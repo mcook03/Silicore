@@ -1,0 +1,5 @@
+ref,value,x,y,layer
+R1,10k,10,20,Top
+C1,100nF,11,21,Top
+U1,ATmega328,20,30,Top
+LED1,Red,25,35,Top
