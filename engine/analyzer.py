@@ -125,12 +125,40 @@ def calculate_risk_score(risks):
 
     return round(score, 2)
 
+def check_power_distribution(pcb, max_distance=15):
+    risks = []
+
+    regulators = [c for c in pcb.components if c.type.upper() == "REGULATOR"]
+    mcus = [c for c in pcb.components if c.type.upper() == "MCU"]
+
+    for mcu in mcus:
+
+        closest_distance = None
+        closest_reg = None
+
+        for reg in regulators:
+            dx = mcu.x - reg.x
+            dy = mcu.y - reg.y
+            distance = (dx**2 + dy**2) ** 0.5
+
+            if closest_distance is None or distance < closest_distance:
+                closest_distance = distance
+                closest_reg = reg
+
+        if closest_distance is None or closest_distance > max_distance:
+            risks.append(
+                f"Risk: {mcu.ref} may have poor power delivery (regulator too far away)"
+            )
+
+    return risks
+
 def run_analysis(pcb):
     risks = []
     risks.extend(check_component_spacing(pcb))
     risks.extend(check_decoupling_capacitors(pcb))
     risks.extend(check_thermal_hotspots(pcb))
     risks.extend(check_component_density(pcb))
+    risks.extend(check_power_distribution(pcb))
 
     score = calculate_risk_score(risks)
 
