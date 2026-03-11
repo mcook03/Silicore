@@ -21,3 +21,38 @@ def check_component_spacing(components, min_distance=5):
                 )
 
     return risks
+
+def check_decoupling_capacitors(components):
+
+    risks = []
+
+    microcontrollers = ["ATmega328", "STM32", "ESP32"]
+
+    for comp in components:
+
+        if comp["value"] in microcontrollers:
+
+            mcu_x = comp["x"]
+            mcu_y = comp["y"]
+
+            capacitor_found = False
+
+            for other in components:
+
+                if "nF" in other["value"] or "uF" in other["value"]:
+
+                    dx = other["x"] - mcu_x
+                    dy = other["y"] - mcu_y
+
+                    distance = (dx**2 + dy**2) ** 0.5
+
+                    if distance < 5:
+                        capacitor_found = True
+
+            if not capacitor_found:
+
+                risks.append(
+                    f"Risk: {comp['ref']} ({comp['value']}) has no nearby decoupling capacitor"
+                )
+
+    return risks
