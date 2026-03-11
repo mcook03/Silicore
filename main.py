@@ -8,9 +8,9 @@ print("Starting Silicore...")
 
 start_engine()
 
-pcb_data = parse_pcb_file("sample_pcb.txt")
+pcb = parse_pcb_file("sample_pcb.txt")
 
-risks = check_component_spacing(pcb_data)
+risks = check_component_spacing(pcb)
 
 if risks:
     print("\nDesign Risks Found:")
@@ -19,12 +19,12 @@ if risks:
 else:
     print("\nNo spacing risks detected.")
 
-decap_risks = check_decoupling_capacitors(pcb_data)
+decap_risks = check_decoupling_capacitors(pcb)
 
 for r in decap_risks:
     print(r)
 
-draw_board(pcb_data)
+draw_board(pcb)
 
 
 

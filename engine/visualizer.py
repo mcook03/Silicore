@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
 
 
-def draw_board(components):
+def draw_board(pcb):
     x_coords = []
     y_coords = []
     labels = []
 
-    for comp in components:
-        x_coords.append(comp["x"])
-        y_coords.append(comp["y"])
-        labels.append(comp["ref"])
+    for comp in pcb.components:
+        x_coords.append(comp.x)
+        y_coords.append(comp.y)
+        labels.append(comp.ref)
 
     plt.figure(figsize=(8, 6))
     plt.scatter(x_coords, y_coords)
@@ -21,5 +21,4 @@ def draw_board(components):
     plt.xlabel("X Position")
     plt.ylabel("Y Position")
     plt.grid(True)
-
     plt.show()
