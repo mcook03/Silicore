@@ -53,3 +53,61 @@ def check_decoupling_capacitors(pcb):
                 )
 
     return risks
+
+def check_thermal_hotspots(pcb, min_distance=6):
+    risks = []
+
+    hot_types = ["REGULATOR", "MOSFET", "DRIVER", "POWER_IC"]
+
+    hot_components = [comp for comp in pcb.components if comp.type in hot_types]
+
+    for i in range(len(hot_components)):
+        for j in range(i + 1, len(hot_components)):
+            c1 = hot_components[i]
+            c2 = hot_components[j]
+
+            dx = c2.x - c1.x
+            dy = c2.y - c1.y
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+
+            if distance < min_distance:
+                risks.append(
+                    f"Risk: {c1.ref} and {c2.ref} may create a thermal hotspot ({distance:.2f} units)"
+                )
+
+    return risks
+
+def check_component_density(pcb, region_size=10, max_components_per_region=4):
+    risks = []
+    regions = {}
+
+    for component in pcb.components:
+        region_x = int(component.x // region_size)
+        region_y = int(component.y // region_size)
+        region_key = (region_x, region_y)
+
+        if region_key not in regions:
+            regions[region_key] = []
+
+        regions[region_key].append(component)
+
+    for (region_x, region_y), components in regions.items():
+        if len(components) > max_components_per_region:
+            center_x = region_x * region_size
+            center_y = region_y * region_size
+            refs = ", ".join(c.ref for c in components)
+
+            risks.append(
+                f"Risk: High component density in region ({center_x},{center_y}) "
+                f"with {len(components)} components [{refs}]"
+            )
+
+    return risks
+
+def run_analysis(pcb):
+    risks = []
+    risks.extend(check_component_spacing(pcb))
+    risks.extend(check_decoupling_capacitors(pcb))
+    risks.extend(check_thermal_hotspots(pcb))
+    risks.extend(check_component_density(pcb))
+    return risks

@@ -1,30 +1,20 @@
 from engine.parser import start_engine, parse_pcb_file
-from engine.analyzer import check_component_spacing
-from engine.analyzer import check_decoupling_capacitors
+from engine.analyzer import run_analysis
 from engine.visualizer import draw_board
 
-
 print("Starting Silicore...")
-
 start_engine()
 
 pcb = parse_pcb_file("sample_pcb.txt")
 
-risks = check_component_spacing(pcb)
+risks = run_analysis(pcb)
+
+print("\nDesign Risks Found:")
 
 if risks:
-    print("\nDesign Risks Found:")
-    for r in risks:
-        print(r)
+    for risk in risks:
+        print(risk)
 else:
-    print("\nNo spacing risks detected.")
-
-decap_risks = check_decoupling_capacitors(pcb)
-
-for r in decap_risks:
-    print(r)
+    print("No risks found.")
 
 draw_board(pcb)
-
-
-
