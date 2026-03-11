@@ -7,7 +7,7 @@ start_engine()
 
 pcb = parse_pcb_file("sample_pcb.txt")
 
-risks = run_analysis(pcb)
+risks, score = run_analysis(pcb)
 
 print("\nDesign Risks Found:")
 
@@ -17,4 +17,4 @@ if risks:
 else:
     print("No risks found.")
 
-draw_board(pcb)
+print(f"\nSilicore Risk Score: {score} / 10")

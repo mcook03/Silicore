@@ -104,10 +104,34 @@ def check_component_density(pcb, region_size=10, max_components_per_region=4):
 
     return risks
 
+def calculate_risk_score(risks):
+    score = 10.0
+
+    for risk in risks:
+        if "too close" in risk:
+            score -= 1
+
+        elif "decoupling capacitor" in risk:
+            score -= 1.5
+
+        elif "thermal hotspot" in risk:
+            score -= 2
+
+        elif "density" in risk:
+            score -= 1
+
+    if score < 0:
+        score = 0
+
+    return round(score, 2)
+
 def run_analysis(pcb):
     risks = []
     risks.extend(check_component_spacing(pcb))
     risks.extend(check_decoupling_capacitors(pcb))
     risks.extend(check_thermal_hotspots(pcb))
     risks.extend(check_component_density(pcb))
-    return risks
+
+    score = calculate_risk_score(risks)
+
+    return risks, score
