@@ -1,6 +1,8 @@
 from engine.parser import start_engine, parse_pcb_file
 from engine.analyzer import check_component_spacing
 from engine.analyzer import check_decoupling_capacitors
+from engine.visualizer import draw_board
+
 
 print("Starting Silicore...")
 
@@ -21,4 +23,8 @@ decap_risks = check_decoupling_capacitors(pcb_data)
 
 for r in decap_risks:
     print(r)
+
+draw_board(pcb_data)
+
+
 
