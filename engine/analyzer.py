@@ -120,6 +120,9 @@ def calculate_risk_score(risks):
         elif "density" in risk:
             score -= 1
 
+        elif "poor power delivery" in risk:
+            score -= 1.5
+
     if score < 0:
         score = 0
 
@@ -128,37 +131,46 @@ def calculate_risk_score(risks):
 def check_power_distribution(pcb, max_distance=15):
     risks = []
 
-    regulators = [c for c in pcb.components if c.type.upper() == "REGULATOR"]
-    mcus = [c for c in pcb.components if c.type.upper() == "MCU"]
+    regulators = [c for c in pcb.components if c.type.strip().upper() == "REGULATOR"]
+    mcus = [c for c in pcb.components if c.type.strip().upper() == "MCU"]
 
     for mcu in mcus:
-
         closest_distance = None
         closest_reg = None
 
         for reg in regulators:
             dx = mcu.x - reg.x
             dy = mcu.y - reg.y
-            distance = (dx**2 + dy**2) ** 0.5
+            distance = (dx ** 2 + dy ** 2) ** 0.5
 
             if closest_distance is None or distance < closest_distance:
                 closest_distance = distance
                 closest_reg = reg
 
         if closest_distance is None or closest_distance > max_distance:
-            risks.append(
-                f"Risk: {mcu.ref} may have poor power delivery (regulator too far away)"
-            )
+            if closest_reg is not None:
+                risks.append(
+                    f"Risk: {mcu.ref} may have poor power delivery because nearest regulator "
+                    f"{closest_reg.ref} is {closest_distance:.2f} units away"
+                )
+            else:
+                risks.append(
+                    f"Risk: {mcu.ref} may have poor power delivery because no regulator was found"
+                )
 
     return risks
 
 def run_analysis(pcb):
     risks = []
+
     risks.extend(check_component_spacing(pcb))
     risks.extend(check_decoupling_capacitors(pcb))
     risks.extend(check_thermal_hotspots(pcb))
     risks.extend(check_component_density(pcb))
     risks.extend(check_power_distribution(pcb))
+
+    print("DEBUG MCUS:", [c.type for c in pcb.components if "MCU" in c.type.upper()])
+    print("DEBUG REGS:", [c.type for c in pcb.components if "REGULATOR" in c.type.upper()])
 
     score = calculate_risk_score(risks)
 
