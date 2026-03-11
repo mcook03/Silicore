@@ -18,3 +18,5 @@ else:
     print("No risks found.")
 
 print(f"\nSilicore Risk Score: {score} / 10")
+
+draw_board(pcb, risks)
