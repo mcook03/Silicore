@@ -27,8 +27,10 @@ def run_rule(pcb):
                 risks.append(
                     make_risk(
                         rule_id="power_distribution",
+                        category="power_integrity",
                         severity="high",
                         message=f"{mcu.ref} may have poor power delivery because nearest regulator {closest_reg.ref} is {closest_distance:.2f} units away",
+                        recommendation="Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
                         components=[mcu.ref, closest_reg.ref],
                     )
                 )
@@ -36,8 +38,10 @@ def run_rule(pcb):
                 risks.append(
                     make_risk(
                         rule_id="power_distribution",
+                        category="power_integrity",
                         severity="critical",
                         message=f"{mcu.ref} may have poor power delivery because no regulator was found",
+                        recommendation="Add a regulator or verify that the MCU is connected to a valid power source.",
                         components=[mcu.ref],
                     )
                 )

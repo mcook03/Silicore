@@ -8,8 +8,10 @@ def run_rule(pcb):
         risks.append(
             make_risk(
                 rule_id="return_path",
+                category="emi_return_path",
                 severity="critical",
                 message="No GND net found, return paths cannot be verified",
+                recommendation="Add a valid ground net so return current paths can be analyzed.",
                 nets=["GND"],
             )
         )
@@ -28,8 +30,10 @@ def run_rule(pcb):
                     risks.append(
                         make_risk(
                             rule_id="return_path",
+                            category="emi_return_path",
                             severity="high",
                             message=f"{ref} on signal net {net_name} may not have a proper return path to GND",
+                            recommendation="Ensure the signal has a nearby ground return path to reduce EMI and instability.",
                             components=[ref],
                             nets=[net_name, "GND"],
                         )

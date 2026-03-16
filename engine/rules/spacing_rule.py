@@ -17,8 +17,10 @@ def run_rule(pcb):
                 risks.append(
                     make_risk(
                         rule_id="spacing",
+                        category="layout",
                         severity="high",
                         message=f"{c1.ref} and {c2.ref} are too close ({distance:.2f} units)",
+                        recommendation="Increase spacing between these components to improve manufacturability and routing clearance.",
                         components=[c1.ref, c2.ref],
                     )
                 )

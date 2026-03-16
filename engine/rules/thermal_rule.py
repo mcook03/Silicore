@@ -22,8 +22,10 @@ def run_rule(pcb):
                 risks.append(
                     make_risk(
                         rule_id="thermal",
+                        category="thermal",
                         severity="high",
                         message=f"{c1.ref} and {c2.ref} may create a thermal hotspot ({distance:.2f} units)",
+                        recommendation="Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
                         components=[c1.ref, c2.ref],
                     )
                 )

@@ -26,8 +26,10 @@ def run_rule(pcb):
             risks.append(
                 make_risk(
                     rule_id="density",
+                    category="layout",
                     severity="medium",
                     message=f"High component density in region ({center_x},{center_y}) with {len(components)} components [{', '.join(refs)}]",
+                    recommendation="Spread components more evenly to reduce routing congestion and assembly difficulty.",
                     components=refs,
                     region=(center_x, center_y),
                 )

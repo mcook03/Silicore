@@ -12,8 +12,10 @@ def run_rule(pcb):
             risks.append(
                 make_risk(
                     rule_id="power_rail",
+                    category="power_integrity",
                     severity="critical",
                     message=f"Missing required power rail {net}",
+                    recommendation=f"Add and verify the {net} rail in the design connectivity.",
                     nets=[net],
                 )
             )
@@ -27,8 +29,10 @@ def run_rule(pcb):
                 risks.append(
                     make_risk(
                         rule_id="power_rail",
+                        category="power_integrity",
                         severity="high",
                         message=f"{mcu.ref} is not connected to the VOUT power rail",
+                        recommendation="Connect the MCU power pin to the correct regulated power net.",
                         components=[mcu.ref],
                         nets=["VOUT"],
                     )
@@ -41,8 +45,10 @@ def run_rule(pcb):
                 risks.append(
                     make_risk(
                         rule_id="power_rail",
+                        category="power_integrity",
                         severity="high",
                         message=f"{comp.ref} may be missing a ground connection on GND rail",
+                        recommendation="Verify that this component has a proper ground connection and return path.",
                         components=[comp.ref],
                         nets=["GND"],
                     )

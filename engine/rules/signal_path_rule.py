@@ -28,8 +28,10 @@ def run_rule(pcb):
                         risks.append(
                             make_risk(
                                 rule_id="signal_path",
+                                category="signal_integrity",
                                 severity="medium",
                                 message=f"Net {net_name} has a long signal path between {ref1} and {ref2} ({distance:.2f} units)",
+                                recommendation="Reduce path length or improve routing to lower noise and signal quality risks.",
                                 components=[ref1, ref2],
                                 nets=[net_name],
                             )

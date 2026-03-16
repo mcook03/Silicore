@@ -22,8 +22,10 @@ def run_rule(pcb):
             risks.append(
                 make_risk(
                     rule_id="decoupling",
+                    category="power_integrity",
                     severity="medium",
                     message=f"{mcu.ref} ({mcu.value}) has no nearby decoupling capacitor",
+                    recommendation="Place a 100nF decoupling capacitor close to the MCU power pin.",
                     components=[mcu.ref],
                 )
             )
