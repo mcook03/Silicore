@@ -6,12 +6,15 @@ def draw_board(pcb, risks=None):
         risks = []
 
     risky_refs = set()
+    risky_regions = []
 
     for risk in risks:
-        words = risk.replace(",", "").replace("[", "").replace("]", "").split()
-        for word in words:
-            if word.startswith(("R", "C", "U", "Q", "D", "L", "LED", "J", "SW")):
-                risky_refs.add(word)
+        for ref in risk.get("components", []):
+            risky_refs.add(ref)
+
+        region = risk.get("region")
+        if region:
+            risky_regions.append(region)
 
     x_safe, y_safe = [], []
     x_risk, y_risk = [], []
@@ -30,26 +33,16 @@ def draw_board(pcb, risks=None):
     plt.scatter(x_risk, y_risk, color="red", label="Risk Components")
 
     region_size = 10
-    regions = {}
-
-    for comp in pcb.components:
-        rx = int(comp.x // region_size)
-        ry = int(comp.y // region_size)
-        key = (rx, ry)
-        regions.setdefault(key, []).append(comp)
-
-    for (rx, ry), comps in regions.items():
-        count = len(comps)
-
-        if count > 4:
-            rect = plt.Rectangle(
-                (rx * region_size, ry * region_size),
-                region_size,
-                region_size,
-                color="orange",
-                alpha=0.20
-            )
-            plt.gca().add_patch(rect)
+    for region in risky_regions:
+        rx, ry = region
+        rect = plt.Rectangle(
+            (rx, ry),
+            region_size,
+            region_size,
+            color="orange",
+            alpha=0.20
+        )
+        plt.gca().add_patch(rect)
 
     for comp in pcb.components:
         plt.text(comp.x + 0.2, comp.y + 0.2, comp.ref)

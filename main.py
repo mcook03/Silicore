@@ -11,7 +11,7 @@ risks, score = run_analysis(pcb)
 print("\nDesign Risks Found:")
 if risks:
     for risk in risks:
-        print(risk)
+        print(f"[{risk['severity'].upper()}] {risk['message']}")
 else:
     print("No risks found.")
 

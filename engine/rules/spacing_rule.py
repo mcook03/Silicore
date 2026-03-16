@@ -1,24 +1,26 @@
 import math
+from engine.risk import make_risk
 
-def check_component_spacing(pcb, min_distance=5):
+
+def run_rule(pcb):
+    min_distance = 5
     risks = []
-    components = pcb.components
 
-    for i in range(len(components)):
-        for j in range(i + 1, len(components)):
-            c1 = components[i]
-            c2 = components[j]
+    for i in range(len(pcb.components)):
+        for j in range(i + 1, len(pcb.components)):
+            c1 = pcb.components[i]
+            c2 = pcb.components[j]
 
-            x1 = float(c1.x)
-            y1 = float(c1.y)
-            x2 = float(c2.x)
-            y2 = float(c2.y)
-
-            distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            distance = math.sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
 
             if distance < min_distance:
                 risks.append(
-                    f"Risk: {c1.ref} and {c2.ref} are too close ({distance:.2f} units)"
+                    make_risk(
+                        rule_id="spacing",
+                        severity="high",
+                        message=f"{c1.ref} and {c2.ref} are too close ({distance:.2f} units)",
+                        components=[c1.ref, c2.ref],
+                    )
                 )
 
     return risks

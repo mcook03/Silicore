@@ -1,7 +1,9 @@
 import math
+from engine.risk import make_risk
 
 
-def check_power_distribution(pcb, max_distance=15):
+def run_rule(pcb):
+    max_distance = 15
     risks = []
 
     regulators = [c for c in pcb.components if c.type.strip().upper() == "REGULATOR"]
@@ -23,12 +25,21 @@ def check_power_distribution(pcb, max_distance=15):
         if closest_distance is None or closest_distance > max_distance:
             if closest_reg is not None:
                 risks.append(
-                    f"Risk: {mcu.ref} may have poor power delivery because nearest regulator "
-                    f"{closest_reg.ref} is {closest_distance:.2f} units away"
+                    make_risk(
+                        rule_id="power_distribution",
+                        severity="high",
+                        message=f"{mcu.ref} may have poor power delivery because nearest regulator {closest_reg.ref} is {closest_distance:.2f} units away",
+                        components=[mcu.ref, closest_reg.ref],
+                    )
                 )
             else:
                 risks.append(
-                    f"Risk: {mcu.ref} may have poor power delivery because no regulator was found"
+                    make_risk(
+                        rule_id="power_distribution",
+                        severity="critical",
+                        message=f"{mcu.ref} may have poor power delivery because no regulator was found",
+                        components=[mcu.ref],
+                    )
                 )
 
     return risks

@@ -1,7 +1,9 @@
 import math
+from engine.risk import make_risk
 
 
-def check_signal_paths(pcb, max_signal_length=40):
+def run_rule(pcb):
+    max_signal_length = 40
     risks = []
 
     for net_name, net in pcb.nets.items():
@@ -24,8 +26,13 @@ def check_signal_paths(pcb, max_signal_length=40):
 
                     if distance > max_signal_length:
                         risks.append(
-                            f"Risk: Net {net_name} has a long signal path between "
-                            f"{ref1} and {ref2} ({distance:.2f} units)"
+                            make_risk(
+                                rule_id="signal_path",
+                                severity="medium",
+                                message=f"Net {net_name} has a long signal path between {ref1} and {ref2} ({distance:.2f} units)",
+                                components=[ref1, ref2],
+                                nets=[net_name],
+                            )
                         )
 
     return risks

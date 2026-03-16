@@ -1,8 +1,18 @@
-def check_return_paths(pcb):
+from engine.risk import make_risk
+
+
+def run_rule(pcb):
     risks = []
 
     if "GND" not in pcb.nets:
-        risks.append("Risk: No GND net found, return paths cannot be verified")
+        risks.append(
+            make_risk(
+                rule_id="return_path",
+                severity="critical",
+                message="No GND net found, return paths cannot be verified",
+                nets=["GND"],
+            )
+        )
         return risks
 
     gnd_refs = {ref for ref, _ in pcb.nets["GND"].connections}
@@ -13,10 +23,16 @@ def check_return_paths(pcb):
 
         for ref, _ in net.connections:
             component = pcb.get_component(ref)
-            if component and component.type.upper() in {"MCU", "MOSFET", "DRIVER"}:
+            if component and component.type.strip().upper() in {"MCU", "MOSFET", "DRIVER"}:
                 if ref not in gnd_refs:
                     risks.append(
-                        f"Risk: {ref} on signal net {net_name} may not have a proper return path to GND"
+                        make_risk(
+                            rule_id="return_path",
+                            severity="high",
+                            message=f"{ref} on signal net {net_name} may not have a proper return path to GND",
+                            components=[ref],
+                            nets=[net_name, "GND"],
+                        )
                     )
 
     return risks

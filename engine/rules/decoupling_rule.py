@@ -1,30 +1,31 @@
 import math
+from engine.risk import make_risk
 
-def check_decoupling_capacitors(pcb):
+
+def run_rule(pcb):
+    max_distance = 6
     risks = []
 
-    microcontrollers = ["ATmega328", "STM32", "ESP32"]
+    mcus = [c for c in pcb.components if c.type.strip().upper() == "MCU"]
+    capacitors = [c for c in pcb.components if c.type.strip().upper() == "CAPACITOR"]
 
-    for comp in pcb.components:
-        if comp.value in microcontrollers:
-            mcu_x = comp.x
-            mcu_y = comp.y
+    for mcu in mcus:
+        has_nearby_cap = False
 
-            capacitor_found = False
+        for cap in capacitors:
+            distance = math.sqrt((mcu.x - cap.x) ** 2 + (mcu.y - cap.y) ** 2)
+            if distance <= max_distance:
+                has_nearby_cap = True
+                break
 
-            for other in pcb.components:
-                if "nF" in other.value or "uF" in other.value:
-                    dx = other.x - mcu_x
-                    dy = other.y - mcu_y
-                    distance = (dx ** 2 + dy ** 2) ** 0.5
-
-                    if distance < 5:
-                        capacitor_found = True
-                        break
-
-            if not capacitor_found:
-                risks.append(
-                    f"Risk: {comp.ref} ({comp.value}) has no nearby decoupling capacitor"
+        if not has_nearby_cap:
+            risks.append(
+                make_risk(
+                    rule_id="decoupling",
+                    severity="medium",
+                    message=f"{mcu.ref} ({mcu.value}) has no nearby decoupling capacitor",
+                    components=[mcu.ref],
                 )
+            )
 
     return risks

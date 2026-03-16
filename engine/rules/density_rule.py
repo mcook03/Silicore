@@ -1,4 +1,9 @@
-def check_component_density(pcb, region_size=10, max_components_per_region=4):
+from engine.risk import make_risk
+
+
+def run_rule(pcb):
+    region_size = 10
+    max_components_per_region = 4
     risks = []
     regions = {}
 
@@ -16,11 +21,16 @@ def check_component_density(pcb, region_size=10, max_components_per_region=4):
         if len(components) > max_components_per_region:
             center_x = region_x * region_size
             center_y = region_y * region_size
-            refs = ", ".join(c.ref for c in components)
+            refs = [c.ref for c in components]
 
             risks.append(
-                f"Risk: High component density in region ({center_x},{center_y}) "
-                f"with {len(components)} components [{refs}]"
+                make_risk(
+                    rule_id="density",
+                    severity="medium",
+                    message=f"High component density in region ({center_x},{center_y}) with {len(components)} components [{', '.join(refs)}]",
+                    components=refs,
+                    region=(center_x, center_y),
+                )
             )
 
     return risks
