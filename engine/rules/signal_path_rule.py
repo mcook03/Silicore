@@ -1,0 +1,31 @@
+import math
+
+
+def check_signal_paths(pcb, max_signal_length=40):
+    risks = []
+
+    for net_name, net in pcb.nets.items():
+        if net_name in {"GND", "VIN", "VOUT"}:
+            continue
+
+        if len(net.connections) < 2:
+            continue
+
+        for i in range(len(net.connections)):
+            for j in range(i + 1, len(net.connections)):
+                ref1, _ = net.connections[i]
+                ref2, _ = net.connections[j]
+
+                c1 = pcb.get_component(ref1)
+                c2 = pcb.get_component(ref2)
+
+                if c1 and c2:
+                    distance = math.sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
+
+                    if distance > max_signal_length:
+                        risks.append(
+                            f"Risk: Net {net_name} has a long signal path between "
+                            f"{ref1} and {ref2} ({distance:.2f} units)"
+                        )
+
+    return risks

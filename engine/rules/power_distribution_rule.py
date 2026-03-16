@@ -1,28 +1,5 @@
 import math
 
-def calculate_risk_score(risks):
-    score = 10.0
-
-    for risk in risks:
-        if "too close" in risk:
-            score -= 1
-
-        elif "decoupling capacitor" in risk:
-            score -= 1.5
-
-        elif "thermal hotspot" in risk:
-            score -= 2
-
-        elif "density" in risk:
-            score -= 1
-
-        elif "poor power delivery" in risk:
-            score -= 1.5
-
-    if score < 0:
-        score = 0
-
-    return round(score, 2)
 
 def check_power_distribution(pcb, max_distance=15):
     risks = []
@@ -37,7 +14,7 @@ def check_power_distribution(pcb, max_distance=15):
         for reg in regulators:
             dx = mcu.x - reg.x
             dy = mcu.y - reg.y
-            distance = (dx ** 2 + dy ** 2) ** 0.5
+            distance = math.sqrt(dx ** 2 + dy ** 2)
 
             if closest_distance is None or distance < closest_distance:
                 closest_distance = distance
@@ -55,16 +32,3 @@ def check_power_distribution(pcb, max_distance=15):
                 )
 
     return risks
-
-def run_analysis(pcb):
-    risks = []
-
-    risks.extend(check_component_spacing(pcb))
-    risks.extend(check_decoupling_capacitors(pcb))
-    risks.extend(check_thermal_hotspots(pcb))
-    risks.extend(check_component_density(pcb))
-    risks.extend(check_power_distribution(pcb))
-
-    score = calculate_risk_score(risks)
-
-    return risks, score
