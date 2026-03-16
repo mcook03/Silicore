@@ -10,6 +10,22 @@ start_engine()
 pcb = parse_pcb_file("sample_pcb.txt")
 risks, score = run_analysis(pcb)
 
+from collections import defaultdict
+
+pcb = parse_pcb_file("sample_pcb.txt")
+risks, score = run_analysis(pcb)
+
+severity_counts = defaultdict(int)
+for risk in risks:
+    severity_counts[risk["severity"]] += 1
+
+print("Severity Summary:")
+print(f"  Critical: {severity_counts['critical']}")
+print(f"  High: {severity_counts['high']}")
+print(f"  Medium: {severity_counts['medium']}")
+print(f"  Low: {severity_counts['low']}")
+print()
+
 report = generate_report(pcb, risks, score)
 print()
 print(report)
