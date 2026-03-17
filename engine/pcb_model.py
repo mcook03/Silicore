@@ -1,21 +1,45 @@
 class Component:
-    def __init__(self, ref, value, x, y, layer, comp_type):
+    def __init__(self, ref, value, x, y, layer, comp_type, footprint="", rotation=0.0):
         self.ref = ref
         self.value = value
         self.x = float(x)
         self.y = float(y)
         self.layer = layer
         self.type = comp_type
-        self.pins = {}
+        self.footprint = footprint
+        self.rotation = float(rotation)
+        self.pads = []
 
-    def add_pin(self, pin_name, net_name):
-        self.pins[pin_name] = net_name
+    def to_dict(self):
+        return {
+            "ref": self.ref,
+            "value": self.value,
+            "x": self.x,
+            "y": self.y,
+            "layer": self.layer,
+            "type": self.type,
+            "footprint": self.footprint,
+            "rotation": self.rotation,
+            "pads": [pad.to_dict() for pad in self.pads],
+        }
 
-    def __repr__(self):
-        return (
-            f"Component({self.ref}, {self.value}, {self.x}, "
-            f"{self.y}, {self.layer}, {self.type})"
-        )
+
+class Pad:
+    def __init__(self, pad_number, x, y, net_name="", layer=""):
+        self.pad_number = str(pad_number)
+        self.x = float(x)
+        self.y = float(y)
+        self.net_name = net_name
+        self.layer = layer
+
+    def to_dict(self):
+        return {
+            "pad_number": self.pad_number,
+            "x": self.x,
+            "y": self.y,
+            "net_name": self.net_name,
+            "layer": self.layer,
+        }
 
 
 class Net:
@@ -23,32 +47,127 @@ class Net:
         self.name = name
         self.connections = []
 
-    def add_connection(self, ref, pin):
-        self.connections.append((ref, pin))
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "connections": self.connections,
+        }
 
-    def __repr__(self):
-        return f"Net({self.name}, connections={self.connections})"
+
+class Trace:
+    def __init__(self, net_name, x1, y1, x2, y2, layer="", width=0.0):
+        self.net_name = net_name
+        self.x1 = float(x1)
+        self.y1 = float(y1)
+        self.x2 = float(x2)
+        self.y2 = float(y2)
+        self.layer = layer
+        self.width = float(width)
+
+    def length(self):
+        dx = self.x2 - self.x1
+        dy = self.y2 - self.y1
+        return (dx ** 2 + dy ** 2) ** 0.5
+
+    def to_dict(self):
+        return {
+            "net_name": self.net_name,
+            "x1": self.x1,
+            "y1": self.y1,
+            "x2": self.x2,
+            "y2": self.y2,
+            "layer": self.layer,
+            "width": self.width,
+            "length": round(self.length(), 2),
+        }
+
+
+class Via:
+    def __init__(self, x, y, drill=0.0, net_name=""):
+        self.x = float(x)
+        self.y = float(y)
+        self.drill = float(drill)
+        self.net_name = net_name
+
+    def to_dict(self):
+        return {
+            "x": self.x,
+            "y": self.y,
+            "drill": self.drill,
+            "net_name": self.net_name,
+        }
+
+
+class Zone:
+    def __init__(self, net_name="", layer=""):
+        self.net_name = net_name
+        self.layer = layer
+
+    def to_dict(self):
+        return {
+            "net_name": self.net_name,
+            "layer": self.layer,
+        }
 
 
 class PCB:
     def __init__(self):
         self.components = []
         self.nets = {}
+        self.traces = []
+        self.vias = []
+        self.zones = []
+        self.layers = set()
+        self.board_width = 0.0
+        self.board_height = 0.0
+        self.source_format = "unknown"
 
     def add_component(self, component):
         self.components.append(component)
+        if component.layer:
+            self.layers.add(component.layer)
+
+    def add_trace(self, trace):
+        self.traces.append(trace)
+        if trace.layer:
+            self.layers.add(trace.layer)
+
+    def add_via(self, via):
+        self.vias.append(via)
+
+    def add_zone(self, zone):
+        self.zones.append(zone)
+        if zone.layer:
+            self.layers.add(zone.layer)
 
     def add_net_connection(self, net_name, ref, pin):
         if net_name not in self.nets:
             self.nets[net_name] = Net(net_name)
-        self.nets[net_name].add_connection(ref, pin)
-
-        component = self.get_component(ref)
-        if component:
-            component.add_pin(pin, net_name)
+        self.nets[net_name].connections.append((ref, pin))
 
     def get_component(self, ref):
         for component in self.components:
             if component.ref == ref:
                 return component
         return None
+
+    def estimate_board_bounds(self):
+        xs = [c.x for c in self.components]
+        ys = [c.y for c in self.components]
+
+        if xs and ys:
+            self.board_width = max(xs) - min(xs)
+            self.board_height = max(ys) - min(ys)
+
+    def to_dict(self):
+        return {
+            "source_format": self.source_format,
+            "board_width": self.board_width,
+            "board_height": self.board_height,
+            "layers": sorted(list(self.layers)),
+            "components": [c.to_dict() for c in self.components],
+            "nets": {name: net.to_dict() for name, net in self.nets.items()},
+            "traces": [t.to_dict() for t in self.traces],
+            "vias": [v.to_dict() for v in self.vias],
+            "zones": [z.to_dict() for z in self.zones],
+        }

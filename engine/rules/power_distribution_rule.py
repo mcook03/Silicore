@@ -1,49 +1,68 @@
-import math
+from math import sqrt
+
 from engine.risk import make_risk
 
+REGULATOR_KEYWORDS = {"regulator", "buck", "boost", "ldo", "pmic", "power"}
+LOAD_KEYWORDS = {"mcu", "microcontroller", "processor", "fpga", "driver", "sensor", "ic"}
 
-def run_rule(pcb):
-    max_distance = 15
+
+def distance(c1, c2):
+    return sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
+
+
+def is_regulator(component):
+    text = f"{component.ref} {component.type} {component.value}".lower()
+    return any(keyword in text for keyword in REGULATOR_KEYWORDS) or component.ref.upper().startswith("U")
+
+
+def is_load(component):
+    text = f"{component.ref} {component.type} {component.value}".lower()
+    return any(keyword in text for keyword in LOAD_KEYWORDS) or component.ref.upper().startswith("U")
+
+
+def run_rule(pcb, config):
     risks = []
+    threshold = config["rules"]["power_distribution"]["threshold"]
 
-    regulators = [c for c in pcb.components if c.type.strip().upper() == "REGULATOR"]
-    mcus = [c for c in pcb.components if c.type.strip().upper() == "MCU"]
+    regulators = [c for c in pcb.components if is_regulator(c)]
+    loads = [c for c in pcb.components if is_load(c)]
 
-    for mcu in mcus:
-        closest_distance = None
-        closest_reg = None
+    if not regulators or not loads:
+        return risks
+
+    for load in loads:
+        nearest_reg = None
+        nearest_distance = None
 
         for reg in regulators:
-            dx = mcu.x - reg.x
-            dy = mcu.y - reg.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
+            if reg.ref == load.ref:
+                continue
 
-            if closest_distance is None or distance < closest_distance:
-                closest_distance = distance
-                closest_reg = reg
+            d = distance(load, reg)
 
-        if closest_distance is None or closest_distance > max_distance:
-            if closest_reg is not None:
-                risks.append(
-                    make_risk(
-                        rule_id="power_distribution",
-                        category="power_integrity",
-                        severity="high",
-                        message=f"{mcu.ref} may have poor power delivery because nearest regulator {closest_reg.ref} is {closest_distance:.2f} units away",
-                        recommendation="Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
-                        components=[mcu.ref, closest_reg.ref],
-                    )
+            if nearest_distance is None or d < nearest_distance:
+                nearest_distance = d
+                nearest_reg = reg
+
+        if nearest_reg is not None and nearest_distance is not None and nearest_distance > threshold:
+            risks.append(
+                make_risk(
+                    rule_id="power_distribution",
+                    category="power_integrity",
+                    severity="high",
+                    message=f"{load.ref} may have poor power delivery because nearest regulator {nearest_reg.ref} is {nearest_distance:.2f} units away",
+                    recommendation="Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+                    components=[load.ref, nearest_reg.ref],
+                    metrics={
+                        "distance": round(nearest_distance, 2),
+                        "threshold": threshold,
+                    },
+                    confidence=0.78,
+                    short_title="Weak power distribution path",
+                    fix_priority="high",
+                    estimated_impact="high",
+                    design_domain="power",
                 )
-            else:
-                risks.append(
-                    make_risk(
-                        rule_id="power_distribution",
-                        category="power_integrity",
-                        severity="critical",
-                        message=f"{mcu.ref} may have poor power delivery because no regulator was found",
-                        recommendation="Add a regulator or verify that the MCU is connected to a valid power source.",
-                        components=[mcu.ref],
-                    )
-                )
+            )
 
     return risks

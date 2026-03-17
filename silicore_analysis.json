@@ -1,240 +1,60 @@
 {
     "summary": {
-        "component_count": 11,
-        "net_count": 4,
-        "risk_score": 0,
-        "total_risks": 17
+        "component_count": 4,
+        "net_count": 3,
+        "risk_score": 6.0,
+        "total_risks": 3
     },
     "risks": [
         {
             "rule_id": "spacing",
             "category": "layout",
             "severity": "high",
-            "message": "U1 and C1 are too close (1.00 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "C1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U1 and D1 are too close (1.00 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "D1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U1 and L1 are too close (2.24 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U1 and LED1 are too close (3.61 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U2 and Q1 are too close (2.83 units)",
+            "message": "U2 and Q1 are too close (2.24 units)",
             "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
             "components": [
                 "U2",
                 "Q1"
             ],
             "nets": [],
-            "region": null
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 5
+            }
         },
         {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "C1 and D1 are too close (1.41 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "C1",
-                "D1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "C1 and L1 are too close (2.00 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "C1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "C1 and LED1 are too close (3.16 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "C1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "D1 and L1 are too close (1.41 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "D1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "D1 and LED1 are too close (2.83 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "D1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "L1 and LED1 are too close (1.41 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "L1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "L1 and C2 are too close (4.24 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "L1",
-                "C2"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "LED1 and C2 are too close (2.83 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "LED1",
-                "C2"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "signal_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Net CTRL has a long signal path between U1 and Q1 (73.54 units)",
-            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
-            "components": [
-                "U1",
-                "Q1"
-            ],
-            "nets": [
-                "CTRL"
-            ],
-            "region": null
-        },
-        {
-            "rule_id": "power_distribution",
+            "rule_id": "decoupling",
             "category": "power_integrity",
-            "severity": "high",
-            "message": "U1 may have poor power delivery because nearest regulator U2 is 70.71 units away",
-            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
-            "components": [
-                "U1",
-                "U2"
-            ],
-            "nets": [],
-            "region": null
-        },
-        {
-            "rule_id": "density",
-            "category": "layout",
             "severity": "medium",
-            "message": "High component density in region (20,30) with 6 components [U1, C1, D1, L1, LED1, C2]",
-            "recommendation": "Spread components more evenly to reduce routing congestion and assembly difficulty.",
+            "message": "U1 (ATmega328) has no nearby decoupling capacitor",
+            "recommendation": "Place a 100nF decoupling capacitor close to the MCU power pin.",
             "components": [
-                "U1",
-                "C1",
-                "D1",
-                "L1",
-                "LED1",
-                "C2"
+                "U1"
             ],
             "nets": [],
-            "region": [
-                20,
-                30
-            ]
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 6
+            }
         },
         {
             "rule_id": "thermal",
             "category": "thermal",
             "severity": "high",
-            "message": "U2 and Q1 may create a thermal hotspot (2.83 units)",
+            "message": "U2 and Q1 may create a thermal hotspot (2.24 units)",
             "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
             "components": [
                 "U2",
                 "Q1"
             ],
             "nets": [],
-            "region": null
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 8
+            }
         }
     ]
 }

@@ -7,6 +7,12 @@ def make_risk(
     components=None,
     nets=None,
     region=None,
+    metrics=None,
+    confidence=0.8,
+    short_title="",
+    fix_priority="medium",
+    estimated_impact="moderate",
+    design_domain="general",
 ):
     return {
         "rule_id": rule_id,
@@ -17,4 +23,10 @@ def make_risk(
         "components": components or [],
         "nets": nets or [],
         "region": region,
+        "metrics": metrics or {},
+        "confidence": confidence,
+        "short_title": short_title or message,
+        "fix_priority": fix_priority,
+        "estimated_impact": estimated_impact,
+        "design_domain": design_domain,
     }

@@ -1,42 +1,57 @@
 from engine.risk import make_risk
 
+GROUND_NET_NAMES = {"GND", "GROUND", "PGND", "AGND"}
 
-def run_rule(pcb):
+
+def run_rule(pcb, config):
     risks = []
 
-    if "GND" not in pcb.nets:
+    ground_nets = [name for name in pcb.nets if name.upper() in GROUND_NET_NAMES]
+    ground_zone_count = len([zone for zone in pcb.zones if zone.net_name.upper() in GROUND_NET_NAMES])
+    min_ground_zones = config["rules"]["return_path"]["min_ground_zones"]
+
+    if not ground_nets:
         risks.append(
             make_risk(
                 rule_id="return_path",
-                category="emi_return_path",
-                severity="critical",
-                message="No GND net found, return paths cannot be verified",
-                recommendation="Add a valid ground net so return current paths can be analyzed.",
-                nets=["GND"],
+                category="signal_integrity",
+                severity="high",
+                message="No explicit ground net was found, which may indicate poor return path definition",
+                recommendation="Ensure the design includes a clear ground reference net and proper return path strategy.",
+                metrics={
+                    "ground_net_count": 0,
+                    "ground_zone_count": ground_zone_count,
+                    "min_ground_zones": min_ground_zones,
+                },
+                confidence=0.88,
+                short_title="Missing ground reference",
+                fix_priority="high",
+                estimated_impact="high",
+                design_domain="signal",
             )
         )
         return risks
 
-    gnd_refs = {ref for ref, _ in pcb.nets["GND"].connections}
-
-    for net_name, net in pcb.nets.items():
-        if net_name in {"GND", "VIN", "VOUT"}:
-            continue
-
-        for ref, _ in net.connections:
-            component = pcb.get_component(ref)
-            if component and component.type.strip().upper() in {"MCU", "MOSFET", "DRIVER"}:
-                if ref not in gnd_refs:
-                    risks.append(
-                        make_risk(
-                            rule_id="return_path",
-                            category="emi_return_path",
-                            severity="high",
-                            message=f"{ref} on signal net {net_name} may not have a proper return path to GND",
-                            recommendation="Ensure the signal has a nearby ground return path to reduce EMI and instability.",
-                            components=[ref],
-                            nets=[net_name, "GND"],
-                        )
-                    )
+    if ground_zone_count < min_ground_zones:
+        risks.append(
+            make_risk(
+                rule_id="return_path",
+                category="signal_integrity",
+                severity="medium",
+                message="Ground net exists but no ground zone or copper pour was detected for return path support",
+                recommendation="Consider adding a continuous ground plane or ground pour to improve return current paths.",
+                nets=ground_nets,
+                metrics={
+                    "ground_net_count": len(ground_nets),
+                    "ground_zone_count": ground_zone_count,
+                    "min_ground_zones": min_ground_zones,
+                },
+                confidence=0.76,
+                short_title="Weak return path support",
+                fix_priority="high",
+                estimated_impact="high",
+                design_domain="signal",
+            )
+        )
 
     return risks

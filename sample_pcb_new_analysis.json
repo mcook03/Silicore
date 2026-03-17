@@ -1,0 +1,214 @@
+{
+    "summary": {
+        "source_format": "simple_text",
+        "total_components": 4,
+        "total_nets": 3,
+        "total_traces": 0,
+        "total_vias": 0,
+        "total_zones": 0,
+        "board_width": 20.0,
+        "board_height": 10.0,
+        "risk_score": 4.0,
+        "total_risks": 4,
+        "severity_counts": {
+            "critical": 0,
+            "high": 2,
+            "medium": 2,
+            "low": 0
+        },
+        "layers": [
+            "Top"
+        ]
+    },
+    "pcb": {
+        "source_format": "simple_text",
+        "board_width": 20.0,
+        "board_height": 10.0,
+        "layers": [
+            "Top"
+        ],
+        "components": [
+            {
+                "ref": "U1",
+                "value": "ATmega328",
+                "x": 20.0,
+                "y": 30.0,
+                "layer": "Top",
+                "type": "mcu",
+                "footprint": "",
+                "rotation": 0.0,
+                "pads": []
+            },
+            {
+                "ref": "D1",
+                "value": "1N4148",
+                "x": 40.0,
+                "y": 40.0,
+                "layer": "Top",
+                "type": "diode",
+                "footprint": "",
+                "rotation": 0.0,
+                "pads": []
+            },
+            {
+                "ref": "U2",
+                "value": "LM7805",
+                "x": 25.0,
+                "y": 35.0,
+                "layer": "Top",
+                "type": "regulator",
+                "footprint": "",
+                "rotation": 0.0,
+                "pads": []
+            },
+            {
+                "ref": "Q1",
+                "value": "IRFZ44N",
+                "x": 26.0,
+                "y": 37.0,
+                "layer": "Top",
+                "type": "mosfet",
+                "footprint": "",
+                "rotation": 0.0,
+                "pads": []
+            }
+        ],
+        "nets": {
+            "VOUT": {
+                "name": "VOUT",
+                "connections": [
+                    [
+                        "U2",
+                        "OUT"
+                    ],
+                    [
+                        "U1",
+                        "VCC"
+                    ]
+                ]
+            },
+            "GND": {
+                "name": "GND",
+                "connections": [
+                    [
+                        "U2",
+                        "GND"
+                    ],
+                    [
+                        "U1",
+                        "GND"
+                    ],
+                    [
+                        "Q1",
+                        "S"
+                    ]
+                ]
+            },
+            "CTRL": {
+                "name": "CTRL",
+                "connections": [
+                    [
+                        "U1",
+                        "PB0"
+                    ],
+                    [
+                        "Q1",
+                        "G"
+                    ]
+                ]
+            }
+        },
+        "traces": [],
+        "vias": [],
+        "zones": []
+    },
+    "risks": [
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U2 and Q1 are too close (2.24 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 4.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout"
+        },
+        {
+            "rule_id": "return_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Ground net exists but no ground zone or copper pour was detected for return path support",
+            "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_net_count": 1,
+                "ground_zone_count": 0,
+                "min_ground_zones": 1
+            },
+            "confidence": 0.76,
+            "short_title": "Weak return path support",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal"
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U1 (ATmega328) has no nearby decoupling capacitor",
+            "recommendation": "Place a 100nF decoupling capacitor close to the device power pin.",
+            "components": [
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 6.0
+            },
+            "confidence": 0.85,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power"
+        },
+        {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "high",
+            "message": "U2 and Q1 may create a thermal hotspot (2.24 units)",
+            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 6.0
+            },
+            "confidence": 0.8,
+            "short_title": "Potential thermal hotspot",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "thermal"
+        }
+    ]
+}

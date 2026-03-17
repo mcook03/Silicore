@@ -1,37 +1,43 @@
+from collections import defaultdict
+
 from engine.risk import make_risk
 
 
-def run_rule(pcb):
-    region_size = 10
-    max_components_per_region = 4
+def run_rule(pcb, config):
     risks = []
-    regions = {}
+    region_size = config["rules"]["density"]["region_size"]
+    component_threshold = config["rules"]["density"]["component_threshold"]
 
-    for component in pcb.components:
-        region_x = int(component.x // region_size)
-        region_y = int(component.y // region_size)
-        region_key = (region_x, region_y)
+    grid = defaultdict(list)
 
-        if region_key not in regions:
-            regions[region_key] = []
+    for comp in pcb.components:
+        region_x = int(comp.x // region_size) * int(region_size)
+        region_y = int(comp.y // region_size) * int(region_size)
+        key = (region_x, region_y)
+        grid[key].append(comp)
 
-        regions[region_key].append(component)
-
-    for (region_x, region_y), components in regions.items():
-        if len(components) > max_components_per_region:
-            center_x = region_x * region_size
-            center_y = region_y * region_size
-            refs = [c.ref for c in components]
-
+    for region, comps in grid.items():
+        if len(comps) > component_threshold:
+            refs = [c.ref for c in comps]
             risks.append(
                 make_risk(
                     rule_id="density",
                     category="layout",
                     severity="medium",
-                    message=f"High component density in region ({center_x},{center_y}) with {len(components)} components [{', '.join(refs)}]",
+                    message=f"High component density in region {region} with {len(comps)} components [{', '.join(refs)}]",
                     recommendation="Spread components more evenly to reduce routing congestion and assembly difficulty.",
                     components=refs,
-                    region=(center_x, center_y),
+                    region=region,
+                    metrics={
+                        "component_count": len(comps),
+                        "threshold": component_threshold,
+                        "region_size": region_size,
+                    },
+                    confidence=0.9,
+                    short_title="High component density",
+                    fix_priority="medium",
+                    estimated_impact="moderate",
+                    design_domain="layout",
                 )
             )
 

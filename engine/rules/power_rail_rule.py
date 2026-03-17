@@ -1,57 +1,39 @@
 from engine.risk import make_risk
 
+POWER_NET_KEYWORDS = {"VCC", "VIN", "VBAT", "5V", "3V3", "12V", "1V8"}
 
-def run_rule(pcb):
+
+def run_rule(pcb, config):
     risks = []
+    min_connections = config["rules"]["power_rail"]["min_connections"]
 
-    required_power_nets = {"VOUT", "GND"}
-    existing_nets = set(pcb.nets.keys())
+    for net_name, net in pcb.nets.items():
+        upper_name = net_name.upper()
 
-    for net in required_power_nets:
-        if net not in existing_nets:
+        if not any(keyword in upper_name for keyword in POWER_NET_KEYWORDS):
+            continue
+
+        connection_count = len([conn for conn in net.connections if conn[0]])
+
+        if connection_count < min_connections:
             risks.append(
                 make_risk(
                     rule_id="power_rail",
                     category="power_integrity",
-                    severity="critical",
-                    message=f"Missing required power rail {net}",
-                    recommendation=f"Add and verify the {net} rail in the design connectivity.",
-                    nets=[net],
+                    severity="medium",
+                    message=f"Power net {net_name} appears weakly connected with only {connection_count} mapped connection(s)",
+                    recommendation="Verify the power rail reaches all required loads and that its connectivity is correctly defined.",
+                    nets=[net_name],
+                    metrics={
+                        "connection_count": connection_count,
+                        "min_connections": min_connections,
+                    },
+                    confidence=0.72,
+                    short_title="Weak power rail connectivity",
+                    fix_priority="high",
+                    estimated_impact="high",
+                    design_domain="power",
                 )
             )
-
-    if "VOUT" in pcb.nets:
-        vout_refs = {ref for ref, _ in pcb.nets["VOUT"].connections}
-        mcus = [c for c in pcb.components if c.type.strip().upper() == "MCU"]
-
-        for mcu in mcus:
-            if mcu.ref not in vout_refs:
-                risks.append(
-                    make_risk(
-                        rule_id="power_rail",
-                        category="power_integrity",
-                        severity="high",
-                        message=f"{mcu.ref} is not connected to the VOUT power rail",
-                        recommendation="Connect the MCU power pin to the correct regulated power net.",
-                        components=[mcu.ref],
-                        nets=["VOUT"],
-                    )
-                )
-
-    if "GND" in pcb.nets:
-        gnd_refs = {ref for ref, _ in pcb.nets["GND"].connections}
-        for comp in pcb.components:
-            if comp.ref not in gnd_refs and comp.type.strip().upper() in {"MCU", "REGULATOR", "MOSFET"}:
-                risks.append(
-                    make_risk(
-                        rule_id="power_rail",
-                        category="power_integrity",
-                        severity="high",
-                        message=f"{comp.ref} may be missing a ground connection on GND rail",
-                        recommendation="Verify that this component has a proper ground connection and return path.",
-                        components=[comp.ref],
-                        nets=["GND"],
-                    )
-                )
 
     return risks

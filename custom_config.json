@@ -1,0 +1,13 @@
+{
+    "rules": {
+        "spacing": {
+            "threshold": 4.0
+        },
+        "thermal": {
+            "threshold": 6.0
+        },
+        "power_rail": {
+            "min_connections": 3
+        }
+    }
+}
