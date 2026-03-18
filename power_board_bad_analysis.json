@@ -1,0 +1,458 @@
+{
+    "summary": {
+        "source_format": "kicad_pcb",
+        "total_components": 2,
+        "total_nets": 3,
+        "total_traces": 5,
+        "total_vias": 7,
+        "total_zones": 0,
+        "board_width": 86.0,
+        "board_height": 4.0,
+        "risk_score": 0.0,
+        "total_risks": 10,
+        "severity_counts": {
+            "critical": 0,
+            "high": 4,
+            "medium": 6,
+            "low": 0
+        },
+        "layers": [
+            "F.Cu"
+        ]
+    },
+    "pcb": {
+        "source_format": "kicad_pcb",
+        "board_width": 86.0,
+        "board_height": 4.0,
+        "layers": [
+            "F.Cu"
+        ],
+        "components": [
+            {
+                "ref": "U1",
+                "value": "regulator",
+                "x": 10.0,
+                "y": 10.0,
+                "layer": "F.Cu",
+                "type": "regulator",
+                "footprint": "Regulator",
+                "rotation": 0.0,
+                "pads": [
+                    {
+                        "pad_number": "1",
+                        "x": 10.0,
+                        "y": 10.0,
+                        "net_name": "VIN",
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    },
+                    {
+                        "pad_number": "2",
+                        "x": 12.0,
+                        "y": 10.0,
+                        "net_name": "GND",
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    }
+                ]
+            },
+            {
+                "ref": "U2",
+                "value": "mcu",
+                "x": 95.0,
+                "y": 10.0,
+                "layer": "F.Cu",
+                "type": "mcu",
+                "footprint": "MCU",
+                "rotation": 0.0,
+                "pads": [
+                    {
+                        "pad_number": "1",
+                        "x": 95.0,
+                        "y": 10.0,
+                        "net_name": "VIN",
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "pad_number": "2",
+                        "x": 97.0,
+                        "y": 10.0,
+                        "net_name": "GND",
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "pad_number": "3",
+                        "x": 96.0,
+                        "y": 12.0,
+                        "net_name": "CTRL",
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    }
+                ]
+            }
+        ],
+        "nets": {
+            "VIN": {
+                "name": "VIN",
+                "connections": [
+                    [
+                        "U1",
+                        "1"
+                    ],
+                    [
+                        "U2",
+                        "1"
+                    ]
+                ]
+            },
+            "GND": {
+                "name": "GND",
+                "connections": [
+                    [
+                        "U1",
+                        "2"
+                    ],
+                    [
+                        "U2",
+                        "2"
+                    ]
+                ]
+            },
+            "CTRL": {
+                "name": "CTRL",
+                "connections": [
+                    [
+                        "U2",
+                        "3"
+                    ]
+                ]
+            }
+        },
+        "traces": [
+            {
+                "net_name": "VIN",
+                "x1": 10.0,
+                "y1": 10.0,
+                "x2": 40.0,
+                "y2": 10.0,
+                "layer": "F.Cu",
+                "width": 0.15,
+                "length": 30.0
+            },
+            {
+                "net_name": "VIN",
+                "x1": 40.0,
+                "y1": 10.0,
+                "x2": 70.0,
+                "y2": 10.0,
+                "layer": "F.Cu",
+                "width": 0.15,
+                "length": 30.0
+            },
+            {
+                "net_name": "VIN",
+                "x1": 70.0,
+                "y1": 10.0,
+                "x2": 95.0,
+                "y2": 10.0,
+                "layer": "F.Cu",
+                "width": 0.15,
+                "length": 25.0
+            },
+            {
+                "net_name": "GND",
+                "x1": 10.0,
+                "y1": 12.0,
+                "x2": 95.0,
+                "y2": 12.0,
+                "layer": "F.Cu",
+                "width": 0.12,
+                "length": 85.0
+            },
+            {
+                "net_name": "CTRL",
+                "x1": 95.0,
+                "y1": 12.0,
+                "x2": 96.0,
+                "y2": 14.0,
+                "layer": "F.Cu",
+                "width": 0.1,
+                "length": 2.24
+            }
+        ],
+        "vias": [
+            {
+                "x": 25.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            },
+            {
+                "x": 35.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            },
+            {
+                "x": 45.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            },
+            {
+                "x": 55.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            },
+            {
+                "x": 65.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            },
+            {
+                "x": 75.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            },
+            {
+                "x": 85.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "net_name": "VIN",
+                "diameter": 0.8
+            }
+        ],
+        "zones": []
+    },
+    "risks": [
+        {
+            "rule_id": "trace_quality",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net GND contains a very narrow trace (0.12)",
+            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.12,
+                "threshold": 0.15
+            },
+            "confidence": 0.83,
+            "short_title": "Very narrow trace",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "layout"
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CTRL contains a very narrow trace (0.10)",
+            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+            "components": [],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.1,
+                "threshold": 0.15
+            },
+            "confidence": 0.83,
+            "short_title": "Very narrow trace",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "layout"
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN has excessive routed length (85.00 units)",
+            "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 85.0,
+                "max_trace_length": 80.0
+            },
+            "confidence": 0.84,
+            "short_title": "Excessive power rail length",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power"
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN uses a narrow trace width (0.15)",
+            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.15,
+                "required_min_trace_width": 0.25
+            },
+            "confidence": 0.9,
+            "short_title": "Narrow power trace",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power"
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "Power net VIN uses many vias (7) which may increase impedance",
+            "recommendation": "Reduce unnecessary via transitions on critical power nets where possible.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "via_count": 7,
+                "max_via_count": 6
+            },
+            "confidence": 0.7,
+            "short_title": "Too many power-net vias",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power"
+        },
+        {
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U1 may have poor power delivery because nearest regulator U2 is 85.00 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 85.0,
+                "threshold": 15.0
+            },
+            "confidence": 0.78,
+            "short_title": "Weak power distribution path",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power"
+        },
+        {
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U2",
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 85.0,
+                "threshold": 15.0
+            },
+            "confidence": 0.78,
+            "short_title": "Weak power distribution path",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power"
+        },
+        {
+            "rule_id": "return_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Ground net exists but ground-zone support appears insufficient for robust return paths",
+            "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_net_count": 1,
+                "ground_zone_count": 0,
+                "min_ground_zones": 1
+            },
+            "confidence": 0.76,
+            "short_title": "Weak return path support",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal"
+        },
+        {
+            "rule_id": "return_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "1 signal net(s) exist without any detected ground-zone support",
+            "recommendation": "Add or verify ground pours/planes near signal routing to improve return current continuity.",
+            "components": [],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "signal_net_count": 1,
+                "ground_zone_count": 0
+            },
+            "confidence": 0.74,
+            "short_title": "Signals lack return-path support",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal"
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U2 (mcu) has no nearby decoupling capacitor",
+            "recommendation": "Place a 100nF decoupling capacitor close to the device power pin.",
+            "components": [
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 6.0
+            },
+            "confidence": 0.85,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power"
+        }
+    ]
+}

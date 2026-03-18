@@ -10,6 +10,18 @@ def _safe_float(value, default=0.0):
         return default
 
 
+def _extract_quoted_or_unquoted_net_name(line):
+    quoted = re.search(r'\(net_name\s+"([^"]+)"\)', line)
+    if quoted:
+        return quoted.group(1).strip()
+
+    unquoted = re.search(r'\(net_name\s+([^\s)]+)\)', line)
+    if unquoted:
+        return unquoted.group(1).strip().replace('"', "")
+
+    return ""
+
+
 def parse_kicad_file(filename):
     pcb = PCB()
     pcb.source_format = "kicad_pcb"
@@ -203,10 +215,10 @@ def parse_kicad_file(filename):
 
         if line.startswith("(zone "):
             layer_match = re.search(r'\(layer\s+"?([^")]+)"?\)', line)
-            net_match = re.search(r'\(net_name\s+"([^"]+)"\)', line)
             layer = layer_match.group(1) if layer_match else ""
-            net_name = net_match.group(1) if net_match else ""
+            net_name = _extract_quoted_or_unquoted_net_name(line)
             pcb.add_zone(Zone(net_name, layer))
+            continue
 
     pcb.estimate_board_bounds()
     return pcb

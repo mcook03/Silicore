@@ -1,0 +1,75 @@
+
+    <html>
+    <head>
+        <title>Silicore Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 40px;
+                background: #f7f7f7;
+                color: #222;
+            }
+            .container {
+                background: white;
+                padding: 24px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            }
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                font-family: Consolas, monospace;
+                font-size: 14px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Silicore Report</h1>
+            <pre>SILICORE ENGINEERING REPORT
+========================================
+
+BOARD OVERVIEW
+----------------------------------------
+Source Format: kicad_pcb
+Total Components: 3
+Total Nets: 3
+Total Traces: 4
+Total Vias: 1
+Board Size Estimate: 16.0 x 6.0
+Layers: F.Cu
+Overall Risk Score: 8.5 / 10
+
+RISK SUMMARY
+----------------------------------------
+Total Risks: 1
+Critical: 0
+High: 1
+Medium: 0
+Low: 0
+
+RISKS BY CATEGORY
+----------------------------------------
+layout: 1
+
+DETAILED FINDINGS
+----------------------------------------
+
+[LAYOUT]
+- (HIGH) U2 and C1 are too close (2.83 units)
+  Title: Insufficient component spacing
+  Components: U2, C1
+  Confidence: 0.95
+  Fix Priority: high
+  Estimated Impact: moderate
+  Recommendation: Increase spacing between these components to improve manufacturability and routing clearance.
+
+TOP PRIORITY ISSUES
+----------------------------------------
+- [HIGH] U2 and C1 are too close (2.83 units)
+
+END OF REPORT</pre>
+        </div>
+    </body>
+    </html>
+    

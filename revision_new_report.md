@@ -1,0 +1,80 @@
+# Silicore Report
+
+```
+SILICORE ENGINEERING REPORT
+========================================
+
+BOARD OVERVIEW
+----------------------------------------
+Source Format: kicad_pcb
+Total Components: 3
+Total Nets: 2
+Total Traces: 2
+Total Vias: 0
+Board Size Estimate: 15.0 x 4.0
+Layers: F.Cu
+Overall Risk Score: 8.5 / 10
+
+RISK SUMMARY
+----------------------------------------
+Total Risks: 1
+Critical: 0
+High: 1
+Medium: 0
+Low: 0
+
+RISKS BY CATEGORY
+----------------------------------------
+layout: 1
+
+DETAILED FINDINGS
+----------------------------------------
+
+[LAYOUT]
+- (HIGH) U2 and C1 are too close (2.83 units)
+  Title: Insufficient component spacing
+  Components: U2, C1
+  Confidence: 0.95
+  Fix Priority: high
+  Estimated Impact: moderate
+  Recommendation: Increase spacing between these components to improve manufacturability and routing clearance.
+
+TOP PRIORITY ISSUES
+----------------------------------------
+- [HIGH] U2 and C1 are too close (2.83 units)
+
+END OF REPORT
+
+REVISION COMPARISON
+========================================
+
+Old Score: 0.11
+New Score: 8.5
+Score Change: +8.39
+
+RESOLVED RISKS
+----------------------------------------
+- Ground net exists but ground-zone support appears insufficient for robust return paths
+- Net GND contains a very narrow trace (0.12)
+- Power net VIN uses a narrow trace width (0.15)
+- U2 (mcu) has no nearby decoupling capacitor
+- U2 may have poor power delivery because nearest regulator U1 is 70.00 units away
+
+NEW RISKS
+----------------------------------------
+- U2 and C1 are too close (2.83 units)
+
+IMPROVED PERSISTING RISKS
+----------------------------------------
+None
+
+WORSENED PERSISTING RISKS
+----------------------------------------
+None
+
+UNCHANGED PERSISTING RISKS
+----------------------------------------
+None
+
+END REVISION COMPARISON
+```

@@ -1,0 +1,26 @@
+(kicad_pcb
+  (net 0 "")
+  (net 1 "VIN")
+  (net 2 "GND")
+
+  (footprint "Regulator"
+    (layer "F.Cu")
+    (at 10 10 0)
+    (property "Reference" "U1")
+    (property "Value" "regulator")
+    (pad 1 smd rect (at 0 0) (size 1.2 1.2) (layers "F.Cu") (net 1 "VIN"))
+    (pad 2 smd rect (at 2 0) (size 1.2 1.2) (layers "F.Cu") (net 2 "GND"))
+  )
+
+  (footprint "MCU"
+    (layer "F.Cu")
+    (at 80 10 0)
+    (property "Reference" "U2")
+    (property "Value" "mcu")
+    (pad 1 smd rect (at 0 0) (size 1.0 1.0) (layers "F.Cu") (net 1 "VIN"))
+    (pad 2 smd rect (at 2 0) (size 1.0 1.0) (layers "F.Cu") (net 2 "GND"))
+  )
+
+  (segment (start 10 10) (end 80 10) (width 0.15) (layer "F.Cu") (net 1))
+  (segment (start 10 12) (end 80 12) (width 0.12) (layer "F.Cu") (net 2))
+)
