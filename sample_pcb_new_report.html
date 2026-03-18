@@ -38,22 +38,22 @@ Total Traces: 0
 Total Vias: 0
 Board Size Estimate: 20.0 x 10.0
 Layers: Top
-Overall Risk Score: 4.0 / 10
+Overall Risk Score: 0.9 / 10
 
 RISK SUMMARY
 ----------------------------------------
-Total Risks: 4
+Total Risks: 6
 Critical: 0
-High: 2
-Medium: 2
+High: 3
+Medium: 3
 Low: 0
 
 RISKS BY CATEGORY
 ----------------------------------------
 layout: 1
 power_integrity: 1
-signal_integrity: 1
-thermal: 1
+signal_integrity: 2
+thermal: 2
 
 DETAILED FINDINGS
 ----------------------------------------
@@ -68,13 +68,20 @@ DETAILED FINDINGS
   Recommendation: Increase spacing between these components to improve manufacturability and routing clearance.
 
 [SIGNAL_INTEGRITY]
-- (MEDIUM) Ground net exists but no ground zone or copper pour was detected for return path support
+- (MEDIUM) Ground net exists but ground-zone support appears insufficient for robust return paths
   Title: Weak return path support
   Nets: GND
   Confidence: 0.76
   Fix Priority: high
   Estimated Impact: high
   Recommendation: Consider adding a continuous ground plane or ground pour to improve return current paths.
+- (MEDIUM) 2 signal net(s) exist without any detected ground-zone support
+  Title: Signals lack return-path support
+  Nets: VOUT, CTRL
+  Confidence: 0.74
+  Fix Priority: high
+  Estimated Impact: high
+  Recommendation: Add or verify ground pours/planes near signal routing to improve return current continuity.
 
 [POWER_INTEGRITY]
 - (MEDIUM) U1 (ATmega328) has no nearby decoupling capacitor
@@ -86,6 +93,13 @@ DETAILED FINDINGS
   Recommendation: Place a 100nF decoupling capacitor close to the device power pin.
 
 [THERMAL]
+- (HIGH) U1 and U2 may create a thermal hotspot (7.07 units)
+  Title: Potential thermal hotspot
+  Components: U1, U2
+  Confidence: 0.8
+  Fix Priority: high
+  Estimated Impact: high
+  Recommendation: Increase spacing, improve copper area, or add thermal relief to reduce localized heating.
 - (HIGH) U2 and Q1 may create a thermal hotspot (2.24 units)
   Title: Potential thermal hotspot
   Components: U2, Q1
@@ -97,9 +111,10 @@ DETAILED FINDINGS
 TOP PRIORITY ISSUES
 ----------------------------------------
 - [HIGH] U2 and Q1 are too close (2.24 units)
+- [HIGH] U1 and U2 may create a thermal hotspot (7.07 units)
 - [HIGH] U2 and Q1 may create a thermal hotspot (2.24 units)
 - [MEDIUM] U1 (ATmega328) has no nearby decoupling capacitor
-- [MEDIUM] Ground net exists but no ground zone or copper pour was detected for return path support
+- [MEDIUM] Ground net exists but ground-zone support appears insufficient for robust return paths
 
 END OF REPORT
 
@@ -107,19 +122,19 @@ REVISION COMPARISON
 ========================================
 
 Old Score: 0.0
-New Score: 4.0
-Score Change: +4.00
+New Score: 0.9
+Score Change: +0.90
 
 RESOLVED RISKS
 ----------------------------------------
-- U1 and D1 are too close (1.41 units)
-- Net VOUT has a long signal path between U2 and U1 (70.71 units)
 - Net CTRL has a long signal path between U1 and Q1 (73.54 units)
+- Net VOUT has a long signal path between U2 and U1 (70.71 units)
+- U1 and D1 are too close (1.41 units)
 - U2 may have poor power delivery because nearest regulator U1 is 70.71 units away
 
 NEW RISKS
 ----------------------------------------
-None
+- U1 and U2 may create a thermal hotspot (7.07 units)
 
 IMPROVED PERSISTING RISKS
 ----------------------------------------
@@ -136,7 +151,9 @@ WORSENED PERSISTING RISKS
 
 UNCHANGED PERSISTING RISKS
 ----------------------------------------
-- Ground net exists but no ground zone or copper pour was detected for return path support
+- 2 signal net(s) exist without any detected ground-zone support
+  Trend: Unchanged
+- Ground net exists but ground-zone support appears insufficient for robust return paths
   Trend: Unchanged
 - U1 (ATmega328) has no nearby decoupling capacitor
   Trend: Unchanged

@@ -8,12 +8,12 @@
         "total_zones": 0,
         "board_width": 20.0,
         "board_height": 10.0,
-        "risk_score": 4.0,
-        "total_risks": 4,
+        "risk_score": 0.9,
+        "total_risks": 6,
         "severity_counts": {
             "critical": 0,
-            "high": 2,
-            "medium": 2,
+            "high": 3,
+            "medium": 3,
             "low": 0
         },
         "layers": [
@@ -137,7 +137,7 @@
             "region": null,
             "metrics": {
                 "distance": 2.24,
-                "threshold": 4.0
+                "threshold": 5.0
             },
             "confidence": 0.95,
             "short_title": "Insufficient component spacing",
@@ -149,7 +149,7 @@
             "rule_id": "return_path",
             "category": "signal_integrity",
             "severity": "medium",
-            "message": "Ground net exists but no ground zone or copper pour was detected for return path support",
+            "message": "Ground net exists but ground-zone support appears insufficient for robust return paths",
             "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
             "components": [],
             "nets": [
@@ -163,6 +163,28 @@
             },
             "confidence": 0.76,
             "short_title": "Weak return path support",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal"
+        },
+        {
+            "rule_id": "return_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "2 signal net(s) exist without any detected ground-zone support",
+            "recommendation": "Add or verify ground pours/planes near signal routing to improve return current continuity.",
+            "components": [],
+            "nets": [
+                "VOUT",
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "signal_net_count": 2,
+                "ground_zone_count": 0
+            },
+            "confidence": 0.74,
+            "short_title": "Signals lack return-path support",
             "fix_priority": "high",
             "estimated_impact": "high",
             "design_domain": "signal"
@@ -192,6 +214,28 @@
             "rule_id": "thermal",
             "category": "thermal",
             "severity": "high",
+            "message": "U1 and U2 may create a thermal hotspot (7.07 units)",
+            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 7.07,
+                "threshold": 8.0
+            },
+            "confidence": 0.8,
+            "short_title": "Potential thermal hotspot",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "thermal"
+        },
+        {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "high",
             "message": "U2 and Q1 may create a thermal hotspot (2.24 units)",
             "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
             "components": [
@@ -202,7 +246,7 @@
             "region": null,
             "metrics": {
                 "distance": 2.24,
-                "threshold": 6.0
+                "threshold": 8.0
             },
             "confidence": 0.8,
             "short_title": "Potential thermal hotspot",

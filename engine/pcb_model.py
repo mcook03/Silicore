@@ -25,12 +25,14 @@ class Component:
 
 
 class Pad:
-    def __init__(self, pad_number, x, y, net_name="", layer=""):
+    def __init__(self, pad_number, x, y, net_name="", layer="", size_x=0.0, size_y=0.0):
         self.pad_number = str(pad_number)
         self.x = float(x)
         self.y = float(y)
         self.net_name = net_name
         self.layer = layer
+        self.size_x = float(size_x)
+        self.size_y = float(size_y)
 
     def to_dict(self):
         return {
@@ -39,6 +41,8 @@ class Pad:
             "y": self.y,
             "net_name": self.net_name,
             "layer": self.layer,
+            "size_x": self.size_x,
+            "size_y": self.size_y,
         }
 
 
@@ -69,6 +73,9 @@ class Trace:
         dy = self.y2 - self.y1
         return (dx ** 2 + dy ** 2) ** 0.5
 
+    def midpoint(self):
+        return ((self.x1 + self.x2) / 2.0, (self.y1 + self.y2) / 2.0)
+
     def to_dict(self):
         return {
             "net_name": self.net_name,
@@ -83,11 +90,12 @@ class Trace:
 
 
 class Via:
-    def __init__(self, x, y, drill=0.0, net_name=""):
+    def __init__(self, x, y, drill=0.0, net_name="", diameter=0.0):
         self.x = float(x)
         self.y = float(y)
         self.drill = float(drill)
         self.net_name = net_name
+        self.diameter = float(diameter)
 
     def to_dict(self):
         return {
@@ -95,6 +103,7 @@ class Via:
             "y": self.y,
             "drill": self.drill,
             "net_name": self.net_name,
+            "diameter": self.diameter,
         }
 
 
@@ -151,13 +160,40 @@ class PCB:
                 return component
         return None
 
+    def get_traces_by_net(self, net_name):
+        return [trace for trace in self.traces if trace.net_name.upper() == net_name.upper()]
+
+    def get_vias_by_net(self, net_name):
+        return [via for via in self.vias if via.net_name.upper() == net_name.upper()]
+
+    def get_zones_by_net(self, net_name):
+        return [zone for zone in self.zones if zone.net_name.upper() == net_name.upper()]
+
+    def total_trace_length_for_net(self, net_name):
+        return round(sum(trace.length() for trace in self.get_traces_by_net(net_name)), 2)
+
+    def min_trace_width_for_net(self, net_name):
+        traces = self.get_traces_by_net(net_name)
+        if not traces:
+            return None
+        return min(trace.width for trace in traces)
+
     def estimate_board_bounds(self):
         xs = [c.x for c in self.components]
         ys = [c.y for c in self.components]
 
-        if xs and ys:
-            self.board_width = max(xs) - min(xs)
-            self.board_height = max(ys) - min(ys)
+        trace_xs = []
+        trace_ys = []
+        for t in self.traces:
+            trace_xs.extend([t.x1, t.x2])
+            trace_ys.extend([t.y1, t.y2])
+
+        all_xs = xs + trace_xs
+        all_ys = ys + trace_ys
+
+        if all_xs and all_ys:
+            self.board_width = max(all_xs) - min(all_xs)
+            self.board_height = max(all_ys) - min(all_ys)
 
     def to_dict(self):
         return {

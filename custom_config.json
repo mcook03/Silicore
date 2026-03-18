@@ -7,7 +7,14 @@
             "threshold": 6.0
         },
         "power_rail": {
-            "min_connections": 3
+            "min_connections": 3,
+            "max_trace_length": 60.0,
+            "min_trace_width": 0.3,
+            "max_via_count": 4
+        },
+        "return_path": {
+            "min_ground_zones": 1,
+            "require_ground_net": true
         }
     }
 }

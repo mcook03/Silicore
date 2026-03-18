@@ -42,17 +42,17 @@ Overall Risk Score: 0.0 / 10
 
 RISK SUMMARY
 ----------------------------------------
-Total Risks: 23
+Total Risks: 24
 Critical: 0
 High: 17
-Medium: 6
+Medium: 7
 Low: 0
 
 RISKS BY CATEGORY
 ----------------------------------------
 layout: 13
 power_integrity: 3
-signal_integrity: 4
+signal_integrity: 5
 thermal: 3
 
 DETAILED FINDINGS
@@ -177,13 +177,20 @@ DETAILED FINDINGS
   Fix Priority: medium
   Estimated Impact: moderate
   Recommendation: Reduce path length or improve routing to lower noise and signal quality risks.
-- (MEDIUM) Ground net exists but no ground zone or copper pour was detected for return path support
+- (MEDIUM) Ground net exists but ground-zone support appears insufficient for robust return paths
   Title: Weak return path support
   Nets: GND
   Confidence: 0.76
   Fix Priority: high
   Estimated Impact: high
   Recommendation: Consider adding a continuous ground plane or ground pour to improve return current paths.
+- (MEDIUM) 2 signal net(s) exist without any detected ground-zone support
+  Title: Signals lack return-path support
+  Nets: VOUT, CTRL
+  Confidence: 0.74
+  Fix Priority: high
+  Estimated Impact: high
+  Recommendation: Add or verify ground pours/planes near signal routing to improve return current continuity.
 
 [POWER_INTEGRITY]
 - (MEDIUM) Power net VIN appears weakly connected with only 2 mapped connection(s)

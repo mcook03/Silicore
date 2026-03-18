@@ -9,11 +9,11 @@
         "board_width": 62.0,
         "board_height": 72.0,
         "risk_score": 0.0,
-        "total_risks": 23,
+        "total_risks": 24,
         "severity_counts": {
             "critical": 0,
             "high": 17,
-            "medium": 6,
+            "medium": 7,
             "low": 0
         },
         "layers": [
@@ -630,7 +630,7 @@
             "rule_id": "return_path",
             "category": "signal_integrity",
             "severity": "medium",
-            "message": "Ground net exists but no ground zone or copper pour was detected for return path support",
+            "message": "Ground net exists but ground-zone support appears insufficient for robust return paths",
             "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
             "components": [],
             "nets": [
@@ -644,6 +644,28 @@
             },
             "confidence": 0.76,
             "short_title": "Weak return path support",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal"
+        },
+        {
+            "rule_id": "return_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "2 signal net(s) exist without any detected ground-zone support",
+            "recommendation": "Add or verify ground pours/planes near signal routing to improve return current continuity.",
+            "components": [],
+            "nets": [
+                "VOUT",
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "signal_net_count": 2,
+                "ground_zone_count": 0
+            },
+            "confidence": 0.74,
+            "short_title": "Signals lack return-path support",
             "fix_priority": "high",
             "estimated_impact": "high",
             "design_domain": "signal"

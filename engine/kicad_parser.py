@@ -1,6 +1,6 @@
 import re
 
-from engine.pcb_model import PCB, Component, Trace, Via, Zone
+from engine.pcb_model import PCB, Component, Pad, Trace, Via, Zone
 
 
 def _safe_float(value, default=0.0):
@@ -44,6 +44,7 @@ def parse_kicad_file(filename):
                 "ref": "",
                 "value": "",
                 "footprint": line.replace("(footprint", "").strip().rstrip(")").strip('"'),
+                "pads": [],
             }
             current_component_x = 0.0
             current_component_y = 0.0
@@ -92,17 +93,48 @@ def parse_kicad_file(filename):
 
         if in_footprint and line.startswith("(pad "):
             pad_parts = line.replace("(", "").replace(")", "").split()
-            if len(pad_parts) >= 2 and current_component:
+            if len(pad_parts) >= 2 and current_component is not None:
                 pad_number = pad_parts[1]
-                net_name = ""
+
+                at_match = re.search(r'\(at\s+([-\d.]+)\s+([-\d.]+)', raw_line)
+                size_match = re.search(r'\(size\s+([-\d.]+)\s+([-\d.]+)\)', raw_line)
+                layers_match = re.search(r'\(layers\s+([^)]+)\)', raw_line)
                 net_inline_match = re.search(r'\(net\s+(\d+)\s+"?([^")]+)"?\)', raw_line)
+                net_num_match = re.search(r'\(net\s+(\d+)', raw_line)
+
+                pad_x = current_component_x
+                pad_y = current_component_y
+                if at_match:
+                    pad_x = current_component_x + _safe_float(at_match.group(1))
+                    pad_y = current_component_y + _safe_float(at_match.group(2))
+
+                size_x = 0.0
+                size_y = 0.0
+                if size_match:
+                    size_x = _safe_float(size_match.group(1))
+                    size_y = _safe_float(size_match.group(2))
+
+                layer = current_component_layer
+                if layers_match:
+                    layer = layers_match.group(1).strip().replace('"', "")
+
+                net_name = ""
                 if net_inline_match:
                     net_name = net_inline_match.group(2).strip()
-                else:
-                    net_num_match = re.search(r'\(net\s+(\d+)', raw_line)
-                    if net_num_match:
-                        net_id = net_num_match.group(1)
-                        net_name = net_id_to_name.get(net_id, "")
+                elif net_num_match:
+                    net_id = net_num_match.group(1)
+                    net_name = net_id_to_name.get(net_id, "")
+
+                pad = Pad(
+                    pad_number=pad_number,
+                    x=pad_x,
+                    y=pad_y,
+                    net_name=net_name,
+                    layer=layer,
+                    size_x=size_x,
+                    size_y=size_y,
+                )
+                current_component["pads"].append(pad)
 
                 if net_name:
                     pcb.add_net_connection(net_name, current_component.get("ref", ""), pad_number)
@@ -125,6 +157,7 @@ def parse_kicad_file(filename):
                     footprint=footprint,
                     rotation=current_component_rotation,
                 )
+                component.pads = current_component.get("pads", [])
                 pcb.add_component(component)
 
             in_footprint = False
@@ -154,16 +187,18 @@ def parse_kicad_file(filename):
         if line.startswith("(via "):
             at_match = re.search(r'\(at\s+([-\d.]+)\s+([-\d.]+)\)', line)
             drill_match = re.search(r'\(drill\s+([-\d.]+)\)', line)
+            size_match = re.search(r'\(size\s+([-\d.]+)\)', line)
             net_match = re.search(r'\(net\s+(\d+)\)', line)
 
             if at_match:
                 x = _safe_float(at_match.group(1))
                 y = _safe_float(at_match.group(2))
                 drill = _safe_float(drill_match.group(1)) if drill_match else 0.0
+                diameter = _safe_float(size_match.group(1)) if size_match else 0.0
                 net_name = ""
                 if net_match:
                     net_name = net_id_to_name.get(net_match.group(1), "")
-                pcb.add_via(Via(x, y, drill, net_name))
+                pcb.add_via(Via(x, y, drill, net_name, diameter))
             continue
 
         if line.startswith("(zone "):

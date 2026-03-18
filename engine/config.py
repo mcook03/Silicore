@@ -24,6 +24,9 @@ DEFAULT_CONFIG = {
         "power_rail": {
             "enabled": True,
             "min_connections": 2,
+            "max_trace_length": 80.0,
+            "min_trace_width": 0.25,
+            "max_via_count": 6,
         },
         "signal_path": {
             "enabled": True,
@@ -32,6 +35,7 @@ DEFAULT_CONFIG = {
         "return_path": {
             "enabled": True,
             "min_ground_zones": 1,
+            "require_ground_net": True,
         },
     },
     "scoring": {
