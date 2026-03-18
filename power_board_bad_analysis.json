@@ -8,18 +8,152 @@
         "total_zones": 0,
         "board_width": 86.0,
         "board_height": 4.0,
-        "risk_score": 0.0,
-        "total_risks": 10,
+        "risk_score": 0.15,
+        "total_risks": 6,
         "severity_counts": {
             "critical": 0,
-            "high": 4,
-            "medium": 6,
+            "high": 3,
+            "medium": 3,
             "low": 0
+        },
+        "category_counts": {
+            "power_integrity": 5,
+            "manufacturing": 1
         },
         "layers": [
             "F.Cu"
         ]
     },
+    "top_issues": [
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN uses a narrow trace width (0.15)",
+            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.15,
+                "required_min_trace_width": 0.25
+            },
+            "confidence": 0.9,
+            "short_title": "Narrow power trace",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "Narrow power traces can overheat and create avoidable IR drop under load.",
+            "suggested_actions": [
+                "Increase trace width on the critical power segment.",
+                "Check expected current draw for this rail.",
+                "Consider copper pours for heavier current paths."
+            ]
+        },
+        {
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U2",
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 85.0,
+                "threshold": 15.0
+            },
+            "confidence": 0.88,
+            "short_title": "Weak power distribution path",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN has excessive routed length (85.00 units)",
+            "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 85.0,
+                "max_trace_length": 80.0
+            },
+            "confidence": 0.84,
+            "short_title": "Excessive power rail length",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "Long power paths can increase resistance, voltage drop, and noise susceptibility.",
+            "suggested_actions": [
+                "Shorten the route between source and loads.",
+                "Move the regulator or source closer to major loads.",
+                "Review distribution topology for unnecessary detours."
+            ]
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U2 (mcu) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 6.0
+            },
+            "confidence": 0.9,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CTRL contains a very narrow trace (0.10)",
+            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+            "components": [],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.1,
+                "threshold": 0.15
+            },
+            "confidence": 0.83,
+            "short_title": "Very narrow trace",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+            "suggested_actions": [
+                "Increase trace width if routing space allows.",
+                "Check board-house minimum trace capability.",
+                "Review whether this narrow section is intentional."
+            ]
+        }
+    ],
     "pcb": {
         "source_format": "kicad_pcb",
         "board_width": 86.0,
@@ -242,46 +376,55 @@
     },
     "risks": [
         {
-            "rule_id": "trace_quality",
-            "category": "manufacturing",
-            "severity": "medium",
-            "message": "Net GND contains a very narrow trace (0.12)",
-            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN uses a narrow trace width (0.15)",
+            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
             "components": [],
             "nets": [
-                "GND"
+                "VIN"
             ],
             "region": null,
             "metrics": {
-                "min_trace_width": 0.12,
-                "threshold": 0.15
+                "min_trace_width": 0.15,
+                "required_min_trace_width": 0.25
             },
-            "confidence": 0.83,
-            "short_title": "Very narrow trace",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
+            "confidence": 0.9,
+            "short_title": "Narrow power trace",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "Narrow power traces can overheat and create avoidable IR drop under load.",
+            "suggested_actions": [
+                "Increase trace width on the critical power segment.",
+                "Check expected current draw for this rail.",
+                "Consider copper pours for heavier current paths."
+            ]
         },
         {
-            "rule_id": "trace_quality",
-            "category": "manufacturing",
-            "severity": "medium",
-            "message": "Net CTRL contains a very narrow trace (0.10)",
-            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
-            "components": [],
-            "nets": [
-                "CTRL"
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U2",
+                "U1"
             ],
+            "nets": [],
             "region": null,
             "metrics": {
-                "min_trace_width": 0.1,
-                "threshold": 0.15
+                "distance": 85.0,
+                "threshold": 15.0
             },
-            "confidence": 0.83,
-            "short_title": "Very narrow trace",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
+            "confidence": 0.88,
+            "short_title": "Weak power distribution path",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
             "rule_id": "power_rail",
@@ -302,28 +445,63 @@
             "short_title": "Excessive power rail length",
             "fix_priority": "high",
             "estimated_impact": "high",
-            "design_domain": "power"
+            "design_domain": "power",
+            "why_it_matters": "Long power paths can increase resistance, voltage drop, and noise susceptibility.",
+            "suggested_actions": [
+                "Shorten the route between source and loads.",
+                "Move the regulator or source closer to major loads.",
+                "Review distribution topology for unnecessary detours."
+            ]
         },
         {
-            "rule_id": "power_rail",
+            "rule_id": "decoupling",
             "category": "power_integrity",
-            "severity": "high",
-            "message": "Power net VIN uses a narrow trace width (0.15)",
-            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+            "severity": "medium",
+            "message": "U2 (mcu) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 6.0
+            },
+            "confidence": 0.9,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CTRL contains a very narrow trace (0.10)",
+            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
             "components": [],
             "nets": [
-                "VIN"
+                "CTRL"
             ],
             "region": null,
             "metrics": {
-                "min_trace_width": 0.15,
-                "required_min_trace_width": 0.25
+                "min_trace_width": 0.1,
+                "threshold": 0.15
             },
-            "confidence": 0.9,
-            "short_title": "Narrow power trace",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "power"
+            "confidence": 0.83,
+            "short_title": "Very narrow trace",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+            "suggested_actions": [
+                "Increase trace width if routing space allows.",
+                "Check board-house minimum trace capability.",
+                "Review whether this narrow section is intentional."
+            ]
         },
         {
             "rule_id": "power_rail",
@@ -344,115 +522,13 @@
             "short_title": "Too many power-net vias",
             "fix_priority": "medium",
             "estimated_impact": "moderate",
-            "design_domain": "power"
-        },
-        {
-            "rule_id": "power_distribution",
-            "category": "power_integrity",
-            "severity": "high",
-            "message": "U1 may have poor power delivery because nearest regulator U2 is 85.00 units away",
-            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
-            "components": [
-                "U1",
-                "U2"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 85.0,
-                "threshold": 15.0
-            },
-            "confidence": 0.78,
-            "short_title": "Weak power distribution path",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "power"
-        },
-        {
-            "rule_id": "power_distribution",
-            "category": "power_integrity",
-            "severity": "high",
-            "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
-            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
-            "components": [
-                "U2",
-                "U1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 85.0,
-                "threshold": 15.0
-            },
-            "confidence": 0.78,
-            "short_title": "Weak power distribution path",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "power"
-        },
-        {
-            "rule_id": "return_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Ground net exists but ground-zone support appears insufficient for robust return paths",
-            "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
-            "components": [],
-            "nets": [
-                "GND"
-            ],
-            "region": null,
-            "metrics": {
-                "ground_net_count": 1,
-                "ground_zone_count": 0,
-                "min_ground_zones": 1
-            },
-            "confidence": 0.76,
-            "short_title": "Weak return path support",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "signal"
-        },
-        {
-            "rule_id": "return_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "1 signal net(s) exist without any detected ground-zone support",
-            "recommendation": "Add or verify ground pours/planes near signal routing to improve return current continuity.",
-            "components": [],
-            "nets": [
-                "CTRL"
-            ],
-            "region": null,
-            "metrics": {
-                "signal_net_count": 1,
-                "ground_zone_count": 0
-            },
-            "confidence": 0.74,
-            "short_title": "Signals lack return-path support",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "signal"
-        },
-        {
-            "rule_id": "decoupling",
-            "category": "power_integrity",
-            "severity": "medium",
-            "message": "U2 (mcu) has no nearby decoupling capacitor",
-            "recommendation": "Place a 100nF decoupling capacitor close to the device power pin.",
-            "components": [
-                "U2"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "nearest_cap_distance": null,
-                "threshold": 6.0
-            },
-            "confidence": 0.85,
-            "short_title": "Missing nearby decoupling",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "power"
+            "design_domain": "power",
+            "why_it_matters": "Excessive via transitions can increase path impedance and reduce power-delivery quality.",
+            "suggested_actions": [
+                "Flatten the route where possible.",
+                "Reduce unnecessary layer changes.",
+                "Keep critical power paths direct and wide."
+            ]
         }
     ]
 }

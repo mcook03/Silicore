@@ -1,6 +1,5 @@
 from engine.risk import make_risk
-
-POWER_NET_KEYWORDS = {"VCC", "VIN", "VBAT", "5V", "3V3", "12V", "1V8"}
+from engine.net_utils import is_power_net
 
 
 def run_rule(pcb, config):
@@ -11,11 +10,10 @@ def run_rule(pcb, config):
     max_trace_length = rule_config["max_trace_length"]
     min_trace_width = rule_config["min_trace_width"]
     max_via_count = rule_config["max_via_count"]
+    power_net_keywords = rule_config["power_net_keywords"]
 
     for net_name, net in pcb.nets.items():
-        upper_name = net_name.upper()
-
-        if not any(keyword in upper_name for keyword in POWER_NET_KEYWORDS):
+        if not is_power_net(net_name, power_net_keywords):
             continue
 
         connection_count = len([conn for conn in net.connections if conn[0]])
@@ -41,6 +39,12 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    why_it_matters="Weak connectivity on a power rail can indicate missing load coverage or incomplete distribution paths.",
+                    suggested_actions=[
+                        "Verify intended loads are attached to this power net.",
+                        "Check for missing net assignments or disconnected pads.",
+                        "Confirm power reaches all required components.",
+                    ],
                 )
             )
 
@@ -62,6 +66,12 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    why_it_matters="Long power paths can increase resistance, voltage drop, and noise susceptibility.",
+                    suggested_actions=[
+                        "Shorten the route between source and loads.",
+                        "Move the regulator or source closer to major loads.",
+                        "Review distribution topology for unnecessary detours.",
+                    ],
                 )
             )
 
@@ -83,6 +93,12 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    why_it_matters="Narrow power traces can overheat and create avoidable IR drop under load.",
+                    suggested_actions=[
+                        "Increase trace width on the critical power segment.",
+                        "Check expected current draw for this rail.",
+                        "Consider copper pours for heavier current paths.",
+                    ],
                 )
             )
 
@@ -104,6 +120,12 @@ def run_rule(pcb, config):
                     fix_priority="medium",
                     estimated_impact="moderate",
                     design_domain="power",
+                    why_it_matters="Excessive via transitions can increase path impedance and reduce power-delivery quality.",
+                    suggested_actions=[
+                        "Flatten the route where possible.",
+                        "Reduce unnecessary layer changes.",
+                        "Keep critical power paths direct and wide.",
+                    ],
                 )
             )
 

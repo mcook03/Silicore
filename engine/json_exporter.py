@@ -1,5 +1,7 @@
 import json
 
+from engine.report_utils import sort_risks_for_reporting
+
 
 def export_analysis_to_json(pcb, risks, score, output_file="analysis.json"):
     severity_counts = {
@@ -9,10 +11,20 @@ def export_analysis_to_json(pcb, risks, score, output_file="analysis.json"):
         "low": 0,
     }
 
-    for risk in risks:
+    category_counts = {}
+
+    sorted_risks = sort_risks_for_reporting(risks)
+
+    for risk in sorted_risks:
         severity = risk.get("severity", "low")
+        category = risk.get("category", "other")
+
         if severity in severity_counts:
             severity_counts[severity] += 1
+
+        if category not in category_counts:
+            category_counts[category] = 0
+        category_counts[category] += 1
 
     data = {
         "summary": {
@@ -25,12 +37,14 @@ def export_analysis_to_json(pcb, risks, score, output_file="analysis.json"):
             "board_width": pcb.board_width,
             "board_height": pcb.board_height,
             "risk_score": score,
-            "total_risks": len(risks),
+            "total_risks": len(sorted_risks),
             "severity_counts": severity_counts,
+            "category_counts": category_counts,
             "layers": sorted(list(pcb.layers)),
         },
+        "top_issues": sorted_risks[:5],
         "pcb": pcb.to_dict(),
-        "risks": risks,
+        "risks": sorted_risks,
     }
 
     with open(output_file, "w", encoding="utf-8") as f:

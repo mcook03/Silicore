@@ -1,87 +1,73 @@
-from engine.risk import make_risk
+from math import sqrt
 
-GROUND_NET_NAMES = {"GND", "GROUND", "PGND", "AGND"}
+from engine.risk import make_risk
+from engine.net_utils import is_excluded_net, is_critical_signal_net
+
+
+def distance(c1, c2):
+    return sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
 
 
 def run_rule(pcb, config):
     risks = []
-    rule_config = config["rules"]["return_path"]
+    rule_config = config["rules"]["signal_path"]
 
-    min_ground_zones = rule_config["min_ground_zones"]
-    require_ground_net = rule_config["require_ground_net"]
+    threshold = rule_config["threshold"]
+    excluded_net_keywords = rule_config["excluded_net_keywords"]
+    critical_net_keywords = rule_config["critical_net_keywords"]
 
-    ground_nets = [name for name in pcb.nets if name.upper() in GROUND_NET_NAMES]
-    ground_zone_count = len([zone for zone in pcb.zones if zone.net_name.upper() in GROUND_NET_NAMES])
+    for net_name, net in pcb.nets.items():
+        if is_excluded_net(net_name, excluded_net_keywords):
+            continue
 
-    if require_ground_net and not ground_nets:
-        risks.append(
-            make_risk(
-                rule_id="return_path",
-                category="signal_integrity",
-                severity="high",
-                message="No explicit ground net was found, which may indicate poor return path definition",
-                recommendation="Ensure the design includes a clear ground reference net and proper return path strategy.",
-                metrics={
-                    "ground_net_count": 0,
-                    "ground_zone_count": ground_zone_count,
-                    "min_ground_zones": min_ground_zones,
-                },
-                confidence=0.88,
-                short_title="Missing ground reference",
-                fix_priority="high",
-                estimated_impact="high",
-                design_domain="signal",
+        if not is_critical_signal_net(net_name, critical_net_keywords):
+            continue
+
+        valid_connections = [conn for conn in net.connections if conn[0]]
+        if len(valid_connections) < 2:
+            continue
+
+        max_pair_distance = 0.0
+        worst_pair = None
+
+        for i in range(len(valid_connections)):
+            for j in range(i + 1, len(valid_connections)):
+                ref1, _ = valid_connections[i]
+                ref2, _ = valid_connections[j]
+
+                c1 = pcb.get_component(ref1)
+                c2 = pcb.get_component(ref2)
+
+                if c1 is None or c2 is None:
+                    continue
+
+                d = distance(c1, c2)
+
+                if d > max_pair_distance:
+                    max_pair_distance = d
+                    worst_pair = (c1, c2)
+
+        if worst_pair and max_pair_distance > threshold:
+            c1, c2 = worst_pair
+            risks.append(
+                make_risk(
+                    rule_id="signal_path",
+                    category="signal_integrity",
+                    severity="medium",
+                    message=f"Critical net {net_name} has a long signal path between {c1.ref} and {c2.ref} ({max_pair_distance:.2f} units)",
+                    recommendation="Reduce path length or improve routing on this critical signal to lower timing and noise risks.",
+                    components=[c1.ref, c2.ref],
+                    nets=[net_name],
+                    metrics={
+                        "distance": round(max_pair_distance, 2),
+                        "threshold": threshold,
+                    },
+                    confidence=0.86,
+                    short_title="Long critical signal path",
+                    fix_priority="medium",
+                    estimated_impact="moderate",
+                    design_domain="signal",
+                )
             )
-        )
-        return risks
-
-    if ground_nets and ground_zone_count < min_ground_zones:
-        risks.append(
-            make_risk(
-                rule_id="return_path",
-                category="signal_integrity",
-                severity="medium",
-                message="Ground net exists but ground-zone support appears insufficient for robust return paths",
-                recommendation="Consider adding a continuous ground plane or ground pour to improve return current paths.",
-                nets=ground_nets,
-                metrics={
-                    "ground_net_count": len(ground_nets),
-                    "ground_zone_count": ground_zone_count,
-                    "min_ground_zones": min_ground_zones,
-                },
-                confidence=0.76,
-                short_title="Weak return path support",
-                fix_priority="high",
-                estimated_impact="high",
-                design_domain="signal",
-            )
-        )
-
-    signal_nets = []
-    for net_name in pcb.nets:
-        upper = net_name.upper()
-        if upper not in GROUND_NET_NAMES and upper not in {"VCC", "VIN", "VBAT", "3V3", "5V", "12V"}:
-            signal_nets.append(net_name)
-
-    if signal_nets and ground_zone_count == 0:
-        risks.append(
-            make_risk(
-                rule_id="return_path",
-                category="signal_integrity",
-                severity="medium",
-                message=f"{len(signal_nets)} signal net(s) exist without any detected ground-zone support",
-                recommendation="Add or verify ground pours/planes near signal routing to improve return current continuity.",
-                nets=signal_nets[:10],
-                metrics={
-                    "signal_net_count": len(signal_nets),
-                    "ground_zone_count": ground_zone_count,
-                },
-                confidence=0.74,
-                short_title="Signals lack return-path support",
-                fix_priority="high",
-                estimated_impact="high",
-                design_domain="signal",
-            )
-        )
 
     return risks

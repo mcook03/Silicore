@@ -16,10 +16,39 @@
             "medium": 0,
             "low": 0
         },
+        "category_counts": {
+            "layout": 1
+        },
         "layers": [
             "F.Cu"
         ]
     },
+    "top_issues": [
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U2 and C1 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U2",
+                "C1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        }
+    ],
     "pcb": {
         "source_format": "kicad_pcb",
         "board_width": 15.0,
@@ -206,7 +235,9 @@
             "short_title": "Insufficient component spacing",
             "fix_priority": "high",
             "estimated_impact": "moderate",
-            "design_domain": "layout"
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
         }
     ]
 }

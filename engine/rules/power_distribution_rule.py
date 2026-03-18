@@ -2,30 +2,37 @@ from math import sqrt
 
 from engine.risk import make_risk
 
-REGULATOR_KEYWORDS = {"regulator", "buck", "boost", "ldo", "pmic", "power"}
-LOAD_KEYWORDS = {"mcu", "microcontroller", "processor", "fpga", "driver", "sensor", "ic"}
-
 
 def distance(c1, c2):
     return sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
 
 
-def is_regulator(component):
+def is_regulator(component, keywords):
     text = f"{component.ref} {component.type} {component.value}".lower()
-    return any(keyword in text for keyword in REGULATOR_KEYWORDS) or component.ref.upper().startswith("U")
+    return any(keyword.lower() in text for keyword in keywords)
 
 
-def is_load(component):
+def is_load(component, keywords):
     text = f"{component.ref} {component.type} {component.value}".lower()
-    return any(keyword in text for keyword in LOAD_KEYWORDS) or component.ref.upper().startswith("U")
+    return any(keyword.lower() in text for keyword in keywords)
+
+
+def shared_nets(component_a, component_b):
+    nets_a = {pad.net_name.upper() for pad in component_a.pads if pad.net_name}
+    nets_b = {pad.net_name.upper() for pad in component_b.pads if pad.net_name}
+    return nets_a & nets_b
 
 
 def run_rule(pcb, config):
     risks = []
-    threshold = config["rules"]["power_distribution"]["threshold"]
+    rule_config = config["rules"]["power_distribution"]
 
-    regulators = [c for c in pcb.components if is_regulator(c)]
-    loads = [c for c in pcb.components if is_load(c)]
+    threshold = rule_config["threshold"]
+    regulator_keywords = rule_config["regulator_keywords"]
+    load_keywords = rule_config["load_keywords"]
+
+    regulators = [c for c in pcb.components if is_regulator(c, regulator_keywords)]
+    loads = [c for c in pcb.components if is_load(c, load_keywords)]
 
     if not regulators or not loads:
         return risks
@@ -37,6 +44,11 @@ def run_rule(pcb, config):
         for reg in regulators:
             if reg.ref == load.ref:
                 continue
+
+            if load.pads and reg.pads:
+                shared = shared_nets(load, reg)
+                if not shared:
+                    continue
 
             d = distance(load, reg)
 
@@ -57,7 +69,7 @@ def run_rule(pcb, config):
                         "distance": round(nearest_distance, 2),
                         "threshold": threshold,
                     },
-                    confidence=0.78,
+                    confidence=0.88 if load.pads and nearest_reg.pads else 0.76,
                     short_title="Weak power distribution path",
                     fix_priority="high",
                     estimated_impact="high",

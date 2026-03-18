@@ -13,6 +13,8 @@ def make_risk(
     fix_priority="medium",
     estimated_impact="moderate",
     design_domain="general",
+    why_it_matters="",
+    suggested_actions=None,
 ):
     return {
         "rule_id": rule_id,
@@ -29,4 +31,6 @@ def make_risk(
         "fix_priority": fix_priority,
         "estimated_impact": estimated_impact,
         "design_domain": design_domain,
+        "why_it_matters": why_it_matters,
+        "suggested_actions": suggested_actions or [],
     }

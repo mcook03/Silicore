@@ -4,6 +4,7 @@ def make_risk_key(risk):
         tuple(sorted(risk.get("components", []))),
         tuple(sorted(risk.get("nets", []))),
         risk.get("region"),
+        risk.get("short_title"),
     )
 
 
@@ -29,6 +30,15 @@ def compare_metric_trend(old_risk, new_risk):
         elif new_c > old_c:
             return f"Worsened: component count increased from {old_c} to {new_c}"
 
+    if "trace_length" in old_m and "trace_length" in new_m:
+        old_t = old_m["trace_length"]
+        new_t = new_m["trace_length"]
+
+        if new_t < old_t:
+            return f"Improved: trace length decreased from {old_t} to {new_t}"
+        elif new_t > old_t:
+            return f"Worsened: trace length increased from {old_t} to {new_t}"
+
     return "Unchanged"
 
 
@@ -44,32 +54,6 @@ def compare_revisions(old_risks, new_risks, old_score, new_score):
     resolved = old_keys - new_keys
     new_only = new_keys - old_keys
     persisting = old_keys & new_keys
-
-    report.append("REVISION COMPARISON")
-    report.append("=" * 40)
-    report.append("")
-    report.append(f"Old Score: {old_score}")
-    report.append(f"New Score: {new_score}")
-    report.append(f"Score Change: {new_score - old_score:+.2f}")
-    report.append("")
-
-    report.append("RESOLVED RISKS")
-    report.append("-" * 40)
-    if resolved:
-        for key in resolved:
-            report.append(f"- {old_map[key]['message']}")
-    else:
-        report.append("None")
-    report.append("")
-
-    report.append("NEW RISKS")
-    report.append("-" * 40)
-    if new_only:
-        for key in new_only:
-            report.append(f"- {new_map[key]['message']}")
-    else:
-        report.append("None")
-    report.append("")
 
     improved = []
     worsened = []
@@ -89,6 +73,39 @@ def compare_revisions(old_risks, new_risks, old_score, new_score):
             worsened.append(item)
         else:
             unchanged.append(item)
+
+    report.append("REVISION COMPARISON")
+    report.append("=" * 40)
+    report.append("")
+    report.append("SUMMARY")
+    report.append("-" * 40)
+    report.append(f"Old Score: {old_score}")
+    report.append(f"New Score: {new_score}")
+    report.append(f"Score Change: {new_score - old_score:+.2f}")
+    report.append(f"Resolved Risks: {len(resolved)}")
+    report.append(f"New Risks: {len(new_only)}")
+    report.append(f"Improved Persisting Risks: {len(improved)}")
+    report.append(f"Worsened Persisting Risks: {len(worsened)}")
+    report.append(f"Unchanged Persisting Risks: {len(unchanged)}")
+    report.append("")
+
+    report.append("RESOLVED RISKS")
+    report.append("-" * 40)
+    if resolved:
+        for key in resolved:
+            report.append(f"- {old_map[key]['message']}")
+    else:
+        report.append("None")
+    report.append("")
+
+    report.append("NEW RISKS")
+    report.append("-" * 40)
+    if new_only:
+        for key in new_only:
+            report.append(f"- {new_map[key]['message']}")
+    else:
+        report.append("None")
+    report.append("")
 
     report.append("IMPROVED PERSISTING RISKS")
     report.append("-" * 40)
