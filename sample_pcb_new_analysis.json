@@ -8,18 +8,97 @@
         "total_zones": 0,
         "board_width": 20.0,
         "board_height": 10.0,
-        "risk_score": 0.9,
-        "total_risks": 6,
+        "risk_score": 5.3,
+        "total_risks": 3,
         "severity_counts": {
             "critical": 0,
-            "high": 3,
-            "medium": 3,
+            "high": 2,
+            "medium": 1,
             "low": 0
+        },
+        "category_counts": {
+            "thermal": 1,
+            "layout": 1,
+            "power_integrity": 1
         },
         "layers": [
             "Top"
         ]
     },
+    "top_issues": [
+        {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "high",
+            "message": "U2 and Q1 may create a thermal hotspot (2.24 units)",
+            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 8.0,
+                "same_layer": true
+            },
+            "confidence": 0.85,
+            "short_title": "Potential thermal hotspot",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "thermal",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U2 and Q1 are too close (2.24 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U1 (ATmega328) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 6.0
+            },
+            "confidence": 0.8,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
+        }
+    ],
     "pcb": {
         "source_format": "simple_text",
         "board_width": 20.0,
@@ -124,6 +203,31 @@
     },
     "risks": [
         {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "high",
+            "message": "U2 and Q1 may create a thermal hotspot (2.24 units)",
+            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 8.0,
+                "same_layer": true
+            },
+            "confidence": 0.85,
+            "short_title": "Potential thermal hotspot",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "thermal",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
             "rule_id": "spacing",
             "category": "layout",
             "severity": "high",
@@ -143,58 +247,16 @@
             "short_title": "Insufficient component spacing",
             "fix_priority": "high",
             "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "return_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Ground net exists but ground-zone support appears insufficient for robust return paths",
-            "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
-            "components": [],
-            "nets": [
-                "GND"
-            ],
-            "region": null,
-            "metrics": {
-                "ground_net_count": 1,
-                "ground_zone_count": 0,
-                "min_ground_zones": 1
-            },
-            "confidence": 0.76,
-            "short_title": "Weak return path support",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "signal"
-        },
-        {
-            "rule_id": "return_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "2 signal net(s) exist without any detected ground-zone support",
-            "recommendation": "Add or verify ground pours/planes near signal routing to improve return current continuity.",
-            "components": [],
-            "nets": [
-                "VOUT",
-                "CTRL"
-            ],
-            "region": null,
-            "metrics": {
-                "signal_net_count": 2,
-                "ground_zone_count": 0
-            },
-            "confidence": 0.74,
-            "short_title": "Signals lack return-path support",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "signal"
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
             "rule_id": "decoupling",
             "category": "power_integrity",
             "severity": "medium",
             "message": "U1 (ATmega328) has no nearby decoupling capacitor",
-            "recommendation": "Place a 100nF decoupling capacitor close to the device power pin.",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
             "components": [
                 "U1"
             ],
@@ -204,55 +266,13 @@
                 "nearest_cap_distance": null,
                 "threshold": 6.0
             },
-            "confidence": 0.85,
+            "confidence": 0.8,
             "short_title": "Missing nearby decoupling",
             "fix_priority": "high",
             "estimated_impact": "high",
-            "design_domain": "power"
-        },
-        {
-            "rule_id": "thermal",
-            "category": "thermal",
-            "severity": "high",
-            "message": "U1 and U2 may create a thermal hotspot (7.07 units)",
-            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
-            "components": [
-                "U1",
-                "U2"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 7.07,
-                "threshold": 8.0
-            },
-            "confidence": 0.8,
-            "short_title": "Potential thermal hotspot",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "thermal"
-        },
-        {
-            "rule_id": "thermal",
-            "category": "thermal",
-            "severity": "high",
-            "message": "U2 and Q1 may create a thermal hotspot (2.24 units)",
-            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
-            "components": [
-                "U2",
-                "Q1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 2.24,
-                "threshold": 8.0
-            },
-            "confidence": 0.8,
-            "short_title": "Potential thermal hotspot",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "thermal"
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
         }
     ]
 }

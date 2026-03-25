@@ -9,17 +9,146 @@
         "board_width": 62.0,
         "board_height": 72.0,
         "risk_score": 0.0,
-        "total_risks": 24,
+        "total_risks": 20,
         "severity_counts": {
             "critical": 0,
-            "high": 17,
-            "medium": 7,
+            "high": 15,
+            "medium": 5,
             "low": 0
+        },
+        "category_counts": {
+            "thermal": 1,
+            "power_integrity": 1,
+            "layout": 14,
+            "signal_integrity": 4
         },
         "layers": [
             "Top"
         ]
     },
+    "top_issues": [
+        {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "high",
+            "message": "U2 and Q1 may create a thermal hotspot (2.83 units)",
+            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 8.0,
+                "same_layer": true
+            },
+            "confidence": 0.85,
+            "short_title": "Potential thermal hotspot",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "thermal",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U1 may have poor power delivery because nearest regulator U2 is 70.71 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 70.71,
+                "threshold": 15.0
+            },
+            "confidence": 0.76,
+            "short_title": "Weak power distribution path",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and C1 are too close (1.00 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "C1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.0,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and D1 are too close (1.00 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "D1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.0,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and L1 are too close (2.24 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "L1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.24,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        }
+    ],
     "pcb": {
         "source_format": "simple_text",
         "board_width": 62.0,
@@ -226,99 +355,11 @@
     },
     "risks": [
         {
-            "rule_id": "spacing",
-            "category": "layout",
+            "rule_id": "thermal",
+            "category": "thermal",
             "severity": "high",
-            "message": "U1 and C1 are too close (1.00 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "C1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 1.0,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U1 and D1 are too close (1.00 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "D1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 1.0,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U1 and L1 are too close (2.24 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 2.24,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U1 and LED1 are too close (3.61 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "U1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 3.61,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "U2 and Q1 are too close (2.83 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "message": "U2 and Q1 may create a thermal hotspot (2.83 units)",
+            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
             "components": [
                 "U2",
                 "Q1"
@@ -327,260 +368,16 @@
             "region": null,
             "metrics": {
                 "distance": 2.83,
-                "threshold": 4.0
+                "threshold": 8.0,
+                "same_layer": true
             },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "C1 and D1 are too close (1.41 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "C1",
-                "D1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 1.41,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "C1 and L1 are too close (2.00 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "C1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 2.0,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "C1 and LED1 are too close (3.16 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "C1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 3.16,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "D1 and L1 are too close (1.41 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "D1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 1.41,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "D1 and LED1 are too close (2.83 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "D1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 2.83,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "L1 and LED1 are too close (1.41 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "L1",
-                "LED1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 1.41,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "spacing",
-            "category": "layout",
-            "severity": "high",
-            "message": "LED1 and C2 are too close (2.83 units)",
-            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
-            "components": [
-                "LED1",
-                "C2"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 2.83,
-                "threshold": 4.0
-            },
-            "confidence": 0.95,
-            "short_title": "Insufficient component spacing",
-            "fix_priority": "high",
-            "estimated_impact": "moderate",
-            "design_domain": "layout"
-        },
-        {
-            "rule_id": "signal_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Net VOUT has a long signal path between U2 and U1 (70.71 units)",
-            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
-            "components": [
-                "U2",
-                "U1"
-            ],
-            "nets": [
-                "VOUT"
-            ],
-            "region": null,
-            "metrics": {
-                "distance": 70.71,
-                "threshold": 40.0
-            },
-            "confidence": 0.82,
-            "short_title": "Long signal path",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "signal"
-        },
-        {
-            "rule_id": "signal_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Net VOUT has a long signal path between U2 and C1 (70.01 units)",
-            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
-            "components": [
-                "U2",
-                "C1"
-            ],
-            "nets": [
-                "VOUT"
-            ],
-            "region": null,
-            "metrics": {
-                "distance": 70.01,
-                "threshold": 40.0
-            },
-            "confidence": 0.82,
-            "short_title": "Long signal path",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "signal"
-        },
-        {
-            "rule_id": "signal_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Net CTRL has a long signal path between U1 and Q1 (73.54 units)",
-            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
-            "components": [
-                "U1",
-                "Q1"
-            ],
-            "nets": [
-                "CTRL"
-            ],
-            "region": null,
-            "metrics": {
-                "distance": 73.54,
-                "threshold": 40.0
-            },
-            "confidence": 0.82,
-            "short_title": "Long signal path",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "signal"
-        },
-        {
-            "rule_id": "power_rail",
-            "category": "power_integrity",
-            "severity": "medium",
-            "message": "Power net VIN appears weakly connected with only 2 mapped connection(s)",
-            "recommendation": "Verify the power rail reaches all required loads and that its connectivity is correctly defined.",
-            "components": [],
-            "nets": [
-                "VIN"
-            ],
-            "region": null,
-            "metrics": {
-                "connection_count": 2,
-                "min_connections": 3
-            },
-            "confidence": 0.72,
-            "short_title": "Weak power rail connectivity",
+            "confidence": 0.85,
+            "short_title": "Potential thermal hotspot",
             "fix_priority": "high",
             "estimated_impact": "high",
-            "design_domain": "power"
+            "design_domain": "thermal",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
             "rule_id": "power_distribution",
@@ -598,77 +395,325 @@
                 "distance": 70.71,
                 "threshold": 15.0
             },
-            "confidence": 0.78,
+            "confidence": 0.76,
             "short_title": "Weak power distribution path",
             "fix_priority": "high",
             "estimated_impact": "high",
-            "design_domain": "power"
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
-            "rule_id": "power_distribution",
-            "category": "power_integrity",
+            "rule_id": "spacing",
+            "category": "layout",
             "severity": "high",
-            "message": "U2 may have poor power delivery because nearest regulator U1 is 70.71 units away",
-            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "message": "U1 and C1 are too close (1.00 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
             "components": [
-                "U2",
-                "U1"
+                "U1",
+                "C1"
             ],
             "nets": [],
             "region": null,
             "metrics": {
-                "distance": 70.71,
-                "threshold": 15.0
+                "distance": 1.0,
+                "threshold": 5.0
             },
-            "confidence": 0.78,
-            "short_title": "Weak power distribution path",
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
             "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "power"
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
-            "rule_id": "return_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "Ground net exists but ground-zone support appears insufficient for robust return paths",
-            "recommendation": "Consider adding a continuous ground plane or ground pour to improve return current paths.",
-            "components": [],
-            "nets": [
-                "GND"
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and D1 are too close (1.00 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "D1"
             ],
+            "nets": [],
             "region": null,
             "metrics": {
-                "ground_net_count": 1,
-                "ground_zone_count": 0,
-                "min_ground_zones": 1
+                "distance": 1.0,
+                "threshold": 5.0
             },
-            "confidence": 0.76,
-            "short_title": "Weak return path support",
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
             "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "signal"
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
-            "rule_id": "return_path",
-            "category": "signal_integrity",
-            "severity": "medium",
-            "message": "2 signal net(s) exist without any detected ground-zone support",
-            "recommendation": "Add or verify ground pours/planes near signal routing to improve return current continuity.",
-            "components": [],
-            "nets": [
-                "VOUT",
-                "CTRL"
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and L1 are too close (2.24 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "L1"
             ],
+            "nets": [],
             "region": null,
             "metrics": {
-                "signal_net_count": 2,
-                "ground_zone_count": 0
+                "distance": 2.24,
+                "threshold": 5.0
             },
-            "confidence": 0.74,
-            "short_title": "Signals lack return-path support",
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
             "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "signal"
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and LED1 are too close (3.61 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "LED1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 3.61,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U2 and Q1 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U2",
+                "Q1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "C1 and D1 are too close (1.41 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "C1",
+                "D1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "C1 and L1 are too close (2.00 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "C1",
+                "L1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.0,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "C1 and LED1 are too close (3.16 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "C1",
+                "LED1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 3.16,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "D1 and L1 are too close (1.41 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "D1",
+                "L1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "D1 and LED1 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "D1",
+                "LED1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "L1 and LED1 are too close (1.41 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "L1",
+                "LED1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "L1 and C2 are too close (4.24 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "L1",
+                "C2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 4.24,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "LED1 and C2 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "LED1",
+                "C2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
             "rule_id": "density",
@@ -698,73 +743,113 @@
             "short_title": "High component density",
             "fix_priority": "medium",
             "estimated_impact": "moderate",
-            "design_domain": "layout"
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
-            "rule_id": "thermal",
-            "category": "thermal",
-            "severity": "high",
-            "message": "U1 and L1 may create a thermal hotspot (2.24 units)",
-            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Critical net CTRL has a long signal path between U1 and Q1 (73.54 units)",
+            "recommendation": "Reduce path length or improve routing on this critical signal to lower timing and noise risks.",
             "components": [
                 "U1",
-                "L1"
-            ],
-            "nets": [],
-            "region": null,
-            "metrics": {
-                "distance": 2.24,
-                "threshold": 6.0
-            },
-            "confidence": 0.8,
-            "short_title": "Potential thermal hotspot",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "thermal"
-        },
-        {
-            "rule_id": "thermal",
-            "category": "thermal",
-            "severity": "high",
-            "message": "U2 and Q1 may create a thermal hotspot (2.83 units)",
-            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
-            "components": [
-                "U2",
                 "Q1"
             ],
-            "nets": [],
+            "nets": [
+                "CTRL"
+            ],
             "region": null,
             "metrics": {
-                "distance": 2.83,
-                "threshold": 6.0
+                "distance": 73.54,
+                "threshold": 40.0
             },
-            "confidence": 0.8,
-            "short_title": "Potential thermal hotspot",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "thermal"
+            "confidence": 0.86,
+            "short_title": "Long critical signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": []
         },
         {
-            "rule_id": "thermal",
-            "category": "thermal",
-            "severity": "high",
-            "message": "L1 and C2 may create a thermal hotspot (4.24 units)",
-            "recommendation": "Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VOUT has a long signal path between U2 and U1 (70.71 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
             "components": [
-                "L1",
-                "C2"
+                "U2",
+                "U1"
             ],
-            "nets": [],
+            "nets": [
+                "VOUT"
+            ],
             "region": null,
             "metrics": {
-                "distance": 4.24,
-                "threshold": 6.0
+                "distance": 70.71,
+                "threshold": 40.0
             },
-            "confidence": 0.8,
-            "short_title": "Potential thermal hotspot",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "thermal"
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VOUT has a long signal path between U2 and C1 (70.01 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+            "components": [
+                "U2",
+                "C1"
+            ],
+            "nets": [
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 70.01,
+                "threshold": 40.0
+            },
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": []
+        },
+        {
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net CTRL has a long signal path between U1 and Q1 (73.54 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+            "components": [
+                "U1",
+                "Q1"
+            ],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 73.54,
+                "threshold": 40.0
+            },
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": []
         }
     ]
 }
