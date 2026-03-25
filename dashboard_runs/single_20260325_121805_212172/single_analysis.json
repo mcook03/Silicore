@@ -1,0 +1,36 @@
+{
+    "run_type": "single",
+    "run_id": "single_20260325_121805_212172",
+    "board_name": "power_board_good.kicad_pcb",
+    "score": 8.5,
+    "risk_count": 1,
+    "component_count": 3,
+    "net_count": 3,
+    "report": "SILICORE ENGINEERING REPORT\n========================================\n\nEXECUTIVE SUMMARY\n----------------------------------------\nOverall Risk Score: 8.5 / 10\nTotal Risks: 1\nCritical/High Risks: 1\nMost Affected Categories: layout (1)\nTop Priority Fixes:\n- Insufficient component spacing\n\nBOARD OVERVIEW\n----------------------------------------\nSource Format: kicad_pcb\nTotal Components: 3\nTotal Nets: 3\nTotal Traces: 4\nTotal Vias: 1\nBoard Size Estimate: 16.0 x 6.0\nLayers: F.Cu\n\nRISK SUMMARY\n----------------------------------------\nCritical: 0\nHigh: 1\nMedium: 0\nLow: 0\n\nRISKS BY CATEGORY\n----------------------------------------\nlayout: 1\n\nTOP PRIORITY ISSUES\n----------------------------------------\n- [HIGH] U2 and C1 are too close (2.83 units)\n  Recommendation: Increase spacing between these components to improve manufacturability and routing clearance.\n\nDETAILED FINDINGS\n----------------------------------------\n\n[LAYOUT]\n- (HIGH) U2 and C1 are too close (2.83 units)\n  Title: Insufficient component spacing\n  Components: U2, C1\n  Confidence: 0.95\n  Fix Priority: high\n  Estimated Impact: moderate\n  Design Domain: layout\n  Recommendation: Increase spacing between these components to improve manufacturability and routing clearance.\n  Metrics: {'distance': 2.83, 'threshold': 5.0}\n\nEND OF REPORT",
+    "risks": [
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U2 and C1 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U2",
+                "C1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 5.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": []
+        }
+    ]
+}

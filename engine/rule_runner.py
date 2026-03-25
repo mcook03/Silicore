@@ -1,99 +1,73 @@
 import importlib
 import os
-
-from engine.config import DEFAULT_CONFIG
-
-
-def load_rule_functions():
-    rule_functions = []
-    rules_dir = os.path.join(os.path.dirname(__file__), "rules")
-
-    for file in os.listdir(rules_dir):
-        if file.endswith(".py") and file != "__init__.py":
-            module_name = file[:-3]
-            module = importlib.import_module(f"engine.rules.{module_name}")
-
-            if hasattr(module, "run_rule"):
-                rule_functions.append((module_name, module.run_rule))
-
-    return rule_functions
+from engine.score_explainer import build_score_explanation
 
 
-def calculate_risk_score(risks, config=None):
-    if config is None:
-        config = DEFAULT_CONFIG
-
-    scoring = config["scoring"]
-    start_score = scoring["start_score"]
-    severity_weights = scoring["severity_weights"]
-    category_weights = scoring["category_weights"]
-    floor = scoring["floor"]
-    ceiling = scoring["ceiling"]
-
-    score = start_score
-    seen_keys = set()
-
-    for risk in risks:
-        severity = risk.get("severity", "medium")
-        category = risk.get("category", "other")
-        key = (
-            risk.get("rule_id"),
-            tuple(sorted(risk.get("components", []))),
-            tuple(sorted(risk.get("nets", []))),
-            risk.get("region"),
-        )
-
-        base_penalty = severity_weights.get(severity, 1.0)
-        category_multiplier = category_weights.get(category, 1.0)
-        penalty = base_penalty * category_multiplier
-
-        if key in seen_keys:
-            penalty *= 0.9
-        else:
-            seen_keys.add(key)
-
-        score -= penalty
-
-    if score < floor:
-        score = floor
-    if score > ceiling:
-        score = ceiling
-
-    return round(score, 2)
+RULES_PACKAGE = "engine.rules"
+RULES_DIRECTORY = os.path.join(os.path.dirname(__file__), "rules")
 
 
-def run_analysis(pcb, config=None):
-    if config is None:
-        config = DEFAULT_CONFIG
+def load_rule_modules():
+    rule_modules = []
 
-    risks = []
-
-    for rule_name, rule_function in load_rule_functions():
-        rule_config = config["rules"].get(rule_name, {"enabled": True})
-        if not rule_config.get("enabled", True):
+    for filename in os.listdir(RULES_DIRECTORY):
+        if not filename.endswith(".py"):
+            continue
+        if filename == "__init__.py":
             continue
 
-        try:
-            result = rule_function(pcb, config)
-            if result:
-                risks.extend(result)
-        except Exception as e:
-            risks.append({
-                "rule_id": rule_name,
-                "category": "other",
-                "severity": "low",
-                "message": f"Rule execution error in {rule_name}: {e}",
-                "recommendation": "Inspect rule implementation.",
-                "components": [],
-                "nets": [],
-                "region": None,
-                "metrics": {},
-                "confidence": 1.0,
-                "short_title": f"{rule_name} execution error",
-                "fix_priority": "low",
-                "estimated_impact": "low",
-                "design_domain": "system",
-            })
+        module_name = filename[:-3]
+        full_module_name = f"{RULES_PACKAGE}.{module_name}"
+        module = importlib.import_module(full_module_name)
 
-    score = calculate_risk_score(risks, config)
-    return risks, score
+        if hasattr(module, "run_rule"):
+            rule_modules.append(module)
+
+    return rule_modules
+
+
+def run_analysis(pcb, config, debug=False):
+    risks = []
+    loaded_rules = load_rule_modules()
+
+    for rule_module in loaded_rules:
+        try:
+            rule_risks = rule_module.run_rule(pcb, config)
+            if rule_risks:
+                risks.extend(rule_risks)
+        except Exception as exc:
+            if debug:
+                print(f"Rule error in {rule_module.__name__}: {exc}")
+
+    score_explanation = build_score_explanation(risks, start_score=10.0)
+
+    severity_counts = {
+        "low": 0,
+        "medium": 0,
+        "high": 0,
+        "critical": 0,
+    }
+
+    category_counts = {}
+
+    for risk in risks:
+        severity = str(risk.get("severity", "low")).lower()
+        category = risk.get("category", "uncategorized")
+
+        if severity in severity_counts:
+            severity_counts[severity] += 1
+        else:
+            severity_counts[severity] = severity_counts.get(severity, 0) + 1
+
+        category_counts[category] = category_counts.get(category, 0) + 1
+
+    return {
+        "risks": risks,
+        "score": score_explanation["final_score"],
+        "score_explanation": score_explanation,
+        "risk_summary": {
+            "total_risks": len(risks),
+            "by_severity": severity_counts,
+            "by_category": category_counts,
+        },
+    }

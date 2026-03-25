@@ -1,0 +1,11 @@
+{
+    "run_id": "project_20260325_121825_375420",
+    "run_type": "project",
+    "title": "4 board project",
+    "created_at": "2026-03-25T12:18:25.377558",
+    "files": {
+        "json": "dashboard_runs/project_20260325_121825_375420/project_summary.json",
+        "md": "dashboard_runs/project_20260325_121825_375420/project_summary.md",
+        "html": "dashboard_runs/project_20260325_121825_375420/project_summary.html"
+    }
+}

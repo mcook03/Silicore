@@ -1,139 +1,92 @@
-from collections import Counter, defaultdict
-
-from engine.report_utils import sort_risks_for_reporting, summarize_top_categories
-
-
-def generate_report(pcb, risks, score):
+def generate_report(pcb, analysis_result):
     lines = []
 
-    severity_counter = Counter()
-    category_counter = Counter()
-    grouped = defaultdict(list)
-
-    sorted_risks = sort_risks_for_reporting(risks)
-
-    for risk in sorted_risks:
-        severity = risk.get("severity", "low")
-        category = risk.get("category", "other")
-        severity_counter[severity] += 1
-        category_counter[category] += 1
-        grouped[category].append(risk)
-
-    top_categories = summarize_top_categories(category_counter, limit=3)
-    top_fixes = sorted_risks[:5]
-
-    lines.append("SILICORE ENGINEERING REPORT")
-    lines.append("=" * 40)
+    lines.append("# SILICORE ENGINEERING REPORT")
     lines.append("")
-    lines.append("EXECUTIVE SUMMARY")
-    lines.append("-" * 40)
-    lines.append(f"Overall Risk Score: {score} / 10")
-    lines.append(f"Total Risks: {len(risks)}")
-    lines.append(
-        f"Critical/High Risks: {severity_counter['critical'] + severity_counter['high']}"
-    )
 
-    if top_categories:
-        lines.append(
-            "Most Affected Categories: "
-            + ", ".join(f"{name} ({count})" for name, count in top_categories)
-        )
+    lines.append("## BOARD OVERVIEW")
+    lines.append(f"- Total Components: {len(getattr(pcb, 'components', []))}")
+    lines.append(f"- Total Nets: {len(getattr(pcb, 'nets', {}))}")
+    lines.append(f"- Overall Risk Score: {analysis_result.get('score', 0)} / 10")
+    lines.append("")
+
+    risk_summary = analysis_result.get("risk_summary", {})
+    by_severity = risk_summary.get("by_severity", {})
+    by_category = risk_summary.get("by_category", {})
+
+    lines.append("## RISK SUMMARY")
+    lines.append(f"- Total Risks: {risk_summary.get('total_risks', 0)}")
+    lines.append(f"- Low: {by_severity.get('low', 0)}")
+    lines.append(f"- Medium: {by_severity.get('medium', 0)}")
+    lines.append(f"- High: {by_severity.get('high', 0)}")
+    lines.append(f"- Critical: {by_severity.get('critical', 0)}")
+    lines.append("")
+
+    lines.append("## RISKS BY CATEGORY")
+    if by_category:
+        for category, count in sorted(by_category.items()):
+            lines.append(f"- {category}: {count}")
     else:
-        lines.append("Most Affected Categories: None")
+        lines.append("- No category risks found")
+    lines.append("")
 
-    if top_fixes:
-        lines.append("Top Priority Fixes:")
-        for risk in top_fixes:
-            lines.append(f"- {risk['short_title']}")
+    score_explanation = analysis_result.get("score_explanation", {})
+
+    lines.append("## SCORE EXPLAINABILITY")
+    lines.append(f"- Start Score: {score_explanation.get('start_score', 10.0)}")
+    lines.append(f"- Total Penalty: {score_explanation.get('total_penalty', 0.0)}")
+    lines.append(f"- Final Score: {score_explanation.get('final_score', analysis_result.get('score', 0))}")
+    lines.append("")
+
+    lines.append("### Penalties by Severity")
+    severity_totals = score_explanation.get("severity_totals", {})
+    if severity_totals:
+        for severity, penalty in sorted(severity_totals.items()):
+            lines.append(f"- {severity}: {penalty}")
     else:
-        lines.append("Top Priority Fixes: None")
+        lines.append("- No severity penalties")
+    lines.append("")
 
-    lines.append("")
-    lines.append("BOARD OVERVIEW")
-    lines.append("-" * 40)
-    lines.append(f"Source Format: {pcb.source_format}")
-    lines.append(f"Total Components: {len(pcb.components)}")
-    lines.append(f"Total Nets: {len(pcb.nets)}")
-    lines.append(f"Total Traces: {len(pcb.traces)}")
-    lines.append(f"Total Vias: {len(pcb.vias)}")
-    lines.append(f"Board Size Estimate: {round(pcb.board_width, 2)} x {round(pcb.board_height, 2)}")
-    lines.append(f"Layers: {', '.join(sorted(list(pcb.layers))) if pcb.layers else 'None'}")
-    lines.append("")
-    lines.append("RISK SUMMARY")
-    lines.append("-" * 40)
-    lines.append(f"Critical: {severity_counter['critical']}")
-    lines.append(f"High: {severity_counter['high']}")
-    lines.append(f"Medium: {severity_counter['medium']}")
-    lines.append(f"Low: {severity_counter['low']}")
-    lines.append("")
-    lines.append("RISKS BY CATEGORY")
-    lines.append("-" * 40)
-
-    if category_counter:
-        for category, count in sorted(category_counter.items()):
-            lines.append(f"{category}: {count}")
+    lines.append("### Penalties by Category")
+    category_totals = score_explanation.get("category_totals", {})
+    if category_totals:
+        for category, penalty in sorted(category_totals.items()):
+            lines.append(f"- {category}: {penalty}")
     else:
-        lines.append("No risks found.")
-
-    lines.append("")
-    lines.append("TOP PRIORITY ISSUES")
-    lines.append("-" * 40)
-
-    if top_fixes:
-        for risk in top_fixes:
-            lines.append(f"- [{risk['severity'].upper()}] {risk['message']}")
-            if risk.get("why_it_matters"):
-                lines.append(f"  Why It Matters: {risk['why_it_matters']}")
-            if risk.get("recommendation"):
-                lines.append(f"  Recommendation: {risk['recommendation']}")
-    else:
-        lines.append("No priority issues found.")
-
-    lines.append("")
-    lines.append("DETAILED FINDINGS")
-    lines.append("-" * 40)
+        lines.append("- No category penalties")
     lines.append("")
 
-    for category in sorted(grouped.keys()):
-        items = grouped[category]
-        lines.append(f"[{category.upper()}]")
-
-        for risk in items:
-            lines.append(f"- ({risk['severity'].upper()}) {risk['message']}")
-            lines.append(f"  Title: {risk.get('short_title', risk['message'])}")
-
+    lines.append("## DETAILED FINDINGS")
+    risks = analysis_result.get("risks", [])
+    if risks:
+        for risk in risks:
+            lines.append(f"### [{str(risk.get('severity', 'low')).upper()}] {risk.get('message', 'No message')}")
+            lines.append(f"- Rule ID: {risk.get('rule_id', 'UNKNOWN_RULE')}")
+            lines.append(f"- Category: {risk.get('category', 'uncategorized')}")
             if risk.get("components"):
-                lines.append(f"  Components: {', '.join(risk['components'])}")
-
+                lines.append(f"- Components: {', '.join(risk.get('components', []))}")
             if risk.get("nets"):
-                lines.append(f"  Nets: {', '.join(risk['nets'])}")
-
-            if risk.get("region"):
-                lines.append(f"  Region: {risk['region']}")
-
-            lines.append(f"  Confidence: {risk.get('confidence', 0.0)}")
-            lines.append(f"  Fix Priority: {risk.get('fix_priority', 'medium')}")
-            lines.append(f"  Estimated Impact: {risk.get('estimated_impact', 'moderate')}")
-            lines.append(f"  Design Domain: {risk.get('design_domain', 'general')}")
-
-            if risk.get("why_it_matters"):
-                lines.append(f"  Why It Matters: {risk['why_it_matters']}")
-
-            if risk.get("recommendation"):
-                lines.append(f"  Recommendation: {risk['recommendation']}")
-
-            actions = risk.get("suggested_actions", [])
-            if actions:
-                lines.append("  Suggested Actions:")
-                for action in actions:
-                    lines.append(f"    - {action}")
-
-            metrics = risk.get("metrics", {})
-            if metrics:
-                lines.append(f"  Metrics: {metrics}")
-
+                lines.append(f"- Nets: {', '.join(risk.get('nets', []))}")
+            if risk.get("metrics"):
+                lines.append(f"- Metrics: {risk.get('metrics')}")
+            lines.append(f"- Recommendation: {risk.get('recommendation', 'No recommendation provided')}")
+            lines.append("")
+    else:
+        lines.append("- No risks found")
         lines.append("")
 
-    lines.append("END OF REPORT")
+    lines.append("## DETAILED PENALTY BREAKDOWN")
+    detailed_penalties = score_explanation.get("detailed_penalties", [])
+    if detailed_penalties:
+        for item in detailed_penalties:
+            lines.append(
+                f"- {item.get('rule_id', 'UNKNOWN_RULE')} | "
+                f"{item.get('severity', 'low')} | "
+                f"{item.get('category', 'uncategorized')} | "
+                f"Penalty: {item.get('penalty', 0)} | "
+                f"{item.get('message', 'No message')}"
+            )
+    else:
+        lines.append("- No penalties recorded")
 
     return "\n".join(lines)
