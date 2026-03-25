@@ -43,12 +43,6 @@ def timestamp_string():
     return datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
 
-def ensure_clean_directory(path):
-    if os.path.exists(path):
-        shutil.rmtree(path)
-    os.makedirs(path, exist_ok=True)
-
-
 def parse_uploaded_board(file_path):
     extension = os.path.splitext(file_path)[1].lower()
 
@@ -120,11 +114,11 @@ def build_score_explanation_html(score_explanation):
         return "<p>No score explanation available.</p>"
 
     severity_html = ""
-    for severity, penalty in score_explanation.get("severity_totals", {}).items():
+    for severity, penalty in sorted(score_explanation.get("severity_totals", {}).items()):
         severity_html += f"<li><strong>{severity.title()}</strong>: {penalty}</li>"
 
     category_html = ""
-    for category, penalty in score_explanation.get("category_totals", {}).items():
+    for category, penalty in sorted(score_explanation.get("category_totals", {}).items()):
         category_html += f"<li><strong>{category}</strong>: {penalty}</li>"
 
     detail_html = ""
@@ -146,19 +140,41 @@ def build_score_explanation_html(score_explanation):
 
     return f"""
     <div class="score-box">
-        <h3>Score Explainability</h3>
-        <p><strong>Start Score:</strong> {score_explanation.get('start_score', 10.0)}</p>
-        <p><strong>Total Penalty:</strong> {score_explanation.get('total_penalty', 0.0)}</p>
-        <p><strong>Final Score:</strong> {score_explanation.get('final_score', 0.0)}</p>
+        <div class="section-header">
+            <h3>Score Explainability</h3>
+            <span class="subtle-chip">Trust Layer</span>
+        </div>
 
-        <h4>Penalty by Severity</h4>
-        <ul>{severity_html or "<li>None</li>"}</ul>
+        <div class="stats-grid">
+            <div class="mini-stat">
+                <span class="mini-label">Start Score</span>
+                <span class="mini-value">{score_explanation.get('start_score', 10.0)}</span>
+            </div>
+            <div class="mini-stat">
+                <span class="mini-label">Total Penalty</span>
+                <span class="mini-value">{score_explanation.get('total_penalty', 0.0)}</span>
+            </div>
+            <div class="mini-stat">
+                <span class="mini-label">Final Score</span>
+                <span class="mini-value">{score_explanation.get('final_score', 0.0)}</span>
+            </div>
+        </div>
 
-        <h4>Penalty by Category</h4>
-        <ul>{category_html or "<li>None</li>"}</ul>
+        <div class="two-column-block">
+            <div>
+                <h4>Penalty by Severity</h4>
+                <ul>{severity_html or "<li>None</li>"}</ul>
+            </div>
+            <div>
+                <h4>Penalty by Category</h4>
+                <ul>{category_html or "<li>None</li>"}</ul>
+            </div>
+        </div>
 
-        <h4>Detailed Penalties</h4>
-        <ul>{detail_html or "<li>None</li>"}</ul>
+        <details style="margin-top: 14px;">
+            <summary><strong>Detailed Penalties</strong></summary>
+            <ul style="margin-top: 12px;">{detail_html or "<li>None</li>"}</ul>
+        </details>
     </div>
     """
 
@@ -168,18 +184,30 @@ def build_risk_list_html(risks):
         return "<p>No risks found.</p>"
 
     parts = []
+
     for risk in risks:
+        severity = str(risk.get("severity", "low")).lower()
+        category = risk.get("category", "uncategorized")
         components = ", ".join(risk.get("components", [])) if risk.get("components") else "None"
         nets = ", ".join(risk.get("nets", [])) if risk.get("nets") else "None"
         metrics = risk.get("metrics", {})
 
         parts.append(f"""
-        <div class="risk-card severity-{str(risk.get('severity', 'low')).lower()}">
-            <h4>{str(risk.get('severity', 'low')).upper()} — {risk.get('message', 'No message')}</h4>
-            <p><strong>Rule ID:</strong> {risk.get('rule_id', 'UNKNOWN_RULE')}</p>
-            <p><strong>Category:</strong> {risk.get('category', 'uncategorized')}</p>
-            <p><strong>Components:</strong> {components}</p>
-            <p><strong>Nets:</strong> {nets}</p>
+        <div class="risk-card severity-{severity}" data-severity="{severity}" data-category="{category}">
+            <div class="risk-top-row">
+                <div class="risk-main">
+                    <h4>{severity.upper()} — {risk.get('message', 'No message')}</h4>
+                    <p class="risk-meta"><strong>Rule ID:</strong> {risk.get('rule_id', 'UNKNOWN_RULE')}</p>
+                </div>
+                <div class="pill-group">
+                    <span class="pill pill-severity">{severity.title()}</span>
+                    <span class="pill pill-category">{category}</span>
+                </div>
+            </div>
+            <div class="risk-detail-grid">
+                <p><strong>Components:</strong> {components}</p>
+                <p><strong>Nets:</strong> {nets}</p>
+            </div>
             <p><strong>Metrics:</strong> {metrics}</p>
             <p><strong>Recommendation:</strong> {risk.get('recommendation', 'No recommendation provided')}</p>
         </div>
@@ -314,20 +342,72 @@ def render_home():
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f3f4f6;
+            background: linear-gradient(180deg, #edf2f8 0%, #f7f9fc 100%);
             color: #111827;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1240px;
             margin: 0 auto;
             padding: 32px;
         }
         .hero {
-            background: #111827;
+            background: linear-gradient(135deg, #0f172a, #1e293b 55%, #334155);
             color: white;
-            padding: 28px;
-            border-radius: 16px;
+            padding: 34px;
+            border-radius: 22px;
             margin-bottom: 24px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .hero h1 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 36px;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            margin: 0;
+            color: #cbd5e1;
+            max-width: 760px;
+        }
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            align-items: flex-start;
+        }
+        .build-note {
+            font-size: 12px;
+            color: #cbd5e1;
+            background: rgba(255,255,255,0.08);
+            padding: 8px 12px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .home-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .home-stat {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 16px;
+            border-radius: 14px;
+            backdrop-filter: blur(4px);
+        }
+        .home-stat .label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .home-stat .value {
+            font-size: 24px;
+            font-weight: 700;
         }
         .grid {
             display: grid;
@@ -335,43 +415,71 @@ def render_home():
             gap: 24px;
         }
         .card {
-            background: white;
+            background: rgba(255,255,255,0.88);
+            backdrop-filter: blur(8px);
             padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
         }
         .recent-run {
-            padding: 14px;
+            padding: 16px;
             border: 1px solid #e5e7eb;
-            border-radius: 10px;
+            border-radius: 14px;
             margin-bottom: 12px;
+            background: #fafafa;
         }
         input[type=file] {
             margin: 12px 0;
             width: 100%;
+            padding: 10px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
         }
         button {
-            background: #111827;
+            background: linear-gradient(135deg, #111827, #1f2937);
             color: white;
             border: none;
             padding: 12px 18px;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(17, 24, 39, 0.16);
         }
         button:hover {
-            opacity: 0.92;
+            opacity: 0.95;
         }
         a {
             color: #2563eb;
             text-decoration: none;
         }
+        a:hover {
+            text-decoration: underline;
+        }
         .note {
             color: #6b7280;
             font-size: 14px;
         }
+        .footer-note {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+        }
         @media (max-width: 900px) {
-            .grid {
+            .grid, .home-stats {
                 grid-template-columns: 1fr;
+            }
+            .hero-top {
+                flex-direction: column;
+            }
+            .build-note {
+                white-space: normal;
             }
         }
     </style>
@@ -379,8 +487,28 @@ def render_home():
 <body>
     <div class="container">
         <div class="hero">
-            <h1>Silicore Dashboard</h1>
-            <p>PCB risk analysis, project ranking, explainable scoring, and downloadable reports.</p>
+            <div class="hero-top">
+                <div>
+                    <h1>Silicore Dashboard</h1>
+                    <p>PCB risk analysis, project ranking, explainable scoring, and downloadable reports.</p>
+                </div>
+                <div class="build-note">Dev Build - Milestone 11</div>
+            </div>
+
+            <div class="home-stats">
+                <div class="home-stat">
+                    <span class="label">Saved Runs</span>
+                    <span class="value">{{ recent_runs|length }}</span>
+                </div>
+                <div class="home-stat">
+                    <span class="label">Ranking Model</span>
+                    <span class="value">1 = Best</span>
+                </div>
+                <div class="home-stat">
+                    <span class="label">Supported Inputs</span>
+                    <span class="value">.txt, .kicad_pcb</span>
+                </div>
+            </div>
         </div>
 
         <div class="grid">
@@ -390,7 +518,7 @@ def render_home():
                     <input type="file" name="board_file" required>
                     <button type="submit">Analyze Board</button>
                 </form>
-                <p class="note">Upload one board file. Supports .txt and .kicad_pcb inputs.</p>
+                <p class="note">Upload one board file for individual analysis and explainable scoring.</p>
             </div>
 
             <div class="card">
@@ -399,7 +527,7 @@ def render_home():
                     <input type="file" name="board_files" multiple required>
                     <button type="submit">Analyze Project</button>
                 </form>
-                <p class="note">Select all project files at once. Rank 1 is best. Higher rank is worse.</p>
+                <p class="note">Select all files at once. Rank 1 is best. Higher number is worse.</p>
             </div>
         </div>
 
@@ -431,6 +559,8 @@ def render_home():
                 <p>No saved runs yet.</p>
             {% endif %}
         </div>
+
+        <div class="footer-note">Dev Build - Milestone 11</div>
     </div>
 </body>
 </html>
@@ -476,6 +606,15 @@ def analyze_board():
     )
     risk_list_html = build_risk_list_html(analysis_result.get("risks", []))
     risk_summary = analysis_result.get("risk_summary", {})
+    by_severity = risk_summary.get("by_severity", {})
+    by_category = risk_summary.get("by_category", {})
+
+    severity_options = sorted(
+        {str(risk.get("severity", "low")).lower() for risk in analysis_result.get("risks", [])}
+    )
+    category_options = sorted(
+        {str(risk.get("category", "uncategorized")) for risk in analysis_result.get("risks", [])}
+    )
 
     return render_template_string(
         """
@@ -488,20 +627,22 @@ def analyze_board():
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f3f4f6;
+            background: linear-gradient(180deg, #edf2f8 0%, #f7f9fc 100%);
             color: #111827;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1180px;
             margin: 0 auto;
             padding: 32px;
         }
-        .card, .score-box, .risk-card {
-            background: white;
+        .card, .score-box, .risk-card, .summary-card, .filter-card {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
             padding: 22px;
-            border-radius: 14px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 18px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
             margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
         }
         .severity-low { border-left: 6px solid #10b981; }
         .severity-medium { border-left: 6px solid #f59e0b; }
@@ -511,17 +652,133 @@ def analyze_board():
             color: #2563eb;
             text-decoration: none;
         }
+        a:hover {
+            text-decoration: underline;
+        }
         .top-links {
             margin-bottom: 20px;
         }
         .summary-grid {
             display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .mini-stat, .summary-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .mini-label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mini-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .risk-top-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .risk-main h4 {
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+        .pill-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .pill-severity {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .pill-category {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+        .risk-meta {
+            color: #6b7280;
+            margin-top: 6px;
+        }
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+        .risk-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .subtle-chip {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+        .two-column-block {
+            display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 18px;
         }
+        select, button.filter-btn {
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            background: white;
+        }
+        button.filter-btn {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .empty-note {
+            color: #6b7280;
+            font-style: italic;
+            padding: 8px 0;
+        }
+        .page-title-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+        }
         @media (max-width: 900px) {
-            .summary-grid {
+            .summary-grid, .stats-grid, .filter-row, .two-column-block, .risk-detail-grid {
                 grid-template-columns: 1fr;
+            }
+            .risk-top-row {
+                flex-direction: column;
             }
         }
     </style>
@@ -532,11 +789,15 @@ def analyze_board():
             <a href="/">← Back to Dashboard</a>
         </div>
 
-        <div class="card">
-            <h1>Single Board Result</h1>
-            <p><strong>Board:</strong> {{ board_name }}</p>
+        <div class="card page-title-card">
+            <div class="section-header">
+                <div>
+                    <h1 style="margin: 0;">Single Board Result</h1>
+                    <p style="margin-top: 8px; color: #6b7280;"><strong>Board:</strong> {{ board_name }}</p>
+                </div>
+                <span class="subtle-chip">1 = Best Ranking Model</span>
+            </div>
             <p><strong>Overall Risk Score:</strong> {{ score }} / 10</p>
-            <p><strong>Total Risks:</strong> {{ total_risks }}</p>
             <p>
                 <a href="/download/{{ run_id }}/json">Download JSON</a> |
                 <a href="/download/{{ run_id }}/markdown">Download Markdown</a> |
@@ -545,48 +806,131 @@ def analyze_board():
         </div>
 
         <div class="summary-grid">
-            <div class="card">
-                <h3>Severity Summary</h3>
-                <ul>
-                    <li>Low: {{ by_severity.get('low', 0) }}</li>
-                    <li>Medium: {{ by_severity.get('medium', 0) }}</li>
-                    <li>High: {{ by_severity.get('high', 0) }}</li>
-                    <li>Critical: {{ by_severity.get('critical', 0) }}</li>
-                </ul>
+            <div class="summary-card">
+                <span class="mini-label">Total Risks</span>
+                <span class="mini-value">{{ total_risks }}</span>
             </div>
+            <div class="summary-card">
+                <span class="mini-label">Low</span>
+                <span class="mini-value">{{ by_severity.get('low', 0) }}</span>
+            </div>
+            <div class="summary-card">
+                <span class="mini-label">Medium</span>
+                <span class="mini-value">{{ by_severity.get('medium', 0) }}</span>
+            </div>
+            <div class="summary-card">
+                <span class="mini-label">High + Critical</span>
+                <span class="mini-value">{{ by_severity.get('high', 0) + by_severity.get('critical', 0) }}</span>
+            </div>
+        </div>
 
-            <div class="card">
-                <h3>Category Summary</h3>
-                {% if by_category %}
-                    <ul>
-                        {% for category, count in by_category.items() %}
-                            <li>{{ category }}: {{ count }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>No category risks found.</p>
-                {% endif %}
+        <div class="summary-card">
+            <div class="section-header">
+                <h3 style="margin: 0;">Category Summary</h3>
+                <span class="subtle-chip">Board Overview</span>
             </div>
+            {% if by_category %}
+                <div class="pill-group">
+                    {% for category, count in by_category.items() %}
+                        <span class="pill pill-category">{{ category }}: {{ count }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No category risks found.</p>
+            {% endif %}
         </div>
 
         {{ score_explanation_html|safe }}
 
+        <div class="filter-card">
+            <div class="section-header">
+                <h3 style="margin: 0;">Filter Findings</h3>
+                <span class="subtle-chip">Interactive View</span>
+            </div>
+            <div class="filter-row">
+                <div>
+                    <label for="severityFilter"><strong>Severity</strong></label><br>
+                    <select id="severityFilter">
+                        <option value="all">All severities</option>
+                        {% for value in severity_options %}
+                            <option value="{{ value }}">{{ value.title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="categoryFilter"><strong>Category</strong></label><br>
+                    <select id="categoryFilter">
+                        <option value="all">All categories</option>
+                        {% for value in category_options %}
+                            <option value="{{ value }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <button class="filter-btn" type="button" onclick="resetFilters()">Reset Filters</button>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
-            <h2>Detailed Findings</h2>
-            {{ risk_list_html|safe }}
+            <div class="section-header">
+                <h2 style="margin: 0;">Detailed Findings</h2>
+                <span class="subtle-chip">Engineering Detail</span>
+            </div>
+            <div id="riskContainer">
+                {{ risk_list_html|safe }}
+            </div>
+            <p id="emptyState" class="empty-note" style="display:none;">No findings match the selected filters.</p>
         </div>
     </div>
+
+    <script>
+        function applyFilters() {
+            const severity = document.getElementById("severityFilter").value;
+            const category = document.getElementById("categoryFilter").value;
+            const cards = document.querySelectorAll(".risk-card");
+            let visibleCount = 0;
+
+            cards.forEach((card) => {
+                const cardSeverity = card.getAttribute("data-severity");
+                const cardCategory = card.getAttribute("data-category");
+
+                const severityMatch = severity === "all" || cardSeverity === severity;
+                const categoryMatch = category === "all" || cardCategory === category;
+
+                if (severityMatch && categoryMatch) {
+                    card.style.display = "block";
+                    visibleCount += 1;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            document.getElementById("emptyState").style.display = visibleCount === 0 ? "block" : "none";
+        }
+
+        function resetFilters() {
+            document.getElementById("severityFilter").value = "all";
+            document.getElementById("categoryFilter").value = "all";
+            applyFilters();
+        }
+
+        document.getElementById("severityFilter").addEventListener("change", applyFilters);
+        document.getElementById("categoryFilter").addEventListener("change", applyFilters);
+    </script>
 </body>
 </html>
         """,
         board_name=filename,
         score=analysis_result.get("score", 0),
         total_risks=risk_summary.get("total_risks", 0),
-        by_severity=risk_summary.get("by_severity", {}),
-        by_category=risk_summary.get("by_category", {}),
+        by_severity=by_severity,
+        by_category=by_category,
         score_explanation_html=score_explanation_html,
         risk_list_html=risk_list_html,
         run_id=run_id,
+        severity_options=severity_options,
+        category_options=category_options,
     )
 
 
@@ -629,9 +973,7 @@ def analyze_project():
 
         for index, board in enumerate(board_results, start=1):
             board["rank"] = index
-            board["badge"] = "Best Board" if index == 1 else (
-                "Worst Board" if index == len(board_results) else ""
-            )
+            board["badge"] = "Best Board" if index == 1 else ("Worst Board" if index == len(board_results) else "")
 
         run_id, _ = create_project_run(board_results)
 
@@ -640,6 +982,18 @@ def analyze_project():
         return f"<h2>Project analysis failed</h2><p>{exc}</p>", 500
 
     shutil.rmtree(temp_dir, ignore_errors=True)
+
+    all_categories = sorted({
+        str(risk.get("category", "uncategorized"))
+        for board in board_results
+        for risk in board.get("risks", [])
+    })
+
+    all_severities = sorted({
+        str(risk.get("severity", "low")).lower()
+        for board in board_results
+        for risk in board.get("risks", [])
+    })
 
     return render_template_string(
         """
@@ -652,29 +1006,40 @@ def analyze_project():
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f3f4f6;
+            background: linear-gradient(180deg, #edf2f8 0%, #f7f9fc 100%);
             color: #111827;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1240px;
             margin: 0 auto;
             padding: 32px;
         }
-        .board-card, .summary-card, .score-box, .risk-card {
-            background: white;
+        .board-card, .summary-card, .score-box, .risk-card, .filter-card, .hero-card {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
             padding: 22px;
-            border-radius: 14px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 18px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
             margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .hero-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
         }
         .badge {
             display: inline-block;
-            background: #111827;
             color: white;
             padding: 6px 10px;
             border-radius: 999px;
             font-size: 12px;
             margin-left: 8px;
+            font-weight: 700;
+        }
+        .badge-best {
+            background: #059669;
+        }
+        .badge-worst {
+            background: #dc2626;
         }
         .top-links {
             margin-bottom: 20px;
@@ -687,6 +1052,9 @@ def analyze_project():
             color: #2563eb;
             text-decoration: none;
         }
+        a:hover {
+            text-decoration: underline;
+        }
         .rank {
             font-size: 24px;
             font-weight: bold;
@@ -694,13 +1062,130 @@ def analyze_project():
         }
         .summary-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(4, 1fr);
             gap: 18px;
             margin-bottom: 24px;
         }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .mini-stat, .summary-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .mini-label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mini-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .pill-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .pill-severity {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .pill-category {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+        .risk-top-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .risk-main h4 {
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+        .risk-meta {
+            color: #6b7280;
+            margin-top: 6px;
+        }
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+        .risk-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .subtle-chip {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+        .two-column-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        select, button.filter-btn {
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            background: white;
+        }
+        button.filter-btn {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .empty-note {
+            color: #6b7280;
+            font-style: italic;
+            padding: 8px 0;
+        }
         @media (max-width: 900px) {
-            .summary-grid {
+            .summary-grid, .stats-grid, .filter-row, .two-column-block, .risk-detail-grid {
                 grid-template-columns: 1fr;
+            }
+            .board-header, .risk-top-row {
+                flex-direction: column;
             }
         }
     </style>
@@ -711,10 +1196,16 @@ def analyze_project():
             <a href="/">← Back to Dashboard</a>
         </div>
 
-        <div class="summary-card">
-            <h1>Project Results</h1>
-            <p><strong>Board Count:</strong> {{ board_count }}</p>
-            <p><strong>Ranking:</strong> 1 is best, higher number is worse</p>
+        <div class="hero-card">
+            <div class="section-header">
+                <div>
+                    <h1 style="margin: 0;">Project Results</h1>
+                    <p style="margin-top: 8px; color: #6b7280;">
+                        <strong>Board Count:</strong> {{ board_count }}
+                    </p>
+                </div>
+                <span class="subtle-chip">Ranking: 1 = Best</span>
+            </div>
             <p>
                 <a href="/download/{{ run_id }}/json">Download JSON</a> |
                 <a href="/download/{{ run_id }}/markdown">Download Markdown</a> |
@@ -722,45 +1213,103 @@ def analyze_project():
             </p>
         </div>
 
+        <div class="summary-grid">
+            <div class="summary-card">
+                <span class="mini-label">Best Board</span>
+                <span class="mini-value">{{ board_results[0].board_name if board_results else "N/A" }}</span>
+            </div>
+            <div class="summary-card">
+                <span class="mini-label">Worst Board</span>
+                <span class="mini-value">{{ board_results[-1].board_name if board_results else "N/A" }}</span>
+            </div>
+            <div class="summary-card">
+                <span class="mini-label">Highest Score</span>
+                <span class="mini-value">{{ board_results[0].score if board_results else "N/A" }}</span>
+            </div>
+            <div class="summary-card">
+                <span class="mini-label">Lowest Score</span>
+                <span class="mini-value">{{ board_results[-1].score if board_results else "N/A" }}</span>
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <div class="section-header">
+                <h3 style="margin: 0;">Filter Project Findings</h3>
+                <span class="subtle-chip">Interactive View</span>
+            </div>
+            <div class="filter-row">
+                <div>
+                    <label for="severityFilter"><strong>Severity</strong></label><br>
+                    <select id="severityFilter">
+                        <option value="all">All severities</option>
+                        {% for value in all_severities %}
+                            <option value="{{ value }}">{{ value.title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="categoryFilter"><strong>Category</strong></label><br>
+                    <select id="categoryFilter">
+                        <option value="all">All categories</option>
+                        {% for value in all_categories %}
+                            <option value="{{ value }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <button class="filter-btn" type="button" onclick="resetFilters()">Reset Filters</button>
+                </div>
+            </div>
+        </div>
+
         {% for board in board_results %}
             <div class="board-card">
-                <div class="rank">
-                    Rank {{ board.rank }} — {{ board.board_name }}
-                    {% if board.badge %}
-                        <span class="badge">{{ board.badge }}</span>
-                    {% endif %}
+                <div class="board-header">
+                    <div>
+                        <div class="rank">
+                            Rank {{ board.rank }} — {{ board.board_name }}
+                            {% if board.badge == "Best Board" %}
+                                <span class="badge badge-best">{{ board.badge }}</span>
+                            {% elif board.badge == "Worst Board" %}
+                                <span class="badge badge-worst">{{ board.badge }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <span class="subtle-chip">Score {{ board.score }}</span>
                 </div>
 
                 <div class="summary-grid">
                     <div class="summary-card">
-                        <h3>Board Score</h3>
-                        <p><strong>{{ board.score }}</strong> / 10</p>
+                        <span class="mini-label">Board Score</span>
+                        <span class="mini-value">{{ board.score }}</span>
                     </div>
-
                     <div class="summary-card">
-                        <h3>Total Risks</h3>
-                        <p><strong>{{ board.risk_summary.get('total_risks', 0) }}</strong></p>
+                        <span class="mini-label">Total Risks</span>
+                        <span class="mini-value">{{ board.risk_summary.get('total_risks', 0) }}</span>
                     </div>
-
                     <div class="summary-card">
-                        <h3>Severity Summary</h3>
-                        <ul>
-                            <li>Low: {{ board.risk_summary.get('by_severity', {}).get('low', 0) }}</li>
-                            <li>Medium: {{ board.risk_summary.get('by_severity', {}).get('medium', 0) }}</li>
-                            <li>High: {{ board.risk_summary.get('by_severity', {}).get('high', 0) }}</li>
-                            <li>Critical: {{ board.risk_summary.get('by_severity', {}).get('critical', 0) }}</li>
-                        </ul>
+                        <span class="mini-label">High + Critical</span>
+                        <span class="mini-value">
+                            {{ board.risk_summary.get('by_severity', {}).get('high', 0) + board.risk_summary.get('by_severity', {}).get('critical', 0) }}
+                        </span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="mini-label">Categories</span>
+                        <span class="mini-value">{{ board.risk_summary.get('by_category', {})|length }}</span>
                     </div>
                 </div>
 
                 <div class="summary-card">
-                    <h3>Category Summary</h3>
+                    <div class="section-header">
+                        <h3 style="margin: 0;">Category Summary</h3>
+                        <span class="subtle-chip">Board Overview</span>
+                    </div>
                     {% if board.risk_summary.get('by_category', {}) %}
-                        <ul>
+                        <div class="pill-group">
                             {% for category, count in board.risk_summary.get('by_category', {}).items() %}
-                                <li>{{ category }}: {{ count }}</li>
+                                <span class="pill pill-category">{{ category }}: {{ count }}</span>
                             {% endfor %}
-                        </ul>
+                        </div>
                     {% else %}
                         <p>No category risks found.</p>
                     {% endif %}
@@ -769,12 +1318,79 @@ def analyze_project():
                 {{ build_score_explanation_html(board.score_explanation)|safe }}
 
                 <div class="summary-card">
-                    <h3>Detailed Findings</h3>
-                    {{ build_risk_list_html(board.risks)|safe }}
+                    <div class="section-header">
+                        <h3 style="margin: 0;">Detailed Findings</h3>
+                        <span class="subtle-chip">Engineering Detail</span>
+                    </div>
+                    <div class="board-risks">
+                        {% if board.risks %}
+                            {% for risk in board.risks %}
+                                <div class="risk-card severity-{{ risk.get('severity', 'low')|lower }}"
+                                     data-severity="{{ risk.get('severity', 'low')|lower }}"
+                                     data-category="{{ risk.get('category', 'uncategorized') }}">
+                                    <div class="risk-top-row">
+                                        <div class="risk-main">
+                                            <h4>{{ risk.get('severity', 'low')|upper }} — {{ risk.get('message', 'No message') }}</h4>
+                                            <p class="risk-meta"><strong>Rule ID:</strong> {{ risk.get('rule_id', 'UNKNOWN_RULE') }}</p>
+                                        </div>
+                                        <div class="pill-group">
+                                            <span class="pill pill-severity">{{ risk.get('severity', 'low')|title }}</span>
+                                            <span class="pill pill-category">{{ risk.get('category', 'uncategorized') }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="risk-detail-grid">
+                                        <p><strong>Components:</strong> {{ ", ".join(risk.get('components', [])) if risk.get('components') else "None" }}</p>
+                                        <p><strong>Nets:</strong> {{ ", ".join(risk.get('nets', [])) if risk.get('nets') else "None" }}</p>
+                                    </div>
+                                    <p><strong>Metrics:</strong> {{ risk.get('metrics', {}) }}</p>
+                                    <p><strong>Recommendation:</strong> {{ risk.get('recommendation', 'No recommendation provided') }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No risks found.</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         {% endfor %}
+
+        <p id="emptyState" class="empty-note" style="display:none;">No findings match the selected filters.</p>
     </div>
+
+    <script>
+        function applyFilters() {
+            const severity = document.getElementById("severityFilter").value;
+            const category = document.getElementById("categoryFilter").value;
+            const cards = document.querySelectorAll(".risk-card");
+            let visibleCount = 0;
+
+            cards.forEach((card) => {
+                const cardSeverity = card.getAttribute("data-severity");
+                const cardCategory = card.getAttribute("data-category");
+
+                const severityMatch = severity === "all" || cardSeverity === severity;
+                const categoryMatch = category === "all" || cardCategory === category;
+
+                if (severityMatch && categoryMatch) {
+                    card.style.display = "block";
+                    visibleCount += 1;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            document.getElementById("emptyState").style.display = visibleCount === 0 ? "block" : "none";
+        }
+
+        function resetFilters() {
+            document.getElementById("severityFilter").value = "all";
+            document.getElementById("categoryFilter").value = "all";
+            applyFilters();
+        }
+
+        document.getElementById("severityFilter").addEventListener("change", applyFilters);
+        document.getElementById("categoryFilter").addEventListener("change", applyFilters);
+    </script>
 </body>
 </html>
         """,
@@ -782,7 +1398,8 @@ def analyze_project():
         board_count=len(board_results),
         run_id=run_id,
         build_score_explanation_html=build_score_explanation_html,
-        build_risk_list_html=build_risk_list_html,
+        all_categories=all_categories,
+        all_severities=all_severities,
     )
 
 
