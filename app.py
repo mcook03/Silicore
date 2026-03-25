@@ -1,7 +1,8 @@
 import os
 import tempfile
+from datetime import datetime
 
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, send_file, abort, url_for
 
 from engine.parser import start_engine, parse_pcb_file
 from engine.kicad_parser import parse_kicad_file
@@ -9,10 +10,12 @@ from engine.normalizer import normalize_pcb
 from engine.rule_runner import run_analysis
 from engine.report_generator import generate_report
 from engine.config_loader import load_config
-from engine.project_analyzer import (
-    build_board_result,
-    summarize_project,
-    generate_project_summary_report,
+from engine.project_analyzer import build_board_result, summarize_project
+from engine.dashboard_storage import (
+    save_single_run,
+    save_project_run,
+    list_recent_runs,
+    get_download_path,
 )
 
 app = Flask(__name__)
@@ -124,6 +127,7 @@ HTML = """
             border-radius: 12px;
             margin-bottom: 20px;
             font-weight: bold;
+            white-space: pre-wrap;
         }
 
         .success {
@@ -302,6 +306,65 @@ HTML = """
             font-weight: bold;
         }
 
+        .download-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .download-link {
+            display: inline-block;
+            background: #0f172a;
+            color: white;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .download-link:hover {
+            background: #1e293b;
+        }
+
+        .recent-run {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+
+        .recent-run:last-child {
+            border-bottom: none;
+        }
+
+        .recent-run-title {
+            font-weight: bold;
+        }
+
+        .recent-run-meta {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .recent-run-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recent-run-links a {
+            color: #0f172a;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .recent-run-links a:hover {
+            text-decoration: underline;
+        }
+
         pre {
             background: #0f172a;
             color: #e2e8f0;
@@ -363,7 +426,7 @@ HTML = """
 
             <div class="card">
                 <h2>Project Batch Analysis</h2>
-                <p class="muted">Upload multiple .kicad_pcb or .txt files and rank the boards by risk score.</p>
+                <p class="muted">Select all files at once. On Mac, hold Command to choose multiple files.</p>
                 <form method="post" enctype="multipart/form-data">
                     <input type="hidden" name="form_type" value="project">
                     <div class="form-row">
@@ -375,6 +438,17 @@ HTML = """
             </div>
         </div>
 
+        {% if download_bundle %}
+            <div class="card" style="margin-bottom: 24px;">
+                <h2>Downloads</h2>
+                <div class="download-row">
+                    <a class="download-link" href="{{ url_for('download_run_file', run_id=download_bundle['run_id'], filename=download_bundle['json_filename']) }}">Download JSON</a>
+                    <a class="download-link" href="{{ url_for('download_run_file', run_id=download_bundle['run_id'], filename=download_bundle['md_filename']) }}">Download Markdown</a>
+                    <a class="download-link" href="{{ url_for('download_run_file', run_id=download_bundle['run_id'], filename=download_bundle['html_filename']) }}">Download HTML</a>
+                </div>
+            </div>
+        {% endif %}
+
         {% if single_result %}
             <div class="section">
                 <h2 class="section-title">Single Board Result</h2>
@@ -382,25 +456,25 @@ HTML = """
                 <div class="summary-grid">
                     <div class="summary-box">
                         <div class="label">Board</div>
-                        <div class="value" style="font-size: 20px;">{{ single_result.board_name }}</div>
+                        <div class="value" style="font-size: 20px;">{{ single_result["board_name"] }}</div>
                     </div>
                     <div class="summary-box">
                         <div class="label">Score</div>
-                        <div class="value">{{ single_result.score }}</div>
+                        <div class="value">{{ single_result["score"] }}</div>
                     </div>
                     <div class="summary-box">
                         <div class="label">Risks</div>
-                        <div class="value">{{ single_result.risk_count }}</div>
+                        <div class="value">{{ single_result["risk_count"] }}</div>
                     </div>
                     <div class="summary-box">
                         <div class="label">Components</div>
-                        <div class="value">{{ single_result.component_count }}</div>
+                        <div class="value">{{ single_result["component_count"] }}</div>
                     </div>
                 </div>
 
                 <div class="card">
                     <h2>Generated Report</h2>
-                    <pre>{{ single_result.report }}</pre>
+                    <pre>{{ single_result["report"] }}</pre>
                 </div>
             </div>
         {% endif %}
@@ -412,19 +486,19 @@ HTML = """
                 <div class="summary-grid">
                     <div class="summary-box">
                         <div class="label">Boards Analyzed</div>
-                        <div class="value">{{ project_summary.boards_analyzed }}</div>
+                        <div class="value">{{ project_summary["boards_analyzed"] }}</div>
                     </div>
                     <div class="summary-box">
                         <div class="label">Average Score</div>
-                        <div class="value">{{ project_summary.average_score }}</div>
+                        <div class="value">{{ project_summary["average_score"] }}</div>
                     </div>
                     <div class="summary-box">
                         <div class="label">Total Risks</div>
-                        <div class="value">{{ project_summary.total_risks }}</div>
+                        <div class="value">{{ project_summary["total_risks"] }}</div>
                     </div>
                     <div class="summary-box">
                         <div class="label">Low Scoring Boards</div>
-                        <div class="value">{{ project_summary.boards_below_threshold_5|length }}</div>
+                        <div class="value">{{ project_summary["boards_below_threshold_5"]|length }}</div>
                     </div>
                 </div>
 
@@ -465,15 +539,15 @@ HTML = """
                             {% for board in ranked_boards %}
                                 <tr>
                                     <td>{{ loop.index }}</td>
-                                    <td>{{ board.board_name }}</td>
+                                    <td>{{ board["board_name"] }}</td>
                                     <td>
-                                        <span class="{% if board.score < 5 %}score-bad{% elif board.score < 7 %}score-medium{% else %}score-good{% endif %}">
-                                            {{ board.score }}
+                                        <span class="{% if board['score'] < 5 %}score-bad{% elif board['score'] < 7 %}score-medium{% else %}score-good{% endif %}">
+                                            {{ board["score"] }}
                                         </span>
                                     </td>
-                                    <td>{{ board.risk_count }}</td>
-                                    <td>{{ board.component_count }}</td>
-                                    <td>{{ board.net_count }}</td>
+                                    <td>{{ board["risk_count"] }}</td>
+                                    <td>{{ board["component_count"] }}</td>
+                                    <td>{{ board["net_count"] }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -485,39 +559,39 @@ HTML = """
                     {% for board in ranked_boards %}
                         <div class="board-card">
                             <div class="board-header">
-                                <h3>{{ board.board_name }}</h3>
-                                <div class="{% if board.score < 5 %}score-bad{% elif board.score < 7 %}score-medium{% else %}score-good{% endif %}">
-                                    Score: {{ board.score }} / 10
+                                <h3>{{ board["board_name"] }}</h3>
+                                <div class="{% if board['score'] < 5 %}score-bad{% elif board['score'] < 7 %}score-medium{% else %}score-good{% endif %}">
+                                    Score: {{ board["score"] }} / 10
                                 </div>
                             </div>
 
                             <div class="stats">
-                                <div class="stat">Risks: {{ board.risk_count }}</div>
-                                <div class="stat">Components: {{ board.component_count }}</div>
-                                <div class="stat">Nets: {{ board.net_count }}</div>
+                                <div class="stat">Risks: {{ board["risk_count"] }}</div>
+                                <div class="stat">Components: {{ board["component_count"] }}</div>
+                                <div class="stat">Nets: {{ board["net_count"] }}</div>
                             </div>
 
-                            {% if board.risks %}
-                                {% for risk in board.risks %}
+                            {% if board["risks"] %}
+                                {% for risk in board["risks"] %}
                                     <div class="risk">
                                         <div class="risk-message">
-                                            <span class="sev-{{ risk.severity }}">[{{ risk.severity.upper() }}]</span>
-                                            {{ risk.message }}
+                                            <span class="sev-{{ risk['severity'] }}">[{{ risk['severity']|upper }}]</span>
+                                            {{ risk["message"] }}
                                         </div>
-                                        <div><strong>Category:</strong> {{ risk.category }}</div>
-                                        <div><strong>Recommendation:</strong> {{ risk.recommendation }}</div>
-                                        <div><strong>Confidence:</strong> {{ risk.confidence }}</div>
-                                        {% if risk.why_it_matters %}
-                                            <div><strong>Why it matters:</strong> {{ risk.why_it_matters }}</div>
+                                        <div><strong>Category:</strong> {{ risk["category"] }}</div>
+                                        <div><strong>Recommendation:</strong> {{ risk["recommendation"] }}</div>
+                                        <div><strong>Confidence:</strong> {{ risk["confidence"] }}</div>
+                                        {% if risk["why_it_matters"] %}
+                                            <div><strong>Why it matters:</strong> {{ risk["why_it_matters"] }}</div>
                                         {% endif %}
-                                        {% if risk.components %}
-                                            <div><strong>Components:</strong> {{ risk.components|join(", ") }}</div>
+                                        {% if risk["components"] %}
+                                            <div><strong>Components:</strong> {{ risk["components"]|join(", ") }}</div>
                                         {% endif %}
-                                        {% if risk.nets %}
-                                            <div><strong>Nets:</strong> {{ risk.nets|join(", ") }}</div>
+                                        {% if risk["nets"] %}
+                                            <div><strong>Nets:</strong> {{ risk["nets"]|join(", ") }}</div>
                                         {% endif %}
-                                        {% if risk.metrics %}
-                                            <div><strong>Metrics:</strong> {{ risk.metrics }}</div>
+                                        {% if risk["metrics"] %}
+                                            <div><strong>Metrics:</strong> {{ risk["metrics"] }}</div>
                                         {% endif %}
                                     </div>
                                 {% endfor %}
@@ -536,6 +610,30 @@ HTML = """
                 </div>
             </div>
         {% endif %}
+
+        <div class="card">
+            <h2>Recent Saved Runs</h2>
+            {% if recent_runs %}
+                {% for run in recent_runs %}
+                    <div class="recent-run">
+                        <div>
+                            <div class="recent-run-title">{{ run["title"] }}</div>
+                            <div class="recent-run-meta">
+                                {{ run["run_type"]|upper }} |
+                                {{ run["created_at"] }}
+                            </div>
+                        </div>
+                        <div class="recent-run-links">
+                            <a href="{{ url_for('download_run_file', run_id=run['run_id'], filename=run['files']['json'].split('/')[-1]) }}">JSON</a>
+                            <a href="{{ url_for('download_run_file', run_id=run['run_id'], filename=run['files']['md'].split('/')[-1]) }}">Markdown</a>
+                            <a href="{{ url_for('download_run_file', run_id=run['run_id'], filename=run['files']['html'].split('/')[-1]) }}">HTML</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="muted">No saved runs yet.</div>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
@@ -559,10 +657,22 @@ def load_pcb(filename):
     return pcb
 
 
-def save_uploaded_file(uploaded_file, directory):
-    filename = uploaded_file.filename
+def make_unique_filename(directory, filename):
     safe_name = os.path.basename(filename)
-    destination = os.path.join(directory, safe_name)
+    base, ext = os.path.splitext(safe_name)
+    candidate = safe_name
+    counter = 1
+
+    while os.path.exists(os.path.join(directory, candidate)):
+        candidate = f"{base}_{counter}{ext}"
+        counter += 1
+
+    return candidate
+
+
+def save_uploaded_file(uploaded_file, directory):
+    unique_name = make_unique_filename(directory, uploaded_file.filename)
+    destination = os.path.join(directory, unique_name)
     uploaded_file.save(destination)
     return destination
 
@@ -577,6 +687,79 @@ def analyze_single_file(file_path):
     return result
 
 
+def generate_project_summary_report(board_results, project_summary):
+    lines = []
+    lines.append("SILICORE PROJECT SUMMARY")
+    lines.append("=" * 60)
+    lines.append(f"Boards analyzed: {project_summary['boards_analyzed']}")
+    lines.append(f"Average score: {project_summary['average_score']} / 10")
+    lines.append(f"Total components: {project_summary['total_components']}")
+    lines.append(f"Total nets: {project_summary['total_nets']}")
+    lines.append(f"Total risks: {project_summary['total_risks']}")
+    lines.append("")
+
+    if project_summary["best_board"]:
+        lines.append("BEST BOARD")
+        lines.append("-" * 60)
+        lines.append(
+            f"{project_summary['best_board']['board_name']} | "
+            f"Score: {project_summary['best_board']['score']} | "
+            f"Risks: {project_summary['best_board']['risk_count']}"
+        )
+        lines.append("")
+
+    if project_summary["worst_board"]:
+        lines.append("WORST BOARD")
+        lines.append("-" * 60)
+        lines.append(
+            f"{project_summary['worst_board']['board_name']} | "
+            f"Score: {project_summary['worst_board']['score']} | "
+            f"Risks: {project_summary['worst_board']['risk_count']}"
+        )
+        lines.append("")
+
+    lines.append("RISK CATEGORIES")
+    lines.append("-" * 60)
+    if project_summary["risk_categories"]:
+        sorted_categories = sorted(
+            project_summary["risk_categories"].items(),
+            key=lambda item: item[1],
+            reverse=True,
+        )
+        for category, count in sorted_categories:
+            lines.append(f"{category}: {count}")
+    else:
+        lines.append("No categories found.")
+    lines.append("")
+
+    lines.append("RISK SEVERITIES")
+    lines.append("-" * 60)
+    if project_summary["risk_severities"]:
+        severity_order = ["critical", "high", "medium", "low", "unknown"]
+        sorted_severities = sorted(
+            project_summary["risk_severities"].items(),
+            key=lambda item: severity_order.index(item[0]) if item[0] in severity_order else 99,
+        )
+        for severity, count in sorted_severities:
+            lines.append(f"{severity}: {count}")
+    else:
+        lines.append("No severities found.")
+    lines.append("")
+
+    lines.append("PER-BOARD RESULTS")
+    lines.append("-" * 60)
+    for board in sorted(board_results, key=lambda item: item["score"], reverse=True):
+        lines.append(
+            f"{board['board_name']} | "
+            f"Score: {board['score']} | "
+            f"Risks: {board['risk_count']} | "
+            f"Components: {board['component_count']} | "
+            f"Nets: {board['net_count']}"
+        )
+
+    return "\n".join(lines)
+
+
 def analyze_project_files(file_paths):
     board_results = []
 
@@ -586,7 +769,7 @@ def analyze_project_files(file_paths):
         board_result = build_board_result(file_path, pcb, risks, score)
         board_results.append(board_result)
 
-    ranked_boards = sorted(board_results, key=lambda item: item["score"])
+    ranked_boards = sorted(board_results, key=lambda item: item["score"], reverse=True)
     project_summary = summarize_project(board_results)
     project_report = generate_project_summary_report(board_results, project_summary)
 
@@ -615,6 +798,7 @@ def home():
     ranked_boards = []
     top_categories = []
     severity_breakdown = []
+    download_bundle = None
 
     if request.method == "POST":
         form_type = request.form.get("form_type", "").strip()
@@ -631,15 +815,21 @@ def home():
                     else:
                         file_path = save_uploaded_file(uploaded, temp_dir)
                         single_result = analyze_single_file(file_path)
+                        download_bundle = save_single_run(single_result)
                         success = f"Single-board analysis completed for {single_result['board_name']}."
 
                 elif form_type == "project":
                     uploaded_files = request.files.getlist("project_files")
 
-                    valid_files = [
-                        uploaded for uploaded in uploaded_files
-                        if uploaded and uploaded.filename and is_supported_file(uploaded.filename)
-                    ]
+                    valid_files = []
+                    skipped_files = []
+
+                    for uploaded in uploaded_files:
+                        if uploaded and uploaded.filename:
+                            if is_supported_file(uploaded.filename):
+                                valid_files.append(uploaded)
+                            else:
+                                skipped_files.append(uploaded.filename)
 
                     if not valid_files:
                         error = "Please upload one or more supported project files (.kicad_pcb or .txt)."
@@ -654,13 +844,19 @@ def home():
                             severity_breakdown,
                         ) = analyze_project_files(file_paths)
 
+                        download_bundle = save_project_run(ranked_boards, project_summary, project_report)
                         success = f"Project analysis completed for {project_summary['boards_analyzed']} board(s)."
+
+                        if skipped_files:
+                            success += f" Skipped unsupported files: {', '.join(skipped_files)}"
 
                 else:
                     error = "Unknown analysis request."
 
         except Exception as e:
             error = f"Analysis failed: {e}"
+
+    recent_runs = list_recent_runs(limit=10)
 
     return render_template_string(
         HTML,
@@ -672,7 +868,22 @@ def home():
         ranked_boards=ranked_boards,
         top_categories=top_categories,
         severity_breakdown=severity_breakdown,
+        download_bundle=download_bundle,
+        recent_runs=recent_runs,
+        url_for=url_for,
+        now=datetime.now().isoformat(),
     )
+
+
+@app.route("/download/<run_id>/<filename>")
+def download_run_file(run_id, filename):
+    safe_filename = os.path.basename(filename)
+    file_path = get_download_path(run_id, safe_filename)
+
+    if not file_path:
+        abort(404)
+
+    return send_file(file_path, as_attachment=True)
 
 
 if __name__ == "__main__":
