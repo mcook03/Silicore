@@ -1,154 +1,53 @@
 DEFAULT_CONFIG = {
-    "rules": {
-        "spacing": {
-            "enabled": True,
-            "threshold": 5.0,
-        },
-        "decoupling": {
-            "enabled": True,
-            "threshold": 6.0,
-            "target_keywords": [
-                "atmega328",
-                "mcu",
-                "microcontroller",
-                "ic",
-                "processor",
-                "controller",
-                "fpga",
-                "driver",
-            ],
-            "capacitor_keywords": [
-                "cap",
-                "capacitor",
-                "c",
-            ],
-        },
-        "thermal": {
-            "enabled": True,
-            "threshold": 8.0,
-            "hot_keywords": [
-                "regulator",
-                "mosfet",
-                "transistor",
-                "driver",
-                "power",
-                "buck",
-                "boost",
-                "ldo",
-                "pmic",
-            ],
-        },
-        "density": {
-            "enabled": True,
-            "region_size": 10.0,
-            "component_threshold": 4,
-        },
-        "power_distribution": {
-            "enabled": True,
-            "threshold": 15.0,
-            "regulator_keywords": [
-                "regulator",
-                "buck",
-                "boost",
-                "ldo",
-                "pmic",
-                "power",
-            ],
-            "load_keywords": [
-                "mcu",
-                "microcontroller",
-                "processor",
-                "fpga",
-                "driver",
-                "sensor",
-                "ic",
-            ],
-        },
-        "power_rail": {
-            "enabled": True,
-            "min_connections": 2,
-            "max_trace_length": 80.0,
-            "min_trace_width": 0.25,
-            "max_via_count": 6,
-            "power_net_keywords": [
-                "VCC",
-                "VIN",
-                "VBAT",
-                "5V",
-                "3V3",
-                "12V",
-                "1V8",
-            ],
-        },
-        "signal_path": {
-            "enabled": True,
-            "threshold": 40.0,
-            "excluded_net_keywords": [
-                "GND",
-                "GROUND",
-                "VCC",
-                "VIN",
-                "VBAT",
-                "3V3",
-                "5V",
-                "12V",
-            ],
-            "critical_net_keywords": [
-                "CLK",
-                "CLOCK",
-                "CTRL",
-                "RESET",
-                "TX",
-                "RX",
-                "SCL",
-                "SDA",
-                "PWM",
-                "SPI",
-                "MISO",
-                "MOSI",
-                "CS",
-            ],
-        },
-        "return_path": {
-            "enabled": True,
-            "min_ground_zones": 1,
-            "require_ground_net": True,
-            "ground_net_names": [
-                "GND",
-                "GROUND",
-                "PGND",
-                "AGND",
-            ],
-        },
-        "trace_quality": {
-            "enabled": True,
-            "max_signal_trace_length": 120.0,
-            "min_general_trace_width": 0.15,
-            "excluded_net_keywords": [
-                "GND",
-                "GROUND",
-            ],
-        },
-    },
-    "scoring": {
-        "severity_weights": {
+    # =========================
+    # SCORING (DO NOT CHANGE YET)
+    # =========================
+    "score": {
+        "start_score": 10.0,
+        "penalties": {
             "low": 0.5,
             "medium": 1.0,
             "high": 1.5,
             "critical": 2.0,
-        },
-        "category_weights": {
-            "layout": 1.0,
-            "power_integrity": 1.4,
-            "signal_integrity": 1.3,
-            "thermal": 1.2,
-            "manufacturing": 1.1,
-            "reliability": 1.2,
-            "other": 1.0,
-        },
-        "persistent_risk_multiplier": 1.15,
-        "floor": 0.0,
-        "ceiling": 10.0,
-        "start_score": 10.0,
+        }
     },
+
+    # =========================
+    # LAYOUT RULES
+    # =========================
+    "layout": {
+        "min_component_spacing": 5.0,
+        "max_density_threshold": 5,  # components per region
+    },
+
+    # =========================
+    # POWER RULES
+    # =========================
+    "power": {
+        "required_power_nets": ["VCC", "3V3", "5V", "VIN"],
+        "required_ground_nets": ["GND", "GROUND"],
+        "max_power_distance": 50.0,
+    },
+
+    # =========================
+    # SIGNAL / TRACE RULES
+    # =========================
+    "signal": {
+        "max_trace_length": 50,
+        "critical_nets": ["CLK", "DATA", "CTRL"],
+    },
+
+    # =========================
+    # THERMAL RULES
+    # =========================
+    "thermal": {
+        "max_hotspot_distance": 5.0,
+    },
+
+    # =========================
+    # EMI / RETURN PATH
+    # =========================
+    "emi": {
+        "require_ground_reference": True,
+    }
 }
