@@ -1,210 +1,306 @@
 import json
 import os
-
-from engine.json_exporter import export_analysis_to_json
-from engine.kicad_parser import parse_kicad_file
-from engine.normalizer import normalize_pcb
-from engine.parser import parse_pcb_file
-from engine.report_exporter import export_report_files
-from engine.report_generator import generate_report
-from engine.rule_runner import run_analysis
-from engine.visualizer import draw_board
+from datetime import datetime
+from html import escape
 
 
 SUPPORTED_EXTENSIONS = {".txt", ".kicad_pcb"}
 
 
-def load_pcb_from_file(filename):
-    extension = os.path.splitext(filename)[1].lower()
+def _safe_filename(filename):
+    return filename.replace("/", "_").replace("\\", "_").strip()
 
-    if extension == ".kicad_pcb":
-        pcb = parse_kicad_file(filename)
+
+def _build_project_summary(boards):
+    if not boards:
+        return {
+            "total_boards": 0,
+            "average_score": 0,
+            "best_score": 0,
+            "worst_score": 0,
+            "severity_counts": {},
+            "category_counts": {}
+        }
+
+    total_score = sum(board.get("score", 0) for board in boards)
+    average_score = round(total_score / len(boards), 2)
+    best_score = max(board.get("score", 0) for board in boards)
+    worst_score = min(board.get("score", 0) for board in boards)
+
+    severity_counts = {}
+    category_counts = {}
+
+    for board in boards:
+        for risk in board.get("risks", []):
+            severity = risk.get("severity", "unknown")
+            category = risk.get("category", "unknown")
+
+            severity_counts[severity] = severity_counts.get(severity, 0) + 1
+            category_counts[category] = category_counts.get(category, 0) + 1
+
+    return {
+        "total_boards": len(boards),
+        "average_score": average_score,
+        "best_score": best_score,
+        "worst_score": worst_score,
+        "severity_counts": severity_counts,
+        "category_counts": category_counts
+    }
+
+
+def _write_json(path, data):
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4)
+
+
+def _write_markdown(path, project_data):
+    summary = project_data["summary"]
+    boards = project_data["boards"]
+
+    lines = [
+        "# SILICORE PROJECT SUMMARY",
+        "",
+        f"- Total Boards: {summary['total_boards']}",
+        f"- Average Score: {summary['average_score']} / 10",
+        f"- Best Score: {summary['best_score']} / 10",
+        f"- Worst Score: {summary['worst_score']} / 10",
+        "",
+        "## Severity Summary",
+        ""
+    ]
+
+    if summary["severity_counts"]:
+        for severity, count in summary["severity_counts"].items():
+            lines.append(f"- {severity}: {count}")
     else:
-        pcb = parse_pcb_file(filename)
+        lines.append("- No risks detected")
 
-    return normalize_pcb(pcb)
+    lines.extend([
+        "",
+        "## Category Summary",
+        ""
+    ])
+
+    if summary["category_counts"]:
+        for category, count in summary["category_counts"].items():
+            lines.append(f"- {category}: {count}")
+    else:
+        lines.append("- No risks detected")
+
+    lines.extend([
+        "",
+        "## Board Rankings",
+        ""
+    ])
+
+    for index, board in enumerate(boards, start=1):
+        lines.append(f"### #{index} {board['filename']}")
+        lines.append(f"- Score: {board['score']} / 10")
+        lines.append(f"- Total Risks: {len(board.get('risks', []))}")
+
+        if board.get("score_explanation"):
+            lines.append(
+                f"- Total Penalty: {board['score_explanation'].get('total_penalty', 0)}"
+            )
+
+        if board.get("risks"):
+            lines.append("")
+            lines.append("#### Findings")
+            lines.append("")
+
+            for risk in board["risks"]:
+                lines.append(
+                    f"- [{risk.get('severity', 'unknown').upper()}] "
+                    f"{risk.get('category', 'unknown')}: "
+                    f"{risk.get('message', 'No message')}"
+                )
+                lines.append(
+                    f"  - Recommendation: {risk.get('recommendation', 'No recommendation')}"
+                )
+        else:
+            lines.append("- No risks detected")
+
+        lines.append("")
+
+    with open(path, "w", encoding="utf-8") as file:
+        file.write("\n".join(lines))
 
 
-def get_supported_board_files(directory):
-    board_files = []
+def _write_html(path, project_data):
+    summary = project_data["summary"]
+    boards = project_data["boards"]
 
-    for entry in sorted(os.listdir(directory)):
-        full_path = os.path.join(directory, entry)
+    severity_html = ""
+    if summary["severity_counts"]:
+        for severity, count in summary["severity_counts"].items():
+            severity_html += f"<li>{escape(str(severity))}: {count}</li>"
+    else:
+        severity_html = "<li>No risks detected</li>"
+
+    category_html = ""
+    if summary["category_counts"]:
+        for category, count in summary["category_counts"].items():
+            category_html += f"<li>{escape(str(category))}: {count}</li>"
+    else:
+        category_html = "<li>No risks detected</li>"
+
+    boards_html = ""
+    for index, board in enumerate(boards, start=1):
+        risks_html = ""
+
+        if board.get("risks"):
+            for risk in board["risks"]:
+                risks_html += f"""
+                <div class="risk">
+                    <p><strong>Severity:</strong> {escape(str(risk.get('severity', 'unknown')))}</p>
+                    <p><strong>Category:</strong> {escape(str(risk.get('category', 'unknown')))}</p>
+                    <p><strong>Message:</strong> {escape(str(risk.get('message', 'No message')))}</p>
+                    <p><strong>Recommendation:</strong> {escape(str(risk.get('recommendation', 'No recommendation')))}</p>
+                </div>
+                """
+        else:
+            risks_html = "<p>No risks detected.</p>"
+
+        total_penalty = 0
+        if board.get("score_explanation"):
+            total_penalty = board["score_explanation"].get("total_penalty", 0)
+
+        boards_html += f"""
+        <div class="board">
+            <h2>#{index} {escape(str(board['filename']))}</h2>
+            <p><strong>Score:</strong> {board['score']} / 10</p>
+            <p><strong>Total Risks:</strong> {len(board.get('risks', []))}</p>
+            <p><strong>Total Penalty:</strong> {total_penalty}</p>
+            {risks_html}
+        </div>
+        """
+
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Silicore Project Summary</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 32px;
+                background: #f8fafc;
+                color: #0f172a;
+            }}
+            .card {{
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }}
+            .board {{
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }}
+            .risk {{
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid #e2e8f0;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Silicore Project Summary</h1>
+
+        <div class="card">
+            <p><strong>Total Boards:</strong> {summary['total_boards']}</p>
+            <p><strong>Average Score:</strong> {summary['average_score']} / 10</p>
+            <p><strong>Best Score:</strong> {summary['best_score']} / 10</p>
+            <p><strong>Worst Score:</strong> {summary['worst_score']} / 10</p>
+
+            <h3>Severity Summary</h3>
+            <ul>{severity_html}</ul>
+
+            <h3>Category Summary</h3>
+            <ul>{category_html}</ul>
+        </div>
+
+        {boards_html}
+    </body>
+    </html>
+    """
+
+    with open(path, "w", encoding="utf-8") as file:
+        file.write(html)
+
+
+def run_project_analysis(file_paths, config=None):
+    from main import run_analysis
+
+    boards = []
+
+    for file_path in file_paths:
+        analysis_result = run_analysis(file_path, config=config)
+
+        boards.append({
+            "filename": os.path.basename(file_path),
+            "score": analysis_result.get("score", 0),
+            "risks": analysis_result.get("risks", []),
+            "score_explanation": analysis_result.get("score_explanation", {}),
+            "source_file": file_path
+        })
+
+    boards.sort(key=lambda board: board.get("score", 0), reverse=True)
+
+    summary = _build_project_summary(boards)
+
+    output_dir = os.path.dirname(file_paths[0]) if file_paths else "."
+    summary_json_path = os.path.join(output_dir, "silicore_project_summary.json")
+    summary_md_path = os.path.join(output_dir, "silicore_project_summary.md")
+    summary_html_path = os.path.join(output_dir, "silicore_project_summary.html")
+
+    project_data = {
+        "generated_at": datetime.now().isoformat(),
+        "summary": summary,
+        "boards": boards
+    }
+
+    _write_json(summary_json_path, project_data)
+    _write_markdown(summary_md_path, project_data)
+    _write_html(summary_html_path, project_data)
+
+    return {
+        "boards": boards,
+        "summary": summary,
+        "summary_json_path": summary_json_path,
+        "summary_md_path": summary_md_path,
+        "summary_html_path": summary_html_path
+    }
+
+
+def analyze_project_directory(directory_path, config=None):
+    if not os.path.isdir(directory_path):
+        raise FileNotFoundError(f"Directory not found: {directory_path}")
+
+    file_paths = []
+
+    for name in sorted(os.listdir(directory_path)):
+        full_path = os.path.join(directory_path, name)
 
         if not os.path.isfile(full_path):
             continue
 
-        extension = os.path.splitext(entry)[1].lower()
+        extension = os.path.splitext(name)[1].lower()
         if extension in SUPPORTED_EXTENSIONS:
-            board_files.append(full_path)
+            file_paths.append(full_path)
 
-    return board_files
+    if not file_paths:
+        return {
+            "boards": [],
+            "summary": _build_project_summary([]),
+            "summary_json_path": None,
+            "summary_md_path": None,
+            "summary_html_path": None
+        }
 
-
-def build_project_summary_markdown(board_results):
-    lines = []
-    lines.append("# SILICORE PROJECT SUMMARY")
-    lines.append("")
-
-    lines.append(f"- Board Count: {len(board_results)}")
-    lines.append("")
-
-    if board_results:
-        lines.append(f"- Best Board: {board_results[0]['board_name']}")
-        lines.append(f"- Worst Board: {board_results[-1]['board_name']}")
-    else:
-        lines.append("- Best Board: N/A")
-        lines.append("- Worst Board: N/A")
-
-    lines.append("")
-
-    for board in board_results:
-        lines.append(f"## Rank {board['rank']} — {board['board_name']}")
-        lines.append(f"- Score: {board['score']} / 10")
-        lines.append(f"- Total Risks: {board['risk_summary'].get('total_risks', 0)}")
-        lines.append("")
-
-        by_severity = board["risk_summary"].get("by_severity", {})
-        lines.append("### Severity Summary")
-        lines.append(f"- Low: {by_severity.get('low', 0)}")
-        lines.append(f"- Medium: {by_severity.get('medium', 0)}")
-        lines.append(f"- High: {by_severity.get('high', 0)}")
-        lines.append(f"- Critical: {by_severity.get('critical', 0)}")
-        lines.append("")
-
-        by_category = board["risk_summary"].get("by_category", {})
-        lines.append("### Category Summary")
-        if by_category:
-            for category, count in sorted(by_category.items()):
-                lines.append(f"- {category}: {count}")
-        else:
-            lines.append("- No category risks found")
-        lines.append("")
-
-        score_explanation = board.get("score_explanation", {})
-        lines.append("### Score Explainability")
-        lines.append(f"- Start Score: {score_explanation.get('start_score', 10.0)}")
-        lines.append(f"- Total Penalty: {score_explanation.get('total_penalty', 0.0)}")
-        lines.append(f"- Final Score: {score_explanation.get('final_score', board['score'])}")
-        lines.append("")
-
-    return "\n".join(lines)
-
-
-def analyze_project_directory(directory, config=None, debug=False, draw=False):
-    board_files = get_supported_board_files(directory)
-    output_directory = os.path.join(directory, "silicore_outputs")
-    os.makedirs(output_directory, exist_ok=True)
-
-    board_results = []
-
-    for file_path in board_files:
-        pcb = load_pcb_from_file(file_path)
-        analysis_result = run_analysis(pcb, config=config, debug=debug)
-        report = generate_report(pcb, analysis_result)
-
-        board_name = os.path.basename(file_path)
-        board_base = os.path.splitext(board_name)[0]
-
-        json_output_path = os.path.join(output_directory, f"{board_base}_analysis.json")
-        markdown_output_path = os.path.join(output_directory, f"{board_base}_report.md")
-        html_output_path = os.path.join(output_directory, f"{board_base}_report.html")
-
-        export_analysis_to_json(analysis_result, json_output_path)
-        export_report_files(report, markdown_output_path, html_output_path)
-
-        if draw:
-            draw_board(pcb)
-
-        board_results.append({
-            "board_name": board_name,
-            "file_path": file_path,
-            "score": analysis_result.get("score", 0),
-            "risks": analysis_result.get("risks", []),
-            "risk_summary": analysis_result.get("risk_summary", {}),
-            "score_explanation": analysis_result.get("score_explanation", {}),
-            "outputs": {
-                "json": json_output_path,
-                "markdown": markdown_output_path,
-                "html": html_output_path,
-            },
-        })
-
-    board_results.sort(key=lambda item: item["score"], reverse=True)
-
-    for index, board in enumerate(board_results, start=1):
-        board["rank"] = index
-
-    summary = {
-        "board_count": len(board_results),
-        "best_board": board_results[0]["board_name"] if board_results else None,
-        "worst_board": board_results[-1]["board_name"] if board_results else None,
-    }
-
-    project_summary = {
-        "summary": summary,
-        "boards": board_results,
-    }
-
-    project_summary_json_path = os.path.join(output_directory, "silicore_project_summary.json")
-    project_summary_markdown_path = os.path.join(output_directory, "silicore_project_summary.md")
-    project_summary_html_path = os.path.join(output_directory, "silicore_project_summary.html")
-
-    with open(project_summary_json_path, "w", encoding="utf-8") as file:
-        json.dump(project_summary, file, indent=4)
-
-    markdown_text = build_project_summary_markdown(board_results)
-
-    with open(project_summary_markdown_path, "w", encoding="utf-8") as file:
-        file.write(markdown_text)
-
-    html_text = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Silicore Project Summary</title>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            margin: 32px;
-            line-height: 1.6;
-            background: #f8f9fb;
-            color: #1f2937;
-        }}
-        .report {{
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            max-width: 1100px;
-            margin: 0 auto;
-        }}
-        pre {{
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: "Courier New", monospace;
-            font-size: 14px;
-        }}
-    </style>
-</head>
-<body>
-    <div class="report">
-        <pre>{markdown_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</pre>
-    </div>
-</body>
-</html>
-"""
-
-    with open(project_summary_html_path, "w", encoding="utf-8") as file:
-        file.write(html_text)
-
-    return {
-        "summary": summary,
-        "boards": board_results,
-        "output_directory": output_directory,
-        "project_summary_files": {
-            "json": project_summary_json_path,
-            "markdown": project_summary_markdown_path,
-            "html": project_summary_html_path,
-        },
-    }
+    return run_project_analysis(file_paths, config=config)
