@@ -3,31 +3,127 @@
 ## BOARD OVERVIEW
 - Total Components: 11
 - Total Nets: 4
-- Overall Risk Score: 10.0 / 10
+- Overall Risk Score: 0.0 / 10
 
 ## RISK SUMMARY
-- Total Risks: 0
+- Total Risks: 12
 - Low: 0
 - Medium: 0
-- High: 0
-- Critical: 0
+- High: 11
+- Critical: 1
 
 ## RISKS BY CATEGORY
-- No category risks found
+- emi_return_path: 11
+- power_integrity: 1
 
 ## SCORE EXPLAINABILITY
 - Start Score: 10.0
-- Total Penalty: 0.0
-- Final Score: 10.0
+- Total Penalty: 18.5
+- Final Score: 0.0
 
 ### Penalties by Severity
-- No severity penalties
+- critical: 2.0
+- high: 16.5
 
 ### Penalties by Category
-- No category penalties
+- emi_return_path: 16.5
+- power_integrity: 2.0
 
 ## DETAILED FINDINGS
-- No risks found
+### [HIGH] U1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: U1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] U2 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: U2
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] C1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: C1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] Q1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: Q1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] J1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: J1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] D1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: D1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] L1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: L1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] LED1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: LED1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] R1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: R1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] C2 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: C2
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [HIGH] SW1 has no assigned net, so its ground reference cannot be verified
+- Rule ID: ground_reference
+- Category: emi_return_path
+- Components: SW1
+- Metrics: {'ground_reference_required': True}
+- Recommendation: Assign the component to the proper signal or power net and verify its return path to ground
+
+### [CRITICAL] U1 has no connected net, so power delivery cannot be verified
+- Rule ID: power_connectivity
+- Category: power_integrity
+- Components: U1
+- Metrics: {'required_power_nets': ['VCC', '3V3', '5V', 'VIN']}
+- Recommendation: Connect the component to the appropriate power rail
 
 ## DETAILED PENALTY BREAKDOWN
-- No penalties recorded
+- ground_reference | high | emi_return_path | Penalty: 1.5 | U1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | U2 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | C1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | Q1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | J1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | D1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | L1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | LED1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | R1 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | C2 has no assigned net, so its ground reference cannot be verified
+- ground_reference | high | emi_return_path | Penalty: 1.5 | SW1 has no assigned net, so its ground reference cannot be verified
+- power_connectivity | critical | power_integrity | Penalty: 2.0 | U1 has no connected net, so power delivery cannot be verified
