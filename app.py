@@ -9,64 +9,544 @@ from engine.normalizer import normalize_pcb
 from engine.rule_runner import run_analysis
 from engine.report_generator import generate_report
 from engine.config_loader import load_config
+from engine.project_analyzer import (
+    build_board_result,
+    summarize_project,
+    generate_project_summary_report,
+)
 
 app = Flask(__name__)
 start_engine()
+CONFIG = load_config()
+
+SUPPORTED_EXTENSIONS = {".kicad_pcb", ".txt"}
 
 HTML = """
 <!doctype html>
 <html>
 <head>
-    <title>Silicore Local Dashboard</title>
+    <title>Silicore Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f7fa; }
-        .card { background: white; padding: 24px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); max-width: 1000px; margin: auto; }
-        h1 { margin-top: 0; }
-        pre { width: 100%; white-space: pre-wrap; }
-        input[type=file] { margin-bottom: 16px; }
-        .score { font-size: 20px; font-weight: bold; margin-bottom: 16px; }
-        .risk { border-bottom: 1px solid #ddd; padding: 10px 0; }
-        .sev-high { color: #b00020; }
-        .sev-medium { color: #a15c00; }
-        .sev-low { color: #00695c; }
-        .sev-critical { color: #7b0000; font-weight: bold; }
-        .error { color: #b00020; font-weight: bold; margin-top: 16px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+
+        .hero h1 {
+            margin: 0 0 8px 0;
+            font-size: 34px;
+        }
+
+        .hero p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-size: 22px;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .form-row {
+            margin-bottom: 14px;
+        }
+
+        .form-row label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input[type=file] {
+            width: 100%;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            border: none;
+            background: #0f172a;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1e293b;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-box {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .summary-box .label {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .summary-box .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            margin: 0 0 14px 0;
+            font-size: 24px;
+        }
+
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pill {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #f8fafc;
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .score-bad {
+            color: #991b1b;
+            font-weight: bold;
+        }
+
+        .score-medium {
+            color: #a16207;
+            font-weight: bold;
+        }
+
+        .score-good {
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .board-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            margin-bottom: 18px;
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .board-header h3 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .stat {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .risk {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: #fcfcfd;
+        }
+
+        .risk:last-child {
+            margin-bottom: 0;
+        }
+
+        .risk-message {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .sev-critical {
+            color: #7f1d1d;
+            font-weight: bold;
+        }
+
+        .sev-high {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .sev-medium {
+            color: #a16207;
+            font-weight: bold;
+        }
+
+        .sev-low {
+            color: #166534;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 18px;
+            border-radius: 14px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page {
+                padding: 18px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Silicore Local Dashboard</h1>
-        <form method="post" enctype="multipart/form-data">
-            <input type="file" name="pcb_file" required>
-            <button type="submit">Analyze</button>
-        </form>
+    <div class="page">
+        <div class="hero">
+            <h1>Silicore Dashboard</h1>
+            <p>AI-powered hardware design intelligence for single-board analysis and project-level PCB review</p>
+        </div>
 
         {% if error %}
             <div class="error">{{ error }}</div>
         {% endif %}
 
-        {% if report %}
-            <div class="score">Risk Score: {{ score }} / 10</div>
+        {% if success %}
+            <div class="success">{{ success }}</div>
+        {% endif %}
 
-            <h2>Report</h2>
-            <pre>{{ report }}</pre>
+        <div class="grid">
+            <div class="card">
+                <h2>Single Board Analysis</h2>
+                <p class="muted">Upload one .kicad_pcb or .txt PCB file and generate a full engineering report.</p>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_type" value="single">
+                    <div class="form-row">
+                        <label for="single_file">PCB File</label>
+                        <input type="file" id="single_file" name="pcb_file" required>
+                    </div>
+                    <button type="submit">Analyze Single Board</button>
+                </form>
+            </div>
 
-            <h2>Risks</h2>
-            {% for risk in risks %}
-                <div class="risk">
-                    <div class="sev-{{ risk.severity }}">[{{ risk.severity.upper() }}] {{ risk.message }}</div>
-                    <div><strong>Category:</strong> {{ risk.category }}</div>
-                    <div><strong>Recommendation:</strong> {{ risk.recommendation }}</div>
-                    <div><strong>Confidence:</strong> {{ risk.confidence }}</div>
+            <div class="card">
+                <h2>Project Batch Analysis</h2>
+                <p class="muted">Upload multiple .kicad_pcb or .txt files and rank the boards by risk score.</p>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_type" value="project">
+                    <div class="form-row">
+                        <label for="project_files">Project Files</label>
+                        <input type="file" id="project_files" name="project_files" multiple required>
+                    </div>
+                    <button type="submit">Analyze Project</button>
+                </form>
+            </div>
+        </div>
+
+        {% if single_result %}
+            <div class="section">
+                <h2 class="section-title">Single Board Result</h2>
+
+                <div class="summary-grid">
+                    <div class="summary-box">
+                        <div class="label">Board</div>
+                        <div class="value" style="font-size: 20px;">{{ single_result.board_name }}</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="label">Score</div>
+                        <div class="value">{{ single_result.score }}</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="label">Risks</div>
+                        <div class="value">{{ single_result.risk_count }}</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="label">Components</div>
+                        <div class="value">{{ single_result.component_count }}</div>
+                    </div>
                 </div>
-            {% endfor %}
+
+                <div class="card">
+                    <h2>Generated Report</h2>
+                    <pre>{{ single_result.report }}</pre>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if project_summary %}
+            <div class="section">
+                <h2 class="section-title">Project Summary</h2>
+
+                <div class="summary-grid">
+                    <div class="summary-box">
+                        <div class="label">Boards Analyzed</div>
+                        <div class="value">{{ project_summary.boards_analyzed }}</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="label">Average Score</div>
+                        <div class="value">{{ project_summary.average_score }}</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="label">Total Risks</div>
+                        <div class="value">{{ project_summary.total_risks }}</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="label">Low Scoring Boards</div>
+                        <div class="value">{{ project_summary.boards_below_threshold_5|length }}</div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <h2>Top Risk Categories</h2>
+                        <div class="pill-list">
+                            {% for category, count in top_categories %}
+                                <div class="pill">{{ category }}: {{ count }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Severity Breakdown</h2>
+                        <div class="pill-list">
+                            {% for severity, count in severity_breakdown %}
+                                <div class="pill">{{ severity }}: {{ count }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Board Ranking</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Board</th>
+                                <th>Score</th>
+                                <th>Risks</th>
+                                <th>Components</th>
+                                <th>Nets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for board in ranked_boards %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ board.board_name }}</td>
+                                    <td>
+                                        <span class="{% if board.score < 5 %}score-bad{% elif board.score < 7 %}score-medium{% else %}score-good{% endif %}">
+                                            {{ board.score }}
+                                        </span>
+                                    </td>
+                                    <td>{{ board.risk_count }}</td>
+                                    <td>{{ board.component_count }}</td>
+                                    <td>{{ board.net_count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Detailed Board Findings</h2>
+                    {% for board in ranked_boards %}
+                        <div class="board-card">
+                            <div class="board-header">
+                                <h3>{{ board.board_name }}</h3>
+                                <div class="{% if board.score < 5 %}score-bad{% elif board.score < 7 %}score-medium{% else %}score-good{% endif %}">
+                                    Score: {{ board.score }} / 10
+                                </div>
+                            </div>
+
+                            <div class="stats">
+                                <div class="stat">Risks: {{ board.risk_count }}</div>
+                                <div class="stat">Components: {{ board.component_count }}</div>
+                                <div class="stat">Nets: {{ board.net_count }}</div>
+                            </div>
+
+                            {% if board.risks %}
+                                {% for risk in board.risks %}
+                                    <div class="risk">
+                                        <div class="risk-message">
+                                            <span class="sev-{{ risk.severity }}">[{{ risk.severity.upper() }}]</span>
+                                            {{ risk.message }}
+                                        </div>
+                                        <div><strong>Category:</strong> {{ risk.category }}</div>
+                                        <div><strong>Recommendation:</strong> {{ risk.recommendation }}</div>
+                                        <div><strong>Confidence:</strong> {{ risk.confidence }}</div>
+                                        {% if risk.why_it_matters %}
+                                            <div><strong>Why it matters:</strong> {{ risk.why_it_matters }}</div>
+                                        {% endif %}
+                                        {% if risk.components %}
+                                            <div><strong>Components:</strong> {{ risk.components|join(", ") }}</div>
+                                        {% endif %}
+                                        {% if risk.nets %}
+                                            <div><strong>Nets:</strong> {{ risk.nets|join(", ") }}</div>
+                                        {% endif %}
+                                        {% if risk.metrics %}
+                                            <div><strong>Metrics:</strong> {{ risk.metrics }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="risk">
+                                    No risks detected for this board.
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="card">
+                    <h2>Project Summary Report</h2>
+                    <pre>{{ project_report }}</pre>
+                </div>
+            </div>
         {% endif %}
     </div>
 </body>
 </html>
 """
 
-CONFIG = load_config()
+
+def is_supported_file(filename):
+    if not filename:
+        return False
+    extension = os.path.splitext(filename)[1].lower()
+    return extension in SUPPORTED_EXTENSIONS
 
 
 def load_pcb(filename):
@@ -79,44 +559,119 @@ def load_pcb(filename):
     return pcb
 
 
+def save_uploaded_file(uploaded_file, directory):
+    filename = uploaded_file.filename
+    safe_name = os.path.basename(filename)
+    destination = os.path.join(directory, safe_name)
+    uploaded_file.save(destination)
+    return destination
+
+
+def analyze_single_file(file_path):
+    pcb = load_pcb(file_path)
+    risks, score = run_analysis(pcb, config=CONFIG)
+    report = generate_report(pcb, risks, score)
+
+    result = build_board_result(file_path, pcb, risks, score)
+    result["report"] = report
+    return result
+
+
+def analyze_project_files(file_paths):
+    board_results = []
+
+    for file_path in file_paths:
+        pcb = load_pcb(file_path)
+        risks, score = run_analysis(pcb, config=CONFIG)
+        board_result = build_board_result(file_path, pcb, risks, score)
+        board_results.append(board_result)
+
+    ranked_boards = sorted(board_results, key=lambda item: item["score"])
+    project_summary = summarize_project(board_results)
+    project_report = generate_project_summary_report(board_results, project_summary)
+
+    top_categories = sorted(
+        project_summary["risk_categories"].items(),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+
+    severity_order = {"critical": 0, "high": 1, "medium": 2, "low": 3, "unknown": 4}
+    severity_breakdown = sorted(
+        project_summary["risk_severities"].items(),
+        key=lambda item: severity_order.get(item[0], 99),
+    )
+
+    return ranked_boards, project_summary, project_report, top_categories, severity_breakdown
+
+
 @app.route("/", methods=["GET", "POST"])
 def home():
-    report = None
-    risks = []
-    score = None
     error = None
+    success = None
+    single_result = None
+    project_summary = None
+    project_report = None
+    ranked_boards = []
+    top_categories = []
+    severity_breakdown = []
 
     if request.method == "POST":
-        uploaded = request.files.get("pcb_file")
+        form_type = request.form.get("form_type", "").strip()
 
-        if not uploaded or not uploaded.filename:
-            error = "Please upload a PCB file."
-        else:
-            suffix = os.path.splitext(uploaded.filename)[1]
-            temp_path = None
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                if form_type == "single":
+                    uploaded = request.files.get("pcb_file")
 
-            try:
-                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-                    uploaded.save(tmp.name)
-                    temp_path = tmp.name
+                    if not uploaded or not uploaded.filename:
+                        error = "Please upload a PCB file for single-board analysis."
+                    elif not is_supported_file(uploaded.filename):
+                        error = "Unsupported file type. Use .kicad_pcb or .txt"
+                    else:
+                        file_path = save_uploaded_file(uploaded, temp_dir)
+                        single_result = analyze_single_file(file_path)
+                        success = f"Single-board analysis completed for {single_result['board_name']}."
 
-                pcb = load_pcb(temp_path)
-                risks, score = run_analysis(pcb, config=CONFIG)
-                report = generate_report(pcb, risks, score)
+                elif form_type == "project":
+                    uploaded_files = request.files.getlist("project_files")
 
-            except Exception as e:
-                error = f"Analysis failed: {e}"
+                    valid_files = [
+                        uploaded for uploaded in uploaded_files
+                        if uploaded and uploaded.filename and is_supported_file(uploaded.filename)
+                    ]
 
-            finally:
-                if temp_path and os.path.exists(temp_path):
-                    os.remove(temp_path)
+                    if not valid_files:
+                        error = "Please upload one or more supported project files (.kicad_pcb or .txt)."
+                    else:
+                        file_paths = [save_uploaded_file(uploaded, temp_dir) for uploaded in valid_files]
+
+                        (
+                            ranked_boards,
+                            project_summary,
+                            project_report,
+                            top_categories,
+                            severity_breakdown,
+                        ) = analyze_project_files(file_paths)
+
+                        success = f"Project analysis completed for {project_summary['boards_analyzed']} board(s)."
+
+                else:
+                    error = "Unknown analysis request."
+
+        except Exception as e:
+            error = f"Analysis failed: {e}"
 
     return render_template_string(
         HTML,
-        report=report,
-        risks=risks,
-        score=score,
         error=error,
+        success=success,
+        single_result=single_result,
+        project_summary=project_summary,
+        project_report=project_report,
+        ranked_boards=ranked_boards,
+        top_categories=top_categories,
+        severity_breakdown=severity_breakdown,
     )
 
 
