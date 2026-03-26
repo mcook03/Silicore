@@ -4,13 +4,19 @@ from engine.net_utils import is_power_net
 
 def run_rule(pcb, config):
     risks = []
-    rule_config = config["rules"]["power_rail"]
 
-    min_connections = rule_config["min_connections"]
-    max_trace_length = rule_config["max_trace_length"]
-    min_trace_width = rule_config["min_trace_width"]
-    max_via_count = rule_config["max_via_count"]
-    power_net_keywords = rule_config["power_net_keywords"]
+    power_config = config.get("power", {})
+    rule_config = config.get("rules", {}).get("power_rail", {})
+
+    min_connections = rule_config.get("min_connections", 2)
+    max_trace_length = rule_config.get("max_trace_length", 50.0)
+    min_trace_width = rule_config.get("min_trace_width", 0.5)
+    max_via_count = rule_config.get("max_via_count", 5)
+
+    power_net_keywords = rule_config.get(
+        "power_net_keywords",
+        power_config.get("required_power_nets", ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"])
+    )
 
     for net_name, net in pcb.nets.items():
         if not is_power_net(net_name, power_net_keywords):
@@ -88,7 +94,7 @@ def run_rule(pcb, config):
                         "min_trace_width": min_width,
                         "required_min_trace_width": min_trace_width,
                     },
-                    confidence=0.9,
+                    confidence=0.90,
                     short_title="Narrow power trace",
                     fix_priority="high",
                     estimated_impact="high",
@@ -115,7 +121,7 @@ def run_rule(pcb, config):
                         "via_count": via_count,
                         "max_via_count": max_via_count,
                     },
-                    confidence=0.7,
+                    confidence=0.70,
                     short_title="Too many power-net vias",
                     fix_priority="medium",
                     estimated_impact="moderate",

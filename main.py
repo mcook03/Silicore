@@ -1,328 +1,113 @@
-import argparse
-import json
 import os
+import sys
 
-from engine.config import DEFAULT_CONFIG
 from engine.config_loader import load_config
-from engine.json_exporter import export_analysis_to_json
-from engine.kicad_parser import parse_kicad_file
-from engine.normalizer import normalize_pcb
-from engine.parser import parse_pcb_file
-from engine.project_analyzer import analyze_project_directory
-from engine.report_exporter import export_report_files
-from engine.report_generator import generate_report
-from engine.revision_comparator import compare_revisions
-from engine.rule_runner import run_analysis
-from engine.visualizer import draw_board
+from engine.services.analysis_service import (
+    analyze_project_directory,
+    run_single_analysis_from_path,
+)
 
 
-def load_pcb_from_file(filename):
-    extension = os.path.splitext(filename)[1].lower()
+def print_single_result(result):
+    print("\nSILICORE ENGINEERING REPORT")
+    print("-" * 40)
+    print(f"File: {result['filename']}")
+    print(f"Silicore Risk Score: {result['score']} / 10")
+    print(f"Total Risks: {len(result['risks'])}")
+    print(f"Total Penalty: {result['score_explanation'].get('total_penalty', 0)}")
 
-    if extension == ".kicad_pcb":
-        pcb = parse_kicad_file(filename)
-    else:
-        pcb = parse_pcb_file(filename)
-
-    return normalize_pcb(pcb)
-
-
-def get_output_directory_for_file(filename):
-    base_dir = os.path.dirname(os.path.abspath(filename))
-    return base_dir if base_dir else os.getcwd()
-
-
-def get_output_base_name(filename):
-    return os.path.splitext(os.path.basename(filename))[0]
-
-
-def build_analysis_result(pcb, config=None, debug=False):
-    return run_analysis(pcb, config=config, debug=debug)
-
-
-def analyze_pcb_file(filename, config=None, debug=False):
-    pcb = load_pcb_from_file(filename)
-    analysis_result = build_analysis_result(pcb, config=config, debug=debug)
-    report = generate_report(pcb, analysis_result)
-
-    return pcb, analysis_result, report
-
-
-def save_single_analysis_outputs(filename, pcb, analysis_result, report):
-    output_dir = get_output_directory_for_file(filename)
-    output_base = get_output_base_name(filename)
-
-    json_output_path = os.path.join(output_dir, f"{output_base}_analysis.json")
-    markdown_output_path = os.path.join(output_dir, f"{output_base}_report.md")
-    html_output_path = os.path.join(output_dir, f"{output_base}_report.html")
-
-    export_analysis_to_json(analysis_result, json_output_path)
-    export_report_files(report, markdown_output_path, html_output_path)
-
-    return json_output_path, markdown_output_path, html_output_path
-
-
-def print_single_analysis_summary(filename, analysis_result):
-    risk_summary = analysis_result.get("risk_summary", {})
-    score_explanation = analysis_result.get("score_explanation", {})
-
-    print()
-    print("RESULTS")
-    print("========================================")
-    print(f"Analyzed: {filename}")
-    print(f"Total Risks Found: {risk_summary.get('total_risks', 0)}")
-    print(f"Silicore Risk Score: {analysis_result.get('score', 0)} / 10")
-
-    print()
-    print("SEVERITY SUMMARY")
-    print("========================================")
-    by_severity = risk_summary.get("by_severity", {})
-    print(f"Low: {by_severity.get('low', 0)}")
-    print(f"Medium: {by_severity.get('medium', 0)}")
-    print(f"High: {by_severity.get('high', 0)}")
-    print(f"Critical: {by_severity.get('critical', 0)}")
-
-    print()
-    print("CATEGORY SUMMARY")
-    print("========================================")
-    by_category = risk_summary.get("by_category", {})
-    if by_category:
-        for category, count in sorted(by_category.items()):
-            print(f"{category}: {count}")
-    else:
-        print("No category risks found")
-
-    print()
-    print("SCORE EXPLAINABILITY")
-    print("========================================")
-    print(f"Start Score: {score_explanation.get('start_score', 10.0)}")
-    print(f"Total Penalty: {score_explanation.get('total_penalty', 0.0)}")
-    print(f"Final Score: {score_explanation.get('final_score', analysis_result.get('score', 0))}")
-
-    severity_totals = score_explanation.get("severity_totals", {})
+    severity_totals = result["score_explanation"].get("severity_totals", {})
     if severity_totals:
-        print()
-        print("Penalty by Severity")
-        for severity, penalty in sorted(severity_totals.items()):
-            print(f"- {severity}: {penalty}")
+        print("\nSeverity Penalties:")
+        for severity, value in severity_totals.items():
+            print(f"  {severity}: {value}")
 
-    category_totals = score_explanation.get("category_totals", {})
+    category_totals = result["score_explanation"].get("category_totals", {})
     if category_totals:
-        print()
-        print("Penalty by Category")
-        for category, penalty in sorted(category_totals.items()):
-            print(f"- {category}: {penalty}")
+        print("\nCategory Penalties:")
+        for category, value in category_totals.items():
+            print(f"  {category}: {value}")
 
-    detailed_penalties = score_explanation.get("detailed_penalties", [])
-    if detailed_penalties:
-        print()
-        print("DETAILED PENALTIES")
-        print("========================================")
-        for item in detailed_penalties:
+    print("\nDetailed Findings:")
+    if result["risks"]:
+        for risk in result["risks"]:
             print(
-                f"- {item.get('rule_id', 'UNKNOWN_RULE')} | "
-                f"{item.get('severity', 'low')} | "
-                f"{item.get('category', 'uncategorized')} | "
-                f"Penalty: {item.get('penalty', 0)} | "
-                f"{item.get('message', 'No message')}"
+                f"  [{str(risk.get('severity', 'low')).upper()}] "
+                f"{risk.get('category', 'unknown')}: "
+                f"{risk.get('message', 'No message')}"
             )
+            print(f"    Recommendation: {risk.get('recommendation', 'Review this finding.')}")
+    else:
+        print("  No risks detected.")
+
+    if result.get("json_path"):
+        print(f"\nJSON: {result['json_path']}")
+    if result.get("report_md_path"):
+        print(f"Markdown: {result['report_md_path']}")
+    if result.get("report_html_path"):
+        print(f"HTML: {result['report_html_path']}")
 
 
-def run_single_analysis(filename, config=None, draw=True, debug=False):
-    print("Starting Silicore...")
-    print("Silicore analysis engine initialized")
-    print()
-    print("INPUT FILE")
-    print("========================================")
-    print(f"Analyzing: {filename}")
+def print_project_result(result):
+    summary = result["summary"]
+    boards = result["boards"]
 
-    pcb, analysis_result, report = analyze_pcb_file(
-        filename,
+    print("\nSILICORE PROJECT SUMMARY")
+    print("-" * 40)
+    print(f"Total Boards: {summary['total_boards']}")
+    print(f"Average Score: {summary['average_score']} / 10")
+    print(f"Best Score: {summary['best_score']} / 10")
+    print(f"Worst Score: {summary['worst_score']} / 10")
+
+    print("\nBoard Rankings:")
+    for index, board in enumerate(boards, start=1):
+        print(f"  #{index} {board['filename']} — {board['score']} / 10")
+
+    if result.get("summary_json_path"):
+        print(f"\nJSON: {result['summary_json_path']}")
+    if result.get("summary_md_path"):
+        print(f"Markdown: {result['summary_md_path']}")
+    if result.get("summary_html_path"):
+        print(f"HTML: {result['summary_html_path']}")
+
+
+def run_analysis(file_path, config=None):
+    if config is None:
+        config = load_config("custom_config.json")
+
+    output_dir = os.path.dirname(file_path) or "."
+    return run_single_analysis_from_path(
+        file_path=file_path,
         config=config,
-        debug=debug,
+        output_dir=output_dir
     )
-
-    print_single_analysis_summary(filename, analysis_result)
-
-    json_output_path, markdown_output_path, html_output_path = save_single_analysis_outputs(
-        filename,
-        pcb,
-        analysis_result,
-        report,
-    )
-
-    print()
-    print("OUTPUT FILES")
-    print("========================================")
-    print(f"Saved JSON analysis to: {json_output_path}")
-    print(f"Saved Markdown report to: {markdown_output_path}")
-    print(f"Saved HTML report to: {html_output_path}")
-
-    if draw:
-        print()
-        print("Opening board visualization...")
-        draw_board(pcb)
-
-    return pcb, analysis_result, report
-
-
-def run_revision_comparison(old_filename, new_filename, config=None, debug=False):
-    print("Starting Silicore...")
-    print("Silicore revision comparison initialized")
-    print()
-    print("REVISION INPUTS")
-    print("========================================")
-    print(f"Old board: {old_filename}")
-    print(f"New board: {new_filename}")
-
-    old_pcb = load_pcb_from_file(old_filename)
-    new_pcb = load_pcb_from_file(new_filename)
-
-    old_analysis = build_analysis_result(old_pcb, config=config, debug=debug)
-    new_analysis = build_analysis_result(new_pcb, config=config, debug=debug)
-
-    comparison_result = compare_revisions(old_pcb, new_pcb, old_analysis, new_analysis)
-
-    print()
-    print("REVISION COMPARISON")
-    print("========================================")
-    print(f"Old score: {old_analysis.get('score', 0)} / 10")
-    print(f"New score: {new_analysis.get('score', 0)} / 10")
-    print(f"Score delta: {comparison_result.get('score_delta', 0)}")
-    print(f"New risks introduced: {len(comparison_result.get('new_risks', []))}")
-    print(f"Resolved risks: {len(comparison_result.get('resolved_risks', []))}")
-
-    output_dir = get_output_directory_for_file(new_filename)
-    comparison_output_path = os.path.join(output_dir, "silicore_revision_comparison.json")
-
-    with open(comparison_output_path, "w", encoding="utf-8") as file:
-        json.dump(comparison_result, file, indent=4)
-
-    print(f"Saved revision comparison to: {comparison_output_path}")
-
-    return comparison_result
-
-
-def run_batch_analysis(directory, config=None, draw=False, debug=False):
-    print("Starting Silicore...")
-    print("Silicore batch analysis initialized")
-    print()
-    print("PROJECT INPUT")
-    print("========================================")
-    print(f"Analyzing directory: {directory}")
-
-    project_result = analyze_project_directory(
-        directory=directory,
-        config=config,
-        debug=debug,
-        draw=draw,
-    )
-
-    summary = project_result.get("summary", {})
-    boards = project_result.get("boards", [])
-
-    print()
-    print("PROJECT RESULTS")
-    print("========================================")
-    print(f"Boards analyzed: {summary.get('board_count', len(boards))}")
-    print(f"Best board: {summary.get('best_board', 'N/A')}")
-    print(f"Worst board: {summary.get('worst_board', 'N/A')}")
-
-    if boards:
-        print()
-        print("BOARD RANKING")
-        print("========================================")
-        for board in boards:
-            print(
-                f"Rank {board.get('rank', '?')}: "
-                f"{board.get('board_name', 'Unknown')} | "
-                f"Score: {board.get('score', 0)} / 10 | "
-                f"Risks: {board.get('risk_summary', {}).get('total_risks', 0)}"
-            )
-
-    output_dir = project_result.get(
-        "output_directory",
-        os.path.join(directory, "silicore_outputs"),
-    )
-
-    print()
-    print("PROJECT OUTPUTS")
-    print("========================================")
-    print(f"Output directory: {output_dir}")
-
-    return project_result
-
-
-def load_active_config(config_path=None):
-    config = dict(DEFAULT_CONFIG)
-
-    if config_path:
-        loaded_config = load_config(config_path)
-        if isinstance(loaded_config, dict):
-            config.update(loaded_config)
-
-    return config
-
-
-def build_argument_parser():
-    parser = argparse.ArgumentParser(description="Silicore PCB analysis engine")
-    parser.add_argument(
-        "--config",
-        help="Path to custom JSON config file",
-        default=None,
-    )
-
-    subparsers = parser.add_subparsers(dest="command")
-
-    analyze_parser = subparsers.add_parser("analyze", help="Analyze a single PCB file")
-    analyze_parser.add_argument("file", help="Path to PCB file")
-    analyze_parser.add_argument("--no-draw", action="store_true", help="Disable visualization")
-    analyze_parser.add_argument("--debug", action="store_true", help="Enable debug output")
-
-    compare_parser = subparsers.add_parser("compare", help="Compare two PCB revisions")
-    compare_parser.add_argument("old_file", help="Old PCB file")
-    compare_parser.add_argument("new_file", help="New PCB file")
-    compare_parser.add_argument("--debug", action="store_true", help="Enable debug output")
-
-    batch_parser = subparsers.add_parser("batch", help="Analyze all supported PCB files in a directory")
-    batch_parser.add_argument("directory", help="Directory containing PCB files")
-    batch_parser.add_argument("--draw", action="store_true", help="Draw each board during batch analysis")
-    batch_parser.add_argument("--debug", action="store_true", help="Enable debug output")
-
-    return parser
 
 
 def main():
-    parser = build_argument_parser()
-    args = parser.parse_args()
+    config = load_config("custom_config.json")
 
-    if not args.command:
-        parser.print_help()
+    if len(sys.argv) < 3:
+        print("Usage:")
+        print("  python3 main.py analyze <pcb_file>")
+        print("  python3 main.py batch <directory>")
+        sys.exit(1)
+
+    command = sys.argv[1]
+
+    if command == "analyze":
+        file_path = sys.argv[2]
+        result = run_analysis(file_path, config=config)
+        print_single_result(result)
         return
 
-    config = load_active_config(args.config)
+    if command == "batch":
+        directory_path = sys.argv[2]
+        result = analyze_project_directory(directory_path, config=config)
+        print_project_result(result)
+        return
 
-    if args.command == "analyze":
-        run_single_analysis(
-            args.file,
-            config=config,
-            draw=not args.no_draw,
-            debug=args.debug,
-        )
-    elif args.command == "compare":
-        run_revision_comparison(
-            args.old_file,
-            args.new_file,
-            config=config,
-            debug=args.debug,
-        )
-    elif args.command == "batch":
-        run_batch_analysis(
-            args.directory,
-            config=config,
-            draw=args.draw,
-            debug=args.debug,
-        )
+    print(f"Unknown command: {command}")
+    sys.exit(1)
 
 
 if __name__ == "__main__":

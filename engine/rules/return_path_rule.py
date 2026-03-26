@@ -1,73 +1,125 @@
-from math import sqrt
-
 from engine.risk import make_risk
-from engine.net_utils import is_excluded_net, is_critical_signal_net
 
 
-def distance(c1, c2):
-    return sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
+def _upper_set(values):
+    return {str(value).strip().upper() for value in values if str(value).strip()}
 
 
 def run_rule(pcb, config):
     risks = []
-    rule_config = config["rules"]["signal_path"]
 
-    threshold = rule_config["threshold"]
-    excluded_net_keywords = rule_config["excluded_net_keywords"]
-    critical_net_keywords = rule_config["critical_net_keywords"]
+    emi_config = config.get("emi", {})
+    power_config = config.get("power", {})
+    signal_config = config.get("signal", {})
 
-    for net_name, net in pcb.nets.items():
-        if is_excluded_net(net_name, excluded_net_keywords):
-            continue
+    require_ground_reference = emi_config.get("require_ground_reference", True)
+    if not require_ground_reference:
+        return risks
 
-        if not is_critical_signal_net(net_name, critical_net_keywords):
-            continue
+    ground_nets = _upper_set(
+        power_config.get("required_ground_nets", ["GND", "GROUND"])
+    )
 
-        valid_connections = [conn for conn in net.connections if conn[0]]
-        if len(valid_connections) < 2:
-            continue
+    critical_nets = _upper_set(
+        signal_config.get("critical_nets", ["CLK", "SCL", "SDA", "MOSI", "MISO", "CS"])
+    )
 
-        max_pair_distance = 0.0
-        worst_pair = None
+    board_nets = set()
+    for net_name in getattr(pcb, "nets", {}).keys():
+        clean_name = str(net_name).strip().upper()
+        if clean_name:
+            board_nets.add(clean_name)
 
-        for i in range(len(valid_connections)):
-            for j in range(i + 1, len(valid_connections)):
-                ref1, _ = valid_connections[i]
-                ref2, _ = valid_connections[j]
+    ground_present = any(net in ground_nets for net in board_nets)
 
-                c1 = pcb.get_component(ref1)
-                c2 = pcb.get_component(ref2)
+    if not ground_present:
+        signal_components = []
 
-                if c1 is None or c2 is None:
-                    continue
+        for component in getattr(pcb, "components", []):
+            component_type = str(getattr(component, "type", "")).upper()
+            if component_type in ["CAP", "MOUNT", "MECH"]:
+                continue
 
-                d = distance(c1, c2)
+            component_nets = [
+                str(net).strip().upper()
+                for net in getattr(component, "connected_nets", []) or []
+                if str(net).strip()
+            ]
 
-                if d > max_pair_distance:
-                    max_pair_distance = d
-                    worst_pair = (c1, c2)
+            if component_nets:
+                signal_components.append(component.ref)
 
-        if worst_pair and max_pair_distance > threshold:
-            c1, c2 = worst_pair
+        if signal_components:
             risks.append(
                 make_risk(
-                    rule_id="signal_path",
-                    category="signal_integrity",
-                    severity="medium",
-                    message=f"Critical net {net_name} has a long signal path between {c1.ref} and {c2.ref} ({max_pair_distance:.2f} units)",
-                    recommendation="Reduce path length or improve routing on this critical signal to lower timing and noise risks.",
-                    components=[c1.ref, c2.ref],
-                    nets=[net_name],
+                    rule_id="return_path",
+                    category="emi_return_path",
+                    severity="critical",
+                    message="No valid ground net was found on the board, so return-path continuity cannot be verified",
+                    recommendation="Add a valid ground net such as GND and ensure critical signals have a continuous return path.",
+                    components=signal_components,
+                    nets=sorted(list(board_nets)),
                     metrics={
-                        "distance": round(max_pair_distance, 2),
-                        "threshold": threshold,
+                        "ground_present": ground_present,
+                        "required_ground_nets": sorted(list(ground_nets)),
+                        "board_nets": sorted(list(board_nets)),
                     },
-                    confidence=0.86,
-                    short_title="Long critical signal path",
-                    fix_priority="medium",
-                    estimated_impact="moderate",
-                    design_domain="signal",
+                    confidence=0.92,
+                    short_title="Missing board ground reference",
+                    fix_priority="high",
+                    estimated_impact="high",
+                    design_domain="emi",
                 )
             )
+
+        return risks
+
+    for component in getattr(pcb, "components", []):
+        component_type = str(getattr(component, "type", "")).upper()
+
+        if component_type in ["CAP", "MOUNT", "MECH"]:
+            continue
+
+        component_nets = [
+            str(net).strip().upper()
+            for net in getattr(component, "connected_nets", []) or []
+            if str(net).strip()
+        ]
+
+        if not component_nets:
+            continue
+
+        component_critical_nets = [net for net in component_nets if net in critical_nets]
+
+        if not component_critical_nets:
+            continue
+
+        if any(net in ground_nets for net in component_nets):
+            continue
+
+        risks.append(
+            make_risk(
+                rule_id="return_path",
+                category="emi_return_path",
+                severity="high",
+                message=(
+                    f"{component.ref} is connected to critical net(s) "
+                    f"{', '.join(component_critical_nets)} but has no direct ground-reference net"
+                ),
+                recommendation="Review this signal path and ensure it has a nearby continuous ground reference and a clean return path.",
+                components=[component.ref],
+                nets=component_critical_nets,
+                metrics={
+                    "critical_nets": component_critical_nets,
+                    "required_ground_nets": sorted(list(ground_nets)),
+                    "ground_present": ground_present,
+                },
+                confidence=0.82,
+                short_title="Weak return-path reference",
+                fix_priority="high",
+                estimated_impact="high",
+                design_domain="emi",
+            )
+        )
 
     return risks

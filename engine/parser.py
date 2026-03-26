@@ -5,6 +5,35 @@ def start_engine():
     print("Silicore analysis engine initialized")
 
 
+def link_nets_to_components(pcb):
+    for component in pcb.components:
+        component.connected_nets = []
+        component.net_names = []
+        component.net_name = ""
+        component.net = ""
+
+    for net_name, net in pcb.nets.items():
+        for ref, pin in net.connections:
+            component = pcb.get_component(ref)
+            if not component:
+                continue
+
+            if net_name not in component.connected_nets:
+                component.connected_nets.append(net_name)
+
+    for component in pcb.components:
+        unique_nets = []
+        for net_name in component.connected_nets:
+            clean_name = str(net_name).strip()
+            if clean_name and clean_name not in unique_nets:
+                unique_nets.append(clean_name)
+
+        component.connected_nets = unique_nets
+        component.net_names = list(unique_nets)
+        component.net_name = unique_nets[0] if unique_nets else ""
+        component.net = component.net_name
+
+
 def parse_pcb_file(filename):
     pcb = PCB()
     pcb.source_format = "simple_text"
@@ -20,8 +49,11 @@ def parse_pcb_file(filename):
             parts = [p.strip() for p in line.split(",")]
             if len(parts) != 6:
                 continue
+
             ref, value, x, y, layer, ctype = parts
             pcb.add_component(Component(ref, value, x, y, layer, ctype))
+
+        link_nets_to_components(pcb)
         pcb.estimate_board_bounds()
         return pcb
 
@@ -58,5 +90,6 @@ def parse_pcb_file(filename):
             net_name, ref, pin = parts
             pcb.add_net_connection(net_name, ref, pin)
 
+    link_nets_to_components(pcb)
     pcb.estimate_board_bounds()
     return pcb

@@ -1,74 +1,97 @@
 import importlib
 import os
 
-from engine.score_explainer import build_score_explanation
+
+def calculate_score(risks):
+    penalties = {
+        "low": 0.5,
+        "medium": 1.0,
+        "high": 1.5,
+        "critical": 2.0
+    }
+
+    score = 10.0
+    total_penalty = 0.0
+
+    for risk in risks:
+        severity = str(risk.get("severity", "low")).lower()
+        penalty = penalties.get(severity, 0.5)
+        total_penalty += penalty
+
+    score -= total_penalty
+
+    if score < 0:
+        score = 0.0
+
+    return round(score, 2), round(total_penalty, 2)
 
 
-RULES_PACKAGE = "engine.rules"
-RULES_DIRECTORY = os.path.join(os.path.dirname(__file__), "rules")
+def run_analysis(pcb, config):
+    risks = []
 
+    rules_dir = os.path.join(os.path.dirname(__file__), "rules")
 
-def load_rule_modules():
-    rule_modules = []
+    print("\n========== SILICORE RULE DEBUG ==========")
+    print(f"Rules directory: {rules_dir}")
+    print(f"PCB component count: {len(getattr(pcb, 'components', []))}")
+    print(f"PCB net count: {len(getattr(pcb, 'nets', [])) if hasattr(pcb, 'nets') and pcb.nets else 0}")
+    print(f"Config keys: {list(config.keys()) if isinstance(config, dict) else 'CONFIG NOT DICT'}")
+    print("=========================================\n")
 
-    for filename in os.listdir(RULES_DIRECTORY):
+    for filename in os.listdir(rules_dir):
         if not filename.endswith(".py"):
             continue
         if filename == "__init__.py":
             continue
 
-        module_name = filename[:-3]
-        full_module_name = f"{RULES_PACKAGE}.{module_name}"
-        module = importlib.import_module(full_module_name)
+        module_name = f"engine.rules.{filename[:-3]}"
+        print(f"Loading rule module: {module_name}")
 
-        if hasattr(module, "run_rule"):
-            rule_modules.append(module)
-
-    return rule_modules
-
-
-def run_analysis(pcb, config, debug=False):
-    risks = []
-    loaded_rules = load_rule_modules()
-
-    for rule_module in loaded_rules:
         try:
-            rule_risks = rule_module.run_rule(pcb, config)
-            if rule_risks:
-                risks.extend(rule_risks)
-        except Exception as exc:
-            if debug:
-                print(f"Rule error in {rule_module.__name__}: {exc}")
+            module = importlib.import_module(module_name)
+        except Exception as e:
+            print(f"FAILED TO IMPORT {module_name}: {e}")
+            continue
 
-    score_explanation = build_score_explanation(risks, start_score=10.0)
+        if not hasattr(module, "run_rule"):
+            print(f"SKIPPING {module_name}: no run_rule function found")
+            continue
 
-    severity_counts = {
-        "low": 0,
-        "medium": 0,
-        "high": 0,
-        "critical": 0,
-    }
+        try:
+            rule_risks = module.run_rule(pcb, config)
 
-    category_counts = {}
+            if rule_risks is None:
+                print(f"{module_name} returned None")
+                rule_risks = []
 
-    for risk in risks:
-        severity = str(risk.get("severity", "low")).lower()
-        category = risk.get("category", "uncategorized")
+            if not isinstance(rule_risks, list):
+                print(f"{module_name} returned non-list: {type(rule_risks)}")
+                rule_risks = []
 
-        if severity in severity_counts:
-            severity_counts[severity] += 1
-        else:
-            severity_counts[severity] = severity_counts.get(severity, 0) + 1
+            print(f"{module_name} produced {len(rule_risks)} risk(s)")
 
-        category_counts[category] = category_counts.get(category, 0) + 1
+            for risk in rule_risks:
+                print(
+                    f"  - [{risk.get('severity', 'unknown').upper()}] "
+                    f"{risk.get('rule_id', 'no_rule_id')}: "
+                    f"{risk.get('message', 'no message')}"
+                )
+
+            risks.extend(rule_risks)
+
+        except Exception as e:
+            print(f"ERROR RUNNING {module_name}: {e}")
+
+    score, total_penalty = calculate_score(risks)
+
+    print("\n============= FINAL DEBUG =============")
+    print(f"Total risks found: {len(risks)}")
+    print(f"Total penalty: {total_penalty}")
+    print(f"Final score: {score} / 10")
+    print("=======================================\n")
 
     return {
         "risks": risks,
-        "score": score_explanation["final_score"],
-        "score_explanation": score_explanation,
-        "risk_summary": {
-            "total_risks": len(risks),
-            "by_severity": severity_counts,
-            "by_category": category_counts,
-        },
+        "score": score,
+        "total_penalty": total_penalty
     }

@@ -10,6 +10,26 @@ class Component:
         self.rotation = float(rotation)
         self.pads = []
 
+        # Component-level connectivity fields for rules/services
+        self.net_name = ""
+        self.net_names = []
+        self.net = ""
+        self.connected_nets = []
+
+    def sync_nets_from_pads(self):
+        net_names = []
+
+        for pad in self.pads:
+            net_name = getattr(pad, "net_name", "") or ""
+            net_name = str(net_name).strip()
+            if net_name and net_name not in net_names:
+                net_names.append(net_name)
+
+        self.net_names = net_names
+        self.connected_nets = list(net_names)
+        self.net_name = net_names[0] if net_names else ""
+        self.net = self.net_name
+
     def to_dict(self):
         return {
             "ref": self.ref,
@@ -20,6 +40,9 @@ class Component:
             "type": self.type,
             "footprint": self.footprint,
             "rotation": self.rotation,
+            "net_name": self.net_name,
+            "net_names": self.net_names,
+            "connected_nets": self.connected_nets,
             "pads": [pad.to_dict() for pad in self.pads],
         }
 
@@ -132,7 +155,11 @@ class PCB:
         self.source_format = "unknown"
 
     def add_component(self, component):
+        if hasattr(component, "sync_nets_from_pads"):
+            component.sync_nets_from_pads()
+
         self.components.append(component)
+
         if component.layer:
             self.layers.add(component.layer)
 

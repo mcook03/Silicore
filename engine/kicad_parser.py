@@ -22,6 +22,32 @@ def _extract_quoted_or_unquoted_net_name(line):
     return ""
 
 
+def _finalize_component(pcb, current_component, current_component_x, current_component_y, current_component_layer, current_component_rotation):
+    ref = current_component.get("ref", "").strip()
+    value = current_component.get("value", "").strip()
+    footprint = current_component.get("footprint", "").strip()
+
+    if not ref:
+        return
+
+    comp_type = value if value else "unknown"
+
+    component = Component(
+        ref=ref,
+        value=value if value else "unknown",
+        x=current_component_x,
+        y=current_component_y,
+        layer=current_component_layer,
+        comp_type=comp_type,
+        footprint=footprint,
+        rotation=current_component_rotation,
+    )
+
+    component.pads = current_component.get("pads", [])
+    component.sync_nets_from_pads()
+    pcb.add_component(component)
+
+
 def parse_kicad_file(filename):
     pcb = PCB()
     pcb.source_format = "kicad_pcb"
@@ -36,6 +62,7 @@ def parse_kicad_file(filename):
     current_component_layer = ""
     current_component_rotation = 0.0
     in_footprint = False
+    footprint_depth = 0
 
     for raw_line in lines:
         line = raw_line.strip()
@@ -52,6 +79,7 @@ def parse_kicad_file(filename):
 
         if line.startswith("(footprint "):
             in_footprint = True
+            footprint_depth = raw_line.count("(") - raw_line.count(")")
             current_component = {
                 "ref": "",
                 "value": "",
@@ -64,116 +92,102 @@ def parse_kicad_file(filename):
             current_component_rotation = 0.0
             continue
 
-        if in_footprint and line.startswith("(at "):
-            parts = line.replace("(", "").replace(")", "").split()
-            if len(parts) >= 3:
-                current_component_x = _safe_float(parts[1])
-                current_component_y = _safe_float(parts[2])
-            if len(parts) >= 4:
-                current_component_rotation = _safe_float(parts[3])
-            continue
+        if in_footprint and current_component is not None:
+            if line.startswith("(at "):
+                parts = line.replace("(", "").replace(")", "").split()
+                if len(parts) >= 3:
+                    current_component_x = _safe_float(parts[1])
+                    current_component_y = _safe_float(parts[2])
+                if len(parts) >= 4:
+                    current_component_rotation = _safe_float(parts[3])
 
-        if in_footprint and line.startswith("(layer "):
-            parts = line.replace("(", "").replace(")", "").split(maxsplit=1)
-            if len(parts) == 2:
-                current_component_layer = parts[1].replace('"', "")
-            continue
+            elif line.startswith("(layer "):
+                parts = line.replace("(", "").replace(")", "").split(maxsplit=1)
+                if len(parts) == 2:
+                    current_component_layer = parts[1].replace('"', "")
 
-        if in_footprint and "(property " in line and '"Reference"' in line:
-            ref_match = re.search(r'"Reference"\s+"([^"]+)"', line)
-            if ref_match:
-                current_component["ref"] = ref_match.group(1)
-            continue
+            elif "(property " in line and '"Reference"' in line:
+                ref_match = re.search(r'"Reference"\s+"([^"]+)"', line)
+                if ref_match:
+                    current_component["ref"] = ref_match.group(1)
 
-        if in_footprint and "(property " in line and '"Value"' in line:
-            value_match = re.search(r'"Value"\s+"([^"]+)"', line)
-            if value_match:
-                current_component["value"] = value_match.group(1)
-            continue
+            elif "(property " in line and '"Value"' in line:
+                value_match = re.search(r'"Value"\s+"([^"]+)"', line)
+                if value_match:
+                    current_component["value"] = value_match.group(1)
 
-        if in_footprint and line.startswith("(fp_text reference "):
-            ref_match = re.search(r'\(fp_text reference\s+([^\s)]+)', line)
-            if ref_match:
-                current_component["ref"] = ref_match.group(1).replace('"', "")
-            continue
+            elif line.startswith("(fp_text reference "):
+                ref_match = re.search(r'\(fp_text reference\s+([^\s)]+)', line)
+                if ref_match:
+                    current_component["ref"] = ref_match.group(1).replace('"', "")
 
-        if in_footprint and line.startswith("(fp_text value "):
-            value_match = re.search(r'\(fp_text value\s+([^\s)]+)', line)
-            if value_match:
-                current_component["value"] = value_match.group(1).replace('"', "")
-            continue
+            elif line.startswith("(fp_text value "):
+                value_match = re.search(r'\(fp_text value\s+([^\s)]+)', line)
+                if value_match:
+                    current_component["value"] = value_match.group(1).replace('"', "")
 
-        if in_footprint and line.startswith("(pad "):
-            pad_parts = line.replace("(", "").replace(")", "").split()
-            if len(pad_parts) >= 2 and current_component is not None:
-                pad_number = pad_parts[1]
+            elif line.startswith("(pad "):
+                pad_parts = line.replace("(", "").replace(")", "").split()
+                if len(pad_parts) >= 2:
+                    pad_number = pad_parts[1]
 
-                at_match = re.search(r'\(at\s+([-\d.]+)\s+([-\d.]+)', raw_line)
-                size_match = re.search(r'\(size\s+([-\d.]+)\s+([-\d.]+)\)', raw_line)
-                layers_match = re.search(r'\(layers\s+([^)]+)\)', raw_line)
-                net_inline_match = re.search(r'\(net\s+(\d+)\s+"?([^")]+)"?\)', raw_line)
-                net_num_match = re.search(r'\(net\s+(\d+)', raw_line)
+                    at_match = re.search(r'\(at\s+([-\d.]+)\s+([-\d.]+)', raw_line)
+                    size_match = re.search(r'\(size\s+([-\d.]+)\s+([-\d.]+)\)', raw_line)
+                    layers_match = re.search(r'\(layers\s+([^)]+)\)', raw_line)
+                    net_inline_match = re.search(r'\(net\s+(\d+)\s+"?([^")]+)"?\)', raw_line)
+                    net_num_match = re.search(r'\(net\s+(\d+)', raw_line)
 
-                pad_x = current_component_x
-                pad_y = current_component_y
-                if at_match:
-                    pad_x = current_component_x + _safe_float(at_match.group(1))
-                    pad_y = current_component_y + _safe_float(at_match.group(2))
+                    pad_x = current_component_x
+                    pad_y = current_component_y
+                    if at_match:
+                        pad_x = current_component_x + _safe_float(at_match.group(1))
+                        pad_y = current_component_y + _safe_float(at_match.group(2))
 
-                size_x = 0.0
-                size_y = 0.0
-                if size_match:
-                    size_x = _safe_float(size_match.group(1))
-                    size_y = _safe_float(size_match.group(2))
+                    size_x = 0.0
+                    size_y = 0.0
+                    if size_match:
+                        size_x = _safe_float(size_match.group(1))
+                        size_y = _safe_float(size_match.group(2))
 
-                layer = current_component_layer
-                if layers_match:
-                    layer = layers_match.group(1).strip().replace('"', "")
+                    layer = current_component_layer
+                    if layers_match:
+                        layer = layers_match.group(1).strip().replace('"', "")
 
-                net_name = ""
-                if net_inline_match:
-                    net_name = net_inline_match.group(2).strip()
-                elif net_num_match:
-                    net_id = net_num_match.group(1)
-                    net_name = net_id_to_name.get(net_id, "")
+                    net_name = ""
+                    if net_inline_match:
+                        net_name = net_inline_match.group(2).strip()
+                    elif net_num_match:
+                        net_id = net_num_match.group(1)
+                        net_name = net_id_to_name.get(net_id, "")
 
-                pad = Pad(
-                    pad_number=pad_number,
-                    x=pad_x,
-                    y=pad_y,
-                    net_name=net_name,
-                    layer=layer,
-                    size_x=size_x,
-                    size_y=size_y,
+                    pad = Pad(
+                        pad_number=pad_number,
+                        x=pad_x,
+                        y=pad_y,
+                        net_name=net_name,
+                        layer=layer,
+                        size_x=size_x,
+                        size_y=size_y,
+                    )
+                    current_component["pads"].append(pad)
+
+                    ref_for_connection = current_component.get("ref", "").strip()
+                    if net_name:
+                        pcb.add_net_connection(net_name, ref_for_connection, pad_number)
+
+            footprint_depth += raw_line.count("(") - raw_line.count(")")
+            if footprint_depth <= 0:
+                _finalize_component(
+                    pcb,
+                    current_component,
+                    current_component_x,
+                    current_component_y,
+                    current_component_layer,
+                    current_component_rotation,
                 )
-                current_component["pads"].append(pad)
-
-                if net_name:
-                    pcb.add_net_connection(net_name, current_component.get("ref", ""), pad_number)
-            continue
-
-        if line == ")" and in_footprint and current_component is not None:
-            ref = current_component.get("ref", "").strip()
-            value = current_component.get("value", "").strip()
-            footprint = current_component.get("footprint", "").strip()
-
-            if ref:
-                comp_type = value if value else "unknown"
-                component = Component(
-                    ref=ref,
-                    value=value if value else "unknown",
-                    x=current_component_x,
-                    y=current_component_y,
-                    layer=current_component_layer,
-                    comp_type=comp_type,
-                    footprint=footprint,
-                    rotation=current_component_rotation,
-                )
-                component.pads = current_component.get("pads", [])
-                pcb.add_component(component)
-
-            in_footprint = False
-            current_component = None
+                in_footprint = False
+                current_component = None
+                footprint_depth = 0
             continue
 
         if line.startswith("(segment "):

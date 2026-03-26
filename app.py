@@ -1,485 +1,285 @@
-import json
 import os
-import shutil
-from datetime import datetime
 
-from flask import Flask, request, redirect, url_for, render_template_string, send_file
-from werkzeug.utils import secure_filename
+from flask import (
+    Flask,
+    flash,
+    redirect,
+    render_template_string,
+    request,
+    send_from_directory,
+    url_for,
+)
 
-from engine.config import DEFAULT_CONFIG
-from engine.config_loader import load_config
-from engine.parser import parse_pcb_file
-from engine.kicad_parser import parse_kicad_file
-from engine.normalizer import normalize_pcb
-from engine.rule_runner import run_analysis
-from engine.report_generator import generate_report
-
+from engine.config_loader import save_config, parse_config_form
+from engine.dashboard_storage import get_recent_runs
+from engine.services.analysis_service import (
+    analyze_project_files,
+    analyze_single_board,
+    get_dashboard_config,
+)
 
 app = Flask(__name__)
+app.secret_key = "silicore-dev-secret"
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "dashboard_uploads")
-RUNS_DIR = os.path.join(BASE_DIR, "dashboard_runs")
-CUSTOM_CONFIG_PATH = os.path.join(BASE_DIR, "custom_config.json")
+UPLOAD_FOLDER = "dashboard_uploads"
+RUNS_FOLDER = "dashboard_runs"
+CONFIG_PATH = "custom_config.json"
 
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(RUNS_DIR, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(RUNS_FOLDER, exist_ok=True)
 
-
-def get_active_config():
-    if os.path.exists(CUSTOM_CONFIG_PATH):
-        try:
-            loaded = load_config(CUSTOM_CONFIG_PATH)
-            if isinstance(loaded, dict):
-                merged = dict(DEFAULT_CONFIG)
-                merged.update(loaded)
-                return merged
-        except Exception:
-            pass
-    return dict(DEFAULT_CONFIG)
-
-
-def timestamp_string():
-    return datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-
-
-def parse_uploaded_board(file_path):
-    extension = os.path.splitext(file_path)[1].lower()
-
-    if extension == ".kicad_pcb":
-        pcb = parse_kicad_file(file_path)
-    else:
-        pcb = parse_pcb_file(file_path)
-
-    return normalize_pcb(pcb)
-
-
-def save_json(data, output_path):
-    with open(output_path, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4)
-
-
-def save_text(text, output_path):
-    with open(output_path, "w", encoding="utf-8") as file:
-        file.write(text)
-
-
-def markdown_to_basic_html(markdown_text, title="Silicore Report"):
-    escaped = (
-        markdown_text.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-    )
-
-    return f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>{title}</title>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            margin: 32px;
-            line-height: 1.6;
-            background: #f8f9fb;
-            color: #1f2937;
-        }}
-        .report {{
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            max-width: 1100px;
-            margin: 0 auto;
-        }}
-        pre {{
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: "Courier New", monospace;
-            font-size: 14px;
-        }}
-    </style>
-</head>
-<body>
-    <div class="report">
-        <pre>{escaped}</pre>
-    </div>
-</body>
-</html>
-"""
-
-
-def build_score_explanation_html(score_explanation):
-    if not score_explanation:
-        return "<p>No score explanation available.</p>"
-
-    severity_html = ""
-    for severity, penalty in sorted(score_explanation.get("severity_totals", {}).items()):
-        severity_html += f"<li><strong>{severity.title()}</strong>: {penalty}</li>"
-
-    category_html = ""
-    for category, penalty in sorted(score_explanation.get("category_totals", {}).items()):
-        category_html += f"<li><strong>{category}</strong>: {penalty}</li>"
-
-    detail_html = ""
-    for item in score_explanation.get("detailed_penalties", []):
-        components = ", ".join(item.get("components", [])) if item.get("components") else "None"
-        nets = ", ".join(item.get("nets", [])) if item.get("nets") else "None"
-
-        detail_html += (
-            "<li style='margin-bottom:10px;'>"
-            f"<strong>{item.get('rule_id', 'UNKNOWN_RULE')}</strong> | "
-            f"{item.get('severity', 'low').title()} | "
-            f"{item.get('category', 'uncategorized')} | "
-            f"Penalty: {item.get('penalty', 0)}"
-            f"<br>{item.get('message', 'No message')}"
-            f"<br><strong>Components:</strong> {components}"
-            f"<br><strong>Nets:</strong> {nets}"
-            "</li>"
-        )
-
-    return f"""
-    <div class="score-box">
-        <div class="section-header">
-            <h3>Score Explainability</h3>
-            <span class="subtle-chip">Trust Layer</span>
-        </div>
-
-        <div class="stats-grid">
-            <div class="mini-stat">
-                <span class="mini-label">Start Score</span>
-                <span class="mini-value">{score_explanation.get('start_score', 10.0)}</span>
-            </div>
-            <div class="mini-stat">
-                <span class="mini-label">Total Penalty</span>
-                <span class="mini-value">{score_explanation.get('total_penalty', 0.0)}</span>
-            </div>
-            <div class="mini-stat">
-                <span class="mini-label">Final Score</span>
-                <span class="mini-value">{score_explanation.get('final_score', 0.0)}</span>
-            </div>
-        </div>
-
-        <div class="two-column-block">
-            <div>
-                <h4>Penalty by Severity</h4>
-                <ul>{severity_html or "<li>None</li>"}</ul>
-            </div>
-            <div>
-                <h4>Penalty by Category</h4>
-                <ul>{category_html or "<li>None</li>"}</ul>
-            </div>
-        </div>
-
-        <details style="margin-top: 14px;">
-            <summary><strong>Detailed Penalties</strong></summary>
-            <ul style="margin-top: 12px;">{detail_html or "<li>None</li>"}</ul>
-        </details>
-    </div>
-    """
-
-
-def build_risk_list_html(risks):
-    if not risks:
-        return "<p>No risks found.</p>"
-
-    parts = []
-
-    for risk in risks:
-        severity = str(risk.get("severity", "low")).lower()
-        category = risk.get("category", "uncategorized")
-        components = ", ".join(risk.get("components", [])) if risk.get("components") else "None"
-        nets = ", ".join(risk.get("nets", [])) if risk.get("nets") else "None"
-        metrics = risk.get("metrics", {})
-
-        parts.append(f"""
-        <div class="risk-card severity-{severity}" data-severity="{severity}" data-category="{category}">
-            <div class="risk-top-row">
-                <div class="risk-main">
-                    <h4>{severity.upper()} — {risk.get('message', 'No message')}</h4>
-                    <p class="risk-meta"><strong>Rule ID:</strong> {risk.get('rule_id', 'UNKNOWN_RULE')}</p>
-                </div>
-                <div class="pill-group">
-                    <span class="pill pill-severity">{severity.title()}</span>
-                    <span class="pill pill-category">{category}</span>
-                </div>
-            </div>
-            <div class="risk-detail-grid">
-                <p><strong>Components:</strong> {components}</p>
-                <p><strong>Nets:</strong> {nets}</p>
-            </div>
-            <p><strong>Metrics:</strong> {metrics}</p>
-            <p><strong>Recommendation:</strong> {risk.get('recommendation', 'No recommendation provided')}</p>
-        </div>
-        """)
-
-    return "\n".join(parts)
-
-
-def create_single_run(board_name, analysis_result, markdown_report):
-    run_id = f"single_{timestamp_string()}"
-    run_dir = os.path.join(RUNS_DIR, run_id)
-    os.makedirs(run_dir, exist_ok=True)
-
-    json_path = os.path.join(run_dir, "single_analysis.json")
-    md_path = os.path.join(run_dir, "single_report.md")
-    html_path = os.path.join(run_dir, "single_report.html")
-    meta_path = os.path.join(run_dir, "run_meta.json")
-
-    save_json(analysis_result, json_path)
-    save_text(markdown_report, md_path)
-    save_text(markdown_to_basic_html(markdown_report, "Silicore Single Report"), html_path)
-
-    run_meta = {
-        "run_id": run_id,
-        "run_type": "single",
-        "created_at": datetime.now().isoformat(),
-        "board_name": board_name,
-        "score": analysis_result.get("score", 0),
-        "files": {
-            "json": "single_analysis.json",
-            "markdown": "single_report.md",
-            "html": "single_report.html",
-        },
-    }
-    save_json(run_meta, meta_path)
-
-    return run_id, run_dir
-
-
-def create_project_run(project_results):
-    run_id = f"project_{timestamp_string()}"
-    run_dir = os.path.join(RUNS_DIR, run_id)
-    os.makedirs(run_dir, exist_ok=True)
-
-    summary = {
-        "run_id": run_id,
-        "run_type": "project",
-        "created_at": datetime.now().isoformat(),
-        "board_count": len(project_results),
-        "boards": project_results,
-        "best_board": project_results[0]["board_name"] if project_results else None,
-        "worst_board": project_results[-1]["board_name"] if project_results else None,
-    }
-
-    md_lines = [
-        "# SILICORE PROJECT SUMMARY",
-        "",
-        f"- Board Count: {len(project_results)}",
-        "",
-    ]
-
-    for board in project_results:
-        md_lines.extend([
-            f"## Rank {board['rank']} — {board['board_name']}",
-            f"- Score: {board['score']} / 10",
-            f"- Total Risks: {board['risk_summary'].get('total_risks', 0)}",
-            "",
-        ])
-
-    markdown_report = "\n".join(md_lines)
-
-    json_path = os.path.join(run_dir, "project_summary.json")
-    md_path = os.path.join(run_dir, "project_summary.md")
-    html_path = os.path.join(run_dir, "project_summary.html")
-    meta_path = os.path.join(run_dir, "run_meta.json")
-
-    save_json(summary, json_path)
-    save_text(markdown_report, md_path)
-    save_text(markdown_to_basic_html(markdown_report, "Silicore Project Summary"), html_path)
-
-    run_meta = {
-        "run_id": run_id,
-        "run_type": "project",
-        "created_at": datetime.now().isoformat(),
-        "board_count": len(project_results),
-        "best_board": project_results[0]["board_name"] if project_results else None,
-        "worst_board": project_results[-1]["board_name"] if project_results else None,
-        "files": {
-            "json": "project_summary.json",
-            "markdown": "project_summary.md",
-            "html": "project_summary.html",
-        },
-    }
-    save_json(run_meta, meta_path)
-
-    return run_id, run_dir
-
-
-def load_recent_runs(limit=10):
-    runs = []
-
-    if not os.path.exists(RUNS_DIR):
-        return runs
-
-    for entry in os.listdir(RUNS_DIR):
-        run_dir = os.path.join(RUNS_DIR, entry)
-        meta_path = os.path.join(run_dir, "run_meta.json")
-
-        if os.path.isdir(run_dir) and os.path.exists(meta_path):
-            try:
-                with open(meta_path, "r", encoding="utf-8") as file:
-                    meta = json.load(file)
-                    runs.append(meta)
-            except Exception:
-                continue
-
-    runs.sort(key=lambda item: item.get("created_at", ""), reverse=True)
-    return runs[:limit]
-
-
-def render_home():
-    recent_runs = load_recent_runs()
-
-    return render_template_string(
-        """
+HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Silicore Dashboard</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            background: linear-gradient(180deg, #edf2f8 0%, #f7f9fc 100%);
-            color: #111827;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
         }
+
         .container {
-            max-width: 1240px;
+            width: 95%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 32px;
+            padding: 24px 0 48px;
         }
+
         .hero {
-            background: linear-gradient(135deg, #0f172a, #1e293b 55%, #334155);
-            color: white;
-            padding: 34px;
-            border-radius: 22px;
+            background: linear-gradient(135deg, #111827, #1e293b);
+            border: 1px solid #334155;
+            border-radius: 18px;
+            padding: 28px;
             margin-bottom: 24px;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
-            border: 1px solid rgba(255,255,255,0.06);
         }
+
         .hero h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 36px;
-            letter-spacing: -0.02em;
+            margin: 0 0 8px;
+            font-size: 34px;
         }
+
         .hero p {
             margin: 0;
             color: #cbd5e1;
-            max-width: 760px;
+            line-height: 1.6;
         }
-        .hero-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 18px;
-            align-items: flex-start;
-        }
-        .build-note {
-            font-size: 12px;
-            color: #cbd5e1;
-            background: rgba(255,255,255,0.08);
+
+        .dev-note {
+            margin-top: 14px;
+            display: inline-block;
             padding: 8px 12px;
             border-radius: 999px;
-            white-space: nowrap;
+            background: #1e293b;
+            border: 1px solid #475569;
+            color: #93c5fd;
+            font-size: 13px;
         }
-        .home-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 20px;
-        }
-        .home-stat {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 16px;
-            border-radius: 14px;
-            backdrop-filter: blur(4px);
-        }
-        .home-stat .label {
-            display: block;
-            color: #cbd5e1;
-            font-size: 12px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .home-stat .value {
-            font-size: 24px;
-            font-weight: 700;
-        }
+
         .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+            grid-template-columns: 1.1fr 1.1fr 1fr;
+            gap: 20px;
+            align-items: start;
         }
+
         .card {
-            background: rgba(255,255,255,0.88);
-            backdrop-filter: blur(8px);
-            padding: 24px;
-            border-radius: 20px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-            border: 1px solid rgba(255,255,255,0.5);
+            background: #111827;
+            border: 1px solid #334155;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
         }
+
         .card h2 {
             margin-top: 0;
-            margin-bottom: 10px;
+            font-size: 22px;
         }
-        .recent-run {
-            padding: 16px;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            margin-bottom: 12px;
-            background: #fafafa;
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 18px;
         }
-        input[type=file] {
-            margin: 12px 0;
+
+        .muted {
+            color: #94a3b8;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        input[type="number"],
+        select {
             width: 100%;
-            padding: 10px;
-            border: 1px dashed #cbd5e1;
-            border-radius: 12px;
-            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
+            margin-bottom: 16px;
         }
+
         button {
-            background: linear-gradient(135deg, #111827, #1f2937);
-            color: white;
             border: none;
-            padding: 12px 18px;
-            border-radius: 12px;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 10px 20px rgba(17, 24, 39, 0.16);
+            background: #2563eb;
+            color: white;
         }
+
         button:hover {
-            opacity: 0.95;
+            background: #1d4ed8;
         }
-        a {
-            color: #2563eb;
+
+        .flash {
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #1e293b;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .summary-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .summary-box .label {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-box .value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .config-section {
+            margin-bottom: 18px;
+            padding: 16px;
+            border-radius: 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+        }
+
+        .config-section-title {
+            margin: 0 0 12px;
+            font-size: 16px;
+            color: #93c5fd;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .results {
+            margin-top: 26px;
+        }
+
+        .result-card {
+            background: #111827;
+            border: 1px solid #334155;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid #475569;
+            background: #1e293b;
+        }
+
+        .risk-item {
+            border-top: 1px solid #334155;
+            padding-top: 14px;
+            margin-top: 14px;
+        }
+
+        .badge-best {
+            background: #14532d;
+            border-color: #22c55e;
+        }
+
+        .badge-worst {
+            background: #7f1d1d;
+            border-color: #ef4444;
+        }
+
+        .run-list a,
+        .download-links a {
+            color: #93c5fd;
             text-decoration: none;
         }
-        a:hover {
+
+        .run-list a:hover,
+        .download-links a:hover {
             text-decoration: underline;
         }
-        .note {
-            color: #6b7280;
-            font-size: 14px;
+
+        .run-meta {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 4px;
         }
+
         .footer-note {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #6b7280;
+            margin-top: 18px;
+            color: #94a3b8;
+            font-size: 13px;
         }
-        @media (max-width: 900px) {
-            .grid, .home-stats {
+
+        @media (max-width: 1100px) {
+            .grid {
                 grid-template-columns: 1fr;
             }
-            .hero-top {
-                flex-direction: column;
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
             }
-            .build-note {
-                white-space: normal;
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -487,945 +287,345 @@ def render_home():
 <body>
     <div class="container">
         <div class="hero">
-            <div class="hero-top">
-                <div>
-                    <h1>Silicore Dashboard</h1>
-                    <p>PCB risk analysis, project ranking, explainable scoring, and downloadable reports.</p>
-                </div>
-                <div class="build-note">Dev Build - Milestone 11</div>
-            </div>
+            <h1>Silicore</h1>
+            <p>AI-powered PCB design intelligence for risk detection, explainability, revision comparison, and project-level analysis.</p>
+            <div class="dev-note">Dev build: Local prototype dashboard</div>
 
-            <div class="home-stats">
-                <div class="home-stat">
-                    <span class="label">Saved Runs</span>
-                    <span class="value">{{ recent_runs|length }}</span>
+            <div class="summary-grid">
+                <div class="summary-box">
+                    <div class="label">Mode</div>
+                    <div class="value">Dashboard</div>
                 </div>
-                <div class="home-stat">
-                    <span class="label">Ranking Model</span>
-                    <span class="value">1 = Best</span>
+                <div class="summary-box">
+                    <div class="label">Engine</div>
+                    <div class="value">Service Layer</div>
                 </div>
-                <div class="home-stat">
-                    <span class="label">Supported Inputs</span>
-                    <span class="value">.txt, .kicad_pcb</span>
+                <div class="summary-box">
+                    <div class="label">Storage</div>
+                    <div class="value">Persistent Runs</div>
+                </div>
+                <div class="summary-box">
+                    <div class="label">Milestone</div>
+                    <div class="value">13</div>
                 </div>
             </div>
         </div>
 
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="grid">
             <div class="card">
                 <h2>Single Board Analysis</h2>
+                <p class="muted">Upload one board file for immediate analysis.</p>
                 <form action="/analyze" method="post" enctype="multipart/form-data">
-                    <input type="file" name="board_file" required>
+                    <label for="single_file">Board File</label>
+                    <input type="file" id="single_file" name="single_file" required>
                     <button type="submit">Analyze Board</button>
                 </form>
-                <p class="note">Upload one board file for individual analysis and explainable scoring.</p>
             </div>
 
             <div class="card">
                 <h2>Project Analysis</h2>
-                <form action="/project" method="post" enctype="multipart/form-data">
-                    <input type="file" name="board_files" multiple required>
+                <p class="muted">Upload multiple files at once to compare boards and rank them. On Mac, hold Command to select multiple files.</p>
+                <form action="/analyze_project" method="post" enctype="multipart/form-data">
+                    <label for="project_files">Project Files</label>
+                    <input type="file" id="project_files" name="project_files" multiple required>
                     <button type="submit">Analyze Project</button>
                 </form>
-                <p class="note">Select all files at once. Rank 1 is best. Higher number is worse.</p>
             </div>
+
+            <div class="card">
+                <h2>Config Editor</h2>
+                <p class="muted">Tune the analysis engine without manually editing files.</p>
+                <form action="/save_config" method="post">
+                    <div class="config-section">
+                        <div class="config-section-title">Layout</div>
+                        <div class="two-col">
+                            <div>
+                                <label for="min_component_spacing">Min Component Spacing</label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    id="min_component_spacing"
+                                    name="min_component_spacing"
+                                    value="{{ config.layout.min_component_spacing }}"
+                                    required
+                                >
+                            </div>
+                            <div>
+                                <label for="density_threshold">Density Threshold</label>
+                                <input
+                                    type="number"
+                                    id="density_threshold"
+                                    name="density_threshold"
+                                    value="{{ config.layout.density_threshold }}"
+                                    required
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <div class="config-section-title">Power</div>
+                        <label for="required_power_nets">Required Power Nets</label>
+                        <input
+                            type="text"
+                            id="required_power_nets"
+                            name="required_power_nets"
+                            value="{{ config.power.required_power_nets | join(', ') }}"
+                            required
+                        >
+
+                        <label for="required_ground_nets">Required Ground Nets</label>
+                        <input
+                            type="text"
+                            id="required_ground_nets"
+                            name="required_ground_nets"
+                            value="{{ config.power.required_ground_nets | join(', ') }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="config-section">
+                        <div class="config-section-title">Signal</div>
+                        <label for="max_trace_length">Max Trace Length</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            id="max_trace_length"
+                            name="max_trace_length"
+                            value="{{ config.signal.max_trace_length }}"
+                            required
+                        >
+
+                        <label for="critical_nets">Critical Nets</label>
+                        <input
+                            type="text"
+                            id="critical_nets"
+                            name="critical_nets"
+                            value="{{ config.signal.critical_nets | join(', ') }}"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit">Save Config</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="results">
+            {% if result %}
+                <div class="result-card">
+                    <h2>Single Board Result</h2>
+                    <p><strong>File:</strong> {{ result.filename }}</p>
+                    <p><strong>Score:</strong> {{ result.score }} / 10</p>
+
+                    {% if result.score_explanation %}
+                        <h3>Score Explanation</h3>
+                        <p><strong>Start Score:</strong> {{ result.score_explanation.start_score }}</p>
+                        <p><strong>Total Penalty:</strong> {{ result.score_explanation.total_penalty }}</p>
+
+                        {% if result.score_explanation.severity_totals %}
+                            <h4>Severity Penalties</h4>
+                            {% for severity, penalty in result.score_explanation.severity_totals.items() %}
+                                <span class="pill">{{ severity }}: {{ penalty }}</span>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if result.score_explanation.category_totals %}
+                            <h4 style="margin-top: 16px;">Category Penalties</h4>
+                            {% for category, penalty in result.score_explanation.category_totals.items() %}
+                                <span class="pill">{{ category }}: {{ penalty }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+
+                    <h3 style="margin-top: 20px;">Detailed Findings</h3>
+                    {% if result.risks %}
+                        {% for risk in result.risks %}
+                            <div class="risk-item">
+                                <p><strong>Severity:</strong> {{ risk.severity }}</p>
+                                <p><strong>Category:</strong> {{ risk.category }}</p>
+                                <p><strong>Message:</strong> {{ risk.message }}</p>
+                                <p><strong>Recommendation:</strong> {{ risk.recommendation }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No risks detected.</p>
+                    {% endif %}
+
+                    {% if result.downloads %}
+                        <div class="download-links">
+                            <h3>Downloads</h3>
+                            {% for item in result.downloads %}
+                                <p><a href="{{ item.url }}">{{ item.label }}</a></p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if project_result %}
+                <div class="result-card">
+                    <h2>Project Result</h2>
+
+                    {% if project_result.boards %}
+                        {% for board in project_result.boards %}
+                            <div class="risk-item">
+                                <p>
+                                    <strong>#{{ board.rank }} — {{ board.filename }}</strong>
+                                    {% if board.rank == 1 %}
+                                        <span class="pill badge-best">Best Board</span>
+                                    {% endif %}
+                                    {% if board.rank == project_result.boards|length %}
+                                        <span class="pill badge-worst">Worst Board</span>
+                                    {% endif %}
+                                </p>
+
+                                <p><strong>Score:</strong> {{ board.score }} / 10</p>
+
+                                {% if board.score_explanation %}
+                                    <p><strong>Total Penalty:</strong> {{ board.score_explanation.total_penalty }}</p>
+                                {% endif %}
+
+                                {% if board.risks %}
+                                    {% for risk in board.risks %}
+                                        <div class="risk-item">
+                                            <p><strong>Severity:</strong> {{ risk.severity }}</p>
+                                            <p><strong>Category:</strong> {{ risk.category }}</p>
+                                            <p><strong>Message:</strong> {{ risk.message }}</p>
+                                            <p><strong>Recommendation:</strong> {{ risk.recommendation }}</p>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No risks detected.</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if project_result.downloads %}
+                        <div class="download-links">
+                            <h3>Downloads</h3>
+                            {% for item in project_result.downloads %}
+                                <p><a href="{{ item.url }}">{{ item.label }}</a></p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="card" style="margin-top: 24px;">
             <h2>Recent Saved Runs</h2>
             {% if recent_runs %}
-                {% for run in recent_runs %}
-                    <div class="recent-run">
-                        <p><strong>{{ run.run_type.title() }} Run</strong></p>
-                        <p><strong>Created:</strong> {{ run.created_at }}</p>
-
-                        {% if run.run_type == 'single' %}
-                            <p><strong>Board:</strong> {{ run.board_name }}</p>
-                            <p><strong>Score:</strong> {{ run.score }}</p>
-                        {% else %}
-                            <p><strong>Board Count:</strong> {{ run.board_count }}</p>
-                            <p><strong>Best Board:</strong> {{ run.best_board }}</p>
-                            <p><strong>Worst Board:</strong> {{ run.worst_board }}</p>
-                        {% endif %}
-
+                <div class="run-list">
+                    {% for run in recent_runs %}
                         <p>
-                            <a href="/download/{{ run.run_id }}/json">JSON</a> |
-                            <a href="/download/{{ run.run_id }}/markdown">Markdown</a> |
-                            <a href="/download/{{ run.run_id }}/html">HTML</a>
+                            <strong>{{ run.name }}</strong>
                         </p>
-                    </div>
-                {% endfor %}
+                        <div class="run-meta">
+                            Type: {{ run.run_type }} |
+                            Created: {{ run.created_at }}
+                        </div>
+                    {% endfor %}
+                </div>
             {% else %}
-                <p>No saved runs yet.</p>
+                <p class="muted">No saved runs yet.</p>
             {% endif %}
+            <div class="footer-note">Milestone 13 separates dashboard routing from analysis orchestration so Silicore can evolve toward API and SaaS architecture.</div>
         </div>
-
-        <div class="footer-note">Dev Build - Milestone 11</div>
     </div>
 </body>
 </html>
-        """,
-        recent_runs=recent_runs,
+"""
+
+
+def render_dashboard(config, result=None, project_result=None):
+    return render_template_string(
+        HTML_TEMPLATE,
+        config=config,
+        result=result,
+        project_result=project_result,
+        recent_runs=get_recent_runs(RUNS_FOLDER)
     )
 
 
 @app.route("/", methods=["GET"])
-def home():
-    return render_home()
+def index():
+    _, config_view = get_dashboard_config(CONFIG_PATH)
+    return render_dashboard(config_view)
+
+
+@app.route("/save_config", methods=["POST"])
+def save_config_route():
+    try:
+        updated_config = parse_config_form(request.form)
+        save_config(updated_config, CONFIG_PATH)
+        flash("Config updated successfully.")
+    except ValueError:
+        flash("Config update failed. Please check your numeric values.")
+    except OSError:
+        flash("Config update failed. Could not write custom_config.json.")
+
+    return redirect(url_for("index"))
 
 
 @app.route("/analyze", methods=["POST"])
-def analyze_board():
-    uploaded_file = request.files.get("board_file")
-
-    if not uploaded_file or uploaded_file.filename.strip() == "":
-        return redirect(url_for("home"))
-
-    config = get_active_config()
-
-    temp_dir = os.path.join(UPLOAD_DIR, f"single_{timestamp_string()}")
-    os.makedirs(temp_dir, exist_ok=True)
-
-    filename = secure_filename(uploaded_file.filename)
-    file_path = os.path.join(temp_dir, filename)
-    uploaded_file.save(file_path)
-
+def analyze():
     try:
-        pcb = parse_uploaded_board(file_path)
-        analysis_result = run_analysis(pcb, config, debug=False)
-        markdown_report = generate_report(pcb, analysis_result)
-        run_id, _ = create_single_run(filename, analysis_result, markdown_report)
-    except Exception as exc:
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        return f"<h2>Analysis failed</h2><p>{exc}</p>", 500
-
-    shutil.rmtree(temp_dir, ignore_errors=True)
-
-    score_explanation_html = build_score_explanation_html(
-        analysis_result.get("score_explanation", {})
-    )
-    risk_list_html = build_risk_list_html(analysis_result.get("risks", []))
-    risk_summary = analysis_result.get("risk_summary", {})
-    by_severity = risk_summary.get("by_severity", {})
-    by_category = risk_summary.get("by_category", {})
-
-    severity_options = sorted(
-        {str(risk.get("severity", "low")).lower() for risk in analysis_result.get("risks", [])}
-    )
-    category_options = sorted(
-        {str(risk.get("category", "uncategorized")) for risk in analysis_result.get("risks", [])}
-    )
-
-    return render_template_string(
-        """
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Silicore Single Board Result</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: linear-gradient(180deg, #edf2f8 0%, #f7f9fc 100%);
-            color: #111827;
-        }
-        .container {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 32px;
-        }
-        .card, .score-box, .risk-card, .summary-card, .filter-card {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(8px);
-            padding: 22px;
-            border-radius: 18px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        .severity-low { border-left: 6px solid #10b981; }
-        .severity-medium { border-left: 6px solid #f59e0b; }
-        .severity-high { border-left: 6px solid #f97316; }
-        .severity-critical { border-left: 6px solid #ef4444; }
-        a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .top-links {
-            margin-bottom: 20px;
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        .mini-stat, .summary-card {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 14px;
-        }
-        .mini-label {
-            display: block;
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .mini-value {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .risk-top-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            align-items: flex-start;
-        }
-        .risk-main h4 {
-            margin-top: 0;
-            margin-bottom: 6px;
-        }
-        .pill-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .pill {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .pill-severity {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-        .pill-category {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-        .risk-meta {
-            color: #6b7280;
-            margin-top: 6px;
-        }
-        .filter-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 12px;
-            align-items: end;
-        }
-        .risk-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .subtle-chip {
-            font-size: 12px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-weight: 700;
-        }
-        .two-column-block {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-        select, button.filter-btn {
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
-            background: white;
-        }
-        button.filter-btn {
-            background: linear-gradient(135deg, #111827, #1f2937);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .empty-note {
-            color: #6b7280;
-            font-style: italic;
-            padding: 8px 0;
-        }
-        .page-title-card {
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
-        }
-        @media (max-width: 900px) {
-            .summary-grid, .stats-grid, .filter-row, .two-column-block, .risk-detail-grid {
-                grid-template-columns: 1fr;
-            }
-            .risk-top-row {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-links">
-            <a href="/">← Back to Dashboard</a>
-        </div>
-
-        <div class="card page-title-card">
-            <div class="section-header">
-                <div>
-                    <h1 style="margin: 0;">Single Board Result</h1>
-                    <p style="margin-top: 8px; color: #6b7280;"><strong>Board:</strong> {{ board_name }}</p>
-                </div>
-                <span class="subtle-chip">1 = Best Ranking Model</span>
-            </div>
-            <p><strong>Overall Risk Score:</strong> {{ score }} / 10</p>
-            <p>
-                <a href="/download/{{ run_id }}/json">Download JSON</a> |
-                <a href="/download/{{ run_id }}/markdown">Download Markdown</a> |
-                <a href="/download/{{ run_id }}/html">Download HTML</a>
-            </p>
-        </div>
-
-        <div class="summary-grid">
-            <div class="summary-card">
-                <span class="mini-label">Total Risks</span>
-                <span class="mini-value">{{ total_risks }}</span>
-            </div>
-            <div class="summary-card">
-                <span class="mini-label">Low</span>
-                <span class="mini-value">{{ by_severity.get('low', 0) }}</span>
-            </div>
-            <div class="summary-card">
-                <span class="mini-label">Medium</span>
-                <span class="mini-value">{{ by_severity.get('medium', 0) }}</span>
-            </div>
-            <div class="summary-card">
-                <span class="mini-label">High + Critical</span>
-                <span class="mini-value">{{ by_severity.get('high', 0) + by_severity.get('critical', 0) }}</span>
-            </div>
-        </div>
-
-        <div class="summary-card">
-            <div class="section-header">
-                <h3 style="margin: 0;">Category Summary</h3>
-                <span class="subtle-chip">Board Overview</span>
-            </div>
-            {% if by_category %}
-                <div class="pill-group">
-                    {% for category, count in by_category.items() %}
-                        <span class="pill pill-category">{{ category }}: {{ count }}</span>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>No category risks found.</p>
-            {% endif %}
-        </div>
-
-        {{ score_explanation_html|safe }}
-
-        <div class="filter-card">
-            <div class="section-header">
-                <h3 style="margin: 0;">Filter Findings</h3>
-                <span class="subtle-chip">Interactive View</span>
-            </div>
-            <div class="filter-row">
-                <div>
-                    <label for="severityFilter"><strong>Severity</strong></label><br>
-                    <select id="severityFilter">
-                        <option value="all">All severities</option>
-                        {% for value in severity_options %}
-                            <option value="{{ value }}">{{ value.title() }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label for="categoryFilter"><strong>Category</strong></label><br>
-                    <select id="categoryFilter">
-                        <option value="all">All categories</option>
-                        {% for value in category_options %}
-                            <option value="{{ value }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <button class="filter-btn" type="button" onclick="resetFilters()">Reset Filters</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="section-header">
-                <h2 style="margin: 0;">Detailed Findings</h2>
-                <span class="subtle-chip">Engineering Detail</span>
-            </div>
-            <div id="riskContainer">
-                {{ risk_list_html|safe }}
-            </div>
-            <p id="emptyState" class="empty-note" style="display:none;">No findings match the selected filters.</p>
-        </div>
-    </div>
-
-    <script>
-        function applyFilters() {
-            const severity = document.getElementById("severityFilter").value;
-            const category = document.getElementById("categoryFilter").value;
-            const cards = document.querySelectorAll(".risk-card");
-            let visibleCount = 0;
-
-            cards.forEach((card) => {
-                const cardSeverity = card.getAttribute("data-severity");
-                const cardCategory = card.getAttribute("data-category");
-
-                const severityMatch = severity === "all" || cardSeverity === severity;
-                const categoryMatch = category === "all" || cardCategory === category;
-
-                if (severityMatch && categoryMatch) {
-                    card.style.display = "block";
-                    visibleCount += 1;
-                } else {
-                    card.style.display = "none";
-                }
-            });
-
-            document.getElementById("emptyState").style.display = visibleCount === 0 ? "block" : "none";
-        }
-
-        function resetFilters() {
-            document.getElementById("severityFilter").value = "all";
-            document.getElementById("categoryFilter").value = "all";
-            applyFilters();
-        }
-
-        document.getElementById("severityFilter").addEventListener("change", applyFilters);
-        document.getElementById("categoryFilter").addEventListener("change", applyFilters);
-    </script>
-</body>
-</html>
-        """,
-        board_name=filename,
-        score=analysis_result.get("score", 0),
-        total_risks=risk_summary.get("total_risks", 0),
-        by_severity=by_severity,
-        by_category=by_category,
-        score_explanation_html=score_explanation_html,
-        risk_list_html=risk_list_html,
-        run_id=run_id,
-        severity_options=severity_options,
-        category_options=category_options,
-    )
+        service_result = analyze_single_board(
+            uploaded_file=request.files.get("single_file"),
+            upload_folder=UPLOAD_FOLDER,
+            runs_folder=RUNS_FOLDER,
+            config_path=CONFIG_PATH
+        )
+        return render_dashboard(
+            config=service_result["config_view"],
+            result=service_result["result"]
+        )
+    except ValueError as error:
+        flash(str(error))
+        return redirect(url_for("index"))
+    except Exception as error:
+        flash(f"Analysis failed: {error}")
+        return redirect(url_for("index"))
 
 
-@app.route("/project", methods=["POST"])
+@app.route("/analyze_project", methods=["POST"])
 def analyze_project():
-    uploaded_files = request.files.getlist("board_files")
-
-    if not uploaded_files:
-        return redirect(url_for("home"))
-
-    valid_files = [file for file in uploaded_files if file and file.filename.strip()]
-    if not valid_files:
-        return redirect(url_for("home"))
-
-    config = get_active_config()
-
-    temp_dir = os.path.join(UPLOAD_DIR, f"project_{timestamp_string()}")
-    os.makedirs(temp_dir, exist_ok=True)
-
-    board_results = []
-
     try:
-        for uploaded_file in valid_files:
-            filename = secure_filename(uploaded_file.filename)
-            file_path = os.path.join(temp_dir, filename)
-            uploaded_file.save(file_path)
+        service_result = analyze_project_files(
+            uploaded_files=request.files.getlist("project_files"),
+            upload_folder=UPLOAD_FOLDER,
+            runs_folder=RUNS_FOLDER,
+            config_path=CONFIG_PATH
+        )
+        return render_dashboard(
+            config=service_result["config_view"],
+            project_result=service_result["project_result"]
+        )
+    except ValueError as error:
+        flash(str(error))
+        return redirect(url_for("index"))
+    except Exception as error:
+        flash(f"Project analysis failed: {error}")
+        return redirect(url_for("index"))
 
-            pcb = parse_uploaded_board(file_path)
-            analysis_result = run_analysis(pcb, config, debug=False)
 
-            board_results.append({
-                "board_name": filename,
-                "score": analysis_result.get("score", 0),
-                "risks": analysis_result.get("risks", []),
-                "risk_summary": analysis_result.get("risk_summary", {}),
-                "score_explanation": analysis_result.get("score_explanation", {}),
-            })
-
-        board_results.sort(key=lambda item: item["score"], reverse=True)
-
-        for index, board in enumerate(board_results, start=1):
-            board["rank"] = index
-            board["badge"] = "Best Board" if index == 1 else ("Worst Board" if index == len(board_results) else "")
-
-        run_id, _ = create_project_run(board_results)
-
-    except Exception as exc:
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        return f"<h2>Project analysis failed</h2><p>{exc}</p>", 500
-
-    shutil.rmtree(temp_dir, ignore_errors=True)
-
-    all_categories = sorted({
-        str(risk.get("category", "uncategorized"))
-        for board in board_results
-        for risk in board.get("risks", [])
-    })
-
-    all_severities = sorted({
-        str(risk.get("severity", "low")).lower()
-        for board in board_results
-        for risk in board.get("risks", [])
-    })
-
-    return render_template_string(
-        """
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Silicore Project Results</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: linear-gradient(180deg, #edf2f8 0%, #f7f9fc 100%);
-            color: #111827;
-        }
-        .container {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 32px;
-        }
-        .board-card, .summary-card, .score-box, .risk-card, .filter-card, .hero-card {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(8px);
-            padding: 22px;
-            border-radius: 18px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        .hero-card {
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
-        }
-        .badge {
-            display: inline-block;
-            color: white;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            margin-left: 8px;
-            font-weight: 700;
-        }
-        .badge-best {
-            background: #059669;
-        }
-        .badge-worst {
-            background: #dc2626;
-        }
-        .top-links {
-            margin-bottom: 20px;
-        }
-        .severity-low { border-left: 6px solid #10b981; }
-        .severity-medium { border-left: 6px solid #f59e0b; }
-        .severity-high { border-left: 6px solid #f97316; }
-        .severity-critical { border-left: 6px solid #ef4444; }
-        a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .rank {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 24px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        .mini-stat, .summary-card {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 14px;
-        }
-        .mini-label {
-            display: block;
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .mini-value {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .pill-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .pill {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .pill-severity {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-        .pill-category {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-        .risk-top-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            align-items: flex-start;
-        }
-        .risk-main h4 {
-            margin-top: 0;
-            margin-bottom: 6px;
-        }
-        .risk-meta {
-            color: #6b7280;
-            margin-top: 6px;
-        }
-        .board-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-        .filter-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 12px;
-            align-items: end;
-        }
-        .risk-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .subtle-chip {
-            font-size: 12px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-weight: 700;
-        }
-        .two-column-block {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-        select, button.filter-btn {
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
-            background: white;
-        }
-        button.filter-btn {
-            background: linear-gradient(135deg, #111827, #1f2937);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .empty-note {
-            color: #6b7280;
-            font-style: italic;
-            padding: 8px 0;
-        }
-        @media (max-width: 900px) {
-            .summary-grid, .stats-grid, .filter-row, .two-column-block, .risk-detail-grid {
-                grid-template-columns: 1fr;
-            }
-            .board-header, .risk-top-row {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-links">
-            <a href="/">← Back to Dashboard</a>
-        </div>
-
-        <div class="hero-card">
-            <div class="section-header">
-                <div>
-                    <h1 style="margin: 0;">Project Results</h1>
-                    <p style="margin-top: 8px; color: #6b7280;">
-                        <strong>Board Count:</strong> {{ board_count }}
-                    </p>
-                </div>
-                <span class="subtle-chip">Ranking: 1 = Best</span>
-            </div>
-            <p>
-                <a href="/download/{{ run_id }}/json">Download JSON</a> |
-                <a href="/download/{{ run_id }}/markdown">Download Markdown</a> |
-                <a href="/download/{{ run_id }}/html">Download HTML</a>
-            </p>
-        </div>
-
-        <div class="summary-grid">
-            <div class="summary-card">
-                <span class="mini-label">Best Board</span>
-                <span class="mini-value">{{ board_results[0].board_name if board_results else "N/A" }}</span>
-            </div>
-            <div class="summary-card">
-                <span class="mini-label">Worst Board</span>
-                <span class="mini-value">{{ board_results[-1].board_name if board_results else "N/A" }}</span>
-            </div>
-            <div class="summary-card">
-                <span class="mini-label">Highest Score</span>
-                <span class="mini-value">{{ board_results[0].score if board_results else "N/A" }}</span>
-            </div>
-            <div class="summary-card">
-                <span class="mini-label">Lowest Score</span>
-                <span class="mini-value">{{ board_results[-1].score if board_results else "N/A" }}</span>
-            </div>
-        </div>
-
-        <div class="filter-card">
-            <div class="section-header">
-                <h3 style="margin: 0;">Filter Project Findings</h3>
-                <span class="subtle-chip">Interactive View</span>
-            </div>
-            <div class="filter-row">
-                <div>
-                    <label for="severityFilter"><strong>Severity</strong></label><br>
-                    <select id="severityFilter">
-                        <option value="all">All severities</option>
-                        {% for value in all_severities %}
-                            <option value="{{ value }}">{{ value.title() }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label for="categoryFilter"><strong>Category</strong></label><br>
-                    <select id="categoryFilter">
-                        <option value="all">All categories</option>
-                        {% for value in all_categories %}
-                            <option value="{{ value }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <button class="filter-btn" type="button" onclick="resetFilters()">Reset Filters</button>
-                </div>
-            </div>
-        </div>
-
-        {% for board in board_results %}
-            <div class="board-card">
-                <div class="board-header">
-                    <div>
-                        <div class="rank">
-                            Rank {{ board.rank }} — {{ board.board_name }}
-                            {% if board.badge == "Best Board" %}
-                                <span class="badge badge-best">{{ board.badge }}</span>
-                            {% elif board.badge == "Worst Board" %}
-                                <span class="badge badge-worst">{{ board.badge }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <span class="subtle-chip">Score {{ board.score }}</span>
-                </div>
-
-                <div class="summary-grid">
-                    <div class="summary-card">
-                        <span class="mini-label">Board Score</span>
-                        <span class="mini-value">{{ board.score }}</span>
-                    </div>
-                    <div class="summary-card">
-                        <span class="mini-label">Total Risks</span>
-                        <span class="mini-value">{{ board.risk_summary.get('total_risks', 0) }}</span>
-                    </div>
-                    <div class="summary-card">
-                        <span class="mini-label">High + Critical</span>
-                        <span class="mini-value">
-                            {{ board.risk_summary.get('by_severity', {}).get('high', 0) + board.risk_summary.get('by_severity', {}).get('critical', 0) }}
-                        </span>
-                    </div>
-                    <div class="summary-card">
-                        <span class="mini-label">Categories</span>
-                        <span class="mini-value">{{ board.risk_summary.get('by_category', {})|length }}</span>
-                    </div>
-                </div>
-
-                <div class="summary-card">
-                    <div class="section-header">
-                        <h3 style="margin: 0;">Category Summary</h3>
-                        <span class="subtle-chip">Board Overview</span>
-                    </div>
-                    {% if board.risk_summary.get('by_category', {}) %}
-                        <div class="pill-group">
-                            {% for category, count in board.risk_summary.get('by_category', {}).items() %}
-                                <span class="pill pill-category">{{ category }}: {{ count }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p>No category risks found.</p>
-                    {% endif %}
-                </div>
-
-                {{ build_score_explanation_html(board.score_explanation)|safe }}
-
-                <div class="summary-card">
-                    <div class="section-header">
-                        <h3 style="margin: 0;">Detailed Findings</h3>
-                        <span class="subtle-chip">Engineering Detail</span>
-                    </div>
-                    <div class="board-risks">
-                        {% if board.risks %}
-                            {% for risk in board.risks %}
-                                <div class="risk-card severity-{{ risk.get('severity', 'low')|lower }}"
-                                     data-severity="{{ risk.get('severity', 'low')|lower }}"
-                                     data-category="{{ risk.get('category', 'uncategorized') }}">
-                                    <div class="risk-top-row">
-                                        <div class="risk-main">
-                                            <h4>{{ risk.get('severity', 'low')|upper }} — {{ risk.get('message', 'No message') }}</h4>
-                                            <p class="risk-meta"><strong>Rule ID:</strong> {{ risk.get('rule_id', 'UNKNOWN_RULE') }}</p>
-                                        </div>
-                                        <div class="pill-group">
-                                            <span class="pill pill-severity">{{ risk.get('severity', 'low')|title }}</span>
-                                            <span class="pill pill-category">{{ risk.get('category', 'uncategorized') }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="risk-detail-grid">
-                                        <p><strong>Components:</strong> {{ ", ".join(risk.get('components', [])) if risk.get('components') else "None" }}</p>
-                                        <p><strong>Nets:</strong> {{ ", ".join(risk.get('nets', [])) if risk.get('nets') else "None" }}</p>
-                                    </div>
-                                    <p><strong>Metrics:</strong> {{ risk.get('metrics', {}) }}</p>
-                                    <p><strong>Recommendation:</strong> {{ risk.get('recommendation', 'No recommendation provided') }}</p>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <p>No risks found.</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-
-        <p id="emptyState" class="empty-note" style="display:none;">No findings match the selected filters.</p>
-    </div>
-
-    <script>
-        function applyFilters() {
-            const severity = document.getElementById("severityFilter").value;
-            const category = document.getElementById("categoryFilter").value;
-            const cards = document.querySelectorAll(".risk-card");
-            let visibleCount = 0;
-
-            cards.forEach((card) => {
-                const cardSeverity = card.getAttribute("data-severity");
-                const cardCategory = card.getAttribute("data-category");
-
-                const severityMatch = severity === "all" || cardSeverity === severity;
-                const categoryMatch = category === "all" || cardCategory === category;
-
-                if (severityMatch && categoryMatch) {
-                    card.style.display = "block";
-                    visibleCount += 1;
-                } else {
-                    card.style.display = "none";
-                }
-            });
-
-            document.getElementById("emptyState").style.display = visibleCount === 0 ? "block" : "none";
-        }
-
-        function resetFilters() {
-            document.getElementById("severityFilter").value = "all";
-            document.getElementById("categoryFilter").value = "all";
-            applyFilters();
-        }
-
-        document.getElementById("severityFilter").addEventListener("change", applyFilters);
-        document.getElementById("categoryFilter").addEventListener("change", applyFilters);
-    </script>
-</body>
-</html>
-        """,
-        board_results=board_results,
-        board_count=len(board_results),
-        run_id=run_id,
-        build_score_explanation_html=build_score_explanation_html,
-        all_categories=all_categories,
-        all_severities=all_severities,
+@app.route("/download/<run_dir>/<filename>", methods=["GET"])
+def download_file(run_dir, filename):
+    return send_from_directory(
+        os.path.join(RUNS_FOLDER, run_dir),
+        filename,
+        as_attachment=True
     )
-
-
-@app.route("/download/<run_id>/<file_type>", methods=["GET"])
-def download_run_file(run_id, file_type):
-    run_dir = os.path.join(RUNS_DIR, run_id)
-    meta_path = os.path.join(run_dir, "run_meta.json")
-
-    if not os.path.exists(meta_path):
-        return "<h2>Run not found</h2>", 404
-
-    with open(meta_path, "r", encoding="utf-8") as file:
-        meta = json.load(file)
-
-    file_map = meta.get("files", {})
-    filename = file_map.get(file_type)
-
-    if not filename:
-        return "<h2>Requested file type not found</h2>", 404
-
-    target_path = os.path.join(run_dir, filename)
-
-    if not os.path.exists(target_path):
-        return "<h2>File missing</h2>", 404
-
-    return send_file(target_path, as_attachment=True)
 
 
 if __name__ == "__main__":

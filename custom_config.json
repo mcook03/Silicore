@@ -1,44 +1,67 @@
 {
+    "score": {
+        "start_score": 10.0,
+        "min_score": 0.0,
+        "max_score": 10.0,
+        "severity_penalties": {
+            "low": 0.5,
+            "medium": 1.0,
+            "high": 1.5,
+            "critical": 2.0
+        }
+    },
+    "layout": {
+        "min_component_spacing": 3.0,
+        "density_threshold": 6
+    },
+    "power": {
+        "required_power_nets": [
+            "VCC",
+            "VIN",
+            "VBAT",
+            "5V",
+            "3V3",
+            "VDD"
+        ],
+        "required_ground_nets": [
+            "GND",
+            "GROUND"
+        ]
+    },
+    "signal": {
+        "max_trace_length": 25.0,
+        "critical_nets": [
+            "CLK",
+            "SCL",
+            "SDA",
+            "MOSI",
+            "MISO",
+            "CS",
+            "SPI_CLK",
+            "I2C_SCL",
+            "I2C_SDA"
+        ]
+    },
+    "thermal": {
+        "hotspot_distance_threshold": 4.0
+    },
+    "emi": {
+        "require_ground_reference": true
+    },
     "rules": {
-        "spacing": {
-            "threshold": 4.0
-        },
-        "thermal": {
-            "threshold": 6.0,
-            "hot_keywords": [
-                "regulator",
-                "mosfet",
-                "driver",
-                "buck",
-                "boost",
-                "ldo"
-            ]
-        },
         "power_rail": {
-            "min_connections": 3,
-            "max_trace_length": 60.0,
-            "min_trace_width": 0.3,
-            "max_via_count": 4
-        },
-        "signal_path": {
-            "threshold": 30.0,
-            "critical_net_keywords": [
-                "CLK",
-                "CTRL",
-                "RESET",
-                "TX",
-                "RX",
-                "SCL",
-                "SDA"
+            "min_connections": 2,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "power_net_keywords": [
+                "VCC",
+                "VIN",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
             ]
-        },
-        "return_path": {
-            "min_ground_zones": 1,
-            "require_ground_net": true
-        },
-        "trace_quality": {
-            "max_signal_trace_length": 100.0,
-            "min_general_trace_width": 0.18
         }
     }
 }
