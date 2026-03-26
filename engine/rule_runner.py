@@ -2,43 +2,51 @@ import importlib
 import os
 
 
-def calculate_score(risks):
-    penalties = {
-        "low": 0.5,
-        "medium": 1.0,
-        "high": 1.5,
-        "critical": 2.0
-    }
+def calculate_score(risks, config=None):
+    score_config = (config or {}).get("score", {})
 
-    score = 10.0
+    penalties = score_config.get(
+        "severity_penalties",
+        {
+            "low": 0.5,
+            "medium": 1.0,
+            "high": 1.5,
+            "critical": 2.0,
+        },
+    )
+
+    start_score = float(score_config.get("start_score", 10.0))
+    min_score = float(score_config.get("min_score", 0.0))
+    max_score = float(score_config.get("max_score", 10.0))
+
     total_penalty = 0.0
 
     for risk in risks:
         severity = str(risk.get("severity", "low")).lower()
-        penalty = penalties.get(severity, 0.5)
-        total_penalty += penalty
+        total_penalty += float(penalties.get(severity, 0.5))
 
-    score -= total_penalty
-
-    if score < 0:
-        score = 0.0
+    score = start_score - total_penalty
+    score = max(min_score, min(max_score, score))
 
     return round(score, 2), round(total_penalty, 2)
 
 
 def run_analysis(pcb, config):
     risks = []
-
     rules_dir = os.path.join(os.path.dirname(__file__), "rules")
 
     print("\n========== SILICORE RULE DEBUG ==========")
     print(f"Rules directory: {rules_dir}")
     print(f"PCB component count: {len(getattr(pcb, 'components', []))}")
-    print(f"PCB net count: {len(getattr(pcb, 'nets', [])) if hasattr(pcb, 'nets') and pcb.nets else 0}")
-    print(f"Config keys: {list(config.keys()) if isinstance(config, dict) else 'CONFIG NOT DICT'}")
+    print(
+        f"PCB net count: {len(getattr(pcb, 'nets', {})) if hasattr(pcb, 'nets') and pcb.nets else 0}"
+    )
+    print(
+        f"Config keys: {list(config.keys()) if isinstance(config, dict) else 'CONFIG NOT DICT'}"
+    )
     print("=========================================\n")
 
-    for filename in os.listdir(rules_dir):
+    for filename in sorted(os.listdir(rules_dir)):
         if not filename.endswith(".py"):
             continue
         if filename == "__init__.py":
@@ -49,6 +57,7 @@ def run_analysis(pcb, config):
 
         try:
             module = importlib.import_module(module_name)
+            module = importlib.reload(module)
         except Exception as e:
             print(f"FAILED TO IMPORT {module_name}: {e}")
             continue
@@ -82,7 +91,7 @@ def run_analysis(pcb, config):
         except Exception as e:
             print(f"ERROR RUNNING {module_name}: {e}")
 
-    score, total_penalty = calculate_score(risks)
+    score, total_penalty = calculate_score(risks, config)
 
     print("\n============= FINAL DEBUG =============")
     print(f"Total risks found: {len(risks)}")
@@ -93,5 +102,5 @@ def run_analysis(pcb, config):
     return {
         "risks": risks,
         "score": score,
-        "total_penalty": total_penalty
+        "total_penalty": total_penalty,
     }

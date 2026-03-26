@@ -1,54 +1,30 @@
 {
-    "generated_at": "2026-03-26T10:49:13.141279",
+    "generated_at": "2026-03-26T15:57:58.490587",
     "summary": {
         "total_boards": 4,
-        "average_score": 7.75,
-        "best_score": 9.5,
-        "worst_score": 5.5,
+        "average_score": 6.75,
+        "best_score": 10.0,
+        "worst_score": 2.5,
         "severity_counts": {
-            "low": 4,
-            "high": 4,
-            "medium": 1
+            "medium": 4,
+            "high": 6
         },
         "category_counts": {
-            "debug": 4,
-            "power_integrity": 5
+            "power_integrity": 9,
+            "manufacturing": 1
         }
     },
     "boards": [
         {
             "filename": "power_board_good.kicad_pcb",
-            "score": 9.5,
-            "risks": [
-                {
-                    "rule_id": "debug_rule",
-                    "category": "debug",
-                    "severity": "low",
-                    "message": "Debug rule fired successfully",
-                    "recommendation": "Remove this rule after testing",
-                    "components": [],
-                    "nets": [],
-                    "region": null,
-                    "metrics": {}
-                }
-            ],
+            "score": 10.0,
+            "risks": [],
             "score_explanation": {
                 "start_score": 10.0,
-                "total_penalty": 0.5,
-                "severity_totals": {
-                    "low": 0.5
-                },
-                "category_totals": {
-                    "debug": 0.5
-                },
-                "details": [
-                    {
-                        "severity": "low",
-                        "category": "debug",
-                        "penalty": 0.5,
-                        "message": "Debug rule fired successfully"
-                    }
-                ]
+                "total_penalty": 0.0,
+                "severity_totals": {},
+                "category_totals": {},
+                "details": []
             },
             "board_summary": {
                 "filename": "power_board_good.kicad_pcb",
@@ -59,10 +35,8 @@
                     "U2",
                     "C1"
                 ],
-                "risk_count": 1,
-                "severity_counts": {
-                    "low": 1
-                }
+                "risk_count": 0,
+                "severity_counts": {}
             },
             "json_path": null,
             "report_md_path": null,
@@ -71,37 +45,14 @@
         },
         {
             "filename": "revision_new.kicad_pcb",
-            "score": 9.5,
-            "risks": [
-                {
-                    "rule_id": "debug_rule",
-                    "category": "debug",
-                    "severity": "low",
-                    "message": "Debug rule fired successfully",
-                    "recommendation": "Remove this rule after testing",
-                    "components": [],
-                    "nets": [],
-                    "region": null,
-                    "metrics": {}
-                }
-            ],
+            "score": 10.0,
+            "risks": [],
             "score_explanation": {
                 "start_score": 10.0,
-                "total_penalty": 0.5,
-                "severity_totals": {
-                    "low": 0.5
-                },
-                "category_totals": {
-                    "debug": 0.5
-                },
-                "details": [
-                    {
-                        "severity": "low",
-                        "category": "debug",
-                        "penalty": 0.5,
-                        "message": "Debug rule fired successfully"
-                    }
-                ]
+                "total_penalty": 0.0,
+                "severity_totals": {},
+                "category_totals": {},
+                "details": []
             },
             "board_summary": {
                 "filename": "revision_new.kicad_pcb",
@@ -112,10 +63,8 @@
                     "U2",
                     "C1"
                 ],
-                "risk_count": 1,
-                "severity_counts": {
-                    "low": 1
-                }
+                "risk_count": 0,
+                "severity_counts": {}
             },
             "json_path": null,
             "report_md_path": null,
@@ -124,8 +73,41 @@
         },
         {
             "filename": "revision_old.kicad_pcb",
-            "score": 6.5,
+            "score": 4.5,
             "risks": [
+                {
+                    "rule_id": "decoupling",
+                    "category": "power_integrity",
+                    "severity": "medium",
+                    "message": "U2 (mcu) has no nearby decoupling capacitor",
+                    "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "nearest_cap_distance": null,
+                        "threshold": 4.0
+                    }
+                },
+                {
+                    "rule_id": "power_distribution",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 may have poor power delivery because nearest regulator U1 is 70.00 units away",
+                    "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+                    "components": [
+                        "U2",
+                        "U1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 70.0,
+                        "threshold": 20.0
+                    }
+                },
                 {
                     "rule_id": "power_rail",
                     "category": "power_integrity",
@@ -157,31 +139,31 @@
                         "min_trace_width": 0.15,
                         "required_min_trace_width": 0.5
                     }
-                },
-                {
-                    "rule_id": "debug_rule",
-                    "category": "debug",
-                    "severity": "low",
-                    "message": "Debug rule fired successfully",
-                    "recommendation": "Remove this rule after testing",
-                    "components": [],
-                    "nets": [],
-                    "region": null,
-                    "metrics": {}
                 }
             ],
             "score_explanation": {
                 "start_score": 10.0,
-                "total_penalty": 3.5,
+                "total_penalty": 5.5,
                 "severity_totals": {
-                    "high": 3.0,
-                    "low": 0.5
+                    "medium": 1.0,
+                    "high": 4.5
                 },
                 "category_totals": {
-                    "power_integrity": 3.0,
-                    "debug": 0.5
+                    "power_integrity": 5.5
                 },
                 "details": [
+                    {
+                        "severity": "medium",
+                        "category": "power_integrity",
+                        "penalty": 1.0,
+                        "message": "U2 (mcu) has no nearby decoupling capacitor"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "penalty": 1.5,
+                        "message": "U2 may have poor power delivery because nearest regulator U1 is 70.00 units away"
+                    },
                     {
                         "severity": "high",
                         "category": "power_integrity",
@@ -193,12 +175,6 @@
                         "category": "power_integrity",
                         "penalty": 1.5,
                         "message": "Power net VIN uses a narrow trace width (0.15)"
-                    },
-                    {
-                        "severity": "low",
-                        "category": "debug",
-                        "penalty": 0.5,
-                        "message": "Debug rule fired successfully"
                     }
                 ]
             },
@@ -210,10 +186,10 @@
                     "U1",
                     "U2"
                 ],
-                "risk_count": 3,
+                "risk_count": 4,
                 "severity_counts": {
-                    "high": 2,
-                    "low": 1
+                    "medium": 1,
+                    "high": 3
                 }
             },
             "json_path": null,
@@ -223,8 +199,41 @@
         },
         {
             "filename": "power_board_bad.kicad_pcb",
-            "score": 5.5,
+            "score": 2.5,
             "risks": [
+                {
+                    "rule_id": "decoupling",
+                    "category": "power_integrity",
+                    "severity": "medium",
+                    "message": "U2 (mcu) has no nearby decoupling capacitor",
+                    "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "nearest_cap_distance": null,
+                        "threshold": 4.0
+                    }
+                },
+                {
+                    "rule_id": "power_distribution",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+                    "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+                    "components": [
+                        "U2",
+                        "U1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 85.0,
+                        "threshold": 20.0
+                    }
+                },
                 {
                     "rule_id": "power_rail",
                     "category": "power_integrity",
@@ -274,30 +283,46 @@
                     }
                 },
                 {
-                    "rule_id": "debug_rule",
-                    "category": "debug",
-                    "severity": "low",
-                    "message": "Debug rule fired successfully",
-                    "recommendation": "Remove this rule after testing",
+                    "rule_id": "trace_quality",
+                    "category": "manufacturing",
+                    "severity": "medium",
+                    "message": "Net CTRL contains a very narrow trace (0.10)",
+                    "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
                     "components": [],
-                    "nets": [],
+                    "nets": [
+                        "CTRL"
+                    ],
                     "region": null,
-                    "metrics": {}
+                    "metrics": {
+                        "min_trace_width": 0.1,
+                        "threshold": 0.15
+                    }
                 }
             ],
             "score_explanation": {
                 "start_score": 10.0,
-                "total_penalty": 4.5,
+                "total_penalty": 7.5,
                 "severity_totals": {
-                    "high": 3.0,
-                    "medium": 1.0,
-                    "low": 0.5
+                    "medium": 3.0,
+                    "high": 4.5
                 },
                 "category_totals": {
-                    "power_integrity": 4.0,
-                    "debug": 0.5
+                    "power_integrity": 6.5,
+                    "manufacturing": 1.0
                 },
                 "details": [
+                    {
+                        "severity": "medium",
+                        "category": "power_integrity",
+                        "penalty": 1.0,
+                        "message": "U2 (mcu) has no nearby decoupling capacitor"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "penalty": 1.5,
+                        "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away"
+                    },
                     {
                         "severity": "high",
                         "category": "power_integrity",
@@ -317,10 +342,10 @@
                         "message": "Power net VIN uses many vias (7) which may increase impedance"
                     },
                     {
-                        "severity": "low",
-                        "category": "debug",
-                        "penalty": 0.5,
-                        "message": "Debug rule fired successfully"
+                        "severity": "medium",
+                        "category": "manufacturing",
+                        "penalty": 1.0,
+                        "message": "Net CTRL contains a very narrow trace (0.10)"
                     }
                 ]
             },
@@ -332,11 +357,10 @@
                     "U1",
                     "U2"
                 ],
-                "risk_count": 4,
+                "risk_count": 6,
                 "severity_counts": {
-                    "high": 2,
-                    "medium": 1,
-                    "low": 1
+                    "medium": 3,
+                    "high": 3
                 }
             },
             "json_path": null,

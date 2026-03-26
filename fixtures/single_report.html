@@ -1,0 +1,94 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 32px;
+                background: #f8fafc;
+                color: #0f172a;
+            }
+            .card {
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .risk {
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid #e2e8f0;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Silicore Engineering Report</h1>
+
+        <div class="card">
+            <p><strong>File:</strong> revision_old.kicad_pcb</p>
+            <p><strong>Score:</strong> 4.5 / 10</p>
+            <p><strong>Total Risks:</strong> 4</p>
+            <p><strong>Total Penalty:</strong> 5.5</p>
+
+            <h3>Board Summary</h3>
+            
+        <p><strong>Component Count:</strong> 2</p>
+        <p><strong>Net Count:</strong> 2</p>
+        <p><strong>Risk Count:</strong> 4</p>
+        <p><strong>Sample Components:</strong> U1, U2</p>
+    
+
+            <h3>Severity Penalties</h3>
+            <ul><li>medium: 1.0</li><li>high: 4.5</li></ul>
+
+            <h3>Category Penalties</h3>
+            <ul><li>power_integrity: 5.5</li></ul>
+        </div>
+
+        <div class="card">
+            <h2>Detailed Findings</h2>
+            
+            <div class="risk">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 (mcu) has no nearby decoupling capacitor</p>
+                <p><strong>Recommendation:</strong> Place a decoupling capacitor close to the device power pin and on the relevant supply net.</p>
+                <p><strong>Components:</strong> U2</p>
+                
+            </div>
+            
+            <div class="risk">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 may have poor power delivery because nearest regulator U1 is 70.00 units away</p>
+                <p><strong>Recommendation:</strong> Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.</p>
+                <p><strong>Components:</strong> U2, U1</p>
+                
+            </div>
+            
+            <div class="risk">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Power net VIN has excessive routed length (70.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.</p>
+                
+                <p><strong>Nets:</strong> VIN</p>
+            </div>
+            
+            <div class="risk">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Power net VIN uses a narrow trace width (0.15)</p>
+                <p><strong>Recommendation:</strong> Increase power trace width to reduce resistance, heating, and voltage drop.</p>
+                
+                <p><strong>Nets:</strong> VIN</p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
+    

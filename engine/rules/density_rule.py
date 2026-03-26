@@ -1,12 +1,18 @@
 from collections import defaultdict
-
 from engine.risk import make_risk
 
 
 def run_rule(pcb, config):
     risks = []
-    region_size = config["rules"]["density"]["region_size"]
-    component_threshold = config["rules"]["density"]["component_threshold"]
+    rule_config = config.get("rules", {}).get("density", {})
+
+    region_size = float(rule_config.get("region_size", 25.0))
+    component_threshold = int(
+        rule_config.get(
+            "component_threshold",
+            config.get("layout", {}).get("density_threshold", 6),
+        )
+    )
 
     grid = defaultdict(list)
 
@@ -19,6 +25,7 @@ def run_rule(pcb, config):
     for region, comps in grid.items():
         if len(comps) > component_threshold:
             refs = [c.ref for c in comps]
+
             risks.append(
                 make_risk(
                     rule_id="density",

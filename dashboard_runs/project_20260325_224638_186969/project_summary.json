@@ -1,0 +1,359 @@
+{
+    "generated_at": "2026-03-25T22:46:38.192749",
+    "summary": {
+        "total_boards": 4,
+        "average_score": 6.0,
+        "best_score": 6.0,
+        "worst_score": 6.0,
+        "severity_counts": {
+            "critical": 8
+        },
+        "category_counts": {
+            "emi_return_path": 8
+        }
+    },
+    "boards": [
+        {
+            "filename": "power_board_bad.kicad_pcb",
+            "score": 6.0,
+            "risks": [
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 4.0,
+                "severity_totals": {
+                    "critical": 4.0
+                },
+                "category_totals": {
+                    "emi_return_path": 4.0
+                },
+                "details": [
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U1"
+                    },
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U2"
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "power_board_bad.kicad_pcb",
+                "component_count": 2,
+                "net_count": 3,
+                "sample_components": [
+                    "U1",
+                    "U2"
+                ],
+                "risk_count": 2,
+                "severity_counts": {
+                    "critical": 2
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 1
+        },
+        {
+            "filename": "power_board_good.kicad_pcb",
+            "score": 6.0,
+            "risks": [
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 4.0,
+                "severity_totals": {
+                    "critical": 4.0
+                },
+                "category_totals": {
+                    "emi_return_path": 4.0
+                },
+                "details": [
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U1"
+                    },
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U2"
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "power_board_good.kicad_pcb",
+                "component_count": 3,
+                "net_count": 3,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "C1"
+                ],
+                "risk_count": 2,
+                "severity_counts": {
+                    "critical": 2
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 2
+        },
+        {
+            "filename": "revision_new.kicad_pcb",
+            "score": 6.0,
+            "risks": [
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 4.0,
+                "severity_totals": {
+                    "critical": 4.0
+                },
+                "category_totals": {
+                    "emi_return_path": 4.0
+                },
+                "details": [
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U1"
+                    },
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U2"
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "revision_new.kicad_pcb",
+                "component_count": 3,
+                "net_count": 2,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "C1"
+                ],
+                "risk_count": 2,
+                "severity_counts": {
+                    "critical": 2
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 3
+        },
+        {
+            "filename": "revision_old.kicad_pcb",
+            "score": 6.0,
+            "risks": [
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking return path context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "GND"
+                        ]
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 4.0,
+                "severity_totals": {
+                    "critical": 4.0
+                },
+                "category_totals": {
+                    "emi_return_path": 4.0
+                },
+                "details": [
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U1"
+                    },
+                    {
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "penalty": 2.0,
+                        "message": "No ground net was found while checking return path context for U2"
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "revision_old.kicad_pcb",
+                "component_count": 2,
+                "net_count": 2,
+                "sample_components": [
+                    "U1",
+                    "U2"
+                ],
+                "risk_count": 2,
+                "severity_counts": {
+                    "critical": 2
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 4
+        }
+    ]
+}

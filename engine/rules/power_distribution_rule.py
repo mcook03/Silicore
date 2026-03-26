@@ -1,5 +1,4 @@
 from math import sqrt
-
 from engine.risk import make_risk
 
 
@@ -7,13 +6,17 @@ def distance(c1, c2):
     return sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
 
 
+def component_text(component):
+    return f"{component.ref} {component.type} {component.value}".lower()
+
+
 def is_regulator(component, keywords):
-    text = f"{component.ref} {component.type} {component.value}".lower()
+    text = component_text(component)
     return any(keyword.lower() in text for keyword in keywords)
 
 
 def is_load(component, keywords):
-    text = f"{component.ref} {component.type} {component.value}".lower()
+    text = component_text(component)
     return any(keyword.lower() in text for keyword in keywords)
 
 
@@ -25,11 +28,17 @@ def shared_nets(component_a, component_b):
 
 def run_rule(pcb, config):
     risks = []
-    rule_config = config["rules"]["power_distribution"]
+    rule_config = config.get("rules", {}).get("power_distribution", {})
 
-    threshold = rule_config["threshold"]
-    regulator_keywords = rule_config["regulator_keywords"]
-    load_keywords = rule_config["load_keywords"]
+    threshold = float(rule_config.get("threshold", 20.0))
+    regulator_keywords = rule_config.get(
+        "regulator_keywords",
+        ["regulator", "ldo", "buck", "boost", "pmic", "vrm"]
+    )
+    load_keywords = rule_config.get(
+        "load_keywords",
+        ["mcu", "cpu", "fpga", "driver", "sensor", "ic", "controller", "amp"]
+    )
 
     regulators = [c for c in pcb.components if is_regulator(c, regulator_keywords)]
     loads = [c for c in pcb.components if is_load(c, load_keywords)]

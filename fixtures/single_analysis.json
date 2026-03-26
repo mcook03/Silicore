@@ -1,0 +1,122 @@
+{
+    "filename": "revision_old.kicad_pcb",
+    "score": 4.5,
+    "risks": [
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U2 (mcu) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 4.0
+            }
+        },
+        {
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U2 may have poor power delivery because nearest regulator U1 is 70.00 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U2",
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 70.0,
+                "threshold": 20.0
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN has excessive routed length (70.00 units)",
+            "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 70.0,
+                "max_trace_length": 50.0
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN uses a narrow trace width (0.15)",
+            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.15,
+                "required_min_trace_width": 0.5
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 10.0,
+        "total_penalty": 5.5,
+        "severity_totals": {
+            "medium": 1.0,
+            "high": 4.5
+        },
+        "category_totals": {
+            "power_integrity": 5.5
+        },
+        "details": [
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 1.0,
+                "message": "U2 (mcu) has no nearby decoupling capacitor"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 1.5,
+                "message": "U2 may have poor power delivery because nearest regulator U1 is 70.00 units away"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 1.5,
+                "message": "Power net VIN has excessive routed length (70.00 units)"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 1.5,
+                "message": "Power net VIN uses a narrow trace width (0.15)"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "revision_old.kicad_pcb",
+        "component_count": 2,
+        "net_count": 2,
+        "sample_components": [
+            "U1",
+            "U2"
+        ],
+        "risk_count": 4,
+        "severity_counts": {
+            "medium": 1,
+            "high": 3
+        }
+    }
+}

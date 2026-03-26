@@ -1,8 +1,8 @@
 from math import sqrt
-
 from engine.risk import make_risk
 
-EXCLUDED_NETS = {"GND", "GROUND", "VCC", "VIN", "VBAT", "3V3", "5V", "12V"}
+
+EXCLUDED_NETS = {"GND", "GROUND", "VCC", "VIN", "VBAT", "3V3", "5V", "12V", "VDD"}
 
 
 def distance(c1, c2):
@@ -11,13 +11,19 @@ def distance(c1, c2):
 
 def run_rule(pcb, config):
     risks = []
-    threshold = config["rules"]["signal_path"]["threshold"]
+    rule_config = config.get("rules", {}).get("signal_path", {})
+    threshold = float(
+        rule_config.get(
+            "threshold",
+            config.get("signal", {}).get("max_trace_length", 25.0),
+        )
+    )
 
-    for net_name, net in pcb.nets.items():
-        if net_name.upper() in EXCLUDED_NETS:
+    for net_name, net in getattr(pcb, "nets", {}).items():
+        if str(net_name).upper() in EXCLUDED_NETS:
             continue
 
-        valid_connections = [conn for conn in net.connections if conn[0]]
+        valid_connections = [conn for conn in getattr(net, "connections", []) if conn and conn[0]]
         if len(valid_connections) < 2:
             continue
 

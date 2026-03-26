@@ -4,13 +4,16 @@ from engine.net_utils import is_excluded_net
 
 def run_rule(pcb, config):
     risks = []
-    rule_config = config["rules"]["trace_quality"]
+    rule_config = config.get("rules", {}).get("trace_quality", {})
 
-    max_signal_trace_length = rule_config["max_signal_trace_length"]
-    min_general_trace_width = rule_config["min_general_trace_width"]
-    excluded_net_keywords = rule_config["excluded_net_keywords"]
+    max_signal_trace_length = float(rule_config.get("max_signal_trace_length", 60.0))
+    min_general_trace_width = float(rule_config.get("min_general_trace_width", 0.15))
+    excluded_net_keywords = rule_config.get(
+        "excluded_net_keywords",
+        ["GND", "GROUND", "VCC", "VIN", "VBAT", "3V3", "5V", "12V", "VDD"],
+    )
 
-    for net_name, net in pcb.nets.items():
+    for net_name, net in getattr(pcb, "nets", {}).items():
         if is_excluded_net(net_name, excluded_net_keywords):
             continue
 

@@ -1,5 +1,4 @@
 from math import sqrt
-
 from engine.risk import make_risk
 
 
@@ -9,15 +8,20 @@ def distance(c1, c2):
 
 def run_rule(pcb, config):
     risks = []
-    threshold = config["rules"]["spacing"]["threshold"]
+    rule_config = config.get("rules", {}).get("spacing", {})
+    threshold = float(
+        rule_config.get(
+            "threshold",
+            config.get("layout", {}).get("min_component_spacing", 3.0),
+        )
+    )
 
-    components = pcb.components
+    components = getattr(pcb, "components", [])
 
     for i in range(len(components)):
         for j in range(i + 1, len(components)):
             c1 = components[i]
             c2 = components[j]
-
             d = distance(c1, c2)
 
             if d < threshold:

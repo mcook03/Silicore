@@ -1,5 +1,4 @@
 from math import sqrt
-
 from engine.risk import make_risk
 
 
@@ -7,17 +6,27 @@ def distance(c1, c2):
     return sqrt((c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2)
 
 
-def is_hot_component(component, hot_keywords):
+def is_hot_component(component, keywords):
     text = f"{component.ref} {component.type} {component.value}".lower()
-    return any(keyword.lower() in text for keyword in hot_keywords)
+    return any(keyword.lower() in text for keyword in keywords)
 
 
 def run_rule(pcb, config):
     risks = []
-    rule_config = config["rules"]["thermal"]
+    rule_config = config.get("rules", {}).get("thermal", {})
+    thermal_config = config.get("thermal", {})
 
-    threshold = rule_config["threshold"]
-    hot_keywords = rule_config["hot_keywords"]
+    threshold = float(
+        rule_config.get(
+            "threshold",
+            thermal_config.get("hotspot_distance_threshold", 4.0),
+        )
+    )
+
+    hot_keywords = rule_config.get(
+        "hot_component_keywords",
+        ["U", "Q", "VRM", "REG", "LDO", "BUCK", "BOOST", "MOSFET", "DRV", "AMP", "CPU", "FPGA", "POWER"],
+    )
 
     hot_components = [c for c in pcb.components if is_hot_component(c, hot_keywords)]
 
@@ -25,10 +34,6 @@ def run_rule(pcb, config):
         for j in range(i + 1, len(hot_components)):
             c1 = hot_components[i]
             c2 = hot_components[j]
-
-            if c1.layer and c2.layer and c1.layer != c2.layer:
-                continue
-
             d = distance(c1, c2)
 
             if d < threshold:
@@ -36,19 +41,18 @@ def run_rule(pcb, config):
                     make_risk(
                         rule_id="thermal",
                         category="thermal",
-                        severity="high",
-                        message=f"{c1.ref} and {c2.ref} may create a thermal hotspot ({d:.2f} units)",
-                        recommendation="Increase spacing, improve copper area, or add thermal relief to reduce localized heating.",
+                        severity="medium",
+                        message=f"{c1.ref} and {c2.ref} may create a thermal hotspot ({d:.2f} units apart)",
+                        recommendation="Increase spacing, improve copper spreading, or review local thermal management around these components.",
                         components=[c1.ref, c2.ref],
                         metrics={
                             "distance": round(d, 2),
                             "threshold": threshold,
-                            "same_layer": c1.layer == c2.layer,
                         },
-                        confidence=0.85,
-                        short_title="Potential thermal hotspot",
-                        fix_priority="high",
-                        estimated_impact="high",
+                        confidence=0.8,
+                        short_title="Possible thermal hotspot",
+                        fix_priority="medium",
+                        estimated_impact="moderate",
                         design_domain="thermal",
                     )
                 )

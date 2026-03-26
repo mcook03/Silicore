@@ -1,0 +1,123 @@
+{
+    "generated_at": "2026-03-26T10:13:47.703194",
+    "summary": {
+        "total_boards": 4,
+        "average_score": 10.0,
+        "best_score": 10.0,
+        "worst_score": 10.0,
+        "severity_counts": {},
+        "category_counts": {}
+    },
+    "boards": [
+        {
+            "filename": "power_board_good.kicad_pcb",
+            "score": 10.0,
+            "risks": [],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 0.0,
+                "severity_totals": {},
+                "category_totals": {},
+                "details": []
+            },
+            "board_summary": {
+                "filename": "power_board_good.kicad_pcb",
+                "component_count": 3,
+                "net_count": 3,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "C1"
+                ],
+                "risk_count": 0,
+                "severity_counts": {}
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 1
+        },
+        {
+            "filename": "revision_new.kicad_pcb",
+            "score": 10.0,
+            "risks": [],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 0.0,
+                "severity_totals": {},
+                "category_totals": {},
+                "details": []
+            },
+            "board_summary": {
+                "filename": "revision_new.kicad_pcb",
+                "component_count": 3,
+                "net_count": 2,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "C1"
+                ],
+                "risk_count": 0,
+                "severity_counts": {}
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 2
+        },
+        {
+            "filename": "revision_old.kicad_pcb",
+            "score": 10.0,
+            "risks": [],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 0.0,
+                "severity_totals": {},
+                "category_totals": {},
+                "details": []
+            },
+            "board_summary": {
+                "filename": "revision_old.kicad_pcb",
+                "component_count": 2,
+                "net_count": 2,
+                "sample_components": [
+                    "U1",
+                    "U2"
+                ],
+                "risk_count": 0,
+                "severity_counts": {}
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 3
+        },
+        {
+            "filename": "power_board_bad.kicad_pcb",
+            "score": 10.0,
+            "risks": [],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 0.0,
+                "severity_totals": {},
+                "category_totals": {},
+                "details": []
+            },
+            "board_summary": {
+                "filename": "power_board_bad.kicad_pcb",
+                "component_count": 2,
+                "net_count": 3,
+                "sample_components": [
+                    "U1",
+                    "U2"
+                ],
+                "risk_count": 0,
+                "severity_counts": {}
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 4
+        }
+    ]
+}
