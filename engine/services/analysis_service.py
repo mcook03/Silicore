@@ -50,7 +50,7 @@ def get_dashboard_config(config_path):
 def _optional_function(module_name, function_names):
     try:
         module = importlib.import_module(module_name)
-    except ImportError:
+    except Exception:
         return None
 
     for name in function_names:
@@ -79,9 +79,68 @@ def _call_with_supported_args(func, **kwargs):
     return func()
 
 
+def _safe_explain_risk(risk):
+    explain_func = _optional_function(
+        "engine.explainability_engine",
+        ["explain_risk"]
+    )
+
+    if explain_func is None:
+        return {
+            "root_cause": "General design issue",
+            "impact": "Unknown system impact",
+            "confidence": risk.get("confidence", 0.5),
+        }
+
+    try:
+        explanation = explain_func(risk)
+        if isinstance(explanation, dict):
+            return {
+                "root_cause": explanation.get("root_cause", "General design issue"),
+                "impact": explanation.get("impact", "Unknown system impact"),
+                "confidence": explanation.get("confidence", risk.get("confidence", 0.5)),
+            }
+    except Exception:
+        pass
+
+    return {
+        "root_cause": "General design issue",
+        "impact": "Unknown system impact",
+        "confidence": risk.get("confidence", 0.5),
+    }
+
+
+def _safe_suggest_fix(risk):
+    fix_func = _optional_function(
+        "engine.fix_engine",
+        ["suggest_fix"]
+    )
+
+    if fix_func is None:
+        return {
+            "fix": risk.get("recommendation", "Manual review required"),
+            "priority": risk.get("fix_priority", "medium"),
+        }
+
+    try:
+        suggestion = fix_func(risk)
+        if isinstance(suggestion, dict):
+            return {
+                "fix": suggestion.get("fix", risk.get("recommendation", "Manual review required")),
+                "priority": suggestion.get("priority", risk.get("fix_priority", "medium")),
+            }
+    except Exception:
+        pass
+
+    return {
+        "fix": risk.get("recommendation", "Manual review required"),
+        "priority": risk.get("fix_priority", "medium"),
+    }
+
+
 def _normalize_risk(risk):
     if not isinstance(risk, dict):
-        return {
+        normalized = {
             "rule_id": None,
             "category": "unknown",
             "severity": "low",
@@ -90,10 +149,13 @@ def _normalize_risk(risk):
             "components": [],
             "nets": [],
             "region": None,
-            "metrics": {}
+            "metrics": {},
         }
+        normalized["explanation"] = _safe_explain_risk(normalized)
+        normalized["fix_suggestion"] = _safe_suggest_fix(normalized)
+        return normalized
 
-    return {
+    normalized = {
         "rule_id": risk.get("rule_id"),
         "category": risk.get("category", "unknown"),
         "severity": risk.get("severity", "low"),
@@ -102,8 +164,27 @@ def _normalize_risk(risk):
         "components": risk.get("components", []),
         "nets": risk.get("nets", []),
         "region": risk.get("region"),
-        "metrics": risk.get("metrics", {})
+        "metrics": risk.get("metrics", {}),
     }
+
+    if isinstance(risk.get("explanation"), dict):
+        normalized["explanation"] = {
+            "root_cause": risk["explanation"].get("root_cause", "General design issue"),
+            "impact": risk["explanation"].get("impact", "Unknown system impact"),
+            "confidence": risk["explanation"].get("confidence", risk.get("confidence", 0.5)),
+        }
+    else:
+        normalized["explanation"] = _safe_explain_risk(normalized)
+
+    if isinstance(risk.get("fix_suggestion"), dict):
+        normalized["fix_suggestion"] = {
+            "fix": risk["fix_suggestion"].get("fix", normalized["recommendation"]),
+            "priority": risk["fix_suggestion"].get("priority", risk.get("fix_priority", "medium")),
+        }
+    else:
+        normalized["fix_suggestion"] = _safe_suggest_fix(normalized)
+
+    return normalized
 
 
 def _severity_penalty_map(config):
@@ -144,7 +225,12 @@ def _compute_score_and_explanation(risks, config):
             "severity": severity,
             "category": category,
             "penalty": penalty,
-            "message": risk.get("message", "")
+            "message": risk.get("message", ""),
+            "root_cause": risk.get("explanation", {}).get("root_cause", ""),
+            "impact": risk.get("explanation", {}).get("impact", ""),
+            "confidence": risk.get("explanation", {}).get("confidence"),
+            "suggested_fix": risk.get("fix_suggestion", {}).get("fix", ""),
+            "fix_priority": risk.get("fix_suggestion", {}).get("priority", ""),
         })
 
     score = start_score - total_penalty
@@ -256,13 +342,15 @@ def _normalize_board(pcb):
     if not normalize_func:
         return pcb
 
-    normalized = _call_with_supported_args(
-        normalize_func,
-        pcb=pcb,
-        board=pcb
-    )
-
-    return normalized if normalized is not None else pcb
+    try:
+        normalized = _call_with_supported_args(
+            normalize_func,
+            pcb=pcb,
+            board=pcb
+        )
+        return normalized if normalized is not None else pcb
+    except Exception:
+        return pcb
 
 
 def _run_rule_engine(pcb, config):
@@ -293,218 +381,6 @@ def _run_rule_engine(pcb, config):
         return [_normalize_risk(risk) for risk in result], {}
 
     return [], {}
-
-
-def run_single_analysis_from_path(file_path, config=None, output_dir=None):
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Board file not found: {file_path}")
-
-    if config is None:
-        config = load_config("custom_config.json")
-
-    pcb = _load_board(file_path)
-    pcb = _normalize_board(pcb)
-
-    risks, _raw_engine_result = _run_rule_engine(pcb, config)
-
-    score, score_explanation = _compute_score_and_explanation(risks, config)
-    board_summary = _build_board_summary(pcb, risks, os.path.basename(file_path))
-
-    result = {
-        "filename": os.path.basename(file_path),
-        "score": score,
-        "risks": risks,
-        "score_explanation": score_explanation,
-        "board_summary": board_summary
-    }
-
-    if output_dir is not None:
-        os.makedirs(output_dir, exist_ok=True)
-
-        json_path = os.path.join(output_dir, "single_analysis.json")
-        md_path = os.path.join(output_dir, "single_report.md")
-        html_path = os.path.join(output_dir, "single_report.html")
-
-        _write_json(json_path, result)
-        _write_single_markdown(md_path, result)
-        _write_single_html(html_path, result)
-
-        result["json_path"] = json_path
-        result["report_md_path"] = md_path
-        result["report_html_path"] = html_path
-    else:
-        result["json_path"] = None
-        result["report_md_path"] = None
-        result["report_html_path"] = None
-
-    print(f"[Silicore Debug] {board_summary}")
-
-    return result
-
-
-def analyze_project_paths(file_paths, config=None, output_dir=None):
-    if config is None:
-        config = load_config("custom_config.json")
-
-    boards = []
-
-    for file_path in file_paths:
-        boards.append(run_single_analysis_from_path(file_path, config=config))
-
-    boards = sorted(boards, key=lambda board: board.get("score", 0), reverse=True)
-
-    for index, board in enumerate(boards, start=1):
-        board["rank"] = index
-
-    summary = _build_project_summary(boards)
-
-    project_data = {
-        "generated_at": datetime.now().isoformat(),
-        "summary": summary,
-        "boards": boards
-    }
-
-    summary_json_path = None
-    summary_md_path = None
-    summary_html_path = None
-
-    if output_dir is not None:
-        os.makedirs(output_dir, exist_ok=True)
-
-        summary_json_path = os.path.join(output_dir, "project_summary.json")
-        summary_md_path = os.path.join(output_dir, "project_summary.md")
-        summary_html_path = os.path.join(output_dir, "project_summary.html")
-
-        _write_json(summary_json_path, project_data)
-        _write_project_markdown(summary_md_path, project_data)
-        _write_project_html(summary_html_path, project_data)
-
-    return {
-        "boards": boards,
-        "summary": summary,
-        "summary_json_path": summary_json_path,
-        "summary_md_path": summary_md_path,
-        "summary_html_path": summary_html_path
-    }
-
-
-def analyze_project_directory(directory_path, config=None):
-    if not os.path.isdir(directory_path):
-        raise FileNotFoundError(f"Directory not found: {directory_path}")
-
-    file_paths = []
-
-    for name in sorted(os.listdir(directory_path)):
-        full_path = os.path.join(directory_path, name)
-
-        if not os.path.isfile(full_path):
-            continue
-
-        extension = os.path.splitext(name)[1].lower()
-        if extension in SUPPORTED_EXTENSIONS:
-            file_paths.append(full_path)
-
-    if not file_paths:
-        return {
-            "boards": [],
-            "summary": _build_project_summary([]),
-            "summary_json_path": None,
-            "summary_md_path": None,
-            "summary_html_path": None
-        }
-
-    output_dir = os.path.join(directory_path, "silicore_outputs")
-    os.makedirs(output_dir, exist_ok=True)
-
-    return analyze_project_paths(file_paths, config=config, output_dir=output_dir)
-
-
-def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path):
-    if not uploaded_file or uploaded_file.filename == "":
-        raise ValueError("Please upload a board file.")
-
-    ensure_runs_folder(runs_folder)
-    ensure_clean_upload_dir(upload_folder)
-
-    config = load_config(config_path)
-
-    filename = safe_filename(uploaded_file.filename)
-    file_path = os.path.join(upload_folder, filename)
-    uploaded_file.save(file_path)
-
-    run_dir_name, result_output_dir = create_run_directory("single", runs_folder)
-
-    analysis_result = run_single_analysis_from_path(
-        file_path,
-        config=config,
-        output_dir=result_output_dir
-    )
-
-    save_run_meta(result_output_dir, {
-        "run_type": "single",
-        "created_at": datetime.now().isoformat(),
-        "filename": filename
-    })
-
-    return {
-        "config_view": get_editable_config_view(config),
-        "result": {
-            "filename": filename,
-            "score": analysis_result.get("score", 0),
-            "risks": analysis_result.get("risks", []),
-            "score_explanation": analysis_result.get("score_explanation", {}),
-            "board_summary": analysis_result.get("board_summary", {}),
-            "downloads": build_single_downloads(run_dir_name)
-        }
-    }
-
-
-def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_path):
-    valid_files = [
-        file for file in uploaded_files
-        if file and file.filename and file.filename.strip()
-    ]
-
-    if not valid_files:
-        raise ValueError("Please upload at least one project file.")
-
-    ensure_runs_folder(runs_folder)
-    ensure_clean_upload_dir(upload_folder)
-
-    config = load_config(config_path)
-
-    saved_paths = []
-    saved_names = []
-
-    for uploaded_file in valid_files:
-        filename = safe_filename(uploaded_file.filename)
-        file_path = os.path.join(upload_folder, filename)
-        uploaded_file.save(file_path)
-        saved_paths.append(file_path)
-        saved_names.append(filename)
-
-    run_dir_name, result_output_dir = create_run_directory("project", runs_folder)
-
-    project_analysis = analyze_project_paths(
-        saved_paths,
-        config=config,
-        output_dir=result_output_dir
-    )
-
-    save_run_meta(result_output_dir, {
-        "run_type": "project",
-        "created_at": datetime.now().isoformat(),
-        "filenames": saved_names,
-        "board_count": len(saved_names)
-    })
-
-    return {
-        "config_view": get_editable_config_view(config),
-        "project_result": {
-            "boards": project_analysis.get("boards", []),
-            "downloads": build_project_downloads(run_dir_name)
-        }
-    }
 
 
 def _write_json(path, data):
@@ -571,6 +447,18 @@ def _write_single_markdown(path, result):
             lines.append(f"### {risk['severity'].upper()} — {risk['category']}")
             lines.append(f"- Message: {risk['message']}")
             lines.append(f"- Recommendation: {risk['recommendation']}")
+
+            explanation = risk.get("explanation", {})
+            if explanation:
+                lines.append(f"- Root Cause: {explanation.get('root_cause', 'Unknown')}")
+                lines.append(f"- Impact: {explanation.get('impact', 'Unknown')}")
+                lines.append(f"- Confidence: {explanation.get('confidence', 'Unknown')}")
+
+            fix_suggestion = risk.get("fix_suggestion", {})
+            if fix_suggestion:
+                lines.append(f"- Suggested Fix: {fix_suggestion.get('fix', 'Manual review required')}")
+                lines.append(f"- Fix Priority: {fix_suggestion.get('priority', 'medium')}")
+
             if risk.get("components"):
                 lines.append(f"- Components: {', '.join(risk['components'])}")
             if risk.get("nets"):
@@ -590,11 +478,28 @@ def _write_single_html(path, result):
         for risk in result["risks"]:
             components_html = ""
             nets_html = ""
+            explanation_html = ""
+            fix_html = ""
 
             if risk.get("components"):
                 components_html = f"<p><strong>Components:</strong> {escape(', '.join(risk['components']))}</p>"
             if risk.get("nets"):
                 nets_html = f"<p><strong>Nets:</strong> {escape(', '.join(risk['nets']))}</p>"
+
+            explanation = risk.get("explanation", {})
+            if explanation:
+                explanation_html = f"""
+                <p><strong>Root Cause:</strong> {escape(str(explanation.get('root_cause', 'Unknown')))}</p>
+                <p><strong>Impact:</strong> {escape(str(explanation.get('impact', 'Unknown')))}</p>
+                <p><strong>Confidence:</strong> {escape(str(explanation.get('confidence', 'Unknown')))}</p>
+                """
+
+            fix_suggestion = risk.get("fix_suggestion", {})
+            if fix_suggestion:
+                fix_html = f"""
+                <p><strong>Suggested Fix:</strong> {escape(str(fix_suggestion.get('fix', 'Manual review required')))}</p>
+                <p><strong>Fix Priority:</strong> {escape(str(fix_suggestion.get('priority', 'medium')))}</p>
+                """
 
             risks_html += f"""
             <div class="risk">
@@ -602,6 +507,8 @@ def _write_single_html(path, result):
                 <p><strong>Category:</strong> {escape(str(risk['category']))}</p>
                 <p><strong>Message:</strong> {escape(str(risk['message']))}</p>
                 <p><strong>Recommendation:</strong> {escape(str(risk['recommendation']))}</p>
+                {explanation_html}
+                {fix_html}
                 {components_html}
                 {nets_html}
             </div>
@@ -818,3 +725,215 @@ def _write_project_html(path, project_data):
 
     with open(path, "w", encoding="utf-8") as file:
         file.write(html)
+
+
+def run_single_analysis_from_path(file_path, config=None, output_dir=None):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Board file not found: {file_path}")
+
+    if config is None:
+        config = load_config("custom_config.json")
+
+    pcb = _load_board(file_path)
+    pcb = _normalize_board(pcb)
+
+    risks, _raw_engine_result = _run_rule_engine(pcb, config)
+
+    score, score_explanation = _compute_score_and_explanation(risks, config)
+    board_summary = _build_board_summary(pcb, risks, os.path.basename(file_path))
+
+    result = {
+        "filename": os.path.basename(file_path),
+        "score": score,
+        "risks": risks,
+        "score_explanation": score_explanation,
+        "board_summary": board_summary
+    }
+
+    if output_dir is not None:
+        os.makedirs(output_dir, exist_ok=True)
+
+        json_path = os.path.join(output_dir, "single_analysis.json")
+        md_path = os.path.join(output_dir, "single_report.md")
+        html_path = os.path.join(output_dir, "single_report.html")
+
+        _write_json(json_path, result)
+        _write_single_markdown(md_path, result)
+        _write_single_html(html_path, result)
+
+        result["json_path"] = json_path
+        result["report_md_path"] = md_path
+        result["report_html_path"] = html_path
+    else:
+        result["json_path"] = None
+        result["report_md_path"] = None
+        result["report_html_path"] = None
+
+    print(f"[Silicore Debug] {board_summary}")
+
+    return result
+
+
+def analyze_project_paths(file_paths, config=None, output_dir=None):
+    if config is None:
+        config = load_config("custom_config.json")
+
+    boards = []
+
+    for file_path in file_paths:
+        boards.append(run_single_analysis_from_path(file_path, config=config))
+
+    boards = sorted(boards, key=lambda board: board.get("score", 0), reverse=True)
+
+    for index, board in enumerate(boards, start=1):
+        board["rank"] = index
+
+    summary = _build_project_summary(boards)
+
+    project_data = {
+        "generated_at": datetime.now().isoformat(),
+        "summary": summary,
+        "boards": boards
+    }
+
+    summary_json_path = None
+    summary_md_path = None
+    summary_html_path = None
+
+    if output_dir is not None:
+        os.makedirs(output_dir, exist_ok=True)
+
+        summary_json_path = os.path.join(output_dir, "project_summary.json")
+        summary_md_path = os.path.join(output_dir, "project_summary.md")
+        summary_html_path = os.path.join(output_dir, "project_summary.html")
+
+        _write_json(summary_json_path, project_data)
+        _write_project_markdown(summary_md_path, project_data)
+        _write_project_html(summary_html_path, project_data)
+
+    return {
+        "boards": boards,
+        "summary": summary,
+        "summary_json_path": summary_json_path,
+        "summary_md_path": summary_md_path,
+        "summary_html_path": summary_html_path
+    }
+
+
+def analyze_project_directory(directory_path, config=None):
+    if not os.path.isdir(directory_path):
+        raise FileNotFoundError(f"Directory not found: {directory_path}")
+
+    file_paths = []
+
+    for name in sorted(os.listdir(directory_path)):
+        full_path = os.path.join(directory_path, name)
+
+        if not os.path.isfile(full_path):
+            continue
+
+        extension = os.path.splitext(name)[1].lower()
+        if extension in SUPPORTED_EXTENSIONS:
+            file_paths.append(full_path)
+
+    if not file_paths:
+        return {
+            "boards": [],
+            "summary": _build_project_summary([]),
+            "summary_json_path": None,
+            "summary_md_path": None,
+            "summary_html_path": None
+        }
+
+    output_dir = os.path.join(directory_path, "silicore_outputs")
+    os.makedirs(output_dir, exist_ok=True)
+
+    return analyze_project_paths(file_paths, config=config, output_dir=output_dir)
+
+
+def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path):
+    if not uploaded_file or uploaded_file.filename == "":
+        raise ValueError("Please upload a board file.")
+
+    ensure_runs_folder(runs_folder)
+    ensure_clean_upload_dir(upload_folder)
+
+    config = load_config(config_path)
+
+    filename = safe_filename(uploaded_file.filename)
+    file_path = os.path.join(upload_folder, filename)
+    uploaded_file.save(file_path)
+
+    run_dir_name, result_output_dir = create_run_directory("single", runs_folder)
+
+    analysis_result = run_single_analysis_from_path(
+        file_path,
+        config=config,
+        output_dir=result_output_dir
+    )
+
+    save_run_meta(result_output_dir, {
+        "run_type": "single",
+        "created_at": datetime.now().isoformat(),
+        "filename": filename
+    })
+
+    return {
+        "config_view": get_editable_config_view(config),
+        "result": {
+            "filename": filename,
+            "score": analysis_result.get("score", 0),
+            "risks": analysis_result.get("risks", []),
+            "score_explanation": analysis_result.get("score_explanation", {}),
+            "board_summary": analysis_result.get("board_summary", {}),
+            "downloads": build_single_downloads(run_dir_name)
+        }
+    }
+
+
+def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_path):
+    valid_files = [
+        file for file in uploaded_files
+        if file and file.filename and file.filename.strip()
+    ]
+
+    if not valid_files:
+        raise ValueError("Please upload at least one project file.")
+
+    ensure_runs_folder(runs_folder)
+    ensure_clean_upload_dir(upload_folder)
+
+    config = load_config(config_path)
+
+    saved_paths = []
+    saved_names = []
+
+    for uploaded_file in valid_files:
+        filename = safe_filename(uploaded_file.filename)
+        file_path = os.path.join(upload_folder, filename)
+        uploaded_file.save(file_path)
+        saved_paths.append(file_path)
+        saved_names.append(filename)
+
+    run_dir_name, result_output_dir = create_run_directory("project", runs_folder)
+
+    project_analysis = analyze_project_paths(
+        saved_paths,
+        config=config,
+        output_dir=result_output_dir
+    )
+
+    save_run_meta(result_output_dir, {
+        "run_type": "project",
+        "created_at": datetime.now().isoformat(),
+        "filenames": saved_names,
+        "board_count": len(saved_names)
+    })
+
+    return {
+        "config_view": get_editable_config_view(config),
+        "project_result": {
+            "boards": project_analysis.get("boards", []),
+            "downloads": build_project_downloads(run_dir_name)
+        }
+    }
