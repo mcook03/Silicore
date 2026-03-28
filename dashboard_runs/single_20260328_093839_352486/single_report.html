@@ -1,0 +1,211 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .issue-card, .risk-card {
+                background: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            h1, h2, h3 {
+                margin-top: 0;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .muted {
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Engineering Report</h1>
+                <p><strong>File:</strong> power_board_bad.kicad_pcb</p>
+                <p><strong>Score:</strong> 3.5 / 10</p>
+                <p><strong>Total Risks:</strong> 5</p>
+                <p><strong>Total Penalty:</strong> 6.5</p>
+            </div>
+
+            <div class="card">
+                <h2>Executive Summary</h2>
+                <p><strong>Board needs focused engineering review</strong></p>
+                <p class="muted">This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 85.00 units away. The current design snapshot includes 2 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+
+            <div class="card">
+                <h2>Top Issues</h2>
+                
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
+                <p>U2 may have poor power delivery because nearest regulator U1 is 85.00 units away</p>
+                <p><strong>Recommendation:</strong> Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
+                <p>Power net VIN has excessive routed length (85.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
+                <p>Power net VIN uses a narrow trace width (0.15)</p>
+                <p><strong>Recommendation:</strong> Increase power trace width to reduce resistance, heating, and voltage drop.</p>
+            </div>
+            
+            </div>
+
+            <div class="card">
+                <h2>Board Summary</h2>
+                <p><strong>Component Count:</strong> 2</p>
+                <p><strong>Net Count:</strong> 3</p>
+                <p><strong>Risk Count:</strong> 5</p>
+                <p><strong>Sample Components:</strong> U1, U2</p>
+            </div>
+
+            <div class="card">
+                <h2>Severity Penalties</h2>
+                <ul><li>medium: 2.0</li><li>high: 4.5</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Category Penalties</h2>
+                <ul><li>power_integrity: 5.5</li><li>manufacturing: 1.0</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Detailed Findings</h2>
+                
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 (mcu) has no nearby decoupling capacitor</p>
+                <p><strong>Recommendation:</strong> Place a decoupling capacitor close to the device power pin and on the relevant supply net.</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;nearest_cap_distance&quot;: null, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 may have poor power delivery because nearest regulator U1 is 85.00 units away</p>
+                <p><strong>Recommendation:</strong> Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Move the regulator closer to the load or reduce the power path length from its current distance of 85.0. Also consider wider copper or a lower-impedance distribution path.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U2, U1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 85.0, &quot;threshold&quot;: 20.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Power net VIN has excessive routed length (85.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Shorten the power route and improve placement to reduce the current routed length of 85.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 85.0, &quot;threshold&quot;: 50.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Power net VIN uses a narrow trace width (0.15)</p>
+                <p><strong>Recommendation:</strong> Increase power trace width to reduce resistance, heating, and voltage drop.</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the power trace width from 0.15 to at least 0.5 or more, depending on current demand.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_width&quot;: 0.15, &quot;minimum_expected&quot;: 0.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Net CTRL contains a very narrow trace (0.10)</p>
+                <p><strong>Recommendation:</strong> Review manufacturability limits and increase trace width if the design rules require it.</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the narrow trace width from 0.1 to at least 0.15, subject to board-space and fabrication constraints.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;min_trace_width&quot;: 0.1, &quot;threshold&quot;: 0.15}</p>
+            </div>
+            
+            </div>
+        </div>
+    </body>
+    </html>
+    

@@ -1,0 +1,89 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Project Summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .board-card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 18px;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Project Summary</h1>
+                <p><strong>Total Boards:</strong> 4</p>
+                <p><strong>Average Score:</strong> 6.25 / 10</p>
+                <p><strong>Best Score:</strong> 8.5 / 10</p>
+                <p><strong>Worst Score:</strong> 3.5 / 10</p>
+            </div>
+
+            
+        <div class="hero">
+            <p><strong>Project comparison complete</strong></p>
+            <p>The strongest board is power_board_good.kicad_pcb at 8.5 / 10, while the weakest board is power_board_bad.kicad_pcb at 3.5 / 10. The current score spread across the project is 5.0 points. The most recurring issue area across the project is power integrity.</p>
+        </div>
+        
+
+            
+            <div class="board-card">
+                <h3>#1 — power_board_good.kicad_pcb</h3>
+                <p><strong>Score:</strong> 8.5 / 10</p>
+                <p><strong>Total Risks:</strong> 1</p>
+                <p><strong>Total Penalty:</strong> 1.5</p>
+                <p>This board shows moderate design risk. The main risk concentration is in layout. The highest-priority issue is U2 and C1 are too close (2.83 units). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#2 — revision_new.kicad_pcb</h3>
+                <p><strong>Score:</strong> 8.5 / 10</p>
+                <p><strong>Total Risks:</strong> 1</p>
+                <p><strong>Total Penalty:</strong> 1.5</p>
+                <p>This board shows moderate design risk. The main risk concentration is in layout. The highest-priority issue is U2 and C1 are too close (2.83 units). The current design snapshot includes 3 components and 2 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#3 — revision_old.kicad_pcb</h3>
+                <p><strong>Score:</strong> 4.5 / 10</p>
+                <p><strong>Total Risks:</strong> 4</p>
+                <p><strong>Total Penalty:</strong> 5.5</p>
+                <p>This board shows elevated design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 70.00 units away. The current design snapshot includes 2 components and 2 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#4 — power_board_bad.kicad_pcb</h3>
+                <p><strong>Score:</strong> 3.5 / 10</p>
+                <p><strong>Total Risks:</strong> 5</p>
+                <p><strong>Total Penalty:</strong> 6.5</p>
+                <p>This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 85.00 units away. The current design snapshot includes 2 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
+    
