@@ -1,124 +1,62 @@
 {
-  "score": {
-    "start_score": 10.0,
-    "min_score": 0.0,
-    "max_score": 10.0,
-    "severity_penalties": {
-      "low": 0.5,
-      "medium": 1.0,
-      "high": 1.5,
-      "critical": 2.0
-    }
-  },
-  "layout": {
-    "min_component_spacing": 2.5,
-    "density_threshold": 6
-  },
-  "power": {
-    "required_power_nets": ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"],
-    "required_ground_nets": ["GND", "GROUND"]
-  },
-  "signal": {
-    "max_trace_length": 25.0,
-    "critical_nets": [
-      "CLK", "SCL", "SDA", "MOSI", "MISO", "CS",
-      "SPI_CLK", "I2C_SCL", "I2C_SDA"
-    ]
-  },
-  "thermal": {
-    "hotspot_distance_threshold": 4.0
-  },
-  "emi": {
-    "require_ground_reference": true
-  },
-  "rules": {
-    "spacing": {
-      "threshold": 2.5
+    "score": {
+        "start_score": 10.0,
+        "min_score": 0.0,
+        "max_score": 10.0,
+        "severity_penalties": {
+            "low": 0.5,
+            "medium": 1.0,
+            "high": 1.5,
+            "critical": 2.0
+        }
     },
-    "signal_path": {
-      "threshold": 25.0
+    "layout": {
+        "min_component_spacing": 3.0,
+        "density_threshold": 6
     },
-    "trace_quality": {
-      "max_signal_trace_length": 60.0,
-      "min_general_trace_width": 0.15,
-      "excluded_net_keywords": [
-        "GND", "GROUND", "VCC", "VIN", "VBAT",
-        "3V3", "5V", "12V", "VDD"
-      ]
+    "power": {
+        "required_power_nets": [
+            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+        ],
+        "required_ground_nets": [
+            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+        ]
     },
-    "net_length": {
-      "max_trace_length": 25.0,
-      "critical_nets": [
-        "CLK", "SCL", "SDA", "MOSI", "MISO", "CS",
-        "SPI_CLK", "I2C_SCL", "I2C_SDA"
-      ]
-    },
-    "power_rail": {
-      "min_connections": 2,
-      "max_trace_length": 50.0,
-      "min_trace_width": 0.5,
-      "max_via_count": 5,
-      "power_net_keywords": [
-        "VCC", "VIN", "VBAT", "5V", "3V3", "VDD"
-      ]
-    },
-    "power_distribution": {
-      "threshold": 20.0,
-      "regulator_keywords": [
-        "regulator", "ldo", "buck", "boost", "pmic", "vrm"
-      ],
-      "load_keywords": [
-        "mcu", "cpu", "fpga", "driver", "sensor",
-        "ic", "controller", "amp"
-      ]
-    },
-    "decoupling": {
-      "threshold": 4.0,
-      "target_keywords": [
-        "mcu", "cpu", "fpga", "sensor",
-        "driver", "ic", "controller"
-      ],
-      "capacitor_keywords": [
-        "cap", "capacitor", "c"
-      ]
-    },
-    "density": {
-      "region_size": 25.0,
-      "component_threshold": 6
+    "signal": {
+        "max_trace_length": 25.0,
+        "critical_nets": [
+            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+        ]
     },
     "thermal": {
-      "threshold": 4.0,
-      "hot_component_keywords": [
-        "U", "Q", "VRM", "REG", "LDO", "BUCK",
-        "BOOST", "MOSFET", "DRV", "AMP",
-        "CPU", "FPGA", "POWER"
-      ]
+        "hotspot_distance_threshold": 4.0
     },
-    "ground_reference": {
-      "ground_net_keywords": ["GND", "GROUND"],
-      "critical_net_keywords": [
-        "CLK", "SCL", "SDA", "MOSI", "MISO", "CS",
-        "SPI_CLK", "I2C_SCL", "I2C_SDA"
-      ],
-      "require_ground_zone": true
+    "emi": {
+        "require_ground_reference": true
     },
-    "return_path": {
-      "ground_net_keywords": ["GND", "GROUND"],
-      "critical_net_keywords": [
-        "CLK", "SCL", "SDA", "MOSI", "MISO", "CS",
-        "SPI_CLK", "I2C_SCL", "I2C_SDA"
-      ],
-      "max_signal_to_ground_distance": 10.0,
-      "excluded_net_keywords": [
-        "GND", "GROUND", "VCC", "VIN", "VBAT",
-        "3V3", "5V", "12V", "VDD"
-      ]
-    },
-    "power_connectivity": {
-      "required_power_nets": [
-        "VCC", "VIN", "VBAT", "5V", "3V3", "VDD"
-      ],
-      "required_ground_nets": ["GND", "GROUND"]
+    "rules": {
+        "spacing": {
+            "threshold": 3.0
+        },
+        "density": {
+            "component_threshold": 6
+        },
+        "signal_path": {
+            "threshold": 25.0
+        },
+        "net_length": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+            ]
+        },
+        "power_connectivity": {
+            "required_power_nets": [
+                "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+            ],
+            "required_ground_nets": [
+                "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+            ]
+        }
     }
-  }
 }
