@@ -1,31 +1,32 @@
 from engine.risk import make_risk
-from engine.net_utils import is_power_net
+
+
+def is_power_net(net_name, keywords):
+    upper_name = str(net_name).upper()
+    return any(keyword.upper() in upper_name for keyword in keywords)
 
 
 def run_rule(pcb, config):
     risks = []
-
-    power_config = config.get("power", {})
     rule_config = config.get("rules", {}).get("power_rail", {})
 
-    min_connections = rule_config.get("min_connections", 2)
-    max_trace_length = rule_config.get("max_trace_length", 50.0)
-    min_trace_width = rule_config.get("min_trace_width", 0.5)
-    max_via_count = rule_config.get("max_via_count", 5)
-
+    min_connections = int(rule_config.get("min_connections", 2))
+    max_trace_length = float(rule_config.get("max_trace_length", 50.0))
+    min_trace_width = float(rule_config.get("min_trace_width", 0.5))
+    max_via_count = int(rule_config.get("max_via_count", 5))
     power_net_keywords = rule_config.get(
         "power_net_keywords",
-        power_config.get("required_power_nets", ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"])
+        ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"]
     )
 
-    for net_name, net in pcb.nets.items():
+    for net_name, net in getattr(pcb, "nets", {}).items():
         if not is_power_net(net_name, power_net_keywords):
             continue
 
-        connection_count = len([conn for conn in net.connections if conn[0]])
-        total_trace_length = pcb.total_trace_length_for_net(net_name)
-        min_width = pcb.min_trace_width_for_net(net_name)
-        via_count = len(pcb.get_vias_by_net(net_name))
+        connection_count = len(getattr(net, "connections", []))
+        total_length = getattr(net, "total_trace_length", 0.0)
+        min_width = getattr(net, "min_trace_width", None)
+        via_count = getattr(net, "via_count", 0)
 
         if connection_count < min_connections:
             risks.append(
@@ -33,51 +34,29 @@ def run_rule(pcb, config):
                     rule_id="power_rail",
                     category="power_integrity",
                     severity="medium",
-                    message=f"Power net {net_name} appears weakly connected with only {connection_count} mapped connection(s)",
-                    recommendation="Verify the power rail reaches all required loads and that its connectivity is correctly defined.",
+                    message=f"Power net {net_name} has too few connections ({connection_count})",
+                    recommendation="Check whether the power net is properly distributed to all intended loads.",
                     nets=[net_name],
                     metrics={
-                        "connection_count": connection_count,
-                        "min_connections": min_connections,
+                        "connections": connection_count,
+                        "minimum_expected": min_connections,
                     },
-                    confidence=0.72,
-                    short_title="Weak power rail connectivity",
-                    fix_priority="high",
-                    estimated_impact="high",
-                    design_domain="power",
-                    why_it_matters="Weak connectivity on a power rail can indicate missing load coverage or incomplete distribution paths.",
-                    suggested_actions=[
-                        "Verify intended loads are attached to this power net.",
-                        "Check for missing net assignments or disconnected pads.",
-                        "Confirm power reaches all required components.",
-                    ],
                 )
             )
 
-        if total_trace_length > max_trace_length and total_trace_length > 0:
+        if total_length > max_trace_length:
             risks.append(
                 make_risk(
                     rule_id="power_rail",
                     category="power_integrity",
                     severity="high",
-                    message=f"Power net {net_name} has excessive routed length ({total_trace_length:.2f} units)",
+                    message=f"Power net {net_name} has excessive routed length ({total_length:.2f} units)",
                     recommendation="Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
                     nets=[net_name],
                     metrics={
-                        "trace_length": total_trace_length,
-                        "max_trace_length": max_trace_length,
+                        "trace_length": round(total_length, 2),
+                        "threshold": max_trace_length,
                     },
-                    confidence=0.84,
-                    short_title="Excessive power rail length",
-                    fix_priority="high",
-                    estimated_impact="high",
-                    design_domain="power",
-                    why_it_matters="Long power paths can increase resistance, voltage drop, and noise susceptibility.",
-                    suggested_actions=[
-                        "Shorten the route between source and loads.",
-                        "Move the regulator or source closer to major loads.",
-                        "Review distribution topology for unnecessary detours.",
-                    ],
                 )
             )
 
@@ -91,20 +70,9 @@ def run_rule(pcb, config):
                     recommendation="Increase power trace width to reduce resistance, heating, and voltage drop.",
                     nets=[net_name],
                     metrics={
-                        "min_trace_width": min_width,
-                        "required_min_trace_width": min_trace_width,
+                        "trace_width": min_width,
+                        "minimum_expected": min_trace_width,
                     },
-                    confidence=0.90,
-                    short_title="Narrow power trace",
-                    fix_priority="high",
-                    estimated_impact="high",
-                    design_domain="power",
-                    why_it_matters="Narrow power traces can overheat and create avoidable IR drop under load.",
-                    suggested_actions=[
-                        "Increase trace width on the critical power segment.",
-                        "Check expected current draw for this rail.",
-                        "Consider copper pours for heavier current paths.",
-                    ],
                 )
             )
 
@@ -119,19 +87,8 @@ def run_rule(pcb, config):
                     nets=[net_name],
                     metrics={
                         "via_count": via_count,
-                        "max_via_count": max_via_count,
+                        "threshold": max_via_count,
                     },
-                    confidence=0.70,
-                    short_title="Too many power-net vias",
-                    fix_priority="medium",
-                    estimated_impact="moderate",
-                    design_domain="power",
-                    why_it_matters="Excessive via transitions can increase path impedance and reduce power-delivery quality.",
-                    suggested_actions=[
-                        "Flatten the route where possible.",
-                        "Reduce unnecessary layer changes.",
-                        "Keep critical power paths direct and wide.",
-                    ],
                 )
             )
 
