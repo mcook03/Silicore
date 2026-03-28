@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-03-28T02:57:10.832356",
+    "generated_at": "2026-03-28T03:06:50.614722",
     "summary": {
         "total_boards": 4,
         "average_score": 6.25,
@@ -22,7 +22,7 @@
     "boards": [
         {
             "filename": "power_board_good.kicad_pcb",
-            "file_path": "fixtures/power_board_good.kicad_pcb",
+            "file_path": "dashboard_uploads/power_board_good.kicad_pcb",
             "score": 8.5,
             "risks": [
                 {
@@ -122,7 +122,7 @@
                 "score": 8.5,
                 "total_penalty": 1.5
             },
-            "generated_at": "2026-03-28T02:57:10.829986",
+            "generated_at": "2026-03-28T03:06:50.601435",
             "executive_summary": {
                 "headline": "Board needs focused engineering review",
                 "summary": "This board shows moderate design risk. The main risk concentration is in layout. The highest-priority issue is U2 and C1 are too close (2.83 units). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
@@ -139,7 +139,7 @@
         },
         {
             "filename": "revision_new.kicad_pcb",
-            "file_path": "fixtures/revision_new.kicad_pcb",
+            "file_path": "dashboard_uploads/revision_new.kicad_pcb",
             "score": 8.5,
             "risks": [
                 {
@@ -239,7 +239,7 @@
                 "score": 8.5,
                 "total_penalty": 1.5
             },
-            "generated_at": "2026-03-28T02:57:10.831240",
+            "generated_at": "2026-03-28T03:06:50.607144",
             "executive_summary": {
                 "headline": "Board needs focused engineering review",
                 "summary": "This board shows moderate design risk. The main risk concentration is in layout. The highest-priority issue is U2 and C1 are too close (2.83 units). The current design snapshot includes 3 components and 2 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
@@ -256,7 +256,7 @@
         },
         {
             "filename": "revision_old.kicad_pcb",
-            "file_path": "fixtures/revision_old.kicad_pcb",
+            "file_path": "dashboard_uploads/revision_old.kicad_pcb",
             "score": 4.5,
             "risks": [
                 {
@@ -534,7 +534,7 @@
                 "score": 4.5,
                 "total_penalty": 5.5
             },
-            "generated_at": "2026-03-28T02:57:10.832332",
+            "generated_at": "2026-03-28T03:06:50.614656",
             "executive_summary": {
                 "headline": "Board needs focused engineering review",
                 "summary": "This board shows elevated design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 70.00 units away. The current design snapshot includes 2 components and 2 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
@@ -563,7 +563,7 @@
         },
         {
             "filename": "power_board_bad.kicad_pcb",
-            "file_path": "fixtures/power_board_bad.kicad_pcb",
+            "file_path": "dashboard_uploads/power_board_bad.kicad_pcb",
             "score": 3.5,
             "risks": [
                 {
@@ -906,7 +906,7 @@
                 "score": 3.5,
                 "total_penalty": 6.5
             },
-            "generated_at": "2026-03-28T02:57:10.828529",
+            "generated_at": "2026-03-28T03:06:50.611456",
             "executive_summary": {
                 "headline": "Board needs focused engineering review",
                 "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 85.00 units away. The current design snapshot includes 2 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
