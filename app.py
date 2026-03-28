@@ -519,6 +519,11 @@ BASE_TEMPLATE = """
             --radius-lg: 20px;
             --radius-md: 16px;
             --radius-sm: 12px;
+            --glow-blue: rgba(110,181,255,0.22);
+            --glow-cyan: rgba(99,240,255,0.18);
+            --glow-violet: rgba(155,124,255,0.18);
+            --btn-text-dark: #06111f;
+            --btn-text-light: #eef4ff;
         }
 
         * {
@@ -697,25 +702,50 @@ BASE_TEMPLATE = """
             padding: 14px;
             border-radius: 18px;
             border: 1px solid rgba(129, 171, 255, 0.10);
-            background: rgba(255,255,255,0.02);
-            transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                border-color 0.18s ease,
+                background 0.18s ease;
             color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            transform: translateX(-120%);
+            transition: transform 0.6s ease;
+            pointer-events: none;
+        }
+
+        .nav-link:hover::before {
+            transform: translateX(120%);
         }
 
         .nav-link:hover {
             transform: translateY(-2px);
-            border-color: rgba(129, 171, 255, 0.22);
-            box-shadow: 0 14px 26px rgba(0,0,0,0.18), 0 0 20px rgba(110,181,255,0.08);
+            border-color: rgba(129, 171, 255, 0.24);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+            box-shadow:
+                0 16px 28px rgba(0,0,0,0.20),
+                0 0 22px rgba(110,181,255,0.10);
         }
 
         .nav-link.active {
-            border-color: rgba(110,181,255,0.28);
+            border-color: rgba(110,181,255,0.30);
             background:
-                linear-gradient(180deg, rgba(110,181,255,0.10), rgba(155,124,255,0.08));
+                linear-gradient(180deg, rgba(110,181,255,0.14), rgba(155,124,255,0.08));
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.07),
                 0 18px 30px rgba(0,0,0,0.18),
-                0 0 24px rgba(110,181,255,0.10);
+                0 0 28px rgba(110,181,255,0.14);
         }
 
         .nav-icon {
@@ -813,9 +843,25 @@ BASE_TEMPLATE = """
             font-size: 12px;
             font-weight: 700;
             color: #dbebff;
-            border: 1px solid rgba(125, 167, 255, 0.14);
-            background: rgba(255,255,255,0.04);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+            border: 1px solid rgba(125, 167, 255, 0.16);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 10px 20px rgba(0,0,0,0.12);
+            transition:
+                transform 0.16s ease,
+                border-color 0.16s ease,
+                box-shadow 0.16s ease;
+        }
+
+        .top-badge:hover {
+            transform: translateY(-2px);
+            border-color: rgba(125,167,255,0.24);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 14px 24px rgba(0,0,0,0.16),
+                0 0 18px rgba(110,181,255,0.10);
         }
 
         .flash-stack {
@@ -895,12 +941,28 @@ BASE_TEMPLATE = """
         .hero-chip {
             padding: 11px 14px;
             border-radius: 14px;
-            color: #dfeeff;
+            color: #e7f3ff;
             font-size: 13px;
             font-weight: 700;
-            background: rgba(255,255,255,0.035);
-            border: 1px solid rgba(130, 171, 255, 0.14);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+            border: 1px solid rgba(130, 171, 255, 0.16);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 10px 20px rgba(0,0,0,0.12);
+            transition:
+                transform 0.16s ease,
+                box-shadow 0.16s ease,
+                border-color 0.16s ease;
+        }
+
+        .hero-chip:hover {
+            transform: translateY(-2px);
+            border-color: rgba(130,171,255,0.24);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.06),
+                0 14px 24px rgba(0,0,0,0.16),
+                0 0 18px rgba(110,181,255,0.10);
         }
 
         .hero-status-card {
@@ -1080,12 +1142,14 @@ BASE_TEMPLATE = """
             font-weight: 800;
             letter-spacing: 0.01em;
             transition:
-                transform 0.16s ease,
-                box-shadow 0.16s ease,
-                filter 0.16s ease,
-                border-color 0.16s ease;
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                filter 0.18s ease,
+                border-color 0.18s ease,
+                background 0.18s ease;
             transform: translateY(0);
             user-select: none;
+            isolation: isolate;
         }
 
         .btn.full {
@@ -1096,13 +1160,31 @@ BASE_TEMPLATE = """
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
-            transform: translateX(-115%);
-            transition: transform 0.6s ease;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+            transform: translateX(-120%);
+            transition: transform 0.7s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+            opacity: 0.55;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .btn > * {
+            position: relative;
+            z-index: 1;
         }
 
         .btn:hover::before {
-            transform: translateX(115%);
+            transform: translateX(120%);
         }
 
         .btn:active {
@@ -1110,48 +1192,51 @@ BASE_TEMPLATE = """
         }
 
         .btn-primary {
-            color: #06111f;
+            color: var(--btn-text-dark);
             background:
-                linear-gradient(135deg, rgba(110,181,255,1), rgba(79,141,255,1) 55%, rgba(99,240,255,0.95));
+                linear-gradient(135deg, rgba(110,181,255,1), rgba(79,141,255,1) 52%, rgba(99,240,255,0.98));
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.08) inset,
-                0 14px 30px rgba(79,141,255,0.24),
+                0 0 0 1px rgba(255,255,255,0.10) inset,
+                0 16px 32px rgba(79,141,255,0.26),
                 0 0 0 0 rgba(99,240,255,0.00);
         }
 
         .btn-primary:hover {
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.12) inset,
-                0 18px 36px rgba(79,141,255,0.28),
-                0 0 28px rgba(99,240,255,0.18);
-            filter: brightness(1.03);
-            transform: translateY(-1px);
+                0 0 0 1px rgba(255,255,255,0.14) inset,
+                0 20px 38px rgba(79,141,255,0.30),
+                0 0 30px rgba(99,240,255,0.22),
+                0 0 48px rgba(110,181,255,0.10);
+            filter: brightness(1.04) saturate(1.05);
+            transform: translateY(-2px);
         }
 
         .btn-primary:active {
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.12) inset,
-                0 10px 22px rgba(79,141,255,0.22),
-                0 0 36px rgba(99,240,255,0.30);
+                0 0 0 1px rgba(255,255,255,0.14) inset,
+                0 10px 22px rgba(79,141,255,0.24),
+                0 0 34px rgba(99,240,255,0.28);
         }
 
         .btn-secondary {
-            color: #e7f1ff;
-            border: 1px solid rgba(132, 174, 255, 0.16);
+            color: var(--btn-text-light);
+            border: 1px solid rgba(132, 174, 255, 0.18);
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+                linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.07),
                 0 12px 24px rgba(0,0,0,0.18);
         }
 
         .btn-secondary:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.08),
-                0 16px 28px rgba(0,0,0,0.20),
-                0 0 20px rgba(110,181,255,0.12);
-            border-color: rgba(132,174,255,0.28);
+                inset 0 1px 0 rgba(255,255,255,0.10),
+                0 18px 30px rgba(0,0,0,0.22),
+                0 0 22px rgba(110,181,255,0.14);
+            border-color: rgba(132,174,255,0.30);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
         }
 
         .btn-link-row {
@@ -1169,22 +1254,44 @@ BASE_TEMPLATE = """
             font-size: 13px;
             font-weight: 800;
             color: #ecf5ff;
-            border: 1px solid rgba(132,174,255,0.14);
+            border: 1px solid rgba(132,174,255,0.16);
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+                linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.06),
                 0 12px 22px rgba(0,0,0,0.16);
-            transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+            transition:
+                transform 0.16s ease,
+                box-shadow 0.16s ease,
+                border-color 0.16s ease,
+                background 0.16s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-link::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+            transform: translateX(-120%);
+            transition: transform 0.65s ease;
+            pointer-events: none;
+        }
+
+        .btn-link:hover::before {
+            transform: translateX(120%);
         }
 
         .btn-link:hover {
             transform: translateY(-2px);
-            border-color: rgba(132,174,255,0.24);
+            border-color: rgba(132,174,255,0.26);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.035));
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.05),
-                0 14px 28px rgba(0,0,0,0.18),
-                0 0 22px rgba(110,181,255,0.10);
+                inset 0 1px 0 rgba(255,255,255,0.06),
+                0 16px 28px rgba(0,0,0,0.18),
+                0 0 22px rgba(110,181,255,0.12);
         }
 
         .metric-grid {
@@ -1197,11 +1304,15 @@ BASE_TEMPLATE = """
             position: relative;
             overflow: hidden;
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-            border: 1px solid rgba(124, 162, 229, 0.14);
+                linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+            border: 1px solid rgba(124, 162, 229, 0.16);
             border-radius: 20px;
             padding: 18px;
             box-shadow: var(--shadow-md);
+            transition:
+                transform 0.16s ease,
+                box-shadow 0.16s ease,
+                border-color 0.16s ease;
         }
 
         .metric-card::after {
@@ -1211,8 +1322,16 @@ BASE_TEMPLATE = """
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(110,181,255,0.10), transparent 60%);
+            background: radial-gradient(circle, rgba(110,181,255,0.12), transparent 60%);
             pointer-events: none;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(124,162,229,0.24);
+            box-shadow:
+                0 16px 30px rgba(0,0,0,0.20),
+                0 0 20px rgba(110,181,255,0.08);
         }
 
         .metric-label {
@@ -1255,11 +1374,15 @@ BASE_TEMPLATE = """
             position: relative;
             overflow: hidden;
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
-            border: 1px solid rgba(128, 168, 240, 0.14);
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+            border: 1px solid rgba(128, 168, 240, 0.16);
             border-radius: 20px;
             padding: 18px;
             box-shadow: var(--shadow-md);
+            transition:
+                transform 0.16s ease,
+                box-shadow 0.16s ease,
+                border-color 0.16s ease;
         }
 
         .summary-panel::before {
@@ -1270,6 +1393,14 @@ BASE_TEMPLATE = """
             right: 18px;
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+        }
+
+        .summary-panel:hover {
+            transform: translateY(-2px);
+            border-color: rgba(128,168,240,0.24);
+            box-shadow:
+                0 16px 30px rgba(0,0,0,0.20),
+                0 0 20px rgba(110,181,255,0.08);
         }
 
         .summary-panel h3 {
