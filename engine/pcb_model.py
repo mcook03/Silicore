@@ -277,9 +277,7 @@ class PCB:
         for pad in getattr(component, "pads", []):
             pad_layer = getattr(pad, "layer", None)
             if isinstance(pad_layer, str) and "," in pad_layer:
-                self.add_layers(
-                    [item.strip() for item in pad_layer.split(",") if item.strip()]
-                )
+                self.add_layers([item.strip() for item in pad_layer.split(",") if item.strip()])
             else:
                 self.add_layer(pad_layer)
 
@@ -411,10 +409,8 @@ class PCB:
             "width": max(xs) - min(xs),
             "height": max(ys) - min(ys),
         }
-
         self.board_width = self.board_bounds["width"]
         self.board_height = self.board_bounds["height"]
-
         return self.board_bounds
 
     def to_dict(self):

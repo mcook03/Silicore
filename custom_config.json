@@ -16,16 +16,29 @@
     },
     "power": {
         "required_power_nets": [
-            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+            "VIN",
+            "VCC",
+            "VBAT",
+            "5V",
+            "3V3",
+            "VDD"
         ],
         "required_ground_nets": [
-            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+            "GND",
+            "GROUND",
+            "PGND"
         ]
     },
     "signal": {
         "max_trace_length": 25.0,
         "critical_nets": [
-            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+            "CLK",
+            "SCL",
+            "SDA",
+            "MOSI",
+            "MISO",
+            "CS",
+            "CTRL"
         ]
     },
     "thermal": {
@@ -47,15 +60,60 @@
         "net_length": {
             "max_trace_length": 25.0,
             "critical_nets": [
-                "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
             ]
         },
         "power_connectivity": {
             "required_power_nets": [
-                "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
             ],
             "required_ground_nets": [
-                "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                "GND",
+                "GROUND",
+                "PGND"
+            ]
+        },
+        "ground_reference": {
+            "ground_net_keywords": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "critical_net_keywords": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ]
+        },
+        "return_path": {
+            "ground_net_keywords": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "critical_net_keywords": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
             ]
         }
     }

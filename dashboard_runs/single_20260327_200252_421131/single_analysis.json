@@ -134,68 +134,48 @@
         "total_penalty": 6.5,
         "final_score": 3.5,
         "severity_totals": {
-            "medium": 2.0,
-            "high": 4.5
+            "high": 4.5,
+            "medium": 2.0
         },
         "category_totals": {
-            "power_integrity": 5.5,
-            "manufacturing": 1.0
+            "manufacturing": 1.0,
+            "power_integrity": 5.5
         },
-        "details": [
+        "detailed_penalties": [
             {
+                "rule_id": "decoupling",
                 "severity": "medium",
                 "category": "power_integrity",
-                "penalty": 1.0,
                 "message": "U2 (mcu) has no nearby decoupling capacitor",
-                "root_cause": "Power delivery path impedance or placement issue",
-                "impact": "Voltage drop, instability, or noise",
-                "confidence": 0.8,
-                "suggested_fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
-                "fix_priority": "medium"
+                "penalty": 1.0
             },
             {
+                "rule_id": "power_distribution",
                 "severity": "high",
                 "category": "power_integrity",
-                "penalty": 1.5,
                 "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
-                "root_cause": "Power delivery path impedance or placement issue",
-                "impact": "Voltage drop, instability, or noise",
-                "confidence": 0.8,
-                "suggested_fix": "Move the regulator closer to the load or reduce the power path length from its current distance of 85.0. Also consider wider copper or a lower-impedance distribution path.",
-                "fix_priority": "high"
+                "penalty": 1.5
             },
             {
+                "rule_id": "power_rail",
                 "severity": "high",
                 "category": "power_integrity",
-                "penalty": 1.5,
                 "message": "Power net VIN has excessive routed length (85.00 units)",
-                "root_cause": "Power delivery path impedance or placement issue",
-                "impact": "Voltage drop, instability, or noise",
-                "confidence": 0.8,
-                "suggested_fix": "Shorten the power route and improve placement to reduce the current routed length of 85.0.",
-                "fix_priority": "high"
+                "penalty": 1.5
             },
             {
+                "rule_id": "power_rail",
                 "severity": "high",
                 "category": "power_integrity",
-                "penalty": 1.5,
                 "message": "Power net VIN uses a narrow trace width (0.15)",
-                "root_cause": "Power delivery path impedance or placement issue",
-                "impact": "Voltage drop, instability, or noise",
-                "confidence": 0.8,
-                "suggested_fix": "Increase the power trace width from 0.15 to at least 0.5 or more, depending on current demand.",
-                "fix_priority": "high"
+                "penalty": 1.5
             },
             {
+                "rule_id": "trace_quality",
                 "severity": "medium",
                 "category": "manufacturing",
-                "penalty": 1.0,
                 "message": "Net CTRL contains a very narrow trace (0.10)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.8,
-                "suggested_fix": "Increase the narrow trace width from 0.1 to at least 0.15, subject to board-space and fabrication constraints.",
-                "fix_priority": "medium"
+                "penalty": 1.0
             }
         ]
     },

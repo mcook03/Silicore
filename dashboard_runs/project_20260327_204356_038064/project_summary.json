@@ -1,0 +1,1441 @@
+{
+    "generated_at": "2026-03-27T20:43:56.069192",
+    "summary": {
+        "total_boards": 4,
+        "average_score": 0.0,
+        "best_score": 0.0,
+        "worst_score": 0.0,
+        "severity_counts": {
+            "critical": 14,
+            "high": 18,
+            "medium": 3
+        },
+        "category_counts": {
+            "emi_return_path": 14,
+            "layout": 2,
+            "manufacturing": 1,
+            "power_integrity": 18
+        }
+    },
+    "boards": [
+        {
+            "filename": "revision_new.kicad_pcb",
+            "score": 0.0,
+            "risks": [
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for C1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "C1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U1 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "C1 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "C1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "return_path",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                    "recommendation": "Add a valid ground net such as GND and ensure critical signals have a continuous return path.",
+                    "components": [
+                        "U1",
+                        "U2",
+                        "C1"
+                    ],
+                    "nets": [
+                        "GND",
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "ground_present": false,
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ],
+                        "board_nets": [
+                            "GND",
+                            "VIN"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Route the signal closer to a continuous ground reference and reduce gaps, layer transitions, or broken return paths.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U2 and C1 are too close (2.83 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U2",
+                        "C1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.83,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "priority": "high"
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 14.0,
+                "final_score": 0.0,
+                "severity_totals": {
+                    "critical": 8.0,
+                    "high": 6.0
+                },
+                "category_totals": {
+                    "emi_return_path": 8.0,
+                    "layout": 1.5,
+                    "power_integrity": 4.5
+                },
+                "detailed_penalties": [
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U1",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U2",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for C1",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U1 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U2 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "C1 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "return_path",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "U2 and C1 are too close (2.83 units)",
+                        "penalty": 1.5
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "revision_new.kicad_pcb",
+                "component_count": 3,
+                "net_count": 2,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "C1"
+                ],
+                "risk_count": 8,
+                "severity_counts": {
+                    "critical": 4,
+                    "high": 4
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 1
+        },
+        {
+            "filename": "revision_old.kicad_pcb",
+            "score": 0.0,
+            "risks": [
+                {
+                    "rule_id": "decoupling",
+                    "category": "power_integrity",
+                    "severity": "medium",
+                    "message": "U2 (mcu) has no nearby decoupling capacitor",
+                    "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "nearest_cap_distance": null,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                        "priority": "medium"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U1 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_distribution",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 may have poor power delivery because nearest regulator U1 is 70.00 units away",
+                    "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+                    "components": [
+                        "U2",
+                        "U1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 70.0,
+                        "threshold": 20.0
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Move the regulator closer to the load or reduce the power path length from its current distance of 70.0. Also consider wider copper or a lower-impedance distribution path.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_rail",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "Power net VIN has excessive routed length (70.00 units)",
+                    "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+                    "components": [],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "trace_length": 70.0,
+                        "threshold": 50.0
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Shorten the power route and improve placement to reduce the current routed length of 70.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_rail",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "Power net VIN uses a narrow trace width (0.15)",
+                    "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+                    "components": [],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "trace_width": 0.15,
+                        "minimum_expected": 0.5
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase the power trace width from 0.15 to at least 0.5 or more, depending on current demand.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "return_path",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                    "recommendation": "Add a valid ground net such as GND and ensure critical signals have a continuous return path.",
+                    "components": [
+                        "U1",
+                        "U2"
+                    ],
+                    "nets": [
+                        "GND",
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "ground_present": false,
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ],
+                        "board_nets": [
+                            "GND",
+                            "VIN"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Route the signal closer to a continuous ground reference and reduce gaps, layer transitions, or broken return paths.",
+                        "priority": "critical"
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 14.5,
+                "final_score": 0.0,
+                "severity_totals": {
+                    "critical": 6.0,
+                    "high": 7.5,
+                    "medium": 1.0
+                },
+                "category_totals": {
+                    "emi_return_path": 6.0,
+                    "power_integrity": 8.5
+                },
+                "detailed_penalties": [
+                    {
+                        "rule_id": "decoupling",
+                        "severity": "medium",
+                        "category": "power_integrity",
+                        "message": "U2 (mcu) has no nearby decoupling capacitor",
+                        "penalty": 1.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U1",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U2",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U1 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U2 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_distribution",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U2 may have poor power delivery because nearest regulator U1 is 70.00 units away",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_rail",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "Power net VIN has excessive routed length (70.00 units)",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_rail",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "Power net VIN uses a narrow trace width (0.15)",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "return_path",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                        "penalty": 2.0
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "revision_old.kicad_pcb",
+                "component_count": 2,
+                "net_count": 2,
+                "sample_components": [
+                    "U1",
+                    "U2"
+                ],
+                "risk_count": 9,
+                "severity_counts": {
+                    "medium": 1,
+                    "critical": 3,
+                    "high": 5
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 2
+        },
+        {
+            "filename": "power_board_bad.kicad_pcb",
+            "score": 0.0,
+            "risks": [
+                {
+                    "rule_id": "decoupling",
+                    "category": "power_integrity",
+                    "severity": "medium",
+                    "message": "U2 (mcu) has no nearby decoupling capacitor",
+                    "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "nearest_cap_distance": null,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                        "priority": "medium"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND",
+                        "CTRL"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U1 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND",
+                        "CTRL"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_distribution",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+                    "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+                    "components": [
+                        "U2",
+                        "U1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 85.0,
+                        "threshold": 20.0
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Move the regulator closer to the load or reduce the power path length from its current distance of 85.0. Also consider wider copper or a lower-impedance distribution path.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_rail",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "Power net VIN has excessive routed length (85.00 units)",
+                    "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+                    "components": [],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "trace_length": 85.0,
+                        "threshold": 50.0
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Shorten the power route and improve placement to reduce the current routed length of 85.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_rail",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "Power net VIN uses a narrow trace width (0.15)",
+                    "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+                    "components": [],
+                    "nets": [
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "trace_width": 0.15,
+                        "minimum_expected": 0.5
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase the power trace width from 0.15 to at least 0.5 or more, depending on current demand.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "return_path",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                    "recommendation": "Add a valid ground net such as GND and ensure critical signals have a continuous return path.",
+                    "components": [
+                        "U1",
+                        "U2"
+                    ],
+                    "nets": [
+                        "CTRL",
+                        "GND",
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "ground_present": false,
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ],
+                        "board_nets": [
+                            "CTRL",
+                            "GND",
+                            "VIN"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Route the signal closer to a continuous ground reference and reduce gaps, layer transitions, or broken return paths.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "trace_quality",
+                    "category": "manufacturing",
+                    "severity": "medium",
+                    "message": "Net CTRL contains a very narrow trace (0.10)",
+                    "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+                    "components": [],
+                    "nets": [
+                        "CTRL"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "min_trace_width": 0.1,
+                        "threshold": 0.15
+                    },
+                    "explanation": {
+                        "root_cause": "Design rule below fabrication limits",
+                        "impact": "Reduced yield or board failure risk",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase the narrow trace width from 0.1 to at least 0.15, subject to board-space and fabrication constraints.",
+                        "priority": "medium"
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 15.5,
+                "final_score": 0.0,
+                "severity_totals": {
+                    "critical": 6.0,
+                    "high": 7.5,
+                    "medium": 2.0
+                },
+                "category_totals": {
+                    "emi_return_path": 6.0,
+                    "manufacturing": 1.0,
+                    "power_integrity": 8.5
+                },
+                "detailed_penalties": [
+                    {
+                        "rule_id": "decoupling",
+                        "severity": "medium",
+                        "category": "power_integrity",
+                        "message": "U2 (mcu) has no nearby decoupling capacitor",
+                        "penalty": 1.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U1",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U2",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U1 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U2 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_distribution",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_rail",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "Power net VIN has excessive routed length (85.00 units)",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_rail",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "Power net VIN uses a narrow trace width (0.15)",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "return_path",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "trace_quality",
+                        "severity": "medium",
+                        "category": "manufacturing",
+                        "message": "Net CTRL contains a very narrow trace (0.10)",
+                        "penalty": 1.0
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "power_board_bad.kicad_pcb",
+                "component_count": 2,
+                "net_count": 3,
+                "sample_components": [
+                    "U1",
+                    "U2"
+                ],
+                "risk_count": 10,
+                "severity_counts": {
+                    "medium": 2,
+                    "critical": 3,
+                    "high": 5
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 3
+        },
+        {
+            "filename": "power_board_good.kicad_pcb",
+            "score": 0.0,
+            "risks": [
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for U2",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND",
+                        "CTRL"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "ground_reference",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No ground net was found while checking reference context for C1",
+                    "recommendation": "Add a valid ground net such as GND and verify signal return paths.",
+                    "components": [
+                        "C1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U1 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "U2 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "U2"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND",
+                        "CTRL"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "power_connectivity",
+                    "category": "power_integrity",
+                    "severity": "high",
+                    "message": "C1 is not connected to a valid power rail",
+                    "recommendation": "Connect the component to the intended power net and confirm the supply path is present in the board data.",
+                    "components": [
+                        "C1"
+                    ],
+                    "nets": [
+                        "VIN",
+                        "GND"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "required_power_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Power delivery path impedance or placement issue",
+                        "impact": "Voltage drop, instability, or noise",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "return_path",
+                    "category": "emi_return_path",
+                    "severity": "critical",
+                    "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                    "recommendation": "Add a valid ground net such as GND and ensure critical signals have a continuous return path.",
+                    "components": [
+                        "U1",
+                        "U2",
+                        "C1"
+                    ],
+                    "nets": [
+                        "CTRL",
+                        "GND",
+                        "VIN"
+                    ],
+                    "region": null,
+                    "metrics": {
+                        "ground_present": false,
+                        "required_ground_nets": [
+                            "['[\\'[\\\\\\'[\"[\\\\\\\\\\\\\\'[]\\\\\\\\\\\\\\']\"]\\\\\\']\\']']"
+                        ],
+                        "board_nets": [
+                            "CTRL",
+                            "GND",
+                            "VIN"
+                        ]
+                    },
+                    "explanation": {
+                        "root_cause": "Missing or poor return path",
+                        "impact": "Increased EMI and unstable signal reference",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Route the signal closer to a continuous ground reference and reduce gaps, layer transitions, or broken return paths.",
+                        "priority": "critical"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U2 and C1 are too close (2.83 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U2",
+                        "C1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.83,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "priority": "high"
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 14.0,
+                "final_score": 0.0,
+                "severity_totals": {
+                    "critical": 8.0,
+                    "high": 6.0
+                },
+                "category_totals": {
+                    "emi_return_path": 8.0,
+                    "layout": 1.5,
+                    "power_integrity": 4.5
+                },
+                "detailed_penalties": [
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U1",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for U2",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "ground_reference",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No ground net was found while checking reference context for C1",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U1 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "U2 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "power_connectivity",
+                        "severity": "high",
+                        "category": "power_integrity",
+                        "message": "C1 is not connected to a valid power rail",
+                        "penalty": 1.5
+                    },
+                    {
+                        "rule_id": "return_path",
+                        "severity": "critical",
+                        "category": "emi_return_path",
+                        "message": "No valid ground net was found on the board, so return-path continuity cannot be verified",
+                        "penalty": 2.0
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "U2 and C1 are too close (2.83 units)",
+                        "penalty": 1.5
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "power_board_good.kicad_pcb",
+                "component_count": 3,
+                "net_count": 3,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "C1"
+                ],
+                "risk_count": 8,
+                "severity_counts": {
+                    "critical": 4,
+                    "high": 4
+                }
+            },
+            "json_path": null,
+            "report_md_path": null,
+            "report_html_path": null,
+            "rank": 4
+        }
+    ]
+}

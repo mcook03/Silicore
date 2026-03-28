@@ -1,79 +1,175 @@
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Silicore Project Summary</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 32px;
-                background: #f8fafc;
-                color: #0f172a;
-            }
-            .card {
-                background: white;
-                border: 1px solid #cbd5e1;
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-            .board {
-                background: white;
-                border: 1px solid #cbd5e1;
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Silicore Project Summary</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Silicore Project Summary</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 32px;
+            background: #0b1020;
+            color: #e8edf7;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .hero, .board-card {
+            background: #141b2d;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .stat {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #aab6d3;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .board-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 12px;
+        }
+        .rank {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(126,240,197,0.12);
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .score {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .subtle {
+            color: #aab6d3;
+        }
+        .mini-line {
+            margin-top: 8px;
+        }
+        .issue-block {
+            margin-top: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <section class="hero">
+            <h1>Silicore Project Summary</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Boards</div>
+                    <div class="stat-value">4</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Average</div>
+                    <div class="stat-value">6.25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Best</div>
+                    <div class="stat-value">8.5</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Worst</div>
+                    <div class="stat-value">3.5</div>
+                </div>
+            </div>
+        </section>
 
-        <div class="card">
-            <p><strong>Total Boards:</strong> 4</p>
-            <p><strong>Average Score:</strong> 7.0 / 10</p>
-            <p><strong>Best Score:</strong> 10.0 / 10</p>
-            <p><strong>Worst Score:</strong> 3.5 / 10</p>
-        </div>
-
         
-        <div class="board">
-            <h2>#1 power_board_good.kicad_pcb</h2>
-            <p><strong>Score:</strong> 10.0 / 10</p>
-            <p><strong>Total Risks:</strong> 0</p>
-            <p><strong>Total Penalty:</strong> 0.0</p>
-            <p><strong>Component Count:</strong> 3</p>
-            <p><strong>Net Count:</strong> 3</p>
-        </div>
+        <section class="board-card">
+            <div class="board-top">
+                <div>
+                    <div class="rank">#1</div>
+                    <h2>power_board_good.kicad_pcb</h2>
+                    <div class="subtle">Strong board health</div>
+                </div>
+                <div class="score">8.5 / 10</div>
+            </div>
+            <p class="subtle">This board looks strong overall. The remaining issues appear targeted rather than systemic.</p>
+            <div class="issue-block">
+                <strong>Top Issues</strong>
+                <div class='mini-line'><strong>[HIGH]</strong> U2 and C1 are too close (2.83 units)</div>
+            </div>
+        </section>
         
-        <div class="board">
-            <h2>#2 revision_new.kicad_pcb</h2>
-            <p><strong>Score:</strong> 10.0 / 10</p>
-            <p><strong>Total Risks:</strong> 0</p>
-            <p><strong>Total Penalty:</strong> 0.0</p>
-            <p><strong>Component Count:</strong> 3</p>
-            <p><strong>Net Count:</strong> 2</p>
-        </div>
+        <section class="board-card">
+            <div class="board-top">
+                <div>
+                    <div class="rank">#2</div>
+                    <h2>revision_new.kicad_pcb</h2>
+                    <div class="subtle">Strong board health</div>
+                </div>
+                <div class="score">8.5 / 10</div>
+            </div>
+            <p class="subtle">This board looks strong overall. The remaining issues appear targeted rather than systemic.</p>
+            <div class="issue-block">
+                <strong>Top Issues</strong>
+                <div class='mini-line'><strong>[HIGH]</strong> U2 and C1 are too close (2.83 units)</div>
+            </div>
+        </section>
         
-        <div class="board">
-            <h2>#3 revision_old.kicad_pcb</h2>
-            <p><strong>Score:</strong> 4.5 / 10</p>
-            <p><strong>Total Risks:</strong> 4</p>
-            <p><strong>Total Penalty:</strong> 5.5</p>
-            <p><strong>Component Count:</strong> 2</p>
-            <p><strong>Net Count:</strong> 2</p>
-        </div>
+        <section class="board-card">
+            <div class="board-top">
+                <div>
+                    <div class="rank">#3</div>
+                    <h2>revision_old.kicad_pcb</h2>
+                    <div class="subtle">Needs engineering attention</div>
+                </div>
+                <div class="score">4.5 / 10</div>
+            </div>
+            <p class="subtle">This board has several high-impact findings that deserve active cleanup.</p>
+            <div class="issue-block">
+                <strong>Top Issues</strong>
+                <div class='mini-line'><strong>[HIGH]</strong> Power net VIN has excessive routed length (70.00 units)</div><div class='mini-line'><strong>[HIGH]</strong> Power net VIN uses a narrow trace width (0.15)</div>
+            </div>
+        </section>
         
-        <div class="board">
-            <h2>#4 power_board_bad.kicad_pcb</h2>
-            <p><strong>Score:</strong> 3.5 / 10</p>
-            <p><strong>Total Risks:</strong> 5</p>
-            <p><strong>Total Penalty:</strong> 6.5</p>
-            <p><strong>Component Count:</strong> 2</p>
-            <p><strong>Net Count:</strong> 3</p>
-        </div>
+        <section class="board-card">
+            <div class="board-top">
+                <div>
+                    <div class="rank">#4</div>
+                    <h2>power_board_bad.kicad_pcb</h2>
+                    <div class="subtle">Needs engineering attention</div>
+                </div>
+                <div class="score">3.5 / 10</div>
+            </div>
+            <p class="subtle">This board has several high-impact findings that deserve active cleanup.</p>
+            <div class="issue-block">
+                <strong>Top Issues</strong>
+                <div class='mini-line'><strong>[HIGH]</strong> Power net VIN has excessive routed length (85.00 units)</div><div class='mini-line'><strong>[HIGH]</strong> Power net VIN uses a narrow trace width (0.15)</div>
+            </div>
+        </section>
         
-    </body>
-    </html>
-    
+    </div>
+</body>
+</html>
