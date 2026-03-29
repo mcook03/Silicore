@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Run Detail</h2>
+        <p class="section-copy">
+            A closer look at one saved run folder and the export files Silicore generated for it.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Run Name</div>
+                <div class="metric-value" style="font-size:22px;">{{ run_detail.name }}</div>
+                <div class="metric-sub">Saved run folder</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Files</div>
+                <div class="metric-value">{{ run_detail.download_count }}</div>
+                <div class="metric-sub">Total artifacts in this run</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">JSON</div>
+                <div class="metric-value">{{ run_detail.json_count }}</div>
+                <div class="metric-sub">Structured outputs</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Reports</div>
+                <div class="metric-value">{{ run_detail.text_count + run_detail.html_count }}</div>
+                <div class="metric-sub">Readable report-style files</div>
+            </div>
+        </div>
+
+        {% if run_detail.preview %}
+            <div class="summary-strip" style="margin-top: 18px;">
+                <div class="summary-panel" style="grid-column: 1 / -1;">
+                    <h3>Run Preview</h3>
+                    <p>{{ run_detail.preview }}</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <section style="margin-top: 18px;">
+            <div class="section-block-header">
+                <div>
+                    <h3 class="section-title">Downloads</h3>
+                    <div class="copy">Open or save the files generated for this run.</div>
+                </div>
+            </div>
+
+            {% if run_detail.files %}
+                <div class="btn-link-row">
+                    {% for file in run_detail.files %}
+                        <a class="btn-link" href="{{ url_for('download_file', run_dir=file.run_dir, filename=file.filename) }}">{{ file.label }}</a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">No files were found in this run folder.</div>
+            {% endif %}
+        </section>
+    </div>
+</section>
+
+{% endblock %}

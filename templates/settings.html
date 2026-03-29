@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Config Editor</h2>
+        <p class="section-copy">
+            Dashboard-facing thresholds now live on a dedicated settings page instead of crowding the main analysis view.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="divider"></div>
+        <form action="{{ url_for('settings_page') }}" method="post">
+            <div class="stack">
+                <div>
+                    <div class="minor-title">Layout</div>
+                    <p class="section-copy">Controls spacing and density assumptions.</p>
+                </div>
+
+                <div class="inline-grid-2">
+                    <label>
+                        Min Component Spacing
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="layout_min_component_spacing"
+                            value="{{ editable_config.layout.min_component_spacing if editable_config and editable_config.layout else '' }}"
+                        >
+                    </label>
+                    <label>
+                        Density Threshold
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="layout_density_threshold"
+                            value="{{ editable_config.layout.density_threshold if editable_config and editable_config.layout else '' }}"
+                        >
+                    </label>
+                </div>
+
+                <div>
+                    <div class="minor-title">Power</div>
+                    <p class="section-copy">Define required rails and grounding expectations.</p>
+                </div>
+
+                <label>
+                    Required Power Nets
+                    <input
+                        type="text"
+                        name="power_required_power_nets"
+                        value="{{ editable_config.power.required_power_nets if editable_config and editable_config.power else '' }}"
+                        placeholder="VIN, 3V3, 5V"
+                    >
+                </label>
+
+                <label>
+                    Required Ground Nets
+                    <input
+                        type="text"
+                        name="power_required_ground_nets"
+                        value="{{ editable_config.power.required_ground_nets if editable_config and editable_config.power else '' }}"
+                        placeholder="GND, AGND"
+                    >
+                </label>
+
+                <div>
+                    <div class="minor-title">Signal</div>
+                    <p class="section-copy">Set routing expectations and critical net handling.</p>
+                </div>
+
+                <div class="inline-grid-2">
+                    <label>
+                        Max Trace Length
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="signal_max_trace_length"
+                            value="{{ editable_config.signal.max_trace_length if editable_config and editable_config.signal else '' }}"
+                        >
+                    </label>
+                    <label>
+                        Critical Nets
+                        <input
+                            type="text"
+                            name="signal_critical_nets"
+                            value="{{ editable_config.signal.critical_nets if editable_config and editable_config.signal else '' }}"
+                            placeholder="CLK, USB_D+, USB_D-"
+                        >
+                    </label>
+                </div>
+
+                <button class="btn btn-secondary full" type="submit">Save Config</button>
+
+                <div class="mini-note">
+                    This editor preserves the existing Silicore dashboard config save flow while keeping the settings experience cleaner and more product-like.
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

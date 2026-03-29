@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">{{ project.name }}</h2>
+        <p class="section-copy">
+            {{ project.description if project.description else "No description yet for this project." }}
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Project ID</div>
+                <div class="metric-value" style="font-size:22px;">{{ project.project_id }}</div>
+                <div class="metric-sub">Workspace identifier</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Linked Runs</div>
+                <div class="metric-value">{{ project.runs|length }}</div>
+                <div class="metric-sub">Attached analyses</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Created</div>
+                <div class="metric-value" style="font-size:22px;">{{ project.created_at }}</div>
+                <div class="metric-sub">Project creation time</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Updated</div>
+                <div class="metric-value" style="font-size:22px;">{{ project.updated_at }}</div>
+                <div class="metric-sub">Latest change time</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Linked Analysis Runs</h2>
+        <p class="section-copy">
+            Runs attached to this project now behave like a real engineering workflow rather than isolated history items.
+        </p>
+    </div>
+    <div class="card-body">
+        {% if project.runs %}
+            <div class="runs-list">
+                {% for run in project.runs|reverse %}
+                    <div class="run-item">
+                        <p class="run-title">{{ run.name }}</p>
+                        <div class="run-meta">
+                            Type: {{ run.run_type }}<br>
+                            Score: {{ run.score if run.score is not none else "N/A" }}<br>
+                            Risk Count: {{ run.risk_count if run.risk_count is not none else "N/A" }}<br>
+                            Created: {{ run.created_at }}
+                        </div>
+
+                        <div class="run-file-list">
+                            <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run Detail</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                No runs are linked to this project yet.
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-grid">
+        <div>
+            <h1>Silicore now feels like a real control center.</h1>
+            <p>
+                Milestone 16.5 upgrades the dashboard experience by making Home more intentional, History more useful,
+                and Project Review more comparative and product-like, while keeping the same premium Silicore visual language.
+            </p>
+            <div class="hero-chip-row">
+                <div class="hero-chip">Executive dashboard overview</div>
+                <div class="hero-chip">Richer saved run browsing</div>
+                <div class="hero-chip">Stronger project comparison</div>
+                <div class="hero-chip">Design continuity preserved</div>
+            </div>
+
+            <div class="btn-link-row" style="margin-top: 20px;">
+                <a class="btn-link" href="{{ url_for('single_board_page') }}">Open Single Board</a>
+                <a class="btn-link" href="{{ url_for('project_page') }}">Open Project Review</a>
+                <a class="btn-link" href="{{ url_for('history_page') }}">Browse Saved Runs</a>
+            </div>
+        </div>
+
+        <div class="hero-status-card">
+            <div class="status-kicker">Platform status</div>
+            <div class="status-number">Ready</div>
+            <div class="status-copy">
+                Silicore’s engine and product shell are stable enough to focus on experience polish, stronger workflow separation, and customer-facing presentation.
+            </div>
+            <div class="subtle-stat-line">
+                <div class="stat-pill">Stable CLI</div>
+                <div class="stat-pill">Stable dashboard</div>
+                <div class="stat-pill">Stable exports</div>
+                <div class="stat-pill">Premium UI retained</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Executive Overview</h2>
+        <p class="section-copy">
+            A cleaner home surface that behaves more like a product control center than a dumping ground for every workflow.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Saved Runs</div>
+                <div class="metric-value">{{ stats.total_runs }}</div>
+                <div class="metric-sub">Complete dashboard analysis runs</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Single Board Runs</div>
+                <div class="metric-value">{{ stats.single_runs }}</div>
+                <div class="metric-sub">Focused engineering reviews</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Project Runs</div>
+                <div class="metric-value">{{ stats.project_runs }}</div>
+                <div class="metric-sub">Multi-board comparisons</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Runs With Exports</div>
+                <div class="metric-value">{{ stats.exported_runs }}</div>
+                <div class="metric-sub">Saved outputs available to revisit</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Quick Launch</h2>
+            <p class="section-copy">
+                Move directly into the main Silicore workflows from a cleaner dashboard home.
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="grid">
+                <div class="summary-panel">
+                    <h3>Single Board Analysis</h3>
+                    <p>Run a focused review on one board file and surface top engineering issues immediately.</p>
+                    <div class="btn-link-row" style="margin-top: 14px;">
+                        <a class="btn-link" href="{{ url_for('single_board_page') }}">Open Single Board</a>
+                    </div>
+                </div>
+
+                <div class="summary-panel">
+                    <h3>Project Review</h3>
+                    <p>Compare multiple boards, rank them, and understand project-wide score spread more clearly.</p>
+                    <div class="btn-link-row" style="margin-top: 14px;">
+                        <a class="btn-link" href="{{ url_for('project_page') }}">Open Project Review</a>
+                    </div>
+                </div>
+
+                <div class="summary-panel">
+                    <h3>Settings</h3>
+                    <p>Tune dashboard-facing thresholds without crowding your active analysis pages.</p>
+                    <div class="btn-link-row" style="margin-top: 14px;">
+                        <a class="btn-link" href="{{ url_for('settings_page') }}">Open Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Recent Activity</h2>
+            <p class="section-copy">
+                Recent runs stay capped on the home page so this screen remains clean and intentional.
+            </p>
+        </div>
+        <div class="card-body">
+            {% if recent_runs %}
+                <div class="runs-list">
+                    {% for run in recent_runs %}
+                        <div class="run-item">
+                            <p class="run-title">{{ run.name }}</p>
+                            <div class="run-meta">
+                                Type: {{ run.run_type }}<br>
+                                Created: {{ run.created_at }}
+                            </div>
+                            <div class="btn-link-row" style="margin-top: 12px;">
+                                <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">No saved runs yet.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+{% endblock %}

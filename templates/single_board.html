@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Single Board Analysis</h2>
+        <p class="section-copy">
+            Upload one board file to generate focused engineering review, clearer issue prioritization, grouped findings, and downloadable exports.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="divider"></div>
+        <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data">
+            <label>
+                Board File
+                <input type="file" name="board_file" required>
+            </label>
+
+            {% if project_options is defined %}
+            <label>
+                Attach to Project
+                <select name="project_id">
+                    <option value="">No project</option>
+                    {% for project in project_options %}
+                        <option value="{{ project.project_id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% endif %}
+
+            <button class="btn btn-primary full" type="submit">Analyze Board</button>
+        </form>
+    </div>
+</section>
+
+{% if result %}
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Single Board Review</h2>
+            <p class="section-copy">
+                A cleaner engineering review flow that puts health, top issues, grouped findings, and exports first.
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Silicore Risk Score</div>
+                    <div class="metric-value {{ score_band_class(result.score) }}">{{ result.score }}</div>
+                    <div class="metric-sub">{{ score_band_label(result.score) }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Components</div>
+                    <div class="metric-value">{{ result.board_summary.component_count if result.board_summary else 0 }}</div>
+                    <div class="metric-sub">Parsed component count</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Nets</div>
+                    <div class="metric-value">{{ result.board_summary.net_count if result.board_summary else 0 }}</div>
+                    <div class="metric-sub">Detected connectivity entities</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Risk Count</div>
+                    <div class="metric-value">{{ result.board_summary.risk_count if result.board_summary else (result.risks|length if result.risks else 0) }}</div>
+                    <div class="metric-sub">Current ruleset findings</div>
+                </div>
+            </div>
+
+            <div class="summary-strip" style="margin-top: 18px;">
+                <div class="summary-panel">
+                    <h3>{{ result.health_summary.title }}</h3>
+                    <p>{{ result.health_summary.summary }}</p>
+                </div>
+
+                <div class="summary-panel">
+                    <h3>Executive Summary</h3>
+                    <p>
+                        {% if result.executive_summary and result.executive_summary.summary %}
+                            {{ result.executive_summary.summary }}
+                        {% else %}
+                            No executive summary available for this board yet.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <section style="margin-top: 18px;">
+                <div class="section-block-header">
+                    <div>
+                        <h3 class="section-title">Top Issues</h3>
+                        <div class="copy">Highest-priority findings to review first.</div>
+                    </div>
+                </div>
+
+                {% if result.top_issues %}
+                    <div class="issues-grid">
+                        {% for issue in result.top_issues %}
+                            <div class="issue-card">
+                                <div class="chip {{ chip_class(issue.severity) }}">{{ issue.severity }}</div>
+                                <h4>{{ issue.message }}</h4>
+                                <div class="issue-meta">Category: {{ issue.category }}</div>
+
+                                {% if issue.recommendation %}
+                                    <div class="finding-block">
+                                        <span class="finding-label">Recommendation:</span>
+                                        {{ issue.recommendation }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">No issues found.</div>
+                {% endif %}
+            </section>
+
+            <section style="margin-top: 18px;">
+                <div class="section-block-header">
+                    <div>
+                        <h3 class="section-title">Category Summary</h3>
+                        <div class="copy">Quick grouped counts by engineering section.</div>
+                    </div>
+                </div>
+
+                {% if result.grouped_risks %}
+                    <div class="group-grid">
+                        {% for section in result.grouped_risks %}
+                            <div class="group-card">
+                                <h4>{{ section.title }}</h4>
+                                <div class="count">{{ section.count }}</div>
+                                <div class="small-muted">
+                                    issue{% if section.count != 1 %}s{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">No grouped findings.</div>
+                {% endif %}
+            </section>
+
+            {% if result.score_explanation %}
+                <section style="margin-top: 18px;">
+                    <div class="section-block-header">
+                        <div>
+                            <h3 class="section-title">Score Breakdown</h3>
+                            <div class="copy">Where score was removed and why.</div>
+                        </div>
+                    </div>
+
+                    <div class="penalty-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Start</div>
+                            <div class="metric-value">{{ result.score_explanation.start_score }}</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Total Penalty</div>
+                            <div class="metric-value">{{ result.score_explanation.total_penalty }}</div>
+                        </div>
+
+                        <div class="metric-card" style="grid-column: span 2;">
+                            <div class="metric-label">Severity Penalties</div>
+                            <div class="pill-row">
+                                {% if result.score_explanation.severity_totals %}
+                                    {% for severity, penalty in result.score_explanation.severity_totals.items() %}
+                                        <div class="pill">{{ severity }}: {{ penalty }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="pill">None</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="metric-card" style="grid-column: 1 / -1;">
+                            <div class="metric-label">Category Penalties</div>
+                            <div class="pill-row">
+                                {% if result.score_explanation.category_totals %}
+                                    {% for category, penalty in result.score_explanation.category_totals.items() %}
+                                        <div class="pill">{{ category }}: {{ penalty }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="pill">No category penalties recorded</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            {% endif %}
+
+            <section style="margin-top: 18px;">
+                <div class="section-block-header">
+                    <div>
+                        <h3 class="section-title">Grouped Findings</h3>
+                        <div class="copy">Organized by engineering category for easier review flow.</div>
+                    </div>
+                </div>
+
+                {% if result.grouped_risks %}
+                    <div class="grouped-sections">
+                        {% for section in result.grouped_risks %}
+                            <div class="group-section">
+                                <div class="group-section-header">
+                                    <div>
+                                        <h4 class="group-section-title">{{ section.title }}</h4>
+                                        <div class="group-section-sub">
+                                            {{ section.count }} finding{% if section.count != 1 %}s{% endif %} in this category
+                                        </div>
+                                    </div>
+
+                                    <div class="severity-row">
+                                        {% if section.severity_counts.critical %}
+                                            <div class="pill">critical: {{ section.severity_counts.critical }}</div>
+                                        {% endif %}
+                                        {% if section.severity_counts.high %}
+                                            <div class="pill">high: {{ section.severity_counts.high }}</div>
+                                        {% endif %}
+                                        {% if section.severity_counts.medium %}
+                                            <div class="pill">medium: {{ section.severity_counts.medium }}</div>
+                                        {% endif %}
+                                        {% if section.severity_counts.low %}
+                                            <div class="pill">low: {{ section.severity_counts.low }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="finding-list">
+                                    {% for risk in section.risks %}
+                                        <div class="finding">
+                                            <div class="finding-top">
+                                                <div>
+                                                    <div class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</div>
+                                                    <h4>{{ risk.message }}</h4>
+                                                </div>
+
+                                                <div class="small-muted">
+                                                    {% if risk.rule_id %}Rule: {{ risk.rule_id }}{% else %}Grouped finding{% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="finding-block">
+                                                <span class="finding-label">Recommendation:</span>
+                                                {{ risk.recommendation if risk.recommendation else "Manual review recommended." }}
+                                            </div>
+
+                                            {% if risk.explanation %}
+                                                <div class="finding-block">
+                                                    <span class="finding-label">Explanation:</span><br>
+                                                    {% if risk.explanation.root_cause %}Root cause: {{ risk.explanation.root_cause }}<br>{% endif %}
+                                                    {% if risk.explanation.impact %}Impact: {{ risk.explanation.impact }}<br>{% endif %}
+                                                    {% if risk.explanation.confidence %}Confidence: {{ risk.explanation.confidence }}{% endif %}
+                                                </div>
+                                            {% endif %}
+
+                                            {% if risk.components or risk.nets or risk.region %}
+                                                <div class="finding-block">
+                                                    {% if risk.components %}
+                                                        <span class="finding-label">Components:</span> {{ risk.components | join(", ") }}<br>
+                                                    {% endif %}
+                                                    {% if risk.nets %}
+                                                        <span class="finding-label">Nets:</span> {{ risk.nets | join(", ") }}<br>
+                                                    {% endif %}
+                                                    {% if risk.region %}
+                                                        <span class="finding-label">Region:</span> {{ risk.region }}
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <strong>No risks detected</strong><br><br>
+                        This board did not produce any findings in the current ruleset and config state.
+                    </div>
+                {% endif %}
+            </section>
+
+            {% if result.downloads %}
+                <section style="margin-top: 18px;">
+                    <div class="section-block-header">
+                        <div>
+                            <h3 class="section-title">Exports</h3>
+                            <div class="copy">Download generated outputs for review and sharing.</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-link-row">
+                        {% for item in result.downloads %}
+                            <a class="btn-link" href="{{ download_href(item) }}">{{ item.label }}</a>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+    </section>
+{% else %}
+    <section class="card">
+        <div class="card-body">
+            <div class="empty-state">
+                <strong>No board analysis loaded yet.</strong><br><br>
+                Upload a board file above to generate a single-board Silicore review.
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% endblock %}

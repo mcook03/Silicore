@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Projects Workspace</h2>
+        <p class="section-copy">
+            Create persistent engineering workspaces so analyses belong to real projects instead of isolated runs.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Projects</div>
+                <div class="metric-value">{{ projects_summary.total_projects }}</div>
+                <div class="metric-sub">Saved workspaces</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Linked Runs</div>
+                <div class="metric-value">{{ projects_summary.total_runs }}</div>
+                <div class="metric-sub">Runs attached to projects</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Active Projects</div>
+                <div class="metric-value">{{ projects_summary.populated_projects }}</div>
+                <div class="metric-sub">Projects with saved activity</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Empty Projects</div>
+                <div class="metric-value">{{ projects_summary.empty_projects }}</div>
+                <div class="metric-sub">Ready for first analysis</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Create Project</h2>
+            <p class="section-copy">
+                Start a new engineering workspace for boards, saved runs, and future collaboration features.
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="divider"></div>
+            <form action="{{ url_for('create_project_route') }}" method="post">
+                <label>
+                    Project Name
+                    <input type="text" name="name" required placeholder="Power delivery validation">
+                </label>
+
+                <label>
+                    Description
+                    <textarea name="description" placeholder="Describe this project, boards involved, and what the analysis work is for."></textarea>
+                </label>
+
+                <button class="btn btn-primary full" type="submit">Create Project</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">All Projects</h2>
+            <p class="section-copy">
+                Browse workspaces and reopen project-linked analysis history.
+            </p>
+        </div>
+        <div class="card-body">
+            {% if projects %}
+                <div class="runs-list">
+                    {% for project in projects %}
+                        <div class="run-item">
+                            <p class="run-title">{{ project.name }}</p>
+                            <div class="run-meta">
+                                Created: {{ project.created_at }}<br>
+                                Updated: {{ project.updated_at }}<br>
+                                Linked Runs: {{ project.run_count }}
+                            </div>
+
+                            {% if project.description %}
+                                <div class="run-preview">{{ project.description }}</div>
+                            {% endif %}
+
+                            <div class="run-file-list">
+                                <a class="btn-link" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Project</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">No projects yet.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+{% endblock %}

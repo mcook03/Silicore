@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Saved Runs Overview</h2>
+        <p class="section-copy">
+            History now behaves more like product memory instead of a plain list.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Saved Runs</div>
+                <div class="metric-value">{{ history_summary.total_runs }}</div>
+                <div class="metric-sub">Stored dashboard run folders</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Export Files</div>
+                <div class="metric-value">{{ history_summary.total_files }}</div>
+                <div class="metric-sub">Total discovered saved artifacts</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">JSON Files</div>
+                <div class="metric-value">{{ history_summary.total_json }}</div>
+                <div class="metric-sub">Structured machine-readable outputs</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Readable Reports</div>
+                <div class="metric-value">{{ history_summary.total_text + history_summary.total_html }}</div>
+                <div class="metric-sub">Text and HTML artifacts available</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Run Browser</h2>
+        <p class="section-copy">
+            Browse previous work, preview what was saved, and jump directly into export files.
+        </p>
+    </div>
+    <div class="card-body">
+        {% if history_runs %}
+            <div class="runs-list">
+                {% for run in history_runs %}
+                    <div class="run-item">
+                        <p class="run-title">{{ run.name }}</p>
+                        <div class="run-meta">
+                            Type: {{ run.run_type }}<br>
+                            Created: {{ run.created_at }}<br>
+                            Files: {{ run.download_count }}
+                        </div>
+
+                        {% if run.preview %}
+                            <div class="run-preview">
+                                {{ run.preview }}
+                            </div>
+                        {% endif %}
+
+                        <div class="run-file-list">
+                            <a class="btn-link" href="{{ run.detail_url }}">Open Run Detail</a>
+                            {% for file in run.files[:3] %}
+                                <a class="btn-link" href="{{ url_for('download_file', run_dir=file.run_dir, filename=file.filename) }}">{{ file.label }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No saved runs yet.</div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

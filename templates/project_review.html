@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Project Analysis</h2>
+        <p class="section-copy">
+            Upload multiple boards to compare design quality, rank them, and quickly see which boards deserve the most attention.
+        </p>
+    </div>
+    <div class="card-body">
+        <div class="divider"></div>
+        <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data">
+            <label>
+                Project Files
+                <input type="file" name="project_files" multiple required>
+            </label>
+
+            {% if project_options is defined %}
+            <label>
+                Attach to Project
+                <select name="project_id">
+                    <option value="">No project</option>
+                    {% for project in project_options %}
+                        <option value="{{ project.project_id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% endif %}
+
+            <button class="btn btn-primary full" type="submit">Analyze Project</button>
+        </form>
+    </div>
+</section>
+
+{% if project_result %}
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Project Ranking Review</h2>
+            <p class="section-copy">
+                Compare boards across the uploaded project set and quickly see which designs are strongest and weakest.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if project_result.project_summary %}
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Boards</div>
+                        <div class="metric-value">{{ project_result.project_summary.total_boards }}</div>
+                        <div class="metric-sub">Uploaded project set</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Average Score</div>
+                        <div class="metric-value">{{ project_result.project_summary.average_score }}</div>
+                        <div class="metric-sub">Mean board quality</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Best Score</div>
+                        <div class="metric-value">{{ project_result.project_summary.best_score }}</div>
+                        <div class="metric-sub">Top current design</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Worst Score</div>
+                        <div class="metric-value">{{ project_result.project_summary.worst_score }}</div>
+                        <div class="metric-sub">Board needing most attention</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="summary-strip" style="margin-top: 18px;">
+                <div class="summary-panel">
+                    <h3>{{ project_result.project_health_summary.title if project_result.project_health_summary else "Project Health" }}</h3>
+                    <p>
+                        {{ project_result.project_health_summary.summary if project_result.project_health_summary else "No project health summary available." }}
+                    </p>
+                </div>
+
+                <div class="summary-panel">
+                    <h3>Project Insight</h3>
+                    <p>
+                        {% if project_result.project_insight and project_result.project_insight.summary %}
+                            {{ project_result.project_insight.summary }}
+                        {% else %}
+                            No project insight summary available yet.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <section style="margin-top: 18px;">
+                <div class="section-block-header">
+                    <div>
+                        <h3 class="section-title">Best vs Worst Snapshot</h3>
+                        <div class="copy">A faster product-style view of project spread and board quality variation.</div>
+                    </div>
+                </div>
+
+                <div class="spotlight-grid">
+                    <div class="spotlight-card best">
+                        <div class="spotlight-label">Best board</div>
+                        {% if comparison.best_board %}
+                            <div class="spotlight-title">{{ comparison.best_board.filename }}</div>
+                            <div class="spotlight-copy">
+                                Score: {{ comparison.best_board.score }} / 10<br>
+                                {{ comparison.best_board.health_summary.title }}
+                            </div>
+                        {% else %}
+                            <div class="spotlight-copy">No ranked board available.</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="spotlight-card worst">
+                        <div class="spotlight-label">Worst board</div>
+                        {% if comparison.worst_board %}
+                            <div class="spotlight-title">{{ comparison.worst_board.filename }}</div>
+                            <div class="spotlight-copy">
+                                Score: {{ comparison.worst_board.score }} / 10<br>
+                                {{ comparison.worst_board.health_summary.title }}
+                            </div>
+                        {% else %}
+                            <div class="spotlight-copy">No ranked board available.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <section style="margin-top: 18px;">
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Score Spread</div>
+                        <div class="metric-value">{{ comparison.score_spread }}</div>
+                        <div class="metric-sub">Difference between best and worst board</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Strong Boards</div>
+                        <div class="metric-value">{{ comparison.strong_count }}</div>
+                        <div class="metric-sub">Boards at 8.0 or above</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Watch Boards</div>
+                        <div class="metric-value">{{ comparison.watch_count }}</div>
+                        <div class="metric-sub">Boards between 5.0 and 7.99</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">High-Risk Boards</div>
+                        <div class="metric-value">{{ comparison.risk_count }}</div>
+                        <div class="metric-sub">Boards below 5.0</div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="margin-top: 18px;">
+                <div class="section-block-header">
+                    <div>
+                        <h3 class="section-title">Ranked Boards</h3>
+                        <div class="copy">A stronger comparison surface for the uploaded project set.</div>
+                    </div>
+                </div>
+
+                {% if project_result.boards %}
+                    <div class="ranking-grid">
+                        {% for board in project_result.boards %}
+                            <div class="ranking-card">
+                                <div class="ranking-head">
+                                    <div>
+                                        <div class="ranking-rank">
+                                            #{{ board.rank }}
+                                            {% if board.rank == 1 %}
+                                                · Top ranked board
+                                            {% elif board.rank == project_result.boards|length %}
+                                                · Lowest ranked board
+                                            {% else %}
+                                                · Project board
+                                            {% endif %}
+                                        </div>
+                                        <h3>{{ board.filename }}</h3>
+                                    </div>
+
+                                    <div class="ranking-score">
+                                        <div class="value {{ score_band_class(board.score) }}">{{ board.score }}</div>
+                                        <div class="small-muted">{{ score_band_label(board.score) }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="ranking-layout">
+                                    <div class="mini-panel">
+                                        <h4>{{ board.health_summary.title }}</h4>
+                                        <div class="small-muted">{{ board.health_summary.summary }}</div>
+                                    </div>
+
+                                    <div class="mini-panel">
+                                        <h4>Top Issues</h4>
+                                        {% if board.top_issues %}
+                                            <div class="top-issue-list">
+                                                {% for risk in board.top_issues %}
+                                                    <div class="top-issue-item">
+                                                        <div class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</div>
+                                                        <div style="font-size:13px; line-height:1.55;">{{ risk.message }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <div class="small-muted">No top issues recorded.</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">No project boards analyzed.</div>
+                {% endif %}
+            </section>
+
+            {% if project_result.downloads %}
+                <section style="margin-top: 18px;">
+                    <div class="section-block-header">
+                        <div>
+                            <h3 class="section-title">Project Exports</h3>
+                            <div class="copy">Download the full project outputs.</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-link-row">
+                        {% for item in project_result.downloads %}
+                            <a class="btn-link" href="{{ download_href(item) }}">{{ item.label }}</a>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+    </section>
+{% else %}
+    <section class="card">
+        <div class="card-body">
+            <div class="empty-state">
+                <strong>No project analysis loaded yet.</strong><br><br>
+                Upload multiple board files above to generate a ranked project review.
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% endblock %}
