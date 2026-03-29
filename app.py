@@ -41,6 +41,13 @@ def _safe_float(value, default=0.0):
         return default
 
 
+def _safe_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def _severity_rank(severity):
     order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
     return order.get(str(severity).lower(), 4)
@@ -214,6 +221,22 @@ def _score_band_label(score):
     if value >= 5.0:
         return "Needs review before release"
     return "High engineering risk"
+
+
+def _comparison_delta_class(delta, higher_is_better=True):
+    if delta == 0:
+        return "chip-medium"
+    improved = delta > 0 if higher_is_better else delta < 0
+    return "chip-low" if improved else "chip-critical"
+
+
+def _comparison_delta_label(delta, metric_name, higher_is_better=True):
+    if delta == 0:
+        return f"No change in {metric_name}"
+    improved = delta > 0 if higher_is_better else delta < 0
+    direction = "improved" if improved else "worsened"
+    sign = "+" if delta > 0 else ""
+    return f"{metric_name} {direction} ({sign}{delta})"
 
 
 def _get_recent_runs(limit=None):
@@ -393,6 +416,100 @@ def _build_projects_summary(projects):
     }
 
 
+def _normalize_snapshot(snapshot):
+    return snapshot or []
+
+
+def _normalize_category_summary(summary):
+    return summary or {}
+
+
+def _build_delta_analysis(run_a, run_b):
+    snapshot_a = _normalize_snapshot(run_a.get("risk_snapshot"))
+    snapshot_b = _normalize_snapshot(run_b.get("risk_snapshot"))
+
+    sigs_a = {item.get("signature"): item for item in snapshot_a if item.get("signature")}
+    sigs_b = {item.get("signature"): item for item in snapshot_b if item.get("signature")}
+
+    added_keys = [key for key in sigs_b.keys() if key not in sigs_a]
+    removed_keys = [key for key in sigs_a.keys() if key not in sigs_b]
+
+    added_risks = [sigs_b[key] for key in added_keys]
+    removed_risks = [sigs_a[key] for key in removed_keys]
+
+    added_risks = sorted(
+        added_risks,
+        key=lambda item: (_severity_rank(item.get("severity")), item.get("category", ""), item.get("message", "")),
+    )
+    removed_risks = sorted(
+        removed_risks,
+        key=lambda item: (_severity_rank(item.get("severity")), item.get("category", ""), item.get("message", "")),
+    )
+
+    categories_a = _normalize_category_summary(run_a.get("category_summary"))
+    categories_b = _normalize_category_summary(run_b.get("category_summary"))
+
+    all_categories = sorted(set(categories_a.keys()) | set(categories_b.keys()))
+    category_deltas = []
+
+    for category in all_categories:
+        before_count = _safe_int(categories_a.get(category), 0)
+        after_count = _safe_int(categories_b.get(category), 0)
+        delta = after_count - before_count
+
+        if delta != 0:
+            category_deltas.append(
+                {
+                    "category": category,
+                    "before": before_count,
+                    "after": after_count,
+                    "delta": delta,
+                    "direction": "increased" if delta > 0 else "decreased",
+                }
+            )
+
+    category_deltas = sorted(
+        category_deltas,
+        key=lambda item: (-abs(item["delta"]), item["category"]),
+    )
+
+    added_critical = [risk for risk in added_risks if str(risk.get("severity", "")).lower() == "critical"]
+    removed_critical = [risk for risk in removed_risks if str(risk.get("severity", "")).lower() == "critical"]
+
+    insight_lines = []
+
+    if removed_critical:
+        insight_lines.append(f"Removed {len(removed_critical)} critical issue(s).")
+    if added_critical:
+        insight_lines.append(f"Added {len(added_critical)} critical issue(s).")
+    if removed_risks and not removed_critical:
+        insight_lines.append(f"Resolved {len(removed_risks)} prior finding(s).")
+    if added_risks and not added_critical:
+        insight_lines.append(f"Introduced {len(added_risks)} new finding(s).")
+
+    if category_deltas:
+        top_shift = category_deltas[0]
+        category_name = _format_category_name(top_shift["category"])
+        if top_shift["delta"] > 0:
+            insight_lines.append(f"{category_name} issues increased the most.")
+        else:
+            insight_lines.append(f"{category_name} issues improved the most.")
+
+    if not insight_lines:
+        insight_lines.append("No finding-level changes were detected between these runs.")
+
+    return {
+        "added_risks": added_risks,
+        "removed_risks": removed_risks,
+        "added_count": len(added_risks),
+        "removed_count": len(removed_risks),
+        "added_critical_count": len(added_critical),
+        "removed_critical_count": len(removed_critical),
+        "category_deltas": category_deltas,
+        "insight_text": " ".join(insight_lines),
+    }
+
+
 def _download_href(item):
     if isinstance(item, dict):
         if item.get("run_dir") and item.get("filename"):
@@ -424,17 +541,11 @@ def _render_page(*, active_page, page_title, page_eyebrow, page_copy, template_n
         chip_class=_chip_class,
         score_band_class=_score_band_class,
         score_band_label=_score_band_label,
+        comparison_delta_class=_comparison_delta_class,
+        comparison_delta_label=_comparison_delta_label,
         download_href=_download_href,
         **body_context,
     )
-
-
-def _maybe_attach_selected_project(selected_project_id):
-    if not selected_project_id:
-        return
-    latest_runs = _get_recent_runs(limit=1)
-    if latest_runs:
-        add_run_to_project(selected_project_id, latest_runs[0])
 
 
 @app.route("/", methods=["GET"])
@@ -463,7 +574,8 @@ def single_board_page():
                 config_path=CONFIG_PATH,
             )
             result = _enrich_single_result(response.get("result") or {})
-            _maybe_attach_selected_project(selected_project_id)
+            if selected_project_id:
+                add_run_to_project(selected_project_id, response.get("run_record") or {})
             flash("Board analysis completed successfully.")
         except Exception as exc:
             flash(f"Board analysis failed: {exc}")
@@ -497,7 +609,8 @@ def project_page():
             project_result["project_summary"] = project_result.get("summary", {})
             project_result = _enrich_project_result(project_result)
             comparison = _build_project_comparison(project_result)
-            _maybe_attach_selected_project(selected_project_id)
+            if selected_project_id:
+                add_run_to_project(selected_project_id, response.get("run_record") or {})
             flash("Project analysis completed successfully.")
         except Exception as exc:
             flash(f"Project analysis failed: {exc}")
@@ -551,6 +664,76 @@ def project_detail_page(project_id):
         page_copy="Review all runs linked to this engineering workspace.",
         template_name="project_detail.html",
         body_context={"project": project},
+    )
+
+
+@app.route("/projects/<project_id>/compare", methods=["GET"])
+def compare_runs(project_id):
+    run_a_id = (request.args.get("run_a") or "").strip()
+    run_b_id = (request.args.get("run_b") or "").strip()
+
+    project = get_project(project_id)
+    if not project:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+
+    runs = project.get("runs", []) or []
+
+    if len(runs) < 2:
+        flash("At least two runs are required for comparison.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    if not run_a_id or not run_b_id:
+        flash("Select two runs to compare.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    if run_a_id == run_b_id:
+        flash("Choose two different runs for comparison.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    run_a = next((run for run in runs if str(run.get("run_id")) == run_a_id), None)
+    run_b = next((run for run in runs if str(run.get("run_id")) == run_b_id), None)
+
+    if not run_a or not run_b:
+        flash("One or both selected runs could not be found.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    score_a = _safe_float(run_a.get("score"), 0.0)
+    score_b = _safe_float(run_b.get("score"), 0.0)
+    risk_a = _safe_int(run_a.get("risk_count"), 0)
+    risk_b = _safe_int(run_b.get("risk_count"), 0)
+    critical_a = _safe_int(run_a.get("critical_count"), 0)
+    critical_b = _safe_int(run_b.get("critical_count"), 0)
+
+    delta_analysis = _build_delta_analysis(run_a, run_b)
+
+    comparison = {
+        "run_a": run_a,
+        "run_b": run_b,
+        "score_diff": round(score_b - score_a, 2),
+        "risk_diff": risk_b - risk_a,
+        "critical_diff": critical_b - critical_a,
+        "delta_analysis": delta_analysis,
+        "summary": {
+            "score_changed": round(score_b - score_a, 2),
+            "risk_changed": risk_b - risk_a,
+            "critical_changed": critical_b - critical_a,
+            "score_direction": "improved" if score_b > score_a else "worsened" if score_b < score_a else "unchanged",
+            "risk_direction": "improved" if risk_b < risk_a else "worsened" if risk_b > risk_a else "unchanged",
+            "critical_direction": "improved" if critical_b < critical_a else "worsened" if critical_b > critical_a else "unchanged",
+        },
+    }
+
+    return _render_page(
+        active_page="projects_workspace",
+        page_title="Run Comparison",
+        page_eyebrow="Project Comparison",
+        page_copy="Compare two linked runs to measure engineering progress, regression, and overall risk movement.",
+        template_name="compare.html",
+        body_context={
+            "project": project,
+            "comparison": comparison,
+        },
     )
 
 

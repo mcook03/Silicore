@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Run Comparison</h2>
+        <p class="section-copy">
+            Compare two analysis runs to understand engineering improvements or regressions.
+        </p>
+    </div>
+
+    <div class="card-body">
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+            <div class="metric-card">
+                <div style="margin-bottom:10px;">
+                    <span class="chip chip-medium">BASELINE</span>
+                </div>
+
+                <h3>{{ comparison.run_a.name }}</h3>
+                <p><strong>Score:</strong> {{ comparison.run_a.score }}</p>
+                <p><strong>Risks:</strong> {{ comparison.run_a.risk_count }}</p>
+                <p><strong>Critical:</strong> {{ comparison.run_a.critical_count }}</p>
+
+                {% if comparison.run_a.summary %}
+                    <div style="margin-top:10px; color:var(--text-soft);">
+                        {{ comparison.run_a.summary }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div style="margin-bottom:10px;">
+                    <span class="chip chip-high">NEW RUN</span>
+                </div>
+
+                <h3>{{ comparison.run_b.name }}</h3>
+                <p><strong>Score:</strong> {{ comparison.run_b.score }}</p>
+                <p><strong>Risks:</strong> {{ comparison.run_b.risk_count }}</p>
+                <p><strong>Critical:</strong> {{ comparison.run_b.critical_count }}</p>
+
+                {% if comparison.run_b.summary %}
+                    <div style="margin-top:10px; color:var(--text-soft);">
+                        {{ comparison.run_b.summary }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom:16px;">Engineering Changes</h3>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+                <div class="metric-card">
+                    <div class="metric-label">Score Change</div>
+                    <div class="metric-value">{{ comparison.score_diff }}</div>
+                    <div class="metric-sub">{{ comparison.summary.score_direction }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Risk Change</div>
+                    <div class="metric-value">{{ comparison.risk_diff }}</div>
+                    <div class="metric-sub">{{ comparison.summary.risk_direction }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Critical Change</div>
+                    <div class="metric-value">{{ comparison.critical_diff }}</div>
+                    <div class="metric-sub">{{ comparison.summary.critical_direction }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <h3>Delta Insight</h3>
+            <p style="color:var(--text-soft); line-height:1.6;">
+                {{ comparison.delta_analysis.insight_text }}
+            </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+            <div class="card">
+                <h3 style="margin-bottom:14px;">Removed Findings</h3>
+
+                <div style="margin-bottom:12px;">
+                    <span class="chip chip-low">
+                        {{ comparison.delta_analysis.removed_count }} removed
+                    </span>
+                    {% if comparison.delta_analysis.removed_critical_count > 0 %}
+                        <span class="chip chip-low">
+                            {{ comparison.delta_analysis.removed_critical_count }} critical removed
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if comparison.delta_analysis.removed_risks %}
+                    {% for risk in comparison.delta_analysis.removed_risks[:8] %}
+                        <div class="run-item" style="margin-bottom:12px; padding:14px;">
+                            <div style="margin-bottom:6px;">
+                                <span class="chip {{ chip_class(risk.severity) }}">
+                                    {{ risk.severity|upper }}
+                                </span>
+                                <span class="subtle-link">
+                                    {{ risk.category.replace('_', ' ').title() }}
+                                </span>
+                            </div>
+                            <div style="color:var(--text-soft);">
+                                {{ risk.message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">No findings were removed.</div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom:14px;">Added Findings</h3>
+
+                <div style="margin-bottom:12px;">
+                    <span class="chip chip-critical">
+                        {{ comparison.delta_analysis.added_count }} added
+                    </span>
+                    {% if comparison.delta_analysis.added_critical_count > 0 %}
+                        <span class="chip chip-critical">
+                            {{ comparison.delta_analysis.added_critical_count }} critical added
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if comparison.delta_analysis.added_risks %}
+                    {% for risk in comparison.delta_analysis.added_risks[:8] %}
+                        <div class="run-item" style="margin-bottom:12px; padding:14px;">
+                            <div style="margin-bottom:6px;">
+                                <span class="chip {{ chip_class(risk.severity) }}">
+                                    {{ risk.severity|upper }}
+                                </span>
+                                <span class="subtle-link">
+                                    {{ risk.category.replace('_', ' ').title() }}
+                                </span>
+                            </div>
+                            <div style="color:var(--text-soft);">
+                                {{ risk.message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">No new findings were added.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <h3 style="margin-bottom:14px;">Category Movement</h3>
+
+            {% if comparison.delta_analysis.category_deltas %}
+                <div style="display:grid; gap:12px;">
+                    {% for item in comparison.delta_analysis.category_deltas %}
+                        <div class="run-item" style="padding:14px;">
+                            <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+                                <div>
+                                    <strong>{{ item.category.replace('_', ' ').title() }}</strong>
+                                </div>
+                                <div>
+                                    <span class="chip {{ comparison_delta_class(item.delta, False) }}">
+                                        {{ comparison_delta_label(item.delta, item.category.replace('_', ' ').title(), False) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="run-meta" style="margin-top:8px;">
+                                Before: {{ item.before }}<br>
+                                After: {{ item.after }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">No category-level movement detected.</div>
+            {% endif %}
+        </div>
+
+        <div style="margin-top:20px;">
+            <a href="{{ url_for('project_detail_page', project_id=project.project_id) }}" class="btn-link">
+                ← Back to Project
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

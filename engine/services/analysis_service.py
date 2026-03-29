@@ -984,6 +984,84 @@ def _write_project_html(path, project_data):
         file.write(html)
 
 
+def _risk_signature(risk):
+    severity = str(risk.get("severity", "")).lower().strip()
+    category = str(risk.get("category", "")).strip()
+    message = str(risk.get("message", "")).strip()
+    return f"{severity}|{category}|{message}"
+
+
+def _build_risk_snapshot(risks):
+    snapshot = []
+    for risk in risks or []:
+        snapshot.append(
+            {
+                "signature": _risk_signature(risk),
+                "severity": str(risk.get("severity", "low")).lower(),
+                "category": str(risk.get("category", "unknown")),
+                "message": risk.get("message", "No message provided."),
+                "recommendation": risk.get("recommendation", "Review this finding."),
+            }
+        )
+    return snapshot
+
+
+def _build_category_summary_from_risks(risks):
+    categories = {}
+    for risk in risks or []:
+        category = str(risk.get("category", "unknown"))
+        categories[category] = categories.get(category, 0) + 1
+    return categories
+
+
+def _build_run_record(result, run_dir_name, run_type):
+    risks = result.get("risks", []) or []
+
+    return {
+        "run_id": run_dir_name,
+        "name": result.get("filename"),
+        "run_type": run_type,
+        "created_at": datetime.utcnow().isoformat(),
+        "score": result.get("score"),
+        "risk_count": len(risks),
+        "critical_count": sum(
+            1 for risk in risks if str(risk.get("severity", "")).lower() == "critical"
+        ),
+        "summary": result.get("executive_summary", {}).get("summary"),
+        "path": run_dir_name,
+        "risk_snapshot": _build_risk_snapshot(risks),
+        "category_summary": _build_category_summary_from_risks(risks),
+    }
+
+
+def _build_project_run_record(project_result, run_dir_name, saved_names):
+    boards = project_result.get("boards", []) or []
+    all_risks = []
+
+    for board in boards:
+        all_risks.extend(board.get("risks", []) or [])
+
+    display_name = ", ".join(saved_names[:3])
+    if len(saved_names) > 3:
+        display_name += "..."
+
+    return {
+        "run_id": run_dir_name,
+        "name": display_name,
+        "run_type": "project",
+        "created_at": datetime.utcnow().isoformat(),
+        "score": project_result.get("summary", {}).get("average_score"),
+        "risk_count": len(all_risks),
+        "critical_count": sum(
+            1 for risk in all_risks if str(risk.get("severity", "")).lower() == "critical"
+        ),
+        "summary": project_result.get("project_insight", {}).get("summary"),
+        "path": run_dir_name,
+        "risk_snapshot": _build_risk_snapshot(all_risks),
+        "category_summary": _build_category_summary_from_risks(all_risks),
+    }
+
+
 def _analyze_board_file(file_path, config):
     pcb = _load_board(file_path)
     pcb = _normalize_board(pcb)
@@ -1163,10 +1241,13 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path)
         },
     )
 
+    run_record = _build_run_record(result, run_dir_name, "single")
+
     return {
         "config": config,
         "config_view": config_view,
         "result": result,
+        "run_record": run_record,
     }
 
 
@@ -1218,8 +1299,11 @@ def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_pat
         },
     )
 
+    run_record = _build_project_run_record(project_result, run_dir_name, saved_names)
+
     return {
         "config": config,
         "config_view": config_view,
         "project_result": project_result,
+        "run_record": run_record,
     }
