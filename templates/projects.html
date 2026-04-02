@@ -1,99 +1,119 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Projects Workspace</h2>
-        <p class="section-copy">
-            Create persistent engineering workspaces so analyses belong to real projects instead of isolated runs.
-        </p>
-    </div>
-    <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
-                <div class="metric-label">Projects</div>
-                <div class="metric-value">{{ projects_summary.total_projects }}</div>
-                <div class="metric-sub">Saved workspaces</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Linked Runs</div>
-                <div class="metric-value">{{ projects_summary.total_runs }}</div>
-                <div class="metric-sub">Runs attached to projects</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Active Projects</div>
-                <div class="metric-value">{{ projects_summary.populated_projects }}</div>
-                <div class="metric-sub">Projects with saved activity</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Empty Projects</div>
-                <div class="metric-value">{{ projects_summary.empty_projects }}</div>
-                <div class="metric-sub">Ready for first analysis</div>
-            </div>
-        </div>
-    </div>
+<section class="hero-card">
+  <div class="hero-copy">
+    <p class="section-label">Projects Workspace</p>
+    <h1>Organize analysis runs into durable engineering workspaces.</h1>
+    <p class="hero-text">
+      Create projects, attach runs, compare revisions, and now remove old projects that you no longer need.
+    </p>
+  </div>
 </section>
 
-<section class="grid grid-2">
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Create Project</h2>
-            <p class="section-copy">
-                Start a new engineering workspace for boards, saved runs, and future collaboration features.
+<section class="insight-grid insight-grid-four">
+  <article class="stat-card">
+    <p class="section-label">Projects</p>
+    <h3>{{ projects_summary.total_projects }}</h3>
+    <p class="muted-copy">Total workspaces</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="section-label">Runs</p>
+    <h3>{{ projects_summary.total_runs }}</h3>
+    <p class="muted-copy">Linked runs across all projects</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="section-label">Active Projects</p>
+    <h3>{{ projects_summary.populated_projects }}</h3>
+    <p class="muted-copy">Projects with at least one run</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="section-label">Empty Projects</p>
+    <h3>{{ projects_summary.empty_projects }}</h3>
+    <p class="muted-copy">Projects with no linked runs</p>
+  </article>
+</section>
+
+<section class="detail-card">
+  <div class="card-header-inline">
+    <div>
+      <p class="section-label">Create Project</p>
+      <h3>Start a new workspace</h3>
+    </div>
+  </div>
+
+  <form method="post" action="{{ url_for('create_project_route') }}" class="settings-form">
+    <div class="settings-grid">
+      <label class="settings-field">
+        <span>Project Name</span>
+        <input type="text" name="name" placeholder="Enter project name" required>
+      </label>
+
+      <label class="settings-field">
+        <span>Description</span>
+        <input type="text" name="description" placeholder="Optional project description">
+      </label>
+    </div>
+
+    <div class="page-actions">
+      <button type="submit" class="primary-button">Create Project</button>
+    </div>
+  </form>
+</section>
+
+<section class="detail-card">
+  <div class="card-header-inline">
+    <div>
+      <p class="section-label">Saved Projects</p>
+      <h3>Manage your engineering workspaces</h3>
+    </div>
+  </div>
+
+  {% if projects %}
+    <div class="finding-list">
+      {% for project in projects %}
+      <article class="finding-card">
+        <div class="card-header-inline">
+          <div>
+            <h3>{{ project.name }}</h3>
+            <p class="muted-copy">
+              {{ project.description if project.description else "No description provided." }}
             </p>
+          </div>
+          <span class="chip chip-soft">{{ project.run_count }} RUNS</span>
         </div>
-        <div class="card-body">
-            <div class="divider"></div>
-            <form action="{{ url_for('create_project_route') }}" method="post">
-                <label>
-                    Project Name
-                    <input type="text" name="name" required placeholder="Power delivery validation">
-                </label>
 
-                <label>
-                    Description
-                    <textarea name="description" placeholder="Describe this project, boards involved, and what the analysis work is for."></textarea>
-                </label>
-
-                <button class="btn btn-primary full" type="submit">Create Project</button>
-            </form>
+        <div class="metric-stack">
+          <div class="metric-row">
+            <span class="metric-label">Project ID</span>
+            <span class="metric-value">{{ project.project_id }}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Created</span>
+            <span class="metric-value">{{ project.created_at }}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Updated</span>
+            <span class="metric-value">{{ project.updated_at }}</span>
+          </div>
         </div>
-    </section>
 
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">All Projects</h2>
-            <p class="section-copy">
-                Browse workspaces and reopen project-linked analysis history.
-            </p>
+        <div class="page-actions">
+          <a class="primary-button" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Project</a>
+
+          <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" style="display:inline;">
+            <button type="submit" class="secondary-button">Delete Project</button>
+          </form>
         </div>
-        <div class="card-body">
-            {% if projects %}
-                <div class="runs-list">
-                    {% for project in projects %}
-                        <div class="run-item">
-                            <p class="run-title">{{ project.name }}</p>
-                            <div class="run-meta">
-                                Created: {{ project.created_at }}<br>
-                                Updated: {{ project.updated_at }}<br>
-                                Linked Runs: {{ project.run_count }}
-                            </div>
-
-                            {% if project.description %}
-                                <div class="run-preview">{{ project.description }}</div>
-                            {% endif %}
-
-                            <div class="run-file-list">
-                                <a class="btn-link" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Project</a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="empty-state">No projects yet.</div>
-            {% endif %}
-        </div>
-    </section>
+      </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty-state">No projects yet. Create your first workspace above.</p>
+  {% endif %}
 </section>
 
 {% endblock %}

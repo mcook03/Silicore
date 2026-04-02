@@ -14,7 +14,13 @@ from flask import (
 
 from engine.config_loader import save_config, parse_config_form
 from engine.dashboard_storage import get_recent_runs
-from engine.project_store import add_run_to_project, create_project, get_project, list_projects
+from engine.project_store import (
+    add_run_to_project,
+    create_project,
+    delete_project,
+    get_project,
+    list_projects,
+)
 from engine.services.analysis_service import (
     analyze_project_files,
     analyze_single_board,
@@ -424,6 +430,16 @@ def _normalize_category_summary(summary):
     return summary or {}
 
 
+def _severity_direction(old_severity, new_severity):
+    old_rank = _severity_rank(old_severity)
+    new_rank = _severity_rank(new_severity)
+    if new_rank < old_rank:
+        return "improved"
+    if new_rank > old_rank:
+        return "worsened"
+    return "unchanged"
+
+
 def _build_delta_analysis(run_a, run_b):
     snapshot_a = _normalize_snapshot(run_a.get("risk_snapshot"))
     snapshot_b = _normalize_snapshot(run_b.get("risk_snapshot"))
@@ -431,11 +447,52 @@ def _build_delta_analysis(run_a, run_b):
     sigs_a = {item.get("signature"): item for item in snapshot_a if item.get("signature")}
     sigs_b = {item.get("signature"): item for item in snapshot_b if item.get("signature")}
 
-    added_keys = [key for key in sigs_b.keys() if key not in sigs_a]
-    removed_keys = [key for key in sigs_a.keys() if key not in sigs_b]
+    base_a = {item.get("base_signature"): item for item in snapshot_a if item.get("base_signature")}
+    base_b = {item.get("base_signature"): item for item in snapshot_b if item.get("base_signature")}
 
-    added_risks = [sigs_b[key] for key in added_keys]
-    removed_risks = [sigs_a[key] for key in removed_keys]
+    changed_severity = []
+    matched_changed_base_signatures = set()
+
+    for base_signature, old_item in base_a.items():
+        new_item = base_b.get(base_signature)
+        if not new_item:
+            continue
+
+        old_severity = str(old_item.get("severity", "")).lower()
+        new_severity = str(new_item.get("severity", "")).lower()
+
+        if old_severity != new_severity:
+            direction = _severity_direction(old_severity, new_severity)
+            changed_severity.append(
+                {
+                    "base_signature": base_signature,
+                    "category": new_item.get("category") or old_item.get("category") or "unknown",
+                    "message": new_item.get("message") or old_item.get("message") or "No message provided.",
+                    "old_severity": old_severity,
+                    "new_severity": new_severity,
+                    "direction": direction,
+                    "recommendation": new_item.get("recommendation")
+                    or old_item.get("recommendation")
+                    or "Review this finding.",
+                }
+            )
+            matched_changed_base_signatures.add(base_signature)
+
+    added_risks = []
+    for signature, item in sigs_b.items():
+        base_signature = item.get("base_signature")
+        if base_signature in matched_changed_base_signatures:
+            continue
+        if signature not in sigs_a:
+            added_risks.append(item)
+
+    removed_risks = []
+    for signature, item in sigs_a.items():
+        base_signature = item.get("base_signature")
+        if base_signature in matched_changed_base_signatures:
+            continue
+        if signature not in sigs_b:
+            removed_risks.append(item)
 
     added_risks = sorted(
         added_risks,
@@ -444,6 +501,15 @@ def _build_delta_analysis(run_a, run_b):
     removed_risks = sorted(
         removed_risks,
         key=lambda item: (_severity_rank(item.get("severity")), item.get("category", ""), item.get("message", "")),
+    )
+    changed_severity = sorted(
+        changed_severity,
+        key=lambda item: (
+            _severity_rank(item.get("new_severity")),
+            _severity_rank(item.get("old_severity")),
+            item.get("category", ""),
+            item.get("message", ""),
+        ),
     )
 
     categories_a = _normalize_category_summary(run_a.get("category_summary"))
@@ -476,12 +542,19 @@ def _build_delta_analysis(run_a, run_b):
     added_critical = [risk for risk in added_risks if str(risk.get("severity", "")).lower() == "critical"]
     removed_critical = [risk for risk in removed_risks if str(risk.get("severity", "")).lower() == "critical"]
 
+    severity_improved = [risk for risk in changed_severity if risk.get("direction") == "improved"]
+    severity_worsened = [risk for risk in changed_severity if risk.get("direction") == "worsened"]
+
     insight_lines = []
 
     if removed_critical:
         insight_lines.append(f"Removed {len(removed_critical)} critical issue(s).")
     if added_critical:
         insight_lines.append(f"Added {len(added_critical)} critical issue(s).")
+    if severity_improved:
+        insight_lines.append(f"{len(severity_improved)} issue(s) improved in severity.")
+    if severity_worsened:
+        insight_lines.append(f"{len(severity_worsened)} issue(s) worsened in severity.")
     if removed_risks and not removed_critical:
         insight_lines.append(f"Resolved {len(removed_risks)} prior finding(s).")
     if added_risks and not added_critical:
@@ -501,8 +574,14 @@ def _build_delta_analysis(run_a, run_b):
     return {
         "added_risks": added_risks,
         "removed_risks": removed_risks,
+        "changed_severity": changed_severity,
+        "severity_improved": severity_improved,
+        "severity_worsened": severity_worsened,
         "added_count": len(added_risks),
         "removed_count": len(removed_risks),
+        "changed_severity_count": len(changed_severity),
+        "severity_improved_count": len(severity_improved),
+        "severity_worsened_count": len(severity_worsened),
         "added_critical_count": len(added_critical),
         "removed_critical_count": len(removed_critical),
         "category_deltas": category_deltas,
@@ -649,6 +728,25 @@ def create_project_route():
     project = create_project(name, description)
     flash(f"Project '{project['name']}' created successfully.")
     return redirect(url_for("project_detail_page", project_id=project["project_id"]))
+
+
+@app.route("/projects/<project_id>/delete", methods=["POST"])
+def delete_project_route(project_id):
+    project = get_project(project_id)
+
+    if not project:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+
+    project_name = project.get("name", "Project")
+    deleted = delete_project(project_id)
+
+    if deleted:
+        flash(f"Project '{project_name}' deleted successfully.")
+    else:
+        flash("Project could not be deleted.")
+
+    return redirect(url_for("projects_page"))
 
 
 @app.route("/projects/<project_id>", methods=["GET"])
