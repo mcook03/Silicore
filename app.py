@@ -55,6 +55,47 @@ def _safe_int(value, default=0):
         return default
 
 
+def _normalize_compare_text(value):
+    return " ".join(str(value or "").strip().lower().split())
+
+
+def _normalize_compare_message(message):
+    text = _normalize_compare_text(message)
+    for old in ["warning: ", "issue: ", "risk: "]:
+        text = text.replace(old, "")
+    return text
+
+
+def _normalize_string_list(values):
+    if not isinstance(values, list):
+        return []
+
+    normalized = []
+    for value in values:
+        cleaned = str(value or "").strip()
+        if cleaned:
+            normalized.append(cleaned)
+
+    return sorted(set(normalized))
+
+
+def _build_comparison_signatures(risk):
+    category = _normalize_compare_text(risk.get("category") or "unknown")
+    rule_id = _normalize_compare_text(risk.get("rule_id") or "unknown_rule")
+    message = _normalize_compare_message(risk.get("message"))
+    components = "|".join(_normalize_string_list(risk.get("components")))
+    nets = "|".join(_normalize_string_list(risk.get("nets")))
+
+    base_signature = f"{category}|{rule_id}|{message}"
+    signature = f"{base_signature}|c:{components}|n:{nets}"
+
+    return {
+        "signature": signature,
+        "base_signature": base_signature,
+        "normalized_message": message,
+    }
+
+
 def _severity_rank(severity):
     order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
     return order.get(str(severity).lower(), 4)
@@ -654,7 +695,28 @@ def _build_projects_summary(projects):
 
 
 def _normalize_snapshot(snapshot):
-    return snapshot or []
+    normalized = []
+
+    for item in (snapshot or []):
+        if not isinstance(item, dict):
+            continue
+
+        risk = dict(item)
+        signatures = _build_comparison_signatures(risk)
+
+        risk["message"] = risk.get("message") or "No message provided."
+        risk["severity"] = risk.get("severity") or "low"
+        risk["category"] = risk.get("category") or "uncategorized"
+        risk["recommendation"] = risk.get("recommendation") or "Review this finding."
+        risk["components"] = risk.get("components") or []
+        risk["nets"] = risk.get("nets") or []
+        risk["base_signature"] = risk.get("base_signature") or signatures["base_signature"]
+        risk["signature"] = risk.get("signature") or signatures["signature"]
+        risk["normalized_message"] = signatures["normalized_message"]
+
+        normalized.append(risk)
+
+    return normalized
 
 
 def _normalize_category_summary(summary):
@@ -665,15 +727,15 @@ def _severity_direction(old_severity, new_severity):
     old_rank = _severity_rank(old_severity)
     new_rank = _severity_rank(new_severity)
     if new_rank < old_rank:
-        return "improved"
-    if new_rank > old_rank:
         return "worsened"
+    if new_rank > old_rank:
+        return "improved"
     return "unchanged"
 
 
 def _build_delta_analysis(run_a, run_b):
-    snapshot_a = _normalize_snapshot(run_a.get("risk_snapshot"))
-    snapshot_b = _normalize_snapshot(run_b.get("risk_snapshot"))
+    snapshot_a = _normalize_snapshot(run_a.get("risk_snapshot") or run_a.get("risks"))
+    snapshot_b = _normalize_snapshot(run_b.get("risk_snapshot") or run_b.get("risks"))
 
     sigs_a = {item.get("signature"): item for item in snapshot_a if item.get("signature")}
     sigs_b = {item.get("signature"): item for item in snapshot_b if item.get("signature")}

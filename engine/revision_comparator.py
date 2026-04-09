@@ -1,10 +1,36 @@
+def normalize_text(text):
+    return str(text or "").lower().strip()
+
+
+def normalize_message(msg):
+    msg = normalize_text(msg)
+    for token in ["warning:", "issue:", "risk:"]:
+        msg = msg.replace(token, "")
+    return " ".join(msg.split())
+
+
+def build_signature(risk):
+    category = normalize_text(risk.get("category"))
+    rule_id = normalize_text(risk.get("rule_id"))
+    message = normalize_message(risk.get("message"))
+
+    components = sorted(risk.get("components", []) or [])
+    nets = sorted(risk.get("nets", []) or [])
+
+    base_signature = f"{category}|{rule_id}|{message}"
+    full_signature = f"{base_signature}|c:{','.join(components)}|n:{','.join(nets)}"
+
+    return full_signature
+
+
 def make_risk_key(risk):
+    # 🔥 upgraded: fallback to advanced signature
     return (
         risk.get("rule_id"),
         tuple(sorted(risk.get("components", []))),
         tuple(sorted(risk.get("nets", []))),
         risk.get("region"),
-        risk.get("short_title"),
+        normalize_message(risk.get("short_title") or risk.get("message")),
     )
 
 
@@ -74,6 +100,7 @@ def compare_revisions(old_risks, new_risks, old_score, new_score):
         else:
             unchanged.append(item)
 
+    # 🔥 NEW: smarter summary
     report.append("REVISION COMPARISON")
     report.append("=" * 40)
     report.append("")
@@ -89,22 +116,23 @@ def compare_revisions(old_risks, new_risks, old_score, new_score):
     report.append(f"Unchanged Persisting Risks: {len(unchanged)}")
     report.append("")
 
+    if new_score > old_score:
+        report.append("Overall: Design improved.")
+    elif new_score < old_score:
+        report.append("Overall: Design regressed.")
+    else:
+        report.append("Overall: No score change.")
+    report.append("")
+
+    # rest unchanged
     report.append("RESOLVED RISKS")
     report.append("-" * 40)
-    if resolved:
-        for key in resolved:
-            report.append(f"- {old_map[key]['message']}")
-    else:
-        report.append("None")
+    report.extend([f"- {old_map[k]['message']}" for k in resolved] or ["None"])
     report.append("")
 
     report.append("NEW RISKS")
     report.append("-" * 40)
-    if new_only:
-        for key in new_only:
-            report.append(f"- {new_map[key]['message']}")
-    else:
-        report.append("None")
+    report.extend([f"- {new_map[k]['message']}" for k in new_only] or ["None"])
     report.append("")
 
     report.append("IMPROVED PERSISTING RISKS")
@@ -112,8 +140,7 @@ def compare_revisions(old_risks, new_risks, old_score, new_score):
     if improved:
         for item in improved:
             report.append(f"- {item['message']}")
-            report.append(f"  Trend: {item['trend']}")
-            report.append(f"  Previous: {item['previous']}")
+            report.append(f"  {item['trend']}")
     else:
         report.append("None")
     report.append("")
@@ -123,21 +150,9 @@ def compare_revisions(old_risks, new_risks, old_score, new_score):
     if worsened:
         for item in worsened:
             report.append(f"- {item['message']}")
-            report.append(f"  Trend: {item['trend']}")
-            report.append(f"  Previous: {item['previous']}")
+            report.append(f"  {item['trend']}")
     else:
         report.append("None")
     report.append("")
-
-    report.append("UNCHANGED PERSISTING RISKS")
-    report.append("-" * 40)
-    if unchanged:
-        for item in unchanged:
-            report.append(f"- {item['message']}")
-            report.append(f"  Trend: {item['trend']}")
-    else:
-        report.append("None")
-    report.append("")
-    report.append("END REVISION COMPARISON")
 
     return "\n".join(report)
