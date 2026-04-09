@@ -984,18 +984,24 @@ def _write_project_html(path, project_data):
         file.write(html)
 
 
-def _risk_signature(risk):
-    severity = str(risk.get("severity", "")).lower().strip()
+def _risk_base_signature(risk):
     category = str(risk.get("category", "")).strip()
     message = str(risk.get("message", "")).strip()
-    return f"{severity}|{category}|{message}"
+    return f"{category}|{message}"
+
+
+def _risk_signature(risk):
+    severity = str(risk.get("severity", "")).lower().strip()
+    return f"{severity}|{_risk_base_signature(risk)}"
 
 
 def _build_risk_snapshot(risks):
     snapshot = []
+
     for risk in risks or []:
         snapshot.append(
             {
+                "base_signature": _risk_base_signature(risk),
                 "signature": _risk_signature(risk),
                 "severity": str(risk.get("severity", "low")).lower(),
                 "category": str(risk.get("category", "unknown")),
@@ -1003,6 +1009,7 @@ def _build_risk_snapshot(risks):
                 "recommendation": risk.get("recommendation", "Review this finding."),
             }
         )
+
     return snapshot
 
 

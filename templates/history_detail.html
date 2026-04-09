@@ -5,64 +5,419 @@
     <div class="card-header">
         <h2 class="section-title">Run Detail</h2>
         <p class="section-copy">
-            A closer look at one saved run folder and the export files Silicore generated for it.
+            Deep dive into a saved analysis run including score, findings, artifacts, and the exact analysis context used.
         </p>
     </div>
+
     <div class="card-body">
         <div class="metric-grid">
             <div class="metric-card">
                 <div class="metric-label">Run Name</div>
                 <div class="metric-value" style="font-size:22px;">{{ run_detail.name }}</div>
-                <div class="metric-sub">Saved run folder</div>
+                <div class="metric-sub">Saved analysis identifier</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">Files</div>
-                <div class="metric-value">{{ run_detail.download_count }}</div>
-                <div class="metric-sub">Total artifacts in this run</div>
+                <div class="metric-label">Run Type</div>
+                <div class="metric-value">{{ run_detail.run_type if run_detail.run_type else "unknown" }}</div>
+                <div class="metric-sub">Analysis mode</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">JSON</div>
-                <div class="metric-value">{{ run_detail.json_count }}</div>
-                <div class="metric-sub">Structured outputs</div>
+                <div class="metric-label">Score</div>
+                <div class="metric-value">
+                    {% if run_detail.score is not none %}
+                        {{ (run_detail.score * 10)|round|int }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+                <div class="metric-sub">0–100 risk scale</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">Reports</div>
-                <div class="metric-value">{{ run_detail.text_count + run_detail.html_count }}</div>
-                <div class="metric-sub">Readable report-style files</div>
+                <div class="metric-label">Created</div>
+                <div class="metric-value" style="font-size:22px;">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div>
+                <div class="metric-sub">Execution timestamp</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Stored Artifacts</h2>
+            <p class="section-copy">Files generated and saved for this run.</p>
+        </div>
+
+        <div class="card-body">
+            {% if run_detail.files %}
+            <div class="artifact-list">
+                {% for file in run_detail.files %}
+                <div class="artifact-row">
+                    <div>
+                        <div class="artifact-name">{{ file.label }}</div>
+                        <div class="artifact-kind">{{ file.kind|upper }}</div>
+                    </div>
+                    <a class="btn-link" href="{{ download_href(file) }}">Download</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No saved artifacts found for this run.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Analysis Context</h2>
+            <p class="section-copy">Settings and assumptions used for this saved analysis.</p>
+        </div>
+
+        <div class="card-body">
+            {% set context = run_detail.analysis_context_view %}
+            <div class="context-grid">
+                <div class="context-card">
+                    <div class="context-label">Board</div>
+                    <div class="context-value">{{ context.board_name }}</div>
+                </div>
+                <div class="context-card">
+                    <div class="context-label">Performed At</div>
+                    <div class="context-value">{{ context.performed_at }}</div>
+                </div>
+            </div>
+
+            {% if context.config_rows %}
+            <div class="config-list">
+                {% for row in context.config_rows %}
+                <div class="config-pill">
+                    <span class="config-pill-label">{{ row.section }} · {{ row.label }}</span>
+                    <span class="config-pill-value">{{ row.value }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No config snapshot was saved with this run.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Score Explainability</h2>
+        <p class="section-copy">How the final score was calculated for this saved run.</p>
+    </div>
+
+    <div class="card-body">
+        {% set score_data = run_detail.analysis_context_view.score_breakdown %}
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Start Score</div>
+                <div class="metric-value">{{ score_data.start_score }}</div>
+                <div class="metric-sub">Initial baseline</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Total Penalty</div>
+                <div class="metric-value">{{ score_data.total_penalty }}</div>
+                <div class="metric-sub">Total deduction</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Final Score</div>
+                <div class="metric-value">{{ score_data.final_score }}</div>
+                <div class="metric-sub">Final 0–10 score</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Findings</div>
+                <div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div>
+                <div class="metric-sub">Total detected issues</div>
             </div>
         </div>
 
-        {% if run_detail.preview %}
-            <div class="summary-strip" style="margin-top: 18px;">
-                <div class="summary-panel" style="grid-column: 1 / -1;">
-                    <h3>Run Preview</h3>
-                    <p>{{ run_detail.preview }}</p>
-                </div>
+        {% if score_data.severity_rows %}
+        <div class="breakdown-table">
+            <div class="breakdown-table-header">
+                <div>Severity</div>
+                <div>Count</div>
+                <div>Total Penalty</div>
             </div>
+
+            {% for row in score_data.severity_rows %}
+            <div class="breakdown-table-row">
+                <div>{{ row.label }}</div>
+                <div>{{ row.count }}</div>
+                <div>{{ row.total_penalty }}</div>
+            </div>
+            {% endfor %}
+        </div>
         {% endif %}
-
-        <section style="margin-top: 18px;">
-            <div class="section-block-header">
-                <div>
-                    <h3 class="section-title">Downloads</h3>
-                    <div class="copy">Open or save the files generated for this run.</div>
-                </div>
-            </div>
-
-            {% if run_detail.files %}
-                <div class="btn-link-row">
-                    {% for file in run_detail.files %}
-                        <a class="btn-link" href="{{ url_for('download_file', run_dir=file.run_dir, filename=file.filename) }}">{{ file.label }}</a>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="empty-state">No files were found in this run folder.</div>
-            {% endif %}
-        </section>
     </div>
 </section>
+
+{% if run_detail.preview %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Run Preview</h2>
+    </div>
+
+    <div class="card-body">
+        <div class="preview-box">{{ run_detail.preview }}</div>
+    </div>
+</section>
+{% endif %}
+
+{% if run_detail.result %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Findings Overview</h2>
+    </div>
+
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Risks</div>
+                <div class="metric-value">{{ run_detail.result.risks|length }}</div>
+                <div class="metric-sub">Detected findings</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Critical</div>
+                <div class="metric-value">{{ run_detail.critical_count }}</div>
+                <div class="metric-sub">Highest severity</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">High</div>
+                <div class="metric-value">{{ run_detail.high_count }}</div>
+                <div class="metric-sub">High severity issues</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Medium</div>
+                <div class="metric-value">{{ run_detail.medium_count }}</div>
+                <div class="metric-sub">Moderate issues</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Detailed Findings</h2>
+    </div>
+
+    <div class="card-body">
+        {% if run_detail.result.risks %}
+            <div class="finding-list">
+                {% for risk in run_detail.result.risks %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip {{ chip_class(risk.severity) }}">
+                                    {{ risk.severity|upper }}
+                                </div>
+                                <h4>{{ risk.message }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ risk.category.replace('_', ' ').title() if risk.category else "Uncategorized" }}
+                            </div>
+                        </div>
+
+                        {% if risk.recommendation %}
+                        <div class="finding-block">
+                            <span class="finding-label">Recommendation:</span>
+                            {{ risk.recommendation }}
+                        </div>
+                        {% endif %}
+
+                        {% if risk.components %}
+                        <div class="finding-block">
+                            <span class="finding-label">Components:</span>
+                            {{ risk.components|join(', ') }}
+                        </div>
+                        {% endif %}
+
+                        {% if risk.nets %}
+                        <div class="finding-block">
+                            <span class="finding-label">Nets:</span>
+                            {{ risk.nets|join(', ') }}
+                        </div>
+                        {% endif %}
+
+                        {% if risk.metrics %}
+                        <div class="finding-metrics">
+                            {% for key, value in risk.metrics.items() %}
+                            <div class="metric-pill">
+                                <span class="metric-pill-label">{{ key|replace('_', ' ')|title }}</span>
+                                <span class="metric-pill-value">{{ value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No findings saved in this run.</div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<style>
+    .artifact-list,
+    .config-list,
+    .finding-list,
+    .finding-metrics {
+        display: grid;
+        gap: 12px;
+    }
+
+    .artifact-row,
+    .config-pill,
+    .finding,
+    .context-card {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .artifact-row,
+    .config-pill {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .artifact-name,
+    .context-value {
+        color: #f8fbff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .artifact-kind,
+    .context-label,
+    .config-pill-label,
+    .metric-pill-label,
+    .finding-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .config-pill-value,
+    .metric-pill-value {
+        color: #f8fbff;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .context-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .preview-box {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+        color: #dbeafe;
+        line-height: 1.7;
+        white-space: pre-wrap;
+    }
+
+    .finding-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    .finding-top h4 {
+        margin: 10px 0 0;
+        color: #f8fbff;
+        font-size: 16px;
+    }
+
+    .finding-block {
+        margin-top: 10px;
+        color: #dbeafe;
+        line-height: 1.7;
+    }
+
+    .breakdown-table {
+        margin-top: 18px;
+        display: grid;
+        gap: 8px;
+    }
+
+    .breakdown-table-header,
+    .breakdown-table-row {
+        display: grid;
+        grid-template-columns: 1fr 120px 140px;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .breakdown-table-header {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .breakdown-table-row {
+        color: #f8fbff;
+        font-weight: 700;
+    }
+
+    .metric-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        margin-right: 8px;
+        margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+        .context-grid,
+        .breakdown-table-header,
+        .breakdown-table-row {
+            grid-template-columns: 1fr;
+        }
+
+        .artifact-row,
+        .config-pill {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
 
 {% endblock %}

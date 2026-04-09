@@ -60,10 +60,32 @@ def export_report_files(report_text, markdown_output_path, html_output_path, tit
     export_html_report(report_text, html_output_path, title=title)
 
 
+def _append_config_snapshot(lines, config_snapshot):
+    if not isinstance(config_snapshot, dict) or not config_snapshot:
+        lines.append("- No config snapshot available")
+        lines.append("")
+        return
+
+    for section_name, section_data in config_snapshot.items():
+        lines.append(f"### {str(section_name).replace('_', ' ').title()}")
+        if isinstance(section_data, dict):
+            for key, value in section_data.items():
+                if isinstance(value, list):
+                    display_value = ", ".join(str(item) for item in value) if value else "None"
+                else:
+                    display_value = value
+                lines.append(f"- {str(key).replace('_', ' ').title()}: {display_value}")
+        else:
+            lines.append(f"- Value: {section_data}")
+        lines.append("")
+
+
 def build_single_board_report(result):
     risks = result.get("risks", [])
     score_explanation = result.get("score_explanation", {})
     board_summary = result.get("board_summary", {})
+    analysis_context = result.get("analysis_context", {})
+    config_snapshot = analysis_context.get("config_snapshot") or result.get("config_snapshot") or {}
 
     lines = [
         "# SILICORE ENGINEERING REPORT",
@@ -71,15 +93,28 @@ def build_single_board_report(result):
         f"- File: {result.get('filename', 'Unknown')}",
         f"- Score: {result.get('score', 0)} / 10",
         "",
+        "## Analysis Context",
+        f"- Board Name: {analysis_context.get('board_name', result.get('filename', 'Unknown'))}",
+        f"- Timestamp: {analysis_context.get('timestamp', result.get('created_at', 'Unknown'))}",
+        "",
         "## Board Overview",
         f"- Component Count: {board_summary.get('component_count', 0)}",
         f"- Net Count: {board_summary.get('net_count', 0)}",
         "",
-        "## Score Explanation",
-        f"- Start Score: {score_explanation.get('start_score', 10.0)}",
-        f"- Total Penalty: {score_explanation.get('total_penalty', 0)}",
-        "",
+        "## Config Snapshot",
     ]
+
+    _append_config_snapshot(lines, config_snapshot)
+
+    lines.extend(
+        [
+            "## Score Explanation",
+            f"- Start Score: {score_explanation.get('start_score', 10.0)}",
+            f"- Total Penalty: {score_explanation.get('total_penalty', 0)}",
+            f"- Final Score: {score_explanation.get('final_score', result.get('score', 0))}",
+            "",
+        ]
+    )
 
     severity_totals = score_explanation.get("severity_totals", {})
     if severity_totals:
@@ -109,6 +144,8 @@ def build_single_board_report(result):
                 lines.append(f"- Components: {', '.join(risk['components'])}")
             if risk.get("nets"):
                 lines.append(f"- Nets: {', '.join(risk['nets'])}")
+            if risk.get("metrics"):
+                lines.append(f"- Metrics: {risk.get('metrics')}")
 
             fix_suggestion = risk.get("fix_suggestion")
             if isinstance(fix_suggestion, dict):
@@ -155,12 +192,14 @@ def build_project_report(project_data):
 
     for index, board in enumerate(boards, start=1):
         board_summary = board.get("board_summary", {})
+        analysis_context = board.get("analysis_context", {})
         lines.append(f"### #{index} - {board.get('filename', 'Unknown')}")
         lines.append(f"- Score: {board.get('score', 0)} / 10")
         lines.append(f"- Total Risks: {len(board.get('risks', []))}")
         lines.append(f"- Total Penalty: {board.get('score_explanation', {}).get('total_penalty', 0)}")
         lines.append(f"- Component Count: {board_summary.get('component_count', 0)}")
         lines.append(f"- Net Count: {board_summary.get('net_count', 0)}")
+        lines.append(f"- Timestamp: {analysis_context.get('timestamp', board.get('created_at', 'Unknown'))}")
         lines.append("")
 
     return "\n".join(lines)

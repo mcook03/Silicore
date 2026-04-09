@@ -1,0 +1,1705 @@
+{
+    "generated_at": "2026-03-30T22:22:36.899812",
+    "summary": {
+        "total_boards": 2,
+        "average_score": 0.0,
+        "best_score": 0.0,
+        "worst_score": 0.0
+    },
+    "project_insight": {
+        "headline": "Project comparison complete",
+        "summary": "The strongest board is sensor_board_v1.txt at 0.0 / 10, while the weakest board is sensor_board_v2.txt at 0.0 / 10. The current score spread across the project is 0.0 points. The most recurring issue area across the project is layout.",
+        "best_board": {
+            "filename": "sensor_board_v1.txt",
+            "score": 0.0
+        },
+        "worst_board": {
+            "filename": "sensor_board_v2.txt",
+            "score": 0.0
+        },
+        "common_category": "layout"
+    },
+    "boards": [
+        {
+            "filename": "sensor_board_v1.txt",
+            "file_path": "dashboard_uploads/sensor_board_v1.txt",
+            "score": 0.0,
+            "risks": [
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and U2 are too close (1.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "U2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and U3 are too close (2.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "U3"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and R1 are too close (2.24 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "R1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.24,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and R2 are too close (2.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U2 and U3 are too close (1.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U2",
+                        "U3"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U2 and R1 are too close (2.83 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U2",
+                        "R1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.83,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U2 and R2 are too close (2.24 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U2",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.24,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U3 and R2 are too close (2.83 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U3",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.83,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "C1 and C2 are too close (1.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "C1",
+                        "C2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "R1 and R2 are too close (1.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "R1",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "J1 and LED1 are too close (2.83 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "J1",
+                        "LED1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.83,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "thermal",
+                    "category": "thermal",
+                    "severity": "medium",
+                    "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+                    "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                    "components": [
+                        "U1",
+                        "U2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "priority": "medium"
+                    }
+                },
+                {
+                    "rule_id": "thermal",
+                    "category": "thermal",
+                    "severity": "medium",
+                    "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+                    "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                    "components": [
+                        "U1",
+                        "U3"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.0,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "priority": "medium"
+                    }
+                },
+                {
+                    "rule_id": "thermal",
+                    "category": "thermal",
+                    "severity": "medium",
+                    "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+                    "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                    "components": [
+                        "U2",
+                        "U3"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "priority": "medium"
+                    }
+                },
+                {
+                    "rule_id": "thermal",
+                    "category": "thermal",
+                    "severity": "medium",
+                    "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+                    "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                    "components": [
+                        "C1",
+                        "C2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "priority": "medium"
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 20.5,
+                "severity_totals": {
+                    "high": 16.5,
+                    "medium": 4.0
+                },
+                "category_totals": {
+                    "layout": 16.5,
+                    "thermal": 4.0
+                },
+                "details": [
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and U2 are too close (1.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and U3 are too close (2.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and R1 are too close (2.24 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and R2 are too close (2.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U2 and U3 are too close (1.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U2 and R1 are too close (2.83 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U2 and R2 are too close (2.24 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U3 and R2 are too close (2.83 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "C1 and C2 are too close (1.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "R1 and R2 are too close (1.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "J1 and LED1 are too close (2.83 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "medium",
+                        "category": "thermal",
+                        "penalty": 1.0,
+                        "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "fix_priority": "medium"
+                    },
+                    {
+                        "severity": "medium",
+                        "category": "thermal",
+                        "penalty": 1.0,
+                        "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "fix_priority": "medium"
+                    },
+                    {
+                        "severity": "medium",
+                        "category": "thermal",
+                        "penalty": 1.0,
+                        "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "fix_priority": "medium"
+                    },
+                    {
+                        "severity": "medium",
+                        "category": "thermal",
+                        "penalty": 1.0,
+                        "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "fix_priority": "medium"
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "sensor_board_v1.txt",
+                "component_count": 9,
+                "net_count": 4,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "U3",
+                    "C1",
+                    "C2",
+                    "R1",
+                    "R2",
+                    "J1",
+                    "LED1"
+                ],
+                "risk_count": 15,
+                "severity_counts": {
+                    "high": 11,
+                    "medium": 4
+                },
+                "category_counts": {
+                    "layout": 11,
+                    "thermal": 4
+                }
+            },
+            "raw_rule_result": {
+                "risks": [
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and U2 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "U2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and U3 are too close (2.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "U3"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and R1 are too close (2.24 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "R1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.24,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and R2 are too close (2.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U2 and U3 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U2",
+                            "U3"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U2 and R1 are too close (2.83 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U2",
+                            "R1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.83,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U2 and R2 are too close (2.24 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U2",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.24,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U3 and R2 are too close (2.83 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U3",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.83,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "C1 and C2 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "C1",
+                            "C2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "R1 and R2 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "R1",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "J1 and LED1 are too close (2.83 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "J1",
+                            "LED1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.83,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "thermal",
+                        "category": "thermal",
+                        "severity": "medium",
+                        "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+                        "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                        "components": [
+                            "U1",
+                            "U2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 4.0
+                        },
+                        "confidence": 0.8,
+                        "short_title": "Possible thermal hotspot",
+                        "fix_priority": "medium",
+                        "estimated_impact": "moderate",
+                        "design_domain": "thermal",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "thermal",
+                        "category": "thermal",
+                        "severity": "medium",
+                        "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+                        "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                        "components": [
+                            "U1",
+                            "U3"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.0,
+                            "threshold": 4.0
+                        },
+                        "confidence": 0.8,
+                        "short_title": "Possible thermal hotspot",
+                        "fix_priority": "medium",
+                        "estimated_impact": "moderate",
+                        "design_domain": "thermal",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "thermal",
+                        "category": "thermal",
+                        "severity": "medium",
+                        "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+                        "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                        "components": [
+                            "U2",
+                            "U3"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 4.0
+                        },
+                        "confidence": 0.8,
+                        "short_title": "Possible thermal hotspot",
+                        "fix_priority": "medium",
+                        "estimated_impact": "moderate",
+                        "design_domain": "thermal",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "thermal",
+                        "category": "thermal",
+                        "severity": "medium",
+                        "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+                        "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                        "components": [
+                            "C1",
+                            "C2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 4.0
+                        },
+                        "confidence": 0.8,
+                        "short_title": "Possible thermal hotspot",
+                        "fix_priority": "medium",
+                        "estimated_impact": "moderate",
+                        "design_domain": "thermal",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    }
+                ],
+                "score": 0.0,
+                "total_penalty": 20.5
+            },
+            "generated_at": "2026-03-30T22:22:36.896805",
+            "executive_summary": {
+                "headline": "Board needs focused engineering review",
+                "summary": "This board shows high design risk. The main risk concentration is in layout. The highest-priority issue is J1 and LED1 are too close (2.83 units). The current design snapshot includes 9 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+                "top_issues": [
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "J1 and LED1 are too close (2.83 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "U1 and U2 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "U1 and U3 are too close (2.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+                    }
+                ]
+            },
+            "rank": 1
+        },
+        {
+            "filename": "sensor_board_v2.txt",
+            "file_path": "dashboard_uploads/sensor_board_v2.txt",
+            "score": 0.0,
+            "risks": [
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and C1 are too close (1.41 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "C1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.41,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and R1 are too close (2.24 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "R1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.24,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U1 and R2 are too close (2.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U1",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "U2 and C2 are too close (1.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "U2",
+                        "C2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "C1 and R1 are too close (2.24 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "C1",
+                        "R1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.24,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "C1 and R2 are too close (1.41 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "C1",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.41,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "R1 and R2 are too close (1.00 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "R1",
+                        "R2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "spacing",
+                    "category": "layout",
+                    "severity": "high",
+                    "message": "J1 and LED1 are too close (2.83 units)",
+                    "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                    "components": [
+                        "J1",
+                        "LED1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 2.83,
+                        "threshold": 3.0
+                    },
+                    "explanation": {
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "priority": "high"
+                    }
+                },
+                {
+                    "rule_id": "thermal",
+                    "category": "thermal",
+                    "severity": "medium",
+                    "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+                    "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                    "components": [
+                        "U1",
+                        "C1"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.41,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "priority": "medium"
+                    }
+                },
+                {
+                    "rule_id": "thermal",
+                    "category": "thermal",
+                    "severity": "medium",
+                    "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+                    "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                    "components": [
+                        "U2",
+                        "C2"
+                    ],
+                    "nets": [],
+                    "region": null,
+                    "metrics": {
+                        "distance": 1.0,
+                        "threshold": 4.0
+                    },
+                    "explanation": {
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8
+                    },
+                    "fix_suggestion": {
+                        "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "priority": "medium"
+                    }
+                }
+            ],
+            "score_explanation": {
+                "start_score": 10.0,
+                "total_penalty": 14.0,
+                "severity_totals": {
+                    "high": 12.0,
+                    "medium": 2.0
+                },
+                "category_totals": {
+                    "layout": 12.0,
+                    "thermal": 2.0
+                },
+                "details": [
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and C1 are too close (1.41 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and R1 are too close (2.24 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U1 and R2 are too close (2.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "U2 and C2 are too close (1.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "C1 and R1 are too close (2.24 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.24 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "C1 and R2 are too close (1.41 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "R1 and R2 are too close (1.00 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 1.0 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "penalty": 1.5,
+                        "message": "J1 and LED1 are too close (2.83 units)",
+                        "root_cause": "Component placement constraint violation",
+                        "impact": "Routing congestion or manufacturability issues",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                        "fix_priority": "high"
+                    },
+                    {
+                        "severity": "medium",
+                        "category": "thermal",
+                        "penalty": 1.0,
+                        "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "fix_priority": "medium"
+                    },
+                    {
+                        "severity": "medium",
+                        "category": "thermal",
+                        "penalty": 1.0,
+                        "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+                        "root_cause": "Thermal concentration or poor heat spreading",
+                        "impact": "Hotspots, reduced reliability, or thermal stress",
+                        "confidence": 0.8,
+                        "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                        "fix_priority": "medium"
+                    }
+                ]
+            },
+            "board_summary": {
+                "filename": "sensor_board_v2.txt",
+                "component_count": 9,
+                "net_count": 4,
+                "sample_components": [
+                    "U1",
+                    "U2",
+                    "U3",
+                    "C1",
+                    "C2",
+                    "R1",
+                    "R2",
+                    "J1",
+                    "LED1"
+                ],
+                "risk_count": 10,
+                "severity_counts": {
+                    "high": 8,
+                    "medium": 2
+                },
+                "category_counts": {
+                    "layout": 8,
+                    "thermal": 2
+                }
+            },
+            "raw_rule_result": {
+                "risks": [
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and C1 are too close (1.41 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "C1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.41,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and R1 are too close (2.24 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "R1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.24,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U1 and R2 are too close (2.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U1",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "U2 and C2 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "U2",
+                            "C2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "C1 and R1 are too close (2.24 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "C1",
+                            "R1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.24,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "C1 and R2 are too close (1.41 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "C1",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.41,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "R1 and R2 are too close (1.00 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "R1",
+                            "R2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "spacing",
+                        "category": "layout",
+                        "severity": "high",
+                        "message": "J1 and LED1 are too close (2.83 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                        "components": [
+                            "J1",
+                            "LED1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 2.83,
+                            "threshold": 3.0
+                        },
+                        "confidence": 0.95,
+                        "short_title": "Insufficient component spacing",
+                        "fix_priority": "high",
+                        "estimated_impact": "moderate",
+                        "design_domain": "layout",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "thermal",
+                        "category": "thermal",
+                        "severity": "medium",
+                        "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+                        "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                        "components": [
+                            "U1",
+                            "C1"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.41,
+                            "threshold": 4.0
+                        },
+                        "confidence": 0.8,
+                        "short_title": "Possible thermal hotspot",
+                        "fix_priority": "medium",
+                        "estimated_impact": "moderate",
+                        "design_domain": "thermal",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    },
+                    {
+                        "rule_id": "thermal",
+                        "category": "thermal",
+                        "severity": "medium",
+                        "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+                        "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                        "components": [
+                            "U2",
+                            "C2"
+                        ],
+                        "nets": [],
+                        "region": null,
+                        "metrics": {
+                            "distance": 1.0,
+                            "threshold": 4.0
+                        },
+                        "confidence": 0.8,
+                        "short_title": "Possible thermal hotspot",
+                        "fix_priority": "medium",
+                        "estimated_impact": "moderate",
+                        "design_domain": "thermal",
+                        "why_it_matters": "",
+                        "suggested_actions": []
+                    }
+                ],
+                "score": 0.0,
+                "total_penalty": 14.0
+            },
+            "generated_at": "2026-03-30T22:22:36.899755",
+            "executive_summary": {
+                "headline": "Board needs focused engineering review",
+                "summary": "This board shows high design risk. The main risk concentration is in layout. The highest-priority issue is J1 and LED1 are too close (2.83 units). The current design snapshot includes 9 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+                "top_issues": [
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "J1 and LED1 are too close (2.83 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "U1 and C1 are too close (1.41 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+                    },
+                    {
+                        "severity": "high",
+                        "category": "layout",
+                        "message": "U1 and R1 are too close (2.24 units)",
+                        "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+                    }
+                ]
+            },
+            "rank": 2
+        }
+    ]
+}

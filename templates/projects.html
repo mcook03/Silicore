@@ -1,119 +1,658 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero-card">
-  <div class="hero-copy">
-    <p class="section-label">Projects Workspace</p>
-    <h1>Organize analysis runs into durable engineering workspaces.</h1>
-    <p class="hero-text">
-      Create projects, attach runs, compare revisions, and now remove old projects that you no longer need.
-    </p>
-  </div>
-</section>
+{% set ns = namespace(
+    most_active_name="No projects yet",
+    most_active_runs=0,
+    least_active_name="No projects yet",
+    least_active_runs=0,
+    newest_name="No projects yet",
+    newest_date="N/A"
+) %}
 
-<section class="insight-grid insight-grid-four">
-  <article class="stat-card">
-    <p class="section-label">Projects</p>
-    <h3>{{ projects_summary.total_projects }}</h3>
-    <p class="muted-copy">Total workspaces</p>
-  </article>
+{% if projects %}
+    {% set ns.least_active_runs = projects[0].run_count %}
+    {% for project in projects %}
+        {% if project.run_count >= ns.most_active_runs %}
+            {% set ns.most_active_runs = project.run_count %}
+            {% set ns.most_active_name = project.name %}
+        {% endif %}
+        {% if loop.first or project.run_count <= ns.least_active_runs %}
+            {% set ns.least_active_runs = project.run_count %}
+            {% set ns.least_active_name = project.name %}
+        {% endif %}
+        {% if loop.last %}
+            {% set ns.newest_name = project.name %}
+            {% set ns.newest_date = project.created_at %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
-  <article class="stat-card">
-    <p class="section-label">Runs</p>
-    <h3>{{ projects_summary.total_runs }}</h3>
-    <p class="muted-copy">Linked runs across all projects</p>
-  </article>
-
-  <article class="stat-card">
-    <p class="section-label">Active Projects</p>
-    <h3>{{ projects_summary.populated_projects }}</h3>
-    <p class="muted-copy">Projects with at least one run</p>
-  </article>
-
-  <article class="stat-card">
-    <p class="section-label">Empty Projects</p>
-    <h3>{{ projects_summary.empty_projects }}</h3>
-    <p class="muted-copy">Projects with no linked runs</p>
-  </article>
-</section>
-
-<section class="detail-card">
-  <div class="card-header-inline">
-    <div>
-      <p class="section-label">Create Project</p>
-      <h3>Start a new workspace</h3>
-    </div>
-  </div>
-
-  <form method="post" action="{{ url_for('create_project_route') }}" class="settings-form">
-    <div class="settings-grid">
-      <label class="settings-field">
-        <span>Project Name</span>
-        <input type="text" name="name" placeholder="Enter project name" required>
-      </label>
-
-      <label class="settings-field">
-        <span>Description</span>
-        <input type="text" name="description" placeholder="Optional project description">
-      </label>
-    </div>
-
-    <div class="page-actions">
-      <button type="submit" class="primary-button">Create Project</button>
-    </div>
-  </form>
-</section>
-
-<section class="detail-card">
-  <div class="card-header-inline">
-    <div>
-      <p class="section-label">Saved Projects</p>
-      <h3>Manage your engineering workspaces</h3>
-    </div>
-  </div>
-
-  {% if projects %}
-    <div class="finding-list">
-      {% for project in projects %}
-      <article class="finding-card">
-        <div class="card-header-inline">
-          <div>
-            <h3>{{ project.name }}</h3>
-            <p class="muted-copy">
-              {{ project.description if project.description else "No description provided." }}
+<section class="projects-hero-grid">
+    <section class="card projects-score-card">
+        <div class="card-header">
+            <h2 class="section-title">Project Control</h2>
+            <p class="section-copy">
+                Portfolio-style view of engineering workspaces, activity, and workspace spread.
             </p>
-          </div>
-          <span class="chip chip-soft">{{ project.run_count }} RUNS</span>
         </div>
 
-        <div class="metric-stack">
-          <div class="metric-row">
-            <span class="metric-label">Project ID</span>
-            <span class="metric-value">{{ project.project_id }}</span>
-          </div>
-          <div class="metric-row">
-            <span class="metric-label">Created</span>
-            <span class="metric-value">{{ project.created_at }}</span>
-          </div>
-          <div class="metric-row">
-            <span class="metric-label">Updated</span>
-            <span class="metric-value">{{ project.updated_at }}</span>
-          </div>
+        <div class="card-body">
+            <div class="projects-score-shell">
+                <div class="projects-score-main">
+                    <div class="projects-score-number">{{ projects_summary.total_projects }}</div>
+                    <div class="projects-score-label">total projects</div>
+                    <div class="projects-score-pill">Workspace Portfolio</div>
+                </div>
+
+                <div class="projects-score-visual">
+                    <div class="projects-ring">
+                        <div class="projects-ring-core">
+                            <span>{{ projects_summary.populated_projects }}</span>
+                            <small>active</small>
+                        </div>
+                    </div>
+
+                    <div class="projects-scale-row">
+                        <div class="projects-scale-pill low">Empty</div>
+                        <div class="projects-scale-pill watch">Building</div>
+                        <div class="projects-scale-pill high">Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="projects-foot-note">
+                Track total workspaces, active projects, and project spread from one product-style management surface.
+            </div>
+        </div>
+    </section>
+
+    <section class="card projects-overview-card">
+        <div class="card-header">
+            <h2 class="section-title">Workspace Overview</h2>
+            <p class="section-copy">
+                Current management-level metrics across all saved project workspaces.
+            </p>
         </div>
 
-        <div class="page-actions">
-          <a class="primary-button" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Project</a>
+        <div class="card-body">
+            <div class="projects-overview-grid">
+                <div class="overview-mini-card">
+                    <div class="overview-mini-value">{{ projects_summary.total_runs }}</div>
+                    <div class="overview-mini-label">Linked Runs</div>
+                </div>
 
-          <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" style="display:inline;">
-            <button type="submit" class="secondary-button">Delete Project</button>
-          </form>
+                <div class="overview-mini-card">
+                    <div class="overview-mini-value">{{ projects_summary.populated_projects }}</div>
+                    <div class="overview-mini-label">Active Projects</div>
+                </div>
+
+                <div class="overview-mini-card">
+                    <div class="overview-mini-value">{{ projects_summary.empty_projects }}</div>
+                    <div class="overview-mini-label">Empty Projects</div>
+                </div>
+            </div>
+
+            <div class="workspace-trend-panel">
+                <div class="workspace-trend-header">
+                    <span>Workspace Trend</span>
+                    <span>{{ projects_summary.total_projects }} total</span>
+                </div>
+                <div class="workspace-trend-chart">
+                    <span class="workspace-trend-line"></span>
+                </div>
+            </div>
         </div>
-      </article>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p class="empty-state">No projects yet. Create your first workspace above.</p>
-  {% endif %}
+    </section>
 </section>
+
+<section class="card" id="create-project">
+    <div class="card-header">
+        <div class="projects-top-row">
+            <div>
+                <h2 class="section-title">Create Project</h2>
+                <p class="section-copy">
+                    Start a new engineering workspace for boards, runs, and later comparisons.
+                </p>
+            </div>
+
+            <div class="btn-link-row">
+                <a class="btn-link" href="#workspace-gallery">View Workspaces</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="divider"></div>
+
+        <form method="post" action="{{ url_for('create_project_route') }}">
+            <div class="inline-grid-2">
+                <label>
+                    Project Name
+                    <input type="text" name="name" placeholder="Enter project name" required>
+                </label>
+
+                <label>
+                    Description
+                    <input type="text" name="description" placeholder="Optional project description">
+                </label>
+            </div>
+
+            <div class="btn-link-row">
+                <button type="submit" class="btn btn-primary">Create Project</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Workspace Spotlight</h2>
+            <p class="section-copy">
+                Quick visual comparison of the strongest workspace activity versus the lightest one.
+            </p>
+        </div>
+
+        <div class="card-body">
+            <div class="spotlight-grid">
+                <div class="spotlight-card spotlight-best">
+                    <div class="spotlight-kicker">Most Active Project</div>
+                    <div class="spotlight-title">{{ ns.most_active_name }}</div>
+                    <div class="spotlight-copy">
+                        {{ ns.most_active_runs }} linked run{% if ns.most_active_runs != 1 %}s{% endif %}
+                    </div>
+                </div>
+
+                <div class="spotlight-card spotlight-worst">
+                    <div class="spotlight-kicker">Least Active Project</div>
+                    <div class="spotlight-title">{{ ns.least_active_name }}</div>
+                    <div class="spotlight-copy">
+                        {{ ns.least_active_runs }} linked run{% if ns.least_active_runs != 1 %}s{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Project Distribution</h2>
+            <p class="section-copy">
+                Product-style breakdown of workspace status across your project list.
+            </p>
+        </div>
+
+        <div class="card-body">
+            <div class="distribution-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Workspaces</div>
+                    <div class="metric-value">{{ projects_summary.total_projects }}</div>
+                    <div class="metric-sub">All saved project shells</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Active Share</div>
+                    <div class="metric-value">
+                        {% if projects_summary.total_projects > 0 %}
+                            {{ ((projects_summary.populated_projects / projects_summary.total_projects) * 100)|round|int }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </div>
+                    <div class="metric-sub">Percent with at least one run</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Most Active</div>
+                    <div class="metric-value">{{ ns.most_active_runs }}</div>
+                    <div class="metric-sub">Highest linked-run count</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Least Active</div>
+                    <div class="metric-value">{{ ns.least_active_runs }}</div>
+                    <div class="metric-sub">Lowest linked-run count</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Workspace Insight</h2>
+        <p class="section-copy">
+            A clearer summary surface for project activity and portfolio direction.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="summary-strip">
+            <div class="summary-panel">
+                <h3>Most Active Workspace</h3>
+                <p>
+                    <strong>{{ ns.most_active_name }}</strong> currently leads the workspace list with
+                    {{ ns.most_active_runs }} linked run{% if ns.most_active_runs != 1 %}s{% endif %}.
+                </p>
+            </div>
+
+            <div class="summary-panel">
+                <h3>Newest Workspace</h3>
+                <p>
+                    <strong>{{ ns.newest_name }}</strong> is the most recently listed project in the current
+                    workspace set, with creation timestamp {{ ns.newest_date }}.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card" id="workspace-gallery">
+    <div class="card-header">
+        <h2 class="section-title">Workspace Gallery</h2>
+        <p class="section-copy">
+            Card-based project view with stronger visual hierarchy and direct actions.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if projects %}
+            <div class="workspace-gallery">
+                {% for project in projects %}
+                    <article class="workspace-card">
+                        <div class="workspace-card-top">
+                            <div>
+                                <div class="workspace-card-title">{{ project.name }}</div>
+                                <div class="workspace-card-copy">
+                                    {{ project.description if project.description else "No description provided for this workspace yet." }}
+                                </div>
+                            </div>
+
+                            {% if project.run_count > 0 %}
+                                <span class="chip chip-soft">Active</span>
+                            {% else %}
+                                <span class="chip chip-medium">Empty</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="workspace-mini-chart">
+                            <span class="workspace-mini-line"></span>
+                        </div>
+
+                        <div class="workspace-stat-row">
+                            <div class="workspace-stat-box">
+                                <div class="workspace-stat-value">{{ project.run_count }}</div>
+                                <div class="workspace-stat-label">Runs</div>
+                            </div>
+
+                            <div class="workspace-stat-box">
+                                <div class="workspace-stat-value">
+                                    {% if project.run_count > 0 %}
+                                        Live
+                                    {% else %}
+                                        Idle
+                                    {% endif %}
+                                </div>
+                                <div class="workspace-stat-label">Status</div>
+                            </div>
+                        </div>
+
+                        <div class="workspace-meta">
+                            <div><span>Project ID</span><strong>{{ project.project_id }}</strong></div>
+                            <div><span>Created</span><strong>{{ project.created_at }}</strong></div>
+                            <div><span>Updated</span><strong>{{ project.updated_at }}</strong></div>
+                        </div>
+
+                        <div class="workspace-actions">
+                            <a class="btn btn-secondary" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open</a>
+
+                            <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" onsubmit="return confirm('Delete this project?');">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                No projects yet. Create your first engineering workspace above.
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .projects-hero-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+    }
+
+    .projects-score-shell {
+        display: grid;
+        grid-template-columns: 1fr 240px;
+        gap: 18px;
+        align-items: center;
+    }
+
+    .projects-score-number {
+        font-size: 72px;
+        line-height: 1;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -0.05em;
+    }
+
+    .projects-score-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 8px;
+    }
+
+    .projects-score-pill {
+        display: inline-flex;
+        margin-top: 12px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        color: #bfdbfe;
+        background: rgba(59,130,246,0.12);
+        border: 1px solid rgba(59,130,246,0.16);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .projects-score-visual {
+        display: grid;
+        gap: 14px;
+        justify-items: center;
+    }
+
+    .projects-ring {
+        width: 160px;
+        height: 160px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background:
+            radial-gradient(circle at center, rgba(255,255,255,0.03) 40%, transparent 41%),
+            conic-gradient(from 180deg, #2f67ff, #60a5fa, #93c5fd, #2f67ff);
+        padding: 12px;
+    }
+
+    .projects-ring-core {
+        width: 100%;
+        height: 100%;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: rgba(10,16,32,0.96);
+        color: var(--text);
+        text-align: center;
+    }
+
+    .projects-ring-core span {
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .projects-ring-core small {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 4px;
+    }
+
+    .projects-scale-row,
+    .projects-overview-grid,
+    .spotlight-grid,
+    .distribution-grid,
+    .summary-strip,
+    .workspace-gallery,
+    .workspace-stat-row,
+    .workspace-actions {
+        display: grid;
+        gap: 14px;
+    }
+
+    .projects-scale-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .projects-scale-pill {
+        text-align: center;
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .projects-scale-pill.low {
+        color: #cbd5e1;
+        background: rgba(148,163,184,0.12);
+    }
+
+    .projects-scale-pill.watch {
+        color: #fde68a;
+        background: rgba(245,158,11,0.12);
+    }
+
+    .projects-scale-pill.high {
+        color: #86efac;
+        background: rgba(34,197,94,0.12);
+    }
+
+    .projects-foot-note {
+        margin-top: 16px;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .projects-overview-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .overview-mini-card,
+    .summary-panel,
+    .spotlight-card,
+    .workspace-card,
+    .workspace-stat-box {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .overview-mini-value,
+    .workspace-stat-value {
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -0.04em;
+        margin-bottom: 8px;
+    }
+
+    .overview-mini-label,
+    .workspace-stat-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .workspace-trend-panel,
+    .workspace-mini-chart {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.02);
+    }
+
+    .workspace-trend-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .workspace-trend-chart,
+    .workspace-mini-chart {
+        height: 72px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .workspace-trend-line,
+    .workspace-mini-line {
+        position: absolute;
+        inset: 0;
+        border-radius: 14px;
+        background:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59,130,246,0.18), rgba(96,165,250,0.08));
+        background-size: 18px 18px, 18px 18px, auto;
+    }
+
+    .projects-top-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .spotlight-grid,
+    .distribution-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .spotlight-kicker {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 10px;
+    }
+
+    .spotlight-title,
+    .workspace-card-title {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -0.04em;
+        margin-bottom: 8px;
+    }
+
+    .spotlight-copy,
+    .workspace-card-copy,
+    .summary-panel p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .summary-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summary-panel h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 18px;
+    }
+
+    .workspace-gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .workspace-card {
+        display: grid;
+        gap: 16px;
+    }
+
+    .workspace-card-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .workspace-meta {
+        display: grid;
+        gap: 8px;
+    }
+
+    .workspace-meta div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .workspace-meta strong {
+        color: var(--text-soft);
+        font-weight: 700;
+    }
+
+    .workspace-actions {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+    }
+
+    .btn-danger {
+        background: rgba(239,68,68,0.14);
+        color: #fca5a5;
+        border: 1px solid rgba(239,68,68,0.18);
+    }
+
+    @media (max-width: 1100px) {
+        .projects-hero-grid,
+        .workspace-gallery,
+        .summary-strip,
+        .spotlight-grid,
+        .distribution-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .projects-score-shell,
+        .projects-overview-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .projects-scale-row,
+        .workspace-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .workspace-card-top,
+        .projects-top-row {
+            flex-direction: column;
+        }
+    }
+</style>
 
 {% endblock %}

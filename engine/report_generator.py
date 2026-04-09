@@ -1,21 +1,54 @@
+def _append_config_snapshot(lines, config_snapshot):
+    if not isinstance(config_snapshot, dict) or not config_snapshot:
+        lines.append("- No config snapshot available")
+        lines.append("")
+        return
+
+    for section_name, section_data in config_snapshot.items():
+        lines.append(f"### {str(section_name).replace('_', ' ').title()}")
+        if isinstance(section_data, dict):
+            for key, value in section_data.items():
+                if isinstance(value, list):
+                    display_value = ", ".join(str(item) for item in value) if value else "None"
+                else:
+                    display_value = value
+                lines.append(f"- {str(key).replace('_', ' ').title()}: {display_value}")
+        else:
+            lines.append(f"- Value: {section_data}")
+        lines.append("")
+
+
 def generate_report(pcb, analysis_result):
     lines = []
+
+    score_explanation = analysis_result.get("score_explanation", {})
+    risk_summary = analysis_result.get("risk_summary", {})
+    by_severity = risk_summary.get("by_severity", {})
+    by_category = risk_summary.get("by_category", {})
+
+    analysis_context = analysis_result.get("analysis_context", {})
+    config_snapshot = analysis_context.get("config_snapshot") or analysis_result.get("config_snapshot") or {}
 
     lines.append("# SILICORE ENGINEERING REPORT")
     lines.append("")
 
     lines.append("## BOARD OVERVIEW")
+    lines.append(f"- File: {analysis_result.get('filename', 'Unknown')}")
     lines.append(f"- Total Components: {len(getattr(pcb, 'components', []))}")
     lines.append(f"- Total Nets: {len(getattr(pcb, 'nets', {}))}")
     lines.append(f"- Overall Risk Score: {analysis_result.get('score', 0)} / 10")
     lines.append("")
 
-    risk_summary = analysis_result.get("risk_summary", {})
-    by_severity = risk_summary.get("by_severity", {})
-    by_category = risk_summary.get("by_category", {})
+    lines.append("## ANALYSIS CONTEXT")
+    lines.append(f"- Board Name: {analysis_context.get('board_name', analysis_result.get('filename', 'Unknown'))}")
+    lines.append(f"- Timestamp: {analysis_context.get('timestamp', analysis_result.get('created_at', 'Unknown'))}")
+    lines.append("")
+
+    lines.append("## CONFIG SNAPSHOT")
+    _append_config_snapshot(lines, config_snapshot)
 
     lines.append("## RISK SUMMARY")
-    lines.append(f"- Total Risks: {risk_summary.get('total_risks', 0)}")
+    lines.append(f"- Total Risks: {risk_summary.get('total_risks', len(analysis_result.get('risks', [])))}")
     lines.append(f"- Low: {by_severity.get('low', 0)}")
     lines.append(f"- Medium: {by_severity.get('medium', 0)}")
     lines.append(f"- High: {by_severity.get('high', 0)}")
@@ -29,8 +62,6 @@ def generate_report(pcb, analysis_result):
     else:
         lines.append("- No category risks found")
     lines.append("")
-
-    score_explanation = analysis_result.get("score_explanation", {})
 
     lines.append("## SCORE EXPLAINABILITY")
     lines.append(f"- Start Score: {score_explanation.get('start_score', 10.0)}")

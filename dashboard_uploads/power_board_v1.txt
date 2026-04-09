@@ -1,0 +1,16 @@
+BOARD power_board_v1
+NET VCC
+NET GND
+NET PWM_OUT
+NET SW_NODE
+
+COMPONENT U1 ATmega328 10 10 top microcontroller
+COMPONENT U2 LM2596 14 11 top regulator
+COMPONENT C1 0.1uF 30 30 top capacitor
+COMPONENT C2 10uF 31 30 top capacitor
+COMPONENT Q1 MOSFET 16 12 top transistor
+COMPONENT D1 SS34 17 12 top diode
+COMPONENT L1 33uH 18 12 top inductor
+COMPONENT J1 HEADER 45 8 top connector
+COMPONENT R1 10k 11 10 top resistor
+COMPONENT LED1 GREEN 46 9 top led

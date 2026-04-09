@@ -11,17 +11,27 @@ def run_rule(pcb, config):
     emi_config = config.get("emi", {})
     power_config = config.get("power", {})
     signal_config = config.get("signal", {})
+    rule_config = config.get("rules", {}).get("return_path", {})
 
-    require_ground_reference = emi_config.get("require_ground_reference", True)
+    require_ground_reference = rule_config.get(
+        "require_ground_reference",
+        emi_config.get("require_ground_reference", True)
+    )
     if not require_ground_reference:
         return risks
 
     ground_nets = _upper_set(
-        power_config.get("required_ground_nets", ["GND", "GROUND"])
+        rule_config.get(
+            "ground_nets",
+            power_config.get("required_ground_nets", ["GND", "GROUND"])
+        )
     )
 
     critical_nets = _upper_set(
-        signal_config.get("critical_nets", ["CLK", "SCL", "SDA", "MOSI", "MISO", "CS"])
+        rule_config.get(
+            "critical_nets",
+            signal_config.get("critical_nets", ["CLK", "SCL", "SDA", "MOSI", "MISO", "CS"])
+        )
     )
 
     board_nets = set()

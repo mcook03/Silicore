@@ -4,10 +4,10 @@
         "min_score": 0.0,
         "max_score": 10.0,
         "severity_penalties": {
-            "low": 0.5,
-            "medium": 1.0,
-            "high": 1.5,
-            "critical": 2.0
+            "low": 0.15,
+            "medium": 0.35,
+            "high": 0.6,
+            "critical": 1.2
         }
     },
     "layout": {

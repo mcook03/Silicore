@@ -1,80 +1,623 @@
 {% extends "base.html" %}
+
 {% block content %}
+{% set run_list = history_runs if history_runs is defined else (runs if runs is defined else []) %}
+{% set chart = history_chart if history_chart is defined else {} %}
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Saved Runs Overview</h2>
-        <p class="section-copy">
-            History now behaves more like product memory instead of a plain list.
-        </p>
-    </div>
-    <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
-                <div class="metric-label">Saved Runs</div>
-                <div class="metric-value">{{ history_summary.total_runs }}</div>
-                <div class="metric-sub">Stored dashboard run folders</div>
-            </div>
+{% set score_trend = chart.get("score_trend", {}) %}
+{% set artifact_bars = chart.get("artifact_bars", {}) %}
+{% set archive_metrics = chart.get("archive_metrics", []) %}
 
-            <div class="metric-card">
-                <div class="metric-label">Export Files</div>
-                <div class="metric-value">{{ history_summary.total_files }}</div>
-                <div class="metric-sub">Total discovered saved artifacts</div>
-            </div>
+<section class="page-shell">
+    <div class="page-header">
+        <div>
+            <p class="eyebrow">Analysis History</p>
+            <h1>Saved Runs</h1>
+            <p class="page-subtitle">
+                Review previous analyses, compare run quality, reopen engineering outputs, and inspect how each run was generated.
+            </p>
+        </div>
 
-            <div class="metric-card">
-                <div class="metric-label">JSON Files</div>
-                <div class="metric-value">{{ history_summary.total_json }}</div>
-                <div class="metric-sub">Structured machine-readable outputs</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-label">Readable Reports</div>
-                <div class="metric-value">{{ history_summary.total_text + history_summary.total_html }}</div>
-                <div class="metric-sub">Text and HTML artifacts available</div>
-            </div>
+        <div class="page-header-actions">
+            <a href="{{ url_for('single_board_page') }}" class="btn btn-primary">New Analysis</a>
         </div>
     </div>
-</section>
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Run Browser</h2>
-        <p class="section-copy">
-            Browse previous work, preview what was saved, and jump directly into export files.
-        </p>
-    </div>
-    <div class="card-body">
-        {% if history_runs %}
-            <div class="runs-list">
-                {% for run in history_runs %}
-                    <div class="run-item">
-                        <p class="run-title">{{ run.name }}</p>
-                        <div class="run-meta">
-                            Type: {{ run.run_type }}<br>
-                            Created: {{ run.created_at }}<br>
-                            Files: {{ run.download_count }}
+    <section class="stats-grid history-stats-grid">
+        <article class="metric-card">
+            <p class="metric-label">Total Runs</p>
+            <h3 class="metric-value">{{ history_summary.total_runs if history_summary is defined else run_list|length }}</h3>
+            <p class="metric-subtext">Saved analysis records</p>
+        </article>
+
+        <article class="metric-card">
+            <p class="metric-label">Export Files</p>
+            <h3 class="metric-value">{{ history_summary.total_files if history_summary is defined else 0 }}</h3>
+            <p class="metric-subtext">Artifacts across archive</p>
+        </article>
+
+        <article class="metric-card">
+            <p class="metric-label">HTML Reports</p>
+            <h3 class="metric-value">{{ history_summary.total_html if history_summary is defined else 0 }}</h3>
+            <p class="metric-subtext">Readable engineering reports</p>
+        </article>
+
+        <article class="metric-card">
+            <p class="metric-label">JSON Outputs</p>
+            <h3 class="metric-value">{{ history_summary.total_json if history_summary is defined else 0 }}</h3>
+            <p class="metric-subtext">Structured result artifacts</p>
+        </article>
+    </section>
+
+    <section class="panel-grid panel-grid-two">
+        <article class="panel-card chart-panel">
+            <div class="panel-head">
+                <div>
+                    <p class="panel-kicker">Run Quality</p>
+                    <h2>Score Trend</h2>
+                </div>
+            </div>
+
+            <div class="chart-frame">
+                <svg
+                    viewBox="0 0 {{ score_trend.width if score_trend and score_trend.width else 1000 }} {{ score_trend.height if score_trend and score_trend.height else 180 }}"
+                    class="chart-svg"
+                    preserveAspectRatio="none"
+                    aria-label="History score trend"
+                >
+                    {% if score_trend and score_trend.has_data %}
+                        <polygon
+                            points="{{ score_trend.area_points }}"
+                            class="history-area-fill"
+                        ></polygon>
+                        <polyline
+                            fill="none"
+                            stroke="var(--accent-primary, #5b8cff)"
+                            stroke-width="4"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            points="{{ score_trend.points }}"
+                        ></polyline>
+                    {% else %}
+                        <text x="500" y="90" text-anchor="middle" class="chart-empty-text">No score history available yet</text>
+                    {% endif %}
+                </svg>
+            </div>
+        </article>
+
+        <article class="panel-card chart-panel">
+            <div class="panel-head">
+                <div>
+                    <p class="panel-kicker">Artifact Volume</p>
+                    <h2>Saved Outputs</h2>
+                </div>
+            </div>
+
+            <div class="bars-wrap">
+                {% if artifact_bars and artifact_bars.has_data %}
+                    {% for bar in artifact_bars["items"] %}
+                        <div class="bar-group">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="height: {{ bar.width_pct }}%;"></div>
+                            </div>
+                            <span class="bar-label">{{ bar.label }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state-inline">No artifact volume data available yet</div>
+                {% endif %}
+            </div>
+        </article>
+    </section>
+
+    <section class="panel-grid panel-grid-two">
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <p class="panel-kicker">Archive Summary</p>
+                    <h2>History Snapshot</h2>
+                </div>
+            </div>
+
+            {% if archive_metrics %}
+                <div class="archive-metric-list">
+                    {% for item in archive_metrics %}
+                    <div class="archive-metric-card">
+                        <div class="archive-metric-value">{{ item.value }}</div>
+                        <div class="archive-metric-label">{{ item.label }}</div>
+                        <div class="archive-metric-note">{{ item.note }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No archive summary yet</h3>
+                    <p>Run an analysis to start building a usable engineering history.</p>
+                </div>
+            {% endif %}
+        </article>
+
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <p class="panel-kicker">Engineering Archive</p>
+                    <h2>Why This Matters</h2>
+                </div>
+            </div>
+
+            <div class="summary-stack">
+                <div class="summary-panel">
+                    <h3>Traceability</h3>
+                    <p>Saved runs let engineers revisit outputs, review what changed, and track board quality over time instead of treating each analysis as disposable.</p>
+                </div>
+
+                <div class="summary-panel">
+                    <h3>Explainability</h3>
+                    <p>Run detail pages can now show the score, findings, and context used for that analysis, which makes Silicore feel more trustworthy and usable.</p>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <p class="panel-kicker">Saved Run Archive</p>
+                <h2>Run Library</h2>
+            </div>
+        </div>
+
+        {% if run_list %}
+            <div class="history-run-grid">
+                {% for run in run_list %}
+                <article class="history-run-card">
+                    <div class="history-run-top">
+                        <div>
+                            <div class="history-run-title">{{ run.get("name", "Untitled Run") }}</div>
+                            <div class="history-run-meta-row">
+                                <span class="chip chip-soft">{{ run.get("run_type", "unknown")|upper }}</span>
+                                <span class="small-muted">{{ run.get("created_at", "Unknown") }}</span>
+                            </div>
                         </div>
 
-                        {% if run.preview %}
-                            <div class="run-preview">
-                                {{ run.preview }}
-                            </div>
-                        {% endif %}
+                        <a class="btn-link" href="{{ run.detail_url }}">Open Run</a>
+                    </div>
 
-                        <div class="run-file-list">
-                            <a class="btn-link" href="{{ run.detail_url }}">Open Run Detail</a>
-                            {% for file in run.files[:3] %}
-                                <a class="btn-link" href="{{ url_for('download_file', run_dir=file.run_dir, filename=file.filename) }}">{{ file.label }}</a>
-                            {% endfor %}
+                    <div class="history-run-stats">
+                        <div class="history-run-stat">
+                            <span class="history-run-stat-label">Score</span>
+                            <span class="history-run-stat-value">
+                                {% if run.get("score") is not none %}
+                                    {{ (run.get("score", 0) * 10)|round|int }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="history-run-stat">
+                            <span class="history-run-stat-label">Artifacts</span>
+                            <span class="history-run-stat-value">{{ run.get("download_count", 0) }}</span>
+                        </div>
+
+                        <div class="history-run-stat">
+                            <span class="history-run-stat-label">HTML</span>
+                            <span class="history-run-stat-value">{{ run.get("html_count", 0) }}</span>
+                        </div>
+
+                        <div class="history-run-stat">
+                            <span class="history-run-stat-label">JSON</span>
+                            <span class="history-run-stat-value">{{ run.get("json_count", 0) }}</span>
                         </div>
                     </div>
+
+                    <div class="history-run-status-row">
+                        {% set score = run.get("score", 0) %}
+                        {% if score >= 8 %}
+                            <span class="status-pill status-good">Strong</span>
+                        {% elif score >= 6 %}
+                            <span class="status-pill status-fair">Watch</span>
+                        {% else %}
+                            <span class="status-pill status-risk">Attention</span>
+                        {% endif %}
+                    </div>
+
+                    {% if run.get("preview") %}
+                    <div class="history-run-preview">
+                        {{ run.get("preview") }}
+                    </div>
+                    {% endif %}
+
+                    {% if run.get("files") %}
+                    <div class="history-artifact-links">
+                        {% for file in run.get("files", [])[:4] %}
+                        <a class="artifact-mini-link" href="{{ download_href(file) }}">{{ file.label }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </article>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-state">No saved runs yet.</div>
+            <div class="empty-state">
+                <h3>No saved runs yet</h3>
+                <p>Run a board analysis and your history archive will appear here.</p>
+            </div>
         {% endif %}
-    </div>
+    </section>
 </section>
 
+<style>
+    .page-shell {
+        display: grid;
+        gap: 22px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .eyebrow {
+        margin: 0 0 8px;
+        color: var(--blue-3);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 42px;
+        line-height: 1;
+        letter-spacing: -0.05em;
+        color: var(--text);
+    }
+
+    .page-subtitle {
+        margin: 12px 0 0;
+        max-width: 760px;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .panel-grid {
+        display: grid;
+        gap: 18px;
+    }
+
+    .panel-grid-two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric-card,
+    .panel-card,
+    .history-run-card,
+    .archive-metric-card {
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+            rgba(10,16,32,0.78);
+        box-shadow: 0 18px 44px rgba(0,0,0,0.22);
+    }
+
+    .metric-card {
+        padding: 20px;
+    }
+
+    .metric-label,
+    .panel-kicker,
+    .archive-metric-label,
+    .history-run-stat-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .metric-value,
+    .archive-metric-value {
+        margin-top: 10px;
+        font-size: 34px;
+        line-height: 1;
+        color: var(--text);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+    }
+
+    .metric-subtext,
+    .archive-metric-note {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .panel-card {
+        padding: 22px;
+    }
+
+    .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        gap: 12px;
+    }
+
+    .panel-head h2 {
+        margin: 4px 0 0;
+        color: var(--text);
+        font-size: 24px;
+        letter-spacing: -0.03em;
+    }
+
+    .chart-frame {
+        min-height: 240px;
+        display: grid;
+        align-items: center;
+    }
+
+    .chart-svg {
+        width: 100%;
+        height: 240px;
+    }
+
+    .chart-empty-text {
+        fill: var(--muted);
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .history-area-fill {
+        fill: rgba(91, 140, 255, 0.12);
+    }
+
+    .bars-wrap {
+        height: 240px;
+        display: flex;
+        align-items: end;
+        gap: 14px;
+    }
+
+    .bar-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .bar-track {
+        width: 100%;
+        height: 180px;
+        border-radius: 16px;
+        display: flex;
+        align-items: end;
+        overflow: hidden;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .bar-fill {
+        width: 100%;
+        border-radius: 16px 16px 0 0;
+        background: linear-gradient(180deg, #4b8dff, #2f67ff);
+    }
+
+    .bar-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        word-break: break-word;
+    }
+
+    .archive-metric-list,
+    .summary-stack,
+    .history-run-grid,
+    .history-artifact-links {
+        display: grid;
+        gap: 14px;
+    }
+
+    .history-run-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .archive-metric-card,
+    .summary-panel,
+    .history-run-card {
+        padding: 18px;
+    }
+
+    .summary-panel {
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .summary-panel h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 16px;
+    }
+
+    .summary-panel p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .history-run-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .history-run-title {
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .history-run-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .history-run-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .history-run-stat {
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .history-run-stat-value {
+        display: block;
+        margin-top: 8px;
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .history-run-status-row {
+        margin-bottom: 14px;
+    }
+
+    .history-run-preview {
+        padding: 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.05);
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 13px;
+        max-height: 120px;
+        overflow: hidden;
+    }
+
+    .history-artifact-links {
+        margin-top: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .artifact-mini-link {
+        display: block;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.05);
+        color: var(--text-soft);
+        font-size: 12px;
+        font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .empty-state,
+    .empty-state-inline {
+        padding: 24px;
+        border-radius: 18px;
+        text-align: center;
+        color: var(--muted);
+        background: rgba(255,255,255,0.025);
+        border: 1px dashed rgba(255,255,255,0.08);
+    }
+
+    .empty-state h3 {
+        margin: 0 0 8px;
+        color: var(--text);
+    }
+
+    .small-muted {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .status-good {
+        color: #9ae6b4;
+        background: rgba(34,197,94,0.12);
+    }
+
+    .status-fair {
+        color: #fde68a;
+        background: rgba(245,184,79,0.12);
+    }
+
+    .status-risk {
+        color: #fca5a5;
+        background: rgba(248,113,113,0.12);
+    }
+
+    @media (max-width: 1100px) {
+        .panel-grid-two,
+        .history-run-grid,
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .page-header h1 {
+            font-size: 34px;
+        }
+
+        .history-run-stats,
+        .history-artifact-links {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .history-run-stats,
+        .history-artifact-links {
+            grid-template-columns: 1fr;
+        }
+
+        .history-run-top {
+            flex-direction: column;
+        }
+    }
+</style>
 {% endblock %}

@@ -1,145 +1,440 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero">
-    <div class="hero-grid">
-        <div>
-            <h1>Silicore now feels like a real control center.</h1>
-            <p>
-                Milestone 16.5 upgrades the dashboard experience by making Home more intentional, History more useful,
-                and Project Review more comparative and product-like, while keeping the same premium Silicore visual language.
-            </p>
-            <div class="hero-chip-row">
-                <div class="hero-chip">Executive dashboard overview</div>
-                <div class="hero-chip">Richer saved run browsing</div>
-                <div class="hero-chip">Stronger project comparison</div>
-                <div class="hero-chip">Design continuity preserved</div>
-            </div>
-
-            <div class="btn-link-row" style="margin-top: 20px;">
-                <a class="btn-link" href="{{ url_for('single_board_page') }}">Open Single Board</a>
-                <a class="btn-link" href="{{ url_for('project_page') }}">Open Project Review</a>
-                <a class="btn-link" href="{{ url_for('history_page') }}">Browse Saved Runs</a>
-            </div>
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Risk Score</h2>
+            <p class="section-copy">Latest scored run shown on a real 0 to 100 dashboard scale.</p>
         </div>
 
-        <div class="hero-status-card">
-            <div class="status-kicker">Platform status</div>
-            <div class="status-number">Ready</div>
-            <div class="status-copy">
-                Silicore’s engine and product shell are stable enough to focus on experience polish, stronger workflow separation, and customer-facing presentation.
+        <div class="card-body">
+            <div class="home-score-card">
+                <div class="home-score-main">
+                    <div class="home-score-value">{{ home_chart.latest_score }}</div>
+                    <div class="home-score-sub">
+                        {% if home_chart.latest_source %}
+                            {{ home_chart.latest_source }}
+                        {% else %}
+                            no scored run yet
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="home-score-meter">
+                    <div class="score-meter-track">
+                        <div class="score-meter-fill" style="width: {{ home_chart.latest_score }}%;"></div>
+                    </div>
+
+                    <div class="score-meter-scale">
+                        <span>0</span>
+                        <span>25</span>
+                        <span>50</span>
+                        <span>75</span>
+                        <span>100</span>
+                    </div>
+                </div>
             </div>
-            <div class="subtle-stat-line">
-                <div class="stat-pill">Stable CLI</div>
-                <div class="stat-pill">Stable dashboard</div>
-                <div class="stat-pill">Stable exports</div>
-                <div class="stat-pill">Premium UI retained</div>
+
+            <div class="home-score-note">
+                Real score pulled from the latest scored analysis run.
             </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Board Overview</h2>
+            <p class="section-copy">Current platform usage and analysis coverage.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="home-overview-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Runs</div>
+                    <div class="metric-value">{{ stats.total_runs }}</div>
+                    <div class="metric-sub">Total run records</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Projects</div>
+                    <div class="metric-value">{{ stats.project_runs }}</div>
+                    <div class="metric-sub">Project review runs</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Exports</div>
+                    <div class="metric-value">{{ stats.exported_runs }}</div>
+                    <div class="metric-sub">Runs with exports</div>
+                </div>
+            </div>
+
+            <div class="home-sparkline-card">
+                <div class="sparkline-label">Recent Score Trend</div>
+
+                {% if home_chart.trend.has_data %}
+                <svg class="real-line-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
+                    <polygon points="{{ home_chart.trend.area_points }}" class="chart-area"></polygon>
+                    <polyline points="{{ home_chart.trend.points }}" class="chart-line"></polyline>
+                </svg>
+                {% else %}
+                <div class="empty-state">No recent scored runs available for a live trend yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Analysis Results</h2>
+        <p class="section-copy">
+            Main Silicore workflows with real usage bars instead of decorative chart art.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="grid grid-3">
+            <article class="result-card">
+                <div class="result-card-top">
+                    <div>
+                        <div class="result-card-title">Single Board Analysis</div>
+                        <div class="result-card-copy">
+                            Focused engineering review for one board file.
+                        </div>
+                    </div>
+                    <span class="chip chip-soft">{{ stats.single_runs }}</span>
+                </div>
+
+                <div class="real-bar-row">
+                    {% for item in home_chart.workflow_chart["items"] if item.label == "Single" %}
+                        <div class="real-bar-track">
+                            <div class="real-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="result-card">
+                <div class="result-card-top">
+                    <div>
+                        <div class="result-card-title">Project Review</div>
+                        <div class="result-card-copy">
+                            Multi-board ranking and comparison workflow.
+                        </div>
+                    </div>
+                    <span class="chip chip-soft">{{ stats.project_runs }}</span>
+                </div>
+
+                <div class="real-bar-row">
+                    {% for item in home_chart.workflow_chart["items"] if item.label == "Project" %}
+                        <div class="real-bar-track">
+                            <div class="real-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="result-card">
+                <div class="result-card-top">
+                    <div>
+                        <div class="result-card-title">Saved Runs / Exports</div>
+                        <div class="result-card-copy">
+                            Archive and artifact generation coverage.
+                        </div>
+                    </div>
+                    <span class="chip chip-soft">{{ stats.exported_runs }}</span>
+                </div>
+
+                <div class="real-bar-row">
+                    {% for item in home_chart.workflow_chart["items"] if item.label == "Exported" %}
+                        <div class="real-bar-track">
+                            <div class="real-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </article>
         </div>
     </div>
 </section>
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Executive Overview</h2>
-        <p class="section-copy">
-            A cleaner home surface that behaves more like a product control center than a dumping ground for every workflow.
-        </p>
+        <h2 class="section-title">Recent Activity</h2>
+        <p class="section-copy">Most recent runs across board and project workflows.</p>
     </div>
+
     <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
-                <div class="metric-label">Total Saved Runs</div>
-                <div class="metric-value">{{ stats.total_runs }}</div>
-                <div class="metric-sub">Complete dashboard analysis runs</div>
-            </div>
+        {% if recent_runs %}
+            <div class="home-table">
+                <div class="home-table-header">
+                    <div>Run</div>
+                    <div>Type</div>
+                    <div>Created</div>
+                    <div>Action</div>
+                </div>
 
-            <div class="metric-card">
-                <div class="metric-label">Single Board Runs</div>
-                <div class="metric-value">{{ stats.single_runs }}</div>
-                <div class="metric-sub">Focused engineering reviews</div>
-            </div>
+                {% for run in recent_runs %}
+                <div class="home-table-row">
+                    <div class="home-table-run">
+                        <div class="home-table-title">{{ run.name }}</div>
+                    </div>
 
-            <div class="metric-card">
-                <div class="metric-label">Project Runs</div>
-                <div class="metric-value">{{ stats.project_runs }}</div>
-                <div class="metric-sub">Multi-board comparisons</div>
-            </div>
+                    <div>
+                        <span class="chip chip-soft">{{ run.run_type|upper }}</span>
+                    </div>
 
-            <div class="metric-card">
-                <div class="metric-label">Runs With Exports</div>
-                <div class="metric-value">{{ stats.exported_runs }}</div>
-                <div class="metric-sub">Saved outputs available to revisit</div>
+                    <div class="home-table-date">{{ run.created_at }}</div>
+
+                    <div>
+                        <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-        </div>
+        {% else %}
+            <div class="empty-state">
+                <strong>No recent runs yet.</strong><br><br>
+                Start with a single-board analysis or project review to populate the dashboard.
+            </div>
+        {% endif %}
     </div>
 </section>
 
-<section class="grid grid-2">
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Quick Launch</h2>
-            <p class="section-copy">
-                Move directly into the main Silicore workflows from a cleaner dashboard home.
-            </p>
-        </div>
-        <div class="card-body">
-            <div class="grid">
-                <div class="summary-panel">
-                    <h3>Single Board Analysis</h3>
-                    <p>Run a focused review on one board file and surface top engineering issues immediately.</p>
-                    <div class="btn-link-row" style="margin-top: 14px;">
-                        <a class="btn-link" href="{{ url_for('single_board_page') }}">Open Single Board</a>
-                    </div>
-                </div>
+<style>
+    .home-score-card {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 20px;
+        align-items: center;
+    }
 
-                <div class="summary-panel">
-                    <h3>Project Review</h3>
-                    <p>Compare multiple boards, rank them, and understand project-wide score spread more clearly.</p>
-                    <div class="btn-link-row" style="margin-top: 14px;">
-                        <a class="btn-link" href="{{ url_for('project_page') }}">Open Project Review</a>
-                    </div>
-                </div>
+    .home-score-main {
+        display: grid;
+        gap: 6px;
+    }
 
-                <div class="summary-panel">
-                    <h3>Settings</h3>
-                    <p>Tune dashboard-facing thresholds without crowding your active analysis pages.</p>
-                    <div class="btn-link-row" style="margin-top: 14px;">
-                        <a class="btn-link" href="{{ url_for('settings_page') }}">Open Settings</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    .home-score-value {
+        font-size: 64px;
+        line-height: 0.95;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        color: var(--text);
+    }
 
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Recent Activity</h2>
-            <p class="section-copy">
-                Recent runs stay capped on the home page so this screen remains clean and intentional.
-            </p>
-        </div>
-        <div class="card-body">
-            {% if recent_runs %}
-                <div class="runs-list">
-                    {% for run in recent_runs %}
-                        <div class="run-item">
-                            <p class="run-title">{{ run.name }}</p>
-                            <div class="run-meta">
-                                Type: {{ run.run_type }}<br>
-                                Created: {{ run.created_at }}
-                            </div>
-                            <div class="btn-link-row" style="margin-top: 12px;">
-                                <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="empty-state">No saved runs yet.</div>
-            {% endif %}
-        </div>
-    </section>
-</section>
+    .home-score-sub {
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+    }
+
+    .home-score-meter {
+        display: grid;
+        gap: 10px;
+    }
+
+    .score-meter-track {
+        position: relative;
+        height: 16px;
+        border-radius: 999px;
+        overflow: hidden;
+        background:
+            linear-gradient(
+                90deg,
+                rgba(16,185,129,0.35) 0%,
+                rgba(132,204,22,0.35) 20%,
+                rgba(250,204,21,0.35) 45%,
+                rgba(251,146,60,0.35) 72%,
+                rgba(239,68,68,0.35) 100%
+            );
+    }
+
+    .score-meter-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--blue), var(--blue-2));
+        box-shadow: 0 0 18px rgba(59,130,246,0.35);
+    }
+
+    .score-meter-scale {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .score-meter-scale span:nth-child(2),
+    .score-meter-scale span:nth-child(3),
+    .score-meter-scale span:nth-child(4) {
+        text-align: center;
+    }
+
+    .score-meter-scale span:last-child {
+        text-align: right;
+    }
+
+    .home-score-note {
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .home-overview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .home-sparkline-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .sparkline-label {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .real-line-chart {
+        width: 100%;
+        height: 90px;
+        display: block;
+    }
+
+    .chart-area {
+        fill: rgba(59,130,246,0.12);
+    }
+
+    .chart-line {
+        fill: none;
+        stroke: #60A5FA;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .result-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 14px;
+        padding: 18px;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .result-card:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(59,130,246,0.14);
+        transform: translateY(-1px);
+    }
+
+    .result-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .result-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+    }
+
+    .result-card-copy {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .real-bar-row {
+        display: grid;
+        gap: 10px;
+    }
+
+    .real-bar-track {
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        overflow: hidden;
+    }
+
+    .real-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--blue), var(--blue-2));
+    }
+
+    .home-table {
+        display: grid;
+        gap: 12px;
+    }
+
+    .home-table-header {
+        display: grid;
+        grid-template-columns: minmax(260px, 1.5fr) 120px 220px 140px;
+        gap: 14px;
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.02);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .home-table-row {
+        display: grid;
+        grid-template-columns: minmax(260px, 1.5fr) 120px 220px 140px;
+        gap: 14px;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .home-table-row:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(59,130,246,0.14);
+        transform: translateY(-1px);
+    }
+
+    .home-table-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .home-table-date {
+        color: var(--text);
+        font-size: 13px;
+    }
+
+    @media (max-width: 1100px) {
+        .home-score-card,
+        .home-overview-grid,
+        .home-table-header,
+        .home-table-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 {% endblock %}

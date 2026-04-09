@@ -26,7 +26,7 @@ def calculate_score(risks, config=None):
         total_penalty += float(penalties.get(severity, 0.5))
 
     score = start_score - total_penalty
-    score = max(min_score, min(max_score, score))
+    score = max(min_score, min(max_score, round(score, 2)))
 
     return round(score, 2), round(total_penalty, 2)
 

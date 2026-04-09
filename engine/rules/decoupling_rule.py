@@ -24,7 +24,7 @@ def is_capacitor(component, capacitor_keywords):
     return any(keyword.lower() in text for keyword in capacitor_keywords)
 
 
-def shares_power_or_ground_net(component, other_component):
+def shares_power_or_ground_net(component, other_component, power_ground_keywords):
     component_nets = {pad.net_name.upper() for pad in component.pads if pad.net_name}
     other_nets = {pad.net_name.upper() for pad in other_component.pads if pad.net_name}
 
@@ -32,7 +32,6 @@ def shares_power_or_ground_net(component, other_component):
         return False
 
     shared = component_nets & other_nets
-    power_ground_keywords = {"VCC", "VIN", "VBAT", "5V", "3V3", "VDD", "GND", "GROUND"}
 
     for net in shared:
         if net in power_ground_keywords:
@@ -44,8 +43,14 @@ def shares_power_or_ground_net(component, other_component):
 def run_rule(pcb, config):
     risks = []
     rule_config = config.get("rules", {}).get("decoupling", {})
+    power_config = config.get("power", {})
 
-    threshold = float(rule_config.get("threshold", 4.0))
+    threshold = float(
+        rule_config.get(
+            "threshold",
+            power_config.get("decoupling_distance_threshold", 4.0),
+        )
+    )
     target_keywords = rule_config.get(
         "target_keywords",
         ["mcu", "cpu", "fpga", "sensor", "driver", "ic", "controller"]
@@ -55,21 +60,30 @@ def run_rule(pcb, config):
         ["cap", "capacitor", "c"]
     )
 
-    for comp in pcb.components:
+    power_ground_keywords = {
+        str(net).strip().upper()
+        for net in (
+            power_config.get("required_power_nets", ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"])
+            + power_config.get("required_ground_nets", ["GND", "GROUND"])
+        )
+        if str(net).strip()
+    }
+
+    for comp in getattr(pcb, "components", []):
         if not is_target_component(comp, target_keywords):
             continue
 
         nearest_cap_distance = None
         nearest_cap = None
 
-        for other in pcb.components:
+        for other in getattr(pcb, "components", []):
             if comp.ref == other.ref:
                 continue
 
             if not is_capacitor(other, capacitor_keywords):
                 continue
 
-            if comp.pads and other.pads and not shares_power_or_ground_net(comp, other):
+            if comp.pads and other.pads and not shares_power_or_ground_net(comp, other, power_ground_keywords):
                 continue
 
             d = distance(comp, other)

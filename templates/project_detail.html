@@ -8,6 +8,7 @@
             {{ project.description if project.description else "No description yet for this project." }}
         </p>
     </div>
+
     <div class="card-body">
         <div class="metric-grid">
             <div class="metric-card">
@@ -15,16 +16,19 @@
                 <div class="metric-value" style="font-size:22px;">{{ project.project_id }}</div>
                 <div class="metric-sub">Workspace identifier</div>
             </div>
+
             <div class="metric-card">
                 <div class="metric-label">Linked Runs</div>
                 <div class="metric-value">{{ project.runs|length }}</div>
                 <div class="metric-sub">Attached analyses</div>
             </div>
+
             <div class="metric-card">
                 <div class="metric-label">Created</div>
                 <div class="metric-value" style="font-size:22px;">{{ project.created_at }}</div>
                 <div class="metric-sub">Project creation time</div>
             </div>
+
             <div class="metric-card">
                 <div class="metric-label">Updated</div>
                 <div class="metric-value" style="font-size:22px;">{{ project.updated_at }}</div>
@@ -36,36 +40,203 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Linked Analysis Runs</h2>
+        <h2 class="section-title">Run Comparison</h2>
         <p class="section-copy">
-            Runs attached to this project now behave like a real engineering workflow rather than isolated history items.
+            Compare two linked runs to understand score movement, risk change, and revision-level engineering differences.
         </p>
     </div>
-    <div class="card-body">
-        {% if project.runs %}
-            <div class="runs-list">
-                {% for run in project.runs|reverse %}
-                    <div class="run-item">
-                        <p class="run-title">{{ run.name }}</p>
-                        <div class="run-meta">
-                            Type: {{ run.run_type }}<br>
-                            Score: {{ run.score if run.score is not none else "N/A" }}<br>
-                            Risk Count: {{ run.risk_count if run.risk_count is not none else "N/A" }}<br>
-                            Created: {{ run.created_at }}
-                        </div>
 
-                        <div class="run-file-list">
-                            <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run Detail</a>
-                        </div>
-                    </div>
-                {% endfor %}
+    <div class="card-body">
+        {% if project.runs|length >= 2 %}
+        <form method="get" action="{{ url_for('compare_runs', project_id=project.project_id) }}">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Baseline Run
+                    <select name="run_a" required>
+                        <option value="">Select first run</option>
+                        {% for run in project.runs|reverse %}
+                        <option value="{{ run.run_id }}">
+                            {{ run.name }} · {{ run.run_type }} · {{ run.created_at }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    New Run
+                    <select name="run_b" required>
+                        <option value="">Select second run</option>
+                        {% for run in project.runs|reverse %}
+                        <option value="{{ run.run_id }}">
+                            {{ run.name }} · {{ run.run_type }} · {{ run.created_at }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
             </div>
+
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-primary">Compare Runs</button>
+            </div>
+        </form>
         {% else %}
-            <div class="empty-state">
-                No runs are linked to this project yet.
-            </div>
+        <div class="empty-state">
+            You need at least two linked runs before you can compare them.
+        </div>
         {% endif %}
     </div>
 </section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Linked Analysis Runs</h2>
+        <p class="section-copy">
+            Saved runs attached to this workspace, with score, type, and run-level summaries.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if project.runs %}
+            <div class="project-detail-run-list">
+                {% for run in project.runs|reverse %}
+                <div class="project-detail-run-card">
+                    <div class="project-detail-run-top">
+                        <div>
+                            <div class="project-detail-run-title">{{ run.name }}</div>
+                            <div class="small-muted">Type: {{ run.run_type }}</div>
+                        </div>
+
+                        <span class="chip chip-soft">{{ run.run_type|upper }}</span>
+                    </div>
+
+                    <div class="project-detail-run-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Score</span>
+                            <span class="metric-value">
+                                {% if run.score is not none %}
+                                    {{ (run.score * 10)|round|int }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="metric-row">
+                            <span class="metric-label">Risk Count</span>
+                            <span class="metric-value">
+                                {{ run.risk_count if run.risk_count is not none else "N/A" }}
+                            </span>
+                        </div>
+
+                        <div class="metric-row">
+                            <span class="metric-label">Created</span>
+                            <span class="metric-value">{{ run.created_at }}</span>
+                        </div>
+
+                        {% if run.critical_count is defined %}
+                        <div class="metric-row">
+                            <span class="metric-label">Critical</span>
+                            <span class="metric-value">{{ run.critical_count }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if run.summary %}
+                    <div class="summary-panel" style="margin-top:14px;">
+                        <h3>Run Summary</h3>
+                        <p>{{ run.summary }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No runs are linked to this project yet.</div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="btn-link-row">
+    <a class="btn-link" href="{{ url_for('projects_page') }}">Back to Projects</a>
+</div>
+
+<style>
+    .project-detail-compare-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .project-detail-run-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .project-detail-run-card {
+        padding: 18px;
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .project-detail-run-card:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(59,130,246,0.14);
+        transform: translateY(-1px);
+    }
+
+    .project-detail-run-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .project-detail-run-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #E5E7EB;
+        margin-bottom: 4px;
+    }
+
+    .project-detail-run-metrics {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .metric-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .metric-row:first-child {
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .chip-soft {
+        background: rgba(59,130,246,0.10);
+        color: #BFDBFE;
+        border: 1px solid rgba(59,130,246,0.16);
+    }
+
+    @media (max-width: 860px) {
+        .project-detail-compare-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .project-detail-run-top,
+        .metric-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
 
 {% endblock %}

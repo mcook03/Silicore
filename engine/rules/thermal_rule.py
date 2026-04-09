@@ -28,7 +28,7 @@ def run_rule(pcb, config):
         ["U", "Q", "VRM", "REG", "LDO", "BUCK", "BOOST", "MOSFET", "DRV", "AMP", "CPU", "FPGA", "POWER"],
     )
 
-    hot_components = [c for c in pcb.components if is_hot_component(c, hot_keywords)]
+    hot_components = [c for c in getattr(pcb, "components", []) if is_hot_component(c, hot_keywords)]
 
     for i in range(len(hot_components)):
         for j in range(i + 1, len(hot_components)):

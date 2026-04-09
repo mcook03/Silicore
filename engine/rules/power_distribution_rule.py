@@ -29,8 +29,14 @@ def shared_nets(component_a, component_b):
 def run_rule(pcb, config):
     risks = []
     rule_config = config.get("rules", {}).get("power_distribution", {})
+    power_config = config.get("power", {})
 
-    threshold = float(rule_config.get("threshold", 20.0))
+    threshold = float(
+        rule_config.get(
+            "threshold",
+            power_config.get("distribution_distance_threshold", 20.0),
+        )
+    )
     regulator_keywords = rule_config.get(
         "regulator_keywords",
         ["regulator", "ldo", "buck", "boost", "pmic", "vrm"]
@@ -40,8 +46,8 @@ def run_rule(pcb, config):
         ["mcu", "cpu", "fpga", "driver", "sensor", "ic", "controller", "amp"]
     )
 
-    regulators = [c for c in pcb.components if is_regulator(c, regulator_keywords)]
-    loads = [c for c in pcb.components if is_load(c, load_keywords)]
+    regulators = [c for c in getattr(pcb, "components", []) if is_regulator(c, regulator_keywords)]
+    loads = [c for c in getattr(pcb, "components", []) if is_load(c, load_keywords)]
 
     if not regulators or not loads:
         return risks

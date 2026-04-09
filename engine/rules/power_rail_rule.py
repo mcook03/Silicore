@@ -9,14 +9,30 @@ def is_power_net(net_name, keywords):
 def run_rule(pcb, config):
     risks = []
     rule_config = config.get("rules", {}).get("power_rail", {})
+    power_config = config.get("power", {})
 
     min_connections = int(rule_config.get("min_connections", 2))
-    max_trace_length = float(rule_config.get("max_trace_length", 50.0))
-    min_trace_width = float(rule_config.get("min_trace_width", 0.5))
-    max_via_count = int(rule_config.get("max_via_count", 5))
+    max_trace_length = float(
+        rule_config.get(
+            "max_trace_length",
+            power_config.get("max_trace_length", 50.0),
+        )
+    )
+    min_trace_width = float(
+        rule_config.get(
+            "min_trace_width",
+            power_config.get("min_trace_width", 0.5),
+        )
+    )
+    max_via_count = int(
+        rule_config.get(
+            "max_via_count",
+            power_config.get("max_via_count", 5),
+        )
+    )
     power_net_keywords = rule_config.get(
         "power_net_keywords",
-        ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"]
+        power_config.get("required_power_nets", ["VCC", "VIN", "VBAT", "5V", "3V3", "VDD"])
     )
 
     for net_name, net in getattr(pcb, "nets", {}).items():
@@ -41,6 +57,11 @@ def run_rule(pcb, config):
                         "connections": connection_count,
                         "minimum_expected": min_connections,
                     },
+                    confidence=0.8,
+                    short_title="Weak power rail coverage",
+                    fix_priority="medium",
+                    estimated_impact="moderate",
+                    design_domain="power",
                 )
             )
 
@@ -57,6 +78,11 @@ def run_rule(pcb, config):
                         "trace_length": round(total_length, 2),
                         "threshold": max_trace_length,
                     },
+                    confidence=0.86,
+                    short_title="Excessive power path length",
+                    fix_priority="high",
+                    estimated_impact="high",
+                    design_domain="power",
                 )
             )
 
@@ -73,6 +99,11 @@ def run_rule(pcb, config):
                         "trace_width": min_width,
                         "minimum_expected": min_trace_width,
                     },
+                    confidence=0.9,
+                    short_title="Power trace too narrow",
+                    fix_priority="high",
+                    estimated_impact="high",
+                    design_domain="power",
                 )
             )
 
@@ -89,6 +120,11 @@ def run_rule(pcb, config):
                         "via_count": via_count,
                         "threshold": max_via_count,
                     },
+                    confidence=0.78,
+                    short_title="Too many power vias",
+                    fix_priority="medium",
+                    estimated_impact="moderate",
+                    design_domain="power",
                 )
             )
 

@@ -1,0 +1,13 @@
+BOARD risky_board_no_gnd
+NET VCC
+NET DATA
+NET CLK
+
+COMPONENT U1 STM32 15 15 top microcontroller
+COMPONENT U2 FLASH 16 15 top memory
+COMPONENT U3 SENSOR 17 15 top sensor
+COMPONENT C1 0.1uF 35 35 top capacitor
+COMPONENT C2 1uF 36 35 top capacitor
+COMPONENT J1 HEADER 50 15 top connector
+COMPONENT R1 1k 18 15 top resistor
+COMPONENT R2 1k 19 15 top resistor

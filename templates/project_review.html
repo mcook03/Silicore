@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Project Analysis</h2>
-        <p class="section-copy">
-            Upload multiple boards to compare design quality, rank them, and quickly see which boards deserve the most attention.
+<section class="review-hero-card">
+    <div class="review-hero-left">
+        <div class="review-kicker">Multi Board Intelligence</div>
+        <h1 class="review-title">Project Review</h1>
+        <p class="review-copy">
+            Upload multiple boards to compare design quality, rank the strongest and weakest designs, and review project-wide engineering health from one premium analysis surface.
         </p>
-    </div>
-    <div class="card-body">
-        <div class="divider"></div>
-        <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data">
+
+        <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="project-upload">
             <label>
                 Project Files
                 <input type="file" name="project_files" multiple required>
@@ -28,224 +27,1063 @@
             </label>
             {% endif %}
 
-            <button class="btn btn-primary full" type="submit">Analyze Project</button>
+            <div class="btn-link-row">
+                <button class="btn btn-primary" type="submit">Analyze Project</button>
+            </div>
         </form>
+    </div>
+
+    <div class="review-hero-right">
+        <div class="hero-orb hero-orb-a"></div>
+        <div class="hero-orb hero-orb-b"></div>
+
+        <div class="hero-panel">
+            <div class="hero-panel-label">Project Mode</div>
+            <div class="hero-panel-value">Portfolio Review</div>
+
+            {% if project_chart is defined and project_chart["hero_trend"] and project_chart["hero_trend"]["points"] %}
+            <div class="chart-frame chart-frame-hero">
+                <svg viewBox="0 0 100 36" class="real-line-chart" preserveAspectRatio="none">
+                    {% for guide in project_chart["hero_trend"]["guides"] %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="chart-grid-line"></line>
+                    {% endfor %}
+
+                    {% for point in project_chart["hero_trend"]["points"] %}
+                    {% if not loop.first %}
+                    <line
+                        x1="{{ project_chart['hero_trend']['points'][loop.index0 - 1]['x'] }}"
+                        y1="{{ project_chart['hero_trend']['points'][loop.index0 - 1]['y'] }}"
+                        x2="{{ point.x }}"
+                        y2="{{ point.y }}"
+                        class="chart-line-stroke"
+                    ></line>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% for point in project_chart["hero_trend"]["points"] %}
+                    <circle cx="{{ point.x }}" cy="{{ point.y }}" r="1.2" class="chart-point"></circle>
+                    {% endfor %}
+                </svg>
+            </div>
+            {% else %}
+            <div class="chart-fallback chart-fallback-hero">
+                <div class="chart-fallback-empty">Project trend will appear after analysis</div>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </section>
 
 {% if project_result %}
-    <section class="card">
+<section class="grid grid-2">
+    <section class="card loud-card">
         <div class="card-header">
-            <h2 class="section-title">Project Ranking Review</h2>
-            <p class="section-copy">
-                Compare boards across the uploaded project set and quickly see which designs are strongest and weakest.
-            </p>
+            <h2 class="section-title">Project Score</h2>
+            <p class="section-copy">Average quality position across the uploaded project set.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="score-shell">
+                <div class="score-number-block">
+                    <div class="score-number">{{ (project_result.project_summary.average_score * 10)|round|int if project_result.project_summary else 0 }}</div>
+                    <div class="score-number-sub">Average score</div>
+                </div>
+
+                <div class="score-bar-shell">
+                    <div class="score-bar-track">
+                        <div
+                            class="score-bar-fill"
+                            style="width: {{ (project_result.project_summary.average_score * 10)|round|int if project_result.project_summary else 0 }}%;"
+                        ></div>
+                    </div>
+
+                    <div class="score-scale">
+                        <span>0</span>
+                        <span>25</span>
+                        <span>50</span>
+                        <span>75</span>
+                        <span>100</span>
+                    </div>
+
+                    <div class="score-tags">
+                        <span class="score-tag risk">Risk</span>
+                        <span class="score-tag watch">Watch</span>
+                        <span class="score-tag good">Good</span>
+                        <span class="score-tag strong">Strong</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-panel" style="margin-top:18px;">
+                <h3>{{ project_result.project_health_summary.title if project_result.project_health_summary else "Project Health" }}</h3>
+                <p>{{ project_result.project_health_summary.summary if project_result.project_health_summary else "No project health summary available." }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="card loud-card">
+        <div class="card-header">
+            <h2 class="section-title">Project Overview</h2>
+            <p class="section-copy">Headline metrics across the uploaded boards.</p>
         </div>
 
         <div class="card-body">
             {% if project_result.project_summary %}
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Boards</div>
-                        <div class="metric-value">{{ project_result.project_summary.total_boards }}</div>
-                        <div class="metric-sub">Uploaded project set</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Average Score</div>
-                        <div class="metric-value">{{ project_result.project_summary.average_score }}</div>
-                        <div class="metric-sub">Mean board quality</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Best Score</div>
-                        <div class="metric-value">{{ project_result.project_summary.best_score }}</div>
-                        <div class="metric-sub">Top current design</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Worst Score</div>
-                        <div class="metric-value">{{ project_result.project_summary.worst_score }}</div>
-                        <div class="metric-sub">Board needing most attention</div>
-                    </div>
+            <div class="big-stat-grid">
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ project_result.project_summary.total_boards }}</div>
+                    <div class="big-stat-label">Boards</div>
                 </div>
+
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ (project_result.project_summary.best_score * 10)|round|int }}</div>
+                    <div class="big-stat-label">Best Score</div>
+                </div>
+
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ (project_result.project_summary.worst_score * 10)|round|int }}</div>
+                    <div class="big-stat-label">Worst Score</div>
+                </div>
+            </div>
             {% endif %}
 
-            <div class="summary-strip" style="margin-top: 18px;">
-                <div class="summary-panel">
-                    <h3>{{ project_result.project_health_summary.title if project_result.project_health_summary else "Project Health" }}</h3>
-                    <p>
-                        {{ project_result.project_health_summary.summary if project_result.project_health_summary else "No project health summary available." }}
-                    </p>
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Project Trend</span>
+                    <span>{{ project_result.project_summary.total_boards if project_result.project_summary else 0 }} boards</span>
                 </div>
 
-                <div class="summary-panel">
-                    <h3>Project Insight</h3>
-                    <p>
-                        {% if project_result.project_insight and project_result.project_insight.summary %}
-                            {{ project_result.project_insight.summary }}
-                        {% else %}
-                            No project insight summary available yet.
+                {% if project_chart is defined and project_chart["score_trend"] and project_chart["score_trend"]["points"] %}
+                <div class="chart-frame">
+                    <svg viewBox="0 0 100 36" class="real-line-chart" preserveAspectRatio="none">
+                        {% for guide in project_chart["score_trend"]["guides"] %}
+                        <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="chart-grid-line"></line>
+                        {% endfor %}
+
+                        {% for point in project_chart["score_trend"]["points"] %}
+                        {% if not loop.first %}
+                        <line
+                            x1="{{ project_chart['score_trend']['points'][loop.index0 - 1]['x'] }}"
+                            y1="{{ project_chart['score_trend']['points'][loop.index0 - 1]['y'] }}"
+                            x2="{{ point.x }}"
+                            y2="{{ point.y }}"
+                            class="chart-line-stroke"
+                        ></line>
                         {% endif %}
-                    </p>
+                        {% endfor %}
+
+                        {% for point in project_chart["score_trend"]["points"] %}
+                        <circle cx="{{ point.x }}" cy="{{ point.y }}" r="1.2" class="chart-point"></circle>
+                        {% endfor %}
+                    </svg>
+                </div>
+                {% else %}
+                <div class="chart-fallback">
+                    <div class="chart-fallback-empty">No score trend available yet</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Board Spotlight</h2>
+            <p class="section-copy">Best and worst board comparison in the current review.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="spotlight-grid">
+                <div class="spotlight-card spotlight-best">
+                    <div class="spotlight-kicker">Best Board</div>
+                    {% if comparison.best_board %}
+                        <div class="spotlight-name">{{ comparison.best_board.filename }}</div>
+                        <div class="spotlight-score">{{ (comparison.best_board.score * 10)|round|int }}</div>
+                        <div class="spotlight-summary">{{ comparison.best_board.health_summary.title }}</div>
+                    {% else %}
+                        <div class="spotlight-name">No ranked board</div>
+                        <div class="spotlight-summary">No board data available.</div>
+                    {% endif %}
+                </div>
+
+                <div class="spotlight-card spotlight-worst">
+                    <div class="spotlight-kicker">Worst Board</div>
+                    {% if comparison.worst_board %}
+                        <div class="spotlight-name">{{ comparison.worst_board.filename }}</div>
+                        <div class="spotlight-score">{{ (comparison.worst_board.score * 10)|round|int }}</div>
+                        <div class="spotlight-summary">{{ comparison.worst_board.health_summary.title }}</div>
+                    {% else %}
+                        <div class="spotlight-name">No ranked board</div>
+                        <div class="spotlight-summary">No board data available.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Project Distribution</h2>
+            <p class="section-copy">Quality spread across the uploaded board set.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="distribution-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Score Spread</div>
+                    <div class="metric-value">{{ (comparison.score_spread * 10)|round(1) }}</div>
+                    <div class="metric-sub">Best to worst difference</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Strong Boards</div>
+                    <div class="metric-value">{{ comparison.strong_count }}</div>
+                    <div class="metric-sub">80 and above</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Watch Boards</div>
+                    <div class="metric-value">{{ comparison.watch_count }}</div>
+                    <div class="metric-sub">50 to 79</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">High Risk Boards</div>
+                    <div class="metric-value">{{ comparison.risk_count }}</div>
+                    <div class="metric-sub">Below 50</div>
                 </div>
             </div>
 
-            <section style="margin-top: 18px;">
-                <div class="section-block-header">
+            {% if project_chart is defined and project_chart["distribution_bars"] %}
+            <div class="distribution-chart-shell">
+                <div class="distribution-chart-header">
+                    <span>Score Distribution</span>
+                    <span>Live project mix</span>
+                </div>
+
+                <div class="distribution-bars">
+                    {% for bar in project_chart["distribution_bars"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ bar.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill {{ bar.tone }}" style="width: {{ bar.width }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ bar.value }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="card insight-card">
+    <div class="card-header">
+        <h2 class="section-title">Project Insight</h2>
+        <p class="section-copy">Project-wide engineering summary and comparison context.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="summary-strip">
+            <div class="summary-panel">
+                <h3>{{ project_result.project_health_summary.title if project_result.project_health_summary else "Project Health" }}</h3>
+                <p>{{ project_result.project_health_summary.summary if project_result.project_health_summary else "No project summary available." }}</p>
+            </div>
+
+            <div class="summary-panel">
+                <h3>Why this review matters</h3>
+                <p>
+                    Multi-board review helps engineers rank quality, identify weaker designs faster, and understand whether project-level risk is concentrated in one board or spread across the portfolio.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card boards-card">
+    <div class="card-header">
+        <h2 class="section-title">Board Ranking</h2>
+        <p class="section-copy">Board-by-board engineering ranking with score, top issues, and analysis context.</p>
+    </div>
+
+    <div class="card-body">
+        {% if project_result.boards %}
+        <div class="project-board-stack">
+            {% for board in project_result.boards|sort(attribute='score', reverse=True) %}
+            <article class="project-board-card">
+                <div class="project-board-top">
                     <div>
-                        <h3 class="section-title">Best vs Worst Snapshot</h3>
-                        <div class="copy">A faster product-style view of project spread and board quality variation.</div>
-                    </div>
-                </div>
-
-                <div class="spotlight-grid">
-                    <div class="spotlight-card best">
-                        <div class="spotlight-label">Best board</div>
-                        {% if comparison.best_board %}
-                            <div class="spotlight-title">{{ comparison.best_board.filename }}</div>
-                            <div class="spotlight-copy">
-                                Score: {{ comparison.best_board.score }} / 10<br>
-                                {{ comparison.best_board.health_summary.title }}
-                            </div>
-                        {% else %}
-                            <div class="spotlight-copy">No ranked board available.</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="spotlight-card worst">
-                        <div class="spotlight-label">Worst board</div>
-                        {% if comparison.worst_board %}
-                            <div class="spotlight-title">{{ comparison.worst_board.filename }}</div>
-                            <div class="spotlight-copy">
-                                Score: {{ comparison.worst_board.score }} / 10<br>
-                                {{ comparison.worst_board.health_summary.title }}
-                            </div>
-                        {% else %}
-                            <div class="spotlight-copy">No ranked board available.</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </section>
-
-            <section style="margin-top: 18px;">
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Score Spread</div>
-                        <div class="metric-value">{{ comparison.score_spread }}</div>
-                        <div class="metric-sub">Difference between best and worst board</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Strong Boards</div>
-                        <div class="metric-value">{{ comparison.strong_count }}</div>
-                        <div class="metric-sub">Boards at 8.0 or above</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Watch Boards</div>
-                        <div class="metric-value">{{ comparison.watch_count }}</div>
-                        <div class="metric-sub">Boards between 5.0 and 7.99</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">High-Risk Boards</div>
-                        <div class="metric-value">{{ comparison.risk_count }}</div>
-                        <div class="metric-sub">Boards below 5.0</div>
-                    </div>
-                </div>
-            </section>
-
-            <section style="margin-top: 18px;">
-                <div class="section-block-header">
-                    <div>
-                        <h3 class="section-title">Ranked Boards</h3>
-                        <div class="copy">A stronger comparison surface for the uploaded project set.</div>
-                    </div>
-                </div>
-
-                {% if project_result.boards %}
-                    <div class="ranking-grid">
-                        {% for board in project_result.boards %}
-                            <div class="ranking-card">
-                                <div class="ranking-head">
-                                    <div>
-                                        <div class="ranking-rank">
-                                            #{{ board.rank }}
-                                            {% if board.rank == 1 %}
-                                                · Top ranked board
-                                            {% elif board.rank == project_result.boards|length %}
-                                                · Lowest ranked board
-                                            {% else %}
-                                                · Project board
-                                            {% endif %}
-                                        </div>
-                                        <h3>{{ board.filename }}</h3>
-                                    </div>
-
-                                    <div class="ranking-score">
-                                        <div class="value {{ score_band_class(board.score) }}">{{ board.score }}</div>
-                                        <div class="small-muted">{{ score_band_label(board.score) }}</div>
-                                    </div>
-                                </div>
-
-                                <div class="ranking-layout">
-                                    <div class="mini-panel">
-                                        <h4>{{ board.health_summary.title }}</h4>
-                                        <div class="small-muted">{{ board.health_summary.summary }}</div>
-                                    </div>
-
-                                    <div class="mini-panel">
-                                        <h4>Top Issues</h4>
-                                        {% if board.top_issues %}
-                                            <div class="top-issue-list">
-                                                {% for risk in board.top_issues %}
-                                                    <div class="top-issue-item">
-                                                        <div class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</div>
-                                                        <div style="font-size:13px; line-height:1.55;">{{ risk.message }}</div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        {% else %}
-                                            <div class="small-muted">No top issues recorded.</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">No project boards analyzed.</div>
-                {% endif %}
-            </section>
-
-            {% if project_result.downloads %}
-                <section style="margin-top: 18px;">
-                    <div class="section-block-header">
-                        <div>
-                            <h3 class="section-title">Project Exports</h3>
-                            <div class="copy">Download the full project outputs.</div>
+                        <div class="project-board-kicker">Board</div>
+                        <div class="project-board-title">{{ board.filename }}</div>
+                        <div class="project-board-subtitle">
+                            {{ board.health_summary.title if board.health_summary else "Board summary unavailable" }}
                         </div>
                     </div>
 
-                    <div class="btn-link-row">
-                        {% for item in project_result.downloads %}
-                            <a class="btn-link" href="{{ download_href(item) }}">{{ item.label }}</a>
+                    <div class="project-board-score-shell">
+                        <div class="project-board-score">{{ (board.score * 10)|round|int if board.score is not none else 0 }}</div>
+                        <div class="project-board-score-label">Score</div>
+                    </div>
+                </div>
+
+                <div class="project-board-meta-grid">
+                    <div class="project-board-meta-card">
+                        <div class="project-board-meta-label">Findings</div>
+                        <div class="project-board-meta-value">{{ board.risks|length if board.risks else 0 }}</div>
+                    </div>
+
+                    <div class="project-board-meta-card">
+                        <div class="project-board-meta-label">Top Issues</div>
+                        <div class="project-board-meta-value">{{ board.top_issues|length if board.top_issues else 0 }}</div>
+                    </div>
+
+                    <div class="project-board-meta-card">
+                        <div class="project-board-meta-label">Components</div>
+                        <div class="project-board-meta-value">{{ board.board_summary.component_count if board.board_summary else 0 }}</div>
+                    </div>
+
+                    <div class="project-board-meta-card">
+                        <div class="project-board-meta-label">Nets</div>
+                        <div class="project-board-meta-value">{{ board.board_summary.net_count if board.board_summary else 0 }}</div>
+                    </div>
+                </div>
+
+                <div class="project-board-sections">
+                    <section class="project-board-section">
+                        <div class="project-board-section-title">Top Issues</div>
+
+                        {% if board.top_issues %}
+                        <div class="board-issue-list">
+                            {% for risk in board.top_issues %}
+                            <div class="board-issue-item">
+                                <div class="issue-top-row">
+                                    <span class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</span>
+                                    <span class="issue-category">{{ risk.category|replace('_', ' ')|title if risk.category else 'Uncategorized' }}</span>
+                                </div>
+                                <div class="board-issue-text">{{ risk.message }}</div>
+                                {% if risk.recommendation %}
+                                <div class="issue-recommendation">{{ risk.recommendation }}</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state compact-empty">No top issues available for this board.</div>
+                        {% endif %}
+                    </section>
+
+                    <section class="project-board-section">
+                        <div class="project-board-section-title">Analysis Context</div>
+
+                        {% if board.analysis_context_view %}
+                        <div class="context-mini-grid">
+                            <div class="context-mini-card">
+                                <div class="context-mini-label">Board</div>
+                                <div class="context-mini-value">{{ board.analysis_context_view.board_name }}</div>
+                            </div>
+                            <div class="context-mini-card">
+                                <div class="context-mini-label">Run Time</div>
+                                <div class="context-mini-value">{{ board.analysis_context_view.performed_at }}</div>
+                            </div>
+                            <div class="context-mini-card">
+                                <div class="context-mini-label">Final Score</div>
+                                <div class="context-mini-value">{{ board.analysis_context_view.score_breakdown.final_score }}</div>
+                            </div>
+                            <div class="context-mini-card">
+                                <div class="context-mini-label">Penalty</div>
+                                <div class="context-mini-value">{{ board.analysis_context_view.score_breakdown.total_penalty }}</div>
+                            </div>
+                        </div>
+
+                        {% if board.analysis_context_view.config_rows %}
+                        <div class="config-mini-list">
+                            {% for row in board.analysis_context_view.config_rows[:8] %}
+                            <div class="config-mini-pill">
+                                <span class="config-mini-label">{{ row.section }} · {{ row.label }}</span>
+                                <span class="config-mini-value">{{ row.value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <div class="empty-state compact-empty">No analysis context available for this board.</div>
+                        {% endif %}
+                    </section>
+                </div>
+
+                {% if board.grouped_risks %}
+                <div class="project-board-findings">
+                    <div class="project-board-section-title">Findings by Category</div>
+
+                    <div class="category-section-grid">
+                        {% for section in board.grouped_risks %}
+                        <div class="category-section-card">
+                            <div class="category-section-top">
+                                <div class="category-section-title">{{ section.title }}</div>
+                                <div class="category-section-count">{{ section.count }}</div>
+                            </div>
+
+                            <div class="category-severity-row">
+                                {% if section.severity_counts.critical %}
+                                <span class="mini-chip mini-chip-critical">Critical {{ section.severity_counts.critical }}</span>
+                                {% endif %}
+                                {% if section.severity_counts.high %}
+                                <span class="mini-chip mini-chip-high">High {{ section.severity_counts.high }}</span>
+                                {% endif %}
+                                {% if section.severity_counts.medium %}
+                                <span class="mini-chip mini-chip-medium">Medium {{ section.severity_counts.medium }}</span>
+                                {% endif %}
+                                {% if section.severity_counts.low %}
+                                <span class="mini-chip mini-chip-low">Low {{ section.severity_counts.low }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
-                </section>
-            {% endif %}
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
         </div>
-    </section>
-{% else %}
-    <section class="card">
-        <div class="card-body">
-            <div class="empty-state">
-                <strong>No project analysis loaded yet.</strong><br><br>
-                Upload multiple board files above to generate a ranked project review.
-            </div>
-        </div>
-    </section>
+        {% else %}
+        <div class="empty-state">No board results available yet for this project review.</div>
+        {% endif %}
+    </div>
+</section>
 {% endif %}
+
+<style>
+    .review-hero-card {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        padding: 28px;
+        border-radius: 28px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 28%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(10,16,32,0.78);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    }
+
+    .review-kicker {
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+
+    .review-title {
+        margin: 0 0 12px;
+        font-size: 52px;
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+        font-weight: 800;
+        color: #f8fbff;
+    }
+
+    .review-copy {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 760px;
+    }
+
+    .review-upload-form {
+        display: grid;
+        gap: 14px;
+        max-width: 760px;
+    }
+
+    .review-hero-right {
+        position: relative;
+        min-height: 320px;
+    }
+
+    .hero-orb {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(10px);
+    }
+
+    .hero-orb-a {
+        width: 180px;
+        height: 180px;
+        top: 8%;
+        right: 10%;
+        background: rgba(59,130,246,0.20);
+    }
+
+    .hero-orb-b {
+        width: 140px;
+        height: 140px;
+        bottom: 12%;
+        left: 12%;
+        background: rgba(147,197,253,0.12);
+    }
+
+    .hero-panel {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        left: 20px;
+        padding: 22px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.03);
+        backdrop-filter: blur(14px);
+    }
+
+    .hero-panel-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 10px;
+    }
+
+    .hero-panel-value {
+        color: #f8fbff;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 18px;
+    }
+
+    .chart-frame {
+        min-height: 120px;
+    }
+
+    .chart-frame-hero {
+        min-height: 120px;
+    }
+
+    .real-line-chart {
+        width: 100%;
+        height: 120px;
+    }
+
+    .chart-grid-line {
+        stroke: rgba(255,255,255,0.06);
+        stroke-width: 0.6;
+    }
+
+    .chart-line-stroke {
+        stroke: #5b8cff;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+    }
+
+    .chart-point {
+        fill: #cfe0ff;
+    }
+
+    .chart-fallback {
+        position: relative;
+        height: 120px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.06);
+        background:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+        background-size: 18px 18px, 18px 18px, auto;
+        display: grid;
+        place-items: center;
+    }
+
+    .chart-fallback-empty {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .score-shell {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .score-number {
+        font-size: 72px;
+        line-height: 0.95;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        color: #f8fbff;
+    }
+
+    .score-number-sub {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 8px;
+    }
+
+    .score-bar-track {
+        height: 18px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .score-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+    }
+
+    .score-scale,
+    .score-tags {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .score-scale span,
+    .score-tags span {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .score-tag.risk { color: #ffb0b0; }
+    .score-tag.watch { color: #ffc98b; }
+    .score-tag.good { color: #f5e08b; }
+    .score-tag.strong { color: #a9f4c7; }
+
+    .big-stat-grid,
+    .distribution-grid,
+    .project-board-meta-grid,
+    .context-mini-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .big-stat-card,
+    .project-board-meta-card,
+    .context-mini-card {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    }
+
+    .big-stat-value,
+    .project-board-meta-value,
+    .context-mini-value {
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        color: #f8fbff;
+        margin-bottom: 8px;
+        word-break: break-word;
+    }
+
+    .big-stat-label,
+    .project-board-meta-label,
+    .context-mini-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .visual-chart-card,
+    .distribution-chart-shell,
+    .project-board-card,
+    .category-section-card,
+    .board-issue-item {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .visual-chart-header,
+    .distribution-chart-header,
+    .project-board-section-title,
+    .project-board-kicker {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.10em;
+        margin-bottom: 12px;
+    }
+
+    .distribution-bars,
+    .project-board-stack,
+    .board-issue-list,
+    .config-mini-list,
+    .summary-strip,
+    .project-board-sections,
+    .category-section-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .distribution-bar-row {
+        display: grid;
+        grid-template-columns: 110px 1fr 48px;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .distribution-bar-label {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .distribution-bar-track {
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .distribution-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .distribution-bar-fill.strong {
+        background: linear-gradient(90deg, #22c55e, #86efac);
+    }
+
+    .distribution-bar-fill.good {
+        background: linear-gradient(90deg, #60a5fa, #93c5fd);
+    }
+
+    .distribution-bar-fill.watch {
+        background: linear-gradient(90deg, #f59e0b, #fde68a);
+    }
+
+    .distribution-bar-fill.risk {
+        background: linear-gradient(90deg, #ef4444, #fca5a5);
+    }
+
+    .distribution-bar-value {
+        text-align: right;
+        color: #f8fbff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .summary-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summary-panel {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .summary-panel h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 18px;
+    }
+
+    .summary-panel p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .spotlight-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .spotlight-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .spotlight-kicker {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 10px;
+    }
+
+    .spotlight-name {
+        color: #f8fbff;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 8px;
+    }
+
+    .spotlight-score {
+        color: #bfdbfe;
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .spotlight-summary {
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .project-board-card {
+        display: grid;
+        gap: 16px;
+    }
+
+    .project-board-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .project-board-title,
+    .category-section-title {
+        color: #f8fbff;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+    }
+
+    .project-board-subtitle {
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .project-board-score-shell {
+        min-width: 110px;
+        padding: 16px;
+        border-radius: 18px;
+        text-align: center;
+        border: 1px solid rgba(96,165,250,0.20);
+        background: rgba(59,130,246,0.12);
+    }
+
+    .project-board-score {
+        color: #f8fbff;
+        font-size: 40px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+    }
+
+    .project-board-score-label {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .project-board-sections {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-board-section {
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .issue-top-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .issue-category {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .board-issue-text {
+        color: #f8fbff;
+        font-size: 15px;
+        line-height: 1.7;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .issue-recommendation {
+        color: #dbeafe;
+        line-height: 1.7;
+        margin-top: 8px;
+    }
+
+    .config-mini-pill {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .config-mini-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .config-mini-value {
+        color: #f8fbff;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .category-section-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .category-section-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .category-section-count {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: #f8fbff;
+        font-size: 16px;
+        font-weight: 800;
+        background: rgba(59,130,246,0.18);
+        border: 1px solid rgba(96,165,250,0.24);
+    }
+
+    .category-severity-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .mini-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .mini-chip-critical { background: rgba(239,68,68,0.14); color: #fca5a5; }
+    .mini-chip-high { background: rgba(251,146,60,0.14); color: #fdba74; }
+    .mini-chip-medium { background: rgba(245,158,11,0.14); color: #fde68a; }
+    .mini-chip-low { background: rgba(96,165,250,0.14); color: #bfdbfe; }
+
+    .compact-empty {
+        padding: 14px;
+        font-size: 13px;
+    }
+
+    .empty-state {
+        padding: 22px;
+        border-radius: 18px;
+        border: 1px dashed rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.025);
+        color: var(--muted);
+        text-align: center;
+    }
+
+    @media (max-width: 1200px) {
+        .review-hero-card,
+        .project-board-sections,
+        .summary-strip,
+        .spotlight-grid,
+        .category-section-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 980px) {
+        .score-shell,
+        .big-stat-grid,
+        .distribution-grid,
+        .project-board-meta-grid,
+        .context-mini-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .distribution-bar-row {
+            grid-template-columns: 1fr;
+        }
+
+        .distribution-bar-value {
+            text-align: left;
+        }
+
+        .config-mini-pill {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .review-title {
+            font-size: 38px;
+        }
+
+        .score-number,
+        .spotlight-score {
+            font-size: 56px;
+        }
+
+        .score-tags {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
 
 {% endblock %}

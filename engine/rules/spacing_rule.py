@@ -9,10 +9,12 @@ def distance(c1, c2):
 def run_rule(pcb, config):
     risks = []
     rule_config = config.get("rules", {}).get("spacing", {})
+    layout_config = config.get("layout", {})
+
     threshold = float(
         rule_config.get(
             "threshold",
-            config.get("layout", {}).get("min_component_spacing", 3.0),
+            layout_config.get("min_component_spacing", 3.0),
         )
     )
 

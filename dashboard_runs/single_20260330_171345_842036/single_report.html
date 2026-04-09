@@ -1,0 +1,306 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .issue-card, .risk-card {
+                background: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            h1, h2, h3 {
+                margin-top: 0;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .muted {
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Engineering Report</h1>
+                <p><strong>File:</strong> power_board_v1.txt</p>
+                <p><strong>Score:</strong> 0.0 / 10</p>
+                <p><strong>Total Risks:</strong> 10</p>
+                <p><strong>Total Penalty:</strong> 13.5</p>
+            </div>
+
+            <div class="card">
+                <h2>Executive Summary</h2>
+                <p><strong>Board needs focused engineering review</strong></p>
+                <p class="muted">This board shows high design risk. The main risk concentration is in layout. The highest-priority issue is J1 and LED1 are too close (1.41 units). The current design snapshot includes 10 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+
+            <div class="card">
+                <h2>Top Issues</h2>
+                
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — layout</p>
+                <p>J1 and LED1 are too close (1.41 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — layout</p>
+                <p>U1 and R1 are too close (1.00 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — layout</p>
+                <p>U2 and Q1 are too close (2.24 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+            </div>
+            
+            </div>
+
+            <div class="card">
+                <h2>Board Summary</h2>
+                <p><strong>Component Count:</strong> 10</p>
+                <p><strong>Net Count:</strong> 4</p>
+                <p><strong>Risk Count:</strong> 10</p>
+                <p><strong>Sample Components:</strong> U1, U2, C1, C2, Q1, D1, L1, J1, R1, LED1</p>
+            </div>
+
+            <div class="card">
+                <h2>Severity Penalties</h2>
+                <ul><li>high: 10.5</li><li>medium: 3.0</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Category Penalties</h2>
+                <ul><li>layout: 10.5</li><li>thermal: 3.0</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Detailed Findings</h2>
+                
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> U1 and R1 are too close (1.00 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.0 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U1, R1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.0, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> U2 and Q1 are too close (2.24 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 2.24 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U2, Q1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 2.24, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> C1 and C2 are too close (1.00 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.0 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> C1, C2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.0, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> Q1 and D1 are too close (1.00 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.0 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> Q1, D1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.0, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> Q1 and L1 are too close (2.00 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 2.0 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> Q1, L1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 2.0, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> D1 and L1 are too close (1.00 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.0 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> D1, L1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.0, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> J1 and LED1 are too close (1.41 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.41 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1, LED1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.41, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> U2 and Q1 may create a thermal hotspot (2.24 units apart)</p>
+                <p><strong>Recommendation:</strong> Increase spacing, improve copper spreading, or review local thermal management around these components.</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U2, Q1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 2.24, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> C1 and C2 may create a thermal hotspot (1.00 units apart)</p>
+                <p><strong>Recommendation:</strong> Increase spacing, improve copper spreading, or review local thermal management around these components.</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> C1, C2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.0, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> Q1 and L1 may create a thermal hotspot (2.00 units apart)</p>
+                <p><strong>Recommendation:</strong> Increase spacing, improve copper spreading, or review local thermal management around these components.</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 0.8</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> Q1, L1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 2.0, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            </div>
+        </div>
+    </body>
+    </html>
+    

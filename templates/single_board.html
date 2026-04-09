@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Single Board Analysis</h2>
-        <p class="section-copy">
-            Upload one board file to generate focused engineering review, clearer issue prioritization, grouped findings, and downloadable exports.
+<section class="review-hero-card">
+    <div class="review-hero-left">
+        <div class="review-kicker">Single Board Intelligence</div>
+        <h1 class="review-title">Board Analysis</h1>
+        <p class="review-copy">
+            Upload one PCB design to generate a focused engineering review, inspect prioritized findings, and understand board health through a cleaner product-style analysis surface.
         </p>
-    </div>
-    <div class="card-body">
-        <div class="divider"></div>
-        <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data">
+
+        <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="single-board-upload">
             <label>
                 Board File
                 <input type="file" name="board_file" required>
@@ -28,286 +27,943 @@
             </label>
             {% endif %}
 
-            <button class="btn btn-primary full" type="submit">Analyze Board</button>
+            <div class="btn-link-row">
+                <button class="btn btn-primary" type="submit">Analyze Board</button>
+            </div>
         </form>
+    </div>
+
+    <div class="review-hero-right">
+        <div class="hero-orb hero-orb-a"></div>
+        <div class="hero-orb hero-orb-b"></div>
+
+        <div class="hero-panel">
+            <div class="hero-panel-label">Board Mode</div>
+            <div class="hero-panel-value">Focused Review</div>
+
+            {% if single_chart and single_chart["severity_bars"] and single_chart["severity_bars"]["has_data"] %}
+            <div class="hero-mini-bars">
+                {% for item in single_chart["severity_bars"]["items"] %}
+                <div class="hero-mini-row">
+                    <div class="hero-mini-label">{{ item["label"] }}</div>
+                    <div class="hero-mini-track">
+                        <div class="hero-mini-fill severity-{{ item['label']|lower }}" style="width: {{ item['width_pct'] }}%;"></div>
+                    </div>
+                    <div class="hero-mini-value">{{ item["value"]|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="chart-fallback chart-fallback-hero">
+                <div class="chart-fallback-empty">Severity distribution appears after analysis</div>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </section>
 
 {% if result %}
-    <section class="card">
+<section class="grid grid-2">
+    <section class="card loud-card">
         <div class="card-header">
-            <h2 class="section-title">Single Board Review</h2>
-            <p class="section-copy">
-                A cleaner engineering review flow that puts health, top issues, grouped findings, and exports first.
-            </p>
+            <h2 class="section-title">Board Score</h2>
+            <p class="section-copy">Overall engineering position for the uploaded board.</p>
         </div>
+
         <div class="card-body">
-            <div class="metric-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Silicore Risk Score</div>
-                    <div class="metric-value {{ score_band_class(result.score) }}">{{ result.score }}</div>
-                    <div class="metric-sub">{{ score_band_label(result.score) }}</div>
+            <div class="score-shell">
+                <div class="score-number-block">
+                    <div class="score-number">{{ (result.score * 10)|round|int if result.score is not none else 0 }}</div>
+                    <div class="score-number-sub">Board score</div>
                 </div>
 
-                <div class="metric-card">
-                    <div class="metric-label">Components</div>
-                    <div class="metric-value">{{ result.board_summary.component_count if result.board_summary else 0 }}</div>
-                    <div class="metric-sub">Parsed component count</div>
-                </div>
+                <div class="score-bar-shell">
+                    <div class="score-bar-track">
+                        <div
+                            class="score-bar-fill"
+                            style="width: {{ (result.score * 10)|round|int if result.score is not none else 0 }}%;"
+                        ></div>
+                    </div>
 
-                <div class="metric-card">
-                    <div class="metric-label">Nets</div>
-                    <div class="metric-value">{{ result.board_summary.net_count if result.board_summary else 0 }}</div>
-                    <div class="metric-sub">Detected connectivity entities</div>
-                </div>
+                    <div class="score-scale">
+                        <span>0</span>
+                        <span>25</span>
+                        <span>50</span>
+                        <span>75</span>
+                        <span>100</span>
+                    </div>
 
-                <div class="metric-card">
-                    <div class="metric-label">Risk Count</div>
-                    <div class="metric-value">{{ result.board_summary.risk_count if result.board_summary else (result.risks|length if result.risks else 0) }}</div>
-                    <div class="metric-sub">Current ruleset findings</div>
+                    <div class="score-tags">
+                        <span class="score-tag risk">Risk</span>
+                        <span class="score-tag watch">Watch</span>
+                        <span class="score-tag good">Good</span>
+                        <span class="score-tag strong">Strong</span>
+                    </div>
+
+                    <div class="score-status-row">
+                        <span class="status-pill {{ score_band_class(result.score) }}">
+                            {{ score_band_label(result.score) }}
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <div class="summary-strip" style="margin-top: 18px;">
-                <div class="summary-panel">
-                    <h3>{{ result.health_summary.title }}</h3>
-                    <p>{{ result.health_summary.summary }}</p>
+            <div class="summary-panel" style="margin-top:18px;">
+                <h3>{{ result.health_summary.title if result.health_summary else "Board Health" }}</h3>
+                <p>{{ result.health_summary.summary if result.health_summary else "No board health summary available." }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="card loud-card">
+        <div class="card-header">
+            <h2 class="section-title">Board Overview</h2>
+            <p class="section-copy">Core board-level metrics from the current analysis run.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="big-stat-grid">
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ result.risks|length if result.risks else 0 }}</div>
+                    <div class="big-stat-label">Findings</div>
                 </div>
 
-                <div class="summary-panel">
-                    <h3>Executive Summary</h3>
-                    <p>
-                        {% if result.executive_summary and result.executive_summary.summary %}
-                            {{ result.executive_summary.summary }}
-                        {% else %}
-                            No executive summary available for this board yet.
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ result.grouped_risks|length if result.grouped_risks else 0 }}</div>
+                    <div class="big-stat-label">Categories</div>
+                </div>
+
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ result.top_issues|length if result.top_issues else 0 }}</div>
+                    <div class="big-stat-label">Top Issues</div>
+                </div>
+            </div>
+
+            {% if single_chart and single_chart["severity_bars"] and single_chart["severity_bars"]["has_data"] %}
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Severity Distribution</span>
+                    <span>Live analysis mix</span>
+                </div>
+
+                <div class="distribution-bars">
+                    {% for item in single_chart["severity_bars"]["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item["label"] }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill severity-{{ item['label']|lower }}" style="width: {{ item['width_pct'] }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item["value"]|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Analysis Context</h2>
+            <p class="section-copy">What settings and metadata were used for this run.</p>
+        </div>
+
+        <div class="card-body">
+            {% set context = result.analysis_context_view %}
+            <div class="context-meta-grid">
+                <div class="context-meta-card">
+                    <div class="context-meta-label">Board</div>
+                    <div class="context-meta-value">{{ context.board_name }}</div>
+                </div>
+                <div class="context-meta-card">
+                    <div class="context-meta-label">Run Time</div>
+                    <div class="context-meta-value">{{ context.performed_at }}</div>
+                </div>
+                <div class="context-meta-card">
+                    <div class="context-meta-label">Score</div>
+                    <div class="context-meta-value">{{ context.score_breakdown.final_score }}</div>
+                </div>
+                <div class="context-meta-card">
+                    <div class="context-meta-label">Penalty</div>
+                    <div class="context-meta-value">{{ context.score_breakdown.total_penalty }}</div>
+                </div>
+            </div>
+
+            {% if context.config_rows %}
+            <div class="config-section-list">
+                {% for row in context.config_rows %}
+                <div class="config-row-pill">
+                    <span class="config-row-label">{{ row.section }} · {{ row.label }}</span>
+                    <span class="config-row-value">{{ row.value }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No config snapshot is attached to this result yet.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Score Breakdown</h2>
+            <p class="section-copy">How the final score was produced.</p>
+        </div>
+
+        <div class="card-body">
+            {% set score_data = result.analysis_context_view.score_breakdown %}
+            <div class="score-breakdown-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Start Score</div>
+                    <div class="metric-value">{{ score_data.start_score }}</div>
+                    <div class="metric-sub">Initial baseline</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Total Penalty</div>
+                    <div class="metric-value">{{ score_data.total_penalty }}</div>
+                    <div class="metric-sub">Deduction applied</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Final Score</div>
+                    <div class="metric-value">{{ score_data.final_score }}</div>
+                    <div class="metric-sub">Final 0–10 value</div>
+                </div>
+            </div>
+
+            {% if score_data.severity_rows %}
+            <div class="distribution-bars" style="margin-top: 16px;">
+                {% for row in score_data.severity_rows %}
+                <div class="distribution-bar-row">
+                    <div class="distribution-bar-label">{{ row.label }}</div>
+                    <div class="distribution-bar-track">
+                        <div class="distribution-bar-fill severity-{{ row.severity }}" style="width: {{ (row.total_penalty * 20)|round(1) }}%;"></div>
+                    </div>
+                    <div class="distribution-bar-value">{{ row.total_penalty }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Category Distribution</h2>
+            <p class="section-copy">Where the current board’s findings are concentrated.</p>
+        </div>
+
+        <div class="card-body">
+            {% if single_chart and single_chart["category_bars"] and single_chart["category_bars"]["has_data"] %}
+            <div class="distribution-bars">
+                {% for item in single_chart["category_bars"]["items"] %}
+                <div class="distribution-bar-row">
+                    <div class="distribution-bar-label">{{ item["label"] }}</div>
+                    <div class="distribution-bar-track">
+                        <div class="distribution-bar-fill tone-blue" style="width: {{ item['width_pct'] }}%;"></div>
+                    </div>
+                    <div class="distribution-bar-value">{{ item["value"]|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No category distribution available yet.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Penalty Breakdown</h2>
+            <p class="section-copy">How scoring pressure is distributed across issue areas.</p>
+        </div>
+
+        <div class="card-body">
+            {% if single_chart and single_chart["penalty_bars"] and single_chart["penalty_bars"]["has_data"] %}
+            <div class="distribution-bars">
+                {% for item in single_chart["penalty_bars"]["items"] %}
+                <div class="distribution-bar-row">
+                    <div class="distribution-bar-label">{{ item["label"] }}</div>
+                    <div class="distribution-bar-track">
+                        <div class="distribution-bar-fill tone-violet" style="width: {{ item['width_pct'] }}%;"></div>
+                    </div>
+                    <div class="distribution-bar-value">{{ item["value"] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No penalty breakdown is available for this run.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="card insight-card">
+    <div class="card-header">
+        <h2 class="section-title">Top Issues</h2>
+        <p class="section-copy">Highest-priority findings surfaced for this board.</p>
+    </div>
+
+    <div class="card-body">
+        {% if result.top_issues %}
+        <div class="board-issue-list top-issue-list">
+            {% for risk in result.top_issues %}
+            <div class="board-issue-item">
+                <div class="issue-top-row">
+                    <span class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</span>
+                    <span class="issue-category">{{ risk.category|replace('_', ' ')|title if risk.category else 'Uncategorized' }}</span>
+                </div>
+                <div class="board-issue-text strong-issue-text">{{ risk.message }}</div>
+                {% if risk.recommendation %}
+                <div class="issue-recommendation">{{ risk.recommendation }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No top issues are available for this analysis yet.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card boards-card">
+    <div class="card-header">
+        <h2 class="section-title">Findings by Category</h2>
+        <p class="section-copy">Grouped engineering findings with severity, metrics, and recommendations.</p>
+    </div>
+
+    <div class="card-body">
+        {% if result.grouped_risks %}
+        <div class="risk-section-stack">
+            {% for section in result.grouped_risks %}
+            <article class="risk-section-card">
+                <div class="risk-section-top">
+                    <div>
+                        <div class="risk-section-kicker">Category</div>
+                        <div class="risk-section-title">{{ section.title }}</div>
+                    </div>
+
+                    <div class="risk-section-count">
+                        {{ section.count }}
+                    </div>
+                </div>
+
+                <div class="risk-severity-summary">
+                    {% if section.severity_counts.critical %}
+                    <span class="mini-chip mini-chip-critical">Critical {{ section.severity_counts.critical }}</span>
+                    {% endif %}
+                    {% if section.severity_counts.high %}
+                    <span class="mini-chip mini-chip-high">High {{ section.severity_counts.high }}</span>
+                    {% endif %}
+                    {% if section.severity_counts.medium %}
+                    <span class="mini-chip mini-chip-medium">Medium {{ section.severity_counts.medium }}</span>
+                    {% endif %}
+                    {% if section.severity_counts.low %}
+                    <span class="mini-chip mini-chip-low">Low {{ section.severity_counts.low }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="risk-items">
+                    {% for risk in section.risks %}
+                    <div class="risk-item">
+                        <div class="risk-item-header">
+                            <span class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</span>
+                            {% if risk.components %}
+                            <span class="risk-meta-text">Components: {{ risk.components|join(', ') }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="risk-item-message">{{ risk.message }}</div>
+
+                        {% if risk.recommendation %}
+                        <div class="risk-item-recommendation">{{ risk.recommendation }}</div>
                         {% endif %}
-                    </p>
+
+                        {% if risk.nets %}
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Nets</span>
+                            <span class="risk-meta-value">{{ risk.nets|join(', ') }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if risk.metrics %}
+                        <div class="risk-metrics">
+                            {% for key, value in risk.metrics.items() %}
+                            <div class="risk-metric-pill">
+                                <span class="risk-metric-key">{{ key|replace('_', ' ')|title }}</span>
+                                <span class="risk-metric-value">{{ value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
-
-            <section style="margin-top: 18px;">
-                <div class="section-block-header">
-                    <div>
-                        <h3 class="section-title">Top Issues</h3>
-                        <div class="copy">Highest-priority findings to review first.</div>
-                    </div>
-                </div>
-
-                {% if result.top_issues %}
-                    <div class="issues-grid">
-                        {% for issue in result.top_issues %}
-                            <div class="issue-card">
-                                <div class="chip {{ chip_class(issue.severity) }}">{{ issue.severity }}</div>
-                                <h4>{{ issue.message }}</h4>
-                                <div class="issue-meta">Category: {{ issue.category }}</div>
-
-                                {% if issue.recommendation %}
-                                    <div class="finding-block">
-                                        <span class="finding-label">Recommendation:</span>
-                                        {{ issue.recommendation }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">No issues found.</div>
-                {% endif %}
-            </section>
-
-            <section style="margin-top: 18px;">
-                <div class="section-block-header">
-                    <div>
-                        <h3 class="section-title">Category Summary</h3>
-                        <div class="copy">Quick grouped counts by engineering section.</div>
-                    </div>
-                </div>
-
-                {% if result.grouped_risks %}
-                    <div class="group-grid">
-                        {% for section in result.grouped_risks %}
-                            <div class="group-card">
-                                <h4>{{ section.title }}</h4>
-                                <div class="count">{{ section.count }}</div>
-                                <div class="small-muted">
-                                    issue{% if section.count != 1 %}s{% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">No grouped findings.</div>
-                {% endif %}
-            </section>
-
-            {% if result.score_explanation %}
-                <section style="margin-top: 18px;">
-                    <div class="section-block-header">
-                        <div>
-                            <h3 class="section-title">Score Breakdown</h3>
-                            <div class="copy">Where score was removed and why.</div>
-                        </div>
-                    </div>
-
-                    <div class="penalty-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">Start</div>
-                            <div class="metric-value">{{ result.score_explanation.start_score }}</div>
-                        </div>
-
-                        <div class="metric-card">
-                            <div class="metric-label">Total Penalty</div>
-                            <div class="metric-value">{{ result.score_explanation.total_penalty }}</div>
-                        </div>
-
-                        <div class="metric-card" style="grid-column: span 2;">
-                            <div class="metric-label">Severity Penalties</div>
-                            <div class="pill-row">
-                                {% if result.score_explanation.severity_totals %}
-                                    {% for severity, penalty in result.score_explanation.severity_totals.items() %}
-                                        <div class="pill">{{ severity }}: {{ penalty }}</div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="pill">None</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="metric-card" style="grid-column: 1 / -1;">
-                            <div class="metric-label">Category Penalties</div>
-                            <div class="pill-row">
-                                {% if result.score_explanation.category_totals %}
-                                    {% for category, penalty in result.score_explanation.category_totals.items() %}
-                                        <div class="pill">{{ category }}: {{ penalty }}</div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="pill">No category penalties recorded</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            {% endif %}
-
-            <section style="margin-top: 18px;">
-                <div class="section-block-header">
-                    <div>
-                        <h3 class="section-title">Grouped Findings</h3>
-                        <div class="copy">Organized by engineering category for easier review flow.</div>
-                    </div>
-                </div>
-
-                {% if result.grouped_risks %}
-                    <div class="grouped-sections">
-                        {% for section in result.grouped_risks %}
-                            <div class="group-section">
-                                <div class="group-section-header">
-                                    <div>
-                                        <h4 class="group-section-title">{{ section.title }}</h4>
-                                        <div class="group-section-sub">
-                                            {{ section.count }} finding{% if section.count != 1 %}s{% endif %} in this category
-                                        </div>
-                                    </div>
-
-                                    <div class="severity-row">
-                                        {% if section.severity_counts.critical %}
-                                            <div class="pill">critical: {{ section.severity_counts.critical }}</div>
-                                        {% endif %}
-                                        {% if section.severity_counts.high %}
-                                            <div class="pill">high: {{ section.severity_counts.high }}</div>
-                                        {% endif %}
-                                        {% if section.severity_counts.medium %}
-                                            <div class="pill">medium: {{ section.severity_counts.medium }}</div>
-                                        {% endif %}
-                                        {% if section.severity_counts.low %}
-                                            <div class="pill">low: {{ section.severity_counts.low }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <div class="finding-list">
-                                    {% for risk in section.risks %}
-                                        <div class="finding">
-                                            <div class="finding-top">
-                                                <div>
-                                                    <div class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</div>
-                                                    <h4>{{ risk.message }}</h4>
-                                                </div>
-
-                                                <div class="small-muted">
-                                                    {% if risk.rule_id %}Rule: {{ risk.rule_id }}{% else %}Grouped finding{% endif %}
-                                                </div>
-                                            </div>
-
-                                            <div class="finding-block">
-                                                <span class="finding-label">Recommendation:</span>
-                                                {{ risk.recommendation if risk.recommendation else "Manual review recommended." }}
-                                            </div>
-
-                                            {% if risk.explanation %}
-                                                <div class="finding-block">
-                                                    <span class="finding-label">Explanation:</span><br>
-                                                    {% if risk.explanation.root_cause %}Root cause: {{ risk.explanation.root_cause }}<br>{% endif %}
-                                                    {% if risk.explanation.impact %}Impact: {{ risk.explanation.impact }}<br>{% endif %}
-                                                    {% if risk.explanation.confidence %}Confidence: {{ risk.explanation.confidence }}{% endif %}
-                                                </div>
-                                            {% endif %}
-
-                                            {% if risk.components or risk.nets or risk.region %}
-                                                <div class="finding-block">
-                                                    {% if risk.components %}
-                                                        <span class="finding-label">Components:</span> {{ risk.components | join(", ") }}<br>
-                                                    {% endif %}
-                                                    {% if risk.nets %}
-                                                        <span class="finding-label">Nets:</span> {{ risk.nets | join(", ") }}<br>
-                                                    {% endif %}
-                                                    {% if risk.region %}
-                                                        <span class="finding-label">Region:</span> {{ risk.region }}
-                                                    {% endif %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">
-                        <strong>No risks detected</strong><br><br>
-                        This board did not produce any findings in the current ruleset and config state.
-                    </div>
-                {% endif %}
-            </section>
-
-            {% if result.downloads %}
-                <section style="margin-top: 18px;">
-                    <div class="section-block-header">
-                        <div>
-                            <h3 class="section-title">Exports</h3>
-                            <div class="copy">Download generated outputs for review and sharing.</div>
-                        </div>
-                    </div>
-
-                    <div class="btn-link-row">
-                        {% for item in result.downloads %}
-                            <a class="btn-link" href="{{ download_href(item) }}">{{ item.label }}</a>
-                        {% endfor %}
-                    </div>
-                </section>
-            {% endif %}
+            </article>
+            {% endfor %}
         </div>
-    </section>
-{% else %}
-    <section class="card">
-        <div class="card-body">
-            <div class="empty-state">
-                <strong>No board analysis loaded yet.</strong><br><br>
-                Upload a board file above to generate a single-board Silicore review.
-            </div>
-        </div>
-    </section>
+        {% else %}
+        <div class="empty-state">No grouped findings available yet.</div>
+        {% endif %}
+    </div>
+</section>
 {% endif %}
+
+<style>
+    .review-hero-card {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        padding: 28px;
+        border-radius: 28px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 28%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(10,16,32,0.78);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    }
+
+    .review-kicker {
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+
+    .review-title {
+        margin: 0 0 12px;
+        font-size: 52px;
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+        font-weight: 800;
+        color: #f8fbff;
+    }
+
+    .review-copy {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 760px;
+    }
+
+    .review-upload-form {
+        display: grid;
+        gap: 14px;
+        max-width: 760px;
+    }
+
+    .review-hero-right {
+        position: relative;
+        min-height: 320px;
+    }
+
+    .hero-orb {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(10px);
+    }
+
+    .hero-orb-a {
+        width: 180px;
+        height: 180px;
+        top: 8%;
+        right: 10%;
+        background: rgba(59,130,246,0.20);
+    }
+
+    .hero-orb-b {
+        width: 140px;
+        height: 140px;
+        bottom: 12%;
+        left: 12%;
+        background: rgba(147,197,253,0.12);
+    }
+
+    .hero-panel {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        left: 20px;
+        padding: 22px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.03);
+        backdrop-filter: blur(14px);
+    }
+
+    .hero-panel-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 10px;
+    }
+
+    .hero-panel-value {
+        color: #f8fbff;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 18px;
+    }
+
+    .hero-mini-bars,
+    .distribution-bars,
+    .risk-section-stack,
+    .risk-items,
+    .top-issue-list,
+    .config-section-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .hero-mini-row,
+    .distribution-bar-row {
+        display: grid;
+        grid-template-columns: 92px 1fr 48px;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .hero-mini-label,
+    .distribution-bar-label {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .hero-mini-track,
+    .distribution-bar-track {
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .hero-mini-fill,
+    .distribution-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .severity-critical {
+        background: linear-gradient(90deg, #ef4444, #f97316);
+    }
+
+    .severity-high {
+        background: linear-gradient(90deg, #fb7185, #fb923c);
+    }
+
+    .severity-medium {
+        background: linear-gradient(90deg, #f59e0b, #facc15);
+    }
+
+    .severity-low {
+        background: linear-gradient(90deg, #60a5fa, #22c55e);
+    }
+
+    .tone-blue {
+        background: linear-gradient(90deg, #4b8dff, #60a5fa);
+    }
+
+    .tone-violet {
+        background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    }
+
+    .hero-mini-value,
+    .distribution-bar-value {
+        text-align: right;
+        color: #f8fbff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .score-shell {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .score-number {
+        font-size: 72px;
+        line-height: 0.95;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        color: #f8fbff;
+    }
+
+    .score-number-sub {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 8px;
+    }
+
+    .score-bar-track {
+        height: 18px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .score-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+    }
+
+    .score-scale,
+    .score-tags {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .score-scale span,
+    .score-tags span {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .score-tag.risk { color: #ffb0b0; }
+    .score-tag.watch { color: #ffc98b; }
+    .score-tag.good { color: #f5e08b; }
+    .score-tag.strong { color: #a9f4c7; }
+
+    .score-status-row {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+    }
+
+    .score-band-excellent { color: #9ae6b4; }
+    .score-band-good { color: #bfdbfe; }
+    .score-band-watch { color: #fde68a; }
+    .score-band-risk { color: #fca5a5; }
+
+    .big-stat-grid,
+    .score-breakdown-grid,
+    .context-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .context-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .big-stat-card,
+    .context-meta-card {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    }
+
+    .big-stat-value,
+    .context-meta-value {
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        color: #f8fbff;
+        margin-bottom: 8px;
+        word-break: break-word;
+    }
+
+    .big-stat-label,
+    .context-meta-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .visual-chart-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .visual-chart-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.10em;
+    }
+
+    .config-row-pill,
+    .risk-metric-pill {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .config-row-label,
+    .risk-metric-key {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .config-row-value,
+    .risk-metric-value {
+        color: #f8fbff;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .spotlight-shell-card,
+    .insight-card,
+    .boards-card {
+        border-radius: 24px;
+    }
+
+    .issue-top-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .issue-category {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .strong-issue-text {
+        color: #f8fbff;
+        font-size: 15px;
+        line-height: 1.7;
+        font-weight: 700;
+    }
+
+    .risk-section-card,
+    .board-issue-item,
+    .risk-item {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .risk-section-top,
+    .risk-item-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .risk-section-kicker {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 6px;
+    }
+
+    .risk-section-title,
+    .risk-item-message {
+        color: #f8fbff;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .risk-section-count {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        color: #f8fbff;
+        font-size: 18px;
+        font-weight: 800;
+        background: rgba(59,130,246,0.18);
+        border: 1px solid rgba(96,165,250,0.24);
+    }
+
+    .risk-severity-summary {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    .mini-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .mini-chip-critical { background: rgba(239,68,68,0.14); color: #fca5a5; }
+    .mini-chip-high { background: rgba(251,146,60,0.14); color: #fdba74; }
+    .mini-chip-medium { background: rgba(245,158,11,0.14); color: #fde68a; }
+    .mini-chip-low { background: rgba(96,165,250,0.14); color: #bfdbfe; }
+
+    .risk-item-recommendation,
+    .issue-recommendation {
+        color: #dbeafe;
+        line-height: 1.7;
+        margin-top: 8px;
+    }
+
+    .risk-meta-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .risk-meta-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .risk-meta-value,
+    .risk-meta-text {
+        color: #dbeafe;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .risk-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .chart-fallback {
+        position: relative;
+        height: 92px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.06);
+        background:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+        background-size: 18px 18px, 18px 18px, auto;
+        display: grid;
+        place-items: center;
+    }
+
+    .chart-fallback-empty {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    @media (max-width: 1200px) {
+        .review-hero-card {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 980px) {
+        .score-shell,
+        .big-stat-grid,
+        .score-breakdown-grid,
+        .context-meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-mini-row,
+        .distribution-bar-row {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-mini-value,
+        .distribution-bar-value {
+            text-align: left;
+        }
+
+        .config-row-pill {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .review-title {
+            font-size: 38px;
+        }
+
+        .score-number {
+            font-size: 58px;
+        }
+
+        .score-tags {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
 
 {% endblock %}

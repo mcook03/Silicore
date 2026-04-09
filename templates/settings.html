@@ -1,102 +1,1029 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="card">
+<section class="settings-hero-card">
+    <div class="settings-hero-left">
+        <div class="settings-kicker">Configuration Surface</div>
+        <h1 class="settings-title">Settings</h1>
+        <p class="settings-copy">
+            Tune Silicore thresholds and rule-facing controls from a cleaner engineering control surface with more visual, product-style configuration blocks.
+        </p>
+
+        <div class="settings-hero-actions">
+            <a class="btn btn-secondary" href="#config-editor">Open Controls</a>
+            <button class="btn btn-primary" type="submit" form="settings-form">Save Config</button>
+        </div>
+    </div>
+
+    <div class="settings-hero-right">
+        <div class="settings-glow settings-glow-a"></div>
+        <div class="settings-glow settings-glow-b"></div>
+
+        <div class="settings-hero-panel">
+            <div class="settings-panel-label">Config Mode</div>
+            <div class="settings-panel-value">Live Rule Tuning</div>
+            <div class="settings-panel-chart"></div>
+        </div>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Configuration Areas</h2>
+            <p class="section-copy">
+                Settings are grouped by engineering category so tuning stays organized and easier to review.
+            </p>
+        </div>
+
+        <div class="card-body">
+            <div class="settings-area-grid">
+                <div class="settings-area-card">
+                    <div class="settings-area-icon">▣</div>
+                    <div>
+                        <div class="settings-area-title">Layout</div>
+                        <div class="settings-area-copy">
+                            Controls spacing and density assumptions across board placement.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-area-card">
+                    <div class="settings-area-icon">◌</div>
+                    <div>
+                        <div class="settings-area-title">Power</div>
+                        <div class="settings-area-copy">
+                            Defines rail requirements, decoupling assumptions, and distribution tolerances.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-area-card">
+                    <div class="settings-area-icon">≈</div>
+                    <div>
+                        <div class="settings-area-title">Signal</div>
+                        <div class="settings-area-copy">
+                            Sets routing expectations and critical-net handling.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-area-card">
+                    <div class="settings-area-icon">◔</div>
+                    <div>
+                        <div class="settings-area-title">Thermal</div>
+                        <div class="settings-area-copy">
+                            Defines hotspot spacing used by thermal checks.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-area-card">
+                    <div class="settings-area-icon">⇄</div>
+                    <div>
+                        <div class="settings-area-title">EMI</div>
+                        <div class="settings-area-copy">
+                            Controls return-path and ground-reference expectations.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-area-card">
+                    <div class="settings-area-icon">★</div>
+                    <div>
+                        <div class="settings-area-title">Scoring Context</div>
+                        <div class="settings-area-copy">
+                            These settings directly affect what risks are produced and therefore what score Silicore shows.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Control Summary</h2>
+            <p class="section-copy">
+                Product-style overview of the current editable threshold groups.
+            </p>
+        </div>
+
+        <div class="card-body">
+            <div class="settings-summary-grid">
+                <div class="settings-summary-card">
+                    <div class="settings-summary-value">3</div>
+                    <div class="settings-summary-label">Layout Controls</div>
+                </div>
+
+                <div class="settings-summary-card">
+                    <div class="settings-summary-value">5</div>
+                    <div class="settings-summary-label">Power Controls</div>
+                </div>
+
+                <div class="settings-summary-card">
+                    <div class="settings-summary-value">2</div>
+                    <div class="settings-summary-label">Signal Controls</div>
+                </div>
+
+                <div class="settings-summary-card">
+                    <div class="settings-summary-value">2</div>
+                    <div class="settings-summary-label">System Toggles</div>
+                </div>
+            </div>
+
+            <div class="settings-mini-note">
+                These controls now connect more directly to explainable run results, saved analysis context, and report output.
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Why These Settings Matter</h2>
+            <p class="section-copy">
+                Engineers are more likely to trust findings when they can tune the thresholds behind them.
+            </p>
+        </div>
+
+        <div class="card-body">
+            <div class="summary-strip">
+                <div class="summary-panel">
+                    <h3>Trust</h3>
+                    <p>
+                        A warning is easier to trust when the engineer knows exactly what threshold Silicore used.
+                    </p>
+                </div>
+
+                <div class="summary-panel">
+                    <h3>Adaptability</h3>
+                    <p>
+                        Different projects need different tolerances. Prototype boards and production boards should not always be judged the same way.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Active Config Impact</h2>
+            <p class="section-copy">
+                The thresholds below influence what findings are produced and what shows up in saved run detail pages.
+            </p>
+        </div>
+
+        <div class="card-body">
+            <div class="impact-list">
+                <div class="impact-pill">
+                    <span class="impact-label">Spacing</span>
+                    <span class="impact-value">Changes placement warnings</span>
+                </div>
+
+                <div class="impact-pill">
+                    <span class="impact-label">Power Nets</span>
+                    <span class="impact-value">Changes rail and return-path expectations</span>
+                </div>
+
+                <div class="impact-pill">
+                    <span class="impact-label">Trace Length</span>
+                    <span class="impact-value">Changes signal-path findings</span>
+                </div>
+
+                <div class="impact-pill">
+                    <span class="impact-label">Thermal Threshold</span>
+                    <span class="impact-value">Changes hotspot detection sensitivity</span>
+                </div>
+
+                <div class="impact-pill">
+                    <span class="impact-label">Ground Reference</span>
+                    <span class="impact-value">Changes EMI / return-path rule behavior</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="card" id="config-editor">
     <div class="card-header">
         <h2 class="section-title">Config Editor</h2>
         <p class="section-copy">
-            Dashboard-facing thresholds now live on a dedicated settings page instead of crowding the main analysis view.
+            Update threshold values below and save them into the current Silicore configuration flow.
         </p>
     </div>
+
     <div class="card-body">
         <div class="divider"></div>
-        <form action="{{ url_for('settings_page') }}" method="post">
-            <div class="stack">
-                <div>
-                    <div class="minor-title">Layout</div>
-                    <p class="section-copy">Controls spacing and density assumptions.</p>
-                </div>
 
-                <div class="inline-grid-2">
-                    <label>
-                        Min Component Spacing
-                        <input
-                            type="number"
-                            step="0.01"
-                            name="layout_min_component_spacing"
-                            value="{{ editable_config.layout.min_component_spacing if editable_config and editable_config.layout else '' }}"
-                        >
-                    </label>
-                    <label>
-                        Density Threshold
-                        <input
-                            type="number"
-                            step="0.01"
-                            name="layout_density_threshold"
-                            value="{{ editable_config.layout.density_threshold if editable_config and editable_config.layout else '' }}"
-                        >
-                    </label>
-                </div>
+        <form id="settings-form" action="{{ url_for('settings_page') }}" method="post">
+            <div class="settings-section-grid">
 
-                <div>
-                    <div class="minor-title">Power</div>
-                    <p class="section-copy">Define required rails and grounding expectations.</p>
-                </div>
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
+                            <h3>Layout</h3>
+                            <p>Controls spacing and density assumptions.</p>
+                        </div>
+                        <span class="chip chip-soft">Layout Rules</span>
+                    </div>
 
-                <label>
-                    Required Power Nets
-                    <input
-                        type="text"
-                        name="power_required_power_nets"
-                        value="{{ editable_config.power.required_power_nets if editable_config and editable_config.power else '' }}"
-                        placeholder="VIN, 3V3, 5V"
-                    >
-                </label>
+                    <div class="slider-control-grid">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Min Component Spacing</div>
+                                    <div class="slider-help">Adjust minimum acceptable distance between components.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="layout-spacing-value">
+                                        {{ editable_config.layout.min_component_spacing if editable_config and editable_config.layout else 0 }}
+                                    </span>
+                                </div>
+                            </div>
 
-                <label>
-                    Required Ground Nets
-                    <input
-                        type="text"
-                        name="power_required_ground_nets"
-                        value="{{ editable_config.power.required_ground_nets if editable_config and editable_config.power else '' }}"
-                        placeholder="GND, AGND"
-                    >
-                </label>
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0"
+                                max="20"
+                                step="0.01"
+                                name="layout_min_component_spacing"
+                                value="{{ editable_config.layout.min_component_spacing if editable_config and editable_config.layout else 0 }}"
+                                oninput="document.getElementById('layout-spacing-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0</span>
+                                <span>10</span>
+                                <span>20</span>
+                            </div>
+                        </div>
 
-                <div>
-                    <div class="minor-title">Signal</div>
-                    <p class="section-copy">Set routing expectations and critical net handling.</p>
-                </div>
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Density Threshold</div>
+                                    <div class="slider-help">Adjust how tightly packed components can be before a density warning appears.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="layout-density-value">
+                                        {{ editable_config.layout.density_threshold if editable_config and editable_config.layout else 0 }}
+                                    </span>
+                                </div>
+                            </div>
 
-                <div class="inline-grid-2">
-                    <label>
-                        Max Trace Length
-                        <input
-                            type="number"
-                            step="0.01"
-                            name="signal_max_trace_length"
-                            value="{{ editable_config.signal.max_trace_length if editable_config and editable_config.signal else '' }}"
-                        >
-                    </label>
-                    <label>
-                        Critical Nets
-                        <input
-                            type="text"
-                            name="signal_critical_nets"
-                            value="{{ editable_config.signal.critical_nets if editable_config and editable_config.signal else '' }}"
-                            placeholder="CLK, USB_D+, USB_D-"
-                        >
-                    </label>
-                </div>
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="1"
+                                name="layout_density_threshold"
+                                value="{{ editable_config.layout.density_threshold if editable_config and editable_config.layout else 0 }}"
+                                oninput="document.getElementById('layout-density-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0</span>
+                                <span>50</span>
+                                <span>100</span>
+                            </div>
+                        </div>
 
-                <button class="btn btn-secondary full" type="submit">Save Config</button>
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Density Region Size</div>
+                                    <div class="slider-help">Defines the region size used when density clustering is measured.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="layout-region-size-value">
+                                        {{ editable_config.layout.density_region_size if editable_config and editable_config.layout and editable_config.layout.density_region_size is defined else 25 }}
+                                    </span>
+                                </div>
+                            </div>
 
-                <div class="mini-note">
-                    This editor preserves the existing Silicore dashboard config save flow while keeping the settings experience cleaner and more product-like.
-                </div>
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="1"
+                                max="100"
+                                step="1"
+                                name="layout_density_region_size"
+                                value="{{ editable_config.layout.density_region_size if editable_config and editable_config.layout and editable_config.layout.density_region_size is defined else 25 }}"
+                                oninput="document.getElementById('layout-region-size-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>1</span>
+                                <span>50</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
+                            <h3>Power</h3>
+                            <p>Define rail requirements, distribution limits, and decoupling assumptions.</p>
+                        </div>
+                        <span class="chip chip-medium">Power Rules</span>
+                    </div>
+
+                    <div class="settings-text-grid">
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Required Power Nets</span>
+                            <span class="text-input-help">Comma-separated rails required for valid power coverage.</span>
+                            <input
+                                type="text"
+                                name="power_required_power_nets"
+                                value="{{ editable_config.power.required_power_nets|join(', ') if editable_config and editable_config.power and editable_config.power.required_power_nets else '' }}"
+                                placeholder="VIN, 3V3, 5V"
+                            >
+                        </label>
+
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Required Ground Nets</span>
+                            <span class="text-input-help">Comma-separated ground references expected in the design.</span>
+                            <input
+                                type="text"
+                                name="power_required_ground_nets"
+                                value="{{ editable_config.power.required_ground_nets|join(', ') if editable_config and editable_config.power and editable_config.power.required_ground_nets else '' }}"
+                                placeholder="GND, AGND"
+                            >
+                        </label>
+                    </div>
+
+                    <div class="slider-control-grid">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Distribution Distance Threshold</div>
+                                    <div class="slider-help">Maximum tolerated distance between a load and its nearest regulator.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="power-distribution-value">
+                                        {{ editable_config.power.distribution_distance_threshold if editable_config and editable_config.power and editable_config.power.distribution_distance_threshold is defined else 20 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="1"
+                                max="100"
+                                step="0.5"
+                                name="power_distribution_distance_threshold"
+                                value="{{ editable_config.power.distribution_distance_threshold if editable_config and editable_config.power and editable_config.power.distribution_distance_threshold is defined else 20 }}"
+                                oninput="document.getElementById('power-distribution-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>1</span>
+                                <span>50</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Decoupling Distance Threshold</div>
+                                    <div class="slider-help">Maximum distance between a target device and its nearest decoupling capacitor.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="power-decoupling-value">
+                                        {{ editable_config.power.decoupling_distance_threshold if editable_config and editable_config.power and editable_config.power.decoupling_distance_threshold is defined else 4 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0"
+                                max="20"
+                                step="0.1"
+                                name="power_decoupling_distance_threshold"
+                                value="{{ editable_config.power.decoupling_distance_threshold if editable_config and editable_config.power and editable_config.power.decoupling_distance_threshold is defined else 4 }}"
+                                oninput="document.getElementById('power-decoupling-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0</span>
+                                <span>10</span>
+                                <span>20</span>
+                            </div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Power Max Trace Length</div>
+                                    <div class="slider-help">Longest tolerated routed power path before a power-rail warning appears.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="power-trace-length-value">
+                                        {{ editable_config.power.max_trace_length if editable_config and editable_config.power and editable_config.power.max_trace_length is defined else 50 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="1"
+                                max="200"
+                                step="1"
+                                name="power_max_trace_length"
+                                value="{{ editable_config.power.max_trace_length if editable_config and editable_config.power and editable_config.power.max_trace_length is defined else 50 }}"
+                                oninput="document.getElementById('power-trace-length-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>1</span>
+                                <span>100</span>
+                                <span>200</span>
+                            </div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Minimum Trace Width</div>
+                                    <div class="slider-help">Minimum allowed width for power rails before a width warning appears.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="power-trace-width-value">
+                                        {{ editable_config.power.min_trace_width if editable_config and editable_config.power and editable_config.power.min_trace_width is defined else 0.5 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0.1"
+                                max="10"
+                                step="0.1"
+                                name="power_min_trace_width"
+                                value="{{ editable_config.power.min_trace_width if editable_config and editable_config.power and editable_config.power.min_trace_width is defined else 0.5 }}"
+                                oninput="document.getElementById('power-trace-width-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0.1</span>
+                                <span>5</span>
+                                <span>10</span>
+                            </div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Max Via Count</div>
+                                    <div class="slider-help">Maximum number of vias on a critical power rail before it is flagged.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="power-via-count-value">
+                                        {{ editable_config.power.max_via_count if editable_config and editable_config.power and editable_config.power.max_via_count is defined else 5 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0"
+                                max="20"
+                                step="1"
+                                name="power_max_via_count"
+                                value="{{ editable_config.power.max_via_count if editable_config and editable_config.power and editable_config.power.max_via_count is defined else 5 }}"
+                                oninput="document.getElementById('power-via-count-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0</span>
+                                <span>10</span>
+                                <span>20</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
+                            <h3>Signal</h3>
+                            <p>Set routing expectations and critical-net handling.</p>
+                        </div>
+                        <span class="chip chip-low">Signal Rules</span>
+                    </div>
+
+                    <div class="slider-control-grid">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Max Trace Length</div>
+                                    <div class="slider-help">Set the maximum tolerated trace length before routing concern increases.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="signal-trace-value">
+                                        {{ editable_config.signal.max_trace_length if editable_config and editable_config.signal else 0 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="1"
+                                max="200"
+                                step="1"
+                                name="signal_max_trace_length"
+                                value="{{ editable_config.signal.max_trace_length if editable_config and editable_config.signal else 25 }}"
+                                oninput="document.getElementById('signal-trace-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>1</span>
+                                <span>100</span>
+                                <span>200</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-text-grid">
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Critical Nets</span>
+                            <span class="text-input-help">Comma-separated nets that should be treated as sensitive or timing-critical.</span>
+                            <input
+                                type="text"
+                                name="signal_critical_nets"
+                                value="{{ editable_config.signal.critical_nets|join(', ') if editable_config and editable_config.signal and editable_config.signal.critical_nets else '' }}"
+                                placeholder="CLK, SCL, SDA, MOSI"
+                            >
+                        </label>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
+                            <h3>Thermal</h3>
+                            <p>Controls hotspot sensitivity between likely hot components.</p>
+                        </div>
+                        <span class="chip chip-soft">Thermal Rules</span>
+                    </div>
+
+                    <div class="slider-control-grid">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Hotspot Distance Threshold</div>
+                                    <div class="slider-help">Minimum spacing between likely hot components before a hotspot warning is generated.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="thermal-hotspot-value">
+                                        {{ editable_config.thermal.hotspot_distance_threshold if editable_config and editable_config.thermal and editable_config.thermal.hotspot_distance_threshold is defined else 4 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0"
+                                max="20"
+                                step="0.1"
+                                name="thermal_hotspot_distance_threshold"
+                                value="{{ editable_config.thermal.hotspot_distance_threshold if editable_config and editable_config.thermal and editable_config.thermal.hotspot_distance_threshold is defined else 4 }}"
+                                oninput="document.getElementById('thermal-hotspot-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0</span>
+                                <span>10</span>
+                                <span>20</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
+                            <h3>EMI</h3>
+                            <p>Controls whether ground-reference continuity is required by return-path checks.</p>
+                        </div>
+                        <span class="chip chip-medium">EMI Rules</span>
+                    </div>
+
+                    <div class="settings-toggle-grid">
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Require Ground Reference</span>
+                                <span class="settings-toggle-help">When enabled, return-path analysis expects a valid ground reference and flags missing continuity.</span>
+                            </span>
+
+                            <select name="emi_require_ground_reference" class="settings-select">
+                                <option value="true" {% if editable_config and editable_config.emi and editable_config.emi.require_ground_reference %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if editable_config and editable_config.emi and not editable_config.emi.require_ground_reference %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="settings-actions-row">
+                <button class="btn btn-primary" type="submit">Save Config</button>
             </div>
         </form>
     </div>
 </section>
+
+<style>
+    .settings-hero-card {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        padding: 28px;
+        border-radius: 28px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 28%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(10,16,32,0.78);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    }
+
+    .settings-kicker {
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+
+    .settings-title {
+        margin: 0 0 12px;
+        font-size: 52px;
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+        font-weight: 800;
+        color: #f8fbff;
+    }
+
+    .settings-copy {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 760px;
+    }
+
+    .settings-hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .settings-hero-right {
+        position: relative;
+        min-height: 280px;
+    }
+
+    .settings-glow {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(10px);
+    }
+
+    .settings-glow-a {
+        width: 180px;
+        height: 180px;
+        top: 10%;
+        right: 10%;
+        background: rgba(59,130,246,0.20);
+    }
+
+    .settings-glow-b {
+        width: 140px;
+        height: 140px;
+        bottom: 12%;
+        left: 12%;
+        background: rgba(147,197,253,0.12);
+    }
+
+    .settings-hero-panel {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        left: 20px;
+        padding: 22px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.03);
+        backdrop-filter: blur(14px);
+    }
+
+    .settings-panel-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 10px;
+    }
+
+    .settings-panel-value {
+        color: #f8fbff;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 18px;
+    }
+
+    .settings-panel-chart {
+        height: 72px;
+        border-radius: 14px;
+        background:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59,130,246,0.18), rgba(96,165,250,0.08));
+        background-size: 18px 18px, 18px 18px, auto;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .settings-area-grid,
+    .settings-summary-grid,
+    .settings-section-grid,
+    .slider-control-grid,
+    .settings-text-grid,
+    .summary-strip,
+    .impact-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .settings-area-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .settings-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .settings-area-card,
+    .settings-summary-card,
+    .settings-section-card,
+    .slider-card,
+    .settings-input-card,
+    .summary-panel,
+    .impact-pill,
+    .settings-toggle-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .settings-area-card {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+    }
+
+    .settings-area-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        color: #bfdbfe;
+        font-size: 18px;
+        background: rgba(59,130,246,0.14);
+        border: 1px solid rgba(96,165,250,0.18);
+        flex-shrink: 0;
+    }
+
+    .settings-area-title,
+    .settings-section-heading h3,
+    .summary-panel h3,
+    .settings-toggle-title {
+        color: #f8fbff;
+        font-size: 18px;
+        font-weight: 800;
+        margin: 0 0 8px;
+        letter-spacing: -0.03em;
+    }
+
+    .settings-area-copy,
+    .settings-section-heading p,
+    .summary-panel p,
+    .settings-toggle-help,
+    .settings-mini-note,
+    .text-input-help,
+    .slider-help {
+        color: var(--muted);
+        line-height: 1.7;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .settings-summary-value {
+        color: #f8fbff;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
+    }
+
+    .settings-summary-label,
+    .text-input-label,
+    .slider-label,
+    .impact-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .settings-mini-note {
+        margin-top: 14px;
+    }
+
+    .summary-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .impact-pill {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .impact-value {
+        color: #f8fbff;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .divider {
+        height: 1px;
+        background: rgba(255,255,255,0.06);
+        margin-bottom: 22px;
+    }
+
+    .settings-section-grid {
+        gap: 18px;
+    }
+
+    .settings-section-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .slider-control-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .settings-text-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 14px;
+    }
+
+    .settings-input-card,
+    .settings-toggle-card {
+        display: grid;
+        gap: 10px;
+    }
+
+    .slider-card-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 14px;
+    }
+
+    .slider-value-pill {
+        min-width: 72px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(59,130,246,0.14);
+        border: 1px solid rgba(96,165,250,0.18);
+        color: #dbeafe;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .styled-range {
+        width: 100%;
+        accent-color: #4b8dff;
+    }
+
+    .range-scale {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .settings-select,
+    .settings-input-card input,
+    .review-upload-form input,
+    .review-upload-form select,
+    .settings-input-card textarea,
+    #settings-form input[type="text"] {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #f8fbff;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .settings-select {
+        max-width: 220px;
+    }
+
+    .settings-toggle-grid {
+        display: grid;
+        gap: 14px;
+    }
+
+    .settings-toggle-card {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .settings-toggle-copy {
+        display: grid;
+        gap: 8px;
+        max-width: 700px;
+    }
+
+    .settings-actions-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 22px;
+    }
+
+    @media (max-width: 1200px) {
+        .settings-hero-card,
+        .summary-strip {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 980px) {
+        .settings-area-grid,
+        .settings-summary-grid,
+        .slider-control-grid,
+        .settings-text-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .impact-pill,
+        .settings-toggle-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .impact-value {
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .settings-title {
+            font-size: 38px;
+        }
+
+        .settings-hero-actions,
+        .settings-actions-row {
+            justify-content: flex-start;
+        }
+    }
+</style>
 
 {% endblock %}

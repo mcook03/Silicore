@@ -1,183 +1,344 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero-card">
-  <div class="hero-copy">
-    <p class="section-label">Run Comparison</p>
-    <h1>Compare two analysis runs to understand engineering improvements or regressions.</h1>
-  </div>
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Run Comparison</h2>
+        <p class="section-copy">
+            Compare two analysis runs to understand engineering improvements, regressions, and finding-level change.
+        </p>
+    </div>
 </section>
 
-<section class="comparison-grid">
-  <article class="comparison-panel">
-    <p class="section-label">Baseline</p>
-    <h3>{{ comparison.run_a.name }}</h3>
-    <div class="metric-stack">
-      <div class="metric-row">
-        <span class="metric-label">Score</span>
-        <span class="metric-value">{{ comparison.run_a.score }}</span>
-      </div>
-      <div class="metric-row">
-        <span class="metric-label">Risks</span>
-        <span class="metric-value">{{ comparison.run_a.risk_count }}</span>
-      </div>
-      <div class="metric-row">
-        <span class="metric-label">Critical</span>
-        <span class="metric-value">{{ comparison.run_a.critical_count }}</span>
-      </div>
-    </div>
-    {% if comparison.run_a.summary %}
-    <p class="comparison-summary">{{ comparison.run_a.summary }}</p>
-    {% endif %}
-  </article>
-
-  <article class="comparison-panel">
-    <p class="section-label">New Run</p>
-    <h3>{{ comparison.run_b.name }}</h3>
-    <div class="metric-stack">
-      <div class="metric-row">
-        <span class="metric-label">Score</span>
-        <span class="metric-value">{{ comparison.run_b.score }}</span>
-      </div>
-      <div class="metric-row">
-        <span class="metric-label">Risks</span>
-        <span class="metric-value">{{ comparison.run_b.risk_count }}</span>
-      </div>
-      <div class="metric-row">
-        <span class="metric-label">Critical</span>
-        <span class="metric-value">{{ comparison.run_b.critical_count }}</span>
-      </div>
-    </div>
-    {% if comparison.run_b.summary %}
-    <p class="comparison-summary">{{ comparison.run_b.summary }}</p>
-    {% endif %}
-  </article>
-</section>
-
-<section class="insight-grid insight-grid-three">
-  <article class="stat-card">
-    <p class="section-label">Engineering Changes</p>
-    <h3>Score Change</h3>
-    <p class="comparison-delta {{ comparison_delta_class(comparison.score_diff, true) }}">
-      {{ comparison.score_diff }}
-    </p>
-    <p class="muted-copy">{{ comparison.summary.score_direction }}</p>
-  </article>
-
-  <article class="stat-card">
-    <p class="section-label">Engineering Changes</p>
-    <h3>Risk Change</h3>
-    <p class="comparison-delta {{ comparison_delta_class(comparison.risk_diff, false) }}">
-      {{ comparison.risk_diff }}
-    </p>
-    <p class="muted-copy">{{ comparison.summary.risk_direction }}</p>
-  </article>
-
-  <article class="stat-card">
-    <p class="section-label">Engineering Changes</p>
-    <h3>Critical Change</h3>
-    <p class="comparison-delta {{ comparison_delta_class(comparison.critical_diff, false) }}">
-      {{ comparison.critical_diff }}
-    </p>
-    <p class="muted-copy">{{ comparison.summary.critical_direction }}</p>
-  </article>
-</section>
-
-<section class="detail-card">
-  <p class="section-label">Delta Insight</p>
-  <p class="lead-copy">{{ comparison.delta_analysis.insight_text }}</p>
-</section>
-
-<section class="comparison-findings-grid">
-  <article class="detail-card">
-    <div class="card-header-inline">
-      <div>
-        <p class="section-label">Removed Findings</p>
-        <h3>{{ comparison.delta_analysis.removed_count }} removed</h3>
-      </div>
-      {% if comparison.delta_analysis.removed_critical_count > 0 %}
-      <span class="chip chip-good">{{ comparison.delta_analysis.removed_critical_count }} critical removed</span>
-      {% endif %}
-    </div>
-
-    {% if comparison.delta_analysis.removed_risks %}
-      <div class="finding-list">
-        {% for risk in comparison.delta_analysis.removed_risks[:8] %}
-        <article class="finding-card compact">
-          <div class="finding-meta">
-            <span class="chip {{ chip_class(risk.severity) }}">{{ risk.severity|upper }}</span>
-            <span class="chip chip-soft">{{ risk.category.replace('_', ' ').title() }}</span>
-          </div>
-          <p class="finding-message">{{ risk.message }}</p>
-        </article>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="empty-state">No findings were removed.</p>
-    {% endif %}
-  </article>
-
-  <article class="detail-card">
-    <div class="card-header-inline">
-      <div>
-        <p class="section-label">Added Findings</p>
-        <h3>{{ comparison.delta_analysis.added_count }} added</h3>
-      </div>
-      {% if comparison.delta_analysis.added_critical_count > 0 %}
-      <span class="chip chip-alert">{{ comparison.delta_analysis.added_critical_count }} critical added</span>
-      {% endif %}
-    </div>
-
-    {% if comparison.delta_analysis.added_risks %}
-      <div class="finding-list">
-        {% for risk in comparison.delta_analysis.added_risks[:8] %}
-        <article class="finding-card compact">
-          <div class="finding-meta">
-            <span class="chip {{ chip_class(risk.severity) }}">{{ risk.severity|upper }}</span>
-            <span class="chip chip-soft">{{ risk.category.replace('_', ' ').title() }}</span>
-          </div>
-          <p class="finding-message">{{ risk.message }}</p>
-        </article>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="empty-state">No new findings were added.</p>
-    {% endif %}
-  </article>
-</section>
-
-<section class="detail-card">
-  <div class="card-header-inline">
-    <div>
-      <p class="section-label">Category Movement</p>
-      <h3>Risk movement by engineering area</h3>
-    </div>
-  </div>
-
-  {% if comparison.delta_analysis.category_deltas %}
-    <div class="delta-list">
-      {% for item in comparison.delta_analysis.category_deltas %}
-      <article class="delta-row">
-        <div>
-          <h4>{{ item.category.replace('_', ' ').title() }}</h4>
-          <p class="muted-copy">
-            {{ comparison_delta_label(item.delta, item.category.replace('_', ' ').title(), false) }}
-          </p>
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Baseline Run</h2>
+            <p class="section-copy">{{ comparison.run_a.name }}</p>
         </div>
-        <div class="delta-stats">
-          <span>Before: {{ item.before }}</span>
-          <span>After: {{ item.after }}</span>
+
+        <div class="card-body">
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Score</div>
+                    <div class="metric-value">{{ (comparison.run_a.score * 10)|round|int }}</div>
+                    <div class="metric-sub">0–100 scale</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Risks</div>
+                    <div class="metric-value">{{ comparison.run_a.risk_count }}</div>
+                    <div class="metric-sub">Findings in baseline run</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Critical</div>
+                    <div class="metric-value">{{ comparison.run_a.critical_count }}</div>
+                    <div class="metric-sub">Critical findings</div>
+                </div>
+            </div>
+
+            {% if comparison.run_a.summary %}
+                <div class="summary-panel" style="margin-top:18px;">
+                    <h3>Baseline Summary</h3>
+                    <p>{{ comparison.run_a.summary }}</p>
+                </div>
+            {% endif %}
         </div>
-      </article>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p class="empty-state">No category-level movement detected.</p>
-  {% endif %}
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">New Run</h2>
+            <p class="section-copy">{{ comparison.run_b.name }}</p>
+        </div>
+
+        <div class="card-body">
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Score</div>
+                    <div class="metric-value">{{ (comparison.run_b.score * 10)|round|int }}</div>
+                    <div class="metric-sub">0–100 scale</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Risks</div>
+                    <div class="metric-value">{{ comparison.run_b.risk_count }}</div>
+                    <div class="metric-sub">Findings in new run</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Critical</div>
+                    <div class="metric-value">{{ comparison.run_b.critical_count }}</div>
+                    <div class="metric-sub">Critical findings</div>
+                </div>
+            </div>
+
+            {% if comparison.run_b.summary %}
+                <div class="summary-panel" style="margin-top:18px;">
+                    <h3>New Run Summary</h3>
+                    <p>{{ comparison.run_b.summary }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
 </section>
 
-<div class="page-actions">
-  <a class="secondary-button" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">← Back to Project</a>
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Engineering Changes</h2>
+        <p class="section-copy">
+            Score movement, risk count change, and critical finding change between the two runs.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="grid grid-3">
+            <div class="metric-card">
+                <div class="metric-label">Score Change</div>
+                <div class="metric-value {{ comparison_delta_class(comparison.score_diff, true) }}">
+                    {{ (comparison.score_diff * 10)|round(1) }}
+                </div>
+                <div class="metric-sub">{{ comparison.summary.score_direction }}</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Risk Change</div>
+                <div class="metric-value {{ comparison_delta_class(comparison.risk_diff, false) }}">
+                    {{ comparison.risk_diff }}
+                </div>
+                <div class="metric-sub">{{ comparison.summary.risk_direction }}</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Critical Change</div>
+                <div class="metric-value {{ comparison_delta_class(comparison.critical_diff, false) }}">
+                    {{ comparison.critical_diff }}
+                </div>
+                <div class="metric-sub">{{ comparison.summary.critical_direction }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Severity Tracking</h2>
+        <p class="section-copy">
+            See whether issues improved, worsened, or changed severity between revisions.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="grid grid-3">
+            <div class="metric-card">
+                <div class="metric-label">Severity Changes</div>
+                <div class="metric-value">{{ comparison.delta_analysis.changed_severity_count }}</div>
+                <div class="metric-sub">Issues changed severity</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Improved Severity</div>
+                <div class="metric-value chip-low-text">{{ comparison.delta_analysis.severity_improved_count }}</div>
+                <div class="metric-sub">Issues became less severe</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Worsened Severity</div>
+                <div class="metric-value chip-critical-text">{{ comparison.delta_analysis.severity_worsened_count }}</div>
+                <div class="metric-sub">Issues became more severe</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Delta Insight</h2>
+    </div>
+
+    <div class="card-body">
+        <div class="summary-panel">
+            <p>{{ comparison.delta_analysis.insight_text }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Added Risks</h2>
+            <p class="section-copy">
+                Findings that appear in the new run but were not present in the baseline.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.delta_analysis.added_risks %}
+                <div class="finding-list">
+                    {% for risk in comparison.delta_analysis.added_risks[:10] %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip {{ chip_class(risk.severity) }}">{{ risk.severity|upper }}</div>
+                                <h4>{{ risk.message }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ risk.category.replace('_', ' ').title() if risk.category else "Uncategorized" }}
+                            </div>
+                        </div>
+
+                        {% if risk.recommendation %}
+                        <div class="finding-block">
+                            <span class="finding-label">Recommendation:</span>
+                            {{ risk.recommendation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">No new risks were introduced.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Removed Risks</h2>
+            <p class="section-copy">
+                Findings that were present in the baseline but not in the new run.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.delta_analysis.removed_risks %}
+                <div class="finding-list">
+                    {% for risk in comparison.delta_analysis.removed_risks[:10] %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip {{ chip_class(risk.severity) }}">{{ risk.severity|upper }}</div>
+                                <h4>{{ risk.message }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ risk.category.replace('_', ' ').title() if risk.category else "Uncategorized" }}
+                            </div>
+                        </div>
+
+                        {% if risk.recommendation %}
+                        <div class="finding-block">
+                            <span class="finding-label">Recommendation:</span>
+                            {{ risk.recommendation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">No prior risks were resolved between these runs.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Severity Changes</h2>
+        <p class="section-copy">
+            Findings that stayed conceptually similar but changed severity between runs.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.delta_analysis.changed_severity %}
+            <div class="finding-list">
+                {% for risk in comparison.delta_analysis.changed_severity[:10] %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip chip-soft">{{ risk.category.replace('_', ' ').title() }}</div>
+                                <h4>{{ risk.message }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {% if risk.direction == "improved" %}
+                                    Severity Improved
+                                {% elif risk.direction == "worsened" %}
+                                    Severity Worsened
+                                {% else %}
+                                    Severity Changed
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">Change:</span>
+                            {{ risk.old_severity|upper }} → {{ risk.new_severity|upper }}
+                        </div>
+
+                        {% if risk.recommendation %}
+                        <div class="finding-block">
+                            <span class="finding-label">Recommendation:</span>
+                            {{ risk.recommendation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No severity changes detected.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Category Movement</h2>
+        <p class="section-copy">Risk movement by engineering area.</p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.delta_analysis.category_deltas %}
+            <div class="finding-list">
+                {% for item in comparison.delta_analysis.category_deltas %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <h4>{{ item.category.replace('_', ' ').title() }}</h4>
+                                <div class="small-muted">
+                                    {{ comparison_delta_label(item.delta, item.category.replace('_', ' ').title(), false) }}
+                                </div>
+                            </div>
+
+                            <div class="small-muted">
+                                Before: {{ item.before }}<br>
+                                After: {{ item.after }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No category-level movement detected.</div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="btn-link-row">
+    <a class="btn-link" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Back to Project</a>
 </div>
+
+<style>
+    .chip-low-text {
+        color: #86efac;
+    }
+
+    .chip-critical-text {
+        color: #fca5a5;
+    }
+</style>
 
 {% endblock %}
