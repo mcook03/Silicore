@@ -123,6 +123,116 @@ def _normalize_risk_list(risks: Optional[List[Dict[str, Any]]]) -> List[Dict[str
     return normalized
 
 
+def _build_transparency(risk: Dict[str, Any]) -> Dict[str, Any]:
+    message = _normalize_message(risk.get("message"))
+    message_lower = message.lower()
+    severity = _normalize_severity(risk.get("severity"))
+    category = _format_category_name(risk.get("category"))
+    recommendation = _normalize_recommendation(risk.get("recommendation"))
+
+    components = _normalize_string_list(risk.get("components"))
+    nets = _normalize_string_list(risk.get("nets"))
+
+    if "trace" in message_lower and "width" in message_lower:
+        trigger = "Trace width condition triggered the rule."
+        threshold = "Minimum acceptable trace width for the relevant electrical or manufacturing context."
+        observed_value = "A trace width condition was flagged as being below the expected safe range."
+        reasoning = (
+            "Narrow traces can increase resistance and heat buildup, especially when current demand rises."
+        )
+        engineering_impact = (
+            "This can reduce reliability, increase thermal stress, and create failure risk under load."
+        )
+    elif "clearance" in message_lower or "spacing" in message_lower or "too close" in message_lower:
+        trigger = "Clearance or spacing condition triggered the rule."
+        threshold = "Minimum spacing requirement based on voltage, manufacturability, or layout constraints."
+        observed_value = "A spacing condition was flagged as being tighter than the expected safe range."
+        reasoning = (
+            "Insufficient spacing can increase the chance of shorts, crowd routing, assembly difficulty, or thermal coupling."
+        )
+        engineering_impact = (
+            "This can create electrical reliability problems, layout congestion, or manufacturability issues."
+        )
+    elif "via" in message_lower:
+        trigger = "Via-related geometry or usage condition triggered the rule."
+        threshold = "Expected via sizing, current handling, or manufacturability constraint."
+        observed_value = "A via condition was detected that appears outside the recommended design range."
+        reasoning = (
+            "Improper via design can weaken current flow, thermal performance, or mechanical reliability."
+        )
+        engineering_impact = (
+            "This can reduce robustness over time and increase the chance of thermal or interconnect issues."
+        )
+    elif "impedance" in message_lower:
+        trigger = "Impedance-related routing condition triggered the rule."
+        threshold = "Expected impedance control requirement for the affected signal path."
+        observed_value = "A routing or stackup condition suggests impedance may not remain within target."
+        reasoning = (
+            "Impedance mismatch can degrade signal integrity and create reflection or timing issues."
+        )
+        engineering_impact = (
+            "This can reduce communication reliability and hurt performance in high-speed interfaces."
+        )
+    elif "return path" in message_lower:
+        trigger = "Return-path continuity condition triggered the rule."
+        threshold = "Expected continuous return-path support for the affected signal route."
+        observed_value = "A signal path appears to have weaker or disrupted return-path support."
+        reasoning = (
+            "Broken or weak return paths can increase EMI risk and degrade signal quality."
+        )
+        engineering_impact = (
+            "This can create noise, emissions problems, and unstable electrical behavior."
+        )
+    elif "thermal" in message_lower or "hotspot" in message_lower:
+        trigger = "Thermal proximity or heat concentration condition triggered the rule."
+        threshold = "Expected component spacing or heat spreading condition for thermal safety."
+        observed_value = "A local thermal condition was flagged as likely to concentrate heat."
+        reasoning = (
+            "Component proximity and weak heat spreading can increase local temperature concentration."
+        )
+        engineering_impact = (
+            "This can reduce reliability, worsen component stress, and create long-term thermal stability issues."
+        )
+    else:
+        trigger = "A rule-based design condition triggered this finding."
+        threshold = "A predefined engineering rule or expected design threshold was crossed."
+        observed_value = "The current design matched the condition used to raise this finding."
+        reasoning = (
+            f"This {severity} severity issue in {category} indicates the design may not meet a recommended engineering practice."
+        )
+        engineering_impact = (
+            "Depending on the underlying condition, this may affect reliability, performance, manufacturability, or review confidence."
+        )
+
+    evidence_summary_parts: List[str] = []
+
+    if components:
+        preview = ", ".join(components[:3])
+        if len(components) > 3:
+            preview += f" +{len(components) - 3} more"
+        evidence_summary_parts.append(f"Components involved: {preview}.")
+
+    if nets:
+        preview = ", ".join(nets[:3])
+        if len(nets) > 3:
+            preview += f" +{len(nets) - 3} more"
+        evidence_summary_parts.append(f"Nets involved: {preview}.")
+
+    if recommendation:
+        evidence_summary_parts.append(f"Suggested action: {recommendation}")
+
+    evidence_summary = " ".join(evidence_summary_parts).strip()
+
+    return {
+        "trigger": trigger,
+        "threshold": threshold,
+        "observed_value": observed_value,
+        "reasoning": reasoning,
+        "engineering_impact": engineering_impact,
+        "evidence_summary": evidence_summary,
+    }
+
+
 def summarize_score_change(old_score: Optional[float], new_score: Optional[float]) -> Dict[str, Any]:
     old_value = float(old_score or 0)
     new_value = float(new_score or 0)
@@ -458,6 +568,7 @@ def _enrich_risk_list_with_confidence(
         enriched_risk = dict(risk)
         enriched_risk["confidence"] = trust
         enriched_risk["evidence_points"] = trust.get("evidence_points", [])
+        enriched_risk["transparency"] = _build_transparency(risk)
         enriched.append(enriched_risk)
 
     return enriched
@@ -484,9 +595,177 @@ def _enrich_changed_risks_with_confidence(changed_risks: Optional[List[Dict[str,
         enriched_risk = dict(risk)
         enriched_risk["confidence"] = trust
         enriched_risk["evidence_points"] = trust.get("evidence_points", [])
+        enriched_risk["transparency"] = _build_transparency(proxy)
         enriched.append(enriched_risk)
 
     return enriched
+
+
+def _extract_cluster_key_from_message(message: str) -> str:
+    text = _normalize_message(message).lower()
+
+    replacements = [
+        (" are too close ", " too close "),
+        (" is too close ", " too close "),
+        (" may create a thermal hotspot ", " thermal hotspot "),
+        (" creates a thermal hotspot ", " thermal hotspot "),
+        (" may be too close ", " too close "),
+        ("  ", " "),
+    ]
+
+    for old, new in replacements:
+        text = text.replace(old, new)
+
+    if "(" in text:
+        text = text.split("(", 1)[0].strip()
+
+    for prefix in ["finding:", "issue:"]:
+        if text.startswith(prefix):
+            text = text[len(prefix):].strip()
+
+    return text
+
+
+def _build_cluster_signature(risk: Dict[str, Any], change_type: str) -> Tuple[str, str, str]:
+    category = _normalize_category(risk.get("category"))
+    severity = _normalize_severity(risk.get("severity") or risk.get("new_severity"))
+    message_key = _extract_cluster_key_from_message(risk.get("message", ""))
+    return (
+        change_type.lower(),
+        category.lower(),
+        message_key,
+    )
+
+
+def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) -> Dict[str, Any]:
+    representative = risks[0]
+    category = _format_category_name(representative.get("category"))
+    severity = _normalize_severity(representative.get("severity") or representative.get("new_severity"))
+    base_message = representative.get("message", "Unnamed issue")
+    cluster_key = _extract_cluster_key_from_message(base_message)
+
+    recommendations = []
+    seen_recommendations = set()
+    evidence_points = []
+    seen_evidence = set()
+
+    confidence_scores = []
+    change_type_counts: Dict[str, int] = defaultdict(int)
+
+    for item in risks:
+        conf = item.get("confidence", {})
+        confidence_scores.append(int(conf.get("score", 0)))
+        local_change_type = _safe_str(item.get("change_type", change_type), change_type)
+        change_type_counts[local_change_type] += 1
+
+        recommendation = _safe_str(item.get("recommendation"), "")
+        if recommendation and recommendation.lower() not in seen_recommendations:
+            seen_recommendations.add(recommendation.lower())
+            recommendations.append(recommendation)
+
+        for point in item.get("evidence_points", [])[:3]:
+            key = point.lower()
+            if key in seen_evidence:
+                continue
+            seen_evidence.add(key)
+            evidence_points.append(point)
+
+    average_confidence = round(sum(confidence_scores) / len(confidence_scores), 1) if confidence_scores else 0
+    max_confidence = max(confidence_scores) if confidence_scores else 0
+
+    if len(risks) == 1:
+        summary = base_message
+    else:
+        summary = f"{len(risks)} similar {category.lower()} findings grouped under “{cluster_key}”."
+
+    if max_confidence >= 80:
+        confidence_band = "high"
+    elif max_confidence >= 60:
+        confidence_band = "medium"
+    else:
+        confidence_band = "low"
+
+    return {
+        "cluster_key": cluster_key,
+        "change_type": change_type,
+        "category": category,
+        "severity": severity,
+        "message": base_message,
+        "summary": summary,
+        "count": len(risks),
+        "average_confidence": average_confidence,
+        "max_confidence": max_confidence,
+        "confidence_band": confidence_band,
+        "recommendations": recommendations[:3],
+        "evidence_points": evidence_points[:5],
+        "items": risks,
+    }
+
+
+def _cluster_risk_list(risks: Optional[List[Dict[str, Any]]], change_type: str) -> List[Dict[str, Any]]:
+    grouped: Dict[Tuple[str, str, str], List[Dict[str, Any]]] = defaultdict(list)
+
+    for risk in risks or []:
+        if not isinstance(risk, dict):
+            continue
+        grouped[_build_cluster_signature(risk, change_type)].append(risk)
+
+    clusters: List[Dict[str, Any]] = []
+    for _, items in grouped.items():
+        items.sort(
+            key=lambda item: (
+                -int(item.get("confidence", {}).get("score", 0)),
+                -_severity_weight(item.get("severity") or item.get("new_severity")),
+                _normalize_message(item.get("message")),
+            )
+        )
+        clusters.append(_cluster_single_risk_group(items, change_type))
+
+    clusters.sort(
+        key=lambda cluster: (
+            -cluster.get("count", 0),
+            -cluster.get("max_confidence", 0),
+            -_severity_weight(cluster.get("severity")),
+            cluster.get("category", "").lower(),
+            cluster.get("cluster_key", "").lower(),
+        )
+    )
+
+    return clusters
+
+
+def _build_noise_reduction_summary(
+    added_risks: List[Dict[str, Any]],
+    removed_risks: List[Dict[str, Any]],
+    changed_risks: List[Dict[str, Any]],
+    clustered_added: List[Dict[str, Any]],
+    clustered_removed: List[Dict[str, Any]],
+    clustered_changed: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    raw_total = len(added_risks) + len(removed_risks) + len(changed_risks)
+    clustered_total = len(clustered_added) + len(clustered_removed) + len(clustered_changed)
+    suppressed_count = max(0, raw_total - clustered_total)
+
+    if raw_total <= 0:
+        reduction_pct = 0
+    else:
+        reduction_pct = round((suppressed_count / raw_total) * 100, 1)
+
+    if suppressed_count == 0:
+        summary = "No meaningful duplicate-like findings were grouped in this comparison."
+    else:
+        summary = (
+            f"Grouped {suppressed_count} repeated or highly similar findings into {clustered_total} clearer review groups "
+            f"for a {reduction_pct}% reduction in visible comparison noise."
+        )
+
+    return {
+        "raw_total": raw_total,
+        "clustered_total": clustered_total,
+        "suppressed_count": suppressed_count,
+        "reduction_pct": reduction_pct,
+        "summary": summary,
+    }
 
 
 def _build_confidence_summary(
@@ -573,46 +852,62 @@ def _build_trusted_focus_items(
     changed_risks: List[Dict[str, Any]],
     limit: int = 5,
 ) -> List[Dict[str, Any]]:
+    clustered_added = _cluster_risk_list(added_risks, "added")
+    clustered_changed = _cluster_risk_list(changed_risks, "changed")
+    clustered_removed = _cluster_risk_list(removed_risks, "removed")
+
     focus_items: List[Dict[str, Any]] = []
 
-    for risk in added_risks:
+    for cluster in clustered_added:
+        representative = cluster.get("items", [{}])[0]
         focus_items.append(
             {
                 "change_type": "added",
-                "category": _format_category_name(risk.get("category")),
-                "message": risk.get("message", "Unnamed issue"),
-                "severity": _normalize_severity(risk.get("severity")),
-                "confidence": risk.get("confidence", {}),
-                "evidence_points": risk.get("evidence_points", []),
-                "recommendation": risk.get("recommendation", ""),
+                "category": cluster.get("category", _format_category_name(representative.get("category"))),
+                "message": representative.get("message", "Unnamed issue"),
+                "summary": cluster.get("summary", ""),
+                "cluster_count": cluster.get("count", 1),
+                "severity": _normalize_severity(representative.get("severity")),
+                "confidence": representative.get("confidence", {}),
+                "evidence_points": representative.get("evidence_points", []),
+                "transparency": representative.get("transparency", {}),
+                "recommendation": representative.get("recommendation", ""),
             }
         )
 
-    for risk in changed_risks:
+    for cluster in clustered_changed:
+        representative = cluster.get("items", [{}])[0]
         focus_items.append(
             {
                 "change_type": "changed",
-                "category": _format_category_name(risk.get("category")),
-                "message": risk.get("message", "Unnamed issue"),
-                "severity": _normalize_severity(risk.get("new_severity")),
-                "confidence": risk.get("confidence", {}),
-                "evidence_points": risk.get("evidence_points", []),
-                "recommendation": risk.get("recommendation", ""),
-                "old_severity": risk.get("old_severity"),
-                "new_severity": risk.get("new_severity"),
+                "category": cluster.get("category", _format_category_name(representative.get("category"))),
+                "message": representative.get("message", "Unnamed issue"),
+                "summary": cluster.get("summary", ""),
+                "cluster_count": cluster.get("count", 1),
+                "severity": _normalize_severity(representative.get("new_severity")),
+                "confidence": representative.get("confidence", {}),
+                "evidence_points": representative.get("evidence_points", []),
+                "transparency": representative.get("transparency", {}),
+                "recommendation": representative.get("recommendation", ""),
+                "old_severity": representative.get("old_severity"),
+                "new_severity": representative.get("new_severity"),
             }
         )
 
-    for risk in removed_risks:
+    for cluster in clustered_removed:
+        representative = cluster.get("items", [{}])[0]
         focus_items.append(
             {
                 "change_type": "removed",
-                "category": _format_category_name(risk.get("category")),
-                "message": risk.get("message", "Unnamed issue"),
-                "severity": _normalize_severity(risk.get("severity")),
-                "confidence": risk.get("confidence", {}),
-                "evidence_points": risk.get("evidence_points", []),
-                "recommendation": risk.get("recommendation", ""),
+                "category": cluster.get("category", _format_category_name(representative.get("category"))),
+                "message": representative.get("message", "Unnamed issue"),
+                "summary": cluster.get("summary", ""),
+                "cluster_count": cluster.get("count", 1),
+                "severity": _normalize_severity(representative.get("severity")),
+                "confidence": representative.get("confidence", {}),
+                "evidence_points": representative.get("evidence_points", []),
+                "transparency": representative.get("transparency", {}),
+                "recommendation": representative.get("recommendation", ""),
             }
         )
 
@@ -620,6 +915,7 @@ def _build_trusted_focus_items(
     focus_items.sort(
         key=lambda item: (
             -int(item.get("confidence", {}).get("score", 0)),
+            -int(item.get("cluster_count", 1)),
             -_severity_weight(item.get("severity")),
             change_type_order.get(item.get("change_type"), 9),
             item.get("category", "").lower(),
@@ -898,6 +1194,10 @@ def generate_comparison_insights(comparison_result: Dict[str, Any]) -> Dict[str,
         "unchanged": risk_diff.get("unchanged", []),
     }
 
+    clustered_added = _cluster_risk_list(risk_diff.get("added", []), "added")
+    clustered_removed = _cluster_risk_list(risk_diff.get("removed", []), "removed")
+    clustered_changed = _cluster_risk_list(risk_diff.get("changed", []), "changed")
+
     category_impacts = calculate_category_impacts(
         added_risks=risk_diff.get("added", []),
         removed_risks=risk_diff.get("removed", []),
@@ -965,6 +1265,15 @@ def generate_comparison_insights(comparison_result: Dict[str, Any]) -> Dict[str,
         trusted_focus_items=trusted_focus_items,
     )
 
+    noise_reduction_summary = _build_noise_reduction_summary(
+        added_risks=risk_diff.get("added", []),
+        removed_risks=risk_diff.get("removed", []),
+        changed_risks=risk_diff.get("changed", []),
+        clustered_added=clustered_added,
+        clustered_removed=clustered_removed,
+        clustered_changed=clustered_changed,
+    )
+
     stability_state = (
         "stable"
         if stats["added_count"] == 0 and stats["removed_count"] == 0 and stats["changed_count"] == 0
@@ -986,4 +1295,8 @@ def generate_comparison_insights(comparison_result: Dict[str, Any]) -> Dict[str,
         "signal_summary": signal_summary,
         "trust_summary": trust_summary,
         "trusted_focus_items": trusted_focus_items,
+        "clustered_added_risks": clustered_added,
+        "clustered_removed_risks": clustered_removed,
+        "clustered_changed_risks": clustered_changed,
+        "noise_reduction_summary": noise_reduction_summary,
     }
