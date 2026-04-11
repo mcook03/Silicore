@@ -84,6 +84,459 @@
     </section>
 </section>
 
+{% if comparison.insights %}
+<section class="card insight-hero-card">
+    <div class="card-header">
+        <h2 class="section-title">Why Score Changed</h2>
+        <p class="section-copy">
+            High-level engineering explanation of what changed between these two revisions.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="summary-panel insight-summary-panel">
+            <p>{{ comparison.insights.overview_summary }}</p>
+        </div>
+
+        {% if comparison.insights.engineering_takeaway %}
+        <div class="takeaway-banner" style="margin-top:16px;">
+            <div class="takeaway-label">Engineering Takeaway</div>
+            <div class="takeaway-copy">{{ comparison.insights.engineering_takeaway }}</div>
+        </div>
+        {% endif %}
+
+        {% if comparison.insights.score_change %}
+        <div class="grid grid-4 insight-metric-grid" style="margin-top:18px;">
+            <div class="metric-card">
+                <div class="metric-label">Baseline Score</div>
+                <div class="metric-value">{{ comparison.insights.score_change.old_score|round(1)|int }}</div>
+                <div class="metric-sub">Starting comparison score</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">New Score</div>
+                <div class="metric-value">{{ comparison.insights.score_change.new_score|round(1)|int }}</div>
+                <div class="metric-sub">Latest comparison score</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Score Delta</div>
+                <div class="metric-value {{ comparison_delta_class(comparison.insights.score_change.delta, true) }}">
+                    {{ comparison.insights.score_change.delta }}
+                </div>
+                <div class="metric-sub">{{ comparison.insights.score_change.direction|title }}</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Finding Movement</div>
+                <div class="metric-value">
+                    {{ comparison.insights.stats.added_count + comparison.insights.stats.changed_count + comparison.insights.stats.removed_count }}
+                </div>
+                <div class="metric-sub">Added, removed, and changed findings</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card trust-hero-card">
+    <div class="card-header">
+        <h2 class="section-title">Trust Summary</h2>
+        <p class="section-copy">
+            Confidence, evidence quality, and signal strength for the comparison findings shown below.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.insights.trust_summary %}
+        <div class="summary-panel trust-summary-panel">
+            <p>{{ comparison.insights.trust_summary.summary }}</p>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-4 insight-metric-grid" style="margin-top:18px;">
+            <div class="metric-card">
+                <div class="metric-label">Trust Band</div>
+                <div class="metric-value">
+                    {{ comparison.insights.trust_summary.band|upper if comparison.insights.trust_summary else "N/A" }}
+                </div>
+                <div class="metric-sub">Overall comparison trust signal</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Avg Confidence</div>
+                <div class="metric-value">
+                    {{ comparison.insights.confidence_summary.average_score if comparison.insights.confidence_summary else 0 }}
+                </div>
+                <div class="metric-sub">Average confidence across changed findings</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Signal Findings</div>
+                <div class="metric-value">
+                    {{ comparison.insights.signal_summary.signal_count if comparison.insights.signal_summary else 0 }}
+                </div>
+                <div class="metric-sub">Higher-confidence comparison findings</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Top Focus Confidence</div>
+                <div class="metric-value">
+                    {{ comparison.insights.trust_summary.top_focus_confidence if comparison.insights.trust_summary else 0 }}
+                </div>
+                <div class="metric-sub">Confidence score of the strongest focus item</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Confidence Overview</h2>
+            <p class="section-copy">
+                Distribution of high, medium, and low-confidence findings in this comparison.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.insights.confidence_summary %}
+                <div class="summary-panel compact-summary-panel">
+                    <p>{{ comparison.insights.confidence_summary.summary }}</p>
+                </div>
+
+                <div class="mini-stat-row" style="margin-top:14px;">
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">High Confidence</span>
+                        <span class="mini-stat-value">{{ comparison.insights.confidence_summary.high_count }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Medium Confidence</span>
+                        <span class="mini-stat-value">{{ comparison.insights.confidence_summary.medium_count }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Low Confidence</span>
+                        <span class="mini-stat-value">{{ comparison.insights.confidence_summary.low_count }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Average Score</span>
+                        <span class="mini-stat-value">{{ comparison.insights.confidence_summary.average_score }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No confidence summary available</h3>
+                    <p>This comparison did not generate enough finding-level trust data to summarize confidence.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Signal vs Noise</h2>
+            <p class="section-copy">
+                Separate stronger signals from findings that still need extra review.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.insights.signal_summary %}
+                <div class="summary-panel compact-summary-panel">
+                    <p>{{ comparison.insights.signal_summary.summary }}</p>
+                </div>
+
+                <div class="mini-stat-row" style="margin-top:14px;">
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Signal</span>
+                        <span class="mini-stat-value">{{ comparison.insights.signal_summary.signal_count }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Needs Review</span>
+                        <span class="mini-stat-value">{{ comparison.insights.signal_summary.review_count }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Noise Watch</span>
+                        <span class="mini-stat-value">{{ comparison.insights.signal_summary.noise_watch_count }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No signal summary available</h3>
+                    <p>This comparison did not produce enough trust metadata to classify findings by signal strength.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Trusted Focus Items</h2>
+        <p class="section-copy">
+            Highest-confidence comparison findings with supporting evidence and recommended follow-up.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.insights.trusted_focus_items %}
+            <div class="finding-list">
+                {% for item in comparison.insights.trusted_focus_items %}
+                <div class="finding trust-finding">
+                    <div class="finding-top">
+                        <div>
+                            <div class="trust-chip-row">
+                                <div class="chip {% if item.change_type == 'added' %}chip-critical{% elif item.change_type == 'changed' %}chip-medium{% else %}chip-low{% endif %}">
+                                    {{ item.change_type|upper }}
+                                </div>
+                                <div class="chip {% if item.confidence.band == 'high' %}chip-low{% elif item.confidence.band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
+                                    {{ item.confidence.band|upper }} CONFIDENCE
+                                </div>
+                                <div class="chip chip-soft">
+                                    {{ item.confidence.signal_level.replace('_', ' ')|upper }}
+                                </div>
+                            </div>
+                            <h4>{{ item.message }}</h4>
+                        </div>
+
+                        <div class="small-muted">
+                            {{ item.category }}<br>
+                            Confidence: {{ item.confidence.score }}
+                            {% if item.old_severity and item.new_severity %}
+                            <br>{{ item.old_severity|upper }} → {{ item.new_severity|upper }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if item.evidence_points %}
+                    <div class="finding-block">
+                        <span class="finding-label">Evidence:</span>
+                        <ul class="evidence-list">
+                            {% for point in item.evidence_points[:4] %}
+                            <li>{{ point }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if item.confidence.reasons %}
+                    <div class="finding-block">
+                        <span class="finding-label">Why this confidence level:</span>
+                        <ul class="evidence-list">
+                            {% for reason in item.confidence.reasons %}
+                            <li>{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if item.recommendation %}
+                    <div class="finding-block">
+                        <span class="finding-label">Recommended follow-up:</span>
+                        {{ item.recommendation }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No trusted focus items generated</h3>
+                <p>This comparison did not surface enough confidence-backed findings to create a focused trust list.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Top Impact Categories</h2>
+            <p class="section-copy">
+                Engineering areas that drove the largest movement in this comparison.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.insights.category_impacts %}
+                <div class="finding-list">
+                    {% for item in comparison.insights.category_impacts[:6] %}
+                    <div class="finding impact-finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip {% if item.direction == 'worse' %}chip-critical{% elif item.direction == 'better' %}chip-low{% else %}chip-medium{% endif %}">
+                                    {{ item.direction|upper }}
+                                </div>
+                                <h4>{{ item.category }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                Delta:
+                                {% if item.delta > 0 %}+{% endif %}{{ item.delta }}
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">Summary:</span>
+                            {{ item.summary }}
+                        </div>
+
+                        <div class="mini-stat-row">
+                            <div class="mini-stat">
+                                <span class="mini-stat-label">Added</span>
+                                <span class="mini-stat-value">{{ item.details.added_count }}</span>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-stat-label">Removed</span>
+                                <span class="mini-stat-value">{{ item.details.removed_count }}</span>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-stat-label">Severity Up</span>
+                                <span class="mini-stat-value">{{ item.details.severity_increase_count }}</span>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-stat-label">Severity Down</span>
+                                <span class="mini-stat-value">{{ item.details.severity_decrease_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No major category drivers identified</h3>
+                    <p>This comparison did not produce strong category-level movement. The revisions may be materially similar or changes may be more localized.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Recommended Next Focus</h2>
+            <p class="section-copy">
+                Suggested engineering priorities based on the largest negative movement and current board risk areas.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.insights.recommendations %}
+                <div class="finding-list">
+                    {% for recommendation in comparison.insights.recommendations %}
+                    <div class="finding recommendation-finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip {% if recommendation.priority == 'high' %}chip-critical{% elif recommendation.priority == 'medium' %}chip-medium{% else %}chip-low{% endif %}">
+                                    {{ recommendation.priority|upper }}
+                                </div>
+                                <h4>{{ recommendation.title }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ recommendation.category if recommendation.category else "General" }}
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">Reason:</span>
+                            {{ recommendation.reason }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No immediate priority actions</h3>
+                    <p>This comparison does not show obvious urgent follow-up. Review detailed findings to confirm the revision remains healthy.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Largest Worsening Areas</h2>
+            <p class="section-copy">
+                Categories that introduced the strongest negative movement in the latest revision.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.insights.top_worsening_categories %}
+                <div class="finding-list">
+                    {% for item in comparison.insights.top_worsening_categories %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip chip-critical">WORSE</div>
+                                <h4>{{ item.category }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                +{{ item.abs_delta }} weighted impact
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">Why it matters:</span>
+                            {{ item.summary }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No worsening categories identified</h3>
+                    <p>No category showed clear negative movement in this comparison.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Improvement Highlights</h2>
+            <p class="section-copy">
+                Categories that improved and reduced engineering risk in the latest revision.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.insights.top_improving_categories %}
+                <div class="finding-list">
+                    {% for item in comparison.insights.top_improving_categories %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip chip-low">BETTER</div>
+                                <h4>{{ item.category }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ item.abs_delta }} weighted improvement
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">What improved:</span>
+                            {{ item.summary }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No improvement highlights identified</h3>
+                    <p>This comparison did not produce clear category-level reductions in risk.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+{% endif %}
+
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Engineering Changes</h2>
@@ -338,6 +791,139 @@
 
     .chip-critical-text {
         color: #fca5a5;
+    }
+
+    .insight-hero-card,
+    .trust-hero-card {
+        border: 1px solid rgba(99, 102, 241, 0.18);
+        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+    }
+
+    .insight-summary-panel,
+    .trust-summary-panel {
+        border: 1px solid rgba(99, 102, 241, 0.14);
+        background: linear-gradient(180deg, rgba(99, 102, 241, 0.08), rgba(15, 23, 42, 0.02));
+    }
+
+    .insight-summary-panel p,
+    .trust-summary-panel p {
+        margin: 0;
+        line-height: 1.65;
+    }
+
+    .takeaway-banner {
+        border-radius: 16px;
+        padding: 16px 18px;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background: rgba(15, 23, 42, 0.28);
+    }
+
+    .takeaway-label {
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.9);
+        margin-bottom: 6px;
+    }
+
+    .takeaway-copy {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #e5e7eb;
+        font-weight: 600;
+    }
+
+    .compact-summary-panel {
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        background: rgba(15, 23, 42, 0.18);
+    }
+
+    .compact-summary-panel p {
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .impact-finding,
+    .recommendation-finding,
+    .trust-finding {
+        border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .trust-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .evidence-list {
+        margin: 8px 0 0 18px;
+        padding: 0;
+    }
+
+    .evidence-list li {
+        margin-bottom: 6px;
+        color: rgba(226, 232, 240, 0.88);
+    }
+
+    .mini-stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .mini-stat {
+        padding: 12px;
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.22);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .mini-stat-label {
+        display: block;
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.9);
+        margin-bottom: 6px;
+    }
+
+    .mini-stat-value {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #e5e7eb;
+    }
+
+    .refined-empty-state {
+        padding: 20px;
+        border-radius: 16px;
+        border: 1px dashed rgba(148, 163, 184, 0.18);
+        background: rgba(15, 23, 42, 0.16);
+    }
+
+    .refined-empty-state h3 {
+        margin: 0 0 8px 0;
+        font-size: 1rem;
+    }
+
+    .refined-empty-state p {
+        margin: 0;
+        color: rgba(226, 232, 240, 0.82);
+        line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+        .mini-stat-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 640px) {
+        .mini-stat-row {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
     }
 </style>
 

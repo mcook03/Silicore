@@ -3,7 +3,7 @@
   "name": "Test Project",
   "description": "",
   "created_at": "2026-04-05 00:51:23 UTC",
-  "updated_at": "2026-04-05 02:05:39 UTC",
+  "updated_at": "2026-04-11 02:35:14 UTC",
   "runs": [
     {
       "run_id": "project_20260404_195137_972138",
@@ -708,6 +708,1838 @@
       ],
       "category_summary": {
         "layout": 31,
+        "thermal": 11
+      }
+    },
+    {
+      "run_id": "single_20260408_233558_235247",
+      "name": "risky_board_no_gnd.txt",
+      "run_type": "single",
+      "created_at": "2026-04-09T04:35:58.273905",
+      "score": 3.8,
+      "risk_count": 12,
+      "critical_count": 0,
+      "summary": "This board shows high design risk. The main risk concentration is in layout. The highest-priority issue is U1 and U2 are too close (1.00 units). The current design snapshot includes 8 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+      "path": "single_20260408_233558_235247",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.00 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U3 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 8,
+        "thermal": 4
+      }
+    },
+    {
+      "run_id": "single_20260408_233618_759354",
+      "name": "risky_board_fixed_gnd.txt",
+      "run_type": "single",
+      "created_at": "2026-04-09T04:36:18.765649",
+      "score": 6.9,
+      "risk_count": 6,
+      "critical_count": 0,
+      "summary": "This board shows elevated design risk. The main risk concentration is in layout. The highest-priority issue is U1 and C1 are too close (1.41 units). The current design snapshot includes 8 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+      "path": "single_20260408_233618_759354",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.41 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.83 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C2 and R2 are too close (2.83 units)",
+          "signature": "high|layout|C2 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C2 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 4,
+        "thermal": 2
+      }
+    },
+    {
+      "run_id": "project_20260408_235848_519816",
+      "name": "power_board_v1.txt, sensor_board_v1.txt, risky_board_no_gnd.txt",
+      "run_type": "project",
+      "created_at": "2026-04-09T04:58:48.551092",
+      "score": 3.52,
+      "risk_count": 37,
+      "critical_count": 0,
+      "summary": "The strongest board is power_board_v1.txt at 4.75 / 10, while the weakest board is sensor_board_v1.txt at 2.0 / 10. The current score spread across the project is 2.75 points. The most recurring issue area across the project is layout.",
+      "path": "project_20260408_235848_519816",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U1 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and Q1 are too close (2.24 units)",
+          "signature": "high|layout|U2 and Q1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and Q1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and D1 are too close (1.00 units)",
+          "signature": "high|layout|Q1 and D1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and D1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and L1 are too close (2.00 units)",
+          "signature": "high|layout|Q1 and L1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and L1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|D1 and L1 are too close (1.00 units)",
+          "signature": "high|layout|D1 and L1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "D1 and L1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (1.41 units)",
+          "signature": "high|layout|J1 and LED1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "signature": "medium|thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.00 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U3 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|U1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U1 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.83 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R2 are too close (2.24 units)",
+          "signature": "high|layout|U2 and R2 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R2 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.83 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (2.83 units)",
+          "signature": "high|layout|J1 and LED1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 26,
+        "thermal": 11
+      }
+    },
+    {
+      "run_id": "project_20260408_235900_546486",
+      "name": "power_board_v2.txt, sensor_board_v2.txt, risky_board_fixed_gnd.txt",
+      "run_type": "project",
+      "created_at": "2026-04-09T04:59:00.566955",
+      "score": 5.9,
+      "risk_count": 23,
+      "critical_count": 0,
+      "summary": "The strongest board is risky_board_fixed_gnd.txt at 6.9 / 10, while the weakest board is sensor_board_v2.txt at 4.5 / 10. The current score spread across the project is 2.4 points. The most recurring issue area across the project is layout.",
+      "path": "project_20260408_235900_546486",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.41 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.83 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C2 and R2 are too close (2.83 units)",
+          "signature": "high|layout|C2 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C2 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.00 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and D1 are too close (2.00 units)",
+          "signature": "high|layout|Q1 and D1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and D1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (1.41 units)",
+          "signature": "high|layout|J1 and LED1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|U1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U1 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.00 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R2 are too close (1.41 units)",
+          "signature": "high|layout|C1 and R2 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R2 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (2.83 units)",
+          "signature": "high|layout|J1 and LED1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 17,
+        "thermal": 6
+      }
+    },
+    {
+      "run_id": "project_20260410_075835_839885",
+      "name": "power_board_v1.txt, sensor_board_v1.txt, risky_board_no_gnd.txt",
+      "run_type": "project",
+      "created_at": "2026-04-10T12:58:35.863379",
+      "score": 3.52,
+      "risk_count": 37,
+      "critical_count": 0,
+      "summary": "The strongest board is power_board_v1.txt at 4.75 / 10, while the weakest board is sensor_board_v1.txt at 2.0 / 10. The current score spread across the project is 2.75 points. The most recurring issue area across the project is layout.",
+      "path": "project_20260410_075835_839885",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U1 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and Q1 are too close (2.24 units)",
+          "signature": "high|layout|U2 and Q1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and Q1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and D1 are too close (1.00 units)",
+          "signature": "high|layout|Q1 and D1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and D1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and L1 are too close (2.00 units)",
+          "signature": "high|layout|Q1 and L1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and L1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|D1 and L1 are too close (1.00 units)",
+          "signature": "high|layout|D1 and L1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "D1 and L1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (1.41 units)",
+          "signature": "high|layout|J1 and LED1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "signature": "medium|thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.00 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U3 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|U1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U1 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.83 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R2 are too close (2.24 units)",
+          "signature": "high|layout|U2 and R2 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R2 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.83 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (2.83 units)",
+          "signature": "high|layout|J1 and LED1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 26,
+        "thermal": 11
+      }
+    },
+    {
+      "run_id": "project_20260410_213401_156327",
+      "name": "power_board_v1.txt, sensor_board_v1.txt, risky_board_no_gnd.txt",
+      "run_type": "project",
+      "created_at": "2026-04-11T02:34:01.187712",
+      "score": 3.52,
+      "risk_count": 37,
+      "critical_count": 0,
+      "summary": "The strongest board is power_board_v1.txt at 4.75 / 10, while the weakest board is sensor_board_v1.txt at 2.0 / 10. The current score spread across the project is 2.75 points. The most recurring issue area across the project is layout.",
+      "path": "project_20260410_213401_156327",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U1 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and Q1 are too close (2.24 units)",
+          "signature": "high|layout|U2 and Q1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and Q1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and D1 are too close (1.00 units)",
+          "signature": "high|layout|Q1 and D1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and D1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and L1 are too close (2.00 units)",
+          "signature": "high|layout|Q1 and L1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and L1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|D1 and L1 are too close (1.00 units)",
+          "signature": "high|layout|D1 and L1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "D1 and L1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (1.41 units)",
+          "signature": "high|layout|J1 and LED1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "signature": "medium|thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.00 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U3 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|U1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U1 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.83 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R2 are too close (2.24 units)",
+          "signature": "high|layout|U2 and R2 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R2 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.83 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (2.83 units)",
+          "signature": "high|layout|J1 and LED1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 26,
+        "thermal": 11
+      }
+    },
+    {
+      "run_id": "project_20260410_213453_055072",
+      "name": "power_board_v2.txt, sensor_board_v2.txt, risky_board_fixed_gnd.txt",
+      "run_type": "project",
+      "created_at": "2026-04-11T02:34:53.077619",
+      "score": 5.9,
+      "risk_count": 23,
+      "critical_count": 0,
+      "summary": "The strongest board is risky_board_fixed_gnd.txt at 6.9 / 10, while the weakest board is sensor_board_v2.txt at 4.5 / 10. The current score spread across the project is 2.4 points. The most recurring issue area across the project is layout.",
+      "path": "project_20260410_213453_055072",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.41 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.83 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C2 and R2 are too close (2.83 units)",
+          "signature": "high|layout|C2 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C2 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.00 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and D1 are too close (2.00 units)",
+          "signature": "high|layout|Q1 and D1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and D1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (1.41 units)",
+          "signature": "high|layout|J1 and LED1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and C1 are too close (1.41 units)",
+          "signature": "high|layout|U1 and C1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and C1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|U1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U1 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and C2 are too close (1.00 units)",
+          "signature": "high|layout|U2 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|C1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and R2 are too close (1.41 units)",
+          "signature": "high|layout|C1 and R2 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and R2 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (2.83 units)",
+          "signature": "high|layout|J1 and LED1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "signature": "medium|thermal|U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 17,
+        "thermal": 6
+      }
+    },
+    {
+      "run_id": "project_20260410_213514_725604",
+      "name": "power_board_v1.txt, sensor_board_v1.txt, risky_board_no_gnd.txt",
+      "run_type": "project",
+      "created_at": "2026-04-11T02:35:14.750399",
+      "score": 3.52,
+      "risk_count": 37,
+      "critical_count": 0,
+      "summary": "The strongest board is power_board_v1.txt at 4.75 / 10, while the weakest board is sensor_board_v1.txt at 2.0 / 10. The current score spread across the project is 2.75 points. The most recurring issue area across the project is layout.",
+      "path": "project_20260410_213514_725604",
+      "risk_snapshot": [
+        {
+          "base_signature": "layout|U1 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U1 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and Q1 are too close (2.24 units)",
+          "signature": "high|layout|U2 and Q1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and Q1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and D1 are too close (1.00 units)",
+          "signature": "high|layout|Q1 and D1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and D1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|Q1 and L1 are too close (2.00 units)",
+          "signature": "high|layout|Q1 and L1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "Q1 and L1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|D1 and L1 are too close (1.00 units)",
+          "signature": "high|layout|D1 and L1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "D1 and L1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (1.41 units)",
+          "signature": "high|layout|J1 and LED1 are too close (1.41 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (1.41 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "signature": "medium|thermal|U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and Q1 may create a thermal hotspot (2.24 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "Q1 and L1 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.00 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R1 are too close (1.00 units)",
+          "signature": "high|layout|U3 and R1 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R1 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "layout|U1 and U2 are too close (1.00 units)",
+          "signature": "high|layout|U1 and U2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and U3 are too close (2.00 units)",
+          "signature": "high|layout|U1 and U3 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and U3 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R1 are too close (2.24 units)",
+          "signature": "high|layout|U1 and R1 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R1 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U1 and R2 are too close (2.00 units)",
+          "signature": "high|layout|U1 and R2 are too close (2.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U1 and R2 are too close (2.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and U3 are too close (1.00 units)",
+          "signature": "high|layout|U2 and U3 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and U3 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R1 are too close (2.83 units)",
+          "signature": "high|layout|U2 and R1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U2 and R2 are too close (2.24 units)",
+          "signature": "high|layout|U2 and R2 are too close (2.24 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U2 and R2 are too close (2.24 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|U3 and R2 are too close (2.83 units)",
+          "signature": "high|layout|U3 and R2 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "U3 and R2 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|C1 and C2 are too close (1.00 units)",
+          "signature": "high|layout|C1 and C2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "C1 and C2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|R1 and R2 are too close (1.00 units)",
+          "signature": "high|layout|R1 and R2 are too close (1.00 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "R1 and R2 are too close (1.00 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "layout|J1 and LED1 are too close (2.83 units)",
+          "signature": "high|layout|J1 and LED1 are too close (2.83 units)",
+          "severity": "high",
+          "category": "layout",
+          "message": "J1 and LED1 are too close (2.83 units)",
+          "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+        },
+        {
+          "base_signature": "thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "signature": "medium|thermal|U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 and U3 may create a thermal hotspot (2.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U2 and U3 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        },
+        {
+          "base_signature": "thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "signature": "medium|thermal|C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "C1 and C2 may create a thermal hotspot (1.00 units apart)",
+          "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components."
+        }
+      ],
+      "category_summary": {
+        "layout": 26,
         "thermal": 11
       }
     }

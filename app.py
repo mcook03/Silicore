@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections import defaultdict
+from engine.insight_engine import generate_comparison_insights
 
 from flask import (
     Flask,
@@ -1476,6 +1477,27 @@ def compare_runs(project_id):
 
     delta_analysis = _build_delta_analysis(run_a, run_b)
 
+    # Use the same risk source that the existing comparison system uses.
+    old_risks = (
+        run_a.get("risk_snapshot")
+        or run_a.get("risks")
+        or []
+    )
+    new_risks = (
+        run_b.get("risk_snapshot")
+        or run_b.get("risks")
+        or []
+    )
+
+    comparison_input = {
+        "old_score": score_a,
+        "new_score": score_b,
+        "old_risks": old_risks,
+        "new_risks": new_risks,
+    }
+
+    insights = generate_comparison_insights(comparison_input)
+
     comparison = {
         "run_a": run_a,
         "run_b": run_b,
@@ -1483,6 +1505,7 @@ def compare_runs(project_id):
         "risk_diff": risk_b - risk_a,
         "critical_diff": critical_b - critical_a,
         "delta_analysis": delta_analysis,
+        "insights": insights,
         "summary": {
             "score_changed": round(score_b - score_a, 2),
             "risk_changed": risk_b - risk_a,
@@ -1504,7 +1527,6 @@ def compare_runs(project_id):
             "comparison": comparison,
         },
     )
-
 
 @app.route("/history", methods=["GET"])
 def history_page():
