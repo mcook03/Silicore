@@ -1477,26 +1477,82 @@ def compare_runs(project_id):
 
     delta_analysis = _build_delta_analysis(run_a, run_b)
 
-    # Use the same risk source that the existing comparison system uses.
-    old_risks = (
-        run_a.get("risk_snapshot")
-        or run_a.get("risks")
-        or []
-    )
-    new_risks = (
-        run_b.get("risk_snapshot")
-        or run_b.get("risks")
-        or []
-    )
+    old_risks = run_a.get("risk_snapshot") or run_a.get("risks") or []
+    new_risks = run_b.get("risk_snapshot") or run_b.get("risks") or []
 
-    comparison_input = {
-        "old_score": score_a,
-        "new_score": score_b,
-        "old_risks": old_risks,
-        "new_risks": new_risks,
-    }
-
-    insights = generate_comparison_insights(comparison_input)
+    try:
+        insights = generate_comparison_insights(
+            {
+                "old_score": score_a,
+                "new_score": score_b,
+                "old_risks": old_risks,
+                "new_risks": new_risks,
+            }
+        )
+    except Exception as exc:
+        print(f"[compare_runs] insight generation failed: {exc}")
+        insights = {
+            "score_change": {
+                "old_score": round(score_a, 2),
+                "new_score": round(score_b, 2),
+                "delta": round(score_b - score_a, 2),
+                "direction": "up" if score_b > score_a else "down" if score_b < score_a else "flat",
+                "summary": "Comparison insight generation failed.",
+                "engineering_summary": "Comparison insight generation failed, but the base delta comparison is still available.",
+            },
+            "overview_summary": "Comparison insight generation failed, so only the base delta view may be available.",
+            "engineering_takeaway": "Review the raw comparison sections below while the insight layer is unavailable.",
+            "stability_state": "changed",
+            "risk_diff": {
+                "added": [],
+                "removed": [],
+                "changed": [],
+                "unchanged": [],
+            },
+            "category_impacts": [],
+            "top_worsening_categories": [],
+            "top_improving_categories": [],
+            "recommendations": [],
+            "stats": {
+                "added_count": 0,
+                "removed_count": 0,
+                "changed_count": 0,
+                "unchanged_count": 0,
+                "old_risk_count": len(old_risks),
+                "new_risk_count": len(new_risks),
+            },
+            "confidence_summary": {
+                "average_score": 0,
+                "band": "low",
+                "summary": "No confidence summary is available because insight generation failed.",
+                "high_count": 0,
+                "medium_count": 0,
+                "low_count": 0,
+            },
+            "signal_summary": {
+                "signal_count": 0,
+                "review_count": 0,
+                "noise_watch_count": 0,
+                "summary": "No signal summary is available because insight generation failed.",
+            },
+            "trust_summary": {
+                "band": "low",
+                "summary": "Trust summary unavailable because insight generation failed.",
+                "top_focus_confidence": 0,
+                "high_confidence_items": 0,
+            },
+            "trusted_focus_items": [],
+            "clustered_added_risks": [],
+            "clustered_removed_risks": [],
+            "clustered_changed_risks": [],
+            "noise_reduction_summary": {
+                "raw_total": len(old_risks) + len(new_risks),
+                "clustered_total": 0,
+                "suppressed_count": 0,
+                "reduction_pct": 0,
+                "summary": "Noise reduction summary unavailable because insight generation failed.",
+            },
+        }
 
     comparison = {
         "run_a": run_a,
@@ -1527,6 +1583,7 @@ def compare_runs(project_id):
             "comparison": comparison,
         },
     )
+
 
 @app.route("/history", methods=["GET"])
 def history_page():
