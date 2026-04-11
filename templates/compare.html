@@ -109,13 +109,13 @@
         <div class="grid grid-4 insight-metric-grid" style="margin-top:18px;">
             <div class="metric-card">
                 <div class="metric-label">Baseline Score</div>
-                <div class="metric-value">{{ comparison.insights.score_change.old_score|round(1)|int }}</div>
+                <div class="metric-value">{{ comparison.insights.score_change.old_score|round(2) }}</div>
                 <div class="metric-sub">Starting comparison score</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-label">New Score</div>
-                <div class="metric-value">{{ comparison.insights.score_change.new_score|round(1)|int }}</div>
+                <div class="metric-value">{{ comparison.insights.score_change.new_score|round(2) }}</div>
                 <div class="metric-sub">Latest comparison score</div>
             </div>
 
@@ -272,6 +272,47 @@
 
 <section class="card">
     <div class="card-header">
+        <h2 class="section-title">Noise Reduction</h2>
+        <p class="section-copy">
+            Group repeated or highly similar findings so the comparison stays readable and engineering attention stays focused.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.insights.noise_reduction_summary %}
+            <div class="summary-panel compact-summary-panel">
+                <p>{{ comparison.insights.noise_reduction_summary.summary }}</p>
+            </div>
+
+            <div class="mini-stat-row" style="margin-top:14px;">
+                <div class="mini-stat">
+                    <span class="mini-stat-label">Raw Findings</span>
+                    <span class="mini-stat-value">{{ comparison.insights.noise_reduction_summary.raw_total }}</span>
+                </div>
+                <div class="mini-stat">
+                    <span class="mini-stat-label">Clustered Groups</span>
+                    <span class="mini-stat-value">{{ comparison.insights.noise_reduction_summary.clustered_total }}</span>
+                </div>
+                <div class="mini-stat">
+                    <span class="mini-stat-label">Suppressed</span>
+                    <span class="mini-stat-value">{{ comparison.insights.noise_reduction_summary.suppressed_count }}</span>
+                </div>
+                <div class="mini-stat">
+                    <span class="mini-stat-label">Reduction %</span>
+                    <span class="mini-stat-value">{{ comparison.insights.noise_reduction_summary.reduction_pct }}</span>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No clustering summary available</h3>
+                <p>This comparison did not produce enough repeated findings to build a noise reduction summary.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
         <h2 class="section-title">Trusted Focus Items</h2>
         <p class="section-copy">
             Highest-confidence comparison findings with supporting evidence and recommended follow-up.
@@ -295,6 +336,11 @@
                                 <div class="chip chip-soft">
                                     {{ item.confidence.signal_level.replace('_', ' ')|upper }}
                                 </div>
+                                {% if item.cluster_count and item.cluster_count > 1 %}
+                                <div class="chip chip-soft">
+                                    {{ item.cluster_count }} GROUPED
+                                </div>
+                                {% endif %}
                             </div>
                             <h4>{{ item.message }}</h4>
                         </div>
@@ -307,6 +353,13 @@
                             {% endif %}
                         </div>
                     </div>
+
+                    {% if item.summary and item.cluster_count and item.cluster_count > 1 %}
+                    <div class="finding-block grouped-summary-block">
+                        <span class="finding-label">Grouped summary:</span>
+                        {{ item.summary }}
+                    </div>
+                    {% endif %}
 
                     {% if item.evidence_points %}
                     <div class="finding-block">
@@ -328,6 +381,40 @@
                             {% endfor %}
                         </ul>
                     </div>
+                    {% endif %}
+
+                    {% if item.transparency %}
+                    <div class="finding-block transparency-block">
+                        <span class="finding-label">What triggered it:</span>
+                        {{ item.transparency.trigger }}
+                    </div>
+
+                    <div class="finding-block transparency-block">
+                        <span class="finding-label">Threshold or rule basis:</span>
+                        {{ item.transparency.threshold }}
+                    </div>
+
+                    <div class="finding-block transparency-block">
+                        <span class="finding-label">Observed condition:</span>
+                        {{ item.transparency.observed_value }}
+                    </div>
+
+                    <div class="finding-block transparency-block">
+                        <span class="finding-label">Engineering reasoning:</span>
+                        {{ item.transparency.reasoning }}
+                    </div>
+
+                    <div class="finding-block transparency-block">
+                        <span class="finding-label">Engineering impact:</span>
+                        {{ item.transparency.engineering_impact }}
+                    </div>
+
+                    {% if item.transparency.evidence_summary %}
+                    <div class="finding-block transparency-block">
+                        <span class="finding-label">Evidence summary:</span>
+                        {{ item.transparency.evidence_summary }}
+                    </div>
+                    {% endif %}
                     {% endif %}
 
                     {% if item.recommendation %}
@@ -550,7 +637,7 @@
             <div class="metric-card">
                 <div class="metric-label">Score Change</div>
                 <div class="metric-value {{ comparison_delta_class(comparison.score_diff, true) }}">
-                    {{ (comparison.score_diff * 10)|round(1) }}
+                    {{ (comparison.score_diff * 10)|round(2) }}
                 </div>
                 <div class="metric-sub">{{ comparison.summary.score_direction }}</div>
             </div>
@@ -642,6 +729,45 @@
                             </div>
                         </div>
 
+                        {% if comparison.insights and comparison.insights.risk_diff and comparison.insights.risk_diff.added %}
+                            {% for enriched in comparison.insights.risk_diff.added %}
+                                {% if enriched.message == risk.message and enriched.category == risk.category %}
+                                    {% if enriched.confidence %}
+                                    <div class="finding-block inline-metadata-block">
+                                        <span class="finding-label">Confidence:</span>
+                                        {{ enriched.confidence.score }} | {{ enriched.confidence.band|upper }} | {{ enriched.confidence.signal_level.replace('_', ' ')|upper }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if enriched.transparency %}
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Trigger:</span>
+                                        {{ enriched.transparency.trigger }}
+                                    </div>
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Observed:</span>
+                                        {{ enriched.transparency.observed_value }}
+                                    </div>
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Impact:</span>
+                                        {{ enriched.transparency.engineering_impact }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if enriched.evidence_points %}
+                                    <div class="finding-block">
+                                        <span class="finding-label">Evidence:</span>
+                                        <ul class="evidence-list">
+                                            {% for point in enriched.evidence_points[:3] %}
+                                            <li>{{ point }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                         {% if risk.recommendation %}
                         <div class="finding-block">
                             <span class="finding-label">Recommendation:</span>
@@ -681,6 +807,45 @@
                             </div>
                         </div>
 
+                        {% if comparison.insights and comparison.insights.risk_diff and comparison.insights.risk_diff.removed %}
+                            {% for enriched in comparison.insights.risk_diff.removed %}
+                                {% if enriched.message == risk.message and enriched.category == risk.category %}
+                                    {% if enriched.confidence %}
+                                    <div class="finding-block inline-metadata-block">
+                                        <span class="finding-label">Confidence:</span>
+                                        {{ enriched.confidence.score }} | {{ enriched.confidence.band|upper }} | {{ enriched.confidence.signal_level.replace('_', ' ')|upper }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if enriched.transparency %}
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Trigger:</span>
+                                        {{ enriched.transparency.trigger }}
+                                    </div>
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Observed:</span>
+                                        {{ enriched.transparency.observed_value }}
+                                    </div>
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Impact:</span>
+                                        {{ enriched.transparency.engineering_impact }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if enriched.evidence_points %}
+                                    <div class="finding-block">
+                                        <span class="finding-label">Evidence:</span>
+                                        <ul class="evidence-list">
+                                            {% for point in enriched.evidence_points[:3] %}
+                                            <li>{{ point }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                         {% if risk.recommendation %}
                         <div class="finding-block">
                             <span class="finding-label">Recommendation:</span>
@@ -696,6 +861,136 @@
         </div>
     </section>
 </section>
+
+{% if comparison.insights and comparison.insights.clustered_added_risks %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Clustered Added Risks</h2>
+        <p class="section-copy">
+            Similar new findings grouped together so repeated issues are easier to review and prioritize.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="finding-list">
+            {% for cluster in comparison.insights.clustered_added_risks[:8] %}
+            <div class="finding grouped-finding">
+                <div class="finding-top">
+                    <div>
+                        <div class="trust-chip-row">
+                            <div class="chip chip-critical">ADDED</div>
+                            <div class="chip chip-soft">{{ cluster.category|upper }}</div>
+                            <div class="chip chip-soft">{{ cluster.count }} GROUPED</div>
+                            <div class="chip {% if cluster.confidence_band == 'high' %}chip-low{% elif cluster.confidence_band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
+                                {{ cluster.confidence_band|upper }}
+                            </div>
+                        </div>
+                        <h4>{{ cluster.message }}</h4>
+                    </div>
+
+                    <div class="small-muted">
+                        Avg Confidence: {{ cluster.average_confidence }}<br>
+                        Max Confidence: {{ cluster.max_confidence }}
+                    </div>
+                </div>
+
+                <div class="finding-block grouped-summary-block">
+                    <span class="finding-label">Grouped summary:</span>
+                    {{ cluster.summary }}
+                </div>
+
+                {% if cluster.evidence_points %}
+                <div class="finding-block">
+                    <span class="finding-label">Shared evidence:</span>
+                    <ul class="evidence-list">
+                        {% for point in cluster.evidence_points %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if cluster.recommendations %}
+                <div class="finding-block">
+                    <span class="finding-label">Likely follow-up:</span>
+                    <ul class="evidence-list">
+                        {% for rec in cluster.recommendations %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if comparison.insights and comparison.insights.clustered_removed_risks %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Clustered Removed Risks</h2>
+        <p class="section-copy">
+            Similar resolved findings grouped together so you can quickly see what types of issues were actually cleaned up.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="finding-list">
+            {% for cluster in comparison.insights.clustered_removed_risks[:8] %}
+            <div class="finding grouped-finding">
+                <div class="finding-top">
+                    <div>
+                        <div class="trust-chip-row">
+                            <div class="chip chip-low">REMOVED</div>
+                            <div class="chip chip-soft">{{ cluster.category|upper }}</div>
+                            <div class="chip chip-soft">{{ cluster.count }} GROUPED</div>
+                            <div class="chip {% if cluster.confidence_band == 'high' %}chip-low{% elif cluster.confidence_band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
+                                {{ cluster.confidence_band|upper }}
+                            </div>
+                        </div>
+                        <h4>{{ cluster.message }}</h4>
+                    </div>
+
+                    <div class="small-muted">
+                        Avg Confidence: {{ cluster.average_confidence }}<br>
+                        Max Confidence: {{ cluster.max_confidence }}
+                    </div>
+                </div>
+
+                <div class="finding-block grouped-summary-block">
+                    <span class="finding-label">Grouped summary:</span>
+                    {{ cluster.summary }}
+                </div>
+
+                {% if cluster.evidence_points %}
+                <div class="finding-block">
+                    <span class="finding-label">Shared evidence:</span>
+                    <ul class="evidence-list">
+                        {% for point in cluster.evidence_points %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if cluster.recommendations %}
+                <div class="finding-block">
+                    <span class="finding-label">Likely follow-up:</span>
+                    <ul class="evidence-list">
+                        {% for rec in cluster.recommendations %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
 
 <section class="card">
     <div class="card-header">
@@ -732,6 +1027,45 @@
                             {{ risk.old_severity|upper }} → {{ risk.new_severity|upper }}
                         </div>
 
+                        {% if comparison.insights and comparison.insights.risk_diff and comparison.insights.risk_diff.changed %}
+                            {% for enriched in comparison.insights.risk_diff.changed %}
+                                {% if enriched.message == risk.message and enriched.category == risk.category %}
+                                    {% if enriched.confidence %}
+                                    <div class="finding-block inline-metadata-block">
+                                        <span class="finding-label">Confidence:</span>
+                                        {{ enriched.confidence.score }} | {{ enriched.confidence.band|upper }} | {{ enriched.confidence.signal_level.replace('_', ' ')|upper }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if enriched.transparency %}
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Trigger:</span>
+                                        {{ enriched.transparency.trigger }}
+                                    </div>
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Observed:</span>
+                                        {{ enriched.transparency.observed_value }}
+                                    </div>
+                                    <div class="finding-block transparency-block">
+                                        <span class="finding-label">Impact:</span>
+                                        {{ enriched.transparency.engineering_impact }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if enriched.evidence_points %}
+                                    <div class="finding-block">
+                                        <span class="finding-label">Evidence:</span>
+                                        <ul class="evidence-list">
+                                            {% for point in enriched.evidence_points[:3] %}
+                                            <li>{{ point }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                         {% if risk.recommendation %}
                         <div class="finding-block">
                             <span class="finding-label">Recommendation:</span>
@@ -746,6 +1080,71 @@
         {% endif %}
     </div>
 </section>
+
+{% if comparison.insights and comparison.insights.clustered_changed_risks %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Clustered Severity Changes</h2>
+        <p class="section-copy">
+            Similar severity shifts grouped together to make repeated worsening or improvement patterns easier to spot.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="finding-list">
+            {% for cluster in comparison.insights.clustered_changed_risks[:8] %}
+            <div class="finding grouped-finding">
+                <div class="finding-top">
+                    <div>
+                        <div class="trust-chip-row">
+                            <div class="chip chip-medium">CHANGED</div>
+                            <div class="chip chip-soft">{{ cluster.category|upper }}</div>
+                            <div class="chip chip-soft">{{ cluster.count }} GROUPED</div>
+                            <div class="chip {% if cluster.confidence_band == 'high' %}chip-low{% elif cluster.confidence_band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
+                                {{ cluster.confidence_band|upper }}
+                            </div>
+                        </div>
+                        <h4>{{ cluster.message }}</h4>
+                    </div>
+
+                    <div class="small-muted">
+                        Avg Confidence: {{ cluster.average_confidence }}<br>
+                        Max Confidence: {{ cluster.max_confidence }}
+                    </div>
+                </div>
+
+                <div class="finding-block grouped-summary-block">
+                    <span class="finding-label">Grouped summary:</span>
+                    {{ cluster.summary }}
+                </div>
+
+                {% if cluster.evidence_points %}
+                <div class="finding-block">
+                    <span class="finding-label">Shared evidence:</span>
+                    <ul class="evidence-list">
+                        {% for point in cluster.evidence_points %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if cluster.recommendations %}
+                <div class="finding-block">
+                    <span class="finding-label">Likely follow-up:</span>
+                    <ul class="evidence-list">
+                        {% for rec in cluster.recommendations %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
 
 <section class="card">
     <div class="card-header">
@@ -845,7 +1244,8 @@
 
     .impact-finding,
     .recommendation-finding,
-    .trust-finding {
+    .trust-finding,
+    .grouped-finding {
         border: 1px solid rgba(148, 163, 184, 0.12);
     }
 
@@ -912,6 +1312,25 @@
         margin: 0;
         color: rgba(226, 232, 240, 0.82);
         line-height: 1.6;
+    }
+
+    .inline-metadata-block {
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        background: rgba(15, 23, 42, 0.18);
+        border-radius: 12px;
+        padding: 10px 12px;
+    }
+
+    .transparency-block {
+        border-left: 3px solid rgba(99, 102, 241, 0.55);
+        padding-left: 12px;
+    }
+
+    .grouped-summary-block {
+        border-left: 3px solid rgba(16, 185, 129, 0.55);
+        padding-left: 12px;
+        background: rgba(16, 185, 129, 0.04);
+        border-radius: 8px;
     }
 
     @media (max-width: 980px) {
