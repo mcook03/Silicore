@@ -478,6 +478,25 @@
                             {% endfor %}
                         </div>
                         {% endif %}
+
+                        {% if risk.transparency_view %}
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Trigger</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.trigger }}</span>
+                        </div>
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Observed</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.observed_text }}</span>
+                        </div>
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Impact</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.engineering_impact }}</span>
+                        </div>
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Confidence</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.confidence_score }} / 100</span>
+                        </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>

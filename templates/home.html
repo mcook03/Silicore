@@ -1,6 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 
+<section class="card dashboard-hero-card">
+    <div class="card-header">
+        <h2 class="section-title">Executive Overview</h2>
+        <p class="section-copy">Silicore as an engineering decision system: analyze, explain, prioritize, and track over time.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="summary-panel">
+            <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
+        </div>
+
+        {% if dashboard_story and dashboard_story.pillars %}
+        <div class="grid grid-3" style="margin-top:16px;">
+            {% for pillar in dashboard_story.pillars %}
+            <div class="result-card">
+                <div class="result-card-top">
+                    <div>
+                        <div class="result-card-title">{{ pillar.title }}</div>
+                        <div class="result-card-copy">{{ pillar.copy }}</div>
+                    </div>
+                    <span class="chip chip-soft">{{ pillar.value }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
 <section class="grid grid-2">
     <section class="card">
         <div class="card-header">
@@ -156,6 +185,72 @@
             </article>
         </div>
     </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Product Maturity</h2>
+            <p class="section-copy">How the current run archive maps to Silicore’s product pillars.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="home-table">
+                <div class="home-table-header">
+                    <div>Capability</div>
+                    <div>Status</div>
+                    <div>Evidence</div>
+                    <div>Meaning</div>
+                </div>
+
+                <div class="home-table-row">
+                    <div class="home-table-title">Design Analysis Engine</div>
+                    <div><span class="chip chip-low">LIVE</span></div>
+                    <div class="home-table-date">{{ stats.total_runs }} runs</div>
+                    <div class="result-card-copy">The platform is generating persistent scored analyses and artifacts.</div>
+                </div>
+
+                <div class="home-table-row">
+                    <div class="home-table-title">AI Insight Engine</div>
+                    <div><span class="chip chip-low">ACTIVE</span></div>
+                    <div class="home-table-date">{{ dashboard_story.top_category if dashboard_story is defined else "Growing" }}</div>
+                    <div class="result-card-copy">Comparison and workspace views are now surfacing trusted focus areas and chronic patterns.</div>
+                </div>
+
+                <div class="home-table-row">
+                    <div class="home-table-title">Project Intelligence</div>
+                    <div><span class="chip chip-medium">ADVANCING</span></div>
+                    <div class="home-table-date">{{ projects|length if projects is defined else 0 }} workspaces</div>
+                    <div class="result-card-copy">Workspace trends, project heatmaps, and timeline views are now tied to real linked runs.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Workspace Health</h2>
+            <p class="section-copy">Current project portfolio state pulled from live workspace data.</p>
+        </div>
+
+        <div class="card-body">
+            {% if projects %}
+            <div class="workspace-health-list">
+                {% for project in projects[:4] %}
+                <div class="workspace-health-row">
+                    <div>
+                        <div class="workspace-health-title">{{ project.name }}</div>
+                        <div class="workspace-health-copy">{{ project.top_category }}</div>
+                    </div>
+                    <div class="workspace-health-score">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">Create and populate workspaces to build a portfolio-level product story.</div>
+            {% endif %}
+        </div>
+    </section>
 </section>
 
 <section class="card">
@@ -425,6 +520,41 @@
     .home-table-date {
         color: var(--text);
         font-size: 13px;
+    }
+
+    .workspace-health-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .workspace-health-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .workspace-health-title {
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .workspace-health-copy {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .workspace-health-score {
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
     }
 
     @media (max-width: 1100px) {

@@ -376,7 +376,8 @@ def _build_analysis_context(result):
 
 
 def _enrich_single_result(result):
-    risks = result.get("risks", []) or []
+    risks = _enrich_risks_with_transparency(result.get("risks", []) or [])
+    result["risks"] = risks
     result["grouped_risks"] = _prepare_grouped_risks(risks)
     result["top_issues"] = _prepare_top_issues(risks)
     result["health_summary"] = _build_health_summary(result.get("score", 0), risks)
@@ -387,7 +388,8 @@ def _enrich_single_result(result):
 def _enrich_project_result(project_result):
     boards = project_result.get("boards", []) or []
     for board in boards:
-        board_risks = board.get("risks", []) or []
+        board_risks = _enrich_risks_with_transparency(board.get("risks", []) or [])
+        board["risks"] = board_risks
         board["top_issues"] = _prepare_top_issues(board_risks, limit=2)
         board["health_summary"] = _build_health_summary(board.get("score", 0), board_risks)
         board["analysis_context_view"] = _build_analysis_context(board)
@@ -596,6 +598,7 @@ def _build_run_detail(run_name):
     )
 
     enriched_result = _enrich_single_result(merged)
+    export_summary = _build_export_summary(files, merged)
 
     return {
         **merged,
@@ -607,6 +610,7 @@ def _build_run_detail(run_name):
         "html_count": sum(1 for item in files if item["kind"] == "html"),
         "json_count": sum(1 for item in files if item["kind"] == "json"),
         "text_count": sum(1 for item in files if item["kind"] == "text"),
+        "export_summary": export_summary,
     }
 
 
@@ -633,6 +637,249 @@ def _build_history_summary(history_runs):
         "total_html": total_html,
         "total_json": total_json,
         "total_text": total_text,
+    }
+
+
+def _build_risk_transparency_view(risk):
+    metrics = risk.get("metrics") or {}
+    explanation = risk.get("explanation") or {}
+    fix_suggestion = risk.get("fix_suggestion") or {}
+
+    rule_id = str(risk.get("rule_id") or "rule").lower()
+    message = str(risk.get("message") or "No message provided.")
+    category = _format_category_name(risk.get("category"))
+
+    threshold = None
+    observed = None
+    trigger = "A rule-based design condition triggered this finding."
+
+    if isinstance(metrics, dict):
+        if metrics.get("threshold") is not None:
+            threshold = metrics.get("threshold")
+        if metrics.get("distance") is not None:
+            observed = metrics.get("distance")
+        elif metrics.get("value") is not None:
+            observed = metrics.get("value")
+
+    if rule_id == "spacing":
+        trigger = "Component spacing fell below the configured safe clearance threshold."
+    elif rule_id == "thermal":
+        trigger = "Component proximity suggests a local thermal concentration risk."
+    elif rule_id == "return_path":
+        trigger = "Signal routing appears to have insufficient return-path support."
+    elif rule_id == "impedance":
+        trigger = "Routing geometry suggests impedance control may not stay within target."
+
+    reasoning = explanation.get("root_cause") or f"{category} guidance indicates this condition should be reviewed."
+    engineering_impact = explanation.get("impact") or "This issue could affect reliability, manufacturability, or electrical behavior."
+    confidence = _extract_risk_confidence_score(risk)
+
+    if threshold is not None and observed is not None:
+        observed_text = f"Observed {observed} against a threshold of {threshold}."
+    elif observed is not None:
+        observed_text = f"Observed value: {observed}."
+    elif threshold is not None:
+        observed_text = f"Configured threshold: {threshold}."
+    else:
+        observed_text = "No measured value was preserved for this finding."
+
+    evidence = []
+    if risk.get("components"):
+        evidence.append(f"Components: {', '.join(risk.get('components', [])[:4])}")
+    if risk.get("nets"):
+        evidence.append(f"Nets: {', '.join(risk.get('nets', [])[:4])}")
+    if fix_suggestion.get("fix"):
+        evidence.append(f"Suggested fix: {fix_suggestion.get('fix')}")
+
+    return {
+        "trigger": trigger,
+        "threshold": threshold,
+        "observed_value": observed,
+        "observed_text": observed_text,
+        "reasoning": reasoning,
+        "engineering_impact": engineering_impact,
+        "confidence_score": confidence,
+        "confidence_band": _confidence_band(confidence),
+        "evidence": evidence,
+        "message": message,
+    }
+
+
+def _enrich_risks_with_transparency(risks):
+    enriched = []
+    for risk in risks or []:
+        if not isinstance(risk, dict):
+            continue
+        item = dict(risk)
+        item["transparency_view"] = _build_risk_transparency_view(risk)
+        enriched.append(item)
+    return enriched
+
+
+def _build_export_summary(files, run_detail):
+    files = files or []
+    by_kind = defaultdict(int)
+    report_files = []
+
+    for file in files:
+        kind = file.get("kind") or "other"
+        by_kind[kind] += 1
+        name = str(file.get("filename") or file.get("label") or "")
+        if "report" in name or name.endswith(".html") or name.endswith(".md"):
+            report_files.append(file)
+
+    run_name = run_detail.get("name", "Run")
+    share_links = []
+    for file in report_files[:3]:
+        share_links.append(
+            {
+                "label": file.get("label"),
+                "href": _download_href(file),
+                "kind": file.get("kind", "other"),
+            }
+        )
+
+    summary = (
+        f"{len(files)} artifact(s) were saved for {run_name}. "
+        f"This run can be reopened as structured JSON, readable reports, and downloadable evidence files."
+        if files
+        else f"No artifacts were saved for {run_name}."
+    )
+
+    return {
+        "summary": summary,
+        "artifact_counts": [
+            {"label": key.upper(), "value": value}
+            for key, value in sorted(by_kind.items())
+        ],
+        "share_links": share_links,
+        "report_ready": bool(report_files),
+    }
+
+
+def _build_project_timeline_data(project):
+    runs = _sort_project_runs(project.get("runs", []))
+    if not runs:
+        return {
+            "events": [],
+            "score_chart": _build_series_chart([]),
+            "risk_chart": _build_series_chart([]),
+            "summary": "No linked runs are available yet for timeline analysis.",
+        }
+
+    events = []
+    prev_score = None
+    prev_risk = None
+    for run in runs:
+        score_100 = _score_to_100(run.get("score")) if run.get("score") is not None else None
+        risk_count = _safe_int(run.get("risk_count"), 0)
+        score_delta = round(score_100 - prev_score, 1) if score_100 is not None and prev_score is not None else None
+        risk_delta = risk_count - prev_risk if prev_risk is not None else None
+
+        if score_delta is None:
+            movement = "Baseline run established."
+        elif score_delta > 0 and (risk_delta is None or risk_delta <= 0):
+            movement = f"Quality improved by {score_delta} points while risk stayed flat or improved."
+        elif score_delta < 0 and (risk_delta is not None and risk_delta > 0):
+            movement = f"Risk increased and score dropped by {abs(score_delta)} points."
+        else:
+            movement = "Run movement was mixed across score and issue volume."
+
+        events.append(
+            {
+                "name": run.get("name", "Run"),
+                "created_at": run.get("created_at", "Unknown"),
+                "run_type": run.get("run_type", "unknown"),
+                "score": score_100,
+                "risk_count": risk_count,
+                "critical_count": _safe_int(run.get("critical_count"), 0),
+                "score_delta": score_delta,
+                "risk_delta": risk_delta,
+                "movement": movement,
+            }
+        )
+
+        if score_100 is not None:
+            prev_score = score_100
+        prev_risk = risk_count
+
+    score_values = [event["score"] for event in events if event.get("score") is not None]
+    score_labels = [event["name"] for event in events if event.get("score") is not None]
+    risk_values = [event["risk_count"] for event in events]
+    risk_labels = [event["name"] for event in events]
+
+    latest = events[-1]
+    summary = (
+        f"{len(events)} linked run(s) are now on the project timeline. "
+        f"The latest run has {latest.get('risk_count', 0)} finding(s)"
+        + (
+            f" at a score of {latest.get('score')}."
+            if latest.get("score") is not None
+            else "."
+        )
+    )
+
+    return {
+        "events": list(reversed(events)),
+        "score_chart": _build_series_chart(score_values, score_labels),
+        "risk_chart": _build_series_chart(risk_values, risk_labels),
+        "summary": summary,
+    }
+
+
+def _build_dashboard_story(recent_runs, projects):
+    recent_runs = recent_runs or []
+    projects = projects or []
+
+    scored_runs = [run for run in recent_runs if run.get("score") is not None]
+    latest_scored = scored_runs[0] if scored_runs else None
+    latest_score = _score_to_100(latest_scored.get("score")) if latest_scored else 0
+
+    active_projects = [project for project in projects if project.get("run_count")]
+    average_project_score = round(
+        sum(_safe_float(project.get("latest_score"), 0.0) for project in active_projects) / len(active_projects),
+        1,
+    ) if active_projects else 0
+
+    recurring_categories = defaultdict(int)
+    for project in projects:
+        category = project.get("top_category")
+        if category and category != "No recurring category yet":
+            recurring_categories[category] += 1
+
+    top_category = None
+    if recurring_categories:
+        top_category = sorted(recurring_categories.items(), key=lambda item: (-item[1], item[0].lower()))[0][0]
+
+    summary = (
+        f"Silicore is currently tracking {len(recent_runs)} saved run(s) and {len(projects)} engineering workspace(s). "
+        f"The latest scored run sits at {latest_score} / 100, and active projects average {average_project_score} / 100."
+    )
+    if top_category:
+        summary += f" The most repeated engineering pressure area across workspaces is {top_category}."
+
+    pillars = [
+        {
+            "title": "Analyze",
+            "value": len(recent_runs),
+            "copy": "Saved runs are giving the platform a real analysis memory instead of one-off outputs.",
+        },
+        {
+            "title": "Explain",
+            "value": latest_score,
+            "copy": "The latest score is backed by trend, trust, and decision-support context.",
+        },
+        {
+            "title": "Prioritize",
+            "value": len(active_projects),
+            "copy": "Active workspaces are now surfacing chronic patterns and what to fix next.",
+        },
+    ]
+
+    return {
+        "summary": summary,
+        "pillars": pillars,
+        "top_category": top_category or "No recurring category yet",
     }
 
 
@@ -1968,6 +2215,7 @@ def _build_project_intelligence(project, run_a, run_b):
 def index():
     stats = _build_home_stats()
     recent_runs = _get_recent_runs(limit=5)
+    projects = [_enrich_project_for_display(project) for project in list_projects()]
     return _render_page(
         active_page="home",
         page_title="Silicore Dashboard",
@@ -1978,6 +2226,8 @@ def index():
             "stats": stats,
             "recent_runs": recent_runs,
             "home_chart": _build_home_chart_data(recent_runs, stats),
+            "dashboard_story": _build_dashboard_story(recent_runs, projects),
+            "projects": projects,
         },
     )
 
@@ -2146,6 +2396,7 @@ def project_detail_page(project_id):
         body_context={
             "project": project,
             "workspace_chart": _build_project_workspace_chart_data(project),
+            "timeline_data": _build_project_timeline_data(project),
         },
     )
 

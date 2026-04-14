@@ -26,8 +26,8 @@
             <div class="metric-card">
                 <div class="metric-label">Score</div>
                 <div class="metric-value">
-                    {% if run_detail.score is not none %}
-                        {{ (run_detail.score * 10)|round|int }}
+                    {% if run_detail.get("score") is not none %}
+                        {{ (run_detail.get("score", 0) * 10)|round|int }}
                     {% else %}
                         N/A
                     {% endif %}
@@ -72,6 +72,52 @@
 
     <section class="card">
         <div class="card-header">
+            <h2 class="section-title">Export Center</h2>
+            <p class="section-copy">Audit-ready report access and shareable artifact links for this run.</p>
+        </div>
+
+        <div class="card-body">
+            {% if run_detail.export_summary %}
+            <div class="summary-panel">
+                <h3>Export Summary</h3>
+                <p>{{ run_detail.export_summary.summary }}</p>
+            </div>
+
+            {% if run_detail.export_summary.artifact_counts %}
+            <div class="metric-grid" style="margin-top:16px;">
+                {% for item in run_detail.export_summary.artifact_counts %}
+                <div class="metric-card">
+                    <div class="metric-label">{{ item.label }}</div>
+                    <div class="metric-value">{{ item.value }}</div>
+                    <div class="metric-sub">Saved artifact count</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if run_detail.export_summary.share_links %}
+            <div class="artifact-list" style="margin-top:16px;">
+                {% for file in run_detail.export_summary.share_links %}
+                <div class="artifact-row">
+                    <div>
+                        <div class="artifact-name">{{ file.label }}</div>
+                        <div class="artifact-kind">{{ file.kind|upper }}</div>
+                    </div>
+                    <a class="btn-link" href="{{ file.href }}">Open Artifact</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="empty-state">No export summary is available for this run.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
             <h2 class="section-title">Analysis Context</h2>
             <p class="section-copy">Settings and assumptions used for this saved analysis.</p>
         </div>
@@ -103,41 +149,43 @@
             {% endif %}
         </div>
     </section>
-</section>
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Score Explainability</h2>
-        <p class="section-copy">How the final score was calculated for this saved run.</p>
-    </div>
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Score Explainability</h2>
+            <p class="section-copy">How the final score was calculated for this saved run.</p>
+        </div>
 
-    <div class="card-body">
-        {% set score_data = run_detail.analysis_context_view.score_breakdown %}
-        <div class="metric-grid">
-            <div class="metric-card">
-                <div class="metric-label">Start Score</div>
-                <div class="metric-value">{{ score_data.start_score }}</div>
-                <div class="metric-sub">Initial baseline</div>
-            </div>
+        <div class="card-body">
+            {% set score_data = run_detail.analysis_context_view.score_breakdown %}
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Start Score</div>
+                    <div class="metric-value">{{ score_data.start_score }}</div>
+                    <div class="metric-sub">Initial baseline</div>
+                </div>
 
-            <div class="metric-card">
-                <div class="metric-label">Total Penalty</div>
-                <div class="metric-value">{{ score_data.total_penalty }}</div>
-                <div class="metric-sub">Total deduction</div>
-            </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Penalty</div>
+                    <div class="metric-value">{{ score_data.total_penalty }}</div>
+                    <div class="metric-sub">Total deduction</div>
+                </div>
 
-            <div class="metric-card">
-                <div class="metric-label">Final Score</div>
-                <div class="metric-value">{{ score_data.final_score }}</div>
-                <div class="metric-sub">Final 0–10 score</div>
-            </div>
+                <div class="metric-card">
+                    <div class="metric-label">Final Score</div>
+                    <div class="metric-value">{{ score_data.final_score }}</div>
+                    <div class="metric-sub">Final 0–10 score</div>
+                </div>
 
-            <div class="metric-card">
-                <div class="metric-label">Findings</div>
-                <div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div>
-                <div class="metric-sub">Total detected issues</div>
+                <div class="metric-card">
+                    <div class="metric-label">Findings</div>
+                    <div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div>
+                    <div class="metric-sub">Total detected issues</div>
+                </div>
             </div>
         </div>
+    </section>
+</section>
 
         {% if score_data.severity_rows %}
         <div class="breakdown-table">
@@ -258,6 +306,25 @@
                                 <span class="metric-pill-value">{{ value }}</span>
                             </div>
                             {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if risk.transparency_view %}
+                        <div class="finding-block">
+                            <span class="finding-label">Trigger:</span>
+                            {{ risk.transparency_view.trigger }}
+                        </div>
+                        <div class="finding-block">
+                            <span class="finding-label">Observed:</span>
+                            {{ risk.transparency_view.observed_text }}
+                        </div>
+                        <div class="finding-block">
+                            <span class="finding-label">Why it matters:</span>
+                            {{ risk.transparency_view.engineering_impact }}
+                        </div>
+                        <div class="finding-block">
+                            <span class="finding-label">Confidence:</span>
+                            {{ risk.transparency_view.confidence_score }} / 100
                         </div>
                         {% endif %}
                     </div>

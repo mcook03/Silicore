@@ -7,6 +7,7 @@
 {% set category_bars = workspace_chart.category_bars if workspace_chart is defined else {} %}
 {% set quality_mix = workspace_chart.quality_mix if workspace_chart is defined else {} %}
 {% set latest_compare_ids = workspace_chart.latest_compare_run_ids if workspace_chart is defined else [] %}
+{% set timeline = timeline_data if timeline_data is defined else {} %}
 
 <section class="grid grid-2">
 <section class="card">
@@ -149,6 +150,85 @@
         </div>
     </div>
 </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Project Timeline Intelligence</h2>
+        <p class="section-copy">Revision-over-time movement for score and issue count, plus event-by-event engineering context.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="summary-panel">
+            <h3>Timeline Summary</h3>
+            <p>{{ timeline.summary if timeline else "No timeline summary is available yet." }}</p>
+        </div>
+
+        <div class="project-trend-grid" style="margin-top:16px;">
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Score Timeline</span>
+                    <strong>{{ timeline.score_chart.last_value|round|int if timeline and timeline.score_chart and timeline.score_chart.has_data else "N/A" }}</strong>
+                </div>
+                {% if timeline and timeline.score_chart and timeline.score_chart.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in timeline.score_chart.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in timeline.score_chart.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ timeline.score_chart.points[loop.index0 - 1].x }}" y1="{{ timeline.score_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-score-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">No score timeline yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Risk Timeline</span>
+                    <strong>{{ timeline.risk_chart.last_value|round|int if timeline and timeline.risk_chart and timeline.risk_chart.has_data else "N/A" }}</strong>
+                </div>
+                {% if timeline and timeline.risk_chart and timeline.risk_chart.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in timeline.risk_chart.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in timeline.risk_chart.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ timeline.risk_chart.points[loop.index0 - 1].x }}" y1="{{ timeline.risk_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-risk-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">No risk timeline yet.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if timeline and timeline.events %}
+        <div class="timeline-list">
+            {% for event in timeline.events %}
+            <div class="timeline-row">
+                <div>
+                    <div class="timeline-title">{{ event.name }}</div>
+                    <div class="timeline-copy">{{ event.created_at }} · {{ event.run_type|upper }}</div>
+                </div>
+                <div class="timeline-metrics">
+                    <span class="mini-chip mini-chip-low">Score {{ event.score|round|int if event.score is not none else "N/A" }}</span>
+                    <span class="mini-chip mini-chip-medium">Risks {{ event.risk_count }}</span>
+                    {% if event.score_delta is not none %}
+                    <span class="mini-chip {% if event.score_delta > 0 %}mini-chip-low{% elif event.score_delta < 0 %}mini-chip-critical{% else %}mini-chip-medium{% endif %}">Delta {{ event.score_delta }}</span>
+                    {% endif %}
+                </div>
+                <div class="timeline-copy">{{ event.movement }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
 </section>
 
 <section class="grid grid-2">
@@ -380,6 +460,39 @@
     .mini-bar-list {
         display: grid;
         gap: 12px;
+    }
+
+    .timeline-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .timeline-row {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .timeline-title {
+        color: #eaf2ff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .timeline-copy {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .timeline-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .mini-bar-row {
