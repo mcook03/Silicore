@@ -173,6 +173,16 @@ def _normalize_risk(risk):
         "nets": risk.get("nets", []),
         "region": risk.get("region"),
         "metrics": risk.get("metrics", {}),
+        "confidence": risk.get("confidence", 0.8),
+        "short_title": risk.get("short_title", risk.get("message", "No message provided.")),
+        "fix_priority": risk.get("fix_priority", "medium"),
+        "estimated_impact": risk.get("estimated_impact", "moderate"),
+        "design_domain": risk.get("design_domain", "general"),
+        "why_it_matters": risk.get("why_it_matters", ""),
+        "suggested_actions": risk.get("suggested_actions", []),
+        "trigger_condition": risk.get("trigger_condition", ""),
+        "threshold_label": risk.get("threshold_label", ""),
+        "observed_label": risk.get("observed_label", ""),
     }
 
     if isinstance(risk.get("explanation"), dict):
@@ -1109,6 +1119,15 @@ def _build_risk_snapshot(risks):
                 "category": str(risk.get("category", "unknown")),
                 "message": risk.get("message", "No message provided."),
                 "recommendation": risk.get("recommendation", "Review this finding."),
+                "components": risk.get("components", []),
+                "nets": risk.get("nets", []),
+                "metrics": risk.get("metrics", {}),
+                "confidence": risk.get("confidence", 0.8),
+                "design_domain": risk.get("design_domain", "general"),
+                "why_it_matters": risk.get("why_it_matters", ""),
+                "trigger_condition": risk.get("trigger_condition", ""),
+                "threshold_label": risk.get("threshold_label", ""),
+                "observed_label": risk.get("observed_label", ""),
             }
         )
 

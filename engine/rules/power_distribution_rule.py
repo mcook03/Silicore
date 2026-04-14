@@ -89,6 +89,9 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    trigger_condition="Load-to-regulator distance exceeded the configured power-distribution threshold.",
+                    threshold_label=f"Maximum regulator distance {threshold:.2f} units",
+                    observed_label=f"Observed regulator distance {nearest_distance:.2f} units",
                 )
             )
 

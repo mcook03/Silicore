@@ -71,6 +71,9 @@ def run_rule(pcb, config):
                             fix_priority="medium",
                             estimated_impact="moderate",
                             design_domain="signal",
+                            trigger_condition="Signal path distance exceeded the configured path-length threshold.",
+                            threshold_label=f"Maximum signal path distance {threshold:.2f} units",
+                            observed_label=f"Observed signal path distance {d:.2f} units",
                         )
                     )
 

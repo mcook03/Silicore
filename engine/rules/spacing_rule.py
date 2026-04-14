@@ -44,6 +44,9 @@ def run_rule(pcb, config):
                         fix_priority="high",
                         estimated_impact="moderate",
                         design_domain="layout",
+                        trigger_condition="Component pair spacing fell below the configured minimum spacing threshold.",
+                        threshold_label=f"Minimum spacing {threshold:.2f} units",
+                        observed_label=f"Observed spacing {d:.2f} units",
                     )
                 )
 

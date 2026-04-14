@@ -54,6 +54,9 @@ def run_rule(pcb, config):
                         fix_priority="medium",
                         estimated_impact="moderate",
                         design_domain="thermal",
+                        trigger_condition="Hot-component separation fell below the configured thermal hotspot spacing threshold.",
+                        threshold_label=f"Thermal spacing threshold {threshold:.2f} units",
+                        observed_label=f"Observed hot-component spacing {d:.2f} units",
                     )
                 )
 

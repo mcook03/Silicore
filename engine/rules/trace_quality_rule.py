@@ -48,6 +48,9 @@ def run_rule(pcb, config):
                         "Reduce unnecessary detours.",
                         "Review whether this net should be treated as timing- or noise-sensitive.",
                     ],
+                    trigger_condition="Signal-net routed length exceeded the configured maximum signal trace threshold.",
+                    threshold_label=f"Maximum signal trace length {max_signal_trace_length:.2f} units",
+                    observed_label=f"Observed trace length {total_length:.2f} units",
                 )
             )
 
@@ -75,6 +78,9 @@ def run_rule(pcb, config):
                         "Check board-house minimum trace capability.",
                         "Review whether this narrow section is intentional.",
                     ],
+                    trigger_condition="Signal trace width fell below the configured minimum manufacturable width threshold.",
+                    threshold_label=f"Minimum general trace width {min_general_trace_width:.2f}",
+                    observed_label=f"Observed trace width {min_width:.2f}",
                 )
             )
 

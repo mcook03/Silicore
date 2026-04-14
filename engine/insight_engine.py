@@ -120,6 +120,10 @@ def _normalize_risk(risk: Dict[str, Any]) -> Dict[str, Any]:
         "components": _normalize_string_list(risk.get("components")),
         "nets": _normalize_string_list(risk.get("nets")),
         "metrics": risk.get("metrics") if isinstance(risk.get("metrics"), dict) else {},
+        "trigger_condition": _safe_str(risk.get("trigger_condition"), ""),
+        "threshold_label": _safe_str(risk.get("threshold_label"), ""),
+        "observed_label": _safe_str(risk.get("observed_label"), ""),
+        "why_it_matters": _safe_str(risk.get("why_it_matters"), ""),
         "raw": risk,
     }
 
@@ -138,11 +142,25 @@ def _build_transparency(risk: Dict[str, Any]) -> Dict[str, Any]:
     severity = _normalize_severity(risk.get("severity"))
     category = _format_category_name(risk.get("category"))
     recommendation = _normalize_recommendation(risk.get("recommendation"))
+    explicit_trigger = _safe_str(risk.get("trigger_condition"), "")
+    explicit_threshold = _safe_str(risk.get("threshold_label"), "")
+    explicit_observed = _safe_str(risk.get("observed_label"), "")
+    explicit_impact = _safe_str(risk.get("why_it_matters"), "")
 
     components = _normalize_string_list(risk.get("components"))
     nets = _normalize_string_list(risk.get("nets"))
 
-    if "trace" in message_lower and "width" in message_lower:
+    if explicit_trigger or explicit_threshold or explicit_observed:
+        trigger = explicit_trigger or "A rule-based design condition triggered this finding."
+        threshold = explicit_threshold or "A configured engineering threshold was used for this finding."
+        observed_value = explicit_observed or "A measured design condition matched the rule trigger."
+        reasoning = (
+            f"This {severity} severity issue in {category} reflects a rule condition that was explicitly captured during analysis."
+        )
+        engineering_impact = explicit_impact or (
+            "This condition can affect reliability, manufacturability, performance, or review confidence depending on context."
+        )
+    elif "trace" in message_lower and "width" in message_lower:
         trigger = "Trace width condition triggered the rule."
         threshold = "Minimum acceptable trace width for the relevant electrical or manufacturing context."
         observed_value = "A trace width condition was flagged as being below the expected safe range."

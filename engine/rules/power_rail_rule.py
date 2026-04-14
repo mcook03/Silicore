@@ -62,6 +62,9 @@ def run_rule(pcb, config):
                     fix_priority="medium",
                     estimated_impact="moderate",
                     design_domain="power",
+                    trigger_condition="Power-net connection count fell below the minimum expected coverage.",
+                    threshold_label=f"Minimum connections {min_connections}",
+                    observed_label=f"Observed connections {connection_count}",
                 )
             )
 
@@ -83,6 +86,9 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    trigger_condition="Power-net routed length exceeded the configured maximum length threshold.",
+                    threshold_label=f"Maximum trace length {max_trace_length:.2f} units",
+                    observed_label=f"Observed trace length {total_length:.2f} units",
                 )
             )
 
@@ -104,6 +110,9 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    trigger_condition="Power trace width fell below the configured minimum width threshold.",
+                    threshold_label=f"Minimum trace width {min_trace_width:.2f}",
+                    observed_label=f"Observed trace width {min_width:.2f}",
                 )
             )
 
@@ -125,6 +134,9 @@ def run_rule(pcb, config):
                     fix_priority="medium",
                     estimated_impact="moderate",
                     design_domain="power",
+                    trigger_condition="Power-net via count exceeded the configured maximum via threshold.",
+                    threshold_label=f"Maximum via count {max_via_count}",
+                    observed_label=f"Observed via count {via_count}",
                 )
             )
 

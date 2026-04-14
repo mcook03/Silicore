@@ -110,6 +110,13 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="power",
+                    trigger_condition="Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+                    threshold_label=f"Maximum decoupling distance {threshold:.2f} units",
+                    observed_label=(
+                        f"Observed nearest capacitor distance {nearest_cap_distance:.2f} units"
+                        if nearest_cap_distance is not None
+                        else "Observed nearest capacitor distance: none found"
+                    ),
                 )
             )
 

@@ -651,7 +651,7 @@ def _build_risk_transparency_view(risk):
 
     threshold = None
     observed = None
-    trigger = "A rule-based design condition triggered this finding."
+    trigger = risk.get("trigger_condition") or "A rule-based design condition triggered this finding."
 
     if isinstance(metrics, dict):
         if metrics.get("threshold") is not None:
@@ -662,19 +662,28 @@ def _build_risk_transparency_view(risk):
             observed = metrics.get("value")
 
     if rule_id == "spacing":
-        trigger = "Component spacing fell below the configured safe clearance threshold."
+        trigger = risk.get("trigger_condition") or "Component spacing fell below the configured safe clearance threshold."
     elif rule_id == "thermal":
-        trigger = "Component proximity suggests a local thermal concentration risk."
+        trigger = risk.get("trigger_condition") or "Component proximity suggests a local thermal concentration risk."
     elif rule_id == "return_path":
-        trigger = "Signal routing appears to have insufficient return-path support."
+        trigger = risk.get("trigger_condition") or "Signal routing appears to have insufficient return-path support."
     elif rule_id == "impedance":
-        trigger = "Routing geometry suggests impedance control may not stay within target."
+        trigger = risk.get("trigger_condition") or "Routing geometry suggests impedance control may not stay within target."
 
     reasoning = explanation.get("root_cause") or f"{category} guidance indicates this condition should be reviewed."
     engineering_impact = explanation.get("impact") or "This issue could affect reliability, manufacturability, or electrical behavior."
     confidence = _extract_risk_confidence_score(risk)
 
-    if threshold is not None and observed is not None:
+    threshold_text = risk.get("threshold_label")
+    observed_label = risk.get("observed_label")
+
+    if observed_label and threshold_text:
+        observed_text = f"{observed_label} against {threshold_text}."
+    elif observed_label:
+        observed_text = observed_label
+    elif threshold_text:
+        observed_text = threshold_text
+    elif threshold is not None and observed is not None:
         observed_text = f"Observed {observed} against a threshold of {threshold}."
     elif observed is not None:
         observed_text = f"Observed value: {observed}."

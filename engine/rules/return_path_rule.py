@@ -79,6 +79,9 @@ def run_rule(pcb, config):
                     fix_priority="high",
                     estimated_impact="high",
                     design_domain="emi",
+                    trigger_condition="No configured ground-reference net was found on the board.",
+                    threshold_label=f"Required ground nets: {', '.join(sorted(list(ground_nets)))}",
+                    observed_label="Observed ground nets: none",
                 )
             )
 
@@ -129,6 +132,9 @@ def run_rule(pcb, config):
                 fix_priority="high",
                 estimated_impact="high",
                 design_domain="emi",
+                trigger_condition="Critical-signal component lacked a direct configured ground-reference net.",
+                threshold_label=f"Required ground nets: {', '.join(sorted(list(ground_nets)))}",
+                observed_label=f"Observed critical nets: {', '.join(component_critical_nets)}",
             )
         )
 

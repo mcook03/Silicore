@@ -15,6 +15,9 @@ def make_risk(
     design_domain="general",
     why_it_matters="",
     suggested_actions=None,
+    trigger_condition="",
+    threshold_label="",
+    observed_label="",
 ):
     return {
         "rule_id": rule_id,
@@ -33,4 +36,7 @@ def make_risk(
         "design_domain": design_domain,
         "why_it_matters": why_it_matters,
         "suggested_actions": suggested_actions or [],
+        "trigger_condition": trigger_condition,
+        "threshold_label": threshold_label,
+        "observed_label": observed_label,
     }
