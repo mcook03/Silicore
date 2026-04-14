@@ -114,6 +114,63 @@
     </section>
 </section>
 
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Parser Readiness</h2>
+            <p class="section-copy">Current supported inputs versus near-term format roadmap.</p>
+        </div>
+
+        <div class="card-body">
+            {% if dashboard_story and dashboard_story.parser_readiness %}
+            <div class="workspace-health-list">
+                {% for item in dashboard_story.parser_readiness %}
+                <div class="workspace-health-row">
+                    <div class="workspace-health-title">{{ item.label }}</div>
+                    <div>
+                        <span class="chip {% if item.status == 'Supported' %}chip-low{% else %}chip-medium{% endif %}">{{ item.status }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Reporting Surface</h2>
+            <p class="section-copy">How Silicore packages analysis into reusable engineering outputs.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="workspace-health-list">
+                <div class="workspace-health-row">
+                    <div>
+                        <div class="workspace-health-title">Structured JSON</div>
+                        <div class="workspace-health-copy">Machine-readable results for downstream tooling and audit trails.</div>
+                    </div>
+                    <div class="workspace-health-score">JSON</div>
+                </div>
+                <div class="workspace-health-row">
+                    <div>
+                        <div class="workspace-health-title">Engineering Summary</div>
+                        <div class="workspace-health-copy">Markdown and HTML reports now carry summary, transparency, and parser-readiness context.</div>
+                    </div>
+                    <div class="workspace-health-score">MD/HTML</div>
+                </div>
+                <div class="workspace-health-row">
+                    <div>
+                        <div class="workspace-health-title">Export Manifest</div>
+                        <div class="workspace-health-copy">Each saved run is now packaged with a manifest describing artifacts and format readiness.</div>
+                    </div>
+                    <div class="workspace-health-score">MANIFEST</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Analysis Results</h2>

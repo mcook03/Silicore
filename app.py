@@ -880,6 +880,12 @@ def _build_dashboard_story(recent_runs, projects):
         "summary": summary,
         "pillars": pillars,
         "top_category": top_category or "No recurring category yet",
+        "parser_readiness": [
+            {"label": "KiCad PCB", "status": "Supported"},
+            {"label": "Structured Demo Text", "status": "Supported"},
+            {"label": "Altium", "status": "Planned"},
+            {"label": "Gerber", "status": "Planned"},
+        ],
     }
 
 

@@ -14,6 +14,12 @@ from engine.dashboard_storage import (
 )
 
 SUPPORTED_EXTENSIONS = {".txt", ".kicad_pcb"}
+FORMAT_READINESS = {
+    ".kicad_pcb": {"label": "KiCad PCB", "status": "supported"},
+    ".txt": {"label": "Structured Demo Text", "status": "supported"},
+    ".brd": {"label": "Altium / Legacy Board", "status": "planned"},
+    ".gbr": {"label": "Gerber", "status": "planned"},
+}
 
 
 def ensure_clean_upload_dir(upload_folder):
@@ -31,6 +37,7 @@ def build_single_downloads(run_dir_name):
         {"label": "Download JSON", "url": f"/download/{run_dir_name}/single_analysis.json"},
         {"label": "Download Markdown", "url": f"/download/{run_dir_name}/single_report.md"},
         {"label": "Download HTML", "url": f"/download/{run_dir_name}/single_report.html"},
+        {"label": "Download Export Manifest", "url": f"/download/{run_dir_name}/export_manifest.json"},
     ]
 
 
@@ -39,6 +46,7 @@ def build_project_downloads(run_dir_name):
         {"label": "Download JSON", "url": f"/download/{run_dir_name}/project_summary.json"},
         {"label": "Download Markdown", "url": f"/download/{run_dir_name}/project_summary.md"},
         {"label": "Download HTML", "url": f"/download/{run_dir_name}/project_summary.html"},
+        {"label": "Download Export Manifest", "url": f"/download/{run_dir_name}/export_manifest.json"},
     ]
 
 
@@ -582,6 +590,56 @@ def _write_json(path, data):
         json.dump(data, file, indent=4)
 
 
+def _format_confidence_display(confidence):
+    value = confidence
+    if value is None:
+        return "Unknown"
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return str(confidence)
+    if value <= 1.0:
+        value *= 100
+    return f"{round(value, 1)} / 100"
+
+
+def _build_transparency_lines(risk):
+    explanation = risk.get("explanation", {}) if isinstance(risk.get("explanation"), dict) else {}
+    metrics = risk.get("metrics", {}) if isinstance(risk.get("metrics"), dict) else {}
+
+    trigger = "A rule-based design condition triggered this finding."
+    if str(risk.get("rule_id", "")).lower() == "spacing":
+        trigger = "Component spacing dropped below the configured safe threshold."
+    elif str(risk.get("rule_id", "")).lower() == "thermal":
+        trigger = "Component proximity indicated likely thermal concentration."
+
+    observed_parts = []
+    if metrics.get("distance") is not None:
+        observed_parts.append(f"distance={metrics.get('distance')}")
+    if metrics.get("threshold") is not None:
+        observed_parts.append(f"threshold={metrics.get('threshold')}")
+
+    return {
+        "trigger": trigger,
+        "observed": ", ".join(observed_parts) if observed_parts else "No measured value preserved.",
+        "reasoning": explanation.get("root_cause", "General design issue"),
+        "impact": explanation.get("impact", "Unknown system impact"),
+        "confidence": _format_confidence_display(explanation.get("confidence")),
+    }
+
+
+def _write_export_manifest(path, *, run_type, title, files, supported_formats, notes):
+    payload = {
+        "run_type": run_type,
+        "title": title,
+        "generated_at": datetime.utcnow().isoformat(),
+        "artifacts": files,
+        "parser_capabilities": supported_formats,
+        "notes": notes,
+    }
+    _write_json(path, payload)
+
+
 def _write_single_markdown(path, result):
     executive_summary = result.get("executive_summary", {})
     board_summary = result.get("board_summary", {})
@@ -601,6 +659,11 @@ def _write_single_markdown(path, result):
         f"**{executive_summary.get('headline', 'Board review summary')}**",
         "",
         executive_summary.get("summary", "No summary available."),
+        "",
+        "## Parser Capability",
+        "",
+        "- Current production-ready inputs: `.kicad_pcb`, `.txt`",
+        "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
         "",
     ]
 
@@ -650,6 +713,12 @@ def _write_single_markdown(path, result):
                 lines.append(f"- Root Cause: {explanation.get('root_cause', 'Unknown')}")
                 lines.append(f"- Impact: {explanation.get('impact', 'Unknown')}")
                 lines.append(f"- Confidence: {explanation.get('confidence', 'Unknown')}")
+
+            transparency = _build_transparency_lines(risk)
+            lines.append(f"- Trigger Condition: {transparency['trigger']}")
+            lines.append(f"- Observed vs Threshold: {transparency['observed']}")
+            lines.append(f"- Engineering Impact: {transparency['impact']}")
+            lines.append(f"- Trust Confidence: {transparency['confidence']}")
 
             fix_suggestion = risk.get("fix_suggestion", {})
             if fix_suggestion:
@@ -714,7 +783,7 @@ def _write_single_html(path, result):
                 explanation_html = f"""
                 <p><strong>Root Cause:</strong> {escape(str(explanation.get('root_cause', 'Unknown')))}</p>
                 <p><strong>Impact:</strong> {escape(str(explanation.get('impact', 'Unknown')))}</p>
-                <p><strong>Confidence:</strong> {escape(str(explanation.get('confidence', 'Unknown')))}</p>
+                <p><strong>Confidence:</strong> {escape(_format_confidence_display(explanation.get('confidence')))}</p>
                 """
 
             fix_suggestion = risk.get("fix_suggestion", {})
@@ -724,12 +793,18 @@ def _write_single_html(path, result):
                 <p><strong>Fix Priority:</strong> {escape(str(fix_suggestion.get('priority', 'medium')))}</p>
                 """
 
+            transparency = _build_transparency_lines(risk)
+
             risks_html += f"""
             <div class="risk-card">
                 <p><strong>Severity:</strong> {escape(str(risk['severity']))}</p>
                 <p><strong>Category:</strong> {escape(str(risk['category']))}</p>
                 <p><strong>Message:</strong> {escape(str(risk['message']))}</p>
                 <p><strong>Recommendation:</strong> {escape(str(risk['recommendation']))}</p>
+                <p><strong>Trigger Condition:</strong> {escape(str(transparency['trigger']))}</p>
+                <p><strong>Observed vs Threshold:</strong> {escape(str(transparency['observed']))}</p>
+                <p><strong>Engineering Impact:</strong> {escape(str(transparency['impact']))}</p>
+                <p><strong>Trust Confidence:</strong> {escape(str(transparency['confidence']))}</p>
                 {explanation_html}
                 {fix_html}
                 {components_html}
@@ -820,6 +895,12 @@ def _write_single_html(path, result):
             </div>
 
             <div class="card">
+                <h2>Parser Capability</h2>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .txt</p>
+                <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            <div class="card">
                 <h2>Top Issues</h2>
                 {top_issues_html}
             </div>
@@ -880,6 +961,14 @@ def _write_project_markdown(path, project_data):
             "",
         ])
 
+    lines.extend([
+        "## Parser Capability",
+        "",
+        "- Current production-ready inputs: `.kicad_pcb`, `.txt`",
+        "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
+        "",
+    ])
+
     lines.extend(["## Ranked Boards", ""])
 
     if boards:
@@ -890,6 +979,13 @@ def _write_project_markdown(path, project_data):
             lines.append(f"- Total Penalty: {board.get('score_explanation', {}).get('total_penalty', 0)}")
             if board.get("executive_summary", {}).get("summary"):
                 lines.append(f"- Summary: {board['executive_summary']['summary']}")
+            top_risks = board.get("risks", [])[:3]
+            for risk in top_risks:
+                transparency = _build_transparency_lines(risk)
+                lines.append(f"  - Finding: {risk.get('message', 'No message')}")
+                lines.append(f"    - Trigger: {transparency['trigger']}")
+                lines.append(f"    - Observed: {transparency['observed']}")
+                lines.append(f"    - Confidence: {transparency['confidence']}")
             lines.append("")
     else:
         lines.append("No boards analyzed.")
@@ -973,6 +1069,12 @@ def _write_project_html(path, project_data):
             </div>
 
             {insight_html}
+
+            <div class="hero">
+                <p><strong>Parser Capability</strong></p>
+                <p>Current production-ready inputs: .kicad_pcb, .txt</p>
+                <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
+            </div>
 
             {boards_html}
         </div>
@@ -1120,12 +1222,28 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None):
     _write_json(json_path, result)
     _write_single_markdown(md_path, result)
     _write_single_html(html_path, result)
+    if output_dir is not None:
+        manifest_path = os.path.join(output_dir, "export_manifest.json")
+        _write_export_manifest(
+            manifest_path,
+            run_type="single",
+            title=result.get("filename", "Single Board Analysis"),
+            files=[
+                {"name": os.path.basename(json_path), "kind": "json"},
+                {"name": os.path.basename(md_path), "kind": "markdown"},
+                {"name": os.path.basename(html_path), "kind": "html"},
+            ],
+            supported_formats=FORMAT_READINESS,
+            notes=["Artifacts include structured analysis, engineering summary, and print-friendly HTML."],
+        )
 
     result["json_path"] = json_path
     result["report_md_path"] = md_path
     result["report_html_path"] = html_path
     result["markdown_path"] = md_path
     result["html_path"] = html_path
+    if output_dir is not None:
+        result["manifest_path"] = os.path.join(output_dir, "export_manifest.json")
 
     return result
 
@@ -1168,6 +1286,18 @@ def analyze_project_paths(file_paths, config=None, output_dir=None):
         _write_json(summary_json_path, project_data)
         _write_project_markdown(summary_md_path, project_data)
         _write_project_html(summary_html_path, project_data)
+        _write_export_manifest(
+            os.path.join(output_dir, "export_manifest.json"),
+            run_type="project",
+            title="Project Review Export",
+            files=[
+                {"name": os.path.basename(summary_json_path), "kind": "json"},
+                {"name": os.path.basename(summary_md_path), "kind": "markdown"},
+                {"name": os.path.basename(summary_html_path), "kind": "html"},
+            ],
+            supported_formats=FORMAT_READINESS,
+            notes=["Artifacts include project summary, ranked boards, and transparency-enriched review output."],
+        )
 
     return {
         "boards": boards,
