@@ -139,6 +139,239 @@
     </div>
 </section>
 
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Engineering Pattern Insight</h2>
+        <p class="section-copy">
+            Identify recurring design patterns and higher-level engineering movement across this comparison.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.insights.category_impacts %}
+            <div class="summary-panel compact-summary-panel">
+                <p>
+                    This section surfaces category-level patterns so the compare view feels less like a raw diff
+                    and more like an engineering review. It highlights where issues are clustering, where
+                    corrections are working, and where repeated attention may still be needed.
+                </p>
+            </div>
+
+            <div class="finding-list" style="margin-top:16px;">
+                {% for item in comparison.insights.category_impacts[:4] %}
+                <div class="finding impact-finding">
+                    <div class="finding-top">
+                        <div>
+                            <div class="chip {% if item.direction == 'worse' %}chip-critical{% elif item.direction == 'better' %}chip-low{% else %}chip-medium{% endif %}">
+                                {{ item.direction|upper }}
+                            </div>
+                            <h4>{{ item.category }}</h4>
+                        </div>
+
+                        <div class="small-muted">
+                            Pattern Strength:
+                            {% if item.delta > 0 %}+{% endif %}{{ item.delta }}
+                        </div>
+                    </div>
+
+                    <div class="finding-block">
+                        <span class="finding-label">Pattern Insight:</span>
+                        {{ item.summary }}
+                    </div>
+
+                    <div class="finding-block">
+                        <span class="finding-label">What this means:</span>
+                        {% if item.direction == 'worse' %}
+                            This category is trending negatively in this comparison and may represent a repeated engineering weakness that needs broader design attention.
+                        {% elif item.direction == 'better' %}
+                            This category is trending positively, which suggests the latest revision corrected meaningful issues in this area.
+                        {% else %}
+                            This category remained relatively stable, so it is not driving major movement but should still be monitored in future revisions.
+                        {% endif %}
+                    </div>
+
+                    <div class="mini-stat-row">
+                        <div class="mini-stat">
+                            <span class="mini-stat-label">Added</span>
+                            <span class="mini-stat-value">{{ item.details.added_count }}</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-stat-label">Removed</span>
+                            <span class="mini-stat-value">{{ item.details.removed_count }}</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-stat-label">Severity Up</span>
+                            <span class="mini-stat-value">{{ item.details.severity_increase_count }}</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-stat-label">Severity Down</span>
+                            <span class="mini-stat-value">{{ item.details.severity_decrease_count }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No pattern trends identified</h3>
+                <p>
+                    This comparison does not show strong category-level recurring patterns yet. Changes may be smaller,
+                    more isolated, or distributed too evenly to form a stronger engineering pattern signal.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Project-Level Intelligence</h2>
+        <p class="section-copy">
+            Put this comparison in the context of the whole project so recurring weaknesses and trend direction are easier to spot.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.project_intelligence %}
+            <div class="summary-panel compact-summary-panel">
+                <p>{{ comparison.project_intelligence.trend_summary }}</p>
+            </div>
+
+            {% if comparison.project_intelligence.project_takeaway %}
+            <div class="takeaway-banner" style="margin-top:16px;">
+                <div class="takeaway-label">Project Takeaway</div>
+                <div class="takeaway-copy">{{ comparison.project_intelligence.project_takeaway }}</div>
+            </div>
+            {% endif %}
+
+            <div class="grid grid-4 insight-metric-grid" style="margin-top:18px;">
+                <div class="metric-card">
+                    <div class="metric-label">History Depth</div>
+                    <div class="metric-value">{{ comparison.project_intelligence.history_depth }}</div>
+                    <div class="metric-sub">Project runs considered</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Trend State</div>
+                    <div class="metric-value">{{ comparison.project_intelligence.stability_label }}</div>
+                    <div class="metric-sub">Recent project direction</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Selected Score Delta</div>
+                    <div class="metric-value {{ comparison_delta_class(comparison.project_intelligence.selected_score_delta, true) }}">
+                        {{ comparison.project_intelligence.selected_score_delta }}
+                    </div>
+                    <div class="metric-sub">{{ comparison.project_intelligence.selected_window_label }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Selected Risk Delta</div>
+                    <div class="metric-value {{ comparison_delta_class(comparison.project_intelligence.selected_risk_delta, false) }}">
+                        {{ comparison.project_intelligence.selected_risk_delta }}
+                    </div>
+                    <div class="metric-sub">Findings across selected runs</div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No project-level intelligence available</h3>
+                <p>This comparison does not yet have enough linked project history to build stronger trend analysis.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Recurring Categories</h2>
+            <p class="section-copy">
+                Engineering areas that keep appearing across linked project runs.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.project_intelligence and comparison.project_intelligence.recurring_categories %}
+                <div class="finding-list">
+                    {% for item in comparison.project_intelligence.recurring_categories %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip chip-medium">RECURRING</div>
+                                <h4>{{ item.category }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ item.appearances }} run(s)
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">Project signal:</span>
+                            {{ item.category }} appeared in {{ item.appearances }} recorded project run(s) and contributed {{ item.total_findings }} total finding(s) across project history.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No recurring categories yet</h3>
+                    <p>No single category has repeated enough across project history to be treated as a stronger recurring project issue.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Recurring Issue Families</h2>
+            <p class="section-copy">
+                Specific issue patterns that keep reappearing across recorded project runs.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison.project_intelligence and comparison.project_intelligence.recurring_patterns %}
+                <div class="finding-list">
+                    {% for item in comparison.project_intelligence.recurring_patterns %}
+                    <div class="finding">
+                        <div class="finding-top">
+                            <div>
+                                <div class="chip chip-critical">PATTERN</div>
+                                <h4>{{ item.message }}</h4>
+                            </div>
+
+                            <div class="small-muted">
+                                {{ item.appearances }} run(s)<br>
+                                {{ item.category }}
+                            </div>
+                        </div>
+
+                        <div class="finding-block">
+                            <span class="finding-label">Why this matters:</span>
+                            This issue family has repeated across {{ item.appearances }} linked project run(s), which suggests the project may be reintroducing the same type of engineering weakness over time.
+                        </div>
+
+                        {% if item.recommendation %}
+                        <div class="finding-block">
+                            <span class="finding-label">Recommended follow-up:</span>
+                            {{ item.recommendation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No recurring issue families detected</h3>
+                    <p>No single issue family has repeated enough across project history to be promoted as a stronger recurring pattern.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
 <section class="card trust-hero-card">
     <div class="card-header">
         <h2 class="section-title">Trust Summary</h2>
@@ -341,6 +574,16 @@
                                     {{ item.cluster_count }} GROUPED
                                 </div>
                                 {% endif %}
+                                {% if item.pattern_type %}
+                                <div class="chip chip-soft">
+                                    {{ item.pattern_type.replace('_', ' ')|upper }}
+                                </div>
+                                {% endif %}
+                                {% if item.systemic_flag %}
+                                <div class="chip chip-medium">
+                                    SYSTEMIC
+                                </div>
+                                {% endif %}
                             </div>
                             <h4>{{ item.message }}</h4>
                         </div>
@@ -358,6 +601,20 @@
                     <div class="finding-block grouped-summary-block">
                         <span class="finding-label">Grouped summary:</span>
                         {{ item.summary }}
+                    </div>
+                    {% endif %}
+
+                    {% if item.engineering_domain %}
+                    <div class="finding-block">
+                        <span class="finding-label">Engineering domain:</span>
+                        {{ item.engineering_domain.replace('_', ' ')|title }}
+                    </div>
+                    {% endif %}
+
+                    {% if item.engineering_impact %}
+                    <div class="finding-block">
+                        <span class="finding-label">Pattern impact:</span>
+                        {{ item.engineering_impact }}
                     </div>
                     {% endif %}
 
@@ -884,6 +1141,12 @@
                             <div class="chip {% if cluster.confidence_band == 'high' %}chip-low{% elif cluster.confidence_band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
                                 {{ cluster.confidence_band|upper }}
                             </div>
+                            {% if cluster.pattern_type %}
+                            <div class="chip chip-soft">{{ cluster.pattern_type.replace('_', ' ')|upper }}</div>
+                            {% endif %}
+                            {% if cluster.systemic_flag %}
+                            <div class="chip chip-medium">SYSTEMIC</div>
+                            {% endif %}
                         </div>
                         <h4>{{ cluster.message }}</h4>
                     </div>
@@ -898,6 +1161,20 @@
                     <span class="finding-label">Grouped summary:</span>
                     {{ cluster.summary }}
                 </div>
+
+                {% if cluster.engineering_domain %}
+                <div class="finding-block">
+                    <span class="finding-label">Engineering domain:</span>
+                    {{ cluster.engineering_domain.replace('_', ' ')|title }}
+                </div>
+                {% endif %}
+
+                {% if cluster.engineering_impact %}
+                <div class="finding-block">
+                    <span class="finding-label">Pattern impact:</span>
+                    {{ cluster.engineering_impact }}
+                </div>
+                {% endif %}
 
                 {% if cluster.evidence_points %}
                 <div class="finding-block">
@@ -949,6 +1226,12 @@
                             <div class="chip {% if cluster.confidence_band == 'high' %}chip-low{% elif cluster.confidence_band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
                                 {{ cluster.confidence_band|upper }}
                             </div>
+                            {% if cluster.pattern_type %}
+                            <div class="chip chip-soft">{{ cluster.pattern_type.replace('_', ' ')|upper }}</div>
+                            {% endif %}
+                            {% if cluster.systemic_flag %}
+                            <div class="chip chip-medium">SYSTEMIC</div>
+                            {% endif %}
                         </div>
                         <h4>{{ cluster.message }}</h4>
                     </div>
@@ -963,6 +1246,20 @@
                     <span class="finding-label">Grouped summary:</span>
                     {{ cluster.summary }}
                 </div>
+
+                {% if cluster.engineering_domain %}
+                <div class="finding-block">
+                    <span class="finding-label">Engineering domain:</span>
+                    {{ cluster.engineering_domain.replace('_', ' ')|title }}
+                </div>
+                {% endif %}
+
+                {% if cluster.engineering_impact %}
+                <div class="finding-block">
+                    <span class="finding-label">Pattern impact:</span>
+                    {{ cluster.engineering_impact }}
+                </div>
+                {% endif %}
 
                 {% if cluster.evidence_points %}
                 <div class="finding-block">
@@ -1103,6 +1400,12 @@
                             <div class="chip {% if cluster.confidence_band == 'high' %}chip-low{% elif cluster.confidence_band == 'medium' %}chip-medium{% else %}chip-critical{% endif %}">
                                 {{ cluster.confidence_band|upper }}
                             </div>
+                            {% if cluster.pattern_type %}
+                            <div class="chip chip-soft">{{ cluster.pattern_type.replace('_', ' ')|upper }}</div>
+                            {% endif %}
+                            {% if cluster.systemic_flag %}
+                            <div class="chip chip-medium">SYSTEMIC</div>
+                            {% endif %}
                         </div>
                         <h4>{{ cluster.message }}</h4>
                     </div>
@@ -1117,6 +1420,20 @@
                     <span class="finding-label">Grouped summary:</span>
                     {{ cluster.summary }}
                 </div>
+
+                {% if cluster.engineering_domain %}
+                <div class="finding-block">
+                    <span class="finding-label">Engineering domain:</span>
+                    {{ cluster.engineering_domain.replace('_', ' ')|title }}
+                </div>
+                {% endif %}
+
+                {% if cluster.engineering_impact %}
+                <div class="finding-block">
+                    <span class="finding-label">Pattern impact:</span>
+                    {{ cluster.engineering_impact }}
+                </div>
+                {% endif %}
 
                 {% if cluster.evidence_points %}
                 <div class="finding-block">

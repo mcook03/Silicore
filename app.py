@@ -1263,6 +1263,215 @@ def _render_page(*, active_page, page_title, page_eyebrow, page_copy, template_n
     )
 
 
+def _short_run_label(run, fallback_index):
+    label = str(run.get("name") or run.get("run_dir") or f"Run {fallback_index + 1}")
+    return label if len(label) <= 24 else label[:21] + "..."
+
+
+def _build_project_intelligence(project, run_a, run_b):
+    runs = project.get("runs", []) or []
+    if len(runs) < 2:
+        return {
+            "trend_summary": "Not enough project history is available to build project-level intelligence yet.",
+            "project_takeaway": "Add more linked runs to this project to unlock trend and recurrence analysis.",
+            "score_history": [],
+            "risk_history": [],
+            "recurring_categories": [],
+            "recurring_patterns": [],
+            "attention_areas": [],
+            "stability_label": "Limited history",
+            "history_depth": len(runs),
+            "selected_window_label": "Current comparison only",
+        }
+
+    run_a_id = str(run_a.get("run_id"))
+    run_b_id = str(run_b.get("run_id"))
+
+    index_a = next((index for index, run in enumerate(runs) if str(run.get("run_id")) == run_a_id), 0)
+    index_b = next((index for index, run in enumerate(runs) if str(run.get("run_id")) == run_b_id), len(runs) - 1)
+
+    start_index = min(index_a, index_b)
+    end_index = max(index_a, index_b)
+
+    history_runs = runs[: end_index + 1]
+    comparison_window = runs[start_index : end_index + 1]
+
+    score_history = []
+    risk_history = []
+
+    for index, run in enumerate(history_runs):
+        score_history.append(
+            {
+                "label": _short_run_label(run, index),
+                "value": _score_to_100(run.get("score")),
+                "selected": str(run.get("run_id")) in {run_a_id, run_b_id},
+                "is_new_run": str(run.get("run_id")) == run_b_id,
+            }
+        )
+        risk_history.append(
+            {
+                "label": _short_run_label(run, index),
+                "value": _safe_int(run.get("risk_count"), 0),
+                "selected": str(run.get("run_id")) in {run_a_id, run_b_id},
+                "is_new_run": str(run.get("run_id")) == run_b_id,
+            }
+        )
+
+    category_presence = defaultdict(int)
+    category_total_findings = defaultdict(int)
+
+    pattern_presence = defaultdict(int)
+    pattern_examples = {}
+    pattern_recommendations = {}
+
+    for run in history_runs:
+        category_summary = run.get("category_summary") or {}
+        run_seen_categories = set()
+
+        for category, count in category_summary.items():
+            normalized_category = category or "uncategorized"
+            if normalized_category not in run_seen_categories:
+                category_presence[normalized_category] += 1
+                run_seen_categories.add(normalized_category)
+            category_total_findings[normalized_category] += _safe_int(count, 0)
+
+        snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
+        seen_base_signatures = set()
+
+        for item in snapshot:
+            base_signature = item.get("base_signature")
+            if not base_signature or base_signature in seen_base_signatures:
+                continue
+            seen_base_signatures.add(base_signature)
+
+            pattern_presence[base_signature] += 1
+            pattern_examples.setdefault(
+                base_signature,
+                {
+                    "category": item.get("category") or "uncategorized",
+                    "message": item.get("message") or "No message provided.",
+                },
+            )
+            pattern_recommendations.setdefault(
+                base_signature,
+                item.get("recommendation") or "Review this recurring issue.",
+            )
+
+    recurring_categories = []
+    for category, appearances in category_presence.items():
+        if appearances < 2:
+            continue
+        recurring_categories.append(
+            {
+                "category": _format_category_name(category),
+                "raw_category": category,
+                "appearances": appearances,
+                "total_findings": category_total_findings.get(category, 0),
+            }
+        )
+
+    recurring_categories.sort(
+        key=lambda item: (-item["appearances"], -item["total_findings"], item["category"].lower())
+    )
+
+    recurring_patterns = []
+    for base_signature, appearances in pattern_presence.items():
+        if appearances < 2:
+            continue
+        example = pattern_examples.get(base_signature, {})
+        recurring_patterns.append(
+            {
+                "category": _format_category_name(example.get("category")),
+                "message": example.get("message"),
+                "appearances": appearances,
+                "recommendation": pattern_recommendations.get(base_signature, "Review this recurring issue."),
+            }
+        )
+
+    recurring_patterns.sort(
+        key=lambda item: (-item["appearances"], item["category"].lower(), item["message"].lower())
+    )
+
+    attention_areas = []
+    for item in recurring_categories[:3]:
+        attention_areas.append(
+            {
+                "category": item["category"],
+                "reason": (
+                    f"{item['category']} appeared in {item['appearances']} project run(s) and contributed "
+                    f"{item['total_findings']} total findings across recorded history."
+                ),
+            }
+        )
+
+    first_score = _score_to_100(history_runs[0].get("score"))
+    last_score = _score_to_100(history_runs[-1].get("score"))
+    selected_start_score = _score_to_100(run_a.get("score"))
+    selected_end_score = _score_to_100(run_b.get("score"))
+
+    first_risk = _safe_int(history_runs[0].get("risk_count"), 0)
+    last_risk = _safe_int(history_runs[-1].get("risk_count"), 0)
+    selected_start_risk = _safe_int(run_a.get("risk_count"), 0)
+    selected_end_risk = _safe_int(run_b.get("risk_count"), 0)
+
+    project_score_delta = round(last_score - first_score, 1)
+    selected_score_delta = round(selected_end_score - selected_start_score, 1)
+    project_risk_delta = last_risk - first_risk
+    selected_risk_delta = selected_end_risk - selected_start_risk
+
+    recent_scores = [item["value"] for item in score_history[-3:]]
+    if len(recent_scores) >= 3 and recent_scores[-1] >= recent_scores[-2] >= recent_scores[-3]:
+        stability_label = "Improving trend"
+    elif len(recent_scores) >= 3 and recent_scores[-1] <= recent_scores[-2] <= recent_scores[-3]:
+        stability_label = "Weakening trend"
+    else:
+        stability_label = "Mixed trend"
+
+    if project_score_delta > 0 and project_risk_delta < 0:
+        trend_summary = (
+            f"Across {len(history_runs)} recorded project run(s), the project score improved by {project_score_delta} points "
+            f"while total findings moved by {project_risk_delta}. This suggests the broader project is trending healthier over time."
+        )
+    elif project_score_delta < 0 and project_risk_delta > 0:
+        trend_summary = (
+            f"Across {len(history_runs)} recorded project run(s), the project score fell by {abs(project_score_delta)} points "
+            f"while total findings increased by {project_risk_delta}. This suggests risk is accumulating across the project."
+        )
+    else:
+        trend_summary = (
+            f"Across {len(history_runs)} recorded project run(s), the project trend is mixed. "
+            f"Score moved by {project_score_delta} and total findings moved by {project_risk_delta}."
+        )
+
+    if recurring_categories:
+        top_category = recurring_categories[0]["category"]
+        project_takeaway = (
+            f"The selected comparison improved by {selected_score_delta} points, but {top_category} remains the strongest recurring "
+            "issue family across project history. This means the current revision may be improving while the broader project still "
+            "shows repeated weakness in the same engineering area."
+        )
+    else:
+        project_takeaway = (
+            f"The selected comparison changed by {selected_score_delta} points and no major recurring issue family dominates the "
+            "recorded project history yet. This suggests movement is still relatively localized."
+        )
+
+    return {
+        "trend_summary": trend_summary,
+        "project_takeaway": project_takeaway,
+        "score_history": score_history,
+        "risk_history": risk_history,
+        "recurring_categories": recurring_categories[:5],
+        "recurring_patterns": recurring_patterns[:5],
+        "attention_areas": attention_areas,
+        "stability_label": stability_label,
+        "history_depth": len(history_runs),
+        "selected_window_label": f"Runs {start_index + 1} to {end_index + 1}",
+        "selected_score_delta": selected_score_delta,
+        "selected_risk_delta": selected_risk_delta,
+    }
+
+
 @app.route("/", methods=["GET"])
 def index():
     stats = _build_home_stats()
@@ -1554,6 +1763,8 @@ def compare_runs(project_id):
             },
         }
 
+    project_intelligence = _build_project_intelligence(project, run_a, run_b)
+
     comparison = {
         "run_a": run_a,
         "run_b": run_b,
@@ -1562,6 +1773,7 @@ def compare_runs(project_id):
         "critical_diff": critical_b - critical_a,
         "delta_analysis": delta_analysis,
         "insights": insights,
+        "project_intelligence": project_intelligence,
         "summary": {
             "score_changed": round(score_b - score_a, 2),
             "risk_changed": risk_b - risk_a,

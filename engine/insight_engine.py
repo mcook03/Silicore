@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import re
 from typing import Any, Dict, List, Optional, Tuple
 
 
@@ -59,6 +60,13 @@ def _normalize_rule_id(value: Any) -> str:
     return _safe_str(value, "")
 
 
+def _safe_float(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def _normalize_string_list(values: Any) -> List[str]:
     if not isinstance(values, list):
         return []
@@ -111,6 +119,7 @@ def _normalize_risk(risk: Dict[str, Any]) -> Dict[str, Any]:
         "recommendation": _normalize_recommendation(risk.get("recommendation")),
         "components": _normalize_string_list(risk.get("components")),
         "nets": _normalize_string_list(risk.get("nets")),
+        "metrics": risk.get("metrics") if isinstance(risk.get("metrics"), dict) else {},
         "raw": risk,
     }
 
@@ -569,6 +578,7 @@ def _enrich_risk_list_with_confidence(
         enriched_risk["confidence"] = trust
         enriched_risk["evidence_points"] = trust.get("evidence_points", [])
         enriched_risk["transparency"] = _build_transparency(risk)
+        enriched_risk["change_type"] = change_type
         enriched.append(enriched_risk)
 
     return enriched
@@ -596,6 +606,7 @@ def _enrich_changed_risks_with_confidence(changed_risks: Optional[List[Dict[str,
         enriched_risk["confidence"] = trust
         enriched_risk["evidence_points"] = trust.get("evidence_points", [])
         enriched_risk["transparency"] = _build_transparency(proxy)
+        enriched_risk["change_type"] = "changed"
         enriched.append(enriched_risk)
 
     return enriched
@@ -626,15 +637,119 @@ def _extract_cluster_key_from_message(message: str) -> str:
     return text
 
 
+def _replace_component_refs(text: str) -> str:
+    return re.sub(r"\b[a-z]+[0-9]+\b", "<ref>", text, flags=re.IGNORECASE)
+
+
+def _replace_numeric_values(text: str) -> str:
+    text = re.sub(r"\b\d+(?:\.\d+)?\b", "<num>", text)
+    return re.sub(r"\(\s*<num>[^)]*\)", "", text).strip()
+
+
+def _build_message_pattern(risk: Dict[str, Any]) -> str:
+    rule_id = _normalize_rule_id(risk.get("rule_id")).lower()
+    message = _extract_cluster_key_from_message(risk.get("message", ""))
+    message = _replace_component_refs(message)
+    message = _replace_numeric_values(message)
+    message = " ".join(message.split())
+
+    if rule_id == "spacing" and "too close" in message:
+        return "spacing components too close"
+    if rule_id == "thermal" and "thermal hotspot" in message:
+        return "thermal hotspot risk"
+    if "return path" in message:
+        return "return path discontinuity"
+    if "impedance" in message:
+        return "impedance control risk"
+    if "via" in message:
+        return "via design risk"
+
+    return message or rule_id or "repeated design condition"
+
+
+def _collect_metric_stats(risks: List[Dict[str, Any]]) -> Dict[str, Dict[str, float]]:
+    metric_values: Dict[str, List[float]] = defaultdict(list)
+
+    for item in risks:
+        metrics = item.get("metrics")
+        if not isinstance(metrics, dict):
+            continue
+        for key, value in metrics.items():
+            if isinstance(value, (int, float)):
+                metric_values[str(key)].append(float(value))
+
+    stats: Dict[str, Dict[str, float]] = {}
+    for key, values in metric_values.items():
+        if not values:
+            continue
+        stats[key] = {
+            "min": round(min(values), 2),
+            "max": round(max(values), 2),
+        }
+
+    return stats
+
+
 def _build_cluster_signature(risk: Dict[str, Any], change_type: str) -> Tuple[str, str, str]:
     category = _normalize_category(risk.get("category"))
-    severity = _normalize_severity(risk.get("severity") or risk.get("new_severity"))
-    message_key = _extract_cluster_key_from_message(risk.get("message", ""))
+    rule_id = _normalize_rule_id(risk.get("rule_id")) or "unknown_rule"
+    message_key = _build_message_pattern(risk)
     return (
         change_type.lower(),
         category.lower(),
-        message_key,
+        f"{rule_id.lower()}|{message_key}",
     )
+
+
+def _classify_pattern(cluster_key: str) -> Dict[str, Any]:
+    key = cluster_key.lower()
+
+    if "spacing" in key or "clearance" in key or "too close" in key:
+        return {
+            "pattern_type": "spacing",
+            "engineering_domain": "manufacturability",
+            "systemic_label": "layout constraint issue",
+            "impact": "manufacturability and electrical reliability",
+        }
+
+    if "thermal" in key or "hotspot" in key:
+        return {
+            "pattern_type": "thermal",
+            "engineering_domain": "thermal",
+            "systemic_label": "heat concentration issue",
+            "impact": "thermal reliability and component lifespan",
+        }
+
+    if "impedance" in key:
+        return {
+            "pattern_type": "impedance",
+            "engineering_domain": "signal_integrity",
+            "systemic_label": "signal integrity issue",
+            "impact": "signal quality and high-speed performance",
+        }
+
+    if "via" in key:
+        return {
+            "pattern_type": "via",
+            "engineering_domain": "interconnect",
+            "systemic_label": "interconnect reliability issue",
+            "impact": "current flow and structural reliability",
+        }
+
+    if "return path" in key:
+        return {
+            "pattern_type": "return_path",
+            "engineering_domain": "signal_integrity",
+            "systemic_label": "return path discontinuity",
+            "impact": "EMI and signal stability",
+        }
+
+    return {
+        "pattern_type": "general",
+        "engineering_domain": "general",
+        "systemic_label": "repeated design condition",
+        "impact": "overall design robustness",
+    }
 
 
 def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) -> Dict[str, Any]:
@@ -643,6 +758,9 @@ def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) ->
     severity = _normalize_severity(representative.get("severity") or representative.get("new_severity"))
     base_message = representative.get("message", "Unnamed issue")
     cluster_key = _extract_cluster_key_from_message(base_message)
+    message_pattern = _build_message_pattern(representative)
+
+    pattern_info = _classify_pattern(cluster_key)
 
     recommendations = []
     seen_recommendations = set()
@@ -651,6 +769,8 @@ def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) ->
 
     confidence_scores = []
     change_type_counts: Dict[str, int] = defaultdict(int)
+    unique_components = set()
+    unique_nets = set()
 
     for item in risks:
         conf = item.get("confidence", {})
@@ -670,13 +790,37 @@ def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) ->
             seen_evidence.add(key)
             evidence_points.append(point)
 
+        for component in _normalize_string_list(item.get("components")):
+            unique_components.add(component)
+        for net in _normalize_string_list(item.get("nets")):
+            unique_nets.add(net)
+
     average_confidence = round(sum(confidence_scores) / len(confidence_scores), 1) if confidence_scores else 0
     max_confidence = max(confidence_scores) if confidence_scores else 0
+    metric_stats = _collect_metric_stats(risks)
 
-    if len(risks) == 1:
-        summary = base_message
+    systemic_flag = len(risks) >= 2
+
+    if systemic_flag:
+        summary = (
+            f"{len(risks)} related findings indicate a likely {pattern_info['systemic_label']} "
+            f"across {len(unique_components) or len(risks)} affected component(s)."
+        )
     else:
-        summary = f"{len(risks)} similar {category.lower()} findings grouped under “{cluster_key}”."
+        summary = base_message
+
+    distance_stats = metric_stats.get("distance")
+    threshold_stats = metric_stats.get("threshold")
+    if distance_stats and threshold_stats:
+        summary += (
+            f" Observed distance ranged from {distance_stats['min']} to {distance_stats['max']} "
+            f"against a threshold of {threshold_stats['min']}."
+        )
+    elif threshold_stats:
+        summary += f" Trigger threshold centered around {threshold_stats['min']}."
+
+    if unique_nets:
+        summary += f" {len(unique_nets)} affected net(s) are tied to this pattern."
 
     if max_confidence >= 80:
         confidence_band = "high"
@@ -685,8 +829,16 @@ def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) ->
     else:
         confidence_band = "low"
 
+    priority_score = (
+        (_severity_weight(severity) * 100)
+        + (len(risks) * 18)
+        + round(max_confidence * 0.6)
+        + (20 if systemic_flag else 0)
+    )
+
     return {
         "cluster_key": cluster_key,
+        "message_pattern": message_pattern,
         "change_type": change_type,
         "category": category,
         "severity": severity,
@@ -696,8 +848,16 @@ def _cluster_single_risk_group(risks: List[Dict[str, Any]], change_type: str) ->
         "average_confidence": average_confidence,
         "max_confidence": max_confidence,
         "confidence_band": confidence_band,
+        "pattern_type": pattern_info["pattern_type"],
+        "engineering_domain": pattern_info["engineering_domain"],
+        "systemic_flag": systemic_flag,
+        "engineering_impact": pattern_info["impact"],
         "recommendations": recommendations[:3],
         "evidence_points": evidence_points[:5],
+        "metric_stats": metric_stats,
+        "affected_component_count": len(unique_components),
+        "affected_net_count": len(unique_nets),
+        "priority_score": priority_score,
         "items": risks,
     }
 
@@ -723,9 +883,9 @@ def _cluster_risk_list(risks: Optional[List[Dict[str, Any]]], change_type: str) 
 
     clusters.sort(
         key=lambda cluster: (
+            -cluster.get("priority_score", 0),
             -cluster.get("count", 0),
             -cluster.get("max_confidence", 0),
-            -_severity_weight(cluster.get("severity")),
             cluster.get("category", "").lower(),
             cluster.get("cluster_key", "").lower(),
         )
@@ -872,6 +1032,10 @@ def _build_trusted_focus_items(
                 "evidence_points": representative.get("evidence_points", []),
                 "transparency": representative.get("transparency", {}),
                 "recommendation": representative.get("recommendation", ""),
+                "pattern_type": cluster.get("pattern_type", "general"),
+                "engineering_domain": cluster.get("engineering_domain", "general"),
+                "systemic_flag": cluster.get("systemic_flag", False),
+                "engineering_impact": cluster.get("engineering_impact", ""),
             }
         )
 
@@ -891,6 +1055,10 @@ def _build_trusted_focus_items(
                 "recommendation": representative.get("recommendation", ""),
                 "old_severity": representative.get("old_severity"),
                 "new_severity": representative.get("new_severity"),
+                "pattern_type": cluster.get("pattern_type", "general"),
+                "engineering_domain": cluster.get("engineering_domain", "general"),
+                "systemic_flag": cluster.get("systemic_flag", False),
+                "engineering_impact": cluster.get("engineering_impact", ""),
             }
         )
 
@@ -908,6 +1076,10 @@ def _build_trusted_focus_items(
                 "evidence_points": representative.get("evidence_points", []),
                 "transparency": representative.get("transparency", {}),
                 "recommendation": representative.get("recommendation", ""),
+                "pattern_type": cluster.get("pattern_type", "general"),
+                "engineering_domain": cluster.get("engineering_domain", "general"),
+                "systemic_flag": cluster.get("systemic_flag", False),
+                "engineering_impact": cluster.get("engineering_impact", ""),
             }
         )
 
@@ -930,6 +1102,8 @@ def build_priority_recommendations(
     current_risks: Optional[List[Dict[str, Any]]] = None,
     added_risks: Optional[List[Dict[str, Any]]] = None,
     changed_risks: Optional[List[Dict[str, Any]]] = None,
+    clustered_added: Optional[List[Dict[str, Any]]] = None,
+    clustered_changed: Optional[List[Dict[str, Any]]] = None,
     limit: int = 3,
 ) -> List[Dict[str, Any]]:
     recommendations: List[Dict[str, Any]] = []
@@ -948,6 +1122,33 @@ def build_priority_recommendations(
                 "priority": "high",
                 "category": category,
                 "type": "category_focus",
+            }
+        )
+
+    systemic_clusters = [
+        cluster for cluster in ((clustered_added or []) + (clustered_changed or []))
+        if cluster.get("systemic_flag")
+    ]
+    systemic_clusters.sort(
+        key=lambda item: (
+            -int(item.get("priority_score", 0)),
+            -int(item.get("count", 0)),
+            item.get("category", "").lower(),
+        )
+    )
+
+    if systemic_clusters:
+        top_cluster = systemic_clusters[0]
+        recommendations.append(
+            {
+                "title": "Investigate repeated issue family",
+                "reason": (
+                    f"{top_cluster.get('count', 0)} related {top_cluster.get('category', 'General')} findings are clustering into a "
+                    f"{top_cluster.get('engineering_domain', 'general')} pattern. This looks more systemic than a one-off violation."
+                ),
+                "priority": "high",
+                "category": top_cluster.get("category", "General"),
+                "type": "systemic_cluster_focus",
             }
         )
 
@@ -1050,7 +1251,21 @@ def build_priority_recommendations(
         deduped.append(recommendation)
 
     priority_order = {"high": 0, "medium": 1, "low": 2}
-    deduped.sort(key=lambda item: (priority_order.get(item.get("priority", "low"), 2), item.get("title", "").lower()))
+    type_order = {
+        "systemic_cluster_focus": 0,
+        "category_focus": 1,
+        "new_high_severity": 2,
+        "severity_increase": 3,
+        "current_state_focus": 4,
+        "stability_followup": 5,
+    }
+    deduped.sort(
+        key=lambda item: (
+            priority_order.get(item.get("priority", "low"), 2),
+            type_order.get(item.get("type", ""), 9),
+            item.get("title", "").lower(),
+        )
+    )
 
     return deduped[:limit]
 
@@ -1212,6 +1427,8 @@ def generate_comparison_insights(comparison_result: Dict[str, Any]) -> Dict[str,
         current_risks=new_risks,
         added_risks=risk_diff.get("added", []),
         changed_risks=risk_diff.get("changed", []),
+        clustered_added=clustered_added,
+        clustered_changed=clustered_changed,
         limit=3,
     )
 
