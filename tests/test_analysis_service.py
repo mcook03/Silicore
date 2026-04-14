@@ -78,6 +78,28 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertGreaterEqual(len(project_summary["boards"]), 2)
         self.assertEqual(project_summary["boards"][0]["rank"], 1)
 
+    def test_single_analysis_accepts_config_path_and_supports_brd_inputs(self):
+        output_dir = self._make_tempdir("silicore_brd_test_")
+        result = run_single_analysis_from_path(
+            "fixtures/legacy_power_board.brd",
+            config="custom_config.json",
+            output_dir=output_dir,
+        )
+
+        manifest_path = os.path.join(output_dir, "export_manifest.json")
+
+        self.assertTrue(os.path.exists(manifest_path))
+        self.assertEqual(result["filename"], "legacy_power_board.brd")
+        self.assertGreater(len(result["risks"]), 0)
+        self.assertIn("board_summary", result)
+        self.assertEqual(result["board_summary"]["component_count"], 8)
+
+        with open(manifest_path, "r", encoding="utf-8") as file:
+            manifest = json.load(file)
+
+        self.assertIn(".brd", manifest["parser_capabilities"])
+        self.assertEqual(manifest["parser_capabilities"][".brd"]["status"], "supported")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -13,11 +13,11 @@ from engine.dashboard_storage import (
     save_run_meta,
 )
 
-SUPPORTED_EXTENSIONS = {".txt", ".kicad_pcb"}
+SUPPORTED_EXTENSIONS = {".txt", ".brd", ".kicad_pcb"}
 FORMAT_READINESS = {
     ".kicad_pcb": {"label": "KiCad PCB", "status": "supported"},
     ".txt": {"label": "Structured Demo Text", "status": "supported"},
-    ".brd": {"label": "Altium / Legacy Board", "status": "planned"},
+    ".brd": {"label": "Legacy Structured Board", "status": "supported"},
     ".gbr": {"label": "Gerber", "status": "planned"},
 }
 
@@ -57,6 +57,16 @@ def build_project_downloads(run_dir_name):
 def get_dashboard_config(config_path):
     config = load_config(config_path)
     return config, get_editable_config_view(config)
+
+
+def _resolve_config(config):
+    if config is None:
+        return load_config("custom_config.json")
+
+    if isinstance(config, str):
+        return load_config(config)
+
+    return config
 
 
 def _optional_function(module_name, function_names):
@@ -1225,8 +1235,7 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None):
     if extension not in SUPPORTED_EXTENSIONS:
         raise ValueError(f"Unsupported file type: {extension}")
 
-    if config is None:
-        config = load_config("custom_config.json")
+    config = _resolve_config(config)
 
     result = _analyze_board_file(file_path, config)
 
@@ -1272,8 +1281,7 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None):
 
 
 def analyze_project_paths(file_paths, config=None, output_dir=None):
-    if config is None:
-        config = load_config("custom_config.json")
+    config = _resolve_config(config)
 
     boards = []
     for file_path in file_paths:
@@ -1370,7 +1378,7 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path)
     extension = os.path.splitext(filename)[1].lower()
 
     if extension not in SUPPORTED_EXTENSIONS:
-        raise ValueError("Unsupported file type. Use .txt or .kicad_pcb.")
+        raise ValueError("Unsupported file type. Use .txt, .brd, or .kicad_pcb.")
 
     ensure_clean_upload_dir(upload_folder)
     ensure_runs_folder(runs_folder)
