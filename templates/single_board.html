@@ -331,6 +331,83 @@
     </div>
 </section>
 
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">What To Fix Next</h2>
+            <p class="section-copy">Decision-layer ranking based on severity and evidence strength.</p>
+        </div>
+
+        <div class="card-body">
+            {% if single_decision and single_decision.next_actions %}
+            <div class="board-issue-list">
+                {% for item in single_decision.next_actions %}
+                <div class="board-issue-item">
+                    <div class="issue-top-row">
+                        <span class="chip {{ chip_class(item.severity) }}">{{ item.severity }}</span>
+                        <span class="issue-category">{{ item.category }}</span>
+                    </div>
+                    <div class="board-issue-text strong-issue-text">{{ item.message }}</div>
+                    <div class="issue-recommendation">{{ item.recommendation }}</div>
+                    <div class="issue-confidence-row">
+                        <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
+                        <span class="mini-chip mini-chip-low">Priority {{ item.priority_score }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No ranked next actions are available yet.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Trust & Confidence</h2>
+            <p class="section-copy">How strong the current board evidence looks across all findings.</p>
+        </div>
+
+        <div class="card-body">
+            {% if single_decision %}
+            <div class="summary-panel">
+                <h3>Confidence Summary</h3>
+                <p>{{ single_decision.confidence_summary }}</p>
+            </div>
+
+            <div class="score-breakdown-grid" style="margin-top:16px;">
+                <div class="metric-card">
+                    <div class="metric-label">Avg Confidence</div>
+                    <div class="metric-value">{{ single_decision.average_confidence }}</div>
+                    <div class="metric-sub">Across all current findings</div>
+                </div>
+            </div>
+
+            {% if single_decision.confidence_bars and single_decision.confidence_bars.has_data %}
+            <div class="distribution-bars" style="margin-top:16px;">
+                {% for item in single_decision.confidence_bars["items"] %}
+                <div class="distribution-bar-row">
+                    <div class="distribution-bar-label">{{ item.label }}</div>
+                    <div class="distribution-bar-track">
+                        <div class="distribution-bar-fill tone-violet" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                    <div class="distribution-bar-value">{{ item.value|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Decision Note</h3>
+                <p>{{ single_decision.trust_note }}</p>
+            </div>
+            {% else %}
+            <div class="empty-state">Confidence insights will appear after analysis.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
 <section class="card boards-card">
     <div class="card-header">
         <h2 class="section-title">Findings by Category</h2>
@@ -869,6 +946,13 @@
         color: #dbeafe;
         line-height: 1.7;
         margin-top: 8px;
+    }
+
+    .issue-confidence-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
     }
 
     .risk-meta-row {

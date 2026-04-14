@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% set score_trend = workspace_chart.score_trend if workspace_chart is defined else {} %}
+{% set risk_trend = workspace_chart.risk_trend if workspace_chart is defined else {} %}
+{% set critical_trend = workspace_chart.critical_trend if workspace_chart is defined else {} %}
+{% set category_bars = workspace_chart.category_bars if workspace_chart is defined else {} %}
+{% set quality_mix = workspace_chart.quality_mix if workspace_chart is defined else {} %}
+{% set latest_compare_ids = workspace_chart.latest_compare_run_ids if workspace_chart is defined else [] %}
+
+<section class="grid grid-2">
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">{{ project.name }}</h2>
@@ -24,6 +32,12 @@
             </div>
 
             <div class="metric-card">
+                <div class="metric-label">Latest Score</div>
+                <div class="metric-value" style="font-size:22px;">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
+                <div class="metric-sub">{{ project.health_label }}</div>
+            </div>
+
+            <div class="metric-card">
                 <div class="metric-label">Created</div>
                 <div class="metric-value" style="font-size:22px;">{{ project.created_at }}</div>
                 <div class="metric-sub">Project creation time</div>
@@ -38,6 +52,106 @@
     </div>
 </section>
 
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Workspace Trends</h2>
+        <p class="section-copy">
+            Real run history for this workspace, including score movement and issue volume across linked analyses.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="project-trend-grid">
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Score Trend</span>
+                    <strong>{{ score_trend.last_value|round|int if score_trend and score_trend.has_data else "N/A" }}</strong>
+                </div>
+                {% if score_trend and score_trend.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in score_trend.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in score_trend.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ score_trend.points[loop.index0 - 1].x }}" y1="{{ score_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-score-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">Run more analyses to build score history.</div>
+                {% endif %}
+            </div>
+
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Risk Count Trend</span>
+                    <strong>{{ risk_trend.last_value|round|int if risk_trend and risk_trend.has_data else "N/A" }}</strong>
+                </div>
+                {% if risk_trend and risk_trend.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in risk_trend.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in risk_trend.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ risk_trend.points[loop.index0 - 1].x }}" y1="{{ risk_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-risk-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">No risk history yet.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="project-trend-grid" style="margin-top:16px;">
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Critical Findings</span>
+                    <strong>{{ critical_trend.last_value|round|int if critical_trend and critical_trend.has_data else 0 }}</strong>
+                </div>
+                {% if critical_trend and critical_trend.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in critical_trend.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in critical_trend.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ critical_trend.points[loop.index0 - 1].x }}" y1="{{ critical_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-critical-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">No critical finding history yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Issue Mix</span>
+                    <strong>{{ project.top_category }}</strong>
+                </div>
+                {% if quality_mix and quality_mix.has_data %}
+                <div class="mini-bar-list">
+                    {% for item in quality_mix["items"] %}
+                    <div class="mini-bar-row">
+                        <div class="mini-bar-label">{{ item.label }}</div>
+                        <div class="mini-bar-track"><div class="mini-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                        <div class="mini-bar-value">{{ item.value }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="trend-empty">Workspace mix will appear after scored runs are linked.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+</section>
+
+<section class="grid grid-2">
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Run Comparison</h2>
@@ -55,7 +169,7 @@
                     <select name="run_a" required>
                         <option value="">Select first run</option>
                         {% for run in project.runs|reverse %}
-                        <option value="{{ run.run_id }}">
+                        <option value="{{ run.run_id }}" {% if latest_compare_ids|length > 0 and run.run_id == latest_compare_ids[0] %}selected{% endif %}>
                             {{ run.name }} · {{ run.run_type }} · {{ run.created_at }}
                         </option>
                         {% endfor %}
@@ -67,7 +181,7 @@
                     <select name="run_b" required>
                         <option value="">Select second run</option>
                         {% for run in project.runs|reverse %}
-                        <option value="{{ run.run_id }}">
+                        <option value="{{ run.run_id }}" {% if latest_compare_ids|length > 1 and run.run_id == latest_compare_ids[1] %}selected{% endif %}>
                             {{ run.name }} · {{ run.run_type }} · {{ run.created_at }}
                         </option>
                         {% endfor %}
@@ -85,6 +199,32 @@
         </div>
         {% endif %}
     </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Recurring Categories</h2>
+        <p class="section-copy">
+            Top engineering categories showing up across this workspace's linked analyses.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if category_bars and category_bars.has_data %}
+            <div class="mini-bar-list">
+                {% for item in category_bars["items"] %}
+                <div class="mini-bar-row">
+                    <div class="mini-bar-label">{{ item.label }}</div>
+                    <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                    <div class="mini-bar-value">{{ item.value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No recurring category data is available yet for this workspace.</div>
+        {% endif %}
+    </div>
+</section>
 </section>
 
 <section class="card">
@@ -141,6 +281,17 @@
                         {% endif %}
                     </div>
 
+                    <div class="summary-panel" style="margin-top:14px;">
+                        <h3>{{ "Strong" if run.score is not none and run.score >= 8 else "Watch" if run.score is not none and run.score >= 5 else "Attention" if run.score is not none else "Unscored" }}</h3>
+                        <p>
+                            {% if run.score is not none %}
+                                This run scored {{ (run.score * 10)|round|int }} / 100 with {{ run.risk_count if run.risk_count is not none else 0 }} total finding(s).
+                            {% else %}
+                                This run does not include a score snapshot yet.
+                            {% endif %}
+                        </p>
+                    </div>
+
                     {% if run.summary %}
                     <div class="summary-panel" style="margin-top:14px;">
                         <h3>Run Summary</h3>
@@ -161,6 +312,107 @@
 </div>
 
 <style>
+    .project-trend-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .trend-panel {
+        padding: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        background: rgba(255,255,255,0.03);
+    }
+
+    .trend-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 12px;
+        color: #dbe7ff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .project-trend-svg {
+        width: 100%;
+        height: 90px;
+        display: block;
+    }
+
+    .trend-grid-line {
+        stroke: rgba(255,255,255,0.06);
+        stroke-width: 0.45;
+    }
+
+    .trend-score-line,
+    .trend-risk-line,
+    .trend-critical-line {
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .trend-score-line {
+        stroke: rgba(96,165,250,0.96);
+    }
+
+    .trend-risk-line {
+        stroke: rgba(248,113,113,0.94);
+    }
+
+    .trend-critical-line {
+        stroke: rgba(251,191,36,0.94);
+    }
+
+    .trend-empty {
+        height: 90px;
+        display: grid;
+        place-items: center;
+        color: rgba(191,219,254,0.8);
+        border-radius: 12px;
+        background: rgba(15,23,42,0.22);
+    }
+
+    .mini-bar-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .mini-bar-row {
+        display: grid;
+        grid-template-columns: 140px 1fr 42px;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .mini-bar-label,
+    .mini-bar-value {
+        font-size: 13px;
+        font-weight: 700;
+        color: #dbe7ff;
+    }
+
+    .mini-bar-track {
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+    }
+
+    .mini-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(59,130,246,0.95), rgba(34,197,94,0.72));
+    }
+
+    .category-bar-fill {
+        background: linear-gradient(90deg, rgba(168,85,247,0.92), rgba(96,165,250,0.72));
+    }
+
     .project-detail-compare-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -227,6 +479,7 @@
     }
 
     @media (max-width: 860px) {
+        .project-trend-grid,
         .project-detail-compare-grid {
             grid-template-columns: 1fr;
         }
@@ -235,6 +488,10 @@
         .metric-row {
             flex-direction: column;
             align-items: flex-start;
+        }
+
+        .mini-bar-row {
+            grid-template-columns: 1fr;
         }
     }
 </style>

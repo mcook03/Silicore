@@ -285,6 +285,138 @@
 <section class="grid grid-2">
     <section class="card">
         <div class="card-header">
+            <h2 class="section-title">Project Score Trend</h2>
+            <p class="section-copy">
+                Score movement across linked project runs, with the selected comparison placed in context.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison_visuals and comparison_visuals.score_history_chart and comparison_visuals.score_history_chart.has_data %}
+                <div class="compare-chart-shell">
+                    <svg viewBox="0 0 100 36" class="compare-trend-svg" preserveAspectRatio="none">
+                        {% for guide in comparison_visuals.score_history_chart.guides %}
+                        <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="compare-grid-line"></line>
+                        {% endfor %}
+                        {% for point in comparison_visuals.score_history_chart.points %}
+                        {% if not loop.first %}
+                        <line x1="{{ comparison_visuals.score_history_chart.points[loop.index0 - 1].x }}" y1="{{ comparison_visuals.score_history_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="compare-score-line"></line>
+                        {% endif %}
+                        {% endfor %}
+                    </svg>
+                </div>
+                <div class="mini-stat-row" style="margin-top:14px;">
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Latest</span>
+                        <span class="mini-stat-value">{{ comparison_visuals.score_history_chart.last_value|round|int }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Delta</span>
+                        <span class="mini-stat-value {{ comparison_delta_class(comparison_visuals.score_history_chart.delta, true) }}">{{ comparison_visuals.score_history_chart.delta }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Min</span>
+                        <span class="mini-stat-value">{{ comparison_visuals.score_history_chart.min_value|round|int }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Max</span>
+                        <span class="mini-stat-value">{{ comparison_visuals.score_history_chart.max_value|round|int }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No score trend available</h3>
+                    <p>The project needs more linked scored runs before a score trend can be drawn.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Project Risk Trend</h2>
+            <p class="section-copy">
+                How total finding count is moving across the linked project history.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if comparison_visuals and comparison_visuals.risk_history_chart and comparison_visuals.risk_history_chart.has_data %}
+                <div class="compare-chart-shell">
+                    <svg viewBox="0 0 100 36" class="compare-trend-svg" preserveAspectRatio="none">
+                        {% for guide in comparison_visuals.risk_history_chart.guides %}
+                        <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="compare-grid-line"></line>
+                        {% endfor %}
+                        {% for point in comparison_visuals.risk_history_chart.points %}
+                        {% if not loop.first %}
+                        <line x1="{{ comparison_visuals.risk_history_chart.points[loop.index0 - 1].x }}" y1="{{ comparison_visuals.risk_history_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="compare-risk-line"></line>
+                        {% endif %}
+                        {% endfor %}
+                    </svg>
+                </div>
+                <div class="mini-stat-row" style="margin-top:14px;">
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Latest</span>
+                        <span class="mini-stat-value">{{ comparison_visuals.risk_history_chart.last_value|round|int }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Delta</span>
+                        <span class="mini-stat-value {{ comparison_delta_class(comparison_visuals.risk_history_chart.delta, false) }}">{{ comparison_visuals.risk_history_chart.delta }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Min</span>
+                        <span class="mini-stat-value">{{ comparison_visuals.risk_history_chart.min_value|round|int }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label">Max</span>
+                        <span class="mini-stat-value">{{ comparison_visuals.risk_history_chart.max_value|round|int }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No risk trend available</h3>
+                    <p>The project needs more linked runs before finding-count trend analysis can be shown.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Category Shift Bar View</h2>
+        <p class="section-copy">
+            Real category movement from the selected comparison, shown as signed pattern-strength bars.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison_visuals and comparison_visuals.category_shift_bars %}
+            <div class="compare-bar-list">
+                {% for item in comparison_visuals.category_shift_bars %}
+                <div class="compare-bar-row">
+                    <div class="compare-bar-label">{{ item.label }}</div>
+                    <div class="compare-bar-track">
+                        <div class="compare-bar-fill {% if item.tone == 'better' %}compare-bar-better{% elif item.tone == 'worse' %}compare-bar-worse{% else %}compare-bar-flat{% endif %}" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                    <div class="compare-bar-value {% if item.tone == 'better' %}chip-low-text{% elif item.tone == 'worse' %}chip-critical-text{% endif %}">
+                        {% if item.signed_delta > 0 %}+{% endif %}{{ item.signed_delta }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No category shift bars available</h3>
+                <p>This comparison did not produce enough category movement data to render the signed shift view.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
             <h2 class="section-title">Recurring Categories</h2>
             <p class="section-copy">
                 Engineering areas that keep appearing across linked project runs.
@@ -1650,9 +1782,89 @@
         border-radius: 8px;
     }
 
+    .compare-chart-shell {
+        padding: 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        background: rgba(15, 23, 42, 0.22);
+    }
+
+    .compare-trend-svg {
+        width: 100%;
+        height: 100px;
+        display: block;
+    }
+
+    .compare-grid-line {
+        stroke: rgba(255,255,255,0.06);
+        stroke-width: 0.45;
+    }
+
+    .compare-score-line,
+    .compare-risk-line {
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .compare-score-line {
+        stroke: rgba(96,165,250,0.96);
+    }
+
+    .compare-risk-line {
+        stroke: rgba(248,113,113,0.94);
+    }
+
+    .compare-bar-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .compare-bar-row {
+        display: grid;
+        grid-template-columns: 180px 1fr 52px;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .compare-bar-label,
+    .compare-bar-value {
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .compare-bar-track {
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+    }
+
+    .compare-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .compare-bar-worse {
+        background: linear-gradient(90deg, rgba(248,113,113,0.95), rgba(251,146,60,0.7));
+    }
+
+    .compare-bar-better {
+        background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(96,165,250,0.7));
+    }
+
+    .compare-bar-flat {
+        background: linear-gradient(90deg, rgba(148,163,184,0.9), rgba(203,213,225,0.6));
+    }
+
     @media (max-width: 980px) {
         .mini-stat-row {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .compare-bar-row {
+            grid-template-columns: 1fr;
         }
     }
 

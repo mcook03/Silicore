@@ -9,6 +9,7 @@
     newest_name="No projects yet",
     newest_date="N/A"
 ) %}
+{% set chart = projects_chart if projects_chart is defined else {} %}
 
 {% if projects %}
     {% set ns.least_active_runs = projects[0].run_count %}
@@ -95,11 +96,33 @@
 
             <div class="workspace-trend-panel">
                 <div class="workspace-trend-header">
-                    <span>Workspace Trend</span>
-                    <span>{{ projects_summary.total_projects }} total</span>
+                    <span>Portfolio Growth</span>
+                    <span>{{ chart.portfolio_average_score if chart else 0 }} avg score</span>
                 </div>
                 <div class="workspace-trend-chart">
-                    <span class="workspace-trend-line"></span>
+                    {% if chart and chart.portfolio_growth and chart.portfolio_growth.has_data %}
+                    <svg viewBox="0 0 100 36" class="workspace-trend-svg" preserveAspectRatio="none" aria-label="Workspace portfolio growth">
+                        {% for guide in chart.portfolio_growth.guides %}
+                        <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="chart-grid-line"></line>
+                        {% endfor %}
+                        {% for point in chart.portfolio_growth.points %}
+                        {% if not loop.first %}
+                        <line
+                            x1="{{ chart.portfolio_growth.points[loop.index0 - 1].x }}"
+                            y1="{{ chart.portfolio_growth.points[loop.index0 - 1].y }}"
+                            x2="{{ point.x }}"
+                            y2="{{ point.y }}"
+                            class="workspace-trend-stroke"
+                        ></line>
+                        {% endif %}
+                        {% endfor %}
+                        {% for point in chart.portfolio_growth.points %}
+                        <circle cx="{{ point.x }}" cy="{{ point.y }}" r="1.2" class="workspace-trend-point"></circle>
+                        {% endfor %}
+                    </svg>
+                    {% else %}
+                    <div class="workspace-chart-empty">Create projects to build a real portfolio trend.</div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -215,8 +238,57 @@
                     <div class="metric-sub">Lowest linked-run count</div>
                 </div>
             </div>
+
+            {% if chart and chart.activity_bars and chart.activity_bars.has_data %}
+            <div class="workspace-bars-panel">
+                <div class="workspace-trend-header">
+                    <span>Most Active Workspaces</span>
+                    <span>Linked run volume</span>
+                </div>
+                <div class="workspace-bars-list">
+                    {% for item in chart.activity_bars["items"] %}
+                    <div class="workspace-bar-row">
+                        <div class="workspace-bar-label">{{ item.label }}</div>
+                        <div class="workspace-bar-track">
+                            <div class="workspace-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="workspace-bar-value">{{ item.value }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
         </div>
     </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Portfolio Scoreboard</h2>
+        <p class="section-copy">
+            Latest scored project position for each workspace with real values pulled from linked project runs.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if chart and chart.score_bars and chart.score_bars.has_data %}
+            <div class="workspace-bars-list">
+                {% for item in chart.score_bars["items"] %}
+                <div class="workspace-bar-row">
+                    <div class="workspace-bar-label">{{ item.label }}</div>
+                    <div class="workspace-bar-track">
+                        <div class="workspace-bar-fill score-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                    <div class="workspace-bar-value">{{ item.value|round|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                No scored project runs yet. Analyze a project and attach it to a workspace to populate portfolio scoring.
+            </div>
+        {% endif %}
+    </div>
 </section>
 
 <section class="card">
@@ -277,7 +349,14 @@
                         </div>
 
                         <div class="workspace-mini-chart">
-                            <span class="workspace-mini-line"></span>
+                            {% if project.score_trend and project.score_trend.has_data %}
+                            <svg viewBox="0 0 {{ project.score_trend.width }} {{ project.score_trend.height }}" class="workspace-mini-svg" preserveAspectRatio="none" aria-label="Project score trend">
+                                <polygon points="{{ project.score_trend.area_points }}" class="workspace-mini-area"></polygon>
+                                <polyline points="{{ project.score_trend.points }}" class="workspace-mini-stroke"></polyline>
+                            </svg>
+                            {% else %}
+                            <div class="workspace-chart-empty">No score history yet</div>
+                            {% endif %}
                         </div>
 
                         <div class="workspace-stat-row">
@@ -287,15 +366,14 @@
                             </div>
 
                             <div class="workspace-stat-box">
-                                <div class="workspace-stat-value">
-                                    {% if project.run_count > 0 %}
-                                        Live
-                                    {% else %}
-                                        Idle
-                                    {% endif %}
-                                </div>
-                                <div class="workspace-stat-label">Status</div>
+                                <div class="workspace-stat-value">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
+                                <div class="workspace-stat-label">Latest Score</div>
                             </div>
+                        </div>
+
+                        <div class="summary-panel">
+                            <h3>{{ project.health_label }}</h3>
+                            <p>Top recurring area: {{ project.top_category }}.</p>
                         </div>
 
                         <div class="workspace-meta">
@@ -519,16 +597,90 @@
         overflow: hidden;
     }
 
-    .workspace-trend-line,
-    .workspace-mini-line {
-        position: absolute;
-        inset: 0;
+    .workspace-trend-svg,
+    .workspace-mini-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .chart-grid-line {
+        stroke: rgba(255,255,255,0.06);
+        stroke-width: 0.45;
+    }
+
+    .workspace-trend-stroke,
+    .workspace-mini-stroke {
+        fill: none;
+        stroke: rgba(96,165,250,0.95);
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .workspace-mini-area {
+        fill: rgba(59,130,246,0.16);
+    }
+
+    .workspace-trend-point {
+        fill: #bfdbfe;
+    }
+
+    .workspace-chart-empty {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-size: 12px;
         border-radius: 14px;
         background:
             linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59,130,246,0.18), rgba(96,165,250,0.08));
-        background-size: 18px 18px, 18px 18px, auto;
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 18px 18px;
+    }
+
+    .workspace-bars-panel {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.02);
+    }
+
+    .workspace-bars-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .workspace-bar-row {
+        display: grid;
+        grid-template-columns: 160px 1fr 42px;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .workspace-bar-label,
+    .workspace-bar-value {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-soft);
+    }
+
+    .workspace-bar-track {
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.06);
+    }
+
+    .workspace-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(59,130,246,0.95), rgba(96,165,250,0.68));
+    }
+
+    .score-bar-fill {
+        background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(96,165,250,0.78));
     }
 
     .projects-top-row {
@@ -645,6 +797,10 @@
     @media (max-width: 700px) {
         .projects-scale-row,
         .workspace-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .workspace-bar-row {
             grid-template-columns: 1fr;
         }
 

@@ -695,6 +695,92 @@ def _build_projects_summary(projects):
     }
 
 
+def _sort_project_runs(runs):
+    return sorted(runs or [], key=lambda item: str(item.get("created_at", "")))
+
+
+def _project_health_label(score_100):
+    value = _safe_float(score_100, 0.0)
+    if value >= 80:
+        return "Strong"
+    if value >= 65:
+        return "Healthy"
+    if value >= 50:
+        return "Watch"
+    return "At Risk"
+
+
+def _aggregate_project_categories(runs, limit=5):
+    totals = defaultdict(int)
+
+    for run in runs or []:
+        summary = run.get("category_summary") or {}
+        if isinstance(summary, dict):
+            for category, count in summary.items():
+                totals[category or "uncategorized"] += _safe_int(count, 0)
+            continue
+
+        snapshot = run.get("risk_snapshot") or []
+        for item in snapshot:
+            if not isinstance(item, dict):
+                continue
+            category = item.get("category") or "uncategorized"
+            totals[category] += 1
+
+    items = [
+        {
+            "label": _format_category_name(category),
+            "value": count,
+        }
+        for category, count in totals.items()
+        if count > 0
+    ]
+    items.sort(key=lambda item: (-item["value"], item["label"].lower()))
+    return items[:limit]
+
+
+def _enrich_project_for_display(project):
+    enriched = dict(project)
+    runs = _sort_project_runs(project.get("runs", []))
+    enriched["runs"] = runs
+
+    scored_runs = [run for run in runs if run.get("score") is not None]
+    score_values = [_score_to_100(run.get("score")) for run in scored_runs]
+    risk_values = [_safe_int(run.get("risk_count"), 0) for run in runs]
+
+    latest_run = runs[-1] if runs else None
+    latest_scored_run = scored_runs[-1] if scored_runs else None
+
+    latest_score = _score_to_100(latest_scored_run.get("score")) if latest_scored_run else 0
+    average_score = round(sum(score_values) / len(score_values), 1) if score_values else 0
+    top_categories = _aggregate_project_categories(runs, limit=3)
+
+    enriched["latest_run"] = latest_run
+    enriched["latest_score"] = latest_score
+    enriched["average_score"] = average_score
+    enriched["health_label"] = _project_health_label(latest_score if latest_scored_run else average_score)
+    enriched["top_category"] = top_categories[0]["label"] if top_categories else "No recurring category yet"
+    enriched["score_trend"] = _build_line_chart(
+        score_values,
+        [run.get("name", "Run") for run in scored_runs],
+        width=240,
+        height=72,
+        pad_x=12,
+        pad_y=10,
+    )
+    enriched["risk_trend"] = _build_line_chart(
+        risk_values,
+        [run.get("name", "Run") for run in runs],
+        width=240,
+        height=72,
+        pad_x=12,
+        pad_y=10,
+    )
+    enriched["category_items"] = top_categories
+
+    return enriched
+
+
 def _normalize_snapshot(snapshot):
     normalized = []
 
@@ -972,6 +1058,52 @@ def _build_bar_chart(items, value_key="value", label_key="label"):
     }
 
 
+def _build_series_chart(values, labels=None, width=100, height=36):
+    chart = _build_line_chart(
+        values,
+        labels=labels,
+        width=width,
+        height=height,
+        pad_x=4,
+        pad_y=4,
+    )
+
+    if not chart.get("has_data"):
+        return {
+            "has_data": False,
+            "points": [],
+            "guides": [8, 16, 24, 32],
+            "width": width,
+            "height": height,
+            "last_value": 0,
+            "delta": 0,
+        }
+
+    point_list = []
+    for pair in chart.get("points", "").split():
+        if "," not in pair:
+            continue
+        x, y = pair.split(",", 1)
+        point_list.append({"x": float(x), "y": float(y)})
+
+    delta = 0
+    clean_values = [_safe_float(value, 0.0) for value in (values or [])]
+    if len(clean_values) >= 2:
+        delta = round(clean_values[-1] - clean_values[0], 1)
+
+    return {
+        "has_data": True,
+        "points": point_list,
+        "guides": [8, 16, 24, 32],
+        "width": width,
+        "height": height,
+        "last_value": chart.get("last_value", 0),
+        "delta": delta,
+        "min_value": chart.get("min_value", 0),
+        "max_value": chart.get("max_value", 0),
+    }
+
+
 def _build_home_chart_data(recent_runs, stats):
     scored_runs = []
     for run in reversed(recent_runs or []):
@@ -1007,6 +1139,40 @@ def _build_home_chart_data(recent_runs, stats):
         "latest_source": latest_source,
         "workflow_chart": workflow_chart,
         "run_fill_pct": min(round((_safe_int(stats.get("total_runs"), 0) / 20) * 100), 100),
+    }
+
+
+def _build_projects_chart_data(projects):
+    projects = projects or []
+
+    portfolio_scores = [
+        _safe_float(project.get("latest_score"), 0.0)
+        for project in projects
+        if project.get("latest_score") is not None
+    ]
+    portfolio_average_score = round(sum(portfolio_scores) / len(portfolio_scores), 1) if portfolio_scores else 0
+
+    creation_values = list(range(1, len(projects) + 1))
+    creation_labels = [project.get("name", "Project") for project in reversed(projects)]
+
+    activity_items = [
+        {"label": _short_board_label(project.get("name", "Project"), limit=18), "value": project.get("run_count", 0)}
+        for project in sorted(projects, key=lambda item: item.get("run_count", 0), reverse=True)[:6]
+    ]
+    score_items = [
+        {
+            "label": _short_board_label(project.get("name", "Project"), limit=18),
+            "value": project.get("latest_score", 0),
+        }
+        for project in sorted(projects, key=lambda item: _safe_float(item.get("latest_score"), 0.0), reverse=True)
+        if _safe_float(project.get("latest_score"), 0.0) > 0
+    ][:6]
+
+    return {
+        "portfolio_average_score": portfolio_average_score,
+        "activity_bars": _build_bar_chart(activity_items),
+        "score_bars": _build_bar_chart(score_items),
+        "portfolio_growth": _build_series_chart(creation_values, creation_labels),
     }
 
 
@@ -1181,6 +1347,70 @@ def _build_project_chart_data(project_result, comparison):
     }
 
 
+def _build_project_workspace_chart_data(project):
+    runs = _sort_project_runs(project.get("runs", []))
+    score_values = [_score_to_100(run.get("score")) for run in runs if run.get("score") is not None]
+    score_labels = [run.get("name", "Run") for run in runs if run.get("score") is not None]
+    risk_values = [_safe_int(run.get("risk_count"), 0) for run in runs]
+    risk_labels = [run.get("name", "Run") for run in runs]
+    critical_values = [_safe_int(run.get("critical_count"), 0) for run in runs]
+
+    category_bars = _build_bar_chart(_aggregate_project_categories(runs, limit=5))
+
+    quality_mix = {"Strong": 0, "Healthy": 0, "Watch": 0, "At Risk": 0}
+    for run in runs:
+        if run.get("score") is None:
+            continue
+        label = _project_health_label(_score_to_100(run.get("score")))
+        quality_mix[label] += 1
+
+    quality_items = [{"label": key, "value": value} for key, value in quality_mix.items() if value > 0]
+
+    latest_two = runs[-2:] if len(runs) >= 2 else runs
+
+    return {
+        "score_trend": _build_series_chart(score_values, score_labels),
+        "risk_trend": _build_series_chart(risk_values, risk_labels),
+        "critical_trend": _build_series_chart(critical_values, risk_labels),
+        "category_bars": category_bars,
+        "quality_mix": _build_bar_chart(quality_items),
+        "latest_compare_run_ids": [run.get("run_id") for run in latest_two if run.get("run_id")],
+    }
+
+
+def _build_compare_visual_data(project_intelligence, insights):
+    score_history = project_intelligence.get("score_history", []) if isinstance(project_intelligence, dict) else []
+    risk_history = project_intelligence.get("risk_history", []) if isinstance(project_intelligence, dict) else []
+
+    category_items = []
+    for item in (insights.get("category_impacts") or [])[:6]:
+        delta = _safe_int(item.get("delta"), 0)
+        category_items.append(
+            {
+                "label": item.get("category", "General"),
+                "value": abs(delta),
+                "tone": "better" if delta < 0 else "worse" if delta > 0 else "flat",
+                "signed_delta": delta,
+            }
+        )
+
+    max_category_value = max([_safe_float(item.get("value"), 0.0) for item in category_items] or [1.0])
+    for item in category_items:
+        item["width_pct"] = round((_safe_float(item.get("value"), 0.0) / max_category_value) * 100, 1)
+
+    return {
+        "score_history_chart": _build_series_chart(
+            [item.get("value", 0) for item in score_history],
+            [item.get("label", "Run") for item in score_history],
+        ),
+        "risk_history_chart": _build_series_chart(
+            [item.get("value", 0) for item in risk_history],
+            [item.get("label", "Run") for item in risk_history],
+        ),
+        "category_shift_bars": category_items,
+    }
+
+
 def _build_single_chart_data(result):
     risks = result.get("risks", []) or []
     grouped = result.get("grouped_risks", []) or []
@@ -1222,6 +1452,268 @@ def _build_single_chart_data(result):
         ),
         "category_bars": _build_bar_chart(category_items),
         "penalty_bars": _build_bar_chart(penalty_items),
+    }
+
+
+def _extract_risk_confidence_score(risk):
+    explanation = risk.get("explanation") or {}
+    if isinstance(explanation, dict) and explanation.get("confidence") is not None:
+        value = _safe_float(explanation.get("confidence"), 0.0)
+        if value <= 1.0:
+            return round(value * 100, 1)
+        return round(value, 1)
+
+    confidence = risk.get("confidence") or {}
+    if isinstance(confidence, dict) and confidence.get("score") is not None:
+        return round(_safe_float(confidence.get("score"), 0.0), 1)
+
+    score = 42.0
+    if risk.get("rule_id"):
+        score += 12
+    if risk.get("recommendation"):
+        score += 10
+    if risk.get("metrics"):
+        score += 12
+    if risk.get("components"):
+        score += 10
+    if risk.get("nets"):
+        score += 8
+    if str(risk.get("severity", "")).lower() in {"high", "critical"}:
+        score += 6
+    return min(round(score, 1), 95.0)
+
+
+def _confidence_band(score):
+    value = _safe_float(score, 0.0)
+    if value >= 80:
+        return "high"
+    if value >= 60:
+        return "medium"
+    return "low"
+
+
+def _normalize_pattern_message(message):
+    text = _normalize_compare_message(message)
+    text = re.sub(r"\b[a-z]+[0-9]+\b", "<ref>", text, flags=re.IGNORECASE)
+    text = re.sub(r"\b\d+(?:\.\d+)?\b", "<num>", text)
+    text = re.sub(r"\(\s*<num>[^)]*\)", "", text)
+    text = " ".join(text.split())
+    return text
+
+
+def _build_single_decision_data(result):
+    risks = result.get("risks", []) or []
+    if not risks:
+        return {
+            "average_confidence": 0,
+            "confidence_summary": "No finding-level confidence data is available for this board yet.",
+            "confidence_bars": _build_bar_chart([]),
+            "next_actions": [],
+            "trust_note": "No findings were generated, so no next-action ranking is needed.",
+        }
+
+    confidence_scores = [_extract_risk_confidence_score(risk) for risk in risks]
+    average_confidence = round(sum(confidence_scores) / len(confidence_scores), 1) if confidence_scores else 0
+
+    band_counts = {"High": 0, "Medium": 0, "Low": 0}
+    ranked_actions = []
+
+    for risk in risks:
+        confidence_score = _extract_risk_confidence_score(risk)
+        band = _confidence_band(confidence_score)
+        band_counts[band.title()] += 1
+
+        severity_weight = {"critical": 4, "high": 3, "medium": 2, "low": 1}.get(
+            str(risk.get("severity", "")).lower(),
+            1,
+        )
+        ranked_actions.append(
+            {
+                "category": _format_category_name(risk.get("category")),
+                "message": risk.get("message", "Unnamed issue"),
+                "recommendation": risk.get("recommendation") or "Review this issue in layout.",
+                "confidence_score": confidence_score,
+                "priority_score": round((severity_weight * 24) + (confidence_score * 0.55), 1),
+                "severity": str(risk.get("severity", "low")).lower(),
+            }
+        )
+
+    ranked_actions.sort(
+        key=lambda item: (-item["priority_score"], -item["confidence_score"], item["category"].lower())
+    )
+
+    if average_confidence >= 80:
+        confidence_summary = "Most current findings have strong support and are credible targets for immediate action."
+    elif average_confidence >= 60:
+        confidence_summary = "The current board findings are directionally strong, with a few items still needing closer review."
+    else:
+        confidence_summary = "Several findings have lighter evidence and should be validated before major design decisions."
+
+    top_action = ranked_actions[0] if ranked_actions else None
+    trust_note = (
+        f"Start with {top_action['category']} because it combines the highest severity and strongest available evidence."
+        if top_action
+        else "No next action is available."
+    )
+
+    return {
+        "average_confidence": average_confidence,
+        "confidence_summary": confidence_summary,
+        "confidence_bars": _build_bar_chart(
+            [{"label": key, "value": value} for key, value in band_counts.items() if value > 0]
+        ),
+        "next_actions": ranked_actions[:3],
+        "trust_note": trust_note,
+    }
+
+
+def _build_project_review_intelligence(project_result):
+    boards = project_result.get("boards", []) or []
+    if not boards:
+        return {
+            "average_confidence": 0,
+            "confidence_summary": "No board data is available for project intelligence yet.",
+            "board_health_bars": _build_bar_chart([]),
+            "chronic_patterns": [],
+            "next_actions": [],
+            "category_heatmap": [],
+        }
+
+    board_health_counts = {"Strong": 0, "Good": 0, "Watch": 0, "Risk": 0}
+    pattern_map = defaultdict(lambda: {"count": 0, "boards": set(), "category": "uncategorized", "message": "", "recommendation": "", "severity_weight": 0, "confidence_sum": 0.0})
+    category_board_counts = defaultdict(lambda: defaultdict(int))
+    action_candidates = []
+    confidence_scores = []
+
+    for board in boards:
+        score_100 = _score_to_100(board.get("score"))
+        if score_100 >= 80:
+            board_health_counts["Strong"] += 1
+        elif score_100 >= 65:
+            board_health_counts["Good"] += 1
+        elif score_100 >= 50:
+            board_health_counts["Watch"] += 1
+        else:
+            board_health_counts["Risk"] += 1
+
+        board_name = board.get("filename", "Board")
+        board_risks = board.get("risks", []) or []
+
+        for risk in board_risks:
+            confidence_score = _extract_risk_confidence_score(risk)
+            confidence_scores.append(confidence_score)
+
+            category = risk.get("category") or "uncategorized"
+            category_board_counts[category][board_name] += 1
+
+            pattern_key = f"{str(risk.get('rule_id') or 'rule').lower()}|{_normalize_pattern_message(risk.get('message'))}"
+            entry = pattern_map[pattern_key]
+            entry["count"] += 1
+            entry["boards"].add(board_name)
+            entry["category"] = category
+            entry["message"] = entry["message"] or risk.get("message", "Unnamed issue")
+            entry["recommendation"] = entry["recommendation"] or risk.get("recommendation") or "Review this recurring issue."
+            severity_weight = {"critical": 4, "high": 3, "medium": 2, "low": 1}.get(str(risk.get("severity", "")).lower(), 1)
+            entry["severity_weight"] = max(entry["severity_weight"], severity_weight)
+            entry["confidence_sum"] += confidence_score
+
+            action_candidates.append(
+                {
+                    "board": board_name,
+                    "category": _format_category_name(category),
+                    "message": risk.get("message", "Unnamed issue"),
+                    "recommendation": risk.get("recommendation") or "Review this issue.",
+                    "confidence_score": confidence_score,
+                    "severity_weight": severity_weight,
+                    "priority_score": 0,
+                }
+            )
+
+    chronic_patterns = []
+    for item in pattern_map.values():
+        average_confidence = round(item["confidence_sum"] / max(item["count"], 1), 1)
+        repeated_boards = len(item["boards"])
+        chronic_patterns.append(
+            {
+                "category": _format_category_name(item["category"]),
+                "message": item["message"],
+                "recommendation": item["recommendation"],
+                "appearances": item["count"],
+                "board_count": repeated_boards,
+                "average_confidence": average_confidence,
+                "priority_score": round((item["severity_weight"] * 32) + (repeated_boards * 18) + (average_confidence * 0.5), 1),
+            }
+        )
+
+    chronic_patterns.sort(
+        key=lambda item: (-item["priority_score"], -item["appearances"], item["category"].lower())
+    )
+
+    top_pattern_by_message = {}
+    for pattern in chronic_patterns:
+        key = (pattern["category"], pattern["message"])
+        top_pattern_by_message[key] = pattern["priority_score"]
+
+    for candidate in action_candidates:
+        matching_key = (candidate["category"], candidate["message"])
+        chronic_bonus = top_pattern_by_message.get(matching_key, 0)
+        candidate["priority_score"] = round(
+            (candidate["severity_weight"] * 26)
+            + (candidate["confidence_score"] * 0.45)
+            + (chronic_bonus * 0.4),
+            1,
+        )
+
+    action_candidates.sort(
+        key=lambda item: (-item["priority_score"], -item["confidence_score"], item["board"].lower())
+    )
+
+    top_categories = sorted(
+        category_board_counts.items(),
+        key=lambda item: (-sum(item[1].values()), _format_category_name(item[0]).lower()),
+    )[:4]
+
+    category_heatmap = []
+    for category, board_counts in top_categories:
+        row_cells = []
+        max_value = max(board_counts.values()) if board_counts else 1
+        for board in boards:
+            board_name = board.get("filename", "Board")
+            value = board_counts.get(board_name, 0)
+            if value >= max_value and value > 0:
+                tone = "strong"
+            elif value >= 2:
+                tone = "medium"
+            elif value == 1:
+                tone = "light"
+            else:
+                tone = "none"
+            row_cells.append({"board": board_name, "value": value, "tone": tone})
+        category_heatmap.append(
+            {
+                "category": _format_category_name(category),
+                "cells": row_cells,
+                "total": sum(board_counts.values()),
+            }
+        )
+
+    average_confidence = round(sum(confidence_scores) / len(confidence_scores), 1) if confidence_scores else 0
+    if average_confidence >= 80:
+        confidence_summary = "Project findings are strongly supported overall, which makes the current review highly usable for engineering prioritization."
+    elif average_confidence >= 60:
+        confidence_summary = "Project findings are moderately supported overall and useful for prioritization, with some items still worth validating."
+    else:
+        confidence_summary = "Project findings are more directional than definitive right now; validate weaker evidence before major decisions."
+
+    return {
+        "average_confidence": average_confidence,
+        "confidence_summary": confidence_summary,
+        "board_health_bars": _build_bar_chart(
+            [{"label": key, "value": value} for key, value in board_health_counts.items() if value > 0]
+        ),
+        "chronic_patterns": chronic_patterns[:5],
+        "next_actions": action_candidates[:5],
+        "category_heatmap": category_heatmap,
     }
 
 
@@ -1494,6 +1986,7 @@ def index():
 def single_board_page():
     result = None
     single_chart = None
+    single_decision = None
 
     if request.method == "POST":
         board_file = request.files.get("board_file")
@@ -1509,6 +2002,7 @@ def single_board_page():
 
             result = _enrich_single_result(response.get("result") or {})
             single_chart = _build_single_chart_data(result)
+            single_decision = _build_single_decision_data(result)
 
             if selected_project_id:
                 add_run_to_project(selected_project_id, response.get("run_record") or {})
@@ -1528,6 +2022,7 @@ def single_board_page():
             "result": result,
             "project_options": _project_options(),
             "single_chart": single_chart,
+            "single_decision": single_decision,
         },
     )
 
@@ -1537,6 +2032,7 @@ def project_page():
     project_result = None
     comparison = None
     project_chart = None
+    project_intelligence_review = None
 
     if request.method == "POST":
         project_files = request.files.getlist("project_files")
@@ -1555,6 +2051,7 @@ def project_page():
             project_result = _enrich_project_result(project_result)
             comparison = _build_project_comparison(project_result)
             project_chart = _build_project_chart_data(project_result, comparison)
+            project_intelligence_review = _build_project_review_intelligence(project_result)
 
             if selected_project_id:
                 add_run_to_project(selected_project_id, response.get("run_record") or {})
@@ -1575,13 +2072,14 @@ def project_page():
             "comparison": comparison,
             "project_options": _project_options(),
             "project_chart": project_chart,
+            "project_intelligence_review": project_intelligence_review,
         },
     )
 
 
 @app.route("/projects", methods=["GET"])
 def projects_page():
-    projects = list_projects()
+    projects = [_enrich_project_for_display(project) for project in list_projects()]
     return _render_page(
         active_page="projects_workspace",
         page_title="Projects",
@@ -1591,6 +2089,7 @@ def projects_page():
         body_context={
             "projects": projects,
             "projects_summary": _build_projects_summary(projects),
+            "projects_chart": _build_projects_chart_data(projects),
         },
     )
 
@@ -1636,13 +2135,18 @@ def project_detail_page(project_id):
         flash("Project not found.")
         return redirect(url_for("projects_page"))
 
+    project = _enrich_project_for_display(project)
+
     return _render_page(
         active_page="projects_workspace",
         page_title=project.get("name", "Project"),
         page_eyebrow="Project Workspace",
         page_copy="Review linked analysis runs, compare revisions, and monitor design progress within this project.",
         template_name="project_detail.html",
-        body_context={"project": project},
+        body_context={
+            "project": project,
+            "workspace_chart": _build_project_workspace_chart_data(project),
+        },
     )
 
 
@@ -1764,6 +2268,7 @@ def compare_runs(project_id):
         }
 
     project_intelligence = _build_project_intelligence(project, run_a, run_b)
+    comparison_visuals = _build_compare_visual_data(project_intelligence, insights)
 
     comparison = {
         "run_a": run_a,
@@ -1773,8 +2278,9 @@ def compare_runs(project_id):
         "critical_diff": critical_b - critical_a,
         "delta_analysis": delta_analysis,
         "insights": insights,
-        "project_intelligence": project_intelligence,
-        "summary": {
+            "project_intelligence": project_intelligence,
+            "comparison_visuals": comparison_visuals,
+            "summary": {
             "score_changed": round(score_b - score_a, 2),
             "risk_changed": risk_b - risk_a,
             "critical_changed": critical_b - critical_a,
@@ -1793,6 +2299,7 @@ def compare_runs(project_id):
         body_context={
             "project": project,
             "comparison": comparison,
+            "comparison_visuals": comparison_visuals,
         },
     )
 
