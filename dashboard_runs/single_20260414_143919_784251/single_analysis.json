@@ -1,0 +1,1230 @@
+{
+    "filename": "risky_board_fixed_gnd.txt",
+    "file_path": "dashboard_uploads/risky_board_fixed_gnd.txt",
+    "score": 3.4,
+    "risks": [
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U3 (SENSOR) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U3",
+                "C2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": 5.1,
+                "threshold": 4.0
+            },
+            "confidence": 0.8,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+            "threshold_label": "Maximum decoupling distance 4.00 units",
+            "observed_label": "Observed nearest capacitor distance 5.10 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "U1 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "U2 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "U3 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "U3"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "C1 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "C1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "C2 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "C2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "J1 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "J1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "R1 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "R1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "ground_reference",
+            "category": "emi_return_path",
+            "severity": "medium",
+            "message": "R2 has no assigned net, so its ground reference cannot be verified",
+            "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+            "components": [
+                "R2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_reference_required": true
+            },
+            "confidence": 0.75,
+            "short_title": "Unconnected component",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "Power net VCC has too few connections (0)",
+            "recommendation": "Check whether the power net is properly distributed to all intended loads.",
+            "components": [],
+            "nets": [
+                "VCC"
+            ],
+            "region": null,
+            "metrics": {
+                "connections": 0,
+                "minimum_expected": 2
+            },
+            "confidence": 0.8,
+            "short_title": "Weak power rail coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Power-net connection count fell below the minimum expected coverage.",
+            "threshold_label": "Minimum connections 2",
+            "observed_label": "Observed connections 0",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Verify that all intended loads are actually connected to this power net and confirm the rail is distributed across the required pins and devices.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U1 and C1 are too close (1.41 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U1",
+                "C1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 3.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+            "threshold_label": "Minimum spacing 3.00 units",
+            "observed_label": "Observed spacing 1.41 units",
+            "explanation": {
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95
+            },
+            "fix_suggestion": {
+                "fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "U2 and C2 are too close (1.41 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "U2",
+                "C2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 3.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+            "threshold_label": "Minimum spacing 3.00 units",
+            "observed_label": "Observed spacing 1.41 units",
+            "explanation": {
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95
+            },
+            "fix_suggestion": {
+                "fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "C1 and R1 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "C1",
+                "R1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 3.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+            "threshold_label": "Minimum spacing 3.00 units",
+            "observed_label": "Observed spacing 2.83 units",
+            "explanation": {
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95
+            },
+            "fix_suggestion": {
+                "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "spacing",
+            "category": "layout",
+            "severity": "high",
+            "message": "C2 and R2 are too close (2.83 units)",
+            "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+            "components": [
+                "C2",
+                "R2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 2.83,
+                "threshold": 3.0
+            },
+            "confidence": 0.95,
+            "short_title": "Insufficient component spacing",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+            "threshold_label": "Minimum spacing 3.00 units",
+            "observed_label": "Observed spacing 2.83 units",
+            "explanation": {
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95
+            },
+            "fix_suggestion": {
+                "fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "medium",
+            "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+            "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+            "components": [
+                "U1",
+                "C1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 4.0
+            },
+            "confidence": 0.8,
+            "short_title": "Possible thermal hotspot",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "thermal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Hot-component separation fell below the configured thermal hotspot spacing threshold.",
+            "threshold_label": "Thermal spacing threshold 4.00 units",
+            "observed_label": "Observed hot-component spacing 1.41 units",
+            "explanation": {
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "thermal",
+            "category": "thermal",
+            "severity": "medium",
+            "message": "U2 and C2 may create a thermal hotspot (1.41 units apart)",
+            "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+            "components": [
+                "U2",
+                "C2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 1.41,
+                "threshold": 4.0
+            },
+            "confidence": 0.8,
+            "short_title": "Possible thermal hotspot",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "thermal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Hot-component separation fell below the configured thermal hotspot spacing threshold.",
+            "threshold_label": "Thermal spacing threshold 4.00 units",
+            "observed_label": "Observed hot-component spacing 1.41 units",
+            "explanation": {
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 10.0,
+        "total_penalty": 6.6,
+        "severity_totals": {
+            "medium": 4.2,
+            "high": 2.4
+        },
+        "category_totals": {
+            "power_integrity": 0.7,
+            "emi_return_path": 2.8,
+            "layout": 2.4,
+            "thermal": 0.7
+        },
+        "details": [
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.35,
+                "message": "U3 (SENSOR) has no nearby decoupling capacitor",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "U1 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "U2 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "U3 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "C1 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "C2 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "J1 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "R1 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_return_path",
+                "penalty": 0.35,
+                "message": "R2 has no assigned net, so its ground reference cannot be verified",
+                "root_cause": "Missing or poor return path",
+                "impact": "Increased EMI and unstable signal reference",
+                "confidence": 0.75,
+                "suggested_fix": "Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.35,
+                "message": "Power net VCC has too few connections (0)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Verify that all intended loads are actually connected to this power net and confirm the rail is distributed across the required pins and devices.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "layout",
+                "penalty": 0.6,
+                "message": "U1 and C1 are too close (1.41 units)",
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95,
+                "suggested_fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "layout",
+                "penalty": 0.6,
+                "message": "U2 and C2 are too close (1.41 units)",
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95,
+                "suggested_fix": "Increase spacing between the affected components from 1.41 to at least 3.0.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "layout",
+                "penalty": 0.6,
+                "message": "C1 and R1 are too close (2.83 units)",
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95,
+                "suggested_fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "layout",
+                "penalty": 0.6,
+                "message": "C2 and R2 are too close (2.83 units)",
+                "root_cause": "Component placement constraint violation",
+                "impact": "Routing congestion or manufacturability issues",
+                "confidence": 0.95,
+                "suggested_fix": "Increase spacing between the affected components from 2.83 to at least 3.0.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "thermal",
+                "penalty": 0.35,
+                "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8,
+                "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "thermal",
+                "penalty": 0.35,
+                "message": "U2 and C2 may create a thermal hotspot (1.41 units apart)",
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8,
+                "suggested_fix": "Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "risky_board_fixed_gnd.txt",
+        "component_count": 8,
+        "net_count": 4,
+        "sample_components": [
+            "U1",
+            "U2",
+            "U3",
+            "C1",
+            "C2",
+            "J1",
+            "R1",
+            "R2"
+        ],
+        "risk_count": 16,
+        "severity_counts": {
+            "medium": 12,
+            "high": 4
+        },
+        "category_counts": {
+            "power_integrity": 2,
+            "emi_return_path": 8,
+            "layout": 4,
+            "thermal": 2
+        }
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "decoupling",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U3 (SENSOR) has no nearby decoupling capacitor",
+                "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                "components": [
+                    "U3",
+                    "C2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "nearest_cap_distance": 5.1,
+                    "threshold": 4.0
+                },
+                "confidence": 0.8,
+                "short_title": "Missing nearby decoupling",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+                "threshold_label": "Maximum decoupling distance 4.00 units",
+                "observed_label": "Observed nearest capacitor distance 5.10 units"
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "U1 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "U2 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "U2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "U3 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "U3"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "C1 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "C1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "C2 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "C2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "J1 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "R1 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "R1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "ground_reference",
+                "category": "emi_return_path",
+                "severity": "medium",
+                "message": "R2 has no assigned net, so its ground reference cannot be verified",
+                "recommendation": "Assign the component to the correct signal or power net and verify its reference to ground.",
+                "components": [
+                    "R2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_reference_required": true
+                },
+                "confidence": 0.75,
+                "short_title": "Unconnected component",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_rail",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "Power net VCC has too few connections (0)",
+                "recommendation": "Check whether the power net is properly distributed to all intended loads.",
+                "components": [],
+                "nets": [
+                    "VCC"
+                ],
+                "region": null,
+                "metrics": {
+                    "connections": 0,
+                    "minimum_expected": 2
+                },
+                "confidence": 0.8,
+                "short_title": "Weak power rail coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Power-net connection count fell below the minimum expected coverage.",
+                "threshold_label": "Minimum connections 2",
+                "observed_label": "Observed connections 0"
+            },
+            {
+                "rule_id": "spacing",
+                "category": "layout",
+                "severity": "high",
+                "message": "U1 and C1 are too close (1.41 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                "components": [
+                    "U1",
+                    "C1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 1.41,
+                    "threshold": 3.0
+                },
+                "confidence": 0.95,
+                "short_title": "Insufficient component spacing",
+                "fix_priority": "high",
+                "estimated_impact": "moderate",
+                "design_domain": "layout",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+                "threshold_label": "Minimum spacing 3.00 units",
+                "observed_label": "Observed spacing 1.41 units"
+            },
+            {
+                "rule_id": "spacing",
+                "category": "layout",
+                "severity": "high",
+                "message": "U2 and C2 are too close (1.41 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                "components": [
+                    "U2",
+                    "C2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 1.41,
+                    "threshold": 3.0
+                },
+                "confidence": 0.95,
+                "short_title": "Insufficient component spacing",
+                "fix_priority": "high",
+                "estimated_impact": "moderate",
+                "design_domain": "layout",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+                "threshold_label": "Minimum spacing 3.00 units",
+                "observed_label": "Observed spacing 1.41 units"
+            },
+            {
+                "rule_id": "spacing",
+                "category": "layout",
+                "severity": "high",
+                "message": "C1 and R1 are too close (2.83 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                "components": [
+                    "C1",
+                    "R1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 2.83,
+                    "threshold": 3.0
+                },
+                "confidence": 0.95,
+                "short_title": "Insufficient component spacing",
+                "fix_priority": "high",
+                "estimated_impact": "moderate",
+                "design_domain": "layout",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+                "threshold_label": "Minimum spacing 3.00 units",
+                "observed_label": "Observed spacing 2.83 units"
+            },
+            {
+                "rule_id": "spacing",
+                "category": "layout",
+                "severity": "high",
+                "message": "C2 and R2 are too close (2.83 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance.",
+                "components": [
+                    "C2",
+                    "R2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 2.83,
+                    "threshold": 3.0
+                },
+                "confidence": 0.95,
+                "short_title": "Insufficient component spacing",
+                "fix_priority": "high",
+                "estimated_impact": "moderate",
+                "design_domain": "layout",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Component pair spacing fell below the configured minimum spacing threshold.",
+                "threshold_label": "Minimum spacing 3.00 units",
+                "observed_label": "Observed spacing 2.83 units"
+            },
+            {
+                "rule_id": "thermal",
+                "category": "thermal",
+                "severity": "medium",
+                "message": "U1 and C1 may create a thermal hotspot (1.41 units apart)",
+                "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                "components": [
+                    "U1",
+                    "C1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 1.41,
+                    "threshold": 4.0
+                },
+                "confidence": 0.8,
+                "short_title": "Possible thermal hotspot",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "thermal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Hot-component separation fell below the configured thermal hotspot spacing threshold.",
+                "threshold_label": "Thermal spacing threshold 4.00 units",
+                "observed_label": "Observed hot-component spacing 1.41 units"
+            },
+            {
+                "rule_id": "thermal",
+                "category": "thermal",
+                "severity": "medium",
+                "message": "U2 and C2 may create a thermal hotspot (1.41 units apart)",
+                "recommendation": "Increase spacing, improve copper spreading, or review local thermal management around these components.",
+                "components": [
+                    "U2",
+                    "C2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 1.41,
+                    "threshold": 4.0
+                },
+                "confidence": 0.8,
+                "short_title": "Possible thermal hotspot",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "thermal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Hot-component separation fell below the configured thermal hotspot spacing threshold.",
+                "threshold_label": "Thermal spacing threshold 4.00 units",
+                "observed_label": "Observed hot-component spacing 1.41 units"
+            }
+        ],
+        "score": 3.4,
+        "total_penalty": 6.6
+    },
+    "generated_at": "2026-04-14T19:39:19.798459+00:00",
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows high design risk. The main risk concentration is in emi return path. The highest-priority issue is U1 and C1 are too close (1.41 units). The current design snapshot includes 8 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "high",
+                "category": "layout",
+                "message": "U1 and C1 are too close (1.41 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+            },
+            {
+                "severity": "high",
+                "category": "layout",
+                "message": "U2 and C2 are too close (1.41 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+            },
+            {
+                "severity": "high",
+                "category": "layout",
+                "message": "C1 and R1 are too close (2.83 units)",
+                "recommendation": "Increase spacing between these components to improve manufacturability and routing clearance."
+            }
+        ]
+    }
+}
