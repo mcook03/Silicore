@@ -3,7 +3,7 @@ import inspect
 import json
 import os
 import shutil
-from datetime import datetime
+from datetime import datetime, UTC
 from html import escape
 
 from engine.config_loader import load_config, get_editable_config_view
@@ -20,6 +20,10 @@ FORMAT_READINESS = {
     ".brd": {"label": "Altium / Legacy Board", "status": "planned"},
     ".gbr": {"label": "Gerber", "status": "planned"},
 }
+
+
+def _utc_now_iso():
+    return datetime.now(UTC).isoformat()
 
 
 def ensure_clean_upload_dir(upload_folder):
@@ -642,7 +646,7 @@ def _write_export_manifest(path, *, run_type, title, files, supported_formats, n
     payload = {
         "run_type": run_type,
         "title": title,
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": _utc_now_iso(),
         "artifacts": files,
         "parser_capabilities": supported_formats,
         "notes": notes,
@@ -1149,7 +1153,7 @@ def _build_run_record(result, run_dir_name, run_type):
         "run_id": run_dir_name,
         "name": result.get("filename"),
         "run_type": run_type,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": _utc_now_iso(),
         "score": result.get("score"),
         "risk_count": len(risks),
         "critical_count": sum(
@@ -1177,7 +1181,7 @@ def _build_project_run_record(project_result, run_dir_name, saved_names):
         "run_id": run_dir_name,
         "name": display_name,
         "run_type": "project",
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": _utc_now_iso(),
         "score": project_result.get("summary", {}).get("average_score"),
         "risk_count": len(all_risks),
         "critical_count": sum(
@@ -1206,7 +1210,7 @@ def _analyze_board_file(file_path, config):
         "score_explanation": score_explanation,
         "board_summary": board_summary,
         "raw_rule_result": raw_rule_result,
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": _utc_now_iso(),
     }
 
     result["executive_summary"] = _generate_executive_summary(result)
@@ -1285,7 +1289,7 @@ def analyze_project_paths(file_paths, config=None, output_dir=None):
     project_insight = _generate_project_insight_summary(boards)
 
     project_data = {
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": _utc_now_iso(),
         "summary": summary,
         "project_insight": project_insight,
         "boards": boards,
@@ -1391,7 +1395,7 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path)
         {
             "name": filename,
             "run_type": "single",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": _utc_now_iso(),
             "filename": filename,
             "score": result.get("score"),
         },
@@ -1450,7 +1454,7 @@ def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_pat
         {
             "name": ", ".join(saved_names[:3]) + ("..." if len(saved_names) > 3 else ""),
             "run_type": "project",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": _utc_now_iso(),
             "board_count": len(saved_paths),
         },
     )
