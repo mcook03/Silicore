@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <aside class="tech-stage">
+        <aside class="tech-stage tech-stage-primary">
             <div class="tech-stage-shell">
                 <div class="tech-stage-topline">
                     <span class="tech-badge">Live Engineering Posture</span>
@@ -590,8 +590,8 @@
         position: relative;
         z-index: 1;
         display: grid;
-        grid-template-columns: 1.02fr 0.98fr;
-        gap: 28px;
+        grid-template-columns: 0.82fr 1.18fr;
+        gap: 30px;
         align-items: stretch;
     }
 
@@ -599,6 +599,7 @@
         display: grid;
         align-content: center;
         gap: 18px;
+        padding-right: 8px;
     }
 
     .tech-kicker,
@@ -618,7 +619,7 @@
     .tech-title {
         margin: 0;
         max-width: 10.5ch;
-        font-size: clamp(52px, 6.8vw, 84px);
+        font-size: clamp(48px, 5.8vw, 74px);
         line-height: 0.94;
         letter-spacing: -0.065em;
         font-weight: 800;
@@ -701,12 +702,17 @@
         position: relative;
         overflow: hidden;
         height: 100%;
-        padding: 22px;
-        border-radius: 26px;
+        padding: 26px;
+        border-radius: 30px;
         border: 1px solid rgba(180, 212, 255, 0.1);
         background:
             linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.018)),
             rgba(7, 16, 26, 0.84);
+    }
+
+    .tech-stage-primary {
+        transform: scale(1.02);
+        transform-origin: center right;
     }
 
     .tech-stage-topline {
@@ -737,7 +743,7 @@
 
     .tech-stage-main {
         display: grid;
-        grid-template-columns: 1fr 220px;
+        grid-template-columns: 1fr 200px;
         gap: 16px;
         margin: 18px 0;
         align-items: stretch;
@@ -745,9 +751,9 @@
 
     .tech-blueprint {
         position: relative;
-        min-height: 390px;
-        padding: 10px;
-        border-radius: 24px;
+        min-height: 540px;
+        padding: 12px;
+        border-radius: 28px;
         border: 1px solid rgba(255,255,255,0.06);
         background:
             radial-gradient(circle at center, rgba(59,130,246,0.07), transparent 48%),
@@ -901,13 +907,13 @@
     }
 
     .tech-stage-overlay-a {
-        top: 18px;
-        right: 18px;
+        top: 20px;
+        right: 20px;
     }
 
     .tech-stage-overlay-b {
-        left: 18px;
-        bottom: 18px;
+        left: 20px;
+        bottom: 20px;
     }
 
     .insight-flash {
@@ -946,19 +952,19 @@
     }
 
     .insight-flash-a {
-        top: 32px;
-        left: 26px;
+        top: 34px;
+        left: 28px;
     }
 
     .insight-flash-b {
-        top: 92px;
-        right: 24px;
+        top: 104px;
+        right: 26px;
         animation-delay: 0.35s;
     }
 
     .insight-flash-c {
-        bottom: 30px;
-        right: 38px;
+        bottom: 36px;
+        right: 42px;
         animation-delay: 0.7s;
     }
 
@@ -1429,6 +1435,10 @@
         .tech-title {
             max-width: none;
             font-size: 46px;
+        }
+
+        .tech-stage-primary {
+            transform: none;
         }
 
         .tech-metric-strip,
