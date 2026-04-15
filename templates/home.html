@@ -421,6 +421,14 @@
 </section>
 
 <style>
+    .dashboard-hero-card .card-header {
+        padding-bottom: 6px;
+    }
+
+    .dashboard-hero-card .card-body {
+        padding-top: 12px;
+    }
+
     .home-score-card {
         display: grid;
         grid-template-columns: 220px 1fr;
@@ -516,17 +524,21 @@
     }
 
     .dashboard-story-summary {
-        padding: 22px;
+        padding: 22px 24px;
         border-radius: 18px;
         background:
             linear-gradient(120deg, rgba(67,212,200,0.08), transparent 40%),
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
     }
 
+    .dashboard-story-summary p {
+        max-width: 66ch;
+    }
+
     .dashboard-pillar-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
+        gap: 16px;
     }
 
     .dashboard-pillar-card {
@@ -534,6 +546,7 @@
         display: grid;
         grid-template-rows: 1fr auto;
         gap: 14px;
+        padding: 20px;
         background:
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
             rgba(255,255,255,0.022);
@@ -708,7 +721,7 @@
         background: rgba(255,255,255,0.03);
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 16px;
+        padding: 18px;
     }
 
     .sparkline-label {
@@ -757,7 +770,7 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 14px;
-        margin-bottom: 18px;
+        margin-bottom: 14px;
     }
 
     .result-card-title {
@@ -853,7 +866,8 @@
         display: flex;
         justify-content: space-between;
         gap: 16px;
-        align-items: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
         padding: 14px 16px;
         border-radius: 14px;
         border: 1px solid var(--border);
@@ -874,9 +888,13 @@
 
     .workspace-health-score {
         color: var(--text);
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 800;
         letter-spacing: -0.04em;
+        line-height: 1.05;
+        text-align: right;
+        max-width: 140px;
+        overflow-wrap: anywhere;
     }
 
     .maturity-table .home-table-row,
@@ -921,10 +939,18 @@
         .dashboard-hero-grid,
         .dashboard-pillar-grid,
         .home-score-card,
-        .home-overview-grid,
-        .home-table-header,
+        .home-overview-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .home-table-header {
+            display: none;
+        }
+
         .home-table-row {
             grid-template-columns: 1fr;
+            gap: 10px;
+            align-items: start;
         }
 
         .orbit-mini-grid {
@@ -949,6 +975,19 @@
         .maturity-table-header,
         .maturity-table-row {
             grid-template-columns: 1fr;
+        }
+
+        .dashboard-story-summary,
+        .dashboard-orbit-panel,
+        .home-sparkline-card,
+        .result-card {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .workspace-health-score {
+            text-align: left;
+            max-width: none;
         }
     }
 </style>
