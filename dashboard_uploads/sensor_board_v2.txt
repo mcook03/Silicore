@@ -1,0 +1,15 @@
+BOARD sensor_board_v2
+NET VCC
+NET GND
+NET SDA
+NET SCL
+
+COMPONENT U1 ESP32 20 20 top microcontroller
+COMPONENT U2 BME280 27 20 top sensor
+COMPONENT U3 MPU6050 31 20 top sensor
+COMPONENT C1 0.1uF 21 21 top capacitor
+COMPONENT C2 0.1uF 27 21 top capacitor
+COMPONENT R1 4.7k 19 22 top resistor
+COMPONENT R2 4.7k 20 22 top resistor
+COMPONENT J1 HEADER 50 10 top connector
+COMPONENT LED1 BLUE 48 12 top led
