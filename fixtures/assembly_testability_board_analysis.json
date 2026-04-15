@@ -339,10 +339,10 @@
                 "U1"
             ],
             "nets": [
-                "UART_TX",
-                "SWCLK",
+                "SWDIO",
                 "GND",
-                "SWDIO"
+                "UART_TX",
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -633,8 +633,8 @@
                 "J1"
             ],
             "nets": [
-                "GND",
-                "UART_TX"
+                "UART_TX",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -652,8 +652,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -688,8 +688,8 @@
                 "R1"
             ],
             "nets": [
-                "GND",
-                "UART_TX"
+                "UART_TX",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -707,8 +707,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2413,7 +2413,7 @@
     },
     "analysis_context": {
         "board_name": "assembly_testability_board.kicad_pcb",
-        "timestamp": "2026-04-15T20:14:34.293976+00:00",
+        "timestamp": "2026-04-15T20:20:01.962132+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3227,10 +3227,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "UART_TX",
-                    "SWCLK",
+                    "SWDIO",
                     "GND",
-                    "SWDIO"
+                    "UART_TX",
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -3449,8 +3449,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3468,8 +3468,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "UART_TX"
+                        "UART_TX",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3495,8 +3495,8 @@
                     "R1"
                 ],
                 "nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3514,8 +3514,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "UART_TX"
+                        "UART_TX",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3765,7 +3765,7 @@
         "score": 0.0,
         "total_penalty": 11.6
     },
-    "generated_at": "2026-04-15T20:14:34.293986+00:00",
+    "generated_at": "2026-04-15T20:20:01.962143+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
