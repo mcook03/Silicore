@@ -186,8 +186,8 @@
                 "U1"
             ],
             "nets": [
-                "HV+",
                 "CTRL",
+                "HV+",
                 "HV-"
             ],
             "region": null,
@@ -226,8 +226,8 @@
                 "U1"
             ],
             "nets": [
-                "HV+",
                 "CTRL",
+                "HV+",
                 "HV-"
             ],
             "region": null,
@@ -265,8 +265,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "CTRL"
+                "CTRL",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -410,8 +410,8 @@
                 "U1"
             ],
             "nets": [
-                "HV+",
                 "CTRL",
+                "HV+",
                 "HV-"
             ],
             "region": null,
@@ -430,8 +430,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV+",
                     "CTRL",
+                    "HV+",
                     "HV-"
                 ],
                 "has_power": false,
@@ -467,8 +467,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "CTRL"
+                "CTRL",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -486,8 +486,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "CTRL"
+                    "CTRL",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1844,7 +1844,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-15T19:53:47.234535+00:00",
+        "timestamp": "2026-04-15T20:05:23.608064+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2502,8 +2502,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV+",
                     "CTRL",
+                    "HV+",
                     "HV-"
                 ],
                 "region": null,
@@ -2533,8 +2533,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV+",
                     "CTRL",
+                    "HV+",
                     "HV-"
                 ],
                 "region": null,
@@ -2563,8 +2563,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "CTRL"
+                    "CTRL",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2681,8 +2681,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV+",
                     "CTRL",
+                    "HV+",
                     "HV-"
                 ],
                 "region": null,
@@ -2701,8 +2701,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV+",
                         "CTRL",
+                        "HV+",
                         "HV-"
                     ],
                     "has_power": false,
@@ -2729,8 +2729,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "CTRL"
+                    "CTRL",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2748,8 +2748,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "CTRL"
+                        "CTRL",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2951,7 +2951,7 @@
         "score": 0.2,
         "total_penalty": 9.8
     },
-    "generated_at": "2026-04-15T19:53:47.234544+00:00",
+    "generated_at": "2026-04-15T20:05:23.608074+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

@@ -308,8 +308,8 @@
             ],
             "nets": [
                 "GND",
-                "SENSOR_OUT",
-                "ADC_IN"
+                "ADC_IN",
+                "SENSOR_OUT"
             ],
             "region": null,
             "metrics": {
@@ -512,8 +512,8 @@
             ],
             "nets": [
                 "GND",
-                "SENSOR_OUT",
-                "ADC_IN"
+                "ADC_IN",
+                "SENSOR_OUT"
             ],
             "region": null,
             "metrics": {
@@ -532,8 +532,8 @@
                 ],
                 "observed_component_nets": [
                     "GND",
-                    "SENSOR_OUT",
-                    "ADC_IN"
+                    "ADC_IN",
+                    "SENSOR_OUT"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2404,7 +2404,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-15T19:53:47.245862+00:00",
+        "timestamp": "2026-04-15T20:05:23.619632+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3183,8 +3183,8 @@
                 ],
                 "nets": [
                     "GND",
-                    "SENSOR_OUT",
-                    "ADC_IN"
+                    "ADC_IN",
+                    "SENSOR_OUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -3342,8 +3342,8 @@
                 ],
                 "nets": [
                     "GND",
-                    "SENSOR_OUT",
-                    "ADC_IN"
+                    "ADC_IN",
+                    "SENSOR_OUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -3362,8 +3362,8 @@
                     ],
                     "observed_component_nets": [
                         "GND",
-                        "SENSOR_OUT",
-                        "ADC_IN"
+                        "ADC_IN",
+                        "SENSOR_OUT"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3774,7 +3774,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-15T19:53:47.245870+00:00",
+    "generated_at": "2026-04-15T20:05:23.619640+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
