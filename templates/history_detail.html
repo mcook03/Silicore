@@ -106,6 +106,12 @@
                 </div>
             </div>
 
+            <div class="btn-link-row" style="margin-top:16px;">
+                <a class="btn btn-secondary" href="{{ url_for('history_printable_page', run_dir=run_detail.run_dir) }}" target="_blank">
+                    {{ run_detail.export_summary.print_label }}
+                </a>
+            </div>
+
             {% if run_detail.export_summary.share_links %}
             <div class="artifact-list" style="margin-top:16px;">
                 {% for file in run_detail.export_summary.share_links %}

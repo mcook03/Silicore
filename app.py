@@ -17,11 +17,13 @@ from flask import (
 from engine.config_loader import ANALYSIS_PROFILE_PRESETS, SUPPORTED_ANALYSIS_PROFILES, parse_config_form, save_config
 from engine.dashboard_storage import get_recent_runs
 from engine.project_store import (
+    add_project_note,
     add_run_to_project,
     create_project,
     delete_project,
     get_project,
     list_projects,
+    update_project_review_status,
 )
 from engine.services.analysis_service import (
     FORMAT_READINESS,
@@ -846,7 +848,21 @@ def _build_export_summary(files, run_detail):
             "Supplier or manufacturing handoff",
             "Internal audit trail",
         ] if files else [],
+        "pdf_ready": bool(report_files),
+        "print_label": "Printable review summary" if report_files else "Generate a run report first",
     }
+
+
+def _review_status_view(value):
+    normalized = str(value or "active_review").strip().lower().replace(" ", "_")
+    mapping = {
+        "active_review": ("Active Review", "medium"),
+        "fix_in_progress": ("Fix In Progress", "critical"),
+        "re_analysis_planned": ("Re-Analysis Planned", "soft"),
+        "ready_for_signoff": ("Ready For Signoff", "low"),
+    }
+    label, tone = mapping.get(normalized, mapping["active_review"])
+    return {"value": normalized, "label": label, "tone": tone}
 
 
 def _build_project_timeline_data(project):
@@ -1198,6 +1214,9 @@ def _enrich_project_for_display(project):
         pad_y=10,
     )
     enriched["category_items"] = top_categories
+    enriched["review_status_view"] = _review_status_view(project.get("review_status"))
+    enriched["collaboration_notes"] = project.get("collaboration_notes", []) or []
+    enriched["note_count"] = len(enriched["collaboration_notes"])
 
     return enriched
 
@@ -2279,6 +2298,11 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
 
     risk_by_component = {}
     risk_by_net = {}
+    component_lookup = {
+        str(component.get("ref") or "").strip(): component
+        for component in components
+        if str(component.get("ref") or "").strip()
+    }
     for risk in risks or []:
         severity = str(risk.get("severity", "low")).lower()
         score = {"low": 1, "medium": 2, "high": 3, "critical": 4}.get(severity, 1)
@@ -2376,6 +2400,43 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
             }
         )
 
+    hotspot_items = []
+    hotspot_seen = set()
+    severity_radius = {1: 18, 2: 26, 3: 34, 4: 42}
+    for risk in (risks or [])[:40]:
+        severity = str(risk.get("severity", "low")).lower()
+        score = {"low": 1, "medium": 2, "high": 3, "critical": 4}.get(severity, 1)
+        hotspot_key = None
+        x = y = None
+
+        region = risk.get("region")
+        if isinstance(region, dict) and region.get("x") is not None and region.get("y") is not None:
+            x = _map_x(_safe_float(region.get("x"), 0.0))
+            y = _map_y(_safe_float(region.get("y"), 0.0))
+            hotspot_key = f"region:{round(x,1)}:{round(y,1)}:{severity}"
+        else:
+            for ref in (risk.get("components") or []):
+                component = component_lookup.get(str(ref).strip())
+                if component:
+                    x = _map_x(_safe_float(component.get("x"), 0.0))
+                    y = _map_y(_safe_float(component.get("y"), 0.0))
+                    hotspot_key = f"component:{ref}:{severity}"
+                    break
+
+        if hotspot_key and hotspot_key not in hotspot_seen and x is not None and y is not None:
+            hotspot_seen.add(hotspot_key)
+            hotspot_items.append(
+                {
+                    "x": x,
+                    "y": y,
+                    "radius": severity_radius.get(score, 18),
+                    "tone": tones.get(score, "low"),
+                    "message": (risk.get("short_title") or risk.get("message") or "Finding")[:120],
+                    "components": risk.get("components") or [],
+                    "nets": risk.get("nets") or [],
+                }
+            )
+
     seen_focus = set()
     for risk in (risks or [])[:12]:
         label = risk.get("short_title") or risk.get("message", "Finding")
@@ -2441,6 +2502,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
         "zones": zone_polygons,
         "outline_segments": outline_paths,
         "focus_items": focus_items,
+        "hotspots": hotspot_items[:12],
         "summary_stats": summary_stats,
         "layer_bars": _build_bar_chart(layer_counts[:6]),
         "net_bars": _build_bar_chart(top_nets[:6]),
@@ -2918,6 +2980,37 @@ def _build_board_review_layers(result):
     }
 
 
+def _build_board_value_metrics(result):
+    result = result or {}
+    risks = result.get("risks", []) or []
+    score_value = _score_to_100(result.get("score"))
+    critical_count = sum(1 for risk in risks if str(risk.get("severity", "")).lower() == "critical")
+    high_count = sum(1 for risk in risks if str(risk.get("severity", "")).lower() == "high")
+    actionable_count = sum(1 for risk in risks if risk.get("recommendation"))
+    return [
+        {
+            "label": "Critical pressure",
+            "value": critical_count,
+            "subtext": "Critical findings requiring immediate attention",
+        },
+        {
+            "label": "High-priority findings",
+            "value": high_count,
+            "subtext": "High-severity items likely to drive failure risk",
+        },
+        {
+            "label": "Actionable fixes",
+            "value": actionable_count,
+            "subtext": "Findings with explicit engineering recommendations",
+        },
+        {
+            "label": "Current score",
+            "value": round(score_value, 1),
+            "subtext": "Live 0-100 engineering position",
+        },
+    ]
+
+
 def _build_project_review_intelligence(project_result):
     boards = project_result.get("boards", []) or []
     if not boards:
@@ -3139,6 +3232,36 @@ def _build_workspace_review_layers(project):
     return {
         "review_cards": review_cards,
         "workspace_posture": f"Recurring workspace pressure is concentrated in {recurring_summary}",
+    }
+
+
+def _build_project_value_metrics(project):
+    project = project or {}
+    runs = project.get("runs", []) or []
+    scored_runs = [run for run in runs if run.get("score") is not None]
+    if len(scored_runs) >= 2:
+        first_score = _score_to_100(scored_runs[0].get("score"))
+        latest_score = _score_to_100(scored_runs[-1].get("score"))
+        score_delta = round(latest_score - first_score, 1)
+    else:
+        score_delta = 0.0
+
+    if len(runs) >= 2:
+        first_risk = _safe_int(runs[0].get("risk_count"), 0)
+        latest_risk = _safe_int(runs[-1].get("risk_count"), 0)
+        risk_delta = latest_risk - first_risk
+    else:
+        risk_delta = 0
+
+    improvement_label = "Improving" if score_delta > 0 or risk_delta < 0 else "Regressing" if score_delta < 0 or risk_delta > 0 else "Stable"
+    return {
+        "score_delta": score_delta,
+        "risk_delta": risk_delta,
+        "improvement_label": improvement_label,
+        "note": (
+            f"Score moved by {score_delta:+.1f} while risk count moved by {risk_delta:+d} across linked runs."
+            if runs else "Link runs to start tracking improvement over time."
+        ),
     }
 
 
@@ -3644,6 +3767,7 @@ def single_board_page():
             "single_chart": single_chart,
             "single_decision": single_decision,
             "board_review_layers": _build_board_review_layers(result),
+            "board_value_metrics": _build_board_value_metrics(result),
             "analysis_modes": analysis_modes,
             "selected_profile": selected_profile,
             "selected_board_type": selected_board_type,
@@ -3786,8 +3910,32 @@ def project_detail_page(project_id):
             "workspace_intelligence": _build_project_workspace_intelligence(project),
             "timeline_data": _build_project_timeline_data(project),
             "workspace_review_layers": _build_workspace_review_layers(project),
+            "project_value_metrics": _build_project_value_metrics(project),
         },
     )
+
+
+@app.route("/projects/<project_id>/notes", methods=["POST"])
+def project_notes_route(project_id):
+    author = (request.form.get("author") or "").strip()
+    body = (request.form.get("body") or "").strip()
+    project = add_project_note(project_id, author, body)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    flash("Review note added.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
+
+
+@app.route("/projects/<project_id>/status", methods=["POST"])
+def project_status_route(project_id):
+    status = (request.form.get("review_status") or "").strip()
+    project = update_project_review_status(project_id, status)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    flash("Review status updated.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
 
 
 @app.route("/projects/<project_id>/compare", methods=["GET"])
@@ -4012,6 +4160,17 @@ def history_detail_page(run_dir):
         template_name="history_detail.html",
         body_context={"run_detail": run_detail},
     )
+
+
+@app.route("/history/<run_dir>/print", methods=["GET"])
+def history_printable_page(run_dir):
+    run_detail = _build_run_detail(run_dir)
+
+    if not run_detail:
+        flash("Requested run folder was not found.")
+        return redirect(url_for("history_page"))
+
+    return render_template("history_print.html", run_detail=run_detail)
 
 
 @app.route("/settings", methods=["GET", "POST"])

@@ -229,6 +229,25 @@
 <section class="grid grid-2">
     <section class="card spotlight-shell-card">
         <div class="card-header">
+            <h2 class="section-title">Value Metrics</h2>
+            <p class="section-copy">What this run means in practical engineering terms right now.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="big-stat-grid compact-stat-grid">
+                {% for item in board_value_metrics %}
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ item.value }}</div>
+                    <div class="big-stat-label">{{ item.label }}</div>
+                    <div class="big-stat-sub">{{ item.subtext }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
             <h2 class="section-title">Advanced Review Lenses</h2>
             <p class="section-copy">A faster view of which engineering domains are driving this board review right now.</p>
         </div>
@@ -704,6 +723,11 @@
             <div>
             <svg class="board-view-svg" viewBox="{{ result.board_view.base_view_box }}" data-base-view-box="{{ result.board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="Board viewer">
                 <rect x="6" y="6" width="{{ result.board_view.width - 12 }}" height="{{ result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                {% for hotspot in result.board_view.hotspots %}
+                <circle cx="{{ hotspot.x }}" cy="{{ hotspot.y }}" r="{{ hotspot.radius }}" class="board-hotspot board-hotspot-{{ hotspot.tone }} board-entity" data-components="{{ hotspot.components|join('|') }}" data-nets="{{ hotspot.nets|join('|') }}" data-kind="hotspot">
+                    <title>{{ hotspot.message }}</title>
+                </circle>
+                {% endfor %}
                 {% for zone in result.board_view.zones %}
                 <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }} board-entity" data-layer="{{ zone.layer }}" data-nets="{{ zone.net_list|join('|') }}" data-kind="zone"><title>{{ zone.net }} · {{ zone.layer }} · Area {{ zone.area_estimate }}</title></polygon>
                 {% endfor %}
@@ -734,6 +758,7 @@
                 <span class="board-legend-chip"><span class="board-legend-swatch board-legend-trace"></span>Routes</span>
                 <span class="board-legend-chip"><span class="board-legend-swatch board-legend-via"></span>Vias</span>
                 <span class="board-legend-chip"><span class="board-legend-swatch board-legend-risk"></span>Risk Anchors</span>
+                <span class="board-legend-chip"><span class="board-legend-swatch board-legend-heat"></span>Heatmap</span>
             </div>
             </div>
 
@@ -1933,6 +1958,29 @@
     .board-legend-trace { background: rgba(125,211,252,0.85); }
     .board-legend-via { background: rgba(147,197,253,0.9); }
     .board-legend-risk { background: rgba(239,68,68,0.88); }
+    .board-legend-heat { background: rgba(245,158,11,0.62); }
+
+    .board-hotspot {
+        opacity: 0.22;
+        stroke-width: 1.2;
+        animation: boardHeatPulse 2.8s ease-in-out infinite;
+    }
+
+    .board-hotspot-low {
+        fill: rgba(96,165,250,0.12);
+        stroke: rgba(96,165,250,0.28);
+    }
+
+    .board-hotspot-medium {
+        fill: rgba(245,184,79,0.12);
+        stroke: rgba(245,184,79,0.4);
+    }
+
+    .board-hotspot-high,
+    .board-hotspot-critical {
+        fill: rgba(248,113,113,0.13);
+        stroke: rgba(248,113,113,0.44);
+    }
 
     .board-focus-item {
         padding: 14px;
@@ -1997,6 +2045,11 @@
         font-size: 18px;
         font-weight: 700;
         margin-top: 4px;
+    }
+
+    @keyframes boardHeatPulse {
+        0%, 100% { opacity: 0.18; }
+        50% { opacity: 0.36; }
     }
 
     .review-lens-grid {

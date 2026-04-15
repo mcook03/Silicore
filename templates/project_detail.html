@@ -206,6 +206,102 @@
 </section>
 </section>
 
+<section class="grid grid-2">
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Value Metrics</h2>
+        <p class="section-copy">Business-facing change signals pulled directly from linked engineering runs.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Project Trend</div>
+                <div class="metric-value">{{ project_value_metrics.improvement_label }}</div>
+                <div class="metric-sub">Current improvement posture</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Score Delta</div>
+                <div class="metric-value">{{ project_value_metrics.score_delta|round(1) }}</div>
+                <div class="metric-sub">Change across linked runs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Risk Delta</div>
+                <div class="metric-value">{{ project_value_metrics.risk_delta }}</div>
+                <div class="metric-sub">Finding count movement</div>
+            </div>
+        </div>
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Improvement Readout</h3>
+            <p>{{ project_value_metrics.note }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Review Workflow</h2>
+        <p class="section-copy">Lightweight collaboration and iteration tracking for shared engineering review.</p>
+    </div>
+
+    <div class="card-body">
+        <form method="post" action="{{ url_for('project_status_route', project_id=project.project_id) }}">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Review Status
+                    <select name="review_status" required>
+                        <option value="active_review" {% if project.review_status_view.value == 'active_review' %}selected{% endif %}>Active Review</option>
+                        <option value="fix_in_progress" {% if project.review_status_view.value == 'fix_in_progress' %}selected{% endif %}>Fix In Progress</option>
+                        <option value="re_analysis_planned" {% if project.review_status_view.value == 're_analysis_planned' %}selected{% endif %}>Re-Analysis Planned</option>
+                        <option value="ready_for_signoff" {% if project.review_status_view.value == 'ready_for_signoff' %}selected{% endif %}>Ready For Signoff</option>
+                    </select>
+                </label>
+            </div>
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-secondary">Update Status</button>
+            </div>
+        </form>
+
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Current Review State</h3>
+            <p><span class="chip chip-{{ project.review_status_view.tone }}">{{ project.review_status_view.label }}</span></p>
+        </div>
+
+        <form method="post" action="{{ url_for('project_notes_route', project_id=project.project_id) }}" style="margin-top:16px;">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Reviewer
+                    <input type="text" name="author" placeholder="Engineering Review">
+                </label>
+            </div>
+            <label style="display:block; margin-top:12px;">
+                Note
+                <textarea name="body" rows="4" placeholder="Capture a decision, open issue, or review note for the team." required></textarea>
+            </label>
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-primary">Add Review Note</button>
+            </div>
+        </form>
+
+        {% if project.collaboration_notes %}
+        <div class="timeline-list" style="margin-top:16px;">
+            {% for note in project.collaboration_notes|reverse %}
+            <div class="timeline-row">
+                <div>
+                    <div class="timeline-title">{{ note.author }}</div>
+                    <div class="timeline-copy">{{ note.created_at }}</div>
+                </div>
+                <div class="timeline-copy">{{ note.body }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="margin-top:16px;">No collaboration notes yet for this workspace.</div>
+        {% endif %}
+    </div>
+</section>
+</section>
+
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Workspace Review Architecture</h2>
@@ -835,6 +931,24 @@
         background: rgba(255,255,255,0.05);
         border-color: rgba(59,130,246,0.14);
         transform: translateY(-1px);
+    }
+
+    .card input[type="text"],
+    .card textarea,
+    .card select {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #f8fbff;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .card textarea {
+        resize: vertical;
+        min-height: 120px;
     }
 
     .project-detail-run-top {

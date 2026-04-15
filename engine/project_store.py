@@ -29,6 +29,8 @@ def create_project(name, description=""):
         "created_at": _now_iso(),
         "updated_at": _now_iso(),
         "runs": [],
+        "review_status": "active_review",
+        "collaboration_notes": [],
     }
 
     with open(_project_path(project_id), "w", encoding="utf-8") as f:
@@ -120,5 +122,42 @@ def add_run_to_project(project_id, run_record):
     if normalized_run["run_id"] not in existing_ids:
         project["runs"].append(normalized_run)
 
+    save_project(project)
+    return project
+
+
+def add_project_note(project_id, author, body):
+    project = get_project(project_id)
+    if not project:
+        return None
+
+    note = {
+        "note_id": str(uuid.uuid4())[:10],
+        "author": (author or "Engineering Review").strip() or "Engineering Review",
+        "body": (body or "").strip(),
+        "created_at": _now_iso(),
+    }
+    if not note["body"]:
+        return project
+
+    project.setdefault("collaboration_notes", [])
+    project["collaboration_notes"].append(note)
+    save_project(project)
+    return project
+
+
+def update_project_review_status(project_id, status):
+    project = get_project(project_id)
+    if not project:
+        return None
+
+    normalized = (status or "").strip().lower().replace(" ", "_")
+    allowed = {
+        "active_review",
+        "fix_in_progress",
+        "re_analysis_planned",
+        "ready_for_signoff",
+    }
+    project["review_status"] = normalized if normalized in allowed else "active_review"
     save_project(project)
     return project

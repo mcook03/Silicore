@@ -55,6 +55,14 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Detailed Findings", page)
         self.assertIn("Review Readiness", page)
 
+    def test_history_printable_page_renders(self):
+        response = self.client.get("/history/project_20260410_234649_970160/print")
+
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Silicore Printable Review", page)
+        self.assertIn("Save As PDF", page)
+
     def test_settings_page_includes_custom_profile_controls(self):
         response = self.client.get("/settings")
 
@@ -73,6 +81,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Confidence Timeline", page)
         self.assertIn("Recurring Failure Pattern", page)
         self.assertIn("Workspace Review Architecture", page)
+        self.assertIn("Review Workflow", page)
+        self.assertIn("Value Metrics", page)
 
     def test_single_board_page_includes_advanced_review_surfaces(self):
         response = self.client.get("/single-board")

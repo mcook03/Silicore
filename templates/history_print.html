@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ run_detail.name }} Review Summary</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 32px;
+            font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+            color: #0f172a;
+            background: #ffffff;
+        }
+        .print-shell {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+        .print-header {
+            border-bottom: 2px solid #dbe4f0;
+            padding-bottom: 18px;
+            margin-bottom: 22px;
+        }
+        .print-kicker {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+            color: #475569;
+        }
+        h1, h2, h3, p { margin: 0; }
+        h1 { margin-top: 8px; font-size: 32px; line-height: 1.05; }
+        .print-subtitle { margin-top: 10px; color: #475569; line-height: 1.7; }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin: 22px 0;
+        }
+        .metric-card {
+            border: 1px solid #dbe4f0;
+            border-radius: 14px;
+            padding: 14px;
+            background: #f8fbff;
+        }
+        .metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 800;
+            color: #64748b;
+        }
+        .metric-value {
+            margin-top: 8px;
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .metric-sub {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+        .section {
+            margin-top: 24px;
+        }
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        .summary-box, .finding {
+            border: 1px solid #dbe4f0;
+            border-radius: 14px;
+            padding: 16px;
+            background: #ffffff;
+        }
+        .summary-box p {
+            color: #334155;
+            line-height: 1.7;
+        }
+        .finding-list {
+            display: grid;
+            gap: 12px;
+        }
+        .finding-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .finding-title {
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .pill {
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .pill.critical { background: #fee2e2; color: #991b1b; }
+        .pill.high { background: #ffedd5; color: #9a3412; }
+        .pill.medium { background: #fef3c7; color: #92400e; }
+        .pill.low { background: #dcfce7; color: #166534; }
+        .finding p {
+            color: #334155;
+            line-height: 1.65;
+        }
+        .finding-meta {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #64748b;
+        }
+        .print-actions {
+            margin-top: 24px;
+        }
+        @media print {
+            .print-actions { display: none; }
+            body { padding: 0; }
+        }
+        @media (max-width: 800px) {
+            .metric-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-shell">
+        <header class="print-header">
+            <div class="print-kicker">Silicore Printable Review</div>
+            <h1>{{ run_detail.name }}</h1>
+            <p class="print-subtitle">Created {{ run_detail.created_at }} · {{ run_detail.run_type|upper }} · {{ run_detail.export_summary.review_ready_label }}</p>
+        </header>
+
+        <section class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Board Score</div>
+                <div class="metric-value">{{ run_detail.result.display_score|round|int if run_detail.result and run_detail.result.display_score is not none else 0 }}</div>
+                <div class="metric-sub">0-100 engineering position</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Findings</div>
+                <div class="metric-value">{{ run_detail.risk_count }}</div>
+                <div class="metric-sub">Total findings in this run</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Critical</div>
+                <div class="metric-value">{{ run_detail.critical_count }}</div>
+                <div class="metric-sub">Immediate engineering risk</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Readiness</div>
+                <div class="metric-value">{{ run_detail.export_summary.review_ready_score }}</div>
+                <div class="metric-sub">{{ run_detail.export_summary.review_ready_label }}</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Summary</h2>
+            <div class="summary-box">
+                <p>{{ run_detail.result.health_summary.summary if run_detail.result and run_detail.result.health_summary else run_detail.export_summary.summary }}</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Recommended Use</h2>
+            <div class="summary-box">
+                <p>{{ run_detail.export_summary.recommended_uses|join(', ') if run_detail.export_summary.recommended_uses else "Internal engineering review." }}</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Top Findings</h2>
+            <div class="finding-list">
+                {% for risk in (run_detail.result.top_issues if run_detail.result and run_detail.result.top_issues else run_detail.result.risks[:6]) %}
+                <article class="finding">
+                    <div class="finding-top">
+                        <div class="finding-title">{{ risk.message }}</div>
+                        <span class="pill {{ risk.severity|lower }}">{{ risk.severity }}</span>
+                    </div>
+                    <p>{{ risk.recommendation if risk.recommendation else "Review this finding in the PCB layout." }}</p>
+                    {% if risk.transparency_view %}
+                    <div class="finding-meta">
+                        Rule {{ risk.transparency_view.rule_id }} · Confidence {{ risk.transparency_view.confidence_score }} / 100 · Traceability {{ risk.transparency_view.traceability_score }} / 100
+                    </div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="print-actions">
+            <button onclick="window.print()">Save As PDF</button>
+        </div>
+    </div>
+</body>
+</html>
