@@ -444,6 +444,72 @@ def update_project_review_status(project_id, status):
     return get_project(project_id)
 
 
+def create_review_decision(project_id, status, summary="", run_id=None, actor_user_id=None):
+    initialize_database()
+    normalized = (status or "").strip().lower().replace(" ", "_")
+    allowed = {
+        "active_review",
+        "fix_in_progress",
+        "re_analysis_planned",
+        "ready_for_signoff",
+        "approved",
+        "blocked",
+    }
+    normalized = normalized if normalized in allowed else "active_review"
+    summary = (summary or "").strip()
+
+    connection = get_connection()
+    try:
+        row = connection.execute(
+            "SELECT owner_user_id FROM projects WHERE project_id = ?",
+            (project_id,),
+        ).fetchone()
+        if not row:
+            return None
+        now = _now_iso(connection)
+        connection.execute(
+            """
+            INSERT INTO review_decisions (
+                decision_id, project_id, run_id, status, summary, actor_user_id, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(uuid4())[:12],
+                project_id,
+                run_id,
+                normalized,
+                summary or None,
+                actor_user_id or row["owner_user_id"],
+                now,
+            ),
+        )
+        connection.execute(
+            """
+            UPDATE projects
+            SET review_status = ?, updated_at = ?
+            WHERE project_id = ?
+            """,
+            (normalized if normalized in {
+                "active_review",
+                "fix_in_progress",
+                "re_analysis_planned",
+                "ready_for_signoff",
+            } else "active_review", now, project_id),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
+    log_audit_event(
+        "project.review_decision_created",
+        actor_user_id=actor_user_id or (row["owner_user_id"] if row else None),
+        project_id=project_id,
+        run_id=run_id,
+        payload={"status": normalized, "summary": summary},
+    )
+    return get_project(project_id)
+
+
 def add_project_member(project_id, user):
     initialize_database()
     if not isinstance(user, dict) or not user.get("user_id"):

@@ -90,6 +90,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Atlas Intelligence", page)
         self.assertIn("Nexus Review Architecture", page)
         self.assertIn("Nexus Review Workflow", page)
+        self.assertIn("Formal Review Decisions", page)
+        self.assertIn("Nexus Runtime Snapshot", page)
         self.assertIn("Value Metrics", page)
         self.assertIn("Nexus Access", page)
 
@@ -211,6 +213,41 @@ class AppRouteSmokeTests(unittest.TestCase):
         worker_status_response = self.client.get("/worker/status")
         self.assertEqual(worker_status_response.status_code, 200)
         self.assertIn("running", worker_status_response.get_json())
+
+        ops_response = self.client.get("/nexus-ops")
+        self.assertEqual(ops_response.status_code, 200)
+        self.assertIn("Nexus Runtime", ops_response.get_data(as_text=True))
+
+    def test_project_review_decision_route_records_summary(self):
+        suffix = str(uuid4())[:8]
+        user = create_user("Workspace Lead", f"workspace-lead-{suffix}@example.com", "password123")
+        connection = get_connection()
+        try:
+            connection.execute("UPDATE users SET role = ? WHERE user_id = ?", ("lead", user["user_id"]))
+            connection.execute(
+                "UPDATE projects SET owner_user_id = ?, owner_name = ?, owner_email = ? WHERE project_id = ?",
+                (user["user_id"], user["name"], user["email"], "ec66c9f0"),
+            )
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.client.session_transaction() as session:
+            session["user_id"] = user["user_id"]
+
+        response = self.client.post(
+            "/projects/ec66c9f0/reviews",
+            data={
+                "status": "approved",
+                "summary": "Review gate passed after the latest rerun collapsed the top layout driver.",
+                "run_id": self.project["runs"][-1]["run_id"],
+            },
+            follow_redirects=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Review decision recorded.", page)
+        self.assertIn("Review gate passed after the latest rerun collapsed the top layout driver.", page)
 
 
 if __name__ == "__main__":

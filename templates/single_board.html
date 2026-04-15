@@ -171,6 +171,24 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <div class="assistant-console-group" style="margin-top:16px;">
+                <div class="assistant-console-label">Atlas Actions</div>
+                <div class="assistant-console-list">
+                    <button type="button" class="assistant-console-lens" data-board-action="generate_signoff_packet">
+                        <span>Backend Packet</span>
+                        <strong>Generate Signoff Packet</strong>
+                    </button>
+                    <button type="button" class="assistant-console-lens" data-board-action="open_high_confidence_findings" data-domain="emi">
+                        <span>Trusted Filter</span>
+                        <strong>Open High-Confidence Findings</strong>
+                    </button>
+                    <button type="button" class="assistant-console-lens" data-board-action="run_fixture_evaluation">
+                        <span>Calibration</span>
+                        <strong>Run Fixture Evaluation</strong>
+                    </button>
+                </div>
+            </div>
         </div>
     </aside>
 </section>
@@ -1333,6 +1351,7 @@
     const questionButtons = Array.from(document.querySelectorAll('[data-assistant-board-question]'));
     const lensButtons = Array.from(document.querySelectorAll('[data-assistant-board-lens]'));
     const promptButtons = Array.from(document.querySelectorAll('[data-assistant-board-prompt]'));
+    const actionButtons = Array.from(document.querySelectorAll('[data-board-action]'));
     const form = document.querySelector('[data-assistant-board-form]');
     const input = document.querySelector('[data-assistant-board-input]');
     const thread = document.querySelector('[data-assistant-board-thread]');
@@ -1378,16 +1397,43 @@
         `;
     };
 
+    const renderWorkflow = (result) => {
+        const plan = Array.isArray(result.workflow_plan) ? result.workflow_plan : [];
+        const results = Array.isArray(result.workflow_results) ? result.workflow_results : [];
+        const suggestions = Array.isArray(result.tool_suggestions) ? result.tool_suggestions : [];
+        const planMarkup = plan.length ? `
+            <div class="assistant-citation-list">
+                ${plan.map((item) => `<span class="assistant-citation">${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}</span>`).join('')}
+            </div>
+        ` : '';
+        const resultMarkup = results.length ? `
+            <div class="assistant-detail-copy">
+                ${results.map((item) => {
+                    const detail = item.error || ((item.result || {}).summary || (item.result || {}).status || (item.job || {}).status || 'completed');
+                    return `${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}: ${escapeHtml(detail)}`;
+                }).join('<br>')}
+            </div>
+        ` : '';
+        const suggestionMarkup = suggestions.length ? `
+            <div class="assistant-citation-list">
+                ${suggestions.map((item) => `<span class="assistant-citation">${escapeHtml(String(item).replace(/_/g, ' '))}</span>`).join('')}
+            </div>
+        ` : '';
+        return {planMarkup, resultMarkup, suggestionMarkup};
+    };
+
     const resultToMarkup = (result) => {
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        return `<p>${result.answer}</p>${detail}`;
+        const workflow = renderWorkflow(result);
+        return `<p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}`;
     };
 
     const renderResponse = (result) => {
         if (!result) return;
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
         const followUps = renderFollowUps(result.follow_ups);
-        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${followUps}`;
+        const workflow = renderWorkflow(result);
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}${workflow.suggestionMarkup}${followUps}`;
         responsePanel.querySelectorAll('[data-assistant-board-followup]').forEach((button) => {
             button.addEventListener('click', () => submitPrompt(button.dataset.assistantBoardFollowup));
         });
@@ -1622,6 +1668,40 @@
         }
     };
 
+    const runBoardAction = async (actionName, params = {}) => {
+        try {
+            const response = await fetch('/atlas/action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    action_name: actionName,
+                    context: {
+                        ...atlasContext,
+                        risk_sources: riskSources,
+                    },
+                    params,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`Atlas action failed with ${response.status}`);
+            }
+            const payload = await response.json();
+            renderResponse({
+                title: actionName.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+                answer: (payload.result || {}).summary || (payload.result || {}).status || `Atlas completed ${actionName.replace(/_/g, ' ')}.`,
+                detail: payload.job ? `Job ${payload.job.job_id} is ${payload.job.status}.` : '',
+                follow_ups: ['What does this change for signoff?', 'What should I fix first?'],
+                workflow_results: [{action_name: actionName, result: payload.result, job: payload.job, error: payload.error}],
+            });
+        } catch (error) {
+            renderResponse({
+                title: 'Atlas Action Failed',
+                answer: error.message || 'The requested Atlas action did not complete.',
+                follow_ups: ['Why is the score low?'],
+            });
+        }
+    };
+
     const pushThreadExchange = (promptText, result) => {
         if (Array.isArray(result.thread) && result.thread.length) {
             threadState = result.thread;
@@ -1676,6 +1756,12 @@
     promptButtons.forEach((button) => {
         button.addEventListener('click', async () => {
             await submitPrompt(button.dataset.assistantBoardPrompt || button.textContent);
+        });
+    });
+
+    actionButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+            await runBoardAction(button.dataset.boardAction, button.dataset.domain ? {domain: button.dataset.domain} : {});
         });
     });
 

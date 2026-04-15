@@ -229,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "SW_NODE",
-                "VCC"
+                "VCC",
+                "SW_NODE"
             ],
             "region": null,
             "metrics": {
@@ -248,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -284,8 +284,8 @@
                 "D1"
             ],
             "nets": [
-                "SW_NODE",
-                "GND"
+                "GND",
+                "SW_NODE"
             ],
             "region": null,
             "metrics": {
@@ -303,8 +303,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW_NODE",
-                    "GND"
+                    "GND",
+                    "SW_NODE"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -339,8 +339,8 @@
                 "R1"
             ],
             "nets": [
-                "CLK",
-                "GND"
+                "GND",
+                "CLK"
             ],
             "region": null,
             "metrics": {
@@ -358,8 +358,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2191,7 +2191,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-15T17:58:34.294495+00:00",
+        "timestamp": "2026-04-15T18:10:46.399360+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2766,8 +2766,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "region": null,
                 "metrics": {
@@ -2785,8 +2785,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW_NODE",
-                        "VCC"
+                        "VCC",
+                        "SW_NODE"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -2812,8 +2812,8 @@
                     "D1"
                 ],
                 "nets": [
-                    "SW_NODE",
-                    "GND"
+                    "GND",
+                    "SW_NODE"
                 ],
                 "region": null,
                 "metrics": {
@@ -2831,8 +2831,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW_NODE",
-                        "GND"
+                        "GND",
+                        "SW_NODE"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2858,8 +2858,8 @@
                     "R1"
                 ],
                 "nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -2877,8 +2877,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
-                        "GND"
+                        "GND",
+                        "CLK"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3178,7 +3178,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-15T17:58:34.294501+00:00",
+    "generated_at": "2026-04-15T18:10:46.399363+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

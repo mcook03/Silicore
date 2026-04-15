@@ -70,6 +70,23 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="assistant-console-group" style="margin-top:16px;">
+                <div class="assistant-console-label">Atlas Actions</div>
+                <div class="assistant-console-list">
+                    <button type="button" class="assistant-console-lens" data-project-action="compare_latest_runs">
+                        <span>Revision Delta</span>
+                        <strong>Compare Latest Runs</strong>
+                    </button>
+                    <button type="button" class="assistant-console-lens" data-project-action="generate_signoff_packet">
+                        <span>Backend Packet</span>
+                        <strong>Generate Signoff Packet</strong>
+                    </button>
+                    <button type="button" class="assistant-console-lens" data-project-action="run_fixture_evaluation">
+                        <span>Calibration</span>
+                        <strong>Run Fixture Evaluation</strong>
+                    </button>
+                </div>
+            </div>
         </div>
     </aside>
 </section>
@@ -433,7 +450,108 @@
         {% endif %}
     </div>
 </section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Formal Review Decisions</h2>
+        <p class="section-copy">Create auditable gate decisions tied to the workspace or a specific linked run.</p>
+    </div>
+
+    <div class="card-body">
+        {% if current_user %}
+        <form method="post" action="{{ url_for('project_review_decision_route', project_id=project.project_id) }}">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Decision
+                    <select name="status" required>
+                        <option value="active_review">Active Review</option>
+                        <option value="fix_in_progress">Fix In Progress</option>
+                        <option value="re_analysis_planned">Re-Analysis Planned</option>
+                        <option value="ready_for_signoff">Ready For Signoff</option>
+                        <option value="approved">Approved</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </label>
+
+                <label>
+                    Related Run
+                    <select name="run_id">
+                        <option value="">Workspace-level decision</option>
+                        {% for run in project.runs|reverse %}
+                        <option value="{{ run.run_id }}">{{ run.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+
+            <label style="display:block; margin-top:12px;">
+                Decision Summary
+                <textarea name="summary" rows="3" placeholder="Document why this workspace is approved, blocked, or moving to the next gate." required></textarea>
+            </label>
+
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-primary">Record Decision</button>
+            </div>
+        </form>
+        {% endif %}
+
+        {% if project_review_feed %}
+        <div class="timeline-list" style="margin-top:16px;">
+            {% for decision in project_review_feed %}
+            <div class="timeline-row">
+                <div>
+                    <div class="timeline-title">{{ decision.status_label }}</div>
+                    <div class="timeline-copy">{{ decision.created_at }} · {{ decision.run_name }}</div>
+                </div>
+                <div class="timeline-copy">{{ decision.summary }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="margin-top:16px;">No formal review decisions have been recorded for this workspace yet.</div>
+        {% endif %}
+    </div>
 </section>
+</section>
+
+{% if operations_snapshot and operations_snapshot.summary %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Nexus Runtime Snapshot</h2>
+        <p class="section-copy">A quick read of worker state and backend job posture behind this workspace.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Worker</div>
+                <div class="metric-value">{{ operations_snapshot.summary.worker_label }}</div>
+                <div class="metric-sub">Atlas job runtime status</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Queued Jobs</div>
+                <div class="metric-value">{{ operations_snapshot.summary.queued_jobs }}</div>
+                <div class="metric-sub">Waiting backend actions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Completed Jobs</div>
+                <div class="metric-value">{{ operations_snapshot.summary.completed_jobs }}</div>
+                <div class="metric-sub">Successful workflow actions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Failed Jobs</div>
+                <div class="metric-value">{{ operations_snapshot.summary.failed_jobs }}</div>
+                <div class="metric-sub">Jobs needing review</div>
+            </div>
+        </div>
+        {% if current_user and current_user.role in ['lead', 'admin'] %}
+        <div class="btn-link-row" style="margin-top:16px;">
+            <a href="{{ url_for('nexus_ops_page') }}" class="btn btn-secondary">Open Nexus Ops</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
 
 <section class="card">
     <div class="card-header">
@@ -1527,6 +1645,7 @@
     const questionButtons = Array.from(document.querySelectorAll('[data-assistant-project-question]'));
     const lensButtons = Array.from(document.querySelectorAll('[data-assistant-project-lens]'));
     const promptButtons = Array.from(document.querySelectorAll('[data-assistant-project-prompt]'));
+    const actionButtons = Array.from(document.querySelectorAll('[data-project-action]'));
     const form = document.querySelector('[data-assistant-project-form]');
     const input = document.querySelector('[data-assistant-project-input]');
     const thread = document.querySelector('[data-assistant-project-thread]');
@@ -1558,14 +1677,28 @@
             </div>
         `;
     };
+    const renderWorkflow = (result) => {
+        const plan = Array.isArray(result.workflow_plan) ? result.workflow_plan : [];
+        const results = Array.isArray(result.workflow_results) ? result.workflow_results : [];
+        const suggestions = Array.isArray(result.tool_suggestions) ? result.tool_suggestions : [];
+        const planMarkup = plan.length ? `<div class="assistant-citation-list">${plan.map((item) => `<span class="assistant-citation">${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}</span>`).join('')}</div>` : '';
+        const resultMarkup = results.length ? `<div class="assistant-detail-copy">${results.map((item) => {
+            const detail = item.error || ((item.result || {}).summary || (item.result || {}).status || (item.job || {}).status || 'completed');
+            return `${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}: ${escapeHtml(detail)}`;
+        }).join('<br>')}</div>` : '';
+        const suggestionMarkup = suggestions.length ? `<div class="assistant-citation-list">${suggestions.map((item) => `<span class="assistant-citation">${escapeHtml(String(item).replace(/_/g, ' '))}</span>`).join('')}</div>` : '';
+        return {planMarkup, resultMarkup, suggestionMarkup};
+    };
     const resultToMarkup = (result) => {
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        return `<p>${result.answer}</p>${detail}`;
+        const workflow = renderWorkflow(result);
+        return `<p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}`;
     };
     const renderResponse = (result) => {
         if (!result) return;
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${renderFollowUps(result.follow_ups)}`;
+        const workflow = renderWorkflow(result);
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}${workflow.suggestionMarkup}${renderFollowUps(result.follow_ups)}`;
         responsePanel.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
             button.addEventListener('click', () => submitPrompt(button.dataset.assistantProjectFollowup));
         });
@@ -1657,6 +1790,33 @@
             return fallbackProjectPrompt(promptText);
         }
     };
+    const runProjectAction = async (actionName) => {
+        try {
+            const response = await fetch('/atlas/action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    action_name: actionName,
+                    context: atlasContext,
+                }),
+            });
+            if (!response.ok) throw new Error(`Atlas action failed with ${response.status}`);
+            const payload = await response.json();
+            renderResponse({
+                title: actionName.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+                answer: (payload.result || {}).summary || (payload.result || {}).status || `Atlas completed ${actionName.replace(/_/g, ' ')}.`,
+                detail: payload.job ? `Job ${payload.job.job_id} is ${payload.job.status}.` : '',
+                follow_ups: ['What should the team do next?', 'Are we review-gate ready?'],
+                workflow_results: [{action_name: actionName, result: payload.result, job: payload.job, error: payload.error}],
+            });
+        } catch (error) {
+            renderResponse({
+                title: 'Atlas Action Failed',
+                answer: error.message || 'The requested Atlas action did not complete.',
+                follow_ups: ['What is repeating across this workspace?'],
+            });
+        }
+    };
     const pushThreadExchange = (promptText, result) => {
         if (Array.isArray(result.thread) && result.thread.length) {
             threadState = result.thread;
@@ -1690,6 +1850,11 @@
     promptButtons.forEach((button) => {
         button.addEventListener('click', async () => {
             await submitPrompt(button.dataset.assistantProjectPrompt || button.textContent);
+        });
+    });
+    actionButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+            await runProjectAction(button.dataset.projectAction);
         });
     });
 

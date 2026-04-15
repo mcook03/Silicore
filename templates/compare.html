@@ -69,6 +69,19 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="assistant-console-group" style="margin-top:16px;">
+                <div class="assistant-console-label">Atlas Actions</div>
+                <div class="assistant-console-list">
+                    <button type="button" class="assistant-console-lens" data-compare-action-tool="generate_signoff_packet">
+                        <span>Backend Packet</span>
+                        <strong>Generate Signoff Packet</strong>
+                    </button>
+                    <button type="button" class="assistant-console-lens" data-compare-action-tool="open_high_confidence_findings">
+                        <span>Trusted Filter</span>
+                        <strong>Open High-Confidence Findings</strong>
+                    </button>
+                </div>
+            </div>
         </div>
     </aside>
 </section>
@@ -2776,6 +2789,7 @@
     const questionButtons = Array.from(document.querySelectorAll('[data-assistant-compare-question]'));
     const lensButtons = Array.from(document.querySelectorAll('[data-assistant-compare-lens]'));
     const promptButtons = Array.from(document.querySelectorAll('[data-assistant-compare-prompt]'));
+    const actionButtons = Array.from(document.querySelectorAll('[data-compare-action-tool]'));
     const form = document.querySelector('[data-assistant-compare-form]');
     const input = document.querySelector('[data-assistant-compare-input]');
     const thread = document.querySelector('[data-assistant-compare-thread]');
@@ -2806,14 +2820,28 @@
             </div>
         `;
     };
+    const renderWorkflow = (result) => {
+        const plan = Array.isArray(result.workflow_plan) ? result.workflow_plan : [];
+        const results = Array.isArray(result.workflow_results) ? result.workflow_results : [];
+        const suggestions = Array.isArray(result.tool_suggestions) ? result.tool_suggestions : [];
+        const planMarkup = plan.length ? `<div class="assistant-citation-list">${plan.map((item) => `<span class="assistant-citation">${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}</span>`).join('')}</div>` : '';
+        const resultMarkup = results.length ? `<div class="assistant-detail-copy">${results.map((item) => {
+            const detail = item.error || ((item.result || {}).summary || (item.result || {}).status || (item.job || {}).status || 'completed');
+            return `${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}: ${escapeHtml(detail)}`;
+        }).join('<br>')}</div>` : '';
+        const suggestionMarkup = suggestions.length ? `<div class="assistant-citation-list">${suggestions.map((item) => `<span class="assistant-citation">${escapeHtml(String(item).replace(/_/g, ' '))}</span>`).join('')}</div>` : '';
+        return {planMarkup, resultMarkup, suggestionMarkup};
+    };
     const resultToMarkup = (result) => {
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        return `<p>${result.answer}</p>${detail}`;
+        const workflow = renderWorkflow(result);
+        return `<p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}`;
     };
     const renderResponse = (result) => {
         if (!result) return;
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${renderFollowUps(result.follow_ups)}`;
+        const workflow = renderWorkflow(result);
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}${workflow.suggestionMarkup}${renderFollowUps(result.follow_ups)}`;
         responsePanel.querySelectorAll('[data-assistant-compare-followup]').forEach((button) => {
             button.addEventListener('click', () => submitPrompt(button.dataset.assistantCompareFollowup));
         });
@@ -2943,6 +2971,37 @@
         }
     };
 
+    const runCompareAction = async (actionName) => {
+        try {
+            const response = await fetch('/atlas/action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    action_name: actionName,
+                    context: {
+                        ...atlasContext,
+                        focus_sources: atlasContext.focus_sources || defaultCitation,
+                    },
+                }),
+            });
+            if (!response.ok) throw new Error(`Atlas action failed with ${response.status}`);
+            const payload = await response.json();
+            renderResponse({
+                title: actionName.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+                answer: (payload.result || {}).summary || (payload.result || {}).status || `Atlas completed ${actionName.replace(/_/g, ' ')}.`,
+                detail: payload.job ? `Job ${payload.job.job_id} is ${payload.job.status}.` : '',
+                follow_ups: ['Can I approve this revision?', 'What got worse?'],
+                workflow_results: [{action_name: actionName, result: payload.result, job: payload.job, error: payload.error}],
+            });
+        } catch (error) {
+            renderResponse({
+                title: 'Atlas Action Failed',
+                answer: error.message || 'The requested Atlas action did not complete.',
+                follow_ups: ['Show the top change cluster'],
+            });
+        }
+    };
+
     const pushThreadExchange = (promptText, result) => {
         if (Array.isArray(result.thread) && result.thread.length) {
             threadState = result.thread;
@@ -2985,6 +3044,11 @@
     promptButtons.forEach((button) => {
         button.addEventListener('click', async () => {
             await submitPrompt(button.dataset.assistantComparePrompt || button.textContent);
+        });
+    });
+    actionButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+            await runCompareAction(button.dataset.compareActionTool);
         });
     });
 

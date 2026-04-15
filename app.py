@@ -41,6 +41,7 @@ from engine.project_store import (
     add_project_note,
     add_project_member,
     add_run_to_project,
+    create_review_decision,
     create_project,
     delete_project,
     get_project,
@@ -3655,13 +3656,90 @@ def _download_href(item):
 
 
 def _get_nav_items(active_page):
-    return [
+    items = [
         {"key": "home", "label": "Nexus", "subtitle": "Platform overview", "href": url_for("index"), "icon": "◈", "active": active_page == "home"},
         {"key": "single", "label": "Board Analysis", "subtitle": "Single-board review", "href": url_for("single_board_page"), "icon": "▣", "active": active_page == "single"},
         {"key": "project", "label": "Nexus Review", "subtitle": "Multi-board comparison", "href": url_for("project_page"), "icon": "▤", "active": active_page == "project"},
         {"key": "projects_workspace", "label": "Projects", "subtitle": "Engineering workspaces", "href": url_for("projects_page"), "icon": "◆", "active": active_page == "projects_workspace"},
         {"key": "history", "label": "Nexus History", "subtitle": "History and outputs", "href": url_for("history_page"), "icon": "◷", "active": active_page == "history"},
         {"key": "settings", "label": "Settings", "subtitle": "Configuration controls", "href": url_for("settings_page"), "icon": "⚙", "active": active_page == "settings"},
+    ]
+    user = getattr(g, "current_user", None)
+    if user and has_role(user, "lead"):
+        items.append(
+            {"key": "ops", "label": "Nexus Ops", "subtitle": "Runtime and reviews", "href": url_for("nexus_ops_page"), "icon": "◎", "active": active_page == "ops"}
+        )
+    return items
+
+
+def _job_type_label(value):
+    mapping = {
+        "evaluation_suite": "Evaluation Suite",
+        "signoff_packet": "Signoff Packet",
+        "compare_latest_runs": "Latest Comparison",
+        "open_high_confidence_findings": "Trusted Findings",
+    }
+    return mapping.get(value, _format_category_name(value or "job"))
+
+
+def _job_status_tone(value):
+    normalized = str(value or "").strip().lower()
+    if normalized == "completed":
+        return "low"
+    if normalized == "failed":
+        return "critical"
+    if normalized == "queued":
+        return "medium"
+    return "high"
+
+
+def _build_operations_snapshot(current_user=None):
+    jobs = list_jobs(limit=12) if current_user and has_role(current_user, "lead") else []
+    reviews = list_review_decisions(limit=10) if current_user and has_role(current_user, "lead") else []
+    audits = list_audit_events(limit=10) if current_user and has_role(current_user, "admin") else []
+    worker = worker_status() if current_user and has_role(current_user, "lead") else {"running": False, "thread_name": None}
+
+    queued = sum(1 for item in jobs if item.get("status") == "queued")
+    failed = sum(1 for item in jobs if item.get("status") == "failed")
+    completed = sum(1 for item in jobs if item.get("status") == "completed")
+    latest_job = jobs[0] if jobs else None
+    latest_review = reviews[0] if reviews else None
+
+    return {
+        "worker": worker,
+        "jobs": [
+            {
+                **item,
+                "job_type_label": _job_type_label(item.get("job_type")),
+                "status_tone": _job_status_tone(item.get("status")),
+            }
+            for item in jobs
+        ],
+        "reviews": reviews,
+        "audit_events": audits,
+        "summary": {
+            "queued_jobs": queued,
+            "failed_jobs": failed,
+            "completed_jobs": completed,
+            "latest_job_label": latest_job.get("job_type") if latest_job else "No jobs yet",
+            "latest_review_status": latest_review.get("status") if latest_review else "No review decisions yet",
+            "worker_label": "Worker active" if worker.get("running") else "Worker idle",
+        },
+    }
+
+
+def _build_project_review_feed(project):
+    reviews = list_review_decisions(project_id=project.get("project_id"), limit=20)
+    run_lookup = {str(run.get("run_id")): run for run in project.get("runs", []) or []}
+    return [
+        {
+            **item,
+            "status_label": _review_status_view(item.get("status")).get("label"),
+            "status_tone": _review_status_view(item.get("status")).get("tone"),
+            "run_name": (run_lookup.get(str(item.get("run_id"))) or {}).get("name") or "Workspace-level review",
+            "summary": item.get("summary") or "No decision note was recorded for this review event.",
+        }
+        for item in reviews
     ]
 
 
@@ -4104,6 +4182,28 @@ def projects_page():
     )
 
 
+@app.route("/nexus-ops", methods=["GET"])
+def nexus_ops_page():
+    current_user = _current_user()
+    if not current_user or not has_role(current_user, "lead"):
+        flash("Lead or admin access is required to open Nexus Ops.")
+        return redirect(url_for("login_page"))
+
+    operations_snapshot = _build_operations_snapshot(current_user)
+    evaluation_summary = evaluate_fixture_suite() if has_role(current_user, "admin") else None
+    return _render_page(
+        active_page="ops",
+        page_title="Nexus Ops",
+        page_eyebrow="Runtime, Reviews, and Audit",
+        page_copy="Monitor Atlas workflows, worker activity, review decisions, queued jobs, and evaluation health from one Silicore Nexus control surface.",
+        template_name="nexus_ops.html",
+        body_context={
+            "operations_snapshot": operations_snapshot,
+            "evaluation_summary": evaluation_summary,
+        },
+    )
+
+
 @app.route("/projects/create", methods=["POST"])
 def create_project_route():
     name = (request.form.get("name") or "").strip()
@@ -4185,6 +4285,8 @@ def project_detail_page(project_id):
                 timeline_data,
                 project_copilot,
             ),
+            "project_review_feed": _build_project_review_feed(project),
+            "operations_snapshot": _build_operations_snapshot(current_user),
             "available_users": [user for user in list_users() if user.get("user_id") != ((project.get("owner") or {}).get("user_id"))],
         },
     )
@@ -4206,6 +4308,34 @@ def project_notes_route(project_id):
         flash("Project not found.")
         return redirect(url_for("projects_page"))
     flash("Review note added.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
+
+
+@app.route("/projects/<project_id>/reviews", methods=["POST"])
+def project_review_decision_route(project_id):
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    if not can_manage_project(_current_user(), project):
+        flash("You do not have permission to record a review decision for this workspace.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    status = (request.form.get("status") or "").strip()
+    summary = (request.form.get("summary") or "").strip()
+    run_id = (request.form.get("run_id") or "").strip() or None
+    updated = create_review_decision(
+        project_id,
+        status,
+        summary=summary,
+        run_id=run_id,
+        actor_user_id=((_current_user() or {}).get("user_id")),
+    )
+    if updated is None:
+        flash("Review decision could not be recorded.")
+        return redirect(url_for("projects_page"))
+
+    flash("Review decision recorded.")
     return redirect(url_for("project_detail_page", project_id=project_id))
 
 
