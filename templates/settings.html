@@ -55,9 +55,9 @@
                 <div class="settings-area-card">
                     <div class="settings-area-icon">▣</div>
                     <div>
-                        <div class="settings-area-title">Layout</div>
+                        <div class="settings-area-title">Layout & Manufacturability</div>
                         <div class="settings-area-copy">
-                            Controls spacing and density assumptions across board placement.
+                            Controls placement density and fab-readiness thresholds so layout quality and DFM stay aligned.
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                     <div>
                         <div class="settings-area-title">Signal</div>
                         <div class="settings-area-copy">
-                            Sets routing expectations and critical-net handling.
+                            Sets routing expectations, high-speed thresholds, differential-pair symmetry, and termination review.
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                     <div>
                         <div class="settings-area-title">Thermal</div>
                         <div class="settings-area-copy">
-                            Defines hotspot spacing used by thermal checks.
+                            Defines hotspot sensitivity, thermal-via support, and heat-spreading expectations.
                         </div>
                     </div>
                 </div>
@@ -95,9 +95,9 @@
                 <div class="settings-area-card">
                     <div class="settings-area-icon">⇄</div>
                     <div>
-                        <div class="settings-area-title">EMI</div>
+                        <div class="settings-area-title">EMI & Reliability</div>
                         <div class="settings-area-copy">
-                            Controls return-path and ground-reference expectations.
+                            Controls return-path continuity, grounding robustness, and field reliability expectations.
                         </div>
                     </div>
                 </div>
@@ -112,25 +112,6 @@
                     </div>
                 </div>
 
-                <div class="settings-area-card">
-                    <div class="settings-area-icon">⇢</div>
-                    <div>
-                        <div class="settings-area-title">Advanced Signal Integrity</div>
-                        <div class="settings-area-copy">
-                            Controls crosstalk, detours, via transitions, and differential-pair skew checks for deeper high-speed review.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-area-card">
-                    <div class="settings-area-icon">▤</div>
-                    <div>
-                        <div class="settings-area-title">DFM, Thermal, Reliability</div>
-                        <div class="settings-area-copy">
-                            Exposes manufacturability, thermal-management, grounding, and component-level thresholds for real engineering projects.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -147,7 +128,7 @@
             <div class="settings-summary-grid">
                 <div class="settings-summary-card">
                     <div class="settings-summary-value">{{ settings_view.section_counts.layout if settings_view else 0 }}</div>
-                    <div class="settings-summary-label">Layout Controls</div>
+                    <div class="settings-summary-label">Layout + DFM Controls</div>
                 </div>
 
                 <div class="settings-summary-card">
@@ -157,7 +138,7 @@
 
                 <div class="settings-summary-card">
                     <div class="settings-summary-value">{{ settings_view.section_counts.signal if settings_view else 0 }}</div>
-                    <div class="settings-summary-label">Signal Controls</div>
+                    <div class="settings-summary-label">Signal + HS Controls</div>
                 </div>
 
                 <div class="settings-summary-card">
@@ -169,12 +150,12 @@
             <div class="settings-summary-grid" style="margin-top:14px;">
                 <div class="settings-summary-card">
                     <div class="settings-summary-value">{{ settings_view.advanced_capability_count if settings_view else 0 }}</div>
-                    <div class="settings-summary-label">Advanced Rule Families</div>
+                    <div class="settings-summary-label">Deep Analysis Domains</div>
                 </div>
 
                 <div class="settings-summary-card">
-                    <div class="settings-summary-value">HS / DFM</div>
-                    <div class="settings-summary-label">Now Configurable</div>
+                    <div class="settings-summary-value">Merged</div>
+                    <div class="settings-summary-label">Into Core Categories</div>
                 </div>
             </div>
 
@@ -269,10 +250,10 @@
                 <section class="settings-section-card">
                     <div class="settings-section-heading">
                         <div>
-                            <h3>Layout</h3>
-                            <p>Controls spacing and density assumptions.</p>
+                            <h3>Layout & Manufacturability</h3>
+                            <p>Controls spacing, density, and fab-readiness assumptions in one physical-design category.</p>
                         </div>
-                        <span class="chip chip-soft">Layout Rules</span>
+                        <span class="chip chip-soft">Layout + DFM</span>
                     </div>
 
                     <div class="slider-control-grid">
@@ -364,6 +345,35 @@
                                 <span>50</span>
                                 <span>100</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-control-grid" style="margin-top:18px;">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Minimum Drill</div><div class="slider-help">Smallest drill size considered safe for standard fabrication assumptions.</div></div>
+                                <div class="slider-value-pill"><span id="mfg-drill-value">{{ editable_config.rules.manufacturing_min_drill if editable_config and editable_config.rules else 0.2 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.1" max="0.6" step="0.01" name="manufacturing_min_drill" value="{{ editable_config.rules.manufacturing_min_drill if editable_config and editable_config.rules else 0.2 }}" oninput="document.getElementById('mfg-drill-value').textContent=this.value">
+                            <div class="range-scale"><span>0.1</span><span>0.35</span><span>0.6</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Minimum Annular Ring</div><div class="slider-help">Minimum annular ring margin expected for robust drilling tolerance.</div></div>
+                                <div class="slider-value-pill"><span id="mfg-ring-value">{{ editable_config.rules.manufacturing_min_annular_ring if editable_config and editable_config.rules else 0.1 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.05" max="0.4" step="0.01" name="manufacturing_min_annular_ring" value="{{ editable_config.rules.manufacturing_min_annular_ring if editable_config and editable_config.rules else 0.1 }}" oninput="document.getElementById('mfg-ring-value').textContent=this.value">
+                            <div class="range-scale"><span>0.05</span><span>0.2</span><span>0.4</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Via-In-Pad Distance</div><div class="slider-help">Pad proximity threshold used to flag via-in-pad or near-pad assembly risk.</div></div>
+                                <div class="slider-value-pill"><span id="mfg-via-pad-value">{{ editable_config.rules.manufacturing_via_in_pad_distance if editable_config and editable_config.rules else 0.35 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.1" max="1.0" step="0.01" name="manufacturing_via_in_pad_distance" value="{{ editable_config.rules.manufacturing_via_in_pad_distance if editable_config and editable_config.rules else 0.35 }}" oninput="document.getElementById('mfg-via-pad-value').textContent=this.value">
+                            <div class="range-scale"><span>0.1</span><span>0.55</span><span>1.0</span></div>
                         </div>
                     </div>
                 </section>
@@ -588,9 +598,9 @@
                     <div class="settings-section-heading">
                         <div>
                             <h3>Signal</h3>
-                            <p>Set routing expectations and critical-net handling.</p>
+                            <p>Set routing expectations, high-speed thresholds, differential-pair symmetry, and termination review in one place.</p>
                         </div>
-                        <span class="chip chip-low">Signal Rules</span>
+                        <span class="chip chip-low">Signal + HS Rules</span>
                     </div>
 
                     <div class="slider-control-grid">
@@ -678,13 +688,108 @@
                             >
                         </label>
                     </div>
+
+                    <div class="slider-control-grid" style="margin-top:18px;">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Max Signal Vias</div>
+                                    <div class="slider-help">Maximum via transitions allowed on a critical signal before continuity risk rises.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="sig-vias-value">{{ editable_config.rules.signal_integrity_max_signal_vias if editable_config and editable_config.rules else 2 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="8" step="1" name="signal_integrity_max_signal_vias" value="{{ editable_config.rules.signal_integrity_max_signal_vias if editable_config and editable_config.rules else 2 }}" oninput="document.getElementById('sig-vias-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>4</span><span>8</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Width Ratio Threshold</div>
+                                    <div class="slider-help">Maximum width-change ratio allowed across a critical route before impedance consistency is questioned.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="sig-width-ratio-value">{{ editable_config.rules.signal_integrity_width_ratio_threshold if editable_config and editable_config.rules else 2.2 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1.0" max="6.0" step="0.1" name="signal_integrity_width_ratio_threshold" value="{{ editable_config.rules.signal_integrity_width_ratio_threshold if editable_config and editable_config.rules else 2.2 }}" oninput="document.getElementById('sig-width-ratio-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>3.5</span><span>6</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Detour Ratio Threshold</div>
+                                    <div class="slider-help">Allowed route detour versus direct point-to-point distance before a signal path is considered inefficient.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="sig-detour-value">{{ editable_config.rules.signal_integrity_detour_ratio_threshold if editable_config and editable_config.rules else 1.8 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1.0" max="4.0" step="0.05" name="signal_integrity_detour_ratio_threshold" value="{{ editable_config.rules.signal_integrity_detour_ratio_threshold if editable_config and editable_config.rules else 1.8 }}" oninput="document.getElementById('sig-detour-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>2.5</span><span>4</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Stub Length Threshold</div>
+                                    <div class="slider-help">Maximum tolerated dangling-route length before a stub warning appears.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="sig-stub-value">{{ editable_config.rules.signal_integrity_stub_length_threshold if editable_config and editable_config.rules else 12 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="40" step="1" name="signal_integrity_stub_length_threshold" value="{{ editable_config.rules.signal_integrity_stub_length_threshold if editable_config and editable_config.rules else 12 }}" oninput="document.getElementById('sig-stub-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>20</span><span>40</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Crosstalk Spacing Threshold</div>
+                                    <div class="slider-help">Minimum spacing multiplier used to judge parallel-route crosstalk exposure.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="sig-crosstalk-value">{{ editable_config.rules.signal_integrity_crosstalk_spacing_threshold if editable_config and editable_config.rules else 2.5 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.5" max="10" step="0.1" name="signal_integrity_crosstalk_spacing_threshold" value="{{ editable_config.rules.signal_integrity_crosstalk_spacing_threshold if editable_config and editable_config.rules else 2.5 }}" oninput="document.getElementById('sig-crosstalk-value').textContent=this.value">
+                            <div class="range-scale"><span>0.5</span><span>5</span><span>10</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Length Mismatch Threshold</div>
+                                    <div class="slider-help">Maximum allowed route-length mismatch across a differential pair.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="diff-length-value">{{ editable_config.rules.differential_pair_length_mismatch_threshold if editable_config and editable_config.rules else 5 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.5" max="20" step="0.5" name="differential_pair_length_mismatch_threshold" value="{{ editable_config.rules.differential_pair_length_mismatch_threshold if editable_config and editable_config.rules else 5 }}" oninput="document.getElementById('diff-length-value').textContent=this.value">
+                            <div class="range-scale"><span>0.5</span><span>10</span><span>20</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Via Mismatch Threshold</div>
+                                    <div class="slider-help">Maximum difference in via count allowed between positive and negative routes.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="diff-via-value">{{ editable_config.rules.differential_pair_via_mismatch_threshold if editable_config and editable_config.rules else 1 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="5" step="1" name="differential_pair_via_mismatch_threshold" value="{{ editable_config.rules.differential_pair_via_mismatch_threshold if editable_config and editable_config.rules else 1 }}" oninput="document.getElementById('diff-via-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>2</span><span>5</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Termination Review Length</div><div class="slider-help">Route length beyond which high-speed nets are checked for visible series or termination resistors.</div></div>
+                                <div class="slider-value-pill"><span id="component-term-length-value">{{ editable_config.rules.component_analysis_termination_length_threshold if editable_config and editable_config.rules else 18 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="50" step="1" name="component_analysis_termination_length_threshold" value="{{ editable_config.rules.component_analysis_termination_length_threshold if editable_config and editable_config.rules else 18 }}" oninput="document.getElementById('component-term-length-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>25</span><span>50</span></div>
+                        </div>
+                    </div>
                 </section>
 
                 <section class="settings-section-card">
                     <div class="settings-section-heading">
                         <div>
                             <h3>Thermal</h3>
-                            <p>Controls hotspot sensitivity between likely hot components.</p>
+                            <p>Controls hotspot sensitivity, thermal-via support, and copper spreading assumptions for power-dissipating regions.</p>
                         </div>
                         <span class="chip chip-soft">Thermal Rules</span>
                     </div>
@@ -718,6 +823,35 @@
                                 <span>10</span>
                                 <span>20</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-control-grid" style="margin-top:18px;">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Minimum Thermal Vias</div><div class="slider-help">Minimum nearby thermal vias expected around hot components.</div></div>
+                                <div class="slider-value-pill"><span id="thermal-vias-value">{{ editable_config.rules.thermal_management_min_thermal_vias if editable_config and editable_config.rules else 1 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="8" step="1" name="thermal_management_min_thermal_vias" value="{{ editable_config.rules.thermal_management_min_thermal_vias if editable_config and editable_config.rules else 1 }}" oninput="document.getElementById('thermal-vias-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>4</span><span>8</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Thermal Via Radius</div><div class="slider-help">Search radius used when checking for thermal-via support around hot parts.</div></div>
+                                <div class="slider-value-pill"><span id="thermal-radius-value">{{ editable_config.rules.thermal_management_via_radius if editable_config and editable_config.rules else 4 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="12" step="0.5" name="thermal_management_via_radius" value="{{ editable_config.rules.thermal_management_via_radius if editable_config and editable_config.rules else 4 }}" oninput="document.getElementById('thermal-radius-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>6</span><span>12</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Minimum Heat Spread Width</div><div class="slider-help">Local copper-width expectation used to estimate heat spreading quality.</div></div>
+                                <div class="slider-value-pill"><span id="thermal-spread-value">{{ editable_config.rules.thermal_management_min_heat_spread_width if editable_config and editable_config.rules else 0.5 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.1" max="3" step="0.05" name="thermal_management_min_heat_spread_width" value="{{ editable_config.rules.thermal_management_min_heat_spread_width if editable_config and editable_config.rules else 0.5 }}" oninput="document.getElementById('thermal-spread-value').textContent=this.value">
+                            <div class="range-scale"><span>0.1</span><span>1.5</span><span>3</span></div>
                         </div>
                     </div>
                 </section>
@@ -801,199 +935,27 @@
                 <section class="settings-section-card">
                     <div class="settings-section-heading">
                         <div>
-                            <h3>Advanced Signal Integrity</h3>
-                            <p>Configure higher-depth routing checks for critical nets and high-speed interfaces.</p>
+                            <h3>EMI & Reliability</h3>
+                            <p>Controls return-path continuity and grounding robustness so EMI expectations and board reliability stay aligned.</p>
                         </div>
-                        <span class="chip chip-medium">HSI Rules</span>
+                        <span class="chip chip-medium">EMI + Reliability</span>
                     </div>
 
-                    <div class="slider-control-grid">
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Max Signal Vias</div>
-                                    <div class="slider-help">Maximum via transitions allowed on a critical signal before continuity risk rises.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="sig-vias-value">{{ editable_config.rules.signal_integrity_max_signal_vias if editable_config and editable_config.rules else 2 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0" max="8" step="1" name="signal_integrity_max_signal_vias" value="{{ editable_config.rules.signal_integrity_max_signal_vias if editable_config and editable_config.rules else 2 }}" oninput="document.getElementById('sig-vias-value').textContent=this.value">
-                            <div class="range-scale"><span>0</span><span>4</span><span>8</span></div>
-                        </div>
+                    <div class="settings-toggle-grid">
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Require Ground Reference</span>
+                                <span class="settings-toggle-help">When enabled, return-path analysis expects a valid ground reference and flags missing continuity.</span>
+                            </span>
 
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Width Ratio Threshold</div>
-                                    <div class="slider-help">Maximum width-change ratio allowed across a critical route before impedance consistency is questioned.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="sig-width-ratio-value">{{ editable_config.rules.signal_integrity_width_ratio_threshold if editable_config and editable_config.rules else 2.2 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="1" max="5" step="0.1" name="signal_integrity_width_ratio_threshold" value="{{ editable_config.rules.signal_integrity_width_ratio_threshold if editable_config and editable_config.rules else 2.2 }}" oninput="document.getElementById('sig-width-ratio-value').textContent=this.value">
-                            <div class="range-scale"><span>1</span><span>3</span><span>5</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Detour Ratio Threshold</div>
-                                    <div class="slider-help">Allowed routed-to-direct distance ratio before a critical route is considered inefficient.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="sig-detour-ratio-value">{{ editable_config.rules.signal_integrity_detour_ratio_threshold if editable_config and editable_config.rules else 1.8 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="1" max="4" step="0.1" name="signal_integrity_detour_ratio_threshold" value="{{ editable_config.rules.signal_integrity_detour_ratio_threshold if editable_config and editable_config.rules else 1.8 }}" oninput="document.getElementById('sig-detour-ratio-value').textContent=this.value">
-                            <div class="range-scale"><span>1</span><span>2.5</span><span>4</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Stub Length Threshold</div>
-                                    <div class="slider-help">Maximum dangling-route length before Silicore flags potential stub behavior.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="sig-stub-value">{{ editable_config.rules.signal_integrity_stub_length_threshold if editable_config and editable_config.rules else 12 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="1" max="40" step="0.5" name="signal_integrity_stub_length_threshold" value="{{ editable_config.rules.signal_integrity_stub_length_threshold if editable_config and editable_config.rules else 12 }}" oninput="document.getElementById('sig-stub-value').textContent=this.value">
-                            <div class="range-scale"><span>1</span><span>20</span><span>40</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Crosstalk Spacing Threshold</div>
-                                    <div class="slider-help">Spacing threshold used to flag close parallel critical traces on the same layer.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="sig-crosstalk-value">{{ editable_config.rules.signal_integrity_crosstalk_spacing_threshold if editable_config and editable_config.rules else 2.5 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0.5" max="10" step="0.1" name="signal_integrity_crosstalk_spacing_threshold" value="{{ editable_config.rules.signal_integrity_crosstalk_spacing_threshold if editable_config and editable_config.rules else 2.5 }}" oninput="document.getElementById('sig-crosstalk-value').textContent=this.value">
-                            <div class="range-scale"><span>0.5</span><span>5</span><span>10</span></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="settings-section-card">
-                    <div class="settings-section-heading">
-                        <div>
-                            <h3>Differential Pairs</h3>
-                            <p>Controls symmetry and skew checks for paired high-speed routes.</p>
-                        </div>
-                        <span class="chip chip-low">Diff Pair</span>
+                            <select name="emi_require_ground_reference" class="settings-select">
+                                <option value="true" {% if editable_config and editable_config.emi and editable_config.emi.require_ground_reference %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if editable_config and editable_config.emi and not editable_config.emi.require_ground_reference %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
                     </div>
 
-                    <div class="slider-control-grid">
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Length Mismatch Threshold</div>
-                                    <div class="slider-help">Maximum allowed route-length mismatch across a differential pair.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="diff-length-value">{{ editable_config.rules.differential_pair_length_mismatch_threshold if editable_config and editable_config.rules else 5 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0.5" max="20" step="0.5" name="differential_pair_length_mismatch_threshold" value="{{ editable_config.rules.differential_pair_length_mismatch_threshold if editable_config and editable_config.rules else 5 }}" oninput="document.getElementById('diff-length-value').textContent=this.value">
-                            <div class="range-scale"><span>0.5</span><span>10</span><span>20</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div>
-                                    <div class="slider-label">Via Mismatch Threshold</div>
-                                    <div class="slider-help">Maximum difference in via count allowed between positive and negative routes.</div>
-                                </div>
-                                <div class="slider-value-pill"><span id="diff-via-value">{{ editable_config.rules.differential_pair_via_mismatch_threshold if editable_config and editable_config.rules else 1 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0" max="5" step="1" name="differential_pair_via_mismatch_threshold" value="{{ editable_config.rules.differential_pair_via_mismatch_threshold if editable_config and editable_config.rules else 1 }}" oninput="document.getElementById('diff-via-value').textContent=this.value">
-                            <div class="range-scale"><span>0</span><span>2</span><span>5</span></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="settings-section-card">
-                    <div class="settings-section-heading">
-                        <div>
-                            <h3>Manufacturability</h3>
-                            <p>Expose fab-oriented DFM controls used by drill, annular-ring, and via-to-pad checks.</p>
-                        </div>
-                        <span class="chip chip-soft">DFM</span>
-                    </div>
-
-                    <div class="slider-control-grid">
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Minimum Drill</div><div class="slider-help">Smallest drill size considered safe for standard fabrication assumptions.</div></div>
-                                <div class="slider-value-pill"><span id="mfg-drill-value">{{ editable_config.rules.manufacturing_min_drill if editable_config and editable_config.rules else 0.2 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0.1" max="0.6" step="0.01" name="manufacturing_min_drill" value="{{ editable_config.rules.manufacturing_min_drill if editable_config and editable_config.rules else 0.2 }}" oninput="document.getElementById('mfg-drill-value').textContent=this.value">
-                            <div class="range-scale"><span>0.1</span><span>0.35</span><span>0.6</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Minimum Annular Ring</div><div class="slider-help">Minimum annular ring margin expected for robust drilling tolerance.</div></div>
-                                <div class="slider-value-pill"><span id="mfg-ring-value">{{ editable_config.rules.manufacturing_min_annular_ring if editable_config and editable_config.rules else 0.1 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0.05" max="0.4" step="0.01" name="manufacturing_min_annular_ring" value="{{ editable_config.rules.manufacturing_min_annular_ring if editable_config and editable_config.rules else 0.1 }}" oninput="document.getElementById('mfg-ring-value').textContent=this.value">
-                            <div class="range-scale"><span>0.05</span><span>0.2</span><span>0.4</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Via-In-Pad Distance</div><div class="slider-help">Pad proximity threshold used to flag via-in-pad or near-pad assembly risk.</div></div>
-                                <div class="slider-value-pill"><span id="mfg-via-pad-value">{{ editable_config.rules.manufacturing_via_in_pad_distance if editable_config and editable_config.rules else 0.35 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0.1" max="1.0" step="0.01" name="manufacturing_via_in_pad_distance" value="{{ editable_config.rules.manufacturing_via_in_pad_distance if editable_config and editable_config.rules else 0.35 }}" oninput="document.getElementById('mfg-via-pad-value').textContent=this.value">
-                            <div class="range-scale"><span>0.1</span><span>0.55</span><span>1.0</span></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="settings-section-card">
-                    <div class="settings-section-heading">
-                        <div>
-                            <h3>Thermal Management</h3>
-                            <p>Controls the added heat-exit and heat-spreading heuristics for power-dissipating parts.</p>
-                        </div>
-                        <span class="chip chip-medium">Thermal+</span>
-                    </div>
-
-                    <div class="slider-control-grid">
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Minimum Thermal Vias</div><div class="slider-help">Minimum nearby thermal vias expected around hot components.</div></div>
-                                <div class="slider-value-pill"><span id="thermal-vias-value">{{ editable_config.rules.thermal_management_min_thermal_vias if editable_config and editable_config.rules else 1 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0" max="8" step="1" name="thermal_management_min_thermal_vias" value="{{ editable_config.rules.thermal_management_min_thermal_vias if editable_config and editable_config.rules else 1 }}" oninput="document.getElementById('thermal-vias-value').textContent=this.value">
-                            <div class="range-scale"><span>0</span><span>4</span><span>8</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Thermal Via Radius</div><div class="slider-help">Search radius used when checking for thermal-via support around hot parts.</div></div>
-                                <div class="slider-value-pill"><span id="thermal-radius-value">{{ editable_config.rules.thermal_management_via_radius if editable_config and editable_config.rules else 4 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="1" max="12" step="0.5" name="thermal_management_via_radius" value="{{ editable_config.rules.thermal_management_via_radius if editable_config and editable_config.rules else 4 }}" oninput="document.getElementById('thermal-radius-value').textContent=this.value">
-                            <div class="range-scale"><span>1</span><span>6</span><span>12</span></div>
-                        </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Minimum Heat Spread Width</div><div class="slider-help">Local copper-width expectation used to estimate heat spreading quality.</div></div>
-                                <div class="slider-value-pill"><span id="thermal-spread-value">{{ editable_config.rules.thermal_management_min_heat_spread_width if editable_config and editable_config.rules else 0.5 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="0.1" max="3" step="0.05" name="thermal_management_min_heat_spread_width" value="{{ editable_config.rules.thermal_management_min_heat_spread_width if editable_config and editable_config.rules else 0.5 }}" oninput="document.getElementById('thermal-spread-value').textContent=this.value">
-                            <div class="range-scale"><span>0.1</span><span>1.5</span><span>3</span></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="settings-section-card">
-                    <div class="settings-section-heading">
-                        <div>
-                            <h3>Reliability & Components</h3>
-                            <p>Controls grounding-robustness and component-level heuristics for real-world failure risk.</p>
-                        </div>
-                        <span class="chip chip-low">Robustness</span>
-                    </div>
-
-                    <div class="slider-control-grid">
+                    <div class="slider-control-grid" style="margin-top:18px;">
                         <div class="slider-card">
                             <div class="slider-card-top">
                                 <div><div class="slider-label">Minimum Ground Vias</div><div class="slider-help">Expected stitching-via count for visible grounding robustness on multi-layer boards.</div></div>
@@ -1011,39 +973,6 @@
                             <input class="styled-range" type="range" min="1" max="20" step="1" name="reliability_min_ground_connections" value="{{ editable_config.rules.reliability_min_ground_connections if editable_config and editable_config.rules else 4 }}" oninput="document.getElementById('rel-ground-connections-value').textContent=this.value">
                             <div class="range-scale"><span>1</span><span>10</span><span>20</span></div>
                         </div>
-
-                        <div class="slider-card">
-                            <div class="slider-card-top">
-                                <div><div class="slider-label">Termination Review Length</div><div class="slider-help">Route length beyond which high-speed nets are checked for visible series or termination resistors.</div></div>
-                                <div class="slider-value-pill"><span id="component-term-length-value">{{ editable_config.rules.component_analysis_termination_length_threshold if editable_config and editable_config.rules else 18 }}</span></div>
-                            </div>
-                            <input class="styled-range" type="range" min="1" max="50" step="1" name="component_analysis_termination_length_threshold" value="{{ editable_config.rules.component_analysis_termination_length_threshold if editable_config and editable_config.rules else 18 }}" oninput="document.getElementById('component-term-length-value').textContent=this.value">
-                            <div class="range-scale"><span>1</span><span>25</span><span>50</span></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="settings-section-card">
-                    <div class="settings-section-heading">
-                        <div>
-                            <h3>EMI</h3>
-                            <p>Controls whether ground-reference continuity is required by return-path checks.</p>
-                        </div>
-                        <span class="chip chip-medium">EMI Rules</span>
-                    </div>
-
-                    <div class="settings-toggle-grid">
-                        <label class="settings-toggle-card">
-                            <span class="settings-toggle-copy">
-                                <span class="settings-toggle-title">Require Ground Reference</span>
-                                <span class="settings-toggle-help">When enabled, return-path analysis expects a valid ground reference and flags missing continuity.</span>
-                            </span>
-
-                            <select name="emi_require_ground_reference" class="settings-select">
-                                <option value="true" {% if editable_config and editable_config.emi and editable_config.emi.require_ground_reference %}selected{% endif %}>Enabled</option>
-                                <option value="false" {% if editable_config and editable_config.emi and not editable_config.emi.require_ground_reference %}selected{% endif %}>Disabled</option>
-                            </select>
-                        </label>
                     </div>
                 </section>
 
