@@ -2079,9 +2079,13 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
     components = pcb_snapshot.get("components", []) or []
     traces = pcb_snapshot.get("traces", []) or []
     vias = pcb_snapshot.get("vias", []) or []
+    zones = pcb_snapshot.get("zones", []) or []
+    outline_segments = pcb_snapshot.get("outline_segments", []) or []
+    nets = pcb_snapshot.get("nets", {}) or {}
+    layers = pcb_snapshot.get("layers", []) or []
 
-    if not components and not traces and not vias:
-        return {"has_data": False, "components": [], "traces": [], "vias": [], "focus_items": []}
+    if not components and not traces and not vias and not zones and not outline_segments:
+        return {"has_data": False, "components": [], "traces": [], "vias": [], "zones": [], "outline_segments": [], "focus_items": []}
 
     min_x, min_y, board_width, board_height = _board_view_bounds(pcb_snapshot)
     padding = 20.0
@@ -2153,6 +2157,36 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
             }
         )
 
+    zone_polygons = []
+    for zone in zones[:24]:
+        points = zone.get("points") or []
+        if len(points) < 3:
+            continue
+        polygon_points = []
+        for point in points[:80]:
+            polygon_points.append(f"{_map_x(_safe_float(point.get('x'), 0.0))},{_map_y(_safe_float(point.get('y'), 0.0))}")
+        tone_key = tones.get(risk_by_net.get(zone.get("net_name", ""), 0), "safe")
+        zone_polygons.append(
+            {
+                "net": zone.get("net_name", ""),
+                "layer": zone.get("layer", ""),
+                "points": " ".join(polygon_points),
+                "tone": tone_key,
+                "area_estimate": zone.get("area_estimate", 0),
+            }
+        )
+
+    outline_paths = []
+    for segment in outline_segments[:300]:
+        outline_paths.append(
+            {
+                "x1": _map_x(_safe_float(segment.get("x1"), 0.0)),
+                "y1": _map_y(_safe_float(segment.get("y1"), 0.0)),
+                "x2": _map_x(_safe_float(segment.get("x2"), 0.0)),
+                "y2": _map_y(_safe_float(segment.get("y2"), 0.0)),
+            }
+        )
+
     seen_focus = set()
     for risk in (risks or [])[:12]:
         label = risk.get("short_title") or risk.get("message", "Finding")
@@ -2169,6 +2203,42 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
             }
         )
 
+    layer_counts = []
+    for layer_name in layers:
+        trace_count = sum(1 for trace in traces if trace.get("layer") == layer_name)
+        zone_count = sum(1 for zone in zones if zone.get("layer") == layer_name)
+        total_value = trace_count + zone_count
+        if total_value <= 0:
+            continue
+        layer_counts.append({"label": layer_name, "value": total_value})
+
+    layer_counts.sort(key=lambda item: (-item["value"], item["label"].lower()))
+
+    top_nets = []
+    for net_name, net_data in nets.items():
+        top_nets.append(
+            {
+                "label": net_name,
+                "value": round(_safe_float(net_data.get("total_trace_length"), 0.0), 1),
+                "via_count": _safe_int(net_data.get("via_count"), 0),
+                "layer_count": _safe_int(net_data.get("layer_count"), 0),
+            }
+        )
+    top_nets.sort(key=lambda item: (-item["value"], item["label"].lower()))
+
+    component_types = defaultdict(int)
+    for component in components:
+        component_types[str(component.get("type") or "unknown").replace("_", " ").title()] += 1
+
+    summary_stats = [
+        {"label": "Components", "value": len(components)},
+        {"label": "Nets", "value": len(nets)},
+        {"label": "Layers", "value": len(layers)},
+        {"label": "Zones", "value": len(zones)},
+        {"label": "Vias", "value": len(vias)},
+        {"label": "Outline", "value": len(outline_segments)},
+    ]
+
     return {
         "has_data": True,
         "width": width,
@@ -2176,7 +2246,16 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
         "components": component_points,
         "traces": trace_segments,
         "vias": via_points,
+        "zones": zone_polygons,
+        "outline_segments": outline_paths,
         "focus_items": focus_items,
+        "summary_stats": summary_stats,
+        "layer_bars": _build_bar_chart(layer_counts[:6]),
+        "net_bars": _build_bar_chart(top_nets[:6]),
+        "component_type_bars": _build_bar_chart(
+            [{"label": key, "value": value} for key, value in sorted(component_types.items(), key=lambda item: (-item[1], item[0].lower()))[:6]]
+        ),
+        "source_format": pcb_snapshot.get("source_format", "unknown"),
     }
 
 

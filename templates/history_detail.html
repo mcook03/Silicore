@@ -239,6 +239,12 @@
         <div class="board-view-shell">
             <svg class="board-view-svg" viewBox="0 0 {{ run_detail.result.board_view.width }} {{ run_detail.result.board_view.height }}" preserveAspectRatio="xMidYMid meet" aria-label="Saved board viewer">
                 <rect x="6" y="6" width="{{ run_detail.result.board_view.width - 12 }}" height="{{ run_detail.result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                {% for zone in run_detail.result.board_view.zones %}
+                <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }}"><title>{{ zone.net }} · {{ zone.layer }} · Area {{ zone.area_estimate }}</title></polygon>
+                {% endfor %}
+                {% for segment in run_detail.result.board_view.outline_segments %}
+                <line x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}" class="board-outline"></line>
+                {% endfor %}
                 {% for trace in run_detail.result.board_view.traces %}
                 <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }}"><title>{{ trace.net }}</title></line>
                 {% endfor %}
@@ -253,6 +259,24 @@
                 </g>
                 {% endfor %}
             </svg>
+            {% if run_detail.result.board_view.summary_stats %}
+            <div class="board-focus-list">
+                <div class="board-focus-item">
+                    <div class="board-focus-top">
+                        <strong>Saved Board Snapshot</strong>
+                        <span class="mini-chip mini-chip-low">{{ run_detail.result.board_view.source_format.replace('_', ' ')|title }}</span>
+                    </div>
+                    <div class="board-stat-grid">
+                        {% for item in run_detail.result.board_view.summary_stats %}
+                        <div class="board-stat-card">
+                            <div class="board-stat-label">{{ item.label }}</div>
+                            <div class="board-stat-value">{{ item.value }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
         {% else %}
         <div class="empty-state">No saved geometry is available for this run.</div>
@@ -471,6 +495,32 @@
         stroke-width: 1;
     }
 
+    .board-outline {
+        stroke: rgba(191,219,254,0.95);
+        stroke-width: 1.6;
+        stroke-linecap: round;
+    }
+
+    .board-zone {
+        opacity: 0.22;
+        stroke-width: 1;
+    }
+
+    .board-zone-safe, .board-zone-low {
+        fill: rgba(59,130,246,0.22);
+        stroke: rgba(96,165,250,0.46);
+    }
+
+    .board-zone-medium {
+        fill: rgba(245,158,11,0.2);
+        stroke: rgba(251,191,36,0.46);
+    }
+
+    .board-zone-high, .board-zone-critical {
+        fill: rgba(239,68,68,0.16);
+        stroke: rgba(248,113,113,0.44);
+    }
+
     .board-trace {
         stroke-linecap: round;
         stroke-width: 2.2;
@@ -487,6 +537,54 @@
         fill: #e5eefc;
         font-size: 11px;
         font-weight: 700;
+    }
+
+    .board-focus-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .board-focus-item {
+        padding: 14px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .board-focus-top {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+    }
+
+    .board-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .board-stat-card {
+        padding: 10px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .board-stat-label {
+        color: rgba(191,219,254,0.75);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .board-stat-value {
+        color: #f8fbff;
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 4px;
     }
 
     .finding-top {

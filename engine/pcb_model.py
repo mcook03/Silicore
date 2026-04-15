@@ -88,14 +88,54 @@ class Via:
 
 
 class Zone:
-    def __init__(self, net_name="", layer=""):
+    def __init__(self, net_name="", layer="", points=None):
         self.net_name = net_name
         self.layer = layer
+        self.points = points or []
+
+    @property
+    def area_estimate(self):
+        if len(self.points) < 3:
+            return 0.0
+        area = 0.0
+        for index, point in enumerate(self.points):
+            next_point = self.points[(index + 1) % len(self.points)]
+            area += (point[0] * next_point[1]) - (next_point[0] * point[1])
+        return abs(area) / 2.0
 
     def to_dict(self):
         return {
             "net_name": self.net_name,
             "layer": self.layer,
+            "points": [{"x": point[0], "y": point[1]} for point in self.points],
+            "area_estimate": round(self.area_estimate, 4),
+        }
+
+
+class OutlineSegment:
+    def __init__(self, x1=0.0, y1=0.0, x2=0.0, y2=0.0, layer="Edge.Cuts", kind="line"):
+        self.x1 = float(x1)
+        self.y1 = float(y1)
+        self.x2 = float(x2)
+        self.y2 = float(y2)
+        self.layer = layer
+        self.kind = kind
+
+    @property
+    def length(self):
+        dx = self.x2 - self.x1
+        dy = self.y2 - self.y1
+        return (dx ** 2 + dy ** 2) ** 0.5
+
+    def to_dict(self):
+        return {
+            "x1": self.x1,
+            "y1": self.y1,
+            "x2": self.x2,
+            "y2": self.y2,
+            "layer": self.layer,
+            "kind": self.kind,
+            "length": round(self.length, 4),
         }
 
 
@@ -260,6 +300,7 @@ class PCB:
         self.traces = []
         self.vias = []
         self.zones = []
+        self.outline_segments = []
 
     def add_layer(self, layer_name):
         if layer_name:
@@ -318,6 +359,10 @@ class PCB:
     def add_zone(self, zone):
         self.zones.append(zone)
         self.add_layer(getattr(zone, "layer", None))
+
+    def add_outline_segment(self, segment):
+        self.outline_segments.append(segment)
+        self.add_layer(getattr(segment, "layer", None))
 
     def get_traces_by_net(self, net_name):
         net = self.nets.get(net_name)
@@ -385,6 +430,14 @@ class PCB:
         for via in self.vias:
             points.append((via.x, via.y))
 
+        for segment in self.outline_segments:
+            points.append((segment.x1, segment.y1))
+            points.append((segment.x2, segment.y2))
+
+        for zone in self.zones:
+            for point in getattr(zone, "points", []):
+                points.append((point[0], point[1]))
+
         if not points:
             self.board_bounds = {
                 "min_x": 0.0,
@@ -426,4 +479,5 @@ class PCB:
             "traces": [trace.to_dict() for trace in self.traces],
             "vias": [via.to_dict() for via in self.vias],
             "zones": [zone.to_dict() for zone in self.zones],
+            "outline_segments": [segment.to_dict() for segment in self.outline_segments],
         }
