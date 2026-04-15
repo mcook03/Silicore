@@ -28,10 +28,14 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
     category_counts = defaultdict(int)
     format_counts = defaultdict(int)
     total_score = 0.0
+    parser_confidence_total = 0.0
+    parser_confidence_count = 0
+    failed_boards = 0
 
     for path in supported:
         try:
             result = run_single_analysis_from_path(path, config=config)
+            parser_confidence = float(((result.get("parser_confidence") or {}).get("score")) or 0)
             boards.append(
                 {
                     "filename": result.get("filename"),
@@ -39,13 +43,18 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
                     "risk_count": len(result.get("risks", []) or []),
                     "format": os.path.splitext(path)[1].lower(),
                     "dominant_subsystem": ((result.get("subsystem_summary") or {}).get("dominant_subsystem") or "General"),
+                    "parser_confidence": parser_confidence,
+                    "stackup_style": ((result.get("stackup_summary") or {}).get("style") or "unknown"),
                 }
             )
             total_score += float(result.get("score", 0) or 0)
+            parser_confidence_total += parser_confidence
+            parser_confidence_count += 1
             format_counts[os.path.splitext(path)[1].lower()] += 1
             for risk in result.get("risks", []) or []:
                 category_counts[str(risk.get("category") or "unknown")] += 1
         except Exception as exc:
+            failed_boards += 1
             boards.append(
                 {
                     "filename": os.path.basename(path),
@@ -53,6 +62,8 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
                     "risk_count": 0,
                     "format": os.path.splitext(path)[1].lower(),
                     "dominant_subsystem": "Unknown",
+                    "parser_confidence": 0,
+                    "stackup_style": "unknown",
                     "error": str(exc),
                 }
             )
@@ -61,6 +72,8 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
     return {
         "fixture_count": fixture_count,
         "average_score": round(total_score / fixture_count, 1) if fixture_count else 0.0,
+        "average_parser_confidence": round(parser_confidence_total / parser_confidence_count, 1) if parser_confidence_count else 0.0,
+        "failed_board_count": failed_boards,
         "categories": [
             {"label": key.replace("_", " ").title(), "count": value}
             for key, value in sorted(category_counts.items(), key=lambda item: (-item[1], item[0]))
@@ -70,6 +83,11 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
             for key, value in sorted(format_counts.items(), key=lambda item: item[0])
         ],
         "boards": boards,
+        "parser_health": {
+            "average_confidence": round(parser_confidence_total / parser_confidence_count, 1) if parser_confidence_count else 0.0,
+            "supported_formats": len(format_counts),
+            "failed_boards": failed_boards,
+        },
     }
 
 

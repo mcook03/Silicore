@@ -31,6 +31,7 @@ from engine.worker_runtime import start_worker, stop_worker, worker_status
 
 from flask import (
     Flask,
+    Response,
     flash,
     g,
     jsonify,
@@ -39,6 +40,7 @@ from flask import (
     request,
     send_from_directory,
     session,
+    stream_with_context,
     url_for,
 )
 
@@ -4748,6 +4750,65 @@ def atlas_query_route():
             "workflow_results": workflow_results,
         }
     )
+
+
+@app.route("/atlas/query/stream", methods=["POST"])
+def atlas_query_stream_route():
+    payload = request.get_json(silent=True) or {}
+    page_type = str(payload.get("page_type") or "").strip().lower()
+    prompt = str(payload.get("prompt") or "").strip()
+    context = payload.get("context") or {}
+    history = payload.get("history") or []
+    thread_key = str(payload.get("thread_key") or "").strip()
+
+    if not prompt:
+        return jsonify({"error": "A prompt is required."}), 400
+    if page_type not in {"board", "project", "compare"}:
+        return jsonify({"error": "Unsupported Atlas page type."}), 400
+
+    actor_user_id = (g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None
+    preview_plan = build_workflow_plan(page_type, prompt, context=context)
+    if not thread_key:
+        thread_key = f"{page_type}::{_normalize_compare_text(context.get('project_id') or context.get('board_name') or context.get('project_name') or context.get('direction') or 'atlas')}"
+
+    def generate():
+        yield json.dumps({"type": "status", "stage": "planning", "workflow_plan": preview_plan}) + "\n"
+        answer = answer_atlas_with_agent(page_type, prompt, context=context, history=history, actor_user_id=actor_user_id)
+        workflow_plan = answer.pop("agent_plan", None) or preview_plan
+        workflow_results = answer.pop("agent_results", None)
+        if workflow_results is None:
+            workflow_results = run_workflow_plan(
+                page_type,
+                prompt,
+                context=context,
+                actor_user_id=actor_user_id,
+            ) if workflow_plan else []
+        yield json.dumps({"type": "status", "stage": "executed", "agent_trace": answer.get("agent_trace") or [], "workflow_results": workflow_results}) + "\n"
+
+        thread_messages = persist_atlas_exchange(
+            thread_key=thread_key,
+            page_type=page_type,
+            context=context,
+            prompt=prompt,
+            answer_payload=answer,
+            owner_user_id=actor_user_id,
+        )
+        tool_suggestions = {
+            "board": ["evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
+            "project": ["compare_latest_runs", "generate_signoff_packet", "run_fixture_evaluation"],
+            "compare": ["generate_signoff_packet", "open_high_confidence_findings"],
+        }
+        final_payload = {
+            **answer,
+            "thread_key": thread_key,
+            "thread": thread_messages,
+            "tool_suggestions": tool_suggestions.get(page_type, []),
+            "workflow_plan": workflow_plan,
+            "workflow_results": workflow_results,
+        }
+        yield json.dumps({"type": "final", "payload": final_payload}) + "\n"
+
+    return Response(stream_with_context(generate()), mimetype="application/x-ndjson")
 
 
 @app.route("/atlas/thread", methods=["GET"])

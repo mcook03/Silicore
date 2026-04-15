@@ -61,6 +61,8 @@ class BackendSystemsTests(unittest.TestCase):
         result = evaluate_fixture_suite()
         self.assertIn("fixture_count", result)
         self.assertIn("boards", result)
+        self.assertIn("average_parser_confidence", result)
+        self.assertIn("parser_health", result)
 
     def test_atlas_tools_summaries_work(self):
         compare = compare_latest_runs(

@@ -172,6 +172,25 @@ class AppRouteSmokeTests(unittest.TestCase):
         thread_payload = thread_response.get_json()
         self.assertGreaterEqual(len(thread_payload.get("messages", [])), 2)
 
+    def test_atlas_stream_route_returns_final_payload(self):
+        response = self.client.post(
+            "/atlas/query/stream",
+            json={
+                "page_type": "board",
+                "prompt": "What should I fix first?",
+                "thread_key": "stream-test-thread",
+                "context": {
+                    "dominant_domain": "Signal Integrity",
+                    "risk_sources": [{"message": "Differential pair mismatch", "severity": "high", "domain": "signal integrity"}],
+                },
+                "history": [],
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        body = response.get_data(as_text=True)
+        self.assertIn('"type": "status"', body)
+        self.assertIn('"type": "final"', body)
+
     def test_atlas_action_route_returns_job_payload(self):
         response = self.client.post(
             "/atlas/action",

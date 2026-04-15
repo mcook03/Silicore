@@ -1769,7 +1769,7 @@
 
     const requestAtlas = async (promptText) => {
         try {
-            const response = await fetch('/atlas/query', {
+            const response = await fetch('/atlas/query/stream', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -1786,7 +1786,38 @@
             if (!response.ok) {
                 throw new Error(`Atlas request failed with ${response.status}`);
             }
-            return await response.json();
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let finalPayload = null;
+            while (true) {
+                const {value, done} = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, {stream: true});
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.trim()) continue;
+                    const event = JSON.parse(line);
+                    if (event.type === 'status') {
+                        renderResponse({
+                            title: 'Atlas Intelligence',
+                            answer: event.stage === 'planning' ? 'Atlas is building an engineering action plan.' : 'Atlas is executing engineering review actions.',
+                            detail: event.stage === 'planning'
+                                ? 'The response is being grounded against the current run, findings, and backend tools.'
+                                : 'Atlas is resolving the plan against backend tooling before finalizing the answer.',
+                            workflow_plan: event.workflow_plan || [],
+                            workflow_results: event.workflow_results || [],
+                            agent_trace: event.agent_trace || [],
+                            follow_ups: [],
+                        });
+                    } else if (event.type === 'final') {
+                        finalPayload = event.payload;
+                    }
+                }
+            }
+            if (!finalPayload) throw new Error('Atlas stream ended without a final payload.');
+            return finalPayload;
         } catch (error) {
             console.debug('atlas board query fallback', error);
             return fallbackBoardPrompt(promptText);
