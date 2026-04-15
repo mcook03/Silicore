@@ -53,7 +53,36 @@ DEFAULT_CONFIG = {
         "return_path": {},
         "signal_path": {},
         "power_rail": {},
-        "trace_quality": {}
+        "trace_quality": {},
+        "signal_integrity_advanced": {
+            "max_signal_vias": 2,
+            "width_ratio_threshold": 2.2,
+            "detour_ratio_threshold": 1.8,
+            "stub_length_threshold": 12.0,
+            "crosstalk_spacing_threshold": 2.5,
+        },
+        "differential_pair": {
+            "length_mismatch_threshold": 5.0,
+            "via_mismatch_threshold": 1,
+        },
+        "manufacturability": {
+            "min_trace_width": 0.15,
+            "min_drill": 0.2,
+            "min_annular_ring": 0.1,
+            "via_in_pad_distance": 0.35,
+        },
+        "thermal_management": {
+            "thermal_via_radius": 4.0,
+            "min_thermal_vias": 1,
+            "min_heat_spread_width": 0.5,
+        },
+        "reliability": {
+            "min_ground_vias": 2,
+            "min_ground_connections": 4,
+        },
+        "component_analysis": {
+            "termination_length_threshold": 18.0,
+        },
     }
 }
 

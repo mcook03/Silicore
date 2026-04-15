@@ -1809,6 +1809,27 @@ def _build_single_chart_data(result):
     }
 
 
+def _build_engineering_domain_bars(risks, limit=6):
+    domain_totals = defaultdict(int)
+
+    for risk in risks or []:
+        domain = str(risk.get("design_domain") or risk.get("category") or "general").strip().lower()
+        if not domain:
+            domain = "general"
+        domain_totals[domain] += 1
+
+    items = [
+        {
+            "label": _format_category_name(domain),
+            "value": count,
+        }
+        for domain, count in domain_totals.items()
+        if count > 0
+    ]
+    items.sort(key=lambda item: (-item["value"], item["label"].lower()))
+    return _build_bar_chart(items[:limit])
+
+
 def _extract_risk_confidence_score(risk):
     explanation = risk.get("explanation") or {}
     if isinstance(explanation, dict) and explanation.get("confidence") is not None:
@@ -1925,6 +1946,7 @@ def _build_single_decision_data(result):
         "confidence_bars": _build_bar_chart(
             [{"label": key, "value": value} for key, value in band_counts.items() if value > 0]
         ),
+        "domain_bars": _build_engineering_domain_bars(risks),
         "focus_bars": _build_bar_chart(focus_items),
         "next_actions": ranked_actions[:3],
         "trust_note": trust_note,
@@ -2075,6 +2097,9 @@ def _build_project_review_intelligence(project_result):
         "board_health_bars": _build_bar_chart(
             [{"label": key, "value": value} for key, value in board_health_counts.items() if value > 0]
         ),
+        "domain_bars": _build_engineering_domain_bars(
+            [risk for board in boards for risk in (board.get("risks", []) or [])]
+        ),
         "chronic_patterns": chronic_patterns[:5],
         "next_actions": action_candidates[:5],
         "category_heatmap": category_heatmap,
@@ -2110,6 +2135,7 @@ def _build_settings_view_model(editable_config):
         "section_counts": sections,
         "penalty_bars": _build_bar_chart(penalty_rows),
         "total_controls": sum(sections.values()),
+        "advanced_capability_count": 6,
     }
 
 

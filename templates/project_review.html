@@ -409,6 +409,26 @@
                 {% endif %}
             </div>
         </div>
+
+        {% if project_intelligence_review and project_intelligence_review.domain_bars and project_intelligence_review.domain_bars.has_data %}
+        <div class="visual-chart-card" style="margin-top:16px;">
+            <div class="visual-chart-header">
+                <span>Engineering Domain Coverage</span>
+                <span>Portfolio-wide finding depth</span>
+            </div>
+            <div class="distribution-bars">
+                {% for item in project_intelligence_review.domain_bars["items"] %}
+                <div class="distribution-bar-row">
+                    <div class="distribution-bar-label">{{ item.label }}</div>
+                    <div class="distribution-bar-track">
+                        <div class="distribution-bar-fill tone-blue" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                    <div class="distribution-bar-value">{{ item.value|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 </section>
 

@@ -137,6 +137,88 @@ EDITABLE_FIELD_MAP = {
             "config_path": ["severity_penalties", "critical"],
         },
     },
+    "rules": {
+        "signal_integrity_max_signal_vias": {
+            "type": "int",
+            "form_keys": ["signal_integrity_max_signal_vias"],
+            "config_path": ["signal_integrity_advanced", "max_signal_vias"],
+        },
+        "signal_integrity_width_ratio_threshold": {
+            "type": "float",
+            "form_keys": ["signal_integrity_width_ratio_threshold"],
+            "config_path": ["signal_integrity_advanced", "width_ratio_threshold"],
+        },
+        "signal_integrity_detour_ratio_threshold": {
+            "type": "float",
+            "form_keys": ["signal_integrity_detour_ratio_threshold"],
+            "config_path": ["signal_integrity_advanced", "detour_ratio_threshold"],
+        },
+        "signal_integrity_stub_length_threshold": {
+            "type": "float",
+            "form_keys": ["signal_integrity_stub_length_threshold"],
+            "config_path": ["signal_integrity_advanced", "stub_length_threshold"],
+        },
+        "signal_integrity_crosstalk_spacing_threshold": {
+            "type": "float",
+            "form_keys": ["signal_integrity_crosstalk_spacing_threshold"],
+            "config_path": ["signal_integrity_advanced", "crosstalk_spacing_threshold"],
+        },
+        "differential_pair_length_mismatch_threshold": {
+            "type": "float",
+            "form_keys": ["differential_pair_length_mismatch_threshold"],
+            "config_path": ["differential_pair", "length_mismatch_threshold"],
+        },
+        "differential_pair_via_mismatch_threshold": {
+            "type": "int",
+            "form_keys": ["differential_pair_via_mismatch_threshold"],
+            "config_path": ["differential_pair", "via_mismatch_threshold"],
+        },
+        "manufacturing_min_drill": {
+            "type": "float",
+            "form_keys": ["manufacturing_min_drill"],
+            "config_path": ["manufacturability", "min_drill"],
+        },
+        "manufacturing_min_annular_ring": {
+            "type": "float",
+            "form_keys": ["manufacturing_min_annular_ring"],
+            "config_path": ["manufacturability", "min_annular_ring"],
+        },
+        "manufacturing_via_in_pad_distance": {
+            "type": "float",
+            "form_keys": ["manufacturing_via_in_pad_distance"],
+            "config_path": ["manufacturability", "via_in_pad_distance"],
+        },
+        "thermal_management_min_thermal_vias": {
+            "type": "int",
+            "form_keys": ["thermal_management_min_thermal_vias"],
+            "config_path": ["thermal_management", "min_thermal_vias"],
+        },
+        "thermal_management_via_radius": {
+            "type": "float",
+            "form_keys": ["thermal_management_via_radius"],
+            "config_path": ["thermal_management", "thermal_via_radius"],
+        },
+        "thermal_management_min_heat_spread_width": {
+            "type": "float",
+            "form_keys": ["thermal_management_min_heat_spread_width"],
+            "config_path": ["thermal_management", "min_heat_spread_width"],
+        },
+        "reliability_min_ground_vias": {
+            "type": "int",
+            "form_keys": ["reliability_min_ground_vias"],
+            "config_path": ["reliability", "min_ground_vias"],
+        },
+        "reliability_min_ground_connections": {
+            "type": "int",
+            "form_keys": ["reliability_min_ground_connections"],
+            "config_path": ["reliability", "min_ground_connections"],
+        },
+        "component_analysis_termination_length_threshold": {
+            "type": "float",
+            "form_keys": ["component_analysis_termination_length_threshold"],
+            "config_path": ["component_analysis", "termination_length_threshold"],
+        },
+    },
 }
 
 
@@ -214,6 +296,24 @@ def get_editable_config_view(config):
             "penalty_high": config.get("score", {}).get("severity_penalties", {}).get("high"),
             "penalty_critical": config.get("score", {}).get("severity_penalties", {}).get("critical"),
         },
+        "rules": {
+            "signal_integrity_max_signal_vias": config.get("rules", {}).get("signal_integrity_advanced", {}).get("max_signal_vias"),
+            "signal_integrity_width_ratio_threshold": config.get("rules", {}).get("signal_integrity_advanced", {}).get("width_ratio_threshold"),
+            "signal_integrity_detour_ratio_threshold": config.get("rules", {}).get("signal_integrity_advanced", {}).get("detour_ratio_threshold"),
+            "signal_integrity_stub_length_threshold": config.get("rules", {}).get("signal_integrity_advanced", {}).get("stub_length_threshold"),
+            "signal_integrity_crosstalk_spacing_threshold": config.get("rules", {}).get("signal_integrity_advanced", {}).get("crosstalk_spacing_threshold"),
+            "differential_pair_length_mismatch_threshold": config.get("rules", {}).get("differential_pair", {}).get("length_mismatch_threshold"),
+            "differential_pair_via_mismatch_threshold": config.get("rules", {}).get("differential_pair", {}).get("via_mismatch_threshold"),
+            "manufacturing_min_drill": config.get("rules", {}).get("manufacturability", {}).get("min_drill"),
+            "manufacturing_min_annular_ring": config.get("rules", {}).get("manufacturability", {}).get("min_annular_ring"),
+            "manufacturing_via_in_pad_distance": config.get("rules", {}).get("manufacturability", {}).get("via_in_pad_distance"),
+            "thermal_management_min_thermal_vias": config.get("rules", {}).get("thermal_management", {}).get("min_thermal_vias"),
+            "thermal_management_via_radius": config.get("rules", {}).get("thermal_management", {}).get("thermal_via_radius"),
+            "thermal_management_min_heat_spread_width": config.get("rules", {}).get("thermal_management", {}).get("min_heat_spread_width"),
+            "reliability_min_ground_vias": config.get("rules", {}).get("reliability", {}).get("min_ground_vias"),
+            "reliability_min_ground_connections": config.get("rules", {}).get("reliability", {}).get("min_ground_connections"),
+            "component_analysis_termination_length_threshold": config.get("rules", {}).get("component_analysis", {}).get("termination_length_threshold"),
+        },
     }
 
 
@@ -278,6 +378,12 @@ def _ensure_rule_sections(config):
     config["rules"].setdefault("thermal", {})
     config["rules"].setdefault("ground_reference", {})
     config["rules"].setdefault("return_path", {})
+    config["rules"].setdefault("signal_integrity_advanced", {})
+    config["rules"].setdefault("differential_pair", {})
+    config["rules"].setdefault("manufacturability", {})
+    config["rules"].setdefault("thermal_management", {})
+    config["rules"].setdefault("reliability", {})
+    config["rules"].setdefault("component_analysis", {})
 
 
 def _apply_rule_mirrors(config):
@@ -388,6 +494,7 @@ def build_sanitized_config(config):
     merged.setdefault("emi", {})
     merged.setdefault("score", {})
     merged["score"].setdefault("severity_penalties", {})
+    merged.setdefault("rules", {})
 
     merged["layout"]["min_component_spacing"] = float(
         merged["layout"].get("min_component_spacing", DEFAULT_CONFIG["layout"]["min_component_spacing"])
@@ -450,6 +557,56 @@ def build_sanitized_config(config):
                 DEFAULT_CONFIG["score"]["severity_penalties"][severity],
             )
         )
+
+    _ensure_rule_sections(merged)
+    merged["rules"]["signal_integrity_advanced"]["max_signal_vias"] = int(
+        merged["rules"]["signal_integrity_advanced"].get("max_signal_vias", DEFAULT_CONFIG["rules"]["signal_integrity_advanced"]["max_signal_vias"])
+    )
+    merged["rules"]["signal_integrity_advanced"]["width_ratio_threshold"] = float(
+        merged["rules"]["signal_integrity_advanced"].get("width_ratio_threshold", DEFAULT_CONFIG["rules"]["signal_integrity_advanced"]["width_ratio_threshold"])
+    )
+    merged["rules"]["signal_integrity_advanced"]["detour_ratio_threshold"] = float(
+        merged["rules"]["signal_integrity_advanced"].get("detour_ratio_threshold", DEFAULT_CONFIG["rules"]["signal_integrity_advanced"]["detour_ratio_threshold"])
+    )
+    merged["rules"]["signal_integrity_advanced"]["stub_length_threshold"] = float(
+        merged["rules"]["signal_integrity_advanced"].get("stub_length_threshold", DEFAULT_CONFIG["rules"]["signal_integrity_advanced"]["stub_length_threshold"])
+    )
+    merged["rules"]["signal_integrity_advanced"]["crosstalk_spacing_threshold"] = float(
+        merged["rules"]["signal_integrity_advanced"].get("crosstalk_spacing_threshold", DEFAULT_CONFIG["rules"]["signal_integrity_advanced"]["crosstalk_spacing_threshold"])
+    )
+    merged["rules"]["differential_pair"]["length_mismatch_threshold"] = float(
+        merged["rules"]["differential_pair"].get("length_mismatch_threshold", DEFAULT_CONFIG["rules"]["differential_pair"]["length_mismatch_threshold"])
+    )
+    merged["rules"]["differential_pair"]["via_mismatch_threshold"] = int(
+        merged["rules"]["differential_pair"].get("via_mismatch_threshold", DEFAULT_CONFIG["rules"]["differential_pair"]["via_mismatch_threshold"])
+    )
+    merged["rules"]["manufacturability"]["min_drill"] = float(
+        merged["rules"]["manufacturability"].get("min_drill", DEFAULT_CONFIG["rules"]["manufacturability"]["min_drill"])
+    )
+    merged["rules"]["manufacturability"]["min_annular_ring"] = float(
+        merged["rules"]["manufacturability"].get("min_annular_ring", DEFAULT_CONFIG["rules"]["manufacturability"]["min_annular_ring"])
+    )
+    merged["rules"]["manufacturability"]["via_in_pad_distance"] = float(
+        merged["rules"]["manufacturability"].get("via_in_pad_distance", DEFAULT_CONFIG["rules"]["manufacturability"]["via_in_pad_distance"])
+    )
+    merged["rules"]["thermal_management"]["min_thermal_vias"] = int(
+        merged["rules"]["thermal_management"].get("min_thermal_vias", DEFAULT_CONFIG["rules"]["thermal_management"]["min_thermal_vias"])
+    )
+    merged["rules"]["thermal_management"]["thermal_via_radius"] = float(
+        merged["rules"]["thermal_management"].get("thermal_via_radius", DEFAULT_CONFIG["rules"]["thermal_management"]["thermal_via_radius"])
+    )
+    merged["rules"]["thermal_management"]["min_heat_spread_width"] = float(
+        merged["rules"]["thermal_management"].get("min_heat_spread_width", DEFAULT_CONFIG["rules"]["thermal_management"]["min_heat_spread_width"])
+    )
+    merged["rules"]["reliability"]["min_ground_vias"] = int(
+        merged["rules"]["reliability"].get("min_ground_vias", DEFAULT_CONFIG["rules"]["reliability"]["min_ground_vias"])
+    )
+    merged["rules"]["reliability"]["min_ground_connections"] = int(
+        merged["rules"]["reliability"].get("min_ground_connections", DEFAULT_CONFIG["rules"]["reliability"]["min_ground_connections"])
+    )
+    merged["rules"]["component_analysis"]["termination_length_threshold"] = float(
+        merged["rules"]["component_analysis"].get("termination_length_threshold", DEFAULT_CONFIG["rules"]["component_analysis"]["termination_length_threshold"])
+    )
 
     _apply_rule_mirrors(merged)
     return merged
