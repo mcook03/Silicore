@@ -55,6 +55,7 @@ from engine.project_store import (
     list_projects,
     update_project_review_status,
 )
+from engine.runtime_config import get_runtime_config
 from engine.user_store import (
     begin_authentication,
     create_email_verification_token,
@@ -77,6 +78,8 @@ from engine.services.analysis_service import (
     analyze_single_board,
     get_dashboard_config,
 )
+
+RUNTIME_CONFIG = get_runtime_config()
 
 app = Flask(__name__)
 
@@ -110,7 +113,7 @@ def _load_app_secret():
 app.secret_key = _load_app_secret()
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=14)
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=RUNTIME_CONFIG["session_days"])
 
 UPLOAD_FOLDER = "dashboard_uploads"
 RUNS_FOLDER = "dashboard_runs"
@@ -146,6 +149,14 @@ def _require_role(minimum_role):
 @app.before_request
 def load_current_user():
     g.current_user = _current_user()
+
+
+def _database_health():
+    try:
+        initialize_database()
+        return {"ok": True}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
 
 
 @app.context_processor
@@ -4764,6 +4775,47 @@ def atlas_action_route():
     return jsonify(result)
 
 
+@app.route("/health/live", methods=["GET"])
+def health_live_route():
+    return jsonify(
+        {
+            "status": "ok",
+            "service": "silicore-web",
+            "environment": RUNTIME_CONFIG["environment"],
+        }
+    )
+
+
+@app.route("/health/ready", methods=["GET"])
+def health_ready_route():
+    db_health = _database_health()
+    worker = worker_status()
+    payload = {
+        "status": "ready" if db_health["ok"] else "degraded",
+        "service": "silicore-web",
+        "environment": RUNTIME_CONFIG["environment"],
+        "database": db_health,
+        "worker": worker,
+    }
+    return jsonify(payload), (200 if db_health["ok"] else 503)
+
+
+@app.route("/runtime/meta", methods=["GET"])
+def runtime_meta_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
+    return jsonify(
+        {
+            "runtime": RUNTIME_CONFIG,
+            "worker": worker_status(),
+            "jobs": {
+                "queued": len([job for job in list_jobs(limit=50) if job.get("status") == "queued"]),
+                "running": len([job for job in list_jobs(limit=50) if job.get("status") == "running"]),
+            },
+        }
+    )
+
+
 @app.route("/jobs", methods=["GET"])
 def jobs_route():
     if not _require_role("lead"):
@@ -5066,4 +5118,8 @@ def download_file(run_dir, filename):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        debug=RUNTIME_CONFIG["debug"],
+        host=RUNTIME_CONFIG["host"],
+        port=RUNTIME_CONFIG["port"],
+    )

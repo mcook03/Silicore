@@ -384,8 +384,8 @@
             "nets": [
                 "CLK",
                 "USB_DN",
-                "USB_DP",
-                "GND"
+                "GND",
+                "USB_DP"
             ],
             "region": null,
             "metrics": {
@@ -692,8 +692,8 @@
             "nets": [
                 "GND",
                 "USB_DN",
-                "USB_DP",
-                "VBUS"
+                "VBUS",
+                "USB_DP"
             ],
             "region": null,
             "metrics": {
@@ -713,8 +713,8 @@
                 "observed_component_nets": [
                     "GND",
                     "USB_DN",
-                    "USB_DP",
-                    "VBUS"
+                    "VBUS",
+                    "USB_DP"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -751,8 +751,8 @@
             "nets": [
                 "CLK",
                 "USB_DN",
-                "USB_DP",
-                "GND"
+                "GND",
+                "USB_DP"
             ],
             "region": null,
             "metrics": {
@@ -772,8 +772,8 @@
                 "observed_component_nets": [
                     "CLK",
                     "USB_DN",
-                    "USB_DP",
-                    "GND"
+                    "GND",
+                    "USB_DP"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -808,8 +808,8 @@
                 "Y1"
             ],
             "nets": [
-                "CLK",
-                "GND"
+                "GND",
+                "CLK"
             ],
             "region": null,
             "metrics": {
@@ -827,8 +827,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -3206,7 +3206,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-15T18:52:31.872046+00:00",
+        "timestamp": "2026-04-15T19:02:45.762003+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4167,8 +4167,8 @@
                 "nets": [
                     "CLK",
                     "USB_DN",
-                    "USB_DP",
-                    "GND"
+                    "GND",
+                    "USB_DP"
                 ],
                 "region": null,
                 "metrics": {
@@ -4403,8 +4403,8 @@
                 "nets": [
                     "GND",
                     "USB_DN",
-                    "USB_DP",
-                    "VBUS"
+                    "VBUS",
+                    "USB_DP"
                 ],
                 "region": null,
                 "metrics": {
@@ -4424,8 +4424,8 @@
                     "observed_component_nets": [
                         "GND",
                         "USB_DN",
-                        "USB_DP",
-                        "VBUS"
+                        "VBUS",
+                        "USB_DP"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4453,8 +4453,8 @@
                 "nets": [
                     "CLK",
                     "USB_DN",
-                    "USB_DP",
-                    "GND"
+                    "GND",
+                    "USB_DP"
                 ],
                 "region": null,
                 "metrics": {
@@ -4474,8 +4474,8 @@
                     "observed_component_nets": [
                         "CLK",
                         "USB_DN",
-                        "USB_DP",
-                        "GND"
+                        "GND",
+                        "USB_DP"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4501,8 +4501,8 @@
                     "Y1"
                 ],
                 "nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -4520,8 +4520,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
-                        "GND"
+                        "GND",
+                        "CLK"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4948,7 +4948,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-15T18:52:31.872053+00:00",
+    "generated_at": "2026-04-15T19:02:45.762011+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

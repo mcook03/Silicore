@@ -7,7 +7,7 @@ from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, 
 from engine.db import get_connection, list_audit_events, list_review_decisions
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
-from engine.job_store import create_job, get_job
+from engine.job_store import claim_jobs, create_job, get_job
 from engine.job_runner import process_queued_jobs
 from engine.org_store import accept_organization_invitation, create_organization, create_organization_invitation
 from engine.altium_ascii_parser import parse_altium_ascii_file
@@ -124,6 +124,14 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertTrue(any(item["job_id"] == job["job_id"] for item in processed))
         refreshed = get_job(job["job_id"])
         self.assertEqual(refreshed["status"], "completed")
+
+    def test_job_claiming_marks_running_state(self):
+        job = create_job("signoff_packet", payload={"context": {"board_name": "Claimed Board"}})
+        claimed = claim_jobs("pytest-worker", limit=5, lease_seconds=90)
+        matched = next((item for item in claimed if item["job_id"] == job["job_id"]), None)
+        self.assertIsNotNone(matched)
+        self.assertEqual(matched["status"], "running")
+        self.assertEqual(matched["claimed_by"], "pytest-worker")
 
 
 if __name__ == "__main__":

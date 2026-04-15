@@ -325,6 +325,11 @@ def _ensure_schema_migrations(connection):
     _ensure_column(connection, "users", "mfa_enabled", "INTEGER NOT NULL DEFAULT 0")
     _ensure_column(connection, "users", "mfa_secret", "TEXT")
     _ensure_column(connection, "users", "session_version", "INTEGER NOT NULL DEFAULT 1")
+    _ensure_column(connection, "analysis_jobs", "claimed_by", "TEXT")
+    _ensure_column(connection, "analysis_jobs", "claimed_at", "TEXT")
+    _ensure_column(connection, "analysis_jobs", "started_at", "TEXT")
+    _ensure_column(connection, "analysis_jobs", "completed_at", "TEXT")
+    _ensure_column(connection, "analysis_jobs", "attempt_count", "INTEGER NOT NULL DEFAULT 0")
 
 
 def _get_state(connection, key):

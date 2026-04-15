@@ -1,0 +1,30 @@
+services:
+  silicore-web:
+    build: .
+    command: python3 app.py
+    environment:
+      SILICORE_ENV: production
+      SILICORE_HOST: 0.0.0.0
+      SILICORE_PORT: 5001
+      SILICORE_DEBUG: "false"
+      SILICORE_DB_PATH: /data/silicore.db
+    ports:
+      - "5001:5001"
+    volumes:
+      - silicore-data:/data
+
+  silicore-worker:
+    build: .
+    command: python3 worker_main.py --worker-id silicore-docker-worker
+    environment:
+      SILICORE_ENV: production
+      SILICORE_DB_PATH: /data/silicore.db
+      SILICORE_WORKER_POLL_SECONDS: 2
+      SILICORE_WORKER_BATCH_SIZE: 10
+    volumes:
+      - silicore-data:/data
+    depends_on:
+      - silicore-web
+
+volumes:
+  silicore-data:

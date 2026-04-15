@@ -1,13 +1,14 @@
 from engine.atlas_tools import create_signoff_packet
 from engine.evaluation_backend import run_evaluation_job
-from engine.job_store import list_jobs, update_job
+from engine.job_store import claim_jobs, list_jobs, update_job
 
 
-def process_queued_jobs(limit=10):
+def process_queued_jobs(limit=10, worker_id="silicore-inline", lease_seconds=90):
     processed = []
-    for job in list_jobs(limit=limit):
-        if job.get("status") != "queued":
-            continue
+    queue = claim_jobs(worker_id=worker_id, limit=limit, lease_seconds=lease_seconds)
+    if not queue:
+        queue = [job for job in list_jobs(limit=limit) if job.get("status") == "queued"] if worker_id == "legacy-fallback" else []
+    for job in queue:
         job_type = job.get("job_type")
         payload = job.get("payload") or {}
         if job_type == "evaluation_suite":

@@ -28,6 +28,15 @@ class AppRouteSmokeTests(unittest.TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200, url)
 
+    def test_health_routes_render(self):
+        live = self.client.get("/health/live")
+        self.assertEqual(live.status_code, 200)
+        self.assertEqual(live.get_json()["status"], "ok")
+
+        ready = self.client.get("/health/ready")
+        self.assertEqual(ready.status_code, 200)
+        self.assertIn("database", ready.get_json())
+
     def test_compare_route_renders_for_existing_project_runs(self):
         run_a = self.project["runs"][-2]["run_id"]
         run_b = self.project["runs"][-1]["run_id"]
@@ -235,6 +244,10 @@ class AppRouteSmokeTests(unittest.TestCase):
         worker_status_response = self.client.get("/worker/status")
         self.assertEqual(worker_status_response.status_code, 200)
         self.assertIn("running", worker_status_response.get_json())
+
+        runtime_response = self.client.get("/runtime/meta")
+        self.assertEqual(runtime_response.status_code, 200)
+        self.assertIn("runtime", runtime_response.get_json())
 
         ops_response = self.client.get("/nexus-ops")
         self.assertEqual(ops_response.status_code, 200)
