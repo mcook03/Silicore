@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="board-redesign-shell">
+<div class="board-top-band">
+
 <section class="review-hero-card">
     <div class="review-hero-left">
         <div class="review-kicker">Single Board Intelligence</div>
@@ -194,6 +197,8 @@
     </aside>
 </section>
 
+</div>
+
 <script id="board-assistant-data" type="application/json">
 {{ {
     "assistant": board_assistant_console,
@@ -203,6 +208,8 @@
     "atlas_context": board_atlas_context if board_atlas_context is defined else {}
 }|tojson }}
 </script>
+
+<div class="board-content-ribbon">
 
 {% if not result %}
 <section class="grid grid-2">
@@ -2136,7 +2143,92 @@
 </details>
 {% endif %}
 
+</div>
+</div>
+
 <style>
+    .board-redesign-shell {
+        display: grid;
+        gap: 26px;
+    }
+
+    .board-top-band {
+        display: grid;
+        grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
+        gap: 22px;
+        align-items: stretch;
+    }
+
+    .board-top-band .review-hero-card,
+    .board-top-band .assistant-console-layout {
+        margin: 0;
+        min-height: 100%;
+    }
+
+    .board-top-band .review-hero-card {
+        grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+        min-height: 760px;
+    }
+
+    .board-top-band .assistant-console-layout {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        align-content: start;
+    }
+
+    .board-top-band .assistant-console-main,
+    .board-top-band .assistant-console-side {
+        min-height: auto;
+    }
+
+    .board-content-ribbon {
+        display: grid;
+        gap: 24px;
+    }
+
+    .board-content-ribbon > .grid.grid-2 {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1.08fr 0.92fr;
+    }
+
+    .board-content-ribbon > .card,
+    .board-content-ribbon > .grid.grid-2 > .card {
+        border-radius: 30px;
+    }
+
+    .board-content-ribbon > .card:nth-child(odd),
+    .board-content-ribbon > .grid.grid-2:nth-child(odd) > .card {
+        background:
+            radial-gradient(circle at top left, rgba(61, 206, 196, 0.09), transparent 44%),
+            linear-gradient(180deg, rgba(13, 24, 42, 0.9), rgba(7, 13, 24, 0.94));
+    }
+
+    .board-content-ribbon > .card:nth-child(even),
+    .board-content-ribbon > .grid.grid-2:nth-child(even) > .card {
+        background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 42%),
+            linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.95));
+    }
+
+    .board-content-ribbon .insight-card {
+        background:
+            linear-gradient(135deg, rgba(12, 23, 44, 0.94), rgba(7, 15, 30, 0.94)),
+            rgba(7, 15, 30, 0.94);
+    }
+
+    @media (max-width: 1380px) {
+        .board-top-band {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1080px) {
+        .board-content-ribbon > .grid.grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
     .fold-card {
         overflow: hidden;
     }

@@ -265,8 +265,8 @@
                 "U2"
             ],
             "nets": [
-                "CTRL",
-                "GND"
+                "GND",
+                "CTRL"
             ],
             "region": null,
             "metrics": {
@@ -467,8 +467,8 @@
                 "U2"
             ],
             "nets": [
-                "CTRL",
-                "GND"
+                "GND",
+                "CTRL"
             ],
             "region": null,
             "metrics": {
@@ -486,8 +486,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CTRL",
-                    "GND"
+                    "GND",
+                    "CTRL"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1844,7 +1844,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-15T20:05:23.608064+00:00",
+        "timestamp": "2026-04-15T20:14:34.306621+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2563,8 +2563,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "CTRL",
-                    "GND"
+                    "GND",
+                    "CTRL"
                 ],
                 "region": null,
                 "metrics": {
@@ -2729,8 +2729,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "CTRL",
-                    "GND"
+                    "GND",
+                    "CTRL"
                 ],
                 "region": null,
                 "metrics": {
@@ -2748,8 +2748,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CTRL",
-                        "GND"
+                        "GND",
+                        "CTRL"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2951,7 +2951,7 @@
         "score": 0.2,
         "total_penalty": 9.8
     },
-    "generated_at": "2026-04-15T20:05:23.608074+00:00",
+    "generated_at": "2026-04-15T20:14:34.306630+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

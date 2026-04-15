@@ -1,6 +1,187 @@
 {% extends "base.html" %}
 {% block content %}
 
+<style>
+    .home-redesign {
+        display: grid;
+        gap: 28px;
+    }
+
+    .home-story-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1.1fr 0.9fr 0.95fr 1.05fr;
+        grid-auto-flow: dense;
+        align-items: start;
+    }
+
+    .home-story-grid > .card {
+        min-height: 100%;
+    }
+
+    .home-command-span {
+        grid-column: span 2;
+    }
+
+    .home-telemetry-span,
+    .home-capability-span,
+    .home-portfolio-span,
+    .home-workflow-span,
+    .home-reporting-span {
+        grid-column: span 2;
+    }
+
+    .home-activity-span {
+        grid-column: 1 / -1;
+    }
+
+    .home-redesign .tech-hero {
+        min-height: clamp(680px, 78vh, 920px);
+        border-radius: 38px;
+        padding: 34px;
+    }
+
+    .home-redesign .tech-hero-grid {
+        grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+        align-items: stretch;
+        gap: 22px;
+    }
+
+    .home-redesign .tech-copy {
+        align-self: stretch;
+        justify-content: space-between;
+        min-height: 100%;
+        padding: 18px 0 8px;
+    }
+
+    .home-redesign .tech-title {
+        max-width: 10ch;
+        font-size: clamp(3rem, 5vw, 5.4rem);
+        line-height: 0.92;
+    }
+
+    .home-redesign .tech-description {
+        max-width: 34rem;
+        font-size: 1rem;
+    }
+
+    .home-redesign .tech-stage-shell {
+        min-height: 100%;
+        border-radius: 34px;
+    }
+
+    .home-redesign .tech-stage-main {
+        grid-template-columns: minmax(0, 1.42fr) minmax(240px, 0.58fr);
+        gap: 18px;
+    }
+
+    .home-redesign .tech-blueprint {
+        min-height: 520px;
+        border-radius: 30px;
+    }
+
+    .home-redesign .tech-stage-side {
+        justify-content: space-between;
+    }
+
+    .home-redesign .tech-surface-card {
+        border-radius: 30px;
+        background:
+            linear-gradient(180deg, rgba(15, 25, 42, 0.9), rgba(7, 15, 28, 0.9)),
+            rgba(5, 10, 20, 0.82);
+    }
+
+    .home-redesign .tech-surface-card:nth-child(odd) {
+        background:
+            radial-gradient(circle at top left, rgba(61, 206, 196, 0.11), transparent 45%),
+            linear-gradient(180deg, rgba(13, 23, 40, 0.9), rgba(6, 13, 24, 0.92));
+    }
+
+    .home-redesign .tech-surface-card:nth-child(even) {
+        background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 42%),
+            linear-gradient(180deg, rgba(15, 24, 42, 0.92), rgba(7, 14, 26, 0.94));
+    }
+
+    .home-redesign .card-header.tech-header {
+        padding-bottom: 20px;
+    }
+
+    .home-redesign .section-title {
+        font-size: clamp(1.2rem, 2vw, 1.7rem);
+    }
+
+    .home-redesign .command-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .home-redesign .telemetry-chart-stack {
+        grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .home-redesign .workspace-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .home-redesign .workflow-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .home-redesign .report-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .home-redesign .recent-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @media (max-width: 1380px) {
+        .home-story-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .home-command-span,
+        .home-telemetry-span,
+        .home-capability-span,
+        .home-portfolio-span,
+        .home-workflow-span,
+        .home-reporting-span,
+        .home-activity-span {
+            grid-column: span 2;
+        }
+
+        .home-redesign .recent-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 1080px) {
+        .home-redesign .tech-hero-grid,
+        .home-redesign .tech-stage-main,
+        .home-redesign .telemetry-chart-stack,
+        .home-redesign .workflow-grid,
+        .home-redesign .report-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .home-story-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .home-command-span,
+        .home-telemetry-span,
+        .home-capability-span,
+        .home-portfolio-span,
+        .home-workflow-span,
+        .home-reporting-span,
+        .home-activity-span {
+            grid-column: auto;
+        }
+    }
+</style>
+
+<div class="home-redesign">
+
 <section class="signal-ribbon">
     <div class="signal-ribbon-track">
         <span>Signal integrity</span>
@@ -227,8 +408,8 @@
     </div>
 </section>
 
-<section class="grid grid-2">
-    <section class="card tech-surface-card">
+<div class="home-story-grid">
+    <section class="card tech-surface-card home-command-span">
         <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Product Command Layer</h2>
@@ -256,7 +437,7 @@
         </div>
     </section>
 
-    <section class="card tech-surface-card">
+    <section class="card tech-surface-card home-telemetry-span">
         <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Telemetry Stack</h2>
@@ -331,10 +512,8 @@
             </div>
         </div>
     </section>
-</section>
 
-<section class="grid grid-2">
-    <section class="card tech-surface-card">
+    <section class="card tech-surface-card home-capability-span">
         <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Capability Progression</h2>
@@ -360,7 +539,7 @@
         </div>
     </section>
 
-    <section class="card tech-surface-card">
+    <section class="card tech-surface-card home-portfolio-span">
         <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Nexus Portfolio</h2>
@@ -401,10 +580,8 @@
             {% endif %}
         </div>
     </section>
-</section>
 
-<section class="grid grid-2">
-    <section class="card tech-surface-card">
+    <section class="card tech-surface-card home-workflow-span">
         <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Workflow Throughput</h2>
@@ -456,7 +633,7 @@
         </div>
     </section>
 
-    <section class="card tech-surface-card">
+    <section class="card tech-surface-card home-reporting-span">
         <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Reporting Surface</h2>
@@ -490,9 +667,8 @@
             </div>
         </div>
     </section>
-</section>
 
-<section class="card tech-surface-card">
+    <section class="card tech-surface-card home-activity-span">
     <div class="card-header tech-header">
         <div>
             <h2 class="section-title">Recent Activity</h2>
@@ -526,6 +702,10 @@
         {% endif %}
     </div>
 </section>
+
+</div>
+
+</div>
 
 <style>
     .tech-hero {

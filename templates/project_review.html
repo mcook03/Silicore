@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="project-redesign-shell">
+
 <section class="review-hero-card">
     <div class="review-hero-left">
         <div class="review-kicker">Powered by Atlas Intelligence</div>
@@ -107,6 +109,7 @@
 </section>
 
 {% if project_result %}
+<div class="project-command-matrix">
 <section class="grid grid-2">
     <section class="card loud-card">
         <div class="card-header">
@@ -458,6 +461,8 @@
     </div>
 </section>
 
+</div>
+
 <section class="grid grid-2">
     <section class="card">
         <div class="card-header">
@@ -746,7 +751,66 @@
 </section>
 {% endif %}
 
+</div>
+
 <style>
+    .project-redesign-shell {
+        display: grid;
+        gap: 26px;
+    }
+
+    .project-redesign-shell .review-hero-card {
+        min-height: 720px;
+        grid-template-columns: minmax(300px, 0.76fr) minmax(0, 1.24fr);
+    }
+
+    .project-command-matrix {
+        display: grid;
+        gap: 24px;
+    }
+
+    .project-command-matrix > .grid.grid-2,
+    .project-redesign-shell > .grid.grid-2 {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1.02fr 0.98fr;
+    }
+
+    .project-command-matrix > .card,
+    .project-command-matrix > .grid.grid-2 > .card,
+    .project-redesign-shell > .card,
+    .project-redesign-shell > .grid.grid-2 > .card {
+        border-radius: 30px;
+    }
+
+    .project-command-matrix > .grid.grid-2:nth-child(odd) > .card,
+    .project-redesign-shell > .grid.grid-2:nth-of-type(odd) > .card {
+        background:
+            radial-gradient(circle at top left, rgba(61, 206, 196, 0.08), transparent 44%),
+            linear-gradient(180deg, rgba(12, 23, 41, 0.9), rgba(7, 13, 24, 0.94));
+    }
+
+    .project-command-matrix > .grid.grid-2:nth-child(even) > .card,
+    .project-redesign-shell > .grid.grid-2:nth-of-type(even) > .card {
+        background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.11), transparent 42%),
+            linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.95));
+    }
+
+    .project-command-matrix > .insight-card,
+    .project-command-matrix > .card {
+        background:
+            linear-gradient(135deg, rgba(12, 23, 44, 0.94), rgba(7, 15, 30, 0.94)),
+            rgba(7, 15, 30, 0.94);
+    }
+
+    @media (max-width: 1080px) {
+        .project-command-matrix > .grid.grid-2,
+        .project-redesign-shell > .grid.grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
     .review-hero-card {
         position: relative;
         overflow: hidden;

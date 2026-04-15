@@ -1,7 +1,97 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="card">
+<style>
+    .compare-redesign-shell {
+        display: grid;
+        gap: 24px;
+    }
+
+    .compare-command-band {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.55fr) minmax(0, 1.45fr);
+        gap: 22px;
+        align-items: stretch;
+    }
+
+    .compare-decision-band {
+        display: grid;
+        gap: 24px;
+    }
+
+    .compare-summary-card,
+    .compare-redesign-shell > .card,
+    .compare-redesign-shell > .grid.grid-2 > .card {
+        border-radius: 30px;
+    }
+
+    .compare-summary-card {
+        min-height: 100%;
+        background:
+            radial-gradient(circle at top left, rgba(96, 165, 250, 0.14), transparent 36%),
+            linear-gradient(180deg, rgba(14, 25, 43, 0.94), rgba(7, 14, 27, 0.96));
+    }
+
+    .compare-command-band .assistant-console-layout {
+        margin: 0;
+        min-height: 100%;
+    }
+
+    .compare-command-band .assistant-console-layout,
+    .compare-command-band .assistant-console-main,
+    .compare-command-band .assistant-console-side {
+        height: 100%;
+    }
+
+    .compare-decision-band > .card:first-child {
+        background:
+            radial-gradient(circle at top left, rgba(61, 206, 196, 0.09), transparent 44%),
+            linear-gradient(180deg, rgba(12, 23, 41, 0.92), rgba(7, 13, 24, 0.96));
+    }
+
+    .compare-decision-band > .card:last-child {
+        background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.13), transparent 42%),
+            linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.96));
+    }
+
+    .compare-redesign-shell > .grid.grid-2 {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .compare-redesign-shell > .card:nth-of-type(odd),
+    .compare-redesign-shell > .grid.grid-2:nth-of-type(odd) > .card {
+        background:
+            radial-gradient(circle at top left, rgba(61, 206, 196, 0.08), transparent 44%),
+            linear-gradient(180deg, rgba(12, 23, 41, 0.9), rgba(7, 13, 24, 0.94));
+    }
+
+    .compare-redesign-shell > .card:nth-of-type(even),
+    .compare-redesign-shell > .grid.grid-2:nth-of-type(even) > .card {
+        background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.11), transparent 42%),
+            linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.95));
+    }
+
+    @media (max-width: 1200px) {
+        .compare-command-band {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1080px) {
+        .compare-redesign-shell > .grid.grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="compare-redesign-shell">
+<div class="compare-command-band">
+
+<section class="card compare-summary-card">
     <div class="card-header">
         <h2 class="section-title">Comparison Summary</h2>
         <p class="section-copy">
@@ -87,6 +177,8 @@
     </aside>
 </section>
 
+</div>
+
 <script id="compare-assistant-data" type="application/json">
 {{ {
     "assistant": compare_assistant_console,
@@ -95,6 +187,7 @@
 }|tojson }}
 </script>
 
+<div class="compare-decision-band">
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Atlas Intelligence</h2>
@@ -346,6 +439,8 @@
         </div>
     </div>
 </section>
+
+</div>
 
 <section class="card">
     <div class="card-header">
@@ -3228,5 +3323,7 @@
     hydrateAgentRuns();
 })();
 </script>
+
+</div>
 
 {% endblock %}
