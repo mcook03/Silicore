@@ -8,25 +8,65 @@
     </div>
 
     <div class="card-body">
-        <div class="summary-panel">
-            <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
-        </div>
-
-        {% if dashboard_story and dashboard_story.pillars %}
-        <div class="grid grid-3" style="margin-top:16px;">
-            {% for pillar in dashboard_story.pillars %}
-            <div class="result-card">
-                <div class="result-card-top">
-                    <div>
-                        <div class="result-card-title">{{ pillar.title }}</div>
-                        <div class="result-card-copy">{{ pillar.copy }}</div>
-                    </div>
-                    <span class="chip chip-soft">{{ pillar.value }}</span>
+        <div class="dashboard-hero-grid">
+            <div class="dashboard-story-panel">
+                <div class="summary-panel dashboard-story-summary">
+                    <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
                 </div>
+
+                {% if dashboard_story and dashboard_story.pillars %}
+                <div class="dashboard-pillar-grid">
+                    {% for pillar in dashboard_story.pillars %}
+                    <div class="result-card dashboard-pillar-card">
+                        <div class="result-card-top">
+                            <div>
+                                <div class="result-card-title">{{ pillar.title }}</div>
+                                <div class="result-card-copy">{{ pillar.copy }}</div>
+                            </div>
+                            <span class="chip chip-soft">{{ pillar.value }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
-            {% endfor %}
+
+            <aside class="dashboard-orbit-panel">
+                <div class="orbit-kicker">Platform Posture</div>
+                <div class="orbit-score">{{ home_chart.latest_score }}</div>
+                <div class="orbit-copy">
+                    {% if home_chart.latest_source %}
+                        Latest scored signal from {{ home_chart.latest_source }}.
+                    {% else %}
+                        Run a new analysis to activate the live engineering posture view.
+                    {% endif %}
+                </div>
+
+                <div class="orbit-ring-shell">
+                    <div class="orbit-ring orbit-ring-a"></div>
+                    <div class="orbit-ring orbit-ring-b"></div>
+                    <div class="orbit-core">
+                        <span>Risk</span>
+                        <strong>{{ home_chart.latest_score }}</strong>
+                    </div>
+                </div>
+
+                <div class="orbit-mini-grid">
+                    <div class="orbit-mini-card">
+                        <span class="orbit-mini-label">Runs</span>
+                        <strong>{{ stats.total_runs }}</strong>
+                    </div>
+                    <div class="orbit-mini-card">
+                        <span class="orbit-mini-label">Projects</span>
+                        <strong>{{ stats.project_runs }}</strong>
+                    </div>
+                    <div class="orbit-mini-card">
+                        <span class="orbit-mini-label">Exports</span>
+                        <strong>{{ stats.exported_runs }}</strong>
+                    </div>
+                </div>
+            </aside>
         </div>
-        {% endif %}
     </div>
 </section>
 
@@ -463,6 +503,168 @@
         line-height: 1.7;
     }
 
+    .dashboard-hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 18px;
+        align-items: stretch;
+    }
+
+    .dashboard-story-panel {
+        display: grid;
+        gap: 16px;
+    }
+
+    .dashboard-story-summary {
+        padding: 22px;
+        border-radius: 18px;
+        background:
+            linear-gradient(120deg, rgba(67,212,200,0.08), transparent 40%),
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .dashboard-pillar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .dashboard-pillar-card {
+        min-height: 148px;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.022);
+    }
+
+    .dashboard-orbit-panel {
+        position: relative;
+        overflow: hidden;
+        padding: 22px;
+        border-radius: 22px;
+        border: 1px solid rgba(180, 212, 255, 0.09);
+        background:
+            radial-gradient(circle at top left, rgba(67,212,200,0.14), transparent 28%),
+            radial-gradient(circle at bottom right, rgba(217,147,91,0.12), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(7, 16, 25, 0.74);
+    }
+
+    .orbit-kicker {
+        color: #c7d8ef;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .orbit-score {
+        margin-top: 10px;
+        font-size: clamp(64px, 8vw, 88px);
+        line-height: 0.9;
+        letter-spacing: -0.08em;
+        font-weight: 800;
+        color: #f5fbff;
+    }
+
+    .orbit-copy {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+        max-width: 30ch;
+    }
+
+    .orbit-ring-shell {
+        position: relative;
+        height: 190px;
+        margin: 18px 0 12px;
+        display: grid;
+        place-items: center;
+    }
+
+    .orbit-ring {
+        position: absolute;
+        border-radius: 999px;
+        border: 1px solid rgba(180, 212, 255, 0.12);
+    }
+
+    .orbit-ring-a {
+        width: 190px;
+        height: 190px;
+        box-shadow: inset 0 0 28px rgba(67,212,200,0.08);
+    }
+
+    .orbit-ring-b {
+        width: 132px;
+        height: 132px;
+        border-color: rgba(217,147,91,0.16);
+        box-shadow: inset 0 0 22px rgba(47,137,255,0.1);
+    }
+
+    .orbit-core {
+        position: relative;
+        z-index: 1;
+        width: 86px;
+        height: 86px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        background:
+            radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), transparent 34%),
+            linear-gradient(135deg, rgba(67,212,200,0.22), rgba(47,137,255,0.18), rgba(217,147,91,0.12));
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 18px 34px rgba(0,0,0,0.18);
+    }
+
+    .orbit-core span {
+        display: block;
+        color: #c8d8ef;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 700;
+    }
+
+    .orbit-core strong {
+        display: block;
+        color: #f8fbff;
+        font-size: 24px;
+        letter-spacing: -0.06em;
+        font-weight: 800;
+    }
+
+    .orbit-mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .orbit-mini-card {
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .orbit-mini-label {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+    }
+
+    .orbit-mini-card strong {
+        display: block;
+        margin-top: 6px;
+        color: var(--text);
+        font-size: 26px;
+        letter-spacing: -0.05em;
+        font-weight: 800;
+    }
+
     .home-overview-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -662,10 +864,22 @@
     }
 
     @media (max-width: 1100px) {
+        .dashboard-hero-grid,
+        .dashboard-pillar-grid,
         .home-score-card,
         .home-overview-grid,
         .home-table-header,
         .home-table-row {
+            grid-template-columns: 1fr;
+        }
+
+        .orbit-mini-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 720px) {
+        .orbit-mini-grid {
             grid-template-columns: 1fr;
         }
     }
