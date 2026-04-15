@@ -172,7 +172,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, VIN, SW
+- Nets: GND, SW, VIN
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -190,7 +190,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: GND, VIN, SW
+- Nets: GND, SW, VIN
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity

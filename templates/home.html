@@ -115,7 +115,7 @@
     }
 
     .home-redesign .command-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .home-redesign .telemetry-chart-stack {
@@ -131,7 +131,7 @@
     }
 
     .home-redesign .report-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .home-redesign .recent-grid {
@@ -1333,10 +1333,10 @@
     .workspace-card-top,
     .workflow-top,
     .recent-top {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 12px;
-        align-items: flex-start;
+        align-items: start;
     }
 
     .command-title,
@@ -1348,6 +1348,39 @@
         font-size: 16px;
         line-height: 1.32;
         font-weight: 700;
+    }
+
+    .command-card,
+    .workflow-tile,
+    .report-tile {
+        padding: 20px;
+    }
+
+    .command-card {
+        min-height: 220px;
+    }
+
+    .workflow-tile {
+        min-height: 190px;
+    }
+
+    .command-value,
+    .workspace-score {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 74px;
+        min-height: 48px;
+        padding: 10px 12px;
+        border-radius: 16px;
+        text-align: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .command-copy,
+    .workflow-copy {
+        margin-top: 12px;
     }
 
     .story-panel {
@@ -1534,9 +1567,9 @@
 
     .report-tile {
         display: grid;
-        grid-template-columns: 128px 1fr;
-        gap: 16px;
-        align-items: start;
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
     }
 
     .report-code {
@@ -1586,6 +1619,13 @@
 
     .recent-title {
         line-height: 1.45;
+    }
+
+    .workflow-top .chip,
+    .recent-top .chip,
+    .workspace-meta span,
+    .command-value {
+        justify-self: start;
     }
 
     .chart-area {
@@ -1758,7 +1798,7 @@
         .workspace-card-top,
         .workflow-top,
         .recent-top {
-            flex-direction: column;
+            grid-template-columns: 1fr;
         }
 
         .workspace-score {

@@ -2605,6 +2605,33 @@
         text-wrap: pretty;
     }
 
+    .hero-panel .hero-mini-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
+    }
+
+    .hero-panel .hero-mini-label {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 8px;
+        align-items: start;
+    }
+
+    .hero-panel .hero-mini-track {
+        grid-column: 1 / -1;
+        height: 10px;
+    }
+
+    .hero-panel .hero-mini-value {
+        text-align: left;
+        font-size: 18px;
+        letter-spacing: -0.03em;
+    }
+
     .hero-mini-track,
     .distribution-bar-track {
         height: 12px;
