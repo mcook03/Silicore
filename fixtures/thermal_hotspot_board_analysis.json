@@ -1713,7 +1713,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-15T19:49:05.144995+00:00",
+        "timestamp": "2026-04-15T19:53:47.251553+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2735,7 +2735,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-15T19:49:05.145008+00:00",
+    "generated_at": "2026-04-15T19:53:47.251563+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

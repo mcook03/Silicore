@@ -1129,7 +1129,11 @@
             </div>
         </div>
         <div class="board-view-shell" data-board-inspector>
-            <div>
+            <div class="board-canvas-stage">
+            <div class="board-stage-meta">
+                <div class="board-stage-kicker">Live inspection canvas</div>
+                <div class="board-stage-copy">Filter layers and nets, switch heat posture, and jump directly into risk regions.</div>
+            </div>
             <svg class="board-view-svg" viewBox="{{ result.board_view.base_view_box }}" data-base-view-box="{{ result.board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="Board viewer">
                 <defs>
                     <filter id="board-heat-blur" x="-80%" y="-80%" width="260%" height="260%">
@@ -3078,8 +3082,43 @@
     .board-view-shell {
         display: grid;
         grid-template-columns: 1.35fr 0.65fr;
-        gap: 18px;
+        gap: 22px;
         align-items: start;
+    }
+
+    .board-canvas-stage {
+        padding: 18px;
+        border-radius: 28px;
+        border: 1px solid rgba(255,255,255,0.055);
+        background:
+            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 24%),
+            linear-gradient(180deg, rgba(255,255,255,0.032), rgba(255,255,255,0.012)),
+            rgba(9, 18, 30, 0.5);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 18px 34px rgba(0,0,0,0.12);
+    }
+
+    .board-stage-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: end;
+        margin-bottom: 14px;
+    }
+
+    .board-stage-kicker {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .board-stage-copy {
+        max-width: 32ch;
+        color: rgba(214,226,255,0.72);
+        font-size: 12px;
+        line-height: 1.6;
+        text-align: right;
     }
 
     .board-toolbar {
@@ -3087,7 +3126,13 @@
         flex-wrap: wrap;
         gap: 12px;
         align-items: end;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.05);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)),
+            rgba(255,255,255,0.015);
     }
 
     .board-toolbar label {
@@ -3115,11 +3160,15 @@
     .board-view-svg {
         width: 100%;
         min-height: 420px;
-        border-radius: 22px;
+        border-radius: 28px;
         background:
             radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 30%),
-            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.06);
+            linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.016));
+        background-size: auto, 22px 22px, 22px 22px, auto;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .board-view-frame {
@@ -3485,6 +3534,16 @@
         .context-meta-grid,
         .board-view-shell {
             grid-template-columns: 1fr;
+        }
+
+        .board-stage-meta {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .board-stage-copy {
+            text-align: left;
+            max-width: none;
         }
 
         .board-toolbar {
