@@ -12,6 +12,139 @@
 
 <section class="card">
     <div class="card-header">
+        <h2 class="section-title">Revision Inspector</h2>
+        <p class="section-copy">
+            Filter by layer or net, then click a changed finding to focus the affected region across both revisions.
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="board-toolbar">
+            <label>
+                Layer Filter
+                <select class="board-filter-select" data-compare-filter="layer">
+                    <option value="">All layers</option>
+                    {% set ns = namespace(layers=[]) %}
+                    {% for layer in comparison.run_a_board_view.available_layers %}
+                        {% if layer not in ns.layers %}{% set ns.layers = ns.layers + [layer] %}{% endif %}
+                    {% endfor %}
+                    {% for layer in comparison.run_b_board_view.available_layers %}
+                        {% if layer not in ns.layers %}{% set ns.layers = ns.layers + [layer] %}{% endif %}
+                    {% endfor %}
+                    {% for layer in ns.layers|sort %}
+                    <option value="{{ layer }}">{{ layer }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Net Filter
+                <select class="board-filter-select" data-compare-filter="net">
+                    <option value="">All nets</option>
+                    {% set ns_nets = namespace(items=[]) %}
+                    {% for net in comparison.run_a_board_view.available_nets %}
+                        {% if net not in ns_nets.items %}{% set ns_nets.items = ns_nets.items + [net] %}{% endif %}
+                    {% endfor %}
+                    {% for net in comparison.run_b_board_view.available_nets %}
+                        {% if net not in ns_nets.items %}{% set ns_nets.items = ns_nets.items + [net] %}{% endif %}
+                    {% endfor %}
+                    {% for net in ns_nets.items|sort %}
+                    <option value="{{ net }}">{{ net }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <div class="board-toolbar-actions">
+                <button type="button" class="btn btn-secondary board-tool-btn" data-compare-action="reset">Reset View</button>
+                <button type="button" class="btn btn-secondary board-tool-btn" data-compare-action="clear">Clear Focus</button>
+            </div>
+        </div>
+
+        {% if comparison.compare_focus_items %}
+        <div class="compare-focus-toolbar">
+            {% for item in comparison.compare_focus_items %}
+            <button type="button" class="compare-focus-chip" data-compare-focus data-components="{{ item.components|join('|') }}" data-nets="{{ item.nets|join('|') }}">
+                <span class="chip mini-chip-{{ item.severity }}">{{ item.change_type|upper }}</span>
+                <span>{{ item.label }}</span>
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="compare-board-grid">
+            <section class="compare-board-panel" data-compare-inspector>
+                <div class="compare-board-header">
+                    <strong>{{ comparison.run_a.name }}</strong>
+                    <span class="small-muted">Baseline</span>
+                </div>
+                {% if comparison.run_a_board_view.has_data %}
+                <svg class="board-view-svg compare-board-svg" viewBox="{{ comparison.run_a_board_view.base_view_box }}" data-base-view-box="{{ comparison.run_a_board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="Baseline board view">
+                    <rect x="6" y="6" width="{{ comparison.run_a_board_view.width - 12 }}" height="{{ comparison.run_a_board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                    {% for zone in comparison.run_a_board_view.zones %}
+                    <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }} compare-entity" data-layer="{{ zone.layer }}" data-nets="{{ zone.net_list|join('|') }}"></polygon>
+                    {% endfor %}
+                    {% for segment in comparison.run_a_board_view.outline_segments %}
+                    <line x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}" class="board-outline compare-entity"></line>
+                    {% endfor %}
+                    {% for trace in comparison.run_a_board_view.traces %}
+                    <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }} compare-entity" data-layer="{{ trace.layer }}" data-nets="{{ trace.net }}"></line>
+                    {% endfor %}
+                    {% for via in comparison.run_a_board_view.vias %}
+                    <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }} compare-entity" data-layer="{{ via.layers|join('|') }}" data-nets="{{ via.net }}"></circle>
+                    {% endfor %}
+                    {% for component in comparison.run_a_board_view.components %}
+                    <g class="board-component board-component-{{ component.tone }} compare-entity" data-layer="{{ component.layer }}" data-components="{{ component.ref }}" data-nets="{{ component.net_list|join('|') }}">
+                        <circle cx="{{ component.x }}" cy="{{ component.y }}" r="5.2"></circle>
+                        <text x="{{ component.x + 7 }}" y="{{ component.y - 7 }}">{{ component.ref }}</text>
+                    </g>
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No baseline geometry</h3>
+                    <p>This saved run does not include a geometry snapshot.</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="compare-board-panel" data-compare-inspector>
+                <div class="compare-board-header">
+                    <strong>{{ comparison.run_b.name }}</strong>
+                    <span class="small-muted">New Revision</span>
+                </div>
+                {% if comparison.run_b_board_view.has_data %}
+                <svg class="board-view-svg compare-board-svg" viewBox="{{ comparison.run_b_board_view.base_view_box }}" data-base-view-box="{{ comparison.run_b_board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="New board view">
+                    <rect x="6" y="6" width="{{ comparison.run_b_board_view.width - 12 }}" height="{{ comparison.run_b_board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                    {% for zone in comparison.run_b_board_view.zones %}
+                    <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }} compare-entity" data-layer="{{ zone.layer }}" data-nets="{{ zone.net_list|join('|') }}"></polygon>
+                    {% endfor %}
+                    {% for segment in comparison.run_b_board_view.outline_segments %}
+                    <line x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}" class="board-outline compare-entity"></line>
+                    {% endfor %}
+                    {% for trace in comparison.run_b_board_view.traces %}
+                    <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }} compare-entity" data-layer="{{ trace.layer }}" data-nets="{{ trace.net }}"></line>
+                    {% endfor %}
+                    {% for via in comparison.run_b_board_view.vias %}
+                    <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }} compare-entity" data-layer="{{ via.layers|join('|') }}" data-nets="{{ via.net }}"></circle>
+                    {% endfor %}
+                    {% for component in comparison.run_b_board_view.components %}
+                    <g class="board-component board-component-{{ component.tone }} compare-entity" data-layer="{{ component.layer }}" data-components="{{ component.ref }}" data-nets="{{ component.net_list|join('|') }}">
+                        <circle cx="{{ component.x }}" cy="{{ component.y }}" r="5.2"></circle>
+                        <text x="{{ component.x + 7 }}" y="{{ component.y - 7 }}">{{ component.ref }}</text>
+                    </g>
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="empty-state refined-empty-state">
+                    <h3>No revision geometry</h3>
+                    <p>This saved run does not include a geometry snapshot.</p>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
         <h2 class="section-title">Engineering Domain Shift</h2>
         <p class="section-copy">
             Domain-level movement across the selected comparison so you can see whether signal, power, EMI/EMC, stackup, thermal, manufacturability, testability, or safety pressure changed.
@@ -1955,13 +2088,174 @@
         background: linear-gradient(90deg, rgba(148,163,184,0.9), rgba(203,213,225,0.6));
     }
 
+    .board-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 14px;
+    }
+
+    .board-toolbar label {
+        display: grid;
+        gap: 6px;
+        color: #dbeafe;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .board-filter-select {
+        min-width: 180px;
+    }
+
+    .board-toolbar-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .board-tool-btn {
+        min-height: 42px;
+    }
+
+    .compare-focus-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .compare-focus-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #eaf2ff;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .compare-focus-chip.is-active {
+        border-color: rgba(125,211,252,0.36);
+        background: rgba(59,130,246,0.08);
+    }
+
+    .compare-board-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .compare-board-panel {
+        padding: 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .compare-board-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 12px;
+        color: #f8fbff;
+    }
+
+    .compare-board-svg {
+        width: 100%;
+        min-height: 420px;
+        border-radius: 22px;
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .board-view-frame {
+        fill: rgba(8,14,30,0.58);
+        stroke: rgba(255,255,255,0.08);
+        stroke-width: 1;
+    }
+
+    .board-outline {
+        stroke: rgba(191,219,254,0.95);
+        stroke-width: 1.6;
+        stroke-linecap: round;
+    }
+
+    .board-zone {
+        opacity: 0.22;
+        stroke-width: 1;
+    }
+
+    .board-zone-safe, .board-zone-low {
+        fill: rgba(59,130,246,0.22);
+        stroke: rgba(96,165,250,0.46);
+    }
+
+    .board-zone-medium {
+        fill: rgba(245,158,11,0.2);
+        stroke: rgba(251,191,36,0.46);
+    }
+
+    .board-zone-high, .board-zone-critical {
+        fill: rgba(239,68,68,0.16);
+        stroke: rgba(248,113,113,0.44);
+    }
+
+    .board-trace {
+        stroke-linecap: round;
+        stroke-width: 2.2;
+        opacity: 0.88;
+    }
+
+    .board-trace-safe, .board-via-safe, .board-component-safe circle { stroke: #7dd3fc; fill: rgba(125,211,252,0.75); }
+    .board-trace-low, .board-via-low, .board-component-low circle { stroke: #93c5fd; fill: rgba(147,197,253,0.78); }
+    .board-trace-medium, .board-via-medium, .board-component-medium circle { stroke: #fcd34d; fill: rgba(245,158,11,0.78); }
+    .board-trace-high, .board-via-high, .board-component-high circle { stroke: #fb923c; fill: rgba(251,146,60,0.82); }
+    .board-trace-critical, .board-via-critical, .board-component-critical circle { stroke: #f87171; fill: rgba(239,68,68,0.86); }
+
+    .board-component text {
+        fill: #e5eefc;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .compare-entity {
+        transition: opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+    }
+
+    .board-hidden {
+        opacity: 0.08;
+    }
+
+    .board-dimmed {
+        opacity: 0.12;
+    }
+
+    .board-highlighted {
+        opacity: 1;
+        filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.42));
+    }
+
     @media (max-width: 980px) {
         .mini-stat-row {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .compare-board-grid,
         .compare-bar-row {
             grid-template-columns: 1fr;
+        }
+
+        .board-toolbar {
+            flex-direction: column;
+            align-items: stretch;
         }
     }
 
@@ -1971,5 +2265,113 @@
         }
     }
 </style>
+
+<script>
+(() => {
+    const inspectors = Array.from(document.querySelectorAll('[data-compare-inspector]'));
+    if (!inspectors.length) return;
+
+    const layerSelect = document.querySelector('[data-compare-filter="layer"]');
+    const netSelect = document.querySelector('[data-compare-filter="net"]');
+    const focusButtons = Array.from(document.querySelectorAll('[data-compare-focus]'));
+    const resetButton = document.querySelector('[data-compare-action="reset"]');
+    const clearButton = document.querySelector('[data-compare-action="clear"]');
+
+    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+    const entitiesByInspector = inspectors.map((panel) => ({
+        panel,
+        svg: panel.querySelector('.compare-board-svg'),
+        entities: Array.from(panel.querySelectorAll('.compare-entity')),
+        baseViewBox: panel.querySelector('.compare-board-svg')?.getAttribute('data-base-view-box') || panel.querySelector('.compare-board-svg')?.getAttribute('viewBox'),
+    }));
+
+    const applyFilters = () => {
+        const activeLayer = layerSelect ? layerSelect.value : '';
+        const activeNet = netSelect ? netSelect.value : '';
+        entitiesByInspector.forEach(({entities}) => {
+            entities.forEach((entity) => {
+                const layers = splitTokens(entity.dataset.layer);
+                const nets = splitTokens(entity.dataset.nets);
+                const layerMatch = !activeLayer || layers.length === 0 || layers.includes(activeLayer);
+                const netMatch = !activeNet || nets.length === 0 || nets.includes(activeNet);
+                entity.classList.toggle('board-hidden', !(layerMatch && netMatch));
+            });
+        });
+    };
+
+    const clearFocus = () => {
+        entitiesByInspector.forEach(({entities, svg, baseViewBox}) => {
+            entities.forEach((entity) => entity.classList.remove('board-dimmed', 'board-highlighted'));
+            if (svg && baseViewBox) svg.setAttribute('viewBox', baseViewBox);
+        });
+        focusButtons.forEach((button) => button.classList.remove('is-active'));
+    };
+
+    const focusEntities = (componentNames, netNames) => {
+        const componentSet = new Set(componentNames);
+        const netSet = new Set(netNames);
+        entitiesByInspector.forEach(({entities}) => {
+            entities.forEach((entity) => {
+                const entityComponents = splitTokens(entity.dataset.components);
+                const entityNets = splitTokens(entity.dataset.nets);
+                const isMatch =
+                    (componentSet.size > 0 && entityComponents.some((value) => componentSet.has(value))) ||
+                    (netSet.size > 0 && entityNets.some((value) => netSet.has(value)));
+                entity.classList.toggle('board-dimmed', !isMatch);
+                entity.classList.toggle('board-highlighted', isMatch);
+            });
+        });
+    };
+
+    const zoomInspector = ({entities, svg}) => {
+        if (!svg) return;
+        const highlighted = entities.filter((entity) => entity.classList.contains('board-highlighted'));
+        if (!highlighted.length) return;
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        highlighted.forEach((entity) => {
+            const box = entity.getBBox();
+            minX = Math.min(minX, box.x);
+            minY = Math.min(minY, box.y);
+            maxX = Math.max(maxX, box.x + box.width);
+            maxY = Math.max(maxY, box.y + box.height);
+        });
+        if (!Number.isFinite(minX)) return;
+        const pad = 28;
+        const width = Math.max(80, maxX - minX + pad * 2);
+        const height = Math.max(80, maxY - minY + pad * 2);
+        svg.setAttribute('viewBox', `${Math.max(0, minX - pad)} ${Math.max(0, minY - pad)} ${width} ${height}`);
+    };
+
+    if (layerSelect) layerSelect.addEventListener('change', applyFilters);
+    if (netSelect) netSelect.addEventListener('change', applyFilters);
+
+    focusButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            focusButtons.forEach((item) => item.classList.remove('is-active'));
+            button.classList.add('is-active');
+            applyFilters();
+            focusEntities(splitTokens(button.dataset.components), splitTokens(button.dataset.nets));
+            entitiesByInspector.forEach(zoomInspector);
+        });
+    });
+
+    if (resetButton) resetButton.addEventListener('click', () => {
+        if (layerSelect) layerSelect.value = '';
+        if (netSelect) netSelect.value = '';
+        clearFocus();
+        applyFilters();
+    });
+
+    if (clearButton) clearButton.addEventListener('click', () => {
+        clearFocus();
+        applyFilters();
+    });
+
+    applyFilters();
+})();
+</script>
 
 {% endblock %}

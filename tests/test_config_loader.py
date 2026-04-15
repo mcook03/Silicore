@@ -82,6 +82,20 @@ class ConfigLoaderTests(unittest.TestCase):
         self.assertEqual(editable["rules"]["safety_high_voltage_net_keywords"], ["HV", "VAC", "48V"])
         self.assertEqual(config["rules"]["power_path_realism"]["max_high_current_vias"], 5)
 
+    def test_parse_config_form_supports_named_custom_profile(self):
+        form = {
+            "analysis_profile": "custom",
+            "analysis_custom_profile_name": "Audio Backplane Review",
+            "signal_max_trace_length": "42",
+        }
+
+        config = parse_config_form(form)
+        editable = get_editable_config_view(config)
+
+        self.assertEqual(editable["analysis"]["profile"], "custom")
+        self.assertEqual(editable["analysis"]["custom_profile_name"], "Audio Backplane Review")
+        self.assertIn("custom", editable["analysis"]["available_profiles"])
+
 
 if __name__ == "__main__":
     unittest.main()

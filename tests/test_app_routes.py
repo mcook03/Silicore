@@ -35,6 +35,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Category Shift Bar View", page)
         self.assertIn("Engineering Domain Shift", page)
         self.assertIn("Recurring Engineering Domains", page)
+        self.assertIn("Revision Inspector", page)
 
     def test_compare_route_recovers_when_run_ids_are_invalid(self):
         response = self.client.get("/projects/ec66c9f0/compare?run_a=missing_a&run_b=missing_b", follow_redirects=True)
@@ -52,6 +53,14 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Export Center", page)
         self.assertIn("Score Explainability", page)
         self.assertIn("Detailed Findings", page)
+
+    def test_settings_page_includes_custom_profile_controls(self):
+        response = self.client.get("/settings")
+
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Custom Profile Name", page)
+        self.assertIn("Custom Project Profile", page)
 
 
 if __name__ == "__main__":

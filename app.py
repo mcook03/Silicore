@@ -14,7 +14,7 @@ from flask import (
     url_for,
 )
 
-from engine.config_loader import ANALYSIS_PROFILE_PRESETS, parse_config_form, save_config
+from engine.config_loader import ANALYSIS_PROFILE_PRESETS, SUPPORTED_ANALYSIS_PROFILES, parse_config_form, save_config
 from engine.dashboard_storage import get_recent_runs
 from engine.project_store import (
     add_run_to_project,
@@ -1115,7 +1115,7 @@ def _normalize_snapshot(snapshot):
     return normalized
 
 
-def _analysis_mode_options():
+def _analysis_mode_options(custom_profile_name="Custom Project Profile"):
     return {
         "profiles": [
             {"value": "balanced", "label": "Balanced"},
@@ -1124,6 +1124,7 @@ def _analysis_mode_options():
             {"value": "mixed_signal", "label": "Mixed Signal"},
             {"value": "production_readiness", "label": "Production Ready"},
             {"value": "high_voltage", "label": "High Voltage"},
+            {"value": "custom", "label": custom_profile_name or "Custom Profile"},
         ],
         "board_types": [
             {"value": "general", "label": "General"},
@@ -2063,6 +2064,20 @@ def _build_engineering_domain_bars(risks, limit=6):
     return _build_bar_chart(items[:limit])
 
 
+def _load_run_payload(run):
+    run_dir_name = str((run or {}).get("path") or (run or {}).get("run_id") or "").strip()
+    if not run_dir_name:
+        return {}
+    run_dir = os.path.join(RUNS_FOLDER, run_dir_name)
+    if not os.path.isdir(run_dir):
+        return {}
+    for filename in ["single_analysis.json", "result.json", "project_summary.json"]:
+        payload = _safe_json_load(os.path.join(run_dir, filename), {})
+        if payload:
+            return payload
+    return {}
+
+
 def _board_view_bounds(pcb_snapshot):
     bounds = (pcb_snapshot or {}).get("board_bounds") or {}
     min_x = _safe_float(bounds.get("min_x"), 0.0)
@@ -2289,6 +2304,36 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
             }
         )[:120],
     }
+
+
+def _build_compare_focus_items(insights, limit=10):
+    focus_items = []
+    seen = set()
+
+    for change_type in ["changed", "added", "removed"]:
+        for item in ((insights or {}).get("risk_diff", {}) or {}).get(change_type, []) or []:
+            if not isinstance(item, dict):
+                continue
+            message = item.get("message") or "Comparison finding"
+            key = f"{change_type}|{message}|{'|'.join(item.get('components') or [])}|{'|'.join(item.get('nets') or [])}"
+            if key in seen:
+                continue
+            seen.add(key)
+            focus_items.append(
+                {
+                    "label": item.get("short_title") or message,
+                    "message": message,
+                    "change_type": change_type,
+                    "severity": str(item.get("severity", "low")).lower(),
+                    "components": item.get("components") or [],
+                    "nets": item.get("nets") or [],
+                    "category": _format_category_name(item.get("category")),
+                }
+            )
+            if len(focus_items) >= limit:
+                return focus_items
+
+    return focus_items
 
 
 def _extract_risk_confidence_score(risk):
@@ -2955,9 +3000,9 @@ def single_board_page():
     result = None
     single_chart = None
     single_decision = None
-    analysis_modes = _analysis_mode_options()
     _, editable_config = get_dashboard_config(CONFIG_PATH)
     default_analysis = editable_config.get("analysis", {}) if isinstance(editable_config, dict) else {}
+    analysis_modes = _analysis_mode_options(default_analysis.get("custom_profile_name", "Custom Project Profile"))
     selected_profile = default_analysis.get("profile", "balanced")
     selected_board_type = default_analysis.get("board_type", "general")
 
@@ -3013,9 +3058,9 @@ def project_page():
     comparison = None
     project_chart = None
     project_intelligence_review = None
-    analysis_modes = _analysis_mode_options()
     _, editable_config = get_dashboard_config(CONFIG_PATH)
     default_analysis = editable_config.get("analysis", {}) if isinstance(editable_config, dict) else {}
+    analysis_modes = _analysis_mode_options(default_analysis.get("custom_profile_name", "Custom Project Profile"))
     selected_profile = default_analysis.get("profile", "balanced")
     selected_board_type = default_analysis.get("board_type", "general")
 
@@ -3290,10 +3335,18 @@ def compare_runs(project_id):
 
     project_intelligence = _build_project_intelligence(project, run_a, run_b)
     comparison_visuals = _build_compare_visual_data(project_intelligence, insights)
+    run_a_payload = _load_run_payload(run_a)
+    run_b_payload = _load_run_payload(run_b)
+    run_a_board_view = _build_board_view_data(run_a_payload.get("pcb_snapshot") or {}, run_a_payload.get("risks") or [])
+    run_b_board_view = _build_board_view_data(run_b_payload.get("pcb_snapshot") or {}, run_b_payload.get("risks") or [])
+    compare_focus_items = _build_compare_focus_items(insights)
 
     comparison = {
         "run_a": run_a,
         "run_b": run_b,
+        "run_a_board_view": run_a_board_view,
+        "run_b_board_view": run_b_board_view,
+        "compare_focus_items": compare_focus_items,
         "score_diff": round(score_b - score_a, 2),
         "risk_diff": risk_b - risk_a,
         "critical_diff": critical_b - critical_a,

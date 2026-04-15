@@ -272,7 +272,13 @@
                             <span class="text-input-help">Choose the default review preset used when no upload-time override is selected.</span>
                             <select name="analysis_profile" class="settings-select">
                                 {% for option in editable_config.analysis.available_profiles %}
-                                <option value="{{ option }}" {% if editable_config.analysis.profile == option %}selected{% endif %}>{{ option.replace('_', ' ')|title }}</option>
+                                <option value="{{ option }}" {% if editable_config.analysis.profile == option %}selected{% endif %}>
+                                    {% if option == 'custom' %}
+                                        {{ editable_config.analysis.custom_profile_name if editable_config.analysis.custom_profile_name else 'Custom Profile' }}
+                                    {% else %}
+                                        {{ option.replace('_', ' ')|title }}
+                                    {% endif %}
+                                </option>
                                 {% endfor %}
                             </select>
                         </label>
@@ -285,6 +291,12 @@
                                 <option value="{{ option }}" {% if editable_config.analysis.board_type == option %}selected{% endif %}>{{ option.replace('_', ' ')|title }}</option>
                                 {% endfor %}
                             </select>
+                        </label>
+
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Custom Profile Name</span>
+                            <span class="text-input-help">When `Custom` is selected, the thresholds and toggles on this page become the active profile definition for your project.</span>
+                            <input type="text" name="analysis_custom_profile_name" class="settings-text-input" value="{{ editable_config.analysis.custom_profile_name if editable_config and editable_config.analysis else 'Custom Project Profile' }}" placeholder="Example: Audio Control Board">
                         </label>
                     </div>
 

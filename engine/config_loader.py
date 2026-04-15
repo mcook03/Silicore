@@ -101,6 +101,8 @@ ANALYSIS_PROFILE_PRESETS = {
     },
 }
 
+SUPPORTED_ANALYSIS_PROFILES = tuple(sorted(list(ANALYSIS_PROFILE_PRESETS.keys()) + ["custom"]))
+
 
 EDITABLE_FIELD_MAP = {
     "analysis": {
@@ -111,6 +113,10 @@ EDITABLE_FIELD_MAP = {
         "board_type": {
             "type": "str",
             "form_keys": ["analysis_board_type", "board_type"],
+        },
+        "custom_profile_name": {
+            "type": "str",
+            "form_keys": ["analysis_custom_profile_name", "custom_profile_name"],
         },
         "toggle_layout_manufacturing": {
             "type": "bool",
@@ -488,8 +494,9 @@ def get_editable_config_view(config):
         "analysis": {
             "profile": config.get("analysis", {}).get("profile", "balanced"),
             "board_type": config.get("analysis", {}).get("board_type", "general"),
+            "custom_profile_name": config.get("analysis", {}).get("custom_profile_name", DEFAULT_CONFIG["analysis"]["custom_profile_name"]),
             "category_toggles": config.get("analysis", {}).get("category_toggles", {}),
-            "available_profiles": sorted(ANALYSIS_PROFILE_PRESETS.keys()),
+            "available_profiles": list(SUPPORTED_ANALYSIS_PROFILES),
             "available_board_types": ["general", "high_speed", "power", "mixed_signal", "analog", "rf", "industrial"],
         },
         "layout": {
@@ -694,8 +701,8 @@ def validate_config(config):
     profile = analysis.get("profile", "balanced")
     board_type = analysis.get("board_type", "general")
 
-    if profile not in ANALYSIS_PROFILE_PRESETS:
-        errors.append("analysis.profile must be a supported preset.")
+    if profile not in SUPPORTED_ANALYSIS_PROFILES:
+        errors.append("analysis.profile must be a supported preset or custom profile.")
 
     if not isinstance(board_type, str) or not board_type.strip():
         errors.append("analysis.board_type must be a non-empty string.")
@@ -769,8 +776,11 @@ def build_sanitized_config(config):
     merged["analysis"]["profile"] = str(
         merged["analysis"].get("profile", DEFAULT_CONFIG["analysis"]["profile"])
     ).strip() or DEFAULT_CONFIG["analysis"]["profile"]
-    if merged["analysis"]["profile"] not in ANALYSIS_PROFILE_PRESETS:
+    if merged["analysis"]["profile"] not in SUPPORTED_ANALYSIS_PROFILES:
         merged["analysis"]["profile"] = DEFAULT_CONFIG["analysis"]["profile"]
+    merged["analysis"]["custom_profile_name"] = str(
+        merged["analysis"].get("custom_profile_name", DEFAULT_CONFIG["analysis"]["custom_profile_name"])
+    ).strip() or DEFAULT_CONFIG["analysis"]["custom_profile_name"]
 
     merged["analysis"]["board_type"] = str(
         merged["analysis"].get("board_type", DEFAULT_CONFIG["analysis"]["board_type"])
@@ -1040,6 +1050,6 @@ def apply_analysis_profile(config, profile_name=None, board_type=None):
     for overlay in overlays:
         _deep_merge_in_place(merged, overlay)
 
-    analysis["profile"] = selected_profile if selected_profile in ANALYSIS_PROFILE_PRESETS else "balanced"
+    analysis["profile"] = selected_profile if selected_profile in SUPPORTED_ANALYSIS_PROFILES else "balanced"
     analysis["board_type"] = selected_board_type or "general"
     return build_sanitized_config(merged)

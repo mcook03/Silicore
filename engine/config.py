@@ -9,6 +9,7 @@ DEFAULT_CONFIG = {
     "analysis": {
         "profile": "balanced",
         "board_type": "general",
+        "custom_profile_name": "Custom Project Profile",
         "category_toggles": {
             "layout_manufacturing": True,
             "power": True,
