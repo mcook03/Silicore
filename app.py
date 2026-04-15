@@ -3747,9 +3747,9 @@ def index():
     projects = [_enrich_project_for_display(project) for project in list_projects()]
     return _render_page(
         active_page="home",
-        page_title="Silicore Dashboard",
-        page_eyebrow="Hardware Design Intelligence Platform",
-        page_copy="Analyze PCB designs, identify engineering risks, compare revisions, and manage project-level design review from a unified control surface.",
+        page_title="Silicore Nexus",
+        page_eyebrow="Powered by Atlas Intelligence",
+        page_copy="Silicore Engineering Intelligence for PCB analysis, design review, revision comparison, and system-level workspace management.",
         template_name="home.html",
         show_page_hero=False,
         body_context={
