@@ -36,6 +36,9 @@ class AdvancedRuleCoverageTests(unittest.TestCase):
         _add_component(pcb, "J2", "DEBUG_HEADER", 3, 6, "connector", ["SWDIO", "SWCLK", "GND"])
         _add_component(pcb, "H1", "HV_CONN", 42, 2, "connector", ["HV_BUS"])
         _add_component(pcb, "R1", "sense_res", 48, 2.2, "resistor", ["HV_BUS", "GND"])
+        _add_component(pcb, "Y1", "XTAL_25M", 15, 10, "oscillator", ["XTAL_IN", "XTAL_OUT"])
+        _add_component(pcb, "U4", "STM32_MCU", 2, 10, "mcu", ["XTAL_IN", "XTAL_OUT", "USB_DP", "USB_DN", "GND"])
+        _add_component(pcb, "U5", "ADC_FRONTEND", 34, 11, "adc", ["ADC_IN", "AGND"])
 
         pcb.add_trace_segment("USB_DP", TraceSegment("USB_DP", 0, 0, 10, 0, 0.30, "F.Cu"))
         pcb.add_trace_segment("USB_DP", TraceSegment("USB_DP", 10, 0, 20, 0, 0.10, "F.Cu"))
@@ -74,6 +77,7 @@ class AdvancedRuleCoverageTests(unittest.TestCase):
         self.assertIn("assembly_testability", rule_ids)
         self.assertIn("safety_high_voltage", rule_ids)
         self.assertIn("power_path_realism", rule_ids)
+        self.assertIn("clock_sensitive_placement", rule_ids)
 
 
 if __name__ == "__main__":

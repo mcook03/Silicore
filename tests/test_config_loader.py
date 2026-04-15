@@ -39,6 +39,8 @@ class ConfigLoaderTests(unittest.TestCase):
             "reliability_min_ground_vias": "3",
             "reliability_min_ground_connections": "6",
             "component_analysis_termination_length_threshold": "22",
+            "clock_sensitive_placement_max_clock_source_distance": "9.5",
+            "clock_sensitive_placement_sensitive_aggressor_keepout": "11",
             "emi_emc_max_switch_trace_length": "21",
             "emi_emc_sensitive_keepout": "7.5",
             "emi_emc_return_via_radius": "4.0",
@@ -76,6 +78,8 @@ class ConfigLoaderTests(unittest.TestCase):
         self.assertEqual(editable["rules"]["thermal_management_min_thermal_vias"], 2)
         self.assertEqual(editable["rules"]["reliability_min_ground_connections"], 6)
         self.assertEqual(config["rules"]["component_analysis"]["termination_length_threshold"], 22.0)
+        self.assertEqual(config["rules"]["clock_sensitive_placement"]["max_clock_source_distance"], 9.5)
+        self.assertEqual(editable["rules"]["clock_sensitive_placement_sensitive_aggressor_keepout"], 11.0)
         self.assertEqual(editable["rules"]["emi_emc_max_switch_trace_length"], 21.0)
         self.assertEqual(editable["rules"]["stackup_return_path_max_signal_layers"], 3)
         self.assertEqual(editable["rules"]["assembly_testability_min_fiducials"], 3)

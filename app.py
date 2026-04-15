@@ -2956,6 +2956,8 @@ def _build_settings_view_model(editable_config):
         "differential_pair_length_mismatch_threshold",
         "differential_pair_via_mismatch_threshold",
         "component_analysis_termination_length_threshold",
+        "clock_sensitive_placement_max_clock_source_distance",
+        "clock_sensitive_placement_sensitive_aggressor_keepout",
     ]
     layout_rules = [
         "manufacturing_min_drill",

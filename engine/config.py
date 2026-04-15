@@ -97,6 +97,14 @@ DEFAULT_CONFIG = {
         "component_analysis": {
             "termination_length_threshold": 18.0,
         },
+        "clock_sensitive_placement": {
+            "max_clock_source_distance": 12.0,
+            "sensitive_aggressor_keepout": 8.0,
+            "clock_source_keywords": ["XTAL", "OSC", "CRYSTAL", "CLOCK", "Y"],
+            "controller_keywords": ["MCU", "CPU", "SOC", "FPGA", "DSP", "STM", "ESP", "PIC", "AVR", "NRF", "IMX", "ATSAM"],
+            "sensitive_component_keywords": ["ADC", "DAC", "REF", "SENSOR", "OPAMP", "AMP", "LNA", "AFE", "ANALOG"],
+            "aggressor_component_keywords": ["REG", "BUCK", "BOOST", "PMIC", "INDUCTOR", "L", "MOSFET", "DRIVER", "SW", "CLOCK"],
+        },
         "emi_emc": {
             "max_switch_trace_length": 18.0,
             "sensitive_keepout": 6.0,

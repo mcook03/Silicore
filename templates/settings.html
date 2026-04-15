@@ -989,6 +989,30 @@
                             <input class="styled-range" type="range" min="1" max="50" step="1" name="component_analysis_termination_length_threshold" value="{{ editable_config.rules.component_analysis_termination_length_threshold if editable_config and editable_config.rules else 18 }}" oninput="document.getElementById('component-term-length-value').textContent=this.value">
                             <div class="range-scale"><span>1</span><span>25</span><span>50</span></div>
                         </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Clock Source Distance</div>
+                                    <div class="slider-help">Maximum preferred spacing between an oscillator or crystal and its nearest controller before placement risk appears.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="clock-source-distance-value">{{ editable_config.rules.clock_sensitive_placement_max_clock_source_distance if editable_config and editable_config.rules else 12 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="30" step="0.5" name="clock_sensitive_placement_max_clock_source_distance" value="{{ editable_config.rules.clock_sensitive_placement_max_clock_source_distance if editable_config and editable_config.rules else 12 }}" oninput="document.getElementById('clock-source-distance-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>15</span><span>30</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Sensitive Circuit Keepout</div>
+                                    <div class="slider-help">Minimum spacing between sensitive analog or timing components and likely noisy or switching circuitry.</div>
+                                </div>
+                                <div class="slider-value-pill"><span id="sensitive-aggressor-keepout-value">{{ editable_config.rules.clock_sensitive_placement_sensitive_aggressor_keepout if editable_config and editable_config.rules else 8 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="24" step="0.5" name="clock_sensitive_placement_sensitive_aggressor_keepout" value="{{ editable_config.rules.clock_sensitive_placement_sensitive_aggressor_keepout if editable_config and editable_config.rules else 8 }}" oninput="document.getElementById('sensitive-aggressor-keepout-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>12</span><span>24</span></div>
+                        </div>
                     </div>
                 </section>
 

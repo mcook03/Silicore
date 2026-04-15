@@ -28,6 +28,10 @@ ANALYSIS_PROFILE_PRESETS = {
                 "signal_via_ground_radius": 2.5,
                 "max_two_layer_critical_length": 20.0,
             },
+            "clock_sensitive_placement": {
+                "max_clock_source_distance": 8.0,
+                "sensitive_aggressor_keepout": 10.0,
+            },
         },
     },
     "power_delivery": {
@@ -67,6 +71,10 @@ ANALYSIS_PROFILE_PRESETS = {
             },
             "component_analysis": {
                 "termination_length_threshold": 16.0,
+            },
+            "clock_sensitive_placement": {
+                "max_clock_source_distance": 10.0,
+                "sensitive_aggressor_keepout": 12.0,
             },
         },
     },
@@ -361,6 +369,16 @@ EDITABLE_FIELD_MAP = {
             "form_keys": ["component_analysis_termination_length_threshold"],
             "config_path": ["component_analysis", "termination_length_threshold"],
         },
+        "clock_sensitive_placement_max_clock_source_distance": {
+            "type": "float",
+            "form_keys": ["clock_sensitive_placement_max_clock_source_distance"],
+            "config_path": ["clock_sensitive_placement", "max_clock_source_distance"],
+        },
+        "clock_sensitive_placement_sensitive_aggressor_keepout": {
+            "type": "float",
+            "form_keys": ["clock_sensitive_placement_sensitive_aggressor_keepout"],
+            "config_path": ["clock_sensitive_placement", "sensitive_aggressor_keepout"],
+        },
         "emi_emc_max_switch_trace_length": {
             "type": "float",
             "form_keys": ["emi_emc_max_switch_trace_length"],
@@ -549,6 +567,8 @@ def get_editable_config_view(config):
             "reliability_min_ground_vias": config.get("rules", {}).get("reliability", {}).get("min_ground_vias"),
             "reliability_min_ground_connections": config.get("rules", {}).get("reliability", {}).get("min_ground_connections"),
             "component_analysis_termination_length_threshold": config.get("rules", {}).get("component_analysis", {}).get("termination_length_threshold"),
+            "clock_sensitive_placement_max_clock_source_distance": config.get("rules", {}).get("clock_sensitive_placement", {}).get("max_clock_source_distance"),
+            "clock_sensitive_placement_sensitive_aggressor_keepout": config.get("rules", {}).get("clock_sensitive_placement", {}).get("sensitive_aggressor_keepout"),
             "emi_emc_max_switch_trace_length": config.get("rules", {}).get("emi_emc", {}).get("max_switch_trace_length"),
             "emi_emc_sensitive_keepout": config.get("rules", {}).get("emi_emc", {}).get("sensitive_keepout"),
             "emi_emc_return_via_radius": config.get("rules", {}).get("emi_emc", {}).get("return_via_radius"),
@@ -646,6 +666,7 @@ def _ensure_rule_sections(config):
     config["rules"].setdefault("thermal_management", {})
     config["rules"].setdefault("reliability", {})
     config["rules"].setdefault("component_analysis", {})
+    config["rules"].setdefault("clock_sensitive_placement", {})
     config["rules"].setdefault("emi_emc", {})
     config["rules"].setdefault("stackup_return_path", {})
     config["rules"].setdefault("assembly_testability", {})
@@ -907,6 +928,12 @@ def build_sanitized_config(config):
     )
     merged["rules"]["component_analysis"]["termination_length_threshold"] = float(
         merged["rules"]["component_analysis"].get("termination_length_threshold", DEFAULT_CONFIG["rules"]["component_analysis"]["termination_length_threshold"])
+    )
+    merged["rules"]["clock_sensitive_placement"]["max_clock_source_distance"] = float(
+        merged["rules"]["clock_sensitive_placement"].get("max_clock_source_distance", DEFAULT_CONFIG["rules"]["clock_sensitive_placement"]["max_clock_source_distance"])
+    )
+    merged["rules"]["clock_sensitive_placement"]["sensitive_aggressor_keepout"] = float(
+        merged["rules"]["clock_sensitive_placement"].get("sensitive_aggressor_keepout", DEFAULT_CONFIG["rules"]["clock_sensitive_placement"]["sensitive_aggressor_keepout"])
     )
     merged["rules"]["emi_emc"]["max_switch_trace_length"] = float(
         merged["rules"]["emi_emc"].get("max_switch_trace_length", DEFAULT_CONFIG["rules"]["emi_emc"]["max_switch_trace_length"])

@@ -17,6 +17,7 @@ RULE_CATEGORY_MAP = {
     "signal_integrity_advanced_rule": "signal",
     "differential_pair_rule": "signal",
     "component_analysis_rule": "signal",
+    "clock_sensitive_placement_rule": "signal",
     "thermal_rule": "thermal",
     "thermal_management_rule": "thermal",
     "ground_reference_rule": "emi_reliability",
