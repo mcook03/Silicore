@@ -880,17 +880,20 @@ def _build_dashboard_story(recent_runs, projects):
         {
             "title": "Analyze",
             "value": len(recent_runs),
-            "copy": "Saved runs are giving the platform a real analysis memory instead of one-off outputs.",
+            "value_label": f"{len(recent_runs)} saved run(s)",
+            "description": "Persistent run history gives each new board review real context instead of isolated one-off outputs.",
         },
         {
             "title": "Explain",
             "value": latest_score,
-            "copy": "The latest score is backed by trend, trust, and decision-support context.",
+            "value_label": f"{latest_score} / 100 score context",
+            "description": "The latest risk position is supported by trends, confidence signals, and explainable engineering reasoning.",
         },
         {
             "title": "Prioritize",
             "value": len(active_projects),
-            "copy": "Active workspaces are now surfacing chronic patterns and what to fix next.",
+            "value_label": f"{len(active_projects)} active workspace(s)",
+            "description": "Project workspaces highlight recurring weaknesses, trusted focus areas, and what teams should fix next.",
         },
     ]
 
