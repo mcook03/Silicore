@@ -19,7 +19,7 @@ def _loads(value, default=None):
         return default
 
 
-def create_job(job_type, payload=None, actor_user_id=None):
+def create_job(job_type, payload=None, actor_user_id=None, status="queued"):
     initialize_database()
     connection = get_connection()
     try:
@@ -31,7 +31,7 @@ def create_job(job_type, payload=None, actor_user_id=None):
                 job_id, job_type, status, payload_json, result_json, error_text, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (job_id, job_type, "queued", json.dumps(payload or {}), "{}", None, now, now),
+            (job_id, job_type, status, json.dumps(payload or {}), "{}", None, now, now),
         )
         connection.commit()
     finally:

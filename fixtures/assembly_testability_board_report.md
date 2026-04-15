@@ -226,7 +226,7 @@ This board shows high design risk. The main risk concentration is in manufacturi
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: SWDIO, UART_TX, VCC, GND
+- Nets: SWDIO, VCC, UART_TX, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — manufacturing
@@ -365,8 +365,8 @@ This board shows high design risk. The main risk concentration is in manufacturi
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: GND, UART_TX
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "UART_TX"], "has_power": false, "has_ground": true}
+- Nets: UART_TX, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["UART_TX", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: R1 has ground but no visible power rail
@@ -383,8 +383,8 @@ This board shows high design risk. The main risk concentration is in manufacturi
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: R1
-- Nets: GND, UART_TX
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "UART_TX"], "has_power": false, "has_ground": true}
+- Nets: UART_TX, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["UART_TX", "GND"], "has_power": false, "has_ground": true}
 
 ### HIGH — power_integrity
 - Message: Power net VCC uses a narrow trace width (0.16)

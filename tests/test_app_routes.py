@@ -109,6 +109,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Sign In", page)
         self.assertIn("Create Account", page)
+        self.assertIn("Request Reset", page)
+        self.assertIn("Reset Password", page)
 
     def test_atlas_query_route_returns_answer_payload(self):
         thread_key = "test-board-thread"
@@ -205,6 +207,10 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertEqual(audit_response.status_code, 200)
         audit_payload = audit_response.get_json()
         self.assertIn("events", audit_payload)
+
+        worker_status_response = self.client.get("/worker/status")
+        self.assertEqual(worker_status_response.status_code, 200)
+        self.assertIn("running", worker_status_response.get_json())
 
 
 if __name__ == "__main__":

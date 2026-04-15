@@ -19,6 +19,8 @@ from engine.evaluation_backend import evaluate_fixture_suite
 from engine.insight_engine import generate_comparison_insights
 from engine.job_store import get_job, list_jobs
 from engine.job_runner import process_queued_jobs
+from engine.org_store import create_organization, list_organizations
+from engine.worker_runtime import start_worker, stop_worker, worker_status
 
 from flask import (
     Flask,
@@ -45,7 +47,15 @@ from engine.project_store import (
     list_projects,
     update_project_review_status,
 )
-from engine.user_store import authenticate_user, create_user, get_user_by_email, get_user_by_id, list_users
+from engine.user_store import (
+    authenticate_user,
+    create_password_reset_token,
+    create_user,
+    get_user_by_email,
+    get_user_by_id,
+    list_users,
+    reset_password_with_token,
+)
 from engine.services.analysis_service import (
     FORMAT_READINESS,
     analyze_project_files,
@@ -4541,6 +4551,27 @@ def jobs_process_route():
     return jsonify({"processed": process_queued_jobs(limit=_safe_int(request.args.get("limit"), 10))})
 
 
+@app.route("/worker/start", methods=["POST"])
+def worker_start_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
+    return jsonify(start_worker(interval_seconds=_safe_float(request.args.get("interval"), 2.0)))
+
+
+@app.route("/worker/stop", methods=["POST"])
+def worker_stop_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
+    return jsonify(stop_worker())
+
+
+@app.route("/worker/status", methods=["GET"])
+def worker_status_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
+    return jsonify(worker_status())
+
+
 @app.route("/admin/audit", methods=["GET"])
 def audit_route():
     if not _require_role("admin"):
@@ -4617,10 +4648,13 @@ def login_page():
         action = (request.form.get("action") or "login").strip()
         if action == "register":
             try:
+                organization_name = (request.form.get("organization_name") or "").strip()
+                organization = create_organization(organization_name) if organization_name else None
                 user = create_user(
                     request.form.get("name"),
                     request.form.get("email"),
                     request.form.get("password"),
+                    organization_key=(organization or {}).get("organization_key", "personal"),
                 )
                 session["user_id"] = user["user_id"]
                 flash("Account created successfully.")
@@ -4628,6 +4662,22 @@ def login_page():
             except Exception as exc:
                 flash(str(exc))
                 return redirect(url_for("login_page"))
+
+        if action == "request_reset":
+            token_info = create_password_reset_token(request.form.get("email"))
+            if not token_info:
+                flash("No account with that email was found.")
+            else:
+                flash(f"Password reset token generated. Use token: {token_info['token']}")
+            return redirect(url_for("login_page"))
+
+        if action == "reset_password":
+            success = reset_password_with_token(
+                request.form.get("reset_token"),
+                request.form.get("new_password"),
+            )
+            flash("Password updated successfully." if success else "Password reset failed.")
+            return redirect(url_for("login_page"))
 
         user = authenticate_user(request.form.get("email"), request.form.get("password"))
         if not user:
@@ -4644,7 +4694,7 @@ def login_page():
         page_copy="Sign in to access Silicore Nexus workspaces, review workflow features, and saved team context.",
         template_name="login.html",
         show_page_hero=False,
-        body_context={},
+        body_context={"organizations": list_organizations()},
     )
 
 

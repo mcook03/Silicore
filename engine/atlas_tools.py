@@ -1,4 +1,3 @@
-from engine.evaluation_backend import run_evaluation_job
 from engine.job_store import create_job, get_job, update_job
 
 
@@ -69,8 +68,16 @@ def queue_evaluation(fixtures_dir="fixtures", config="custom_config.json", actor
         payload={"fixtures_dir": fixtures_dir, "config": config},
         actor_user_id=actor_user_id,
     )
-    result = run_evaluation_job(job["job_id"], fixtures_dir=fixtures_dir, config=config)
-    return {"job": get_job(job["job_id"]), "result": result}
+    return {"job": get_job(job["job_id"]), "result": {"status": "queued"}}
+
+
+def queue_signoff_packet(context, actor_user_id=None):
+    job = create_job(
+        "signoff_packet",
+        payload={"context": context or {}},
+        actor_user_id=actor_user_id,
+    )
+    return {"job": get_job(job["job_id"]), "result": {"status": "queued"}}
 
 
 def run_tool_action(action_name, context=None, actor_user_id=None, params=None):
@@ -78,8 +85,10 @@ def run_tool_action(action_name, context=None, actor_user_id=None, params=None):
     params = params or {}
 
     if action_name == "generate_signoff_packet":
+        if params.get("async"):
+            return queue_signoff_packet(context, actor_user_id=actor_user_id)
         packet = create_signoff_packet(context)
-        job = create_job("signoff_packet", payload={"context_type": context.get("board_name") or context.get("project_name")}, actor_user_id=actor_user_id)
+        job = create_job("signoff_packet", payload={"context_type": context.get("board_name") or context.get("project_name")}, actor_user_id=actor_user_id, status="completed")
         update_job(job["job_id"], status="completed", result=packet)
         return {"job": get_job(job["job_id"]), "result": packet}
 

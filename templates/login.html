@@ -47,8 +47,58 @@
                     Password
                     <input type="password" name="password" required>
                 </label>
+                <label>
+                    Organization Name
+                    <input type="text" name="organization_name" placeholder="Optional team or company name">
+                </label>
                 <div class="btn-link-row">
                     <button class="btn btn-primary" type="submit">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2" style="margin-top: 18px;">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Request Reset</h2>
+            <p class="section-copy">Generate a local password reset token for this environment.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="request_reset">
+                <label>
+                    Email
+                    <input type="email" name="email" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-secondary" type="submit">Generate Reset Token</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Reset Password</h2>
+            <p class="section-copy">Use a generated token to set a new password.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="reset_password">
+                <label>
+                    Reset Token
+                    <input type="text" name="reset_token" required>
+                </label>
+                <label>
+                    New Password
+                    <input type="password" name="new_password" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-secondary" type="submit">Update Password</button>
                 </div>
             </form>
         </div>

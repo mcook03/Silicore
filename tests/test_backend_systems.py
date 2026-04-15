@@ -7,10 +7,13 @@ from engine.atlas_tools import compare_latest_runs, open_high_confidence_finding
 from engine.db import get_connection, list_audit_events, list_review_decisions
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
+from engine.job_store import create_job, get_job
+from engine.job_runner import process_queued_jobs
+from engine.org_store import create_organization
 from engine.subsystem_classifier import classify_pcb_subsystems
 from engine.parser import parse_structured_board_file
 from engine.project_store import create_project, update_project_review_status
-from engine.user_store import create_user
+from engine.user_store import create_password_reset_token, create_user, reset_password_with_token
 
 
 class BackendSystemsTests(unittest.TestCase):
@@ -71,6 +74,21 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertGreaterEqual(len(reviews), 1)
         audit_events = list_audit_events(limit=20)
         self.assertTrue(any(event["event_type"] == "project.review_status_updated" for event in audit_events))
+
+    def test_org_and_password_reset_flow(self):
+        org = create_organization("Backend Test Org")
+        user = create_user("Reset User", f"reset-{uuid4().hex[:8]}@example.com", "password123", organization_key=org["organization_key"])
+        self.assertEqual(user["organization_key"], org["organization_key"])
+        token_info = create_password_reset_token(user["email"])
+        self.assertIsNotNone(token_info)
+        self.assertTrue(reset_password_with_token(token_info["token"], "new-password"))
+
+    def test_job_runner_processes_queued_signoff_packet(self):
+        job = create_job("signoff_packet", payload={"context": {"board_name": "Queued Board", "release_note": "Ready after rerun."}})
+        processed = process_queued_jobs(limit=5)
+        self.assertTrue(any(item["job_id"] == job["job_id"] for item in processed))
+        refreshed = get_job(job["job_id"])
+        self.assertEqual(refreshed["status"], "completed")
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ def build_workflow_plan(page_type, prompt, context=None):
             {
                 "action_name": "generate_signoff_packet",
                 "reason": "User asked for a signoff-style output from the current engineering context.",
-                "params": {},
+                "params": {"async": True},
             }
         )
 
@@ -54,6 +54,22 @@ def build_workflow_plan(page_type, prompt, context=None):
                 "reason": "User asked for a backend evaluation or calibration pass over the fixture set.",
                 "params": {},
             }
+        )
+
+    if page_type == "project" and _contains_any(lowered, ["release plan", "signoff plan", "approval plan"]):
+        steps.extend(
+            [
+                {
+                    "action_name": "compare_latest_runs",
+                    "reason": "Atlas should first compare the newest linked workspace runs to understand release direction.",
+                    "params": {},
+                },
+                {
+                    "action_name": "generate_signoff_packet",
+                    "reason": "After comparing the latest runs, Atlas should prepare a signoff-ready packet draft.",
+                    "params": {"async": True},
+                },
+            ]
         )
 
     return steps

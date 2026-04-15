@@ -61,6 +61,13 @@ def initialize_database():
                 updated_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS organizations (
+                organization_key TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
             CREATE TABLE IF NOT EXISTS users (
                 user_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -199,6 +206,18 @@ def initialize_database():
                 updated_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                token_id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                email TEXT NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                status TEXT NOT NULL DEFAULT 'active',
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                used_at TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            );
+
             CREATE INDEX IF NOT EXISTS idx_runs_created_at ON runs(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_projects_updated_at ON projects(updated_at DESC);
             CREATE INDEX IF NOT EXISTS idx_atlas_messages_thread_time ON atlas_messages(thread_id, created_at);
@@ -254,6 +273,13 @@ def _safe_json_file(path, default=None):
 def _migrate_legacy_users(connection):
     users_path = os.path.join("dashboard_users", "users.json")
     payload = _safe_json_file(users_path, {"users": []})
+    connection.execute(
+        """
+        INSERT OR IGNORE INTO organizations (organization_key, name, created_at, updated_at)
+        VALUES (?, ?, ?, ?)
+        """,
+        ("personal", "Personal Workspace", _now_iso(), _now_iso()),
+    )
     for user in payload.get("users", []) or []:
         email = str(user.get("email") or "").strip().lower()
         if not email:
