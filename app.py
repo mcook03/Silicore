@@ -177,7 +177,7 @@ def _prepare_top_issues(risks, limit=3):
 
 
 def _build_health_summary(score, risks):
-    score_value = _safe_float(score, 0.0)
+    score_value = _score_to_10(score)
     risk_count = len(risks or [])
     critical_count = sum(
         1 for risk in (risks or [])
@@ -217,9 +217,9 @@ def _build_health_summary(score, risks):
 def _build_project_health_summary(project_result):
     project_summary = project_result.get("project_summary", {}) or {}
     boards = project_result.get("boards", []) or []
-    average_score = _safe_float(project_summary.get("average_score", 0), 0.0)
-    best_score = _safe_float(project_summary.get("best_score", 0), 0.0)
-    worst_score = _safe_float(project_summary.get("worst_score", 0), 0.0)
+    average_score = _score_to_10(project_summary.get("average_score", 0))
+    best_score = _score_to_10(project_summary.get("best_score", 0))
+    worst_score = _score_to_10(project_summary.get("worst_score", 0))
 
     if not boards:
         return {
@@ -280,9 +280,9 @@ def _build_score_breakdown(result):
         )
 
     return {
-        "start_score": round(_safe_float(score_explanation.get("start_score", 10.0), 10.0), 2),
-        "final_score": round(_safe_float(score_explanation.get("final_score", result.get("score", 0)), 0.0), 2),
-        "total_penalty": round(_safe_float(score_explanation.get("total_penalty", result.get("total_penalty", 0)), 0.0), 2),
+        "start_score": round(_safe_float(score_explanation.get("start_score", 100.0), 100.0), 1),
+        "final_score": round(_safe_float(score_explanation.get("final_score", result.get("score", 0)), 0.0), 1),
+        "total_penalty": round(_safe_float(score_explanation.get("total_penalty", result.get("total_penalty", 0)), 0.0), 1),
         "severity_rows": severity_rows,
         "category_rows": category_rows,
     }
@@ -414,7 +414,7 @@ def _chip_class(severity):
 
 
 def _score_band_class(score):
-    value = _safe_float(score, 0.0)
+    value = _score_to_10(score)
     if value >= 8.5:
         return "score-band-excellent"
     if value >= 7.0:
@@ -425,7 +425,7 @@ def _score_band_class(score):
 
 
 def _score_band_label(score):
-    value = _safe_float(score, 0.0)
+    value = _score_to_10(score)
     if value >= 8.5:
         return "Strong engineering position"
     if value >= 7.0:
@@ -1355,8 +1355,18 @@ def _build_delta_analysis(run_a, run_b):
     }
 
 
+def _score_to_10(score):
+    value = _safe_float(score, 0.0)
+    if value > 10:
+        return round(value / 10, 2)
+    return round(value, 2)
+
+
 def _score_to_100(score):
-    return round(_safe_float(score, 0.0) * 10, 1)
+    value = _safe_float(score, 0.0)
+    if value > 10:
+        return round(value, 1)
+    return round(value * 10, 1)
 
 
 def _build_line_chart(values, labels=None, width=1000, height=180, pad_x=36, pad_y=24):

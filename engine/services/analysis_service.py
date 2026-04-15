@@ -276,15 +276,20 @@ def _compute_score_and_explanation(risks, config):
             }
         )
 
-    score = start_score - total_penalty
-    score = max(min_score, min(max_score, score))
-    score = round(score, 2)
+    score_raw_10 = start_score - total_penalty
+    score_raw_10 = max(min_score, min(max_score, score_raw_10))
+    score_raw_10 = round(score_raw_10, 2)
+    score_100 = round(score_raw_10 * 10, 1)
 
-    return score, {
-        "start_score": start_score,
-        "total_penalty": round(total_penalty, 2),
+    return score_100, {
+        "start_score": round(start_score * 10, 1),
+        "start_score_raw_10": round(start_score, 2),
+        "total_penalty": round(total_penalty * 10, 1),
+        "total_penalty_raw_10": round(total_penalty, 2),
         "severity_totals": severity_totals,
         "category_totals": category_totals,
+        "final_score": score_100,
+        "final_score_raw_10": score_raw_10,
         "details": details,
     }
 
@@ -393,6 +398,8 @@ def _summarize_primary_category(risks):
 
 
 def _score_band(score):
+    if score > 10:
+        score = score / 10.0
     if score >= 9.0:
         return "very low design risk"
     if score >= 7.0:
@@ -486,8 +493,8 @@ def _generate_project_insight_summary(boards):
     spread = round(best_board.get("score", 0) - worst_board.get("score", 0), 2)
 
     summary = (
-        f"The strongest board is {best_board.get('filename', 'unknown')} at {best_board.get('score', 0)} / 10, "
-        f"while the weakest board is {worst_board.get('filename', 'unknown')} at {worst_board.get('score', 0)} / 10. "
+        f"The strongest board is {best_board.get('filename', 'unknown')} at {best_board.get('score', 0)} / 100, "
+        f"while the weakest board is {worst_board.get('filename', 'unknown')} at {worst_board.get('score', 0)} / 100. "
         f"The current score spread across the project is {spread} points."
     )
 
@@ -674,7 +681,7 @@ def _write_single_markdown(path, result):
         "# SILICORE ENGINEERING REPORT",
         "",
         f"- File: {result['filename']}",
-        f"- Score: {result['score']} / 10",
+        f"- Score: {result['score']} / 100",
         f"- Total Risks: {len(result['risks'])}",
         f"- Total Penalty: {result['score_explanation'].get('total_penalty', 0)}",
         "",
@@ -907,7 +914,7 @@ def _write_single_html(path, result):
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> {escape(result['filename'])}</p>
-                <p><strong>Score:</strong> {result['score']} / 10</p>
+                <p><strong>Score:</strong> {result['score']} / 100</p>
                 <p><strong>Total Risks:</strong> {len(result['risks'])}</p>
                 <p><strong>Total Penalty:</strong> {result['score_explanation'].get('total_penalty', 0)}</p>
             </div>
@@ -969,9 +976,9 @@ def _write_project_markdown(path, project_data):
         "# SILICORE PROJECT SUMMARY",
         "",
         f"- Total Boards: {project_summary.get('total_boards', 0)}",
-        f"- Average Score: {project_summary.get('average_score', 0.0)} / 10",
-        f"- Best Score: {project_summary.get('best_score', 0.0)} / 10",
-        f"- Worst Score: {project_summary.get('worst_score', 0.0)} / 10",
+        f"- Average Score: {project_summary.get('average_score', 0.0)} / 100",
+        f"- Best Score: {project_summary.get('best_score', 0.0)} / 100",
+        f"- Worst Score: {project_summary.get('worst_score', 0.0)} / 100",
         "",
     ]
 
@@ -998,7 +1005,7 @@ def _write_project_markdown(path, project_data):
     if boards:
         for board in boards:
             lines.append(f"### #{board.get('rank', '?')} — {board.get('filename', 'Unknown')}")
-            lines.append(f"- Score: {board.get('score', 0)} / 10")
+            lines.append(f"- Score: {board.get('score', 0)} / 100")
             lines.append(f"- Total Risks: {len(board.get('risks', []))}")
             lines.append(f"- Total Penalty: {board.get('score_explanation', {}).get('total_penalty', 0)}")
             if board.get("executive_summary", {}).get("summary"):
@@ -1029,7 +1036,7 @@ def _write_project_html(path, project_data):
             boards_html += f"""
             <div class="board-card">
                 <h3>#{board.get('rank', '?')} — {escape(str(board.get('filename', 'Unknown')))}</h3>
-                <p><strong>Score:</strong> {board.get('score', 0)} / 10</p>
+                <p><strong>Score:</strong> {board.get('score', 0)} / 100</p>
                 <p><strong>Total Risks:</strong> {len(board.get('risks', []))}</p>
                 <p><strong>Total Penalty:</strong> {board.get('score_explanation', {}).get('total_penalty', 0)}</p>
                 <p>{escape(str(board.get('executive_summary', {}).get('summary', 'No summary available.')))}</p>
@@ -1087,9 +1094,9 @@ def _write_project_html(path, project_data):
             <div class="hero">
                 <h1>Silicore Project Summary</h1>
                 <p><strong>Total Boards:</strong> {project_summary.get('total_boards', 0)}</p>
-                <p><strong>Average Score:</strong> {project_summary.get('average_score', 0.0)} / 10</p>
-                <p><strong>Best Score:</strong> {project_summary.get('best_score', 0.0)} / 10</p>
-                <p><strong>Worst Score:</strong> {project_summary.get('worst_score', 0.0)} / 10</p>
+                <p><strong>Average Score:</strong> {project_summary.get('average_score', 0.0)} / 100</p>
+                <p><strong>Best Score:</strong> {project_summary.get('best_score', 0.0)} / 100</p>
+                <p><strong>Worst Score:</strong> {project_summary.get('worst_score', 0.0)} / 100</p>
             </div>
 
             {insight_html}

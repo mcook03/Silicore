@@ -112,7 +112,7 @@
         <div class="card-body">
             <div class="score-shell">
                 <div class="score-number-block">
-                    <div class="score-number">{{ (result.score * 10)|round|int if result.score is not none else 0 }}</div>
+                    <div class="score-number">{{ result.score|round|int if result.score is not none else 0 }}</div>
                     <div class="score-number-sub">Board score</div>
                 </div>
 
@@ -120,7 +120,7 @@
                     <div class="score-bar-track">
                         <div
                             class="score-bar-fill"
-                            style="width: {{ (result.score * 10)|round|int if result.score is not none else 0 }}%;"
+                            style="width: {{ result.score|round|int if result.score is not none else 0 }}%;"
                         ></div>
                     </div>
 
@@ -287,7 +287,7 @@
                 <div class="metric-card">
                     <div class="metric-label">Final Score</div>
                     <div class="metric-value">{{ score_data.final_score }}</div>
-                    <div class="metric-sub">Final 0–10 value</div>
+                    <div class="metric-sub">Final 0–100 value</div>
                 </div>
             </div>
 

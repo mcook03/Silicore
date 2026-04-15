@@ -117,7 +117,7 @@
         <div class="card-body">
             <div class="score-shell">
                 <div class="score-number-block">
-                    <div class="score-number">{{ (project_result.project_summary.average_score * 10)|round|int if project_result.project_summary else 0 }}</div>
+                    <div class="score-number">{{ project_result.project_summary.average_score|round|int if project_result.project_summary else 0 }}</div>
                     <div class="score-number-sub">Average score</div>
                 </div>
 
@@ -125,7 +125,7 @@
                     <div class="score-bar-track">
                         <div
                             class="score-bar-fill"
-                            style="width: {{ (project_result.project_summary.average_score * 10)|round|int if project_result.project_summary else 0 }}%;"
+                            style="width: {{ project_result.project_summary.average_score|round|int if project_result.project_summary else 0 }}%;"
                         ></div>
                     </div>
 
@@ -168,12 +168,12 @@
                 </div>
 
                 <div class="big-stat-card">
-                    <div class="big-stat-value">{{ (project_result.project_summary.best_score * 10)|round|int }}</div>
+                    <div class="big-stat-value">{{ project_result.project_summary.best_score|round|int }}</div>
                     <div class="big-stat-label">Best Score</div>
                 </div>
 
                 <div class="big-stat-card">
-                    <div class="big-stat-value">{{ (project_result.project_summary.worst_score * 10)|round|int }}</div>
+                    <div class="big-stat-value">{{ project_result.project_summary.worst_score|round|int }}</div>
                     <div class="big-stat-label">Worst Score</div>
                 </div>
             </div>
@@ -232,7 +232,7 @@
                     <div class="spotlight-kicker">Best Board</div>
                     {% if comparison.best_board %}
                         <div class="spotlight-name">{{ comparison.best_board.filename }}</div>
-                        <div class="spotlight-score">{{ (comparison.best_board.score * 10)|round|int }}</div>
+                        <div class="spotlight-score">{{ comparison.best_board.score|round|int }}</div>
                         <div class="spotlight-summary">{{ comparison.best_board.health_summary.title }}</div>
                     {% else %}
                         <div class="spotlight-name">No ranked board</div>
@@ -244,7 +244,7 @@
                     <div class="spotlight-kicker">Worst Board</div>
                     {% if comparison.worst_board %}
                         <div class="spotlight-name">{{ comparison.worst_board.filename }}</div>
-                        <div class="spotlight-score">{{ (comparison.worst_board.score * 10)|round|int }}</div>
+                        <div class="spotlight-score">{{ comparison.worst_board.score|round|int }}</div>
                         <div class="spotlight-summary">{{ comparison.worst_board.health_summary.title }}</div>
                     {% else %}
                         <div class="spotlight-name">No ranked board</div>
@@ -615,7 +615,7 @@
                     </div>
 
                     <div class="project-board-score-shell">
-                        <div class="project-board-score">{{ (board.score * 10)|round|int if board.score is not none else 0 }}</div>
+                        <div class="project-board-score">{{ board.score|round|int if board.score is not none else 0 }}</div>
                         <div class="project-board-score-label">Score</div>
                     </div>
                 </div>
