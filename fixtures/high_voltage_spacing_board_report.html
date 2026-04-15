@@ -54,9 +54,9 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> high_voltage_spacing_board.kicad_pcb</p>
-                <p><strong>Score:</strong> 15.7 / 100</p>
-                <p><strong>Total Risks:</strong> 19</p>
-                <p><strong>Total Penalty:</strong> 104.0</p>
+                <p><strong>Score:</strong> 14.4 / 100</p>
+                <p><strong>Total Risks:</strong> 20</p>
+                <p><strong>Total Penalty:</strong> 106.0</p>
             </div>
 
             <div class="card">
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 3</p>
                 <p><strong>Net Count:</strong> 4</p>
-                <p><strong>Risk Count:</strong> 19</p>
+                <p><strong>Risk Count:</strong> 20</p>
                 <p><strong>Sample Components:</strong> J1, U1, U2</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 4.4</li><li>high: 3.6</li><li>critical: 2.4</li></ul>
+                <ul><li>medium: 4.4</li><li>high: 3.6</li><li>critical: 2.4</li><li>low: 0.2</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 1.2</li><li>power_integrity: 4.0</li><li>emi_return_path: 1.0</li><li>reliability: 0.4</li><li>safety_high_voltage: 2.4</li><li>thermal: 0.8</li><li>signal_integrity: 0.6</li></ul>
+                <ul><li>assembly_testability: 1.2</li><li>power_integrity: 4.0</li><li>emi_return_path: 1.0</li><li>reliability: 0.4</li><li>safety_high_voltage: 2.4</li><li>thermal: 0.8</li><li>signal_integrity: 0.6</li><li>system_interaction: 0.2</li></ul>
             </div>
 
             <div class="card">
@@ -268,7 +268,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> HV-, HV+, CTRL</p>
+                <p><strong>Nets:</strong> CTRL, HV+, HV-</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -293,7 +293,7 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> HV-, HV+, CTRL</p>
+                <p><strong>Nets:</strong> CTRL, HV+, HV-</p>
                 <p><strong>Metrics:</strong> {&quot;bulk_caps_found&quot;: 0, &quot;bulk_distance_threshold&quot;: 12.0}</p>
             </div>
             
@@ -318,7 +318,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> GND, CTRL</p>
+                <p><strong>Nets:</strong> CTRL, GND</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -368,8 +368,8 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> J1</p>
-                <p><strong>Nets:</strong> HV-, HV+</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;HV-&quot;, &quot;HV+&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: false}</p>
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;HV+&quot;, &quot;HV-&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: false}</p>
             </div>
             
             <div class="risk-card">
@@ -393,8 +393,8 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> HV-, HV+, CTRL</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;HV-&quot;, &quot;HV+&quot;, &quot;CTRL&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: false}</p>
+                <p><strong>Nets:</strong> CTRL, HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CTRL&quot;, &quot;HV+&quot;, &quot;HV-&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: false}</p>
             </div>
             
             <div class="risk-card">
@@ -418,8 +418,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> GND, CTRL</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CTRL&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> CTRL, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CTRL&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -595,6 +595,31 @@
                 
                 <p><strong>Nets:</strong> CTRL</p>
                 <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 66.2, &quot;target_impedance_ohms&quot;: 50.0, &quot;mismatch_pct&quot;: 32.4, &quot;delay_ps&quot;: 123.6, &quot;via_inductance_nh&quot;: 0.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> low</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Digital control logic is present without a clearly classified debug or test subsystem.</p>
+                <p><strong>Recommendation:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 66.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 66.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Fix Priority:</strong> low</p>
+                
+                
+                
+                
             </div>
             
             </div>

@@ -1,7 +1,7 @@
 {
     "filename": "mixed_signal_noise_board.kicad_pcb",
     "file_path": "fixtures/mixed_signal_noise_board.kicad_pcb",
-    "score": 8.3,
+    "score": 8.0,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -228,9 +228,9 @@
                 "U1"
             ],
             "nets": [
-                "GND",
                 "VIN",
-                "SW"
+                "SW",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -268,9 +268,9 @@
                 "U1"
             ],
             "nets": [
-                "GND",
                 "VIN",
-                "SW"
+                "SW",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -307,9 +307,9 @@
                 "U2"
             ],
             "nets": [
-                "GND",
+                "ADC_IN",
                 "SENSOR_OUT",
-                "ADC_IN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -511,9 +511,9 @@
                 "U2"
             ],
             "nets": [
-                "GND",
+                "ADC_IN",
                 "SENSOR_OUT",
-                "ADC_IN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -531,9 +531,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
+                    "ADC_IN",
                     "SENSOR_OUT",
-                    "ADC_IN"
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1139,15 +1139,45 @@
                 "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
                 "priority": "high"
             }
+        },
+        {
+            "rule_id": "subsystem_power_analog_interaction",
+            "category": "system_interaction",
+            "severity": "medium",
+            "message": "Power and analog subsystems coexist and may need tighter isolation review.",
+            "recommendation": "Inspect regulator, switching, and analog-reference placement to verify noise containment.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {},
+            "confidence": 0.74,
+            "short_title": "Power and analog interaction pressure",
+            "fix_priority": "high",
+            "estimated_impact": "moderate",
+            "design_domain": "power_integrity",
+            "why_it_matters": "Supply noise or poor partitioning can corrupt sensitive analog behavior.",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74
+            },
+            "fix_suggestion": {
+                "fix": "Inspect regulator, switching, and analog-reference placement to verify noise containment.",
+                "priority": "medium"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 136.0,
-        "total_penalty_raw_10": 13.6,
+        "total_penalty": 140.0,
+        "total_penalty_raw_10": 14.0,
         "severity_totals": {
-            "medium": 7.6,
+            "medium": 8.0,
             "high": 6.0
         },
         "category_totals": {
@@ -1156,14 +1186,15 @@
             "power_integrity": 8.8,
             "manufacturing": 1.6,
             "reliability": 0.4,
-            "thermal": 1.6
+            "thermal": 1.6,
+            "system_interaction": 0.4
         },
-        "final_score": 8.3,
-        "final_score_raw_10": 0.83,
+        "final_score": 8.0,
+        "final_score_raw_10": 0.8,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 3.6,
-        "overflow_penalty": 36.0,
+        "overflow_penalty_raw_10": 4.0,
+        "overflow_penalty": 40.0,
         "details": [
             {
                 "severity": "medium",
@@ -1483,6 +1514,17 @@
                 "confidence": 0.8,
                 "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
                 "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "system_interaction",
+                "penalty": 0.4,
+                "message": "Power and analog subsystems coexist and may need tighter isolation review.",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74,
+                "suggested_fix": "Inspect regulator, switching, and analog-reference placement to verify noise containment.",
+                "fix_priority": "medium"
             }
         ]
     },
@@ -1496,9 +1538,9 @@
             "U2",
             "U3"
         ],
-        "risk_count": 29,
+        "risk_count": 30,
         "severity_counts": {
-            "medium": 19,
+            "medium": 20,
             "high": 10
         },
         "category_counts": {
@@ -1507,7 +1549,8 @@
             "power_integrity": 17,
             "manufacturing": 4,
             "reliability": 1,
-            "thermal": 4
+            "thermal": 4,
+            "system_interaction": 1
         }
     },
     "pcb_snapshot": {
@@ -2361,7 +2404,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:35:13.425990+00:00",
+        "timestamp": "2026-04-15T18:52:31.468272+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2786,7 +2829,7 @@
         "board_type": "general"
     },
     "parser_confidence": {
-        "score": 91.1,
+        "score": 91.5,
         "status": "supported",
         "component_count": 4,
         "net_count": 5,
@@ -2794,7 +2837,8 @@
         "via_count": 0,
         "outline_count": 0,
         "zone_count": 0,
-        "summary": "Parser confidence is 91.1 / 100 for this KiCad PCB input."
+        "layer_count": 1,
+        "summary": "Parser confidence is 91.5 / 100 for this KiCad PCB input."
     },
     "physics_summary": {
         "enabled": true,
@@ -2885,6 +2929,23 @@
                 "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
                 "observed_label": "Observed current density 238.1 A/mm\u00b2"
             }
+        ]
+    },
+    "stackup_summary": {
+        "layer_count": 1,
+        "copper_layers": [
+            "F.Cu"
+        ],
+        "signal_layers": [
+            "F.Cu"
+        ],
+        "reference_layers": [],
+        "style": "two_layer",
+        "reference_coverage_pct": 0.0,
+        "dominant_signal_layer": "F.Cu",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets.",
+            "No dedicated reference layer was inferred from the current board data."
         ]
     },
     "raw_rule_result": {
@@ -3060,9 +3121,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
                     "VIN",
-                    "SW"
+                    "SW",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3091,9 +3152,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
                     "VIN",
-                    "SW"
+                    "SW",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3121,9 +3182,9 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
+                    "ADC_IN",
                     "SENSOR_OUT",
-                    "ADC_IN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3280,9 +3341,9 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
+                    "ADC_IN",
                     "SENSOR_OUT",
-                    "ADC_IN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3300,9 +3361,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
+                        "ADC_IN",
                         "SENSOR_OUT",
-                        "ADC_IN"
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3713,7 +3774,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-15T18:35:13.426002+00:00",
+    "generated_at": "2026-04-15T18:52:31.468279+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -3728,19 +3789,8 @@
                 "nets": [
                     "ADC_IN",
                     "SENSOR_OUT"
-                ]
-            },
-            {
-                "name": "general",
-                "label": "General",
-                "component_count": 1,
-                "net_count": 1,
-                "components": [
-                    "L1"
                 ],
-                "nets": [
-                    "GND"
-                ]
+                "weight": 7.5
             },
             {
                 "name": "power",
@@ -3753,10 +3803,39 @@
                 "nets": [
                     "VIN",
                     "SW"
-                ]
+                ],
+                "weight": 5.1
+            },
+            {
+                "name": "general",
+                "label": "General",
+                "component_count": 1,
+                "net_count": 1,
+                "components": [
+                    "L1"
+                ],
+                "nets": [
+                    "GND"
+                ],
+                "weight": 4.0
             }
         ],
-        "dominant_subsystem": "Analog"
+        "dominant_subsystem": "Analog",
+        "interaction_risks": [
+            {
+                "rule_id": "subsystem_power_analog_interaction",
+                "category": "system_interaction",
+                "severity": "medium",
+                "message": "Power and analog subsystems coexist and may need tighter isolation review.",
+                "recommendation": "Inspect regulator, switching, and analog-reference placement to verify noise containment.",
+                "design_domain": "power_integrity",
+                "confidence": 0.74,
+                "fix_priority": "high",
+                "short_title": "Power and analog interaction pressure",
+                "why_it_matters": "Supply noise or poor partitioning can corrupt sensitive analog behavior."
+            }
+        ],
+        "summary": "Dominant subsystem pressure is Analog."
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",

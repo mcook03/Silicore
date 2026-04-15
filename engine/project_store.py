@@ -162,6 +162,7 @@ def create_project(name, description="", owner=None):
         owner_user_id = owner.get("user_id") if isinstance(owner, dict) else None
         owner_name = owner.get("name") if isinstance(owner, dict) else None
         owner_email = owner.get("email") if isinstance(owner, dict) else None
+        organization_key = owner.get("organization_key") if isinstance(owner, dict) else "personal"
         connection.execute(
             """
             INSERT INTO projects (
@@ -177,7 +178,7 @@ def create_project(name, description="", owner=None):
                 owner_user_id,
                 owner_name,
                 owner_email,
-                "personal",
+                organization_key or "personal",
                 now,
                 now,
             ),

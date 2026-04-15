@@ -113,6 +113,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Create Account", page)
         self.assertIn("Request Reset", page)
         self.assertIn("Reset Password", page)
+        self.assertIn("Verify Email", page)
+        self.assertIn("Verify MFA", page)
 
     def test_atlas_query_route_returns_answer_payload(self):
         thread_key = "test-board-thread"

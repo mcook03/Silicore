@@ -1,9 +1,9 @@
 # SILICORE ENGINEERING REPORT
 
 - File: legacy_power_board.brd
-- Score: 15.7 / 100
-- Total Risks: 22
-- Total Penalty: 104.0
+- Score: 12.5 / 100
+- Total Risks: 24
+- Total Penalty: 110.0
 
 ## Executive Summary
 
@@ -35,13 +35,14 @@ This board shows high design risk. The main risk concentration is in power integ
 
 - Component Count: 8
 - Net Count: 5
-- Risk Count: 22
+- Risk Count: 24
 - Sample Components: U1, U2, C1, C2, L1, D1, J1, R1
 
 ## Severity Penalties
 
-- medium: 5.6
+- medium: 6.0
 - high: 4.8
+- low: 0.2
 
 ## Category Penalties
 
@@ -52,6 +53,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - layout: 1.2
 - thermal: 2.0
 - signal_integrity: 0.6
+- system_interaction: 0.6
 
 ## Detailed Findings
 
@@ -209,8 +211,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: R1
-- Nets: GND, CLK
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CLK"], "has_power": false, "has_ground": true}
+- Nets: CLK, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "GND"], "has_power": false, "has_ground": true}
 
 ### HIGH — power_integrity
 - Message: Power net VCC uses a narrow trace width (0.45)
@@ -435,3 +437,33 @@ This board shows high design risk. The main risk concentration is in power integ
 - Fix Priority: high
 - Nets: CLK
 - Metrics: {"estimated_impedance_ohms": 73.94, "target_impedance_ohms": 50.0, "mismatch_pct": 47.9, "delay_ps": 127.9, "via_inductance_nh": 0.0}
+
+### MEDIUM — system_interaction
+- Message: Clocking and fast connectivity subsystems share board context and need timing-containment review.
+- Recommendation: Check clock-source placement, reference continuity, and keepout from high-speed connectors.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.72
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 72.0 / 100
+- Suggested Fix: Check clock-source placement, reference continuity, and keepout from high-speed connectors.
+- Fix Priority: medium
+
+### LOW — system_interaction
+- Message: Digital control logic is present without a clearly classified debug or test subsystem.
+- Recommendation: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.66
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 66.0 / 100
+- Suggested Fix: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Fix Priority: low

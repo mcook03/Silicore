@@ -382,8 +382,8 @@
                 "U1"
             ],
             "nets": [
-                "USB_DN",
                 "CLK",
+                "USB_DN",
                 "USB_DP",
                 "GND"
             ],
@@ -690,10 +690,10 @@
                 "J1"
             ],
             "nets": [
-                "VBUS",
+                "GND",
                 "USB_DN",
                 "USB_DP",
-                "GND"
+                "VBUS"
             ],
             "region": null,
             "metrics": {
@@ -711,10 +711,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VBUS",
+                    "GND",
                     "USB_DN",
                     "USB_DP",
-                    "GND"
+                    "VBUS"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -749,8 +749,8 @@
                 "U1"
             ],
             "nets": [
-                "USB_DN",
                 "CLK",
+                "USB_DN",
                 "USB_DP",
                 "GND"
             ],
@@ -770,8 +770,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "USB_DN",
                     "CLK",
+                    "USB_DN",
                     "USB_DP",
                     "GND"
                 ],
@@ -808,8 +808,8 @@
                 "Y1"
             ],
             "nets": [
-                "GND",
-                "CLK"
+                "CLK",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -827,8 +827,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "CLK"
+                    "CLK",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1573,17 +1573,78 @@
                 "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
                 "priority": "high"
             }
+        },
+        {
+            "rule_id": "subsystem_clock_io_interaction",
+            "category": "system_interaction",
+            "severity": "medium",
+            "message": "Clocking and fast connectivity subsystems share board context and need timing-containment review.",
+            "recommendation": "Check clock-source placement, reference continuity, and keepout from high-speed connectors.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {},
+            "confidence": 0.72,
+            "short_title": "Clock and connectivity interaction pressure",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "Weak clock containment can amplify timing sensitivity and EMI risk.",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72
+            },
+            "fix_suggestion": {
+                "fix": "Check clock-source placement, reference continuity, and keepout from high-speed connectors.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "subsystem_debug_access_gap",
+            "category": "system_interaction",
+            "severity": "low",
+            "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+            "recommendation": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {},
+            "confidence": 0.66,
+            "short_title": "Debug access classification gap",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Boards are harder to validate when debug access is weak or missing.",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.66
+            },
+            "fix_suggestion": {
+                "fix": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "priority": "low"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 194.0,
-        "total_penalty_raw_10": 19.4,
+        "total_penalty": 200.0,
+        "total_penalty_raw_10": 20.0,
         "severity_totals": {
-            "medium": 10.4,
+            "medium": 10.8,
             "high": 7.8,
-            "critical": 1.2
+            "critical": 1.2,
+            "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 2.0,
@@ -1595,14 +1656,15 @@
             "manufacturing": 0.8,
             "reliability": 0.8,
             "safety_high_voltage": 1.2,
-            "stackup_return_path": 2.0
+            "stackup_return_path": 2.0,
+            "system_interaction": 0.6
         },
         "final_score": 6.4,
         "final_score_raw_10": 0.64,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 9.4,
-        "overflow_penalty": 94.0,
+        "overflow_penalty_raw_10": 10.0,
+        "overflow_penalty": 100.0,
         "details": [
             {
                 "severity": "medium",
@@ -2043,6 +2105,28 @@
                 "confidence": 0.84,
                 "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
                 "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "system_interaction",
+                "penalty": 0.4,
+                "message": "Clocking and fast connectivity subsystems share board context and need timing-containment review.",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72,
+                "suggested_fix": "Check clock-source placement, reference continuity, and keepout from high-speed connectors.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "low",
+                "category": "system_interaction",
+                "penalty": 0.2,
+                "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.66,
+                "suggested_fix": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "fix_priority": "low"
             }
         ]
     },
@@ -2055,11 +2139,12 @@
             "U1",
             "Y1"
         ],
-        "risk_count": 40,
+        "risk_count": 42,
         "severity_counts": {
-            "medium": 26,
+            "medium": 27,
             "high": 13,
-            "critical": 1
+            "critical": 1,
+            "low": 1
         },
         "category_counts": {
             "assembly_testability": 5,
@@ -2071,7 +2156,8 @@
             "manufacturing": 2,
             "reliability": 2,
             "safety_high_voltage": 1,
-            "stackup_return_path": 4
+            "stackup_return_path": 4,
+            "system_interaction": 2
         }
     },
     "pcb_snapshot": {
@@ -3120,7 +3206,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-15T18:35:13.631965+00:00",
+        "timestamp": "2026-04-15T18:52:31.872046+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3545,7 +3631,7 @@
         "board_type": "general"
     },
     "parser_confidence": {
-        "score": 94.8,
+        "score": 95.7,
         "status": "supported",
         "component_count": 3,
         "net_count": 5,
@@ -3553,7 +3639,8 @@
         "via_count": 4,
         "outline_count": 0,
         "zone_count": 0,
-        "summary": "Parser confidence is 94.8 / 100 for this KiCad PCB input."
+        "layer_count": 2,
+        "summary": "Parser confidence is 95.7 / 100 for this KiCad PCB input."
     },
     "physics_summary": {
         "enabled": true,
@@ -3765,6 +3852,26 @@
                 "threshold_label": "Maximum impedance mismatch 12.0%",
                 "observed_label": "Observed mismatch 47.9% at 73.9 ohms"
             }
+        ]
+    },
+    "stackup_summary": {
+        "layer_count": 2,
+        "copper_layers": [
+            "F.Cu",
+            "B.Cu"
+        ],
+        "signal_layers": [
+            "F.Cu",
+            "B.Cu"
+        ],
+        "reference_layers": [
+            "B.Cu"
+        ],
+        "style": "two_layer",
+        "reference_coverage_pct": 50.0,
+        "dominant_signal_layer": "F.Cu",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets."
         ]
     },
     "raw_rule_result": {
@@ -4058,8 +4165,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "USB_DN",
                     "CLK",
+                    "USB_DN",
                     "USB_DP",
                     "GND"
                 ],
@@ -4294,10 +4401,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "VBUS",
+                    "GND",
                     "USB_DN",
                     "USB_DP",
-                    "GND"
+                    "VBUS"
                 ],
                 "region": null,
                 "metrics": {
@@ -4315,10 +4422,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VBUS",
+                        "GND",
                         "USB_DN",
                         "USB_DP",
-                        "GND"
+                        "VBUS"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4344,8 +4451,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "USB_DN",
                     "CLK",
+                    "USB_DN",
                     "USB_DP",
                     "GND"
                 ],
@@ -4365,8 +4472,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "USB_DN",
                         "CLK",
+                        "USB_DN",
                         "USB_DP",
                         "GND"
                     ],
@@ -4394,8 +4501,8 @@
                     "Y1"
                 ],
                 "nets": [
-                    "GND",
-                    "CLK"
+                    "CLK",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4413,8 +4520,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "CLK"
+                        "CLK",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4841,19 +4948,9 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-15T18:35:13.631973+00:00",
+    "generated_at": "2026-04-15T18:52:31.872053+00:00",
     "subsystem_summary": {
         "subsystems": [
-            {
-                "name": "clocking",
-                "label": "Clocking",
-                "component_count": 0,
-                "net_count": 1,
-                "components": [],
-                "nets": [
-                    "CLK"
-                ]
-            },
             {
                 "name": "connectivity",
                 "label": "Connectivity",
@@ -4865,7 +4962,33 @@
                 "nets": [
                     "USB_DP",
                     "USB_DN"
-                ]
+                ],
+                "weight": 5.1
+            },
+            {
+                "name": "clocking",
+                "label": "Clocking",
+                "component_count": 1,
+                "net_count": 1,
+                "components": [
+                    "Y1"
+                ],
+                "nets": [
+                    "CLK"
+                ],
+                "weight": 3.8
+            },
+            {
+                "name": "general",
+                "label": "General",
+                "component_count": 0,
+                "net_count": 2,
+                "components": [],
+                "nets": [
+                    "VBUS",
+                    "GND"
+                ],
+                "weight": 2.6
             },
             {
                 "name": "digital_control",
@@ -4875,23 +4998,38 @@
                 "components": [
                     "U1"
                 ],
-                "nets": []
-            },
-            {
-                "name": "general",
-                "label": "General",
-                "component_count": 1,
-                "net_count": 2,
-                "components": [
-                    "Y1"
-                ],
-                "nets": [
-                    "VBUS",
-                    "GND"
-                ]
+                "nets": [],
+                "weight": 2.5
             }
         ],
-        "dominant_subsystem": "Clocking"
+        "dominant_subsystem": "Connectivity",
+        "interaction_risks": [
+            {
+                "rule_id": "subsystem_clock_io_interaction",
+                "category": "system_interaction",
+                "severity": "medium",
+                "message": "Clocking and fast connectivity subsystems share board context and need timing-containment review.",
+                "recommendation": "Check clock-source placement, reference continuity, and keepout from high-speed connectors.",
+                "design_domain": "signal_integrity",
+                "confidence": 0.72,
+                "fix_priority": "medium",
+                "short_title": "Clock and connectivity interaction pressure",
+                "why_it_matters": "Weak clock containment can amplify timing sensitivity and EMI risk."
+            },
+            {
+                "rule_id": "subsystem_debug_access_gap",
+                "category": "system_interaction",
+                "severity": "low",
+                "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+                "recommendation": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "design_domain": "testability",
+                "confidence": 0.66,
+                "fix_priority": "medium",
+                "short_title": "Debug access classification gap",
+                "why_it_matters": "Boards are harder to validate when debug access is weak or missing."
+            }
+        ],
+        "summary": "Dominant subsystem pressure is Connectivity."
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",

@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections import defaultdict
+from datetime import timedelta
 from engine.atlas_intelligence import (
     answer_atlas_with_agent,
     build_board_assistant_console,
@@ -19,7 +20,13 @@ from engine.evaluation_backend import evaluate_fixture_suite
 from engine.insight_engine import generate_comparison_insights
 from engine.job_store import get_job, list_jobs
 from engine.job_runner import process_queued_jobs
-from engine.org_store import create_organization, list_organizations
+from engine.org_store import (
+    accept_organization_invitation,
+    create_organization,
+    create_organization_invitation,
+    list_organization_invitations,
+    list_organizations,
+)
 from engine.worker_runtime import start_worker, stop_worker, worker_status
 
 from flask import (
@@ -49,13 +56,20 @@ from engine.project_store import (
     update_project_review_status,
 )
 from engine.user_store import (
-    authenticate_user,
+    begin_authentication,
+    create_email_verification_token,
     create_password_reset_token,
+    create_session,
     create_user,
+    enable_mfa,
+    get_active_session,
     get_user_by_email,
     get_user_by_id,
     list_users,
+    revoke_user_sessions,
     reset_password_with_token,
+    verify_auth_challenge,
+    verify_email_with_token,
 )
 from engine.services.analysis_service import (
     FORMAT_READINESS,
@@ -94,6 +108,9 @@ def _load_app_secret():
 
 
 app.secret_key = _load_app_secret()
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=14)
 
 UPLOAD_FOLDER = "dashboard_uploads"
 RUNS_FOLDER = "dashboard_runs"
@@ -107,10 +124,16 @@ os.makedirs(PROJECTS_FOLDER, exist_ok=True)
 
 
 def _current_user():
+    session_id = session.get("session_id")
+    session_token = session.get("session_token")
+    if session_id and session_token:
+        user = get_active_session(session_id, session_token)
+        if user:
+            return user
     user_id = session.get("user_id")
-    if not user_id:
-        return None
-    return get_user_by_id(user_id)
+    if user_id:
+        return get_user_by_id(user_id)
+    return None
 
 
 def _require_role(minimum_role):
@@ -2277,6 +2300,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "domain_breakdown": domain_breakdown,
         "traceability_stats": board_review_layers.get("traceability_stats") or [],
         "physics_summary": result.get("physics_summary") or {},
+        "stackup_summary": result.get("stackup_summary") or {},
         "parser_confidence": result.get("parser_confidence") or {},
         "signoff_gate": result.get("signoff_gate") or {},
         "value_metrics": board_value_metrics or [],
@@ -4676,14 +4700,17 @@ def atlas_query_route():
     if page_type not in {"board", "project", "compare"}:
         return jsonify({"error": "Unsupported Atlas page type."}), 400
 
-    answer = answer_atlas_with_agent(page_type, prompt, context=context, history=history)
-    workflow_plan = build_workflow_plan(page_type, prompt, context=context)
-    workflow_results = run_workflow_plan(
-        page_type,
-        prompt,
-        context=context,
-        actor_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
-    ) if workflow_plan else []
+    actor_user_id = (g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None
+    answer = answer_atlas_with_agent(page_type, prompt, context=context, history=history, actor_user_id=actor_user_id)
+    workflow_plan = answer.pop("agent_plan", None) or build_workflow_plan(page_type, prompt, context=context)
+    workflow_results = answer.pop("agent_results", None)
+    if workflow_results is None:
+        workflow_results = run_workflow_plan(
+            page_type,
+            prompt,
+            context=context,
+            actor_user_id=actor_user_id,
+        ) if workflow_plan else []
     if not thread_key:
         thread_key = f"{page_type}::{_normalize_compare_text(context.get('project_id') or context.get('board_name') or context.get('project_name') or context.get('direction') or 'atlas')}"
 
@@ -4873,12 +4900,36 @@ def login_page():
                     request.form.get("password"),
                     organization_key=(organization or {}).get("organization_key", "personal"),
                 )
+                verification = create_email_verification_token(user["email"])
+                session_record = create_session(
+                    user["user_id"],
+                    ip_address=request.remote_addr,
+                    user_agent=request.headers.get("User-Agent"),
+                )
+                session.clear()
                 session["user_id"] = user["user_id"]
+                session["session_id"] = session_record["session_id"]
+                session["session_token"] = session_record["session_token"]
                 flash("Account created successfully.")
+                if verification:
+                    flash(f"Verification token: {verification['token']}")
                 return redirect(url_for("index"))
             except Exception as exc:
                 flash(str(exc))
                 return redirect(url_for("login_page"))
+
+        if action == "request_verification":
+            token_info = create_email_verification_token(request.form.get("email"))
+            if not token_info:
+                flash("No account with that email was found.")
+            else:
+                flash(f"Verification token generated. Use token: {token_info['token']}")
+            return redirect(url_for("login_page"))
+
+        if action == "verify_email":
+            success = verify_email_with_token(request.form.get("verification_token"))
+            flash("Email verified successfully." if success else "Email verification failed.")
+            return redirect(url_for("login_page"))
 
         if action == "request_reset":
             token_info = create_password_reset_token(request.form.get("email"))
@@ -4896,11 +4947,52 @@ def login_page():
             flash("Password updated successfully." if success else "Password reset failed.")
             return redirect(url_for("login_page"))
 
-        user = authenticate_user(request.form.get("email"), request.form.get("password"))
-        if not user:
+        if action == "verify_mfa":
+            user = verify_auth_challenge(
+                request.form.get("mfa_token"),
+                request.form.get("mfa_code"),
+            )
+            if not user:
+                flash("MFA verification failed.")
+                return redirect(url_for("login_page"))
+            session_record = create_session(
+                user["user_id"],
+                ip_address=request.remote_addr,
+                user_agent=request.headers.get("User-Agent"),
+            )
+            session.clear()
+            session["user_id"] = user["user_id"]
+            session["session_id"] = session_record["session_id"]
+            session["session_token"] = session_record["session_token"]
+            flash("Signed in successfully.")
+            return redirect(url_for("index"))
+
+        auth_result = begin_authentication(
+            request.form.get("email"),
+            request.form.get("password"),
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent"),
+        )
+        if auth_result.get("status") == "failed":
             flash("Login failed. Check your email and password.")
             return redirect(url_for("login_page"))
-        session["user_id"] = user["user_id"]
+        if auth_result.get("status") == "verification_required":
+            verification = auth_result.get("verification") or {}
+            flash("Email verification is required before Atlas team access is fully trusted.")
+            if verification.get("token"):
+                flash(f"Verification token: {verification['token']}")
+            return redirect(url_for("login_page"))
+        if auth_result.get("status") == "mfa_required":
+            challenge = auth_result.get("challenge") or {}
+            flash("Multi-factor verification is required.")
+            if challenge.get("token") and challenge.get("code"):
+                flash(f"MFA token: {challenge['token']} | Code: {challenge['code']}")
+            return redirect(url_for("login_page"))
+        session_record = auth_result.get("session") or {}
+        session.clear()
+        session["user_id"] = auth_result.get("user", {}).get("user_id")
+        session["session_id"] = session_record.get("session_id")
+        session["session_token"] = session_record.get("session_token")
         flash("Signed in successfully.")
         return redirect(url_for("index"))
 
@@ -4917,7 +5009,10 @@ def login_page():
 
 @app.route("/logout", methods=["POST"])
 def logout_route():
-    session.pop("user_id", None)
+    current_user = _current_user()
+    if current_user:
+        revoke_user_sessions(current_user["user_id"])
+    session.clear()
     flash("Signed out.")
     return redirect(url_for("index"))
 

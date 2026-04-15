@@ -1,9 +1,15 @@
 import unittest
 from uuid import uuid4
 
-from engine.db import list_atlas_messages, persist_atlas_exchange
+from engine.db import list_atlas_agent_runs, list_atlas_messages, persist_atlas_exchange
 from engine.project_store import add_project_note, add_project_member, add_run_to_project, create_project, get_project
-from engine.user_store import create_user, get_user_by_email
+from engine.user_store import (
+    begin_authentication,
+    create_email_verification_token,
+    create_user,
+    get_user_by_email,
+    verify_email_with_token,
+)
 
 
 class PersistenceTests(unittest.TestCase):
@@ -64,6 +70,37 @@ class PersistenceTests(unittest.TestCase):
         persisted = list_atlas_messages(thread_key)
         self.assertEqual(len(persisted), 2)
         self.assertEqual(persisted[-1]["intent"], "prioritization")
+
+    def test_user_verification_and_session_flow(self):
+        suffix = str(uuid4())[:8]
+        user = create_user("Verification User", f"verify-{suffix}@example.com", "password123", email_verified=False)
+        token_info = create_email_verification_token(user["email"])
+        self.assertTrue(verify_email_with_token(token_info["token"]))
+        auth_result = begin_authentication(user["email"], "password123", ip_address="127.0.0.1", user_agent="pytest")
+        self.assertEqual(auth_result["status"], "authenticated")
+        self.assertIn("session", auth_result)
+
+    def test_atlas_agent_runs_persist(self):
+        thread_key = f"atlas-agent-thread-{uuid4()}"
+        persist_atlas_exchange(
+            thread_key=thread_key,
+            page_type="board",
+            context={"board_name": "Agent Board"},
+            prompt="Am I signoff ready?",
+            answer_payload={"title": "Signoff", "answer": "Validation pending.", "detail": "", "follow_ups": [], "citations": [], "intent": "signoff"},
+        )
+        from engine.db import persist_atlas_agent_run
+
+        persist_atlas_agent_run(
+            thread_key=thread_key,
+            page_type="board",
+            prompt="Am I signoff ready?",
+            plan=[{"action_name": "evaluate_signoff_gate"}],
+            results=[{"action_name": "evaluate_signoff_gate", "status": "completed"}],
+            model_mode="deterministic_agent",
+        )
+        runs = list_atlas_agent_runs(thread_key)
+        self.assertGreaterEqual(len(runs), 1)
 
 
 if __name__ == "__main__":

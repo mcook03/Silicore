@@ -1,9 +1,9 @@
 # SILICORE ENGINEERING REPORT
 
 - File: mixed_signal_noise_board.kicad_pcb
-- Score: 8.3 / 100
-- Total Risks: 29
-- Total Penalty: 136.0
+- Score: 8.0 / 100
+- Total Risks: 30
+- Total Penalty: 140.0
 
 ## Executive Summary
 
@@ -35,12 +35,12 @@ This board shows moderate design risk. The main risk concentration is in power i
 
 - Component Count: 4
 - Net Count: 5
-- Risk Count: 29
+- Risk Count: 30
 - Sample Components: U1, L1, U2, U3
 
 ## Severity Penalties
 
-- medium: 7.6
+- medium: 8.0
 - high: 6.0
 
 ## Category Penalties
@@ -51,6 +51,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - manufacturing: 1.6
 - reliability: 0.4
 - thermal: 1.6
+- system_interaction: 0.4
 
 ## Detailed Findings
 
@@ -171,7 +172,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, VIN, SW
+- Nets: VIN, SW, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -189,7 +190,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: GND, VIN, SW
+- Nets: VIN, SW, GND
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity
@@ -207,7 +208,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U2
-- Nets: GND, SENSOR_OUT, ADC_IN
+- Nets: ADC_IN, SENSOR_OUT, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — power_integrity
@@ -295,8 +296,8 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U2
-- Nets: GND, SENSOR_OUT, ADC_IN
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "SENSOR_OUT", "ADC_IN"], "has_power": false, "has_ground": true}
+- Nets: ADC_IN, SENSOR_OUT, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["ADC_IN", "SENSOR_OUT", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U3 has ground but no visible power rail
@@ -559,3 +560,18 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Fix Priority: high
 - Nets: VIN
 - Metrics: {"current_density_a_per_mm2": 238.1, "estimated_current_a": 1.5, "cross_section_mm2": 0.0063, "threshold": 12.0}
+
+### MEDIUM — system_interaction
+- Message: Power and analog subsystems coexist and may need tighter isolation review.
+- Recommendation: Inspect regulator, switching, and analog-reference placement to verify noise containment.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.74
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 74.0 / 100
+- Suggested Fix: Inspect regulator, switching, and analog-reference placement to verify noise containment.
+- Fix Priority: medium

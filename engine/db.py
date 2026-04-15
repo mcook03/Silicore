@@ -50,6 +50,16 @@ def _table_exists(connection, table_name):
     return row is not None
 
 
+def _column_exists(connection, table_name, column_name):
+    rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
+    return any(row["name"] == column_name for row in rows)
+
+
+def _ensure_column(connection, table_name, column_name, definition):
+    if not _column_exists(connection, table_name, column_name):
+        connection.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {definition}")
+
+
 def initialize_database():
     connection = get_connection()
     try:
@@ -64,6 +74,8 @@ def initialize_database():
             CREATE TABLE IF NOT EXISTS organizations (
                 organization_key TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
+                domain TEXT,
+                security_json TEXT NOT NULL DEFAULT '{}',
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             );
@@ -75,6 +87,10 @@ def initialize_database():
                 password_hash TEXT,
                 role TEXT NOT NULL DEFAULT 'engineer',
                 organization_key TEXT NOT NULL DEFAULT 'personal',
+                email_verified_at TEXT,
+                mfa_enabled INTEGER NOT NULL DEFAULT 0,
+                mfa_secret TEXT,
+                session_version INTEGER NOT NULL DEFAULT 1,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             );
@@ -218,16 +234,97 @@ def initialize_database():
                 FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
             );
 
+            CREATE TABLE IF NOT EXISTS email_verification_tokens (
+                token_id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                email TEXT NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                status TEXT NOT NULL DEFAULT 'active',
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                used_at TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS organization_invitations (
+                invitation_id TEXT PRIMARY KEY,
+                organization_key TEXT NOT NULL,
+                email TEXT NOT NULL,
+                invited_role TEXT NOT NULL DEFAULT 'engineer',
+                token TEXT NOT NULL UNIQUE,
+                status TEXT NOT NULL DEFAULT 'pending',
+                invited_by_user_id TEXT,
+                accepted_user_id TEXT,
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                accepted_at TEXT,
+                FOREIGN KEY(invited_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+                FOREIGN KEY(accepted_user_id) REFERENCES users(user_id) ON DELETE SET NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS auth_challenges (
+                challenge_id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                challenge_type TEXT NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                code TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'active',
+                context_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                consumed_at TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS user_sessions (
+                session_id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                session_token TEXT NOT NULL UNIQUE,
+                session_version INTEGER NOT NULL DEFAULT 1,
+                status TEXT NOT NULL DEFAULT 'active',
+                ip_address TEXT,
+                user_agent TEXT,
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                last_seen_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS atlas_agent_runs (
+                agent_run_id TEXT PRIMARY KEY,
+                thread_id TEXT,
+                page_type TEXT NOT NULL,
+                prompt TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'planned',
+                plan_json TEXT NOT NULL DEFAULT '[]',
+                results_json TEXT NOT NULL DEFAULT '[]',
+                model_mode TEXT NOT NULL DEFAULT 'deterministic',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(thread_id) REFERENCES atlas_threads(thread_id) ON DELETE SET NULL
+            );
+
             CREATE INDEX IF NOT EXISTS idx_runs_created_at ON runs(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_projects_updated_at ON projects(updated_at DESC);
             CREATE INDEX IF NOT EXISTS idx_atlas_messages_thread_time ON atlas_messages(thread_id, created_at);
             CREATE INDEX IF NOT EXISTS idx_audit_events_time ON audit_events(created_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_user_sessions_user_time ON user_sessions(user_id, created_at DESC);
             """
         )
+        _ensure_schema_migrations(connection)
         _migrate_legacy_data(connection)
         connection.commit()
     finally:
         connection.close()
+
+
+def _ensure_schema_migrations(connection):
+    _ensure_column(connection, "organizations", "domain", "TEXT")
+    _ensure_column(connection, "organizations", "security_json", "TEXT NOT NULL DEFAULT '{}'")
+    _ensure_column(connection, "users", "email_verified_at", "TEXT")
+    _ensure_column(connection, "users", "mfa_enabled", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "users", "mfa_secret", "TEXT")
+    _ensure_column(connection, "users", "session_version", "INTEGER NOT NULL DEFAULT 1")
 
 
 def _get_state(connection, key):
@@ -662,6 +759,93 @@ def list_atlas_messages(thread_key):
                 "citations": _json_loads(row["citations_json"], []),
                 "follow_ups": _json_loads(row["follow_ups_json"], []),
                 "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+    finally:
+        connection.close()
+
+
+def persist_atlas_agent_run(thread_key, page_type, prompt, plan, results, model_mode="deterministic", status="completed"):
+    initialize_database()
+    connection = get_connection()
+    try:
+        now = _now_iso()
+        thread = connection.execute(
+            "SELECT thread_id FROM atlas_threads WHERE thread_key = ?",
+            (thread_key,),
+        ).fetchone()
+        agent_run_id = str(uuid4())[:12]
+        connection.execute(
+            """
+            INSERT INTO atlas_agent_runs (
+                agent_run_id, thread_id, page_type, prompt, status, plan_json,
+                results_json, model_mode, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                agent_run_id,
+                thread["thread_id"] if thread else None,
+                page_type,
+                prompt,
+                status,
+                _json_dumps(plan or []),
+                _json_dumps(results or []),
+                model_mode,
+                now,
+                now,
+            ),
+        )
+        connection.commit()
+        return {
+            "agent_run_id": agent_run_id,
+            "status": status,
+            "model_mode": model_mode,
+            "plan": plan or [],
+            "results": results or [],
+        }
+    finally:
+        connection.close()
+
+
+def list_atlas_agent_runs(thread_key=None, limit=12):
+    initialize_database()
+    connection = get_connection()
+    try:
+        if thread_key:
+            rows = connection.execute(
+                """
+                SELECT ar.agent_run_id, ar.page_type, ar.prompt, ar.status, ar.plan_json, ar.results_json,
+                       ar.model_mode, ar.created_at, ar.updated_at
+                FROM atlas_agent_runs ar
+                JOIN atlas_threads at ON at.thread_id = ar.thread_id
+                WHERE at.thread_key = ?
+                ORDER BY ar.created_at DESC
+                LIMIT ?
+                """,
+                (thread_key, int(limit or 12)),
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                """
+                SELECT agent_run_id, page_type, prompt, status, plan_json, results_json, model_mode, created_at, updated_at
+                FROM atlas_agent_runs
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (int(limit or 12),),
+            ).fetchall()
+        return [
+            {
+                "agent_run_id": row["agent_run_id"],
+                "page_type": row["page_type"],
+                "prompt": row["prompt"],
+                "status": row["status"],
+                "plan": _json_loads(row["plan_json"], []),
+                "results": _json_loads(row["results_json"], []),
+                "model_mode": row["model_mode"],
+                "created_at": row["created_at"],
+                "updated_at": row["updated_at"],
             }
             for row in rows
         ]

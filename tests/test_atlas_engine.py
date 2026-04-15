@@ -109,6 +109,40 @@ class AtlasEngineTests(unittest.TestCase):
         self.assertEqual(physics_response["intent"], "physics")
         self.assertIn("modeled", physics_response["answer"].lower())
 
+    def test_board_question_can_explain_stackup_and_subsystems(self):
+        stackup_response = answer_atlas_question(
+            "board",
+            "What does the stackup look like?",
+            context={
+                "stackup_summary": {
+                    "style": "two_layer",
+                    "layer_count": 2,
+                    "reference_coverage_pct": 30,
+                    "concerns": ["Two-layer stackup limits return-path containment on fast nets."],
+                },
+                "risk_sources": [{"message": "Return path weak", "severity": "high", "domain": "signal integrity"}],
+            },
+            history=[],
+        )
+        self.assertEqual(stackup_response["intent"], "stackup")
+        self.assertIn("two layer", stackup_response["answer"].lower())
+
+        subsystem_response = answer_atlas_question(
+            "board",
+            "How are the subsystems interacting?",
+            context={
+                "subsystem_summary": {
+                    "dominant_subsystem": "Power",
+                    "summary": "Dominant subsystem pressure is Power.",
+                    "interaction_risks": [{"message": "Power and analog subsystems may need tighter isolation review."}],
+                },
+                "risk_sources": [{"message": "Analog noise risk", "severity": "medium", "domain": "power integrity"}],
+            },
+            history=[],
+        )
+        self.assertEqual(subsystem_response["intent"], "subsystem")
+        self.assertIn("dominant subsystem pressure", subsystem_response["answer"].lower())
+
 
 if __name__ == "__main__":
     unittest.main()

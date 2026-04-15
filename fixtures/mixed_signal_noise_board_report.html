@@ -54,9 +54,9 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> mixed_signal_noise_board.kicad_pcb</p>
-                <p><strong>Score:</strong> 8.3 / 100</p>
-                <p><strong>Total Risks:</strong> 29</p>
-                <p><strong>Total Penalty:</strong> 136.0</p>
+                <p><strong>Score:</strong> 8.0 / 100</p>
+                <p><strong>Total Risks:</strong> 30</p>
+                <p><strong>Total Penalty:</strong> 140.0</p>
             </div>
 
             <div class="card">
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 4</p>
                 <p><strong>Net Count:</strong> 5</p>
-                <p><strong>Risk Count:</strong> 29</p>
+                <p><strong>Risk Count:</strong> 30</p>
                 <p><strong>Sample Components:</strong> U1, L1, U2, U3</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 7.6</li><li>high: 6.0</li></ul>
+                <ul><li>medium: 8.0</li><li>high: 6.0</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 0.8</li><li>component_design: 0.4</li><li>power_integrity: 8.8</li><li>manufacturing: 1.6</li><li>reliability: 0.4</li><li>thermal: 1.6</li></ul>
+                <ul><li>assembly_testability: 0.8</li><li>component_design: 0.4</li><li>power_integrity: 8.8</li><li>manufacturing: 1.6</li><li>reliability: 0.4</li><li>thermal: 1.6</li><li>system_interaction: 0.4</li></ul>
             </div>
 
             <div class="card">
@@ -293,7 +293,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> GND, VIN, SW</p>
+                <p><strong>Nets:</strong> VIN, SW, GND</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -318,7 +318,7 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> GND, VIN, SW</p>
+                <p><strong>Nets:</strong> VIN, SW, GND</p>
                 <p><strong>Metrics:</strong> {&quot;bulk_caps_found&quot;: 0, &quot;bulk_distance_threshold&quot;: 12.0}</p>
             </div>
             
@@ -343,7 +343,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> GND, SENSOR_OUT, ADC_IN</p>
+                <p><strong>Nets:</strong> ADC_IN, SENSOR_OUT, GND</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -468,8 +468,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> GND, SENSOR_OUT, ADC_IN</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;SENSOR_OUT&quot;, &quot;ADC_IN&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> ADC_IN, SENSOR_OUT, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;ADC_IN&quot;, &quot;SENSOR_OUT&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -845,6 +845,31 @@
                 
                 <p><strong>Nets:</strong> VIN</p>
                 <p><strong>Metrics:</strong> {&quot;current_density_a_per_mm2&quot;: 238.1, &quot;estimated_current_a&quot;: 1.5, &quot;cross_section_mm2&quot;: 0.0063, &quot;threshold&quot;: 12.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Power and analog subsystems coexist and may need tighter isolation review.</p>
+                <p><strong>Recommendation:</strong> Inspect regulator, switching, and analog-reference placement to verify noise containment.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 74.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 74.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Inspect regulator, switching, and analog-reference placement to verify noise containment.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                
             </div>
             
             </div>

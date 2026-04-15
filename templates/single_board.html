@@ -1519,10 +1519,16 @@
     const renderWorkflow = (result) => {
         const plan = Array.isArray(result.workflow_plan) ? result.workflow_plan : [];
         const results = Array.isArray(result.workflow_results) ? result.workflow_results : [];
+        const trace = Array.isArray(result.agent_trace) ? result.agent_trace : [];
         const suggestions = Array.isArray(result.tool_suggestions) ? result.tool_suggestions : [];
         const planMarkup = plan.length ? `
             <div class="assistant-citation-list">
                 ${plan.map((item) => `<span class="assistant-citation">${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}</span>`).join('')}
+            </div>
+        ` : '';
+        const traceMarkup = trace.length ? `
+            <div class="assistant-detail-copy">
+                ${trace.map((item) => `${escapeHtml(item.label)}: ${escapeHtml(item.summary || item.status || 'completed')}`).join('<br>')}
             </div>
         ` : '';
         const resultMarkup = results.length ? `
@@ -1538,13 +1544,13 @@
                 ${suggestions.map((item) => `<span class="assistant-citation">${escapeHtml(String(item).replace(/_/g, ' '))}</span>`).join('')}
             </div>
         ` : '';
-        return {planMarkup, resultMarkup, suggestionMarkup};
+        return {planMarkup, traceMarkup, resultMarkup, suggestionMarkup};
     };
 
     const resultToMarkup = (result) => {
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
         const workflow = renderWorkflow(result);
-        return `<p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}`;
+        return `<p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.traceMarkup}${workflow.resultMarkup}`;
     };
 
     const renderResponse = (result) => {
@@ -1552,7 +1558,7 @@
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
         const followUps = renderFollowUps(result.follow_ups);
         const workflow = renderWorkflow(result);
-        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.resultMarkup}${workflow.suggestionMarkup}${followUps}`;
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.traceMarkup}${workflow.resultMarkup}${workflow.suggestionMarkup}${followUps}`;
         responsePanel.querySelectorAll('[data-assistant-board-followup]').forEach((button) => {
             button.addEventListener('click', () => submitPrompt(button.dataset.assistantBoardFollowup));
         });

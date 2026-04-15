@@ -9,7 +9,9 @@ from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
 from engine.job_store import create_job, get_job
 from engine.job_runner import process_queued_jobs
-from engine.org_store import create_organization
+from engine.org_store import accept_organization_invitation, create_organization, create_organization_invitation
+from engine.altium_ascii_parser import parse_altium_ascii_file
+from engine.stackup_model import derive_stackup_summary
 from engine.subsystem_classifier import classify_pcb_subsystems
 from engine.parser import parse_structured_board_file
 from engine.project_store import create_project, update_project_review_status
@@ -24,6 +26,23 @@ class BackendSystemsTests(unittest.TestCase):
         summary = classify_pcb_subsystems(pcb)
         self.assertIn("subsystems", summary)
         self.assertTrue(summary["dominant_subsystem"])
+        self.assertIn("interaction_risks", summary)
+
+    def test_stackup_model_and_altium_ascii_parser_work(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".pcbdocascii", delete=False) as handle:
+            handle.write("RECORD=COMPONENT|Designator=U1|Comment=MCU|X=10|Y=10|Layer=TopLayer\n")
+            handle.write("RECORD=PAD|Name=1|Net=CLK|X=10|Y=10|Layer=TopLayer\n")
+            handle.write("RECORD=TRACK|Net=CLK|X1=10|Y1=10|X2=30|Y2=10|Width=0.15|Layer=TopLayer\n")
+            handle.write("RECORD=VIA|Net=CLK|X=20|Y=10|HoleSize=0.3|Size=0.6\n")
+            path = handle.name
+        try:
+            pcb = parse_altium_ascii_file(path)
+            summary = derive_stackup_summary(pcb, board_type="high_speed")
+            self.assertGreaterEqual(len(pcb.traces), 1)
+            self.assertIn("style", summary)
+            self.assertIn("reference_coverage_pct", summary)
+        finally:
+            os.remove(path)
 
     def test_gerber_parser_extracts_geometry(self):
         with tempfile.NamedTemporaryFile("w", suffix=".gbr", delete=False) as handle:
@@ -95,6 +114,9 @@ class BackendSystemsTests(unittest.TestCase):
         token_info = create_password_reset_token(user["email"])
         self.assertIsNotNone(token_info)
         self.assertTrue(reset_password_with_token(token_info["token"], "new-password"))
+        invite = create_organization_invitation(org["organization_key"], f"invite-{uuid4().hex[:8]}@example.com")
+        accepted = accept_organization_invitation(invite["token"], accepted_user_id=user["user_id"])
+        self.assertEqual(accepted["organization_key"], org["organization_key"])
 
     def test_job_runner_processes_queued_signoff_packet(self):
         job = create_job("signoff_packet", payload={"context": {"board_name": "Queued Board", "release_note": "Ready after rerun."}})

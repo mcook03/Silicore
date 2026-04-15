@@ -55,8 +55,8 @@
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> high_speed_pair_bad.kicad_pcb</p>
                 <p><strong>Score:</strong> 6.4 / 100</p>
-                <p><strong>Total Risks:</strong> 40</p>
-                <p><strong>Total Penalty:</strong> 194.0</p>
+                <p><strong>Total Risks:</strong> 42</p>
+                <p><strong>Total Penalty:</strong> 200.0</p>
             </div>
 
             <div class="card">
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 3</p>
                 <p><strong>Net Count:</strong> 5</p>
-                <p><strong>Risk Count:</strong> 40</p>
+                <p><strong>Risk Count:</strong> 42</p>
                 <p><strong>Sample Components:</strong> J1, U1, Y1</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 10.4</li><li>high: 7.8</li><li>critical: 1.2</li></ul>
+                <ul><li>medium: 10.8</li><li>high: 7.8</li><li>critical: 1.2</li><li>low: 0.2</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 2.0</li><li>signal_integrity: 5.2</li><li>component_design: 0.8</li><li>power_integrity: 4.4</li><li>high_speed: 0.6</li><li>emi_emc: 1.6</li><li>manufacturing: 0.8</li><li>reliability: 0.8</li><li>safety_high_voltage: 1.2</li><li>stackup_return_path: 2.0</li></ul>
+                <ul><li>assembly_testability: 2.0</li><li>signal_integrity: 5.2</li><li>component_design: 0.8</li><li>power_integrity: 4.4</li><li>high_speed: 0.6</li><li>emi_emc: 1.6</li><li>manufacturing: 0.8</li><li>reliability: 0.8</li><li>safety_high_voltage: 1.2</li><li>stackup_return_path: 2.0</li><li>system_interaction: 0.6</li></ul>
             </div>
 
             <div class="card">
@@ -393,7 +393,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> USB_DN, CLK, USB_DP, GND</p>
+                <p><strong>Nets:</strong> CLK, USB_DN, USB_DP, GND</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -593,8 +593,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> J1</p>
-                <p><strong>Nets:</strong> VBUS, USB_DN, USB_DP, GND</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;VBUS&quot;, &quot;USB_DN&quot;, &quot;USB_DP&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> GND, USB_DN, USB_DP, VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;USB_DN&quot;, &quot;USB_DP&quot;, &quot;VBUS&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -618,8 +618,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> USB_DN, CLK, USB_DP, GND</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;USB_DN&quot;, &quot;CLK&quot;, &quot;USB_DP&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> CLK, USB_DN, USB_DP, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CLK&quot;, &quot;USB_DN&quot;, &quot;USB_DP&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -643,8 +643,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> Y1</p>
-                <p><strong>Nets:</strong> GND, CLK</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CLK&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> CLK, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CLK&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -1120,6 +1120,56 @@
                 
                 <p><strong>Nets:</strong> CLK</p>
                 <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 73.94, &quot;target_impedance_ohms&quot;: 50.0, &quot;mismatch_pct&quot;: 47.9, &quot;delay_ps&quot;: 92.0, &quot;via_inductance_nh&quot;: 0.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Clocking and fast connectivity subsystems share board context and need timing-containment review.</p>
+                <p><strong>Recommendation:</strong> Check clock-source placement, reference continuity, and keepout from high-speed connectors.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Check clock-source placement, reference continuity, and keepout from high-speed connectors.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> low</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Digital control logic is present without a clearly classified debug or test subsystem.</p>
+                <p><strong>Recommendation:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 66.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 66.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Fix Priority:</strong> low</p>
+                
+                
+                
+                
             </div>
             
             </div>

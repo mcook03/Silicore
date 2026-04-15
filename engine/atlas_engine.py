@@ -172,6 +172,8 @@ def _resolve_board_intent(prompt, context, history):
         ("traceability", _keywords(["traceability", "evidence", "proof", "defensible"])),
         ("parser", _keywords(["parser", "import", "parse confidence", "geometry confidence", "recognition"])),
         ("physics", _keywords(["physics", "impedance", "ir drop", "current density", "voltage drop", "delay", "modeled"])),
+        ("stackup", _keywords(["stackup", "reference plane", "layer stack", "return path layer"])),
+        ("subsystem", _keywords(["subsystem", "analog section", "power section", "clocking", "partition"])),
         ("confidence", _keywords(["confidence", "trust", "certainty", "reliable"])),
         ("fix_priority", _keywords(["fix first", "priority", "prioritize", "first", "top issue", "top action"])),
         ("score", _keywords(["score", "rating", "posture"])),
@@ -381,6 +383,48 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
             confidence=0.82,
+        )
+
+    if intent == "stackup":
+        stackup_summary = context.get("stackup_summary") or {}
+        concerns = _listify(stackup_summary.get("concerns"))
+        return _make_response(
+            "stackup",
+            "Stackup and Return Path",
+            (
+                f"This board is being read as a {str(stackup_summary.get('style') or 'general').replace('_', ' ')} stackup "
+                f"with {stackup_summary.get('layer_count', 0)} inferred layer(s) and {stackup_summary.get('reference_coverage_pct', 0)}% reference coverage."
+            ),
+            detail=concerns[0] if concerns else "Atlas is using inferred layer roles and reference coverage to reason about return-path quality.",
+            follow_ups=[
+                "Which nets are most exposed to stackup risk?",
+                "How does this affect signoff?",
+                "What should I fix first?",
+            ],
+            citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
+            confidence=0.77,
+        )
+
+    if intent == "subsystem":
+        subsystem_summary = context.get("subsystem_summary") or {}
+        dominant_subsystem = subsystem_summary.get("dominant_subsystem") or "General"
+        interaction_risks = _listify(subsystem_summary.get("interaction_risks"))
+        return _make_response(
+            "subsystem",
+            "Subsystem Interaction",
+            subsystem_summary.get("summary") or f"The dominant subsystem pressure is {dominant_subsystem}.",
+            detail=(
+                interaction_risks[0].get("message")
+                if interaction_risks else
+                "Atlas is using subsystem classification to look for architecture-level interaction risks, not only isolated rule hits."
+            ),
+            follow_ups=[
+                "Which subsystem is driving the score most?",
+                "What interaction should I validate next?",
+                "Show me the strongest evidence",
+            ],
+            citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
+            confidence=0.79,
         )
 
     domain_intents = {

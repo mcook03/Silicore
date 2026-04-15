@@ -20,6 +20,8 @@ def has_role(user, minimum_role):
 def can_manage_project(user, project):
     if not user or not project:
         return False
+    if project.get("organization_key") and user.get("organization_key") and project.get("organization_key") != user.get("organization_key"):
+        return False
     if has_role(user, "admin"):
         return True
     owner = project.get("owner") or {}
@@ -36,6 +38,8 @@ def project_is_visible_to_user(user, project):
         return False
     if not user:
         return True
+    if project.get("organization_key") and user.get("organization_key") and project.get("organization_key") != user.get("organization_key"):
+        return False
     if has_role(user, "admin"):
         return True
     owner = project.get("owner") or {}

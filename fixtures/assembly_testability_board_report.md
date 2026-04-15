@@ -1,9 +1,9 @@
 # SILICORE ENGINEERING REPORT
 
 - File: assembly_testability_board.kicad_pcb
-- Score: 8.9 / 100
-- Total Risks: 29
-- Total Penalty: 128.0
+- Score: 8.8 / 100
+- Total Risks: 30
+- Total Penalty: 130.0
 
 ## Executive Summary
 
@@ -35,13 +35,14 @@ This board shows moderate design risk. The main risk concentration is in power i
 
 - Component Count: 4
 - Net Count: 5
-- Risk Count: 29
+- Risk Count: 30
 - Sample Components: U1, J1, C1, R1
 
 ## Severity Penalties
 
 - medium: 9.2
 - high: 3.6
+- low: 0.2
 
 ## Category Penalties
 
@@ -51,6 +52,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - manufacturing: 3.2
 - signal_integrity: 2.6
 - stackup_return_path: 0.4
+- system_interaction: 0.2
 
 ## Detailed Findings
 
@@ -226,7 +228,7 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, SWDIO, VCC, UART_TX
+- Nets: SWDIO, UART_TX, VCC, SWCLK
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — manufacturing
@@ -558,3 +560,18 @@ This board shows moderate design risk. The main risk concentration is in power i
 - Fix Priority: high
 - Nets: SWCLK
 - Metrics: {"estimated_impedance_ohms": 78.73, "target_impedance_ohms": 50.0, "mismatch_pct": 57.5, "delay_ps": 163.7, "via_inductance_nh": 0.0}
+
+### LOW — system_interaction
+- Message: Digital control logic is present without a clearly classified debug or test subsystem.
+- Recommendation: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.66
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 66.0 / 100
+- Suggested Fix: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Fix Priority: low

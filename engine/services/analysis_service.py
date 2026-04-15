@@ -12,6 +12,7 @@ from engine.dashboard_storage import (
     create_run_directory,
     save_run_meta,
 )
+from engine.stackup_model import derive_stackup_summary
 from engine.subsystem_classifier import classify_pcb_subsystems
 
 SUPPORTED_EXTENSIONS = {".txt", ".brd", ".kicad_pcb", ".gbr", ".gko", ".ger", ".pcbdocascii"}
@@ -37,8 +38,9 @@ def _estimate_parser_confidence(pcb, extension):
     via_count = len(getattr(pcb, "vias", []) or [])
     outline_count = len(getattr(pcb, "outline_segments", []) or [])
     zone_count = len(getattr(pcb, "zones", []) or [])
+    layer_count = len(getattr(pcb, "declared_layers", []) or list(getattr(pcb, "layers", []) or []))
 
-    geometry_bonus = min((trace_count * 0.35) + (via_count * 0.5) + (outline_count * 1.2) + (zone_count * 0.8), 12.0)
+    geometry_bonus = min((trace_count * 0.35) + (via_count * 0.5) + (outline_count * 1.2) + (zone_count * 0.8) + (layer_count * 0.45), 14.0)
     richness_bonus = min((component_count * 0.4) + (net_count * 0.35), 10.0)
     missing_penalty = 0.0
     if component_count == 0:
@@ -58,6 +60,7 @@ def _estimate_parser_confidence(pcb, extension):
         "via_count": via_count,
         "outline_count": outline_count,
         "zone_count": zone_count,
+        "layer_count": layer_count,
         "summary": f"Parser confidence is {score} / 100 for this {FORMAT_READINESS.get(extension, {}).get('label', extension or 'board')} input.",
     }
 
@@ -1356,6 +1359,12 @@ def _analyze_board_file(file_path, config):
             physics_summary = physics_summary
     physics_risks = [_normalize_risk(risk) for risk in (physics_summary.get("risks") or [])]
     risks.extend(physics_risks)
+
+    board_type = (config.get("analysis", {}) or {}).get("board_type", "general")
+    stackup_summary = derive_stackup_summary(pcb, board_type=board_type)
+    subsystem_summary = classify_pcb_subsystems(pcb)
+    subsystem_risks = [_normalize_risk(risk) for risk in (subsystem_summary.get("interaction_risks") or [])]
+    risks.extend(subsystem_risks)
     score, score_explanation = _compute_score_and_explanation(risks, config)
     board_summary = _build_board_summary(pcb, risks, os.path.basename(file_path))
 
@@ -1373,14 +1382,15 @@ def _analyze_board_file(file_path, config):
             "timestamp": _utc_now_iso(),
             "config_snapshot": config,
             "profile": (config.get("analysis", {}) or {}).get("profile", "balanced"),
-            "board_type": (config.get("analysis", {}) or {}).get("board_type", "general"),
+            "board_type": board_type,
         },
         "parser_confidence": _estimate_parser_confidence(pcb, extension),
         "physics_summary": physics_summary,
+        "stackup_summary": stackup_summary,
         "raw_rule_result": raw_rule_result,
         "generated_at": _utc_now_iso(),
     }
-    result["subsystem_summary"] = classify_pcb_subsystems(pcb)
+    result["subsystem_summary"] = subsystem_summary
 
     result["executive_summary"] = _generate_executive_summary(result)
     return result

@@ -62,6 +62,37 @@
 <section class="grid grid-2" style="margin-top: 18px;">
     <section class="card">
         <div class="card-header">
+            <h2 class="section-title">Verify Email</h2>
+            <p class="section-copy">Complete organization-grade email verification or request a new verification token.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="request_verification">
+                <label>
+                    Email
+                    <input type="email" name="email" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-secondary" type="submit">Request Verification Token</button>
+                </div>
+            </form>
+
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form" style="margin-top: 18px;">
+                <input type="hidden" name="action" value="verify_email">
+                <label>
+                    Verification Token
+                    <input type="text" name="verification_token" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-secondary" type="submit">Verify Email</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
             <h2 class="section-title">Request Reset</h2>
             <p class="section-copy">Generate a local password reset token for this environment.</p>
         </div>
@@ -99,6 +130,32 @@
                 </label>
                 <div class="btn-link-row">
                     <button class="btn btn-secondary" type="submit">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2" style="margin-top: 18px;">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Verify MFA</h2>
+            <p class="section-copy">Complete multi-factor sign-in with the generated challenge token and code.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="verify_mfa">
+                <label>
+                    MFA Token
+                    <input type="text" name="mfa_token" required>
+                </label>
+                <label>
+                    MFA Code
+                    <input type="text" name="mfa_code" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-secondary" type="submit">Verify MFA</button>
                 </div>
             </form>
         </div>

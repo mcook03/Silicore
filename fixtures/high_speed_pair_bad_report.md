@@ -2,8 +2,8 @@
 
 - File: high_speed_pair_bad.kicad_pcb
 - Score: 6.4 / 100
-- Total Risks: 40
-- Total Penalty: 194.0
+- Total Risks: 42
+- Total Penalty: 200.0
 
 ## Executive Summary
 
@@ -35,14 +35,15 @@ This board shows elevated design risk. The main risk concentration is in signal 
 
 - Component Count: 3
 - Net Count: 5
-- Risk Count: 40
+- Risk Count: 42
 - Sample Components: J1, U1, Y1
 
 ## Severity Penalties
 
-- medium: 10.4
+- medium: 10.8
 - high: 7.8
 - critical: 1.2
+- low: 0.2
 
 ## Category Penalties
 
@@ -56,6 +57,7 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - reliability: 0.8
 - safety_high_voltage: 1.2
 - stackup_return_path: 2.0
+- system_interaction: 0.6
 
 ## Detailed Findings
 
@@ -249,7 +251,7 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: USB_DN, CLK, USB_DP, GND
+- Nets: CLK, USB_DN, USB_DP, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — high_speed
@@ -391,8 +393,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: VBUS, USB_DN, USB_DP, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VBUS", "USB_DN", "USB_DP", "GND"], "has_power": false, "has_ground": true}
+- Nets: GND, USB_DN, USB_DP, VBUS
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "USB_DN", "USB_DP", "VBUS"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U1 has ground but no visible power rail
@@ -409,8 +411,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U1
-- Nets: USB_DN, CLK, USB_DP, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "CLK", "USB_DP", "GND"], "has_power": false, "has_ground": true}
+- Nets: CLK, USB_DN, USB_DP, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "USB_DN", "USB_DP", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Y1 has ground but no visible power rail
@@ -427,8 +429,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: Y1
-- Nets: GND, CLK
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CLK"], "has_power": false, "has_ground": true}
+- Nets: CLK, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: High-current net VBUS uses a long routed path
@@ -760,3 +762,33 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Fix Priority: high
 - Nets: CLK
 - Metrics: {"estimated_impedance_ohms": 73.94, "target_impedance_ohms": 50.0, "mismatch_pct": 47.9, "delay_ps": 92.0, "via_inductance_nh": 0.0}
+
+### MEDIUM — system_interaction
+- Message: Clocking and fast connectivity subsystems share board context and need timing-containment review.
+- Recommendation: Check clock-source placement, reference continuity, and keepout from high-speed connectors.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.72
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 72.0 / 100
+- Suggested Fix: Check clock-source placement, reference continuity, and keepout from high-speed connectors.
+- Fix Priority: medium
+
+### LOW — system_interaction
+- Message: Digital control logic is present without a clearly classified debug or test subsystem.
+- Recommendation: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.66
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 66.0 / 100
+- Suggested Fix: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Fix Priority: low

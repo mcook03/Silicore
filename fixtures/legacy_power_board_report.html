@@ -54,9 +54,9 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> legacy_power_board.brd</p>
-                <p><strong>Score:</strong> 15.7 / 100</p>
-                <p><strong>Total Risks:</strong> 22</p>
-                <p><strong>Total Penalty:</strong> 104.0</p>
+                <p><strong>Score:</strong> 12.5 / 100</p>
+                <p><strong>Total Risks:</strong> 24</p>
+                <p><strong>Total Penalty:</strong> 110.0</p>
             </div>
 
             <div class="card">
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 8</p>
                 <p><strong>Net Count:</strong> 5</p>
-                <p><strong>Risk Count:</strong> 22</p>
+                <p><strong>Risk Count:</strong> 24</p>
                 <p><strong>Sample Components:</strong> U1, U2, C1, C2, L1, D1, J1, R1</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 5.6</li><li>high: 4.8</li></ul>
+                <ul><li>medium: 6.0</li><li>high: 4.8</li><li>low: 0.2</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 1.2</li><li>power_integrity: 3.8</li><li>manufacturing: 1.2</li><li>reliability: 0.4</li><li>layout: 1.2</li><li>thermal: 2.0</li><li>signal_integrity: 0.6</li></ul>
+                <ul><li>assembly_testability: 1.2</li><li>power_integrity: 3.8</li><li>manufacturing: 1.2</li><li>reliability: 0.4</li><li>layout: 1.2</li><li>thermal: 2.0</li><li>signal_integrity: 0.6</li><li>system_interaction: 0.6</li></ul>
             </div>
 
             <div class="card">
@@ -343,8 +343,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> R1</p>
-                <p><strong>Nets:</strong> GND, CLK</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CLK&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> CLK, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CLK&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -670,6 +670,56 @@
                 
                 <p><strong>Nets:</strong> CLK</p>
                 <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 73.94, &quot;target_impedance_ohms&quot;: 50.0, &quot;mismatch_pct&quot;: 47.9, &quot;delay_ps&quot;: 127.9, &quot;via_inductance_nh&quot;: 0.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Clocking and fast connectivity subsystems share board context and need timing-containment review.</p>
+                <p><strong>Recommendation:</strong> Check clock-source placement, reference continuity, and keepout from high-speed connectors.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Check clock-source placement, reference continuity, and keepout from high-speed connectors.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> low</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Digital control logic is present without a clearly classified debug or test subsystem.</p>
+                <p><strong>Recommendation:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 66.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 66.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Fix Priority:</strong> low</p>
+                
+                
+                
+                
             </div>
             
             </div>

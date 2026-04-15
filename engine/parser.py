@@ -1,3 +1,4 @@
+from engine.altium_ascii_parser import parse_altium_ascii_file
 from engine.gerber_parser import parse_gerber_file
 from engine.kicad_parser import parse_kicad_file
 from engine.pcb_model import PCB, Component, Pad, TraceSegment, Via
@@ -169,7 +170,7 @@ def parse_pcb_file(filepath):
     if lower.endswith(".gbr") or lower.endswith(".ger") or lower.endswith(".gko"):
         return parse_gerber_file(filepath)
     if lower.endswith(".pcbdocascii"):
-        return parse_structured_board_file(filepath)
+        return parse_altium_ascii_file(filepath)
     if lower.endswith(".txt") or lower.endswith(".brd"):
         return parse_structured_board_file(filepath)
 

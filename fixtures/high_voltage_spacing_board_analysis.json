@@ -1,7 +1,7 @@
 {
     "filename": "high_voltage_spacing_board.kicad_pcb",
     "file_path": "fixtures/high_voltage_spacing_board.kicad_pcb",
-    "score": 15.7,
+    "score": 14.4,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -186,9 +186,9 @@
                 "U1"
             ],
             "nets": [
-                "HV-",
+                "CTRL",
                 "HV+",
-                "CTRL"
+                "HV-"
             ],
             "region": null,
             "metrics": {
@@ -226,9 +226,9 @@
                 "U1"
             ],
             "nets": [
-                "HV-",
+                "CTRL",
                 "HV+",
-                "CTRL"
+                "HV-"
             ],
             "region": null,
             "metrics": {
@@ -265,8 +265,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "CTRL"
+                "CTRL",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -355,8 +355,8 @@
                 "J1"
             ],
             "nets": [
-                "HV-",
-                "HV+"
+                "HV+",
+                "HV-"
             ],
             "region": null,
             "metrics": {
@@ -374,8 +374,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV-",
-                    "HV+"
+                    "HV+",
+                    "HV-"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -410,9 +410,9 @@
                 "U1"
             ],
             "nets": [
-                "HV-",
+                "CTRL",
                 "HV+",
-                "CTRL"
+                "HV-"
             ],
             "region": null,
             "metrics": {
@@ -430,9 +430,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV-",
+                    "CTRL",
                     "HV+",
-                    "CTRL"
+                    "HV-"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -467,8 +467,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "CTRL"
+                "CTRL",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -486,8 +486,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "CTRL"
+                    "CTRL",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -785,17 +785,48 @@
                 "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
                 "priority": "high"
             }
+        },
+        {
+            "rule_id": "subsystem_debug_access_gap",
+            "category": "system_interaction",
+            "severity": "low",
+            "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+            "recommendation": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {},
+            "confidence": 0.66,
+            "short_title": "Debug access classification gap",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Boards are harder to validate when debug access is weak or missing.",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.66
+            },
+            "fix_suggestion": {
+                "fix": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "priority": "low"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 104.0,
-        "total_penalty_raw_10": 10.4,
+        "total_penalty": 106.0,
+        "total_penalty_raw_10": 10.6,
         "severity_totals": {
             "medium": 4.4,
             "high": 3.6,
-            "critical": 2.4
+            "critical": 2.4,
+            "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 1.2,
@@ -804,14 +835,15 @@
             "reliability": 0.4,
             "safety_high_voltage": 2.4,
             "thermal": 0.8,
-            "signal_integrity": 0.6
+            "signal_integrity": 0.6,
+            "system_interaction": 0.2
         },
-        "final_score": 15.7,
-        "final_score_raw_10": 1.57,
+        "final_score": 14.4,
+        "final_score_raw_10": 1.44,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 0.4,
-        "overflow_penalty": 4.0,
+        "overflow_penalty_raw_10": 0.6,
+        "overflow_penalty": 6.0,
         "details": [
             {
                 "severity": "medium",
@@ -1021,6 +1053,17 @@
                 "confidence": 0.84,
                 "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
                 "fix_priority": "high"
+            },
+            {
+                "severity": "low",
+                "category": "system_interaction",
+                "penalty": 0.2,
+                "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.66,
+                "suggested_fix": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "fix_priority": "low"
             }
         ]
     },
@@ -1033,11 +1076,12 @@
             "U1",
             "U2"
         ],
-        "risk_count": 19,
+        "risk_count": 20,
         "severity_counts": {
             "medium": 11,
             "high": 6,
-            "critical": 2
+            "critical": 2,
+            "low": 1
         },
         "category_counts": {
             "assembly_testability": 3,
@@ -1046,7 +1090,8 @@
             "reliability": 1,
             "safety_high_voltage": 2,
             "thermal": 2,
-            "signal_integrity": 1
+            "signal_integrity": 1,
+            "system_interaction": 1
         }
     },
     "pcb_snapshot": {
@@ -1799,7 +1844,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:35:13.413848+00:00",
+        "timestamp": "2026-04-15T18:52:31.457400+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2224,7 +2269,7 @@
         "board_type": "general"
     },
     "parser_confidence": {
-        "score": 90.0,
+        "score": 90.4,
         "status": "supported",
         "component_count": 3,
         "net_count": 4,
@@ -2232,7 +2277,8 @@
         "via_count": 0,
         "outline_count": 0,
         "zone_count": 0,
-        "summary": "Parser confidence is 90.0 / 100 for this KiCad PCB input."
+        "layer_count": 1,
+        "summary": "Parser confidence is 90.4 / 100 for this KiCad PCB input."
     },
     "physics_summary": {
         "enabled": true,
@@ -2297,6 +2343,23 @@
                 "threshold_label": "Maximum impedance mismatch 12.0%",
                 "observed_label": "Observed mismatch 32.4% at 66.2 ohms"
             }
+        ]
+    },
+    "stackup_summary": {
+        "layer_count": 1,
+        "copper_layers": [
+            "F.Cu"
+        ],
+        "signal_layers": [
+            "F.Cu"
+        ],
+        "reference_layers": [],
+        "style": "two_layer",
+        "reference_coverage_pct": 0.0,
+        "dominant_signal_layer": "F.Cu",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets.",
+            "No dedicated reference layer was inferred from the current board data."
         ]
     },
     "raw_rule_result": {
@@ -2439,9 +2502,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV-",
+                    "CTRL",
                     "HV+",
-                    "CTRL"
+                    "HV-"
                 ],
                 "region": null,
                 "metrics": {
@@ -2470,9 +2533,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV-",
+                    "CTRL",
                     "HV+",
-                    "CTRL"
+                    "HV-"
                 ],
                 "region": null,
                 "metrics": {
@@ -2500,8 +2563,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "CTRL"
+                    "CTRL",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2572,8 +2635,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "HV-",
-                    "HV+"
+                    "HV+",
+                    "HV-"
                 ],
                 "region": null,
                 "metrics": {
@@ -2591,8 +2654,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV-",
-                        "HV+"
+                        "HV+",
+                        "HV-"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -2618,9 +2681,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV-",
+                    "CTRL",
                     "HV+",
-                    "CTRL"
+                    "HV-"
                 ],
                 "region": null,
                 "metrics": {
@@ -2638,9 +2701,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV-",
+                        "CTRL",
                         "HV+",
-                        "CTRL"
+                        "HV-"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -2666,8 +2729,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "CTRL"
+                    "CTRL",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2685,8 +2748,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "CTRL"
+                        "CTRL",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2888,29 +2951,9 @@
         "score": 0.2,
         "total_penalty": 9.8
     },
-    "generated_at": "2026-04-15T18:35:13.413858+00:00",
+    "generated_at": "2026-04-15T18:52:31.457409+00:00",
     "subsystem_summary": {
         "subsystems": [
-            {
-                "name": "connectivity",
-                "label": "Connectivity",
-                "component_count": 1,
-                "net_count": 0,
-                "components": [
-                    "J1"
-                ],
-                "nets": []
-            },
-            {
-                "name": "digital_control",
-                "label": "Digital Control",
-                "component_count": 1,
-                "net_count": 0,
-                "components": [
-                    "U2"
-                ],
-                "nets": []
-            },
             {
                 "name": "general",
                 "label": "General",
@@ -2924,10 +2967,48 @@
                     "HV-",
                     "CTRL",
                     "GND"
-                ]
+                ],
+                "weight": 7.5
+            },
+            {
+                "name": "connectivity",
+                "label": "Connectivity",
+                "component_count": 1,
+                "net_count": 0,
+                "components": [
+                    "J1"
+                ],
+                "nets": [],
+                "weight": 2.5
+            },
+            {
+                "name": "digital_control",
+                "label": "Digital Control",
+                "component_count": 1,
+                "net_count": 0,
+                "components": [
+                    "U2"
+                ],
+                "nets": [],
+                "weight": 2.5
             }
         ],
-        "dominant_subsystem": "Connectivity"
+        "dominant_subsystem": "General",
+        "interaction_risks": [
+            {
+                "rule_id": "subsystem_debug_access_gap",
+                "category": "system_interaction",
+                "severity": "low",
+                "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+                "recommendation": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "design_domain": "testability",
+                "confidence": 0.66,
+                "fix_priority": "medium",
+                "short_title": "Debug access classification gap",
+                "why_it_matters": "Boards are harder to validate when debug access is weak or missing."
+            }
+        ],
+        "summary": "Dominant subsystem pressure is General."
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",

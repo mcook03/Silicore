@@ -1,9 +1,9 @@
 # SILICORE ENGINEERING REPORT
 
 - File: high_voltage_spacing_board.kicad_pcb
-- Score: 15.7 / 100
-- Total Risks: 19
-- Total Penalty: 104.0
+- Score: 14.4 / 100
+- Total Risks: 20
+- Total Penalty: 106.0
 
 ## Executive Summary
 
@@ -35,7 +35,7 @@ This board shows high design risk. The main risk concentration is in power integ
 
 - Component Count: 3
 - Net Count: 4
-- Risk Count: 19
+- Risk Count: 20
 - Sample Components: J1, U1, U2
 
 ## Severity Penalties
@@ -43,6 +43,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - medium: 4.4
 - high: 3.6
 - critical: 2.4
+- low: 0.2
 
 ## Category Penalties
 
@@ -53,6 +54,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - safety_high_voltage: 2.4
 - thermal: 0.8
 - signal_integrity: 0.6
+- system_interaction: 0.2
 
 ## Detailed Findings
 
@@ -155,7 +157,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: HV-, HV+, CTRL
+- Nets: CTRL, HV+, HV-
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -173,7 +175,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: HV-, HV+, CTRL
+- Nets: CTRL, HV+, HV-
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity
@@ -191,7 +193,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U2
-- Nets: GND, CTRL
+- Nets: CTRL, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — emi_return_path
@@ -227,8 +229,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: J1
-- Nets: HV-, HV+
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV-", "HV+"], "has_power": false, "has_ground": false}
+- Nets: HV+, HV-
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV+", "HV-"], "has_power": false, "has_ground": false}
 
 ### HIGH — power_integrity
 - Message: U1 is not connected to a valid power rail
@@ -245,8 +247,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: U1
-- Nets: HV-, HV+, CTRL
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV-", "HV+", "CTRL"], "has_power": false, "has_ground": false}
+- Nets: CTRL, HV+, HV-
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CTRL", "HV+", "HV-"], "has_power": false, "has_ground": false}
 
 ### MEDIUM — power_integrity
 - Message: U2 has ground but no visible power rail
@@ -263,8 +265,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U2
-- Nets: GND, CTRL
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CTRL"], "has_power": false, "has_ground": true}
+- Nets: CTRL, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CTRL", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — reliability
 - Message: Ground net GND has limited visible connectivity (1 connections)
@@ -389,3 +391,18 @@ This board shows high design risk. The main risk concentration is in power integ
 - Fix Priority: high
 - Nets: CTRL
 - Metrics: {"estimated_impedance_ohms": 66.2, "target_impedance_ohms": 50.0, "mismatch_pct": 32.4, "delay_ps": 123.6, "via_inductance_nh": 0.0}
+
+### LOW — system_interaction
+- Message: Digital control logic is present without a clearly classified debug or test subsystem.
+- Recommendation: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.66
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 40 / 100
+- Evidence Count: 0
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 66.0 / 100
+- Suggested Fix: Confirm bring-up access through debug headers, test pads, or programming entry points.
+- Fix Priority: low

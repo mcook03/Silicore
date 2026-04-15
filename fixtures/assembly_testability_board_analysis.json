@@ -1,7 +1,7 @@
 {
     "filename": "assembly_testability_board.kicad_pcb",
     "file_path": "fixtures/assembly_testability_board.kicad_pcb",
-    "score": 8.9,
+    "score": 8.8,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -339,10 +339,10 @@
                 "U1"
             ],
             "nets": [
-                "GND",
                 "SWDIO",
+                "UART_TX",
                 "VCC",
-                "UART_TX"
+                "SWCLK"
             ],
             "region": null,
             "metrics": {
@@ -1109,16 +1109,47 @@
                 "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
                 "priority": "high"
             }
+        },
+        {
+            "rule_id": "subsystem_debug_access_gap",
+            "category": "system_interaction",
+            "severity": "low",
+            "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+            "recommendation": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {},
+            "confidence": 0.66,
+            "short_title": "Debug access classification gap",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Boards are harder to validate when debug access is weak or missing.",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.66
+            },
+            "fix_suggestion": {
+                "fix": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "priority": "low"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 128.0,
-        "total_penalty_raw_10": 12.8,
+        "total_penalty": 130.0,
+        "total_penalty_raw_10": 13.0,
         "severity_totals": {
             "medium": 9.2,
-            "high": 3.6
+            "high": 3.6,
+            "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 2.0,
@@ -1126,14 +1157,15 @@
             "power_integrity": 4.2,
             "manufacturing": 3.2,
             "signal_integrity": 2.6,
-            "stackup_return_path": 0.4
+            "stackup_return_path": 0.4,
+            "system_interaction": 0.2
         },
-        "final_score": 8.9,
-        "final_score_raw_10": 0.89,
+        "final_score": 8.8,
+        "final_score_raw_10": 0.88,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 2.8,
-        "overflow_penalty": 28.0,
+        "overflow_penalty_raw_10": 3.0,
+        "overflow_penalty": 30.0,
         "details": [
             {
                 "severity": "medium",
@@ -1453,6 +1485,17 @@
                 "confidence": 0.84,
                 "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
                 "fix_priority": "high"
+            },
+            {
+                "severity": "low",
+                "category": "system_interaction",
+                "penalty": 0.2,
+                "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.66,
+                "suggested_fix": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "fix_priority": "low"
             }
         ]
     },
@@ -1466,10 +1509,11 @@
             "C1",
             "R1"
         ],
-        "risk_count": 29,
+        "risk_count": 30,
         "severity_counts": {
             "medium": 23,
-            "high": 6
+            "high": 6,
+            "low": 1
         },
         "category_counts": {
             "assembly_testability": 5,
@@ -1477,7 +1521,8 @@
             "power_integrity": 8,
             "manufacturing": 8,
             "signal_integrity": 6,
-            "stackup_return_path": 1
+            "stackup_return_path": 1,
+            "system_interaction": 1
         }
     },
     "pcb_snapshot": {
@@ -2368,7 +2413,7 @@
     },
     "analysis_context": {
         "board_name": "assembly_testability_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:35:13.400142+00:00",
+        "timestamp": "2026-04-15T18:52:31.445967+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2793,7 +2838,7 @@
         "board_type": "general"
     },
     "parser_confidence": {
-        "score": 91.4,
+        "score": 91.9,
         "status": "supported",
         "component_count": 4,
         "net_count": 5,
@@ -2801,7 +2846,8 @@
         "via_count": 0,
         "outline_count": 0,
         "zone_count": 0,
-        "summary": "Parser confidence is 91.4 / 100 for this KiCad PCB input."
+        "layer_count": 1,
+        "summary": "Parser confidence is 91.9 / 100 for this KiCad PCB input."
     },
     "physics_summary": {
         "enabled": true,
@@ -2905,6 +2951,23 @@
                 "threshold_label": "Maximum impedance mismatch 12.0%",
                 "observed_label": "Observed mismatch 57.5% at 78.7 ohms"
             }
+        ]
+    },
+    "stackup_summary": {
+        "layer_count": 1,
+        "copper_layers": [
+            "F.Cu"
+        ],
+        "signal_layers": [
+            "F.Cu"
+        ],
+        "reference_layers": [],
+        "style": "two_layer",
+        "reference_coverage_pct": 0.0,
+        "dominant_signal_layer": "F.Cu",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets.",
+            "No dedicated reference layer was inferred from the current board data."
         ]
     },
     "raw_rule_result": {
@@ -3164,10 +3227,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
                     "SWDIO",
+                    "UART_TX",
                     "VCC",
-                    "UART_TX"
+                    "SWCLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -3702,31 +3765,9 @@
         "score": 0.0,
         "total_penalty": 11.6
     },
-    "generated_at": "2026-04-15T18:35:13.400153+00:00",
+    "generated_at": "2026-04-15T18:52:31.445977+00:00",
     "subsystem_summary": {
         "subsystems": [
-            {
-                "name": "connectivity",
-                "label": "Connectivity",
-                "component_count": 1,
-                "net_count": 1,
-                "components": [
-                    "J1"
-                ],
-                "nets": [
-                    "UART_TX"
-                ]
-            },
-            {
-                "name": "digital_control",
-                "label": "Digital Control",
-                "component_count": 1,
-                "net_count": 0,
-                "components": [
-                    "U1"
-                ],
-                "nets": []
-            },
             {
                 "name": "general",
                 "label": "General",
@@ -3738,7 +3779,21 @@
                 ],
                 "nets": [
                     "GND"
-                ]
+                ],
+                "weight": 6.6
+            },
+            {
+                "name": "connectivity",
+                "label": "Connectivity",
+                "component_count": 1,
+                "net_count": 1,
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "UART_TX"
+                ],
+                "weight": 4.0
             },
             {
                 "name": "power",
@@ -3750,10 +3805,37 @@
                     "VCC",
                     "SWDIO",
                     "SWCLK"
-                ]
+                ],
+                "weight": 3.6
+            },
+            {
+                "name": "digital_control",
+                "label": "Digital Control",
+                "component_count": 1,
+                "net_count": 0,
+                "components": [
+                    "U1"
+                ],
+                "nets": [],
+                "weight": 2.5
             }
         ],
-        "dominant_subsystem": "Connectivity"
+        "dominant_subsystem": "General",
+        "interaction_risks": [
+            {
+                "rule_id": "subsystem_debug_access_gap",
+                "category": "system_interaction",
+                "severity": "low",
+                "message": "Digital control logic is present without a clearly classified debug or test subsystem.",
+                "recommendation": "Confirm bring-up access through debug headers, test pads, or programming entry points.",
+                "design_domain": "testability",
+                "confidence": 0.66,
+                "fix_priority": "medium",
+                "short_title": "Debug access classification gap",
+                "why_it_matters": "Boards are harder to validate when debug access is weak or missing."
+            }
+        ],
+        "summary": "Dominant subsystem pressure is General."
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
