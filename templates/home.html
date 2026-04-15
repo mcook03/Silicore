@@ -32,10 +32,13 @@
 
     <div class="tech-hero-grid">
         <div class="tech-copy">
-            <div class="tech-kicker">Silicore Engineering Intelligence</div>
-            <h1 class="tech-title">Silicore Nexus turns engineering review into a live technical system, powered by Atlas Intelligence.</h1>
+            <div class="tech-brand-row">
+                <div class="tech-kicker">Silicore Engineering Intelligence</div>
+                <div class="tech-brand-tag">Powered by Atlas Intelligence</div>
+            </div>
+            <h1 class="tech-title">Engineering review, ranked in real time.</h1>
             <p class="tech-description">
-                Analyze boards, expose risk pressure across signal, power, thermal, manufacturability, safety, and return-path behavior, then guide teams toward what matters first through Silicore Nexus with Atlas Intelligence driving the reasoning layer.
+                Silicore Nexus surfaces board risk, trust, and fix priority across signal, power, thermal, manufacturability, safety, and return-path behavior without wasting the engineer’s attention.
             </p>
 
             <div class="tech-cta-row">
@@ -45,15 +48,15 @@
 
             <div class="tech-metric-strip">
                 <article class="tech-metric-card">
-                    <span class="tech-metric-label">Tracked Runs</span>
+                    <span class="tech-metric-label">Runs</span>
                     <strong>{{ stats.total_runs }}</strong>
                 </article>
                 <article class="tech-metric-card">
-                    <span class="tech-metric-label">Nexus Workspaces</span>
+                    <span class="tech-metric-label">Workspaces</span>
                     <strong>{{ projects|length }}</strong>
                 </article>
                 <article class="tech-metric-card">
-                    <span class="tech-metric-label">Latest Score</span>
+                    <span class="tech-metric-label">Latest</span>
                     <strong>{{ home_chart.latest_score }}</strong>
                 </article>
             </div>
@@ -598,8 +601,29 @@
     .tech-copy {
         display: grid;
         align-content: center;
-        gap: 18px;
-        padding-right: 8px;
+        gap: 14px;
+        padding-right: 4px;
+    }
+
+    .tech-brand-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .tech-brand-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(125, 211, 252, 0.14);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(224, 235, 255, 0.82);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
     }
 
     .tech-kicker,
@@ -618,9 +642,9 @@
 
     .tech-title {
         margin: 0;
-        max-width: 10.5ch;
-        font-size: clamp(48px, 5.8vw, 74px);
-        line-height: 0.94;
+        max-width: 12ch;
+        font-size: clamp(40px, 4.9vw, 60px);
+        line-height: 0.98;
         letter-spacing: -0.065em;
         font-weight: 800;
         color: #f8fbff;
@@ -629,10 +653,10 @@
 
     .tech-description {
         margin: 0;
-        max-width: 62ch;
+        max-width: 48ch;
         color: rgba(224, 235, 255, 0.8);
-        font-size: 16px;
-        line-height: 1.85;
+        font-size: 15px;
+        line-height: 1.58;
     }
 
     .tech-cta-row {
@@ -642,10 +666,10 @@
     }
 
     .tech-metric-strip {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 8px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 2px;
     }
 
     .tech-metric-card,
@@ -683,15 +707,19 @@
     }
 
     .tech-metric-card {
-        padding: 16px 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        padding: 10px 14px;
     }
 
     .tech-metric-card strong,
     .telemetry-block strong {
         display: block;
-        margin-top: 8px;
+        margin-top: 0;
         color: #f8fbff;
-        font-size: 32px;
+        font-size: 22px;
         line-height: 1;
         letter-spacing: -0.05em;
         font-weight: 800;
