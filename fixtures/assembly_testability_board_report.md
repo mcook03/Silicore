@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: assembly_testability_board.kicad_pcb
-- Score: 10.8 / 100
-- Total Risks: 27
-- Total Penalty: 116.0
+- Score: 8.9 / 100
+- Total Risks: 29
+- Total Penalty: 128.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows high design risk. The main risk concentration is in manufacturing. The highest-priority issue is High-current net SWDIO bottlenecks through a narrow copper section. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows moderate design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms). The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -24,32 +24,32 @@ This board shows high design risk. The main risk concentration is in manufacturi
 
 ## Top Issues
 
-1. **HIGH** — power_integrity — High-current net SWDIO bottlenecks through a narrow copper section
+1. **HIGH** — signal_integrity — Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)
+   - Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+2. **HIGH** — power_integrity — Physics estimate suggests VCC is running high current density (142.9 A/mm²)
+   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+3. **HIGH** — power_integrity — High-current net SWDIO bottlenecks through a narrow copper section
    - Recommendation: Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.
-2. **HIGH** — power_integrity — High-current net SWCLK bottlenecks through a narrow copper section
-   - Recommendation: Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.
-3. **HIGH** — power_integrity — U1 appears to lack enough local decoupling support
-   - Recommendation: Add or reposition local bypass capacitors close to the device supply pins with short return paths.
 
 ## Board Summary
 
 - Component Count: 4
 - Net Count: 5
-- Risk Count: 27
+- Risk Count: 29
 - Sample Components: U1, J1, C1, R1
 
 ## Severity Penalties
 
 - medium: 9.2
-- high: 2.4
+- high: 3.6
 
 ## Category Penalties
 
 - assembly_testability: 2.0
 - component_design: 0.4
-- power_integrity: 3.6
+- power_integrity: 4.2
 - manufacturing: 3.2
-- signal_integrity: 2.0
+- signal_integrity: 2.6
 - stackup_return_path: 0.4
 
 ## Detailed Findings
@@ -226,7 +226,7 @@ This board shows high design risk. The main risk concentration is in manufacturi
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, UART_TX, SWDIO, VCC
+- Nets: VCC, SWDIO, GND, SWCLK
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — manufacturing
@@ -524,3 +524,37 @@ This board shows high design risk. The main risk concentration is in manufacturi
 - Fix Priority: medium
 - Nets: UART_TX
 - Metrics: {"min_trace_width": 0.12, "threshold": 0.15}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VCC is running high current density (142.9 A/mm²)
+- Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.8
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=12.0
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 80.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VCC
+- Metrics: {"current_density_a_per_mm2": 142.86, "estimated_current_a": 0.8, "cross_section_mm2": 0.0056, "threshold": 12.0}
+
+### HIGH — signal_integrity
+- Message: Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)
+- Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+- Root Cause: Signal path geometry or routing issue
+- Impact: Timing errors or signal degradation
+- Confidence: 0.84
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 9
+- Engineering Impact: Timing errors or signal degradation
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.
+- Fix Priority: high
+- Nets: SWCLK
+- Metrics: {"estimated_impedance_ohms": 78.73, "target_impedance_ohms": 50.0, "mismatch_pct": 57.5, "delay_ps": 163.7, "via_inductance_nh": 0.0}

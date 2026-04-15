@@ -1,7 +1,7 @@
 {
     "filename": "mixed_signal_noise_board.kicad_pcb",
     "file_path": "fixtures/mixed_signal_noise_board.kicad_pcb",
-    "score": 9.4,
+    "score": 8.3,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -228,9 +228,9 @@
                 "U1"
             ],
             "nets": [
-                "VIN",
+                "SW",
                 "GND",
-                "SW"
+                "VIN"
             ],
             "region": null,
             "metrics": {
@@ -268,9 +268,9 @@
                 "U1"
             ],
             "nets": [
-                "VIN",
+                "SW",
                 "GND",
-                "SW"
+                "VIN"
             ],
             "region": null,
             "metrics": {
@@ -307,9 +307,9 @@
                 "U2"
             ],
             "nets": [
-                "SENSOR_OUT",
+                "ADC_IN",
                 "GND",
-                "ADC_IN"
+                "SENSOR_OUT"
             ],
             "region": null,
             "metrics": {
@@ -456,8 +456,8 @@
                 "L1"
             ],
             "nets": [
-                "VIN",
-                "SW"
+                "SW",
+                "VIN"
             ],
             "region": null,
             "metrics": {
@@ -475,8 +475,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VIN",
-                    "SW"
+                    "SW",
+                    "VIN"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -511,9 +511,9 @@
                 "U2"
             ],
             "nets": [
-                "SENSOR_OUT",
+                "ADC_IN",
                 "GND",
-                "ADC_IN"
+                "SENSOR_OUT"
             ],
             "region": null,
             "metrics": {
@@ -531,9 +531,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SENSOR_OUT",
+                    "ADC_IN",
                     "GND",
-                    "ADC_IN"
+                    "SENSOR_OUT"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1065,31 +1065,105 @@
                 "fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "priority": "medium"
             }
+        },
+        {
+            "rule_id": "physics_power_integrity",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VIN may incur high IR drop (172.6 mV)",
+            "recommendation": "Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "voltage_drop_mv": 172.6,
+                "estimated_current_a": 1.5,
+                "resistance_ohms": 0.1151,
+                "threshold_mv": 75.0
+            },
+            "confidence": 0.82,
+            "short_title": "Physics-based IR drop risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "Excess IR drop can destabilize rails under load and erode noise margin at the point of use.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles resistance and load estimate exceeded the configured voltage-drop limit.",
+            "threshold_label": "Maximum voltage drop 75.0 mV",
+            "observed_label": "Observed estimated drop 172.6 mV",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_power_density",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VIN is running high current density (238.1 A/mm\u00b2)",
+            "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "current_density_a_per_mm2": 238.1,
+                "estimated_current_a": 1.5,
+                "cross_section_mm2": 0.0063,
+                "threshold": 12.0
+            },
+            "confidence": 0.8,
+            "short_title": "Physics-based current-density risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+            "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+            "observed_label": "Observed current density 238.1 A/mm\u00b2",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 124.0,
-        "total_penalty_raw_10": 12.4,
+        "total_penalty": 136.0,
+        "total_penalty_raw_10": 13.6,
         "severity_totals": {
             "medium": 7.6,
-            "high": 4.8
+            "high": 6.0
         },
         "category_totals": {
             "assembly_testability": 0.8,
             "component_design": 0.4,
-            "power_integrity": 7.6,
+            "power_integrity": 8.8,
             "manufacturing": 1.6,
             "reliability": 0.4,
             "thermal": 1.6
         },
-        "final_score": 9.4,
-        "final_score_raw_10": 0.94,
+        "final_score": 8.3,
+        "final_score_raw_10": 0.83,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 2.4,
-        "overflow_penalty": 24.0,
+        "overflow_penalty_raw_10": 3.6,
+        "overflow_penalty": 36.0,
         "details": [
             {
                 "severity": "medium",
@@ -1387,6 +1461,28 @@
                 "confidence": 0.83,
                 "suggested_fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VIN may incur high IR drop (172.6 mV)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.82,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VIN is running high current density (238.1 A/mm\u00b2)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
             }
         ]
     },
@@ -1400,15 +1496,15 @@
             "U2",
             "U3"
         ],
-        "risk_count": 27,
+        "risk_count": 29,
         "severity_counts": {
             "medium": 19,
-            "high": 8
+            "high": 10
         },
         "category_counts": {
             "assembly_testability": 2,
             "component_design": 1,
-            "power_integrity": 15,
+            "power_integrity": 17,
             "manufacturing": 4,
             "reliability": 1,
             "thermal": 4
@@ -1926,6 +2022,28 @@
         "emi": {
             "require_ground_reference": true
         },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
         "rules": {
             "spacing": {
                 "threshold": 3.0
@@ -2243,7 +2361,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:18:29.324101+00:00",
+        "timestamp": "2026-04-15T18:26:34.414636+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2326,6 +2444,28 @@
             },
             "emi": {
                 "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
             },
             "rules": {
                 "spacing": {
@@ -2645,6 +2785,97 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [],
+        "power_models": [
+            {
+                "net_name": "VIN",
+                "length_mm": 42.05,
+                "average_width_mm": 0.18,
+                "estimated_current_a": 1.5,
+                "resistance_ohms": 0.1151,
+                "voltage_drop_mv": 172.6,
+                "current_density_a_per_mm2": 238.1,
+                "power_loss_mw": 258.89
+            }
+        ],
+        "summary": {
+            "signal_nets_modeled": 0,
+            "power_nets_modeled": 1,
+            "worst_impedance_mismatch_pct": 0.0,
+            "worst_voltage_drop_mv": 172.6
+        },
+        "risks": [
+            {
+                "rule_id": "physics_power_integrity",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VIN may incur high IR drop (172.6 mV)",
+                "recommendation": "Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "voltage_drop_mv": 172.6,
+                    "estimated_current_a": 1.5,
+                    "resistance_ohms": 0.1151,
+                    "threshold_mv": 75.0
+                },
+                "confidence": 0.82,
+                "short_title": "Physics-based IR drop risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "Excess IR drop can destabilize rails under load and erode noise margin at the point of use.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles resistance and load estimate exceeded the configured voltage-drop limit.",
+                "threshold_label": "Maximum voltage drop 75.0 mV",
+                "observed_label": "Observed estimated drop 172.6 mV"
+            },
+            {
+                "rule_id": "physics_power_density",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VIN is running high current density (238.1 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "current_density_a_per_mm2": 238.1,
+                    "estimated_current_a": 1.5,
+                    "cross_section_mm2": 0.0063,
+                    "threshold": 12.0
+                },
+                "confidence": 0.8,
+                "short_title": "Physics-based current-density risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+                "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+                "observed_label": "Observed current density 238.1 A/mm\u00b2"
+            }
+        ]
+    },
     "raw_rule_result": {
         "risks": [
             {
@@ -2818,9 +3049,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "VIN",
+                    "SW",
                     "GND",
-                    "SW"
+                    "VIN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2849,9 +3080,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "VIN",
+                    "SW",
                     "GND",
-                    "SW"
+                    "VIN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2879,9 +3110,9 @@
                     "U2"
                 ],
                 "nets": [
-                    "SENSOR_OUT",
+                    "ADC_IN",
                     "GND",
-                    "ADC_IN"
+                    "SENSOR_OUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -2992,8 +3223,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "VIN",
-                    "SW"
+                    "SW",
+                    "VIN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3011,8 +3242,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VIN",
-                        "SW"
+                        "SW",
+                        "VIN"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3038,9 +3269,9 @@
                     "U2"
                 ],
                 "nets": [
-                    "SENSOR_OUT",
+                    "ADC_IN",
                     "GND",
-                    "ADC_IN"
+                    "SENSOR_OUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -3058,9 +3289,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SENSOR_OUT",
+                        "ADC_IN",
                         "GND",
-                        "ADC_IN"
+                        "SENSOR_OUT"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3471,7 +3702,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-15T18:18:29.324108+00:00",
+    "generated_at": "2026-04-15T18:26:34.414644+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -3518,7 +3749,7 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows very low design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows moderate design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "high",
@@ -3535,8 +3766,8 @@
             {
                 "severity": "high",
                 "category": "power_integrity",
-                "message": "High-current net VIN bottlenecks through a narrow copper section",
-                "recommendation": "Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure."
+                "message": "Physics estimate suggests VIN is running high current density (238.1 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
             }
         ]
     }

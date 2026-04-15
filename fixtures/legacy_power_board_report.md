@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: legacy_power_board.brd
-- Score: 14.0 / 100
-- Total Risks: 19
-- Total Penalty: 86.0
+- Score: 15.7 / 100
+- Total Risks: 22
+- Total Penalty: 104.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is High-current net VCC bottlenecks through a narrow copper section. The current design snapshot includes 8 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms). The current design snapshot includes 8 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -24,33 +24,34 @@ This board shows high design risk. The main risk concentration is in power integ
 
 ## Top Issues
 
-1. **HIGH** — power_integrity — High-current net VCC bottlenecks through a narrow copper section
-   - Recommendation: Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.
-2. **HIGH** — power_integrity — Power net VCC uses a narrow trace width (0.45)
-   - Recommendation: Increase power trace width to reduce resistance, heating, and voltage drop.
-3. **HIGH** — power_integrity — L1 is not connected to a valid power rail
-   - Recommendation: Connect the component to the intended power net and confirm that its pad-to-net assignments are present in the board data.
+1. **HIGH** — signal_integrity — Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)
+   - Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+2. **HIGH** — power_integrity — Physics estimate suggests VIN is running high current density (61.2 A/mm²)
+   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+3. **HIGH** — power_integrity — Physics estimate suggests VCC is running high current density (50.8 A/mm²)
+   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
 
 ## Board Summary
 
 - Component Count: 8
 - Net Count: 5
-- Risk Count: 19
+- Risk Count: 22
 - Sample Components: U1, U2, C1, C2, L1, D1, J1, R1
 
 ## Severity Penalties
 
 - medium: 5.6
-- high: 3.0
+- high: 4.8
 
 ## Category Penalties
 
 - assembly_testability: 1.2
-- power_integrity: 2.6
+- power_integrity: 3.8
 - manufacturing: 1.2
 - reliability: 0.4
 - layout: 1.2
 - thermal: 2.0
+- signal_integrity: 0.6
 
 ## Detailed Findings
 
@@ -172,8 +173,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: L1
-- Nets: SW_NODE, VCC
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["SW_NODE", "VCC"], "has_power": true, "has_ground": false}
+- Nets: VCC, SW_NODE
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VCC", "SW_NODE"], "has_power": true, "has_ground": false}
 
 ### MEDIUM — power_integrity
 - Message: D1 has ground but no visible power rail
@@ -208,8 +209,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: R1
-- Nets: CLK, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "GND"], "has_power": false, "has_ground": true}
+- Nets: GND, CLK
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CLK"], "has_power": false, "has_ground": true}
 
 ### HIGH — power_integrity
 - Message: Power net VCC uses a narrow trace width (0.45)
@@ -383,3 +384,54 @@ This board shows high design risk. The main risk concentration is in power integ
 - Fix Priority: medium
 - Nets: CLK
 - Metrics: {"min_trace_width": 0.12, "threshold": 0.15}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VIN is running high current density (61.2 A/mm²)
+- Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.8
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=12.0
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 80.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VIN
+- Metrics: {"current_density_a_per_mm2": 61.22, "estimated_current_a": 1.5, "cross_section_mm2": 0.0245, "threshold": 12.0}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VCC is running high current density (50.8 A/mm²)
+- Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.8
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=12.0
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 80.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VCC
+- Metrics: {"current_density_a_per_mm2": 50.79, "estimated_current_a": 0.8, "cross_section_mm2": 0.01575, "threshold": 12.0}
+
+### HIGH — signal_integrity
+- Message: Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)
+- Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+- Root Cause: Signal path geometry or routing issue
+- Impact: Timing errors or signal degradation
+- Confidence: 0.84
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 9
+- Engineering Impact: Timing errors or signal degradation
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.
+- Fix Priority: high
+- Nets: CLK
+- Metrics: {"estimated_impedance_ohms": 73.94, "target_impedance_ohms": 50.0, "mismatch_pct": 47.9, "delay_ps": 127.9, "via_inductance_nh": 0.0}

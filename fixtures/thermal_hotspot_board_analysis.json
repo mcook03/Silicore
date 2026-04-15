@@ -1,7 +1,7 @@
 {
     "filename": "thermal_hotspot_board.kicad_pcb",
     "file_path": "fixtures/thermal_hotspot_board.kicad_pcb",
-    "score": 26.0,
+    "score": 20.0,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -151,9 +151,9 @@
                 "U1"
             ],
             "nets": [
-                "VIN",
+                "VOUT",
                 "GND",
-                "VOUT"
+                "VIN"
             ],
             "region": null,
             "metrics": {
@@ -191,9 +191,9 @@
                 "U1"
             ],
             "nets": [
-                "VIN",
+                "VOUT",
                 "GND",
-                "VOUT"
+                "VIN"
             ],
             "region": null,
             "metrics": {
@@ -230,8 +230,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "VOUT"
+                "VOUT",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -347,8 +347,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "VOUT"
+                "VOUT",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -366,8 +366,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "VOUT"
+                    "VOUT",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -655,26 +655,63 @@
                 "fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
                 "priority": "medium"
             }
+        },
+        {
+            "rule_id": "physics_power_density",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VIN is running high current density (214.3 A/mm\u00b2)",
+            "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "current_density_a_per_mm2": 214.29,
+                "estimated_current_a": 1.5,
+                "cross_section_mm2": 0.007,
+                "threshold": 12.0
+            },
+            "confidence": 0.8,
+            "short_title": "Physics-based current-density risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+            "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+            "observed_label": "Observed current density 214.3 A/mm\u00b2",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 74.0,
-        "total_penalty_raw_10": 7.4,
+        "total_penalty": 80.0,
+        "total_penalty_raw_10": 8.0,
         "severity_totals": {
             "medium": 5.6,
-            "high": 1.8
+            "high": 2.4
         },
         "category_totals": {
             "assembly_testability": 0.8,
-            "power_integrity": 3.8,
+            "power_integrity": 4.4,
             "signal_integrity": 1.6,
             "reliability": 0.4,
             "thermal": 0.8
         },
-        "final_score": 26.0,
-        "final_score_raw_10": 2.6,
+        "final_score": 20.0,
+        "final_score_raw_10": 2.0,
         "floor_mode": "linear",
         "soft_floor_score": 5.0,
         "overflow_penalty_raw_10": 0.0,
@@ -866,6 +903,17 @@
                 "confidence": 0.76,
                 "suggested_fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VIN is running high current density (214.3 A/mm\u00b2)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
             }
         ]
     },
@@ -878,14 +926,14 @@
             "Q1",
             "U2"
         ],
-        "risk_count": 17,
+        "risk_count": 18,
         "severity_counts": {
             "medium": 14,
-            "high": 3
+            "high": 4
         },
         "category_counts": {
             "assembly_testability": 2,
-            "power_integrity": 8,
+            "power_integrity": 9,
             "signal_integrity": 4,
             "reliability": 1,
             "thermal": 2
@@ -1326,6 +1374,28 @@
         "emi": {
             "require_ground_reference": true
         },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
         "rules": {
             "spacing": {
                 "threshold": 3.0
@@ -1643,7 +1713,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:18:29.334708+00:00",
+        "timestamp": "2026-04-15T18:26:34.421028+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1726,6 +1796,28 @@
             },
             "emi": {
                 "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
             },
             "rules": {
                 "spacing": {
@@ -2045,6 +2137,69 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [],
+        "power_models": [
+            {
+                "net_name": "VIN",
+                "length_mm": 5.0,
+                "average_width_mm": 0.2,
+                "estimated_current_a": 1.5,
+                "resistance_ohms": 0.0123,
+                "voltage_drop_mv": 18.47,
+                "current_density_a_per_mm2": 214.29,
+                "power_loss_mw": 27.71
+            }
+        ],
+        "summary": {
+            "signal_nets_modeled": 0,
+            "power_nets_modeled": 1,
+            "worst_impedance_mismatch_pct": 0.0,
+            "worst_voltage_drop_mv": 18.47
+        },
+        "risks": [
+            {
+                "rule_id": "physics_power_density",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VIN is running high current density (214.3 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "current_density_a_per_mm2": 214.29,
+                    "estimated_current_a": 1.5,
+                    "cross_section_mm2": 0.007,
+                    "threshold": 12.0
+                },
+                "confidence": 0.8,
+                "short_title": "Physics-based current-density risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+                "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+                "observed_label": "Observed current density 214.3 A/mm\u00b2"
+            }
+        ]
+    },
     "raw_rule_result": {
         "risks": [
             {
@@ -2159,9 +2314,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "VIN",
+                    "VOUT",
                     "GND",
-                    "VOUT"
+                    "VIN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2190,9 +2345,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "VIN",
+                    "VOUT",
                     "GND",
-                    "VOUT"
+                    "VIN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2220,8 +2375,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "VOUT"
+                    "VOUT",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2310,8 +2465,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "VOUT"
+                    "VOUT",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2329,8 +2484,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "VOUT"
+                        "VOUT",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2551,7 +2706,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-15T18:18:29.334715+00:00",
+    "generated_at": "2026-04-15T18:26:34.421033+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -2585,8 +2740,14 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U1 appears to lack enough local decoupling support. The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests VIN is running high current density (214.3 A/mm\u00b2). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "message": "Physics estimate suggests VIN is running high current density (214.3 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
+            },
             {
                 "severity": "high",
                 "category": "power_integrity",
@@ -2598,12 +2759,6 @@
                 "category": "power_integrity",
                 "message": "U2 appears to lack enough local decoupling support",
                 "recommendation": "Add or reposition local bypass capacitors close to the device supply pins with short return paths."
-            },
-            {
-                "severity": "high",
-                "category": "power_integrity",
-                "message": "Power net VIN uses a narrow trace width (0.20)",
-                "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop."
             }
         ]
     }

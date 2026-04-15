@@ -119,6 +119,19 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertEqual(explanation.get("floor_mode"), "soft_floor")
         self.assertGreater(explanation.get("overflow_penalty_raw_10", 0), 0)
 
+    def test_single_analysis_includes_physics_integrity_summary(self):
+        result = run_single_analysis_from_path(
+            "fixtures/high_speed_pair_bad.kicad_pcb",
+            config=self.config,
+        )
+
+        physics_summary = result.get("physics_summary") or {}
+        self.assertTrue(physics_summary.get("enabled"))
+        self.assertIn("signal_models", physics_summary)
+        self.assertIn("power_models", physics_summary)
+        self.assertGreaterEqual(len(physics_summary.get("signal_models") or []), 1)
+        self.assertGreaterEqual(len(physics_summary.get("risks") or []), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

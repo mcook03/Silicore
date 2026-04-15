@@ -81,6 +81,28 @@
     "emi": {
         "require_ground_reference": true
     },
+    "physics": {
+        "dielectric_er": 4.2,
+        "dielectric_height_mm": 0.18,
+        "copper_thickness_mm": 0.035,
+        "board_thickness_mm": 1.6,
+        "target_impedance_ohms": 50.0,
+        "target_diff_impedance_ohms": 90.0,
+        "impedance_tolerance_pct": 12.0,
+        "reference_rise_time_ps": 500.0,
+        "max_voltage_drop_mv": 75.0,
+        "max_current_density_a_per_mm2": 12.0,
+        "current_estimate_map": {
+            "VBUS": 1.5,
+            "VIN": 1.5,
+            "BATT": 2.0,
+            "PACK": 2.0,
+            "VCC": 0.8,
+            "VDD": 0.8,
+            "3V3": 0.6,
+            "5V": 1.0
+        }
+    },
     "rules": {
         "spacing": {
             "threshold": 3.0

@@ -54,15 +54,15 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> mixed_signal_noise_board.kicad_pcb</p>
-                <p><strong>Score:</strong> 9.4 / 100</p>
-                <p><strong>Total Risks:</strong> 27</p>
-                <p><strong>Total Penalty:</strong> 124.0</p>
+                <p><strong>Score:</strong> 8.3 / 100</p>
+                <p><strong>Total Risks:</strong> 29</p>
+                <p><strong>Total Penalty:</strong> 136.0</p>
             </div>
 
             <div class="card">
                 <h2>Executive Summary</h2>
                 <p><strong>Board needs focused engineering review</strong></p>
-                <p class="muted">This board shows very low design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+                <p class="muted">This board shows moderate design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
             </div>
 
             <div class="card">
@@ -95,8 +95,8 @@
             
             <div class="issue-card">
                 <p><strong>HIGH</strong> — power_integrity</p>
-                <p>High-current net VIN bottlenecks through a narrow copper section</p>
-                <p><strong>Recommendation:</strong> Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.</p>
+                <p>Physics estimate suggests VIN is running high current density (238.1 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
             </div>
             
             </div>
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 4</p>
                 <p><strong>Net Count:</strong> 5</p>
-                <p><strong>Risk Count:</strong> 27</p>
+                <p><strong>Risk Count:</strong> 29</p>
                 <p><strong>Sample Components:</strong> U1, L1, U2, U3</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 7.6</li><li>high: 4.8</li></ul>
+                <ul><li>medium: 7.6</li><li>high: 6.0</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 0.8</li><li>component_design: 0.4</li><li>power_integrity: 7.6</li><li>manufacturing: 1.6</li><li>reliability: 0.4</li><li>thermal: 1.6</li></ul>
+                <ul><li>assembly_testability: 0.8</li><li>component_design: 0.4</li><li>power_integrity: 8.8</li><li>manufacturing: 1.6</li><li>reliability: 0.4</li><li>thermal: 1.6</li></ul>
             </div>
 
             <div class="card">
@@ -293,7 +293,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> VIN, GND, SW</p>
+                <p><strong>Nets:</strong> SW, GND, VIN</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -318,7 +318,7 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> VIN, GND, SW</p>
+                <p><strong>Nets:</strong> SW, GND, VIN</p>
                 <p><strong>Metrics:</strong> {&quot;bulk_caps_found&quot;: 0, &quot;bulk_distance_threshold&quot;: 12.0}</p>
             </div>
             
@@ -343,7 +343,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> SENSOR_OUT, GND, ADC_IN</p>
+                <p><strong>Nets:</strong> ADC_IN, GND, SENSOR_OUT</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -443,8 +443,8 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> L1</p>
-                <p><strong>Nets:</strong> VIN, SW</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;VIN&quot;, &quot;SW&quot;], &quot;has_power&quot;: true, &quot;has_ground&quot;: false}</p>
+                <p><strong>Nets:</strong> SW, VIN</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;SW&quot;, &quot;VIN&quot;], &quot;has_power&quot;: true, &quot;has_ground&quot;: false}</p>
             </div>
             
             <div class="risk-card">
@@ -468,8 +468,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> SENSOR_OUT, GND, ADC_IN</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;SENSOR_OUT&quot;, &quot;GND&quot;, &quot;ADC_IN&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> ADC_IN, GND, SENSOR_OUT</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;ADC_IN&quot;, &quot;GND&quot;, &quot;SENSOR_OUT&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -795,6 +795,56 @@
                 
                 <p><strong>Nets:</strong> SENSOR_OUT</p>
                 <p><strong>Metrics:</strong> {&quot;min_trace_width&quot;: 0.12, &quot;threshold&quot;: 0.15}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VIN may incur high IR drop (172.6 mV)</p>
+                <p><strong>Recommendation:</strong> Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;voltage_drop_mv&quot;: 172.6, &quot;estimated_current_a&quot;: 1.5, &quot;resistance_ohms&quot;: 0.1151, &quot;threshold_mv&quot;: 75.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VIN is running high current density (238.1 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=12.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;current_density_a_per_mm2&quot;: 238.1, &quot;estimated_current_a&quot;: 1.5, &quot;cross_section_mm2&quot;: 0.0063, &quot;threshold&quot;: 12.0}</p>
             </div>
             
             </div>

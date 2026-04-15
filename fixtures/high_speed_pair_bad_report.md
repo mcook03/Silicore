@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: high_speed_pair_bad.kicad_pcb
-- Score: 7.0 / 100
-- Total Risks: 35
-- Total Penalty: 164.0
+- Score: 6.4 / 100
+- Total Risks: 40
+- Total Penalty: 194.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows moderate design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -35,21 +35,21 @@ This board shows moderate design risk. The main risk concentration is in signal 
 
 - Component Count: 3
 - Net Count: 5
-- Risk Count: 35
+- Risk Count: 40
 - Sample Components: J1, U1, Y1
 
 ## Severity Penalties
 
 - medium: 10.4
-- high: 4.8
+- high: 7.8
 - critical: 1.2
 
 ## Category Penalties
 
 - assembly_testability: 2.0
-- signal_integrity: 3.4
+- signal_integrity: 5.2
 - component_design: 0.8
-- power_integrity: 3.2
+- power_integrity: 4.4
 - high_speed: 0.6
 - emi_emc: 1.6
 - manufacturing: 0.8
@@ -164,24 +164,6 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Metrics: {"distance": 19.8, "threshold": 12.0, "shares_clock_net": true}
 
 ### MEDIUM — component_design
-- Message: High-speed net USB_DN has a long route with no visible series or termination resistor
-- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.7
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=18.0
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 70.0 / 100
-- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Fix Priority: medium
-- Components: J1, U1
-- Nets: USB_DN
-- Metrics: {"trace_length": 118.2, "threshold": 18.0, "has_resistor": false}
-
-### MEDIUM — component_design
 - Message: High-speed net USB_DP has a long route with no visible series or termination resistor
 - Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
 - Root Cause: General design issue
@@ -198,6 +180,24 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Components: J1, U1
 - Nets: USB_DP
 - Metrics: {"trace_length": 84.67, "threshold": 18.0, "has_resistor": false}
+
+### MEDIUM — component_design
+- Message: High-speed net USB_DN has a long route with no visible series or termination resistor
+- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.7
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=18.0
+- Traceability: 100 / 100
+- Evidence Count: 9
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 70.0 / 100
+- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Fix Priority: medium
+- Components: J1, U1
+- Nets: USB_DN
+- Metrics: {"trace_length": 118.2, "threshold": 18.0, "has_resistor": false}
 
 ### HIGH — power_integrity
 - Message: High-current net VBUS bottlenecks through a narrow copper section
@@ -249,7 +249,7 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: CLK, USB_DN, GND, USB_DP
+- Nets: GND, CLK, USB_DP, USB_DN
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — high_speed
@@ -391,8 +391,8 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: USB_DN, GND, VBUS, USB_DP
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "GND", "VBUS", "USB_DP"], "has_power": false, "has_ground": true}
+- Nets: GND, USB_DP, VBUS, USB_DN
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "USB_DP", "VBUS", "USB_DN"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U1 has ground but no visible power rail
@@ -409,8 +409,8 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U1
-- Nets: CLK, USB_DN, GND, USB_DP
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "USB_DN", "GND", "USB_DP"], "has_power": false, "has_ground": true}
+- Nets: GND, CLK, USB_DP, USB_DN
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CLK", "USB_DP", "USB_DN"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Y1 has ground but no visible power rail
@@ -427,8 +427,8 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: Y1
-- Nets: CLK, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "GND"], "has_power": false, "has_ground": true}
+- Nets: GND, CLK
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CLK"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: High-current net VBUS uses a long routed path
@@ -675,3 +675,88 @@ This board shows moderate design risk. The main risk concentration is in signal 
 - Fix Priority: medium
 - Nets: CLK
 - Metrics: {"min_trace_width": 0.12, "threshold": 0.15}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VBUS may incur high IR drop (248.3 mV)
+- Recommendation: Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.82
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 82.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VBUS
+- Metrics: {"voltage_drop_mv": 248.33, "estimated_current_a": 1.5, "resistance_ohms": 0.1656, "threshold_mv": 75.0}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VBUS is running high current density (171.4 A/mm²)
+- Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.8
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=12.0
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 80.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VBUS
+- Metrics: {"current_density_a_per_mm2": 171.43, "estimated_current_a": 1.5, "cross_section_mm2": 0.00875, "threshold": 12.0}
+
+### HIGH — signal_integrity
+- Message: Physics estimate suggests USB_DP is off target impedance (63.1 ohms vs 90.0 ohms)
+- Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+- Root Cause: Signal path geometry or routing issue
+- Impact: Timing errors or signal degradation
+- Confidence: 0.84
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 9
+- Engineering Impact: Timing errors or signal degradation
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.
+- Fix Priority: high
+- Nets: USB_DP
+- Metrics: {"estimated_impedance_ohms": 63.11, "target_impedance_ohms": 90.0, "mismatch_pct": 29.9, "delay_ps": 497.6, "via_inductance_nh": 68.97}
+
+### HIGH — signal_integrity
+- Message: Physics estimate suggests USB_DN is off target impedance (63.1 ohms vs 90.0 ohms)
+- Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+- Root Cause: Signal path geometry or routing issue
+- Impact: Timing errors or signal degradation
+- Confidence: 0.84
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 9
+- Engineering Impact: Timing errors or signal degradation
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.
+- Fix Priority: high
+- Nets: USB_DN
+- Metrics: {"estimated_impedance_ohms": 63.11, "target_impedance_ohms": 90.0, "mismatch_pct": 29.9, "delay_ps": 694.6, "via_inductance_nh": 68.97}
+
+### HIGH — signal_integrity
+- Message: Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)
+- Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+- Root Cause: Signal path geometry or routing issue
+- Impact: Timing errors or signal degradation
+- Confidence: 0.84
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 9
+- Engineering Impact: Timing errors or signal degradation
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.
+- Fix Priority: high
+- Nets: CLK
+- Metrics: {"estimated_impedance_ohms": 73.94, "target_impedance_ohms": 50.0, "mismatch_pct": 47.9, "delay_ps": 92.0, "via_inductance_nh": 0.0}

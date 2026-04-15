@@ -1,7 +1,7 @@
 {
     "filename": "high_speed_pair_bad.kicad_pcb",
     "file_path": "fixtures/high_speed_pair_bad.kicad_pcb",
-    "score": 7.0,
+    "score": 6.4,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -224,45 +224,6 @@
             "rule_id": "component_analysis",
             "category": "component_design",
             "severity": "medium",
-            "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
-            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-            "components": [
-                "J1",
-                "U1"
-            ],
-            "nets": [
-                "USB_DN"
-            ],
-            "region": null,
-            "metrics": {
-                "trace_length": 118.2,
-                "threshold": 18.0,
-                "has_resistor": false
-            },
-            "confidence": 0.7,
-            "short_title": "Possible missing signal termination",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "component",
-            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-            "suggested_actions": [],
-            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-            "threshold_label": "Termination review length 18.00 units",
-            "observed_label": "Observed route length 118.20 units",
-            "explanation": {
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.7
-            },
-            "fix_suggestion": {
-                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "priority": "medium"
-            }
-        },
-        {
-            "rule_id": "component_analysis",
-            "category": "component_design",
-            "severity": "medium",
             "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
             "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
             "components": [
@@ -288,6 +249,45 @@
             "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
             "threshold_label": "Termination review length 18.00 units",
             "observed_label": "Observed route length 84.67 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "component_analysis",
+            "category": "component_design",
+            "severity": "medium",
+            "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 118.2,
+                "threshold": 18.0,
+                "has_resistor": false
+            },
+            "confidence": 0.7,
+            "short_title": "Possible missing signal termination",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "component",
+            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+            "threshold_label": "Termination review length 18.00 units",
+            "observed_label": "Observed route length 118.20 units",
             "explanation": {
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
@@ -382,10 +382,10 @@
                 "U1"
             ],
             "nets": [
-                "CLK",
-                "USB_DN",
                 "GND",
-                "USB_DP"
+                "CLK",
+                "USB_DP",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -690,10 +690,10 @@
                 "J1"
             ],
             "nets": [
-                "USB_DN",
                 "GND",
+                "USB_DP",
                 "VBUS",
-                "USB_DP"
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -711,10 +711,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "USB_DN",
                     "GND",
+                    "USB_DP",
                     "VBUS",
-                    "USB_DP"
+                    "USB_DN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -749,10 +749,10 @@
                 "U1"
             ],
             "nets": [
-                "CLK",
-                "USB_DN",
                 "GND",
-                "USB_DP"
+                "CLK",
+                "USB_DP",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -770,10 +770,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
-                    "USB_DN",
                     "GND",
-                    "USB_DP"
+                    "CLK",
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -808,8 +808,8 @@
                 "Y1"
             ],
             "nets": [
-                "CLK",
-                "GND"
+                "GND",
+                "CLK"
             ],
             "region": null,
             "metrics": {
@@ -827,8 +827,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1385,23 +1385,211 @@
                 "fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "priority": "medium"
             }
+        },
+        {
+            "rule_id": "physics_power_integrity",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VBUS may incur high IR drop (248.3 mV)",
+            "recommendation": "Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.",
+            "components": [],
+            "nets": [
+                "VBUS"
+            ],
+            "region": null,
+            "metrics": {
+                "voltage_drop_mv": 248.33,
+                "estimated_current_a": 1.5,
+                "resistance_ohms": 0.1656,
+                "threshold_mv": 75.0
+            },
+            "confidence": 0.82,
+            "short_title": "Physics-based IR drop risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "Excess IR drop can destabilize rails under load and erode noise margin at the point of use.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles resistance and load estimate exceeded the configured voltage-drop limit.",
+            "threshold_label": "Maximum voltage drop 75.0 mV",
+            "observed_label": "Observed estimated drop 248.3 mV",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_power_density",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VBUS is running high current density (171.4 A/mm\u00b2)",
+            "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+            "components": [],
+            "nets": [
+                "VBUS"
+            ],
+            "region": null,
+            "metrics": {
+                "current_density_a_per_mm2": 171.43,
+                "estimated_current_a": 1.5,
+                "cross_section_mm2": 0.00875,
+                "threshold": 12.0
+            },
+            "confidence": 0.8,
+            "short_title": "Physics-based current-density risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+            "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+            "observed_label": "Observed current density 171.4 A/mm\u00b2",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_signal_integrity",
+            "category": "signal_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests USB_DP is off target impedance (63.1 ohms vs 90.0 ohms)",
+            "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+            "components": [],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "estimated_impedance_ohms": 63.11,
+                "target_impedance_ohms": 90.0,
+                "mismatch_pct": 29.9,
+                "delay_ps": 497.6,
+                "via_inductance_nh": 68.97
+            },
+            "confidence": 0.84,
+            "short_title": "Physics-based impedance mismatch",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+            "threshold_label": "Maximum impedance mismatch 12.0%",
+            "observed_label": "Observed mismatch 29.9% at 63.1 ohms",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_signal_integrity",
+            "category": "signal_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests USB_DN is off target impedance (63.1 ohms vs 90.0 ohms)",
+            "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+            "components": [],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "estimated_impedance_ohms": 63.11,
+                "target_impedance_ohms": 90.0,
+                "mismatch_pct": 29.9,
+                "delay_ps": 694.6,
+                "via_inductance_nh": 68.97
+            },
+            "confidence": 0.84,
+            "short_title": "Physics-based impedance mismatch",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+            "threshold_label": "Maximum impedance mismatch 12.0%",
+            "observed_label": "Observed mismatch 29.9% at 63.1 ohms",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_signal_integrity",
+            "category": "signal_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+            "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+            "components": [],
+            "nets": [
+                "CLK"
+            ],
+            "region": null,
+            "metrics": {
+                "estimated_impedance_ohms": 73.94,
+                "target_impedance_ohms": 50.0,
+                "mismatch_pct": 47.9,
+                "delay_ps": 92.0,
+                "via_inductance_nh": 0.0
+            },
+            "confidence": 0.84,
+            "short_title": "Physics-based impedance mismatch",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+            "threshold_label": "Maximum impedance mismatch 12.0%",
+            "observed_label": "Observed mismatch 47.9% at 73.9 ohms",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "priority": "high"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 164.0,
-        "total_penalty_raw_10": 16.4,
+        "total_penalty": 194.0,
+        "total_penalty_raw_10": 19.4,
         "severity_totals": {
             "medium": 10.4,
-            "high": 4.8,
+            "high": 7.8,
             "critical": 1.2
         },
         "category_totals": {
             "assembly_testability": 2.0,
-            "signal_integrity": 3.4,
+            "signal_integrity": 5.2,
             "component_design": 0.8,
-            "power_integrity": 3.2,
+            "power_integrity": 4.4,
             "high_speed": 0.6,
             "emi_emc": 1.6,
             "manufacturing": 0.8,
@@ -1409,12 +1597,12 @@
             "safety_high_voltage": 1.2,
             "stackup_return_path": 2.0
         },
-        "final_score": 7.0,
-        "final_score_raw_10": 0.7,
+        "final_score": 6.4,
+        "final_score_raw_10": 0.64,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 6.4,
-        "overflow_penalty": 64.0,
+        "overflow_penalty_raw_10": 9.4,
+        "overflow_penalty": 94.0,
         "details": [
             {
                 "severity": "medium",
@@ -1486,7 +1674,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -1497,7 +1685,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -1800,6 +1988,61 @@
                 "confidence": 0.83,
                 "suggested_fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VBUS may incur high IR drop (248.3 mV)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.82,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VBUS is running high current density (171.4 A/mm\u00b2)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests USB_DP is off target impedance (63.1 ohms vs 90.0 ohms)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84,
+                "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests USB_DN is off target impedance (63.1 ohms vs 90.0 ohms)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84,
+                "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84,
+                "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "fix_priority": "high"
             }
         ]
     },
@@ -1812,17 +2055,17 @@
             "U1",
             "Y1"
         ],
-        "risk_count": 35,
+        "risk_count": 40,
         "severity_counts": {
             "medium": 26,
-            "high": 8,
+            "high": 13,
             "critical": 1
         },
         "category_counts": {
             "assembly_testability": 5,
-            "signal_integrity": 8,
+            "signal_integrity": 11,
             "component_design": 2,
-            "power_integrity": 7,
+            "power_integrity": 9,
             "high_speed": 1,
             "emi_emc": 3,
             "manufacturing": 2,
@@ -2538,6 +2781,28 @@
         "emi": {
             "require_ground_reference": true
         },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
         "rules": {
             "spacing": {
                 "threshold": 3.0
@@ -2855,7 +3120,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-15T18:18:29.288548+00:00",
+        "timestamp": "2026-04-15T18:26:34.394638+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2938,6 +3203,28 @@
             },
             "emi": {
                 "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
             },
             "rules": {
                 "spacing": {
@@ -3257,6 +3544,218 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [
+            {
+                "net_name": "CLK",
+                "length_mm": 15.84,
+                "average_width_mm": 0.12,
+                "impedance_ohms": 73.94,
+                "target_ohms": 50.0,
+                "mismatch_pct": 47.9,
+                "delay_ps": 92.0,
+                "electrical_ratio": 0.18,
+                "via_inductance_nh": 0.0
+            },
+            {
+                "net_name": "USB_DN",
+                "length_mm": 118.2,
+                "average_width_mm": 0.18,
+                "impedance_ohms": 63.11,
+                "target_ohms": 90.0,
+                "mismatch_pct": 29.9,
+                "delay_ps": 694.6,
+                "electrical_ratio": 1.39,
+                "via_inductance_nh": 68.97
+            },
+            {
+                "net_name": "USB_DP",
+                "length_mm": 84.67,
+                "average_width_mm": 0.18,
+                "impedance_ohms": 63.11,
+                "target_ohms": 90.0,
+                "mismatch_pct": 29.9,
+                "delay_ps": 497.6,
+                "electrical_ratio": 1.0,
+                "via_inductance_nh": 68.97
+            }
+        ],
+        "power_models": [
+            {
+                "net_name": "VBUS",
+                "length_mm": 84.02,
+                "average_width_mm": 0.25,
+                "estimated_current_a": 1.5,
+                "resistance_ohms": 0.1656,
+                "voltage_drop_mv": 248.33,
+                "current_density_a_per_mm2": 171.43,
+                "power_loss_mw": 372.49
+            }
+        ],
+        "summary": {
+            "signal_nets_modeled": 3,
+            "power_nets_modeled": 1,
+            "worst_impedance_mismatch_pct": 47.9,
+            "worst_voltage_drop_mv": 248.33
+        },
+        "risks": [
+            {
+                "rule_id": "physics_power_integrity",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VBUS may incur high IR drop (248.3 mV)",
+                "recommendation": "Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.",
+                "components": [],
+                "nets": [
+                    "VBUS"
+                ],
+                "region": null,
+                "metrics": {
+                    "voltage_drop_mv": 248.33,
+                    "estimated_current_a": 1.5,
+                    "resistance_ohms": 0.1656,
+                    "threshold_mv": 75.0
+                },
+                "confidence": 0.82,
+                "short_title": "Physics-based IR drop risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "Excess IR drop can destabilize rails under load and erode noise margin at the point of use.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles resistance and load estimate exceeded the configured voltage-drop limit.",
+                "threshold_label": "Maximum voltage drop 75.0 mV",
+                "observed_label": "Observed estimated drop 248.3 mV"
+            },
+            {
+                "rule_id": "physics_power_density",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VBUS is running high current density (171.4 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+                "components": [],
+                "nets": [
+                    "VBUS"
+                ],
+                "region": null,
+                "metrics": {
+                    "current_density_a_per_mm2": 171.43,
+                    "estimated_current_a": 1.5,
+                    "cross_section_mm2": 0.00875,
+                    "threshold": 12.0
+                },
+                "confidence": 0.8,
+                "short_title": "Physics-based current-density risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+                "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+                "observed_label": "Observed current density 171.4 A/mm\u00b2"
+            },
+            {
+                "rule_id": "physics_signal_integrity",
+                "category": "signal_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests USB_DP is off target impedance (63.1 ohms vs 90.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+                "components": [],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "estimated_impedance_ohms": 63.11,
+                    "target_impedance_ohms": 90.0,
+                    "mismatch_pct": 29.9,
+                    "delay_ps": 497.6,
+                    "via_inductance_nh": 68.97
+                },
+                "confidence": 0.84,
+                "short_title": "Physics-based impedance mismatch",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal_integrity",
+                "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+                "threshold_label": "Maximum impedance mismatch 12.0%",
+                "observed_label": "Observed mismatch 29.9% at 63.1 ohms"
+            },
+            {
+                "rule_id": "physics_signal_integrity",
+                "category": "signal_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests USB_DN is off target impedance (63.1 ohms vs 90.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+                "components": [],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "estimated_impedance_ohms": 63.11,
+                    "target_impedance_ohms": 90.0,
+                    "mismatch_pct": 29.9,
+                    "delay_ps": 694.6,
+                    "via_inductance_nh": 68.97
+                },
+                "confidence": 0.84,
+                "short_title": "Physics-based impedance mismatch",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal_integrity",
+                "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+                "threshold_label": "Maximum impedance mismatch 12.0%",
+                "observed_label": "Observed mismatch 29.9% at 63.1 ohms"
+            },
+            {
+                "rule_id": "physics_signal_integrity",
+                "category": "signal_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+                "components": [],
+                "nets": [
+                    "CLK"
+                ],
+                "region": null,
+                "metrics": {
+                    "estimated_impedance_ohms": 73.94,
+                    "target_impedance_ohms": 50.0,
+                    "mismatch_pct": 47.9,
+                    "delay_ps": 92.0,
+                    "via_inductance_nh": 0.0
+                },
+                "confidence": 0.84,
+                "short_title": "Physics-based impedance mismatch",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal_integrity",
+                "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+                "threshold_label": "Maximum impedance mismatch 12.0%",
+                "observed_label": "Observed mismatch 47.9% at 73.9 ohms"
+            }
+        ]
+    },
     "raw_rule_result": {
         "risks": [
             {
@@ -3426,36 +3925,6 @@
                 "rule_id": "component_analysis",
                 "category": "component_design",
                 "severity": "medium",
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
-                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "components": [
-                    "J1",
-                    "U1"
-                ],
-                "nets": [
-                    "USB_DN"
-                ],
-                "region": null,
-                "metrics": {
-                    "trace_length": 118.2,
-                    "threshold": 18.0,
-                    "has_resistor": false
-                },
-                "confidence": 0.7,
-                "short_title": "Possible missing signal termination",
-                "fix_priority": "medium",
-                "estimated_impact": "moderate",
-                "design_domain": "component",
-                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-                "suggested_actions": [],
-                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-                "threshold_label": "Termination review length 18.00 units",
-                "observed_label": "Observed route length 118.20 units"
-            },
-            {
-                "rule_id": "component_analysis",
-                "category": "component_design",
-                "severity": "medium",
                 "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
                 "components": [
@@ -3481,6 +3950,36 @@
                 "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
                 "threshold_label": "Termination review length 18.00 units",
                 "observed_label": "Observed route length 84.67 units"
+            },
+            {
+                "rule_id": "component_analysis",
+                "category": "component_design",
+                "severity": "medium",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 118.2,
+                    "threshold": 18.0,
+                    "has_resistor": false
+                },
+                "confidence": 0.7,
+                "short_title": "Possible missing signal termination",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "component",
+                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+                "threshold_label": "Termination review length 18.00 units",
+                "observed_label": "Observed route length 118.20 units"
             },
             {
                 "rule_id": "current_density",
@@ -3548,10 +4047,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "CLK",
-                    "USB_DN",
                     "GND",
-                    "USB_DP"
+                    "CLK",
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3784,10 +4283,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "USB_DN",
                     "GND",
+                    "USB_DP",
                     "VBUS",
-                    "USB_DP"
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3805,10 +4304,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "USB_DN",
                         "GND",
+                        "USB_DP",
                         "VBUS",
-                        "USB_DP"
+                        "USB_DN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3834,10 +4333,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "CLK",
-                    "USB_DN",
                     "GND",
-                    "USB_DP"
+                    "CLK",
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3855,10 +4354,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
-                        "USB_DN",
                         "GND",
-                        "USB_DP"
+                        "CLK",
+                        "USB_DP",
+                        "USB_DN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3884,8 +4383,8 @@
                     "Y1"
                 ],
                 "nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -3903,8 +4402,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
-                        "GND"
+                        "GND",
+                        "CLK"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4331,7 +4830,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-15T18:18:29.288564+00:00",
+    "generated_at": "2026-04-15T18:26:34.394643+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -4385,7 +4884,7 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows moderate design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "critical",

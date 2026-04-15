@@ -1,7 +1,7 @@
 {
     "filename": "legacy_power_board.brd",
     "file_path": "fixtures/legacy_power_board.brd",
-    "score": 14.0,
+    "score": 15.7,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -229,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "SW_NODE",
-                "VCC"
+                "VCC",
+                "SW_NODE"
             ],
             "region": null,
             "metrics": {
@@ -248,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -339,8 +339,8 @@
                 "R1"
             ],
             "nets": [
-                "CLK",
-                "GND"
+                "GND",
+                "CLK"
             ],
             "region": null,
             "metrics": {
@@ -358,8 +358,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -753,31 +753,144 @@
                 "fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "priority": "medium"
             }
+        },
+        {
+            "rule_id": "physics_power_density",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VIN is running high current density (61.2 A/mm\u00b2)",
+            "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "current_density_a_per_mm2": 61.22,
+                "estimated_current_a": 1.5,
+                "cross_section_mm2": 0.0245,
+                "threshold": 12.0
+            },
+            "confidence": 0.8,
+            "short_title": "Physics-based current-density risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+            "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+            "observed_label": "Observed current density 61.2 A/mm\u00b2",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_power_density",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VCC is running high current density (50.8 A/mm\u00b2)",
+            "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+            "components": [],
+            "nets": [
+                "VCC"
+            ],
+            "region": null,
+            "metrics": {
+                "current_density_a_per_mm2": 50.79,
+                "estimated_current_a": 0.8,
+                "cross_section_mm2": 0.01575,
+                "threshold": 12.0
+            },
+            "confidence": 0.8,
+            "short_title": "Physics-based current-density risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+            "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+            "observed_label": "Observed current density 50.8 A/mm\u00b2",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_signal_integrity",
+            "category": "signal_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+            "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+            "components": [],
+            "nets": [
+                "CLK"
+            ],
+            "region": null,
+            "metrics": {
+                "estimated_impedance_ohms": 73.94,
+                "target_impedance_ohms": 50.0,
+                "mismatch_pct": 47.9,
+                "delay_ps": 127.9,
+                "via_inductance_nh": 0.0
+            },
+            "confidence": 0.84,
+            "short_title": "Physics-based impedance mismatch",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+            "threshold_label": "Maximum impedance mismatch 12.0%",
+            "observed_label": "Observed mismatch 47.9% at 73.9 ohms",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "priority": "high"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 86.0,
-        "total_penalty_raw_10": 8.6,
+        "total_penalty": 104.0,
+        "total_penalty_raw_10": 10.4,
         "severity_totals": {
             "medium": 5.6,
-            "high": 3.0
+            "high": 4.8
         },
         "category_totals": {
             "assembly_testability": 1.2,
-            "power_integrity": 2.6,
+            "power_integrity": 3.8,
             "manufacturing": 1.2,
             "reliability": 0.4,
             "layout": 1.2,
-            "thermal": 2.0
+            "thermal": 2.0,
+            "signal_integrity": 0.6
         },
-        "final_score": 14.0,
-        "final_score_raw_10": 1.4,
-        "floor_mode": "linear",
+        "final_score": 15.7,
+        "final_score_raw_10": 1.57,
+        "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 0.0,
-        "overflow_penalty": 0.0,
+        "overflow_penalty_raw_10": 0.4,
+        "overflow_penalty": 4.0,
         "details": [
             {
                 "severity": "medium",
@@ -987,6 +1100,39 @@
                 "confidence": 0.83,
                 "suggested_fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VIN is running high current density (61.2 A/mm\u00b2)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VCC is running high current density (50.8 A/mm\u00b2)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84,
+                "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "fix_priority": "high"
             }
         ]
     },
@@ -1004,18 +1150,19 @@
             "J1",
             "R1"
         ],
-        "risk_count": 19,
+        "risk_count": 22,
         "severity_counts": {
             "medium": 14,
-            "high": 5
+            "high": 8
         },
         "category_counts": {
             "assembly_testability": 3,
-            "power_integrity": 5,
+            "power_integrity": 7,
             "manufacturing": 3,
             "reliability": 1,
             "layout": 2,
-            "thermal": 5
+            "thermal": 5,
+            "signal_integrity": 1
         }
     },
     "pcb_snapshot": {
@@ -1879,6 +2026,28 @@
         "emi": {
             "require_ground_reference": true
         },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
         "rules": {
             "spacing": {
                 "threshold": 3.0
@@ -2196,7 +2365,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-15T18:18:29.299956+00:00",
+        "timestamp": "2026-04-15T18:26:34.408251+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2279,6 +2448,28 @@
             },
             "emi": {
                 "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
             },
             "rules": {
                 "spacing": {
@@ -2598,6 +2789,148 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [
+            {
+                "net_name": "CLK",
+                "length_mm": 22.0,
+                "average_width_mm": 0.12,
+                "impedance_ohms": 73.94,
+                "target_ohms": 50.0,
+                "mismatch_pct": 47.9,
+                "delay_ps": 127.9,
+                "electrical_ratio": 0.26,
+                "via_inductance_nh": 0.0
+            }
+        ],
+        "power_models": [
+            {
+                "net_name": "VCC",
+                "length_mm": 31.37,
+                "average_width_mm": 0.45,
+                "estimated_current_a": 0.8,
+                "resistance_ohms": 0.0343,
+                "voltage_drop_mv": 27.47,
+                "current_density_a_per_mm2": 50.79,
+                "power_loss_mw": 21.97
+            },
+            {
+                "net_name": "VIN",
+                "length_mm": 6.16,
+                "average_width_mm": 0.7,
+                "estimated_current_a": 1.5,
+                "resistance_ohms": 0.0043,
+                "voltage_drop_mv": 6.5,
+                "current_density_a_per_mm2": 61.22,
+                "power_loss_mw": 9.76
+            }
+        ],
+        "summary": {
+            "signal_nets_modeled": 1,
+            "power_nets_modeled": 2,
+            "worst_impedance_mismatch_pct": 47.9,
+            "worst_voltage_drop_mv": 27.47
+        },
+        "risks": [
+            {
+                "rule_id": "physics_power_density",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VIN is running high current density (61.2 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "current_density_a_per_mm2": 61.22,
+                    "estimated_current_a": 1.5,
+                    "cross_section_mm2": 0.0245,
+                    "threshold": 12.0
+                },
+                "confidence": 0.8,
+                "short_title": "Physics-based current-density risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+                "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+                "observed_label": "Observed current density 61.2 A/mm\u00b2"
+            },
+            {
+                "rule_id": "physics_power_density",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VCC is running high current density (50.8 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+                "components": [],
+                "nets": [
+                    "VCC"
+                ],
+                "region": null,
+                "metrics": {
+                    "current_density_a_per_mm2": 50.79,
+                    "estimated_current_a": 0.8,
+                    "cross_section_mm2": 0.01575,
+                    "threshold": 12.0
+                },
+                "confidence": 0.8,
+                "short_title": "Physics-based current-density risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+                "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+                "observed_label": "Observed current density 50.8 A/mm\u00b2"
+            },
+            {
+                "rule_id": "physics_signal_integrity",
+                "category": "signal_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+                "components": [],
+                "nets": [
+                    "CLK"
+                ],
+                "region": null,
+                "metrics": {
+                    "estimated_impedance_ohms": 73.94,
+                    "target_impedance_ohms": 50.0,
+                    "mismatch_pct": 47.9,
+                    "delay_ps": 127.9,
+                    "via_inductance_nh": 0.0
+                },
+                "confidence": 0.84,
+                "short_title": "Physics-based impedance mismatch",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal_integrity",
+                "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+                "threshold_label": "Maximum impedance mismatch 12.0%",
+                "observed_label": "Observed mismatch 47.9% at 73.9 ohms"
+            }
+        ]
+    },
     "raw_rule_result": {
         "risks": [
             {
@@ -2772,8 +3105,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "region": null,
                 "metrics": {
@@ -2791,8 +3124,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW_NODE",
-                        "VCC"
+                        "VCC",
+                        "SW_NODE"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -2864,8 +3197,8 @@
                     "R1"
                 ],
                 "nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -2883,8 +3216,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
-                        "GND"
+                        "GND",
+                        "CLK"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3184,7 +3517,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-15T18:18:29.299961+00:00",
+    "generated_at": "2026-04-15T18:26:34.408257+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -3252,25 +3585,25 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is High-current net VCC bottlenecks through a narrow copper section. The current design snapshot includes 8 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms). The current design snapshot includes 8 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "high",
-                "category": "power_integrity",
-                "message": "High-current net VCC bottlenecks through a narrow copper section",
-                "recommendation": "Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure."
+                "category": "signal_integrity",
+                "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target."
             },
             {
                 "severity": "high",
                 "category": "power_integrity",
-                "message": "Power net VCC uses a narrow trace width (0.45)",
-                "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop."
+                "message": "Physics estimate suggests VIN is running high current density (61.2 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
             },
             {
                 "severity": "high",
                 "category": "power_integrity",
-                "message": "L1 is not connected to a valid power rail",
-                "recommendation": "Connect the component to the intended power net and confirm that its pad-to-net assignments are present in the board data."
+                "message": "Physics estimate suggests VCC is running high current density (50.8 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
             }
         ]
     }

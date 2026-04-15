@@ -566,6 +566,35 @@
                 <p>{{ board_review_layers.signal_lane.summary }}</p>
                 <p class="small-muted" style="margin-top:10px;">{{ board_review_layers.signal_lane.detail }}</p>
             </div>
+            {% if board_review_layers.physics_lane %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>{{ board_review_layers.physics_lane.title }}</h3>
+                <p>{{ board_review_layers.physics_lane.summary }}</p>
+                <p class="small-muted" style="margin-top:10px;">{{ board_review_layers.physics_lane.detail }}</p>
+            </div>
+            {% endif %}
+            {% if board_review_layers.physics_summary and (board_review_layers.physics_summary.signal_models or board_review_layers.physics_summary.power_models) %}
+            <div class="grid grid-2" style="margin-top:16px;">
+                <div class="summary-panel compact-summary">
+                    <h3>Signal Modeling</h3>
+                    {% if board_review_layers.physics_summary.signal_models %}
+                    {% set model = board_review_layers.physics_summary.signal_models[0] %}
+                    <p>{{ model.net_name }} estimated at {{ model.impedance_ohms }} ohms with {{ model.mismatch_pct }}% mismatch and {{ model.delay_ps }} ps delay.</p>
+                    {% else %}
+                    <p>No critical signal net met the physics-model criteria on this run.</p>
+                    {% endif %}
+                </div>
+                <div class="summary-panel compact-summary">
+                    <h3>Power Modeling</h3>
+                    {% if board_review_layers.physics_summary.power_models %}
+                    {% set model = board_review_layers.physics_summary.power_models[0] %}
+                    <p>{{ model.net_name }} estimated at {{ model.voltage_drop_mv }} mV drop, {{ model.current_density_a_per_mm2 }} A/mm², and {{ model.power_loss_mw }} mW loss.</p>
+                    {% else %}
+                    <p>No power net met the physics-model criteria on this run.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
             {% else %}
             <div class="empty-state">Signal posture appears after analysis.</div>
             {% endif %}

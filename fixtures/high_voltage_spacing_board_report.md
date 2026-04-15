@@ -1,9 +1,9 @@
 # SILICORE ENGINEERING REPORT
 
 - File: high_voltage_spacing_board.kicad_pcb
-- Score: 2.0 / 100
-- Total Risks: 18
-- Total Penalty: 98.0
+- Score: 15.7 / 100
+- Total Risks: 19
+- Total Penalty: 104.0
 
 ## Executive Summary
 
@@ -28,20 +28,20 @@ This board shows high design risk. The main risk concentration is in power integ
    - Recommendation: Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.
 2. **CRITICAL** — safety_high_voltage — High-voltage pad on U1:HV- is close to U1:CTRL
    - Recommendation: Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.
-3. **HIGH** — emi_return_path — U1 is connected to critical net(s) CTRL but has no direct ground-reference net
-   - Recommendation: Review this signal path and ensure it has a nearby continuous ground reference and a clean return path.
+3. **HIGH** — signal_integrity — Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)
+   - Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
 
 ## Board Summary
 
 - Component Count: 3
 - Net Count: 4
-- Risk Count: 18
+- Risk Count: 19
 - Sample Components: J1, U1, U2
 
 ## Severity Penalties
 
 - medium: 4.4
-- high: 3.0
+- high: 3.6
 - critical: 2.4
 
 ## Category Penalties
@@ -52,6 +52,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - reliability: 0.4
 - safety_high_voltage: 2.4
 - thermal: 0.8
+- signal_integrity: 0.6
 
 ## Detailed Findings
 
@@ -371,3 +372,20 @@ This board shows high design risk. The main risk concentration is in power integ
 - Components: U1
 - Nets: CTRL, HV+, HV-
 - Metrics: {"max_connected_width": 0.24, "threshold": 0.5}
+
+### HIGH — signal_integrity
+- Message: Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)
+- Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+- Root Cause: Signal path geometry or routing issue
+- Impact: Timing errors or signal degradation
+- Confidence: 0.84
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 9
+- Engineering Impact: Timing errors or signal degradation
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.
+- Fix Priority: high
+- Nets: CTRL
+- Metrics: {"estimated_impedance_ohms": 66.2, "target_impedance_ohms": 50.0, "mismatch_pct": 32.4, "delay_ps": 123.6, "via_inductance_nh": 0.0}

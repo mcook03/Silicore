@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: mixed_signal_noise_board.kicad_pcb
-- Score: 9.4 / 100
-- Total Risks: 27
-- Total Penalty: 124.0
+- Score: 8.3 / 100
+- Total Risks: 29
+- Total Penalty: 136.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows very low design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows moderate design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -28,26 +28,26 @@ This board shows very low design risk. The main risk concentration is in power i
    - Recommendation: Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.
 2. **HIGH** — power_integrity — U3 may have poor power delivery because nearest regulator U1 is 37.22 units away
    - Recommendation: Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.
-3. **HIGH** — power_integrity — High-current net VIN bottlenecks through a narrow copper section
-   - Recommendation: Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.
+3. **HIGH** — power_integrity — Physics estimate suggests VIN is running high current density (238.1 A/mm²)
+   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
 
 ## Board Summary
 
 - Component Count: 4
 - Net Count: 5
-- Risk Count: 27
+- Risk Count: 29
 - Sample Components: U1, L1, U2, U3
 
 ## Severity Penalties
 
 - medium: 7.6
-- high: 4.8
+- high: 6.0
 
 ## Category Penalties
 
 - assembly_testability: 0.8
 - component_design: 0.4
-- power_integrity: 7.6
+- power_integrity: 8.8
 - manufacturing: 1.6
 - reliability: 0.4
 - thermal: 1.6
@@ -171,7 +171,7 @@ This board shows very low design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: VIN, GND, SW
+- Nets: SW, GND, VIN
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -189,7 +189,7 @@ This board shows very low design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: VIN, GND, SW
+- Nets: SW, GND, VIN
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity
@@ -207,7 +207,7 @@ This board shows very low design risk. The main risk concentration is in power i
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U2
-- Nets: SENSOR_OUT, GND, ADC_IN
+- Nets: ADC_IN, GND, SENSOR_OUT
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — power_integrity
@@ -277,8 +277,8 @@ This board shows very low design risk. The main risk concentration is in power i
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: L1
-- Nets: VIN, SW
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VIN", "SW"], "has_power": true, "has_ground": false}
+- Nets: SW, VIN
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["SW", "VIN"], "has_power": true, "has_ground": false}
 
 ### MEDIUM — power_integrity
 - Message: U2 has ground but no visible power rail
@@ -295,8 +295,8 @@ This board shows very low design risk. The main risk concentration is in power i
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U2
-- Nets: SENSOR_OUT, GND, ADC_IN
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["SENSOR_OUT", "GND", "ADC_IN"], "has_power": false, "has_ground": true}
+- Nets: ADC_IN, GND, SENSOR_OUT
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["ADC_IN", "GND", "SENSOR_OUT"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U3 has ground but no visible power rail
@@ -525,3 +525,37 @@ This board shows very low design risk. The main risk concentration is in power i
 - Fix Priority: medium
 - Nets: SENSOR_OUT
 - Metrics: {"min_trace_width": 0.12, "threshold": 0.15}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VIN may incur high IR drop (172.6 mV)
+- Recommendation: Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.82
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: No measured value preserved.
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 82.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VIN
+- Metrics: {"voltage_drop_mv": 172.6, "estimated_current_a": 1.5, "resistance_ohms": 0.1151, "threshold_mv": 75.0}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VIN is running high current density (238.1 A/mm²)
+- Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.8
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=12.0
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 80.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VIN
+- Metrics: {"current_density_a_per_mm2": 238.1, "estimated_current_a": 1.5, "cross_section_mm2": 0.0063, "threshold": 12.0}

@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: thermal_hotspot_board.kicad_pcb
-- Score: 26.0 / 100
-- Total Risks: 17
-- Total Penalty: 74.0
+- Score: 20.0 / 100
+- Total Risks: 18
+- Total Penalty: 80.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U1 appears to lack enough local decoupling support. The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests VIN is running high current density (214.3 A/mm²). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -24,29 +24,29 @@ This board shows high design risk. The main risk concentration is in power integ
 
 ## Top Issues
 
-1. **HIGH** — power_integrity — U1 appears to lack enough local decoupling support
+1. **HIGH** — power_integrity — Physics estimate suggests VIN is running high current density (214.3 A/mm²)
+   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+2. **HIGH** — power_integrity — U1 appears to lack enough local decoupling support
    - Recommendation: Add or reposition local bypass capacitors close to the device supply pins with short return paths.
-2. **HIGH** — power_integrity — U2 appears to lack enough local decoupling support
+3. **HIGH** — power_integrity — U2 appears to lack enough local decoupling support
    - Recommendation: Add or reposition local bypass capacitors close to the device supply pins with short return paths.
-3. **HIGH** — power_integrity — Power net VIN uses a narrow trace width (0.20)
-   - Recommendation: Increase power trace width to reduce resistance, heating, and voltage drop.
 
 ## Board Summary
 
 - Component Count: 3
 - Net Count: 3
-- Risk Count: 17
+- Risk Count: 18
 - Sample Components: U1, Q1, U2
 
 ## Severity Penalties
 
 - medium: 5.6
-- high: 1.8
+- high: 2.4
 
 ## Category Penalties
 
 - assembly_testability: 0.8
-- power_integrity: 3.8
+- power_integrity: 4.4
 - signal_integrity: 1.6
 - reliability: 0.4
 - thermal: 0.8
@@ -134,7 +134,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: VIN, GND, VOUT
+- Nets: VOUT, GND, VIN
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -152,7 +152,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: VIN, GND, VOUT
+- Nets: VOUT, GND, VIN
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity
@@ -170,7 +170,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U2
-- Nets: GND, VOUT
+- Nets: VOUT, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — signal_integrity
@@ -224,8 +224,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U2
-- Nets: GND, VOUT
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "VOUT"], "has_power": false, "has_ground": true}
+- Nets: VOUT, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VOUT", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Regulator or converter U1 lacks a nearby shared capacitor network
@@ -350,3 +350,20 @@ This board shows high design risk. The main risk concentration is in power integ
 - Components: Q1
 - Nets: GND, VIN, VOUT
 - Metrics: {"max_connected_width": 0.2, "threshold": 0.5}
+
+### HIGH — power_integrity
+- Message: Physics estimate suggests VIN is running high current density (214.3 A/mm²)
+- Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+- Root Cause: Power delivery path impedance or placement issue
+- Impact: Voltage drop, instability, or noise
+- Confidence: 0.8
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=12.0
+- Traceability: 94 / 100
+- Evidence Count: 8
+- Engineering Impact: Voltage drop, instability, or noise
+- Trust Confidence: 80.0 / 100
+- Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
+- Fix Priority: high
+- Nets: VIN
+- Metrics: {"current_density_a_per_mm2": 214.29, "estimated_current_a": 1.5, "cross_section_mm2": 0.007, "threshold": 12.0}

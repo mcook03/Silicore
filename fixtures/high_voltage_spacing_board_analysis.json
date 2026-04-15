@@ -1,7 +1,7 @@
 {
     "filename": "high_voltage_spacing_board.kicad_pcb",
     "file_path": "fixtures/high_voltage_spacing_board.kicad_pcb",
-    "score": 2.0,
+    "score": 15.7,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -747,16 +747,54 @@
                 "fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
                 "priority": "medium"
             }
+        },
+        {
+            "rule_id": "physics_signal_integrity",
+            "category": "signal_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)",
+            "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+            "components": [],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "estimated_impedance_ohms": 66.2,
+                "target_impedance_ohms": 50.0,
+                "mismatch_pct": 32.4,
+                "delay_ps": 123.6,
+                "via_inductance_nh": 0.0
+            },
+            "confidence": 0.84,
+            "short_title": "Physics-based impedance mismatch",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+            "threshold_label": "Maximum impedance mismatch 12.0%",
+            "observed_label": "Observed mismatch 32.4% at 66.2 ohms",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "priority": "high"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 98.0,
-        "total_penalty_raw_10": 9.8,
+        "total_penalty": 104.0,
+        "total_penalty_raw_10": 10.4,
         "severity_totals": {
             "medium": 4.4,
-            "high": 3.0,
+            "high": 3.6,
             "critical": 2.4
         },
         "category_totals": {
@@ -765,14 +803,15 @@
             "emi_return_path": 1.0,
             "reliability": 0.4,
             "safety_high_voltage": 2.4,
-            "thermal": 0.8
+            "thermal": 0.8,
+            "signal_integrity": 0.6
         },
-        "final_score": 2.0,
-        "final_score_raw_10": 0.2,
-        "floor_mode": "linear",
+        "final_score": 15.7,
+        "final_score_raw_10": 1.57,
+        "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 0.0,
-        "overflow_penalty": 0.0,
+        "overflow_penalty_raw_10": 0.4,
+        "overflow_penalty": 4.0,
         "details": [
             {
                 "severity": "medium",
@@ -971,6 +1010,17 @@
                 "confidence": 0.76,
                 "suggested_fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84,
+                "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "fix_priority": "high"
             }
         ]
     },
@@ -983,10 +1033,10 @@
             "U1",
             "U2"
         ],
-        "risk_count": 18,
+        "risk_count": 19,
         "severity_counts": {
             "medium": 11,
-            "high": 5,
+            "high": 6,
             "critical": 2
         },
         "category_counts": {
@@ -995,7 +1045,8 @@
             "emi_return_path": 2,
             "reliability": 1,
             "safety_high_voltage": 2,
-            "thermal": 2
+            "thermal": 2,
+            "signal_integrity": 1
         }
     },
     "pcb_snapshot": {
@@ -1409,6 +1460,28 @@
         "emi": {
             "require_ground_reference": true
         },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
         "rules": {
             "spacing": {
                 "threshold": 3.0
@@ -1726,7 +1799,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:18:29.294725+00:00",
+        "timestamp": "2026-04-15T18:26:34.402519+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1809,6 +1882,28 @@
             },
             "emi": {
                 "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
             },
             "rules": {
                 "spacing": {
@@ -2127,6 +2222,71 @@
         },
         "profile": "balanced",
         "board_type": "general"
+    },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [
+            {
+                "net_name": "CTRL",
+                "length_mm": 21.1,
+                "average_width_mm": 0.16,
+                "impedance_ohms": 66.2,
+                "target_ohms": 50.0,
+                "mismatch_pct": 32.4,
+                "delay_ps": 123.6,
+                "electrical_ratio": 0.25,
+                "via_inductance_nh": 0.0
+            }
+        ],
+        "power_models": [],
+        "summary": {
+            "signal_nets_modeled": 1,
+            "power_nets_modeled": 0,
+            "worst_impedance_mismatch_pct": 32.4,
+            "worst_voltage_drop_mv": 0.0
+        },
+        "risks": [
+            {
+                "rule_id": "physics_signal_integrity",
+                "category": "signal_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+                "components": [],
+                "nets": [
+                    "CTRL"
+                ],
+                "region": null,
+                "metrics": {
+                    "estimated_impedance_ohms": 66.2,
+                    "target_impedance_ohms": 50.0,
+                    "mismatch_pct": 32.4,
+                    "delay_ps": 123.6,
+                    "via_inductance_nh": 0.0
+                },
+                "confidence": 0.84,
+                "short_title": "Physics-based impedance mismatch",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal_integrity",
+                "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+                "threshold_label": "Maximum impedance mismatch 12.0%",
+                "observed_label": "Observed mismatch 32.4% at 66.2 ohms"
+            }
+        ]
     },
     "raw_rule_result": {
         "risks": [
@@ -2717,7 +2877,7 @@
         "score": 0.2,
         "total_penalty": 9.8
     },
-    "generated_at": "2026-04-15T18:18:29.294730+00:00",
+    "generated_at": "2026-04-15T18:26:34.402523+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -2776,9 +2936,9 @@
             },
             {
                 "severity": "high",
-                "category": "emi_return_path",
-                "message": "U1 is connected to critical net(s) CTRL but has no direct ground-reference net",
-                "recommendation": "Review this signal path and ensure it has a nearby continuous ground reference and a clean return path."
+                "category": "signal_integrity",
+                "message": "Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target."
             }
         ]
     }

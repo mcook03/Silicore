@@ -2275,6 +2275,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "top_actions": decision_data.get("next_actions") or [],
         "domain_breakdown": domain_breakdown,
         "traceability_stats": board_review_layers.get("traceability_stats") or [],
+        "physics_summary": result.get("physics_summary") or {},
         "value_metrics": board_value_metrics or [],
         "subsystem_summary": result.get("subsystem_summary") or {},
         "risk_sources": risk_sources,
@@ -3085,6 +3086,7 @@ def _build_single_decision_data(result):
 def _build_board_review_layers(result):
     risks = (result or {}).get("risks", []) or []
     analysis_context = (result or {}).get("analysis_context_view") or {}
+    physics_summary = (result or {}).get("physics_summary") or {}
     if not risks:
         return {
             "domain_cards": [],
@@ -3093,6 +3095,11 @@ def _build_board_review_layers(result):
                 "title": "Signal & timing review",
                 "summary": "Signal-depth surfaces appear after analysis.",
                 "detail": "Run a board to see clock placement, sensitive-circuit pressure, and routing priorities.",
+            },
+            "physics_lane": {
+                "title": "Physics integrity estimate",
+                "summary": "Physics-informed SI/PI estimates appear after analysis.",
+                "detail": "Silicore will estimate impedance, delay, IR drop, and current density from board geometry and configured material assumptions.",
             },
         }
 
@@ -3181,12 +3188,42 @@ def _build_board_review_layers(result):
         )
         signal_detail = "Signal review combines routing quality, high-speed symmetry, and clock-adjacent placement checks."
 
+    signal_models = physics_summary.get("signal_models") or []
+    power_models = physics_summary.get("power_models") or []
+    if signal_models or power_models:
+        worst_signal = signal_models[0] if signal_models else None
+        worst_power = power_models[0] if power_models else None
+        summary_parts = []
+        if worst_signal:
+            summary_parts.append(
+                f"{worst_signal.get('net_name')} is estimated at {worst_signal.get('impedance_ohms')} ohms with {worst_signal.get('mismatch_pct')}% mismatch."
+            )
+        if worst_power:
+            summary_parts.append(
+                f"{worst_power.get('net_name')} is estimated at {worst_power.get('voltage_drop_mv')} mV drop and {worst_power.get('current_density_a_per_mm2')} A/mm²."
+            )
+        physics_detail = (
+            f"Modeled {len(signal_models)} critical signal net(s) and {len(power_models)} power net(s) using configured dielectric and copper assumptions."
+        )
+        physics_lane = {
+            "title": "Physics integrity estimate",
+            "summary": " ".join(summary_parts) if summary_parts else "Physics-informed SI/PI estimates are available for this board.",
+            "detail": physics_detail,
+        }
+    else:
+        physics_lane = {
+            "title": "Physics integrity estimate",
+            "summary": "No physics-informed SI/PI estimates were generated on this run.",
+            "detail": "Silicore needs routable critical signal or power nets with usable geometry to generate impedance and IR-drop estimates.",
+        }
+
     return {
         "domain_cards": domain_cards[:4],
         "traceability_stats": [
             {"label": "Audit-ready findings", "value": audit_ready_count, "subtext": "Traceability 85+"},
             {"label": "Board-anchored findings", "value": anchored_count, "subtext": "Linked to nets, parts, or regions"},
             {"label": "Evidence-rich findings", "value": evidence_rich_count, "subtext": "Four or more evidence points"},
+            {"label": "Physics-modeled nets", "value": len(signal_models) + len(power_models), "subtext": "Geometry-driven SI/PI estimates"},
             {
                 "label": "Run profile",
                 "value": (
@@ -3206,6 +3243,8 @@ def _build_board_review_layers(result):
             "summary": signal_summary,
             "detail": signal_detail,
         },
+        "physics_lane": physics_lane,
+        "physics_summary": physics_summary,
     }
 
 

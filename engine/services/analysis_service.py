@@ -1303,6 +1303,22 @@ def _analyze_board_file(file_path, config):
     pcb = _normalize_board(pcb)
 
     risks, raw_rule_result = _run_rule_engine(pcb, config)
+    physics_analysis_func = _optional_function(
+        "engine.physics_integrity",
+        ["analyze_board_physics"],
+    )
+    physics_summary = {"enabled": False, "signal_models": [], "power_models": [], "summary": {}, "risks": []}
+    if physics_analysis_func:
+        try:
+            physics_summary = _call_with_supported_args(
+                physics_analysis_func,
+                pcb=pcb,
+                config=config,
+            ) or physics_summary
+        except Exception:
+            physics_summary = physics_summary
+    physics_risks = [_normalize_risk(risk) for risk in (physics_summary.get("risks") or [])]
+    risks.extend(physics_risks)
     score, score_explanation = _compute_score_and_explanation(risks, config)
     board_summary = _build_board_summary(pcb, risks, os.path.basename(file_path))
 
@@ -1322,6 +1338,7 @@ def _analyze_board_file(file_path, config):
             "profile": (config.get("analysis", {}) or {}).get("profile", "balanced"),
             "board_type": (config.get("analysis", {}) or {}).get("board_type", "general"),
         },
+        "physics_summary": physics_summary,
         "raw_rule_result": raw_rule_result,
         "generated_at": _utc_now_iso(),
     }

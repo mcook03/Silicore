@@ -54,15 +54,15 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> thermal_hotspot_board.kicad_pcb</p>
-                <p><strong>Score:</strong> 26.0 / 100</p>
-                <p><strong>Total Risks:</strong> 17</p>
-                <p><strong>Total Penalty:</strong> 74.0</p>
+                <p><strong>Score:</strong> 20.0 / 100</p>
+                <p><strong>Total Risks:</strong> 18</p>
+                <p><strong>Total Penalty:</strong> 80.0</p>
             </div>
 
             <div class="card">
                 <h2>Executive Summary</h2>
                 <p><strong>Board needs focused engineering review</strong></p>
-                <p class="muted">This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U1 appears to lack enough local decoupling support. The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+                <p class="muted">This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests VIN is running high current density (214.3 A/mm²). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
             </div>
 
             <div class="card">
@@ -83,6 +83,12 @@
                 
             <div class="issue-card">
                 <p><strong>HIGH</strong> — power_integrity</p>
+                <p>Physics estimate suggests VIN is running high current density (214.3 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
                 <p>U1 appears to lack enough local decoupling support</p>
                 <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
             </div>
@@ -93,30 +99,24 @@
                 <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
             </div>
             
-            <div class="issue-card">
-                <p><strong>HIGH</strong> — power_integrity</p>
-                <p>Power net VIN uses a narrow trace width (0.20)</p>
-                <p><strong>Recommendation:</strong> Increase power trace width to reduce resistance, heating, and voltage drop.</p>
-            </div>
-            
             </div>
 
             <div class="card">
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 3</p>
                 <p><strong>Net Count:</strong> 3</p>
-                <p><strong>Risk Count:</strong> 17</p>
+                <p><strong>Risk Count:</strong> 18</p>
                 <p><strong>Sample Components:</strong> U1, Q1, U2</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 5.6</li><li>high: 1.8</li></ul>
+                <ul><li>medium: 5.6</li><li>high: 2.4</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 0.8</li><li>power_integrity: 3.8</li><li>signal_integrity: 1.6</li><li>reliability: 0.4</li><li>thermal: 0.8</li></ul>
+                <ul><li>assembly_testability: 0.8</li><li>power_integrity: 4.4</li><li>signal_integrity: 1.6</li><li>reliability: 0.4</li><li>thermal: 0.8</li></ul>
             </div>
 
             <div class="card">
@@ -243,7 +243,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> VIN, GND, VOUT</p>
+                <p><strong>Nets:</strong> VOUT, GND, VIN</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -268,7 +268,7 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> VIN, GND, VOUT</p>
+                <p><strong>Nets:</strong> VOUT, GND, VIN</p>
                 <p><strong>Metrics:</strong> {&quot;bulk_caps_found&quot;: 0, &quot;bulk_distance_threshold&quot;: 12.0}</p>
             </div>
             
@@ -293,7 +293,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> GND, VOUT</p>
+                <p><strong>Nets:</strong> VOUT, GND</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -368,8 +368,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> GND, VOUT</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;VOUT&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> VOUT, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;VOUT&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -545,6 +545,31 @@
                 <p><strong>Components:</strong> Q1</p>
                 <p><strong>Nets:</strong> GND, VIN, VOUT</p>
                 <p><strong>Metrics:</strong> {&quot;max_connected_width&quot;: 0.2, &quot;threshold&quot;: 0.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VIN is running high current density (214.3 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=12.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;current_density_a_per_mm2&quot;: 214.29, &quot;estimated_current_a&quot;: 1.5, &quot;cross_section_mm2&quot;: 0.007, &quot;threshold&quot;: 12.0}</p>
             </div>
             
             </div>

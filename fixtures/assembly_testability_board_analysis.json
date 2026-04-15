@@ -1,7 +1,7 @@
 {
     "filename": "assembly_testability_board.kicad_pcb",
     "file_path": "fixtures/assembly_testability_board.kicad_pcb",
-    "score": 10.8,
+    "score": 8.9,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -339,10 +339,10 @@
                 "U1"
             ],
             "nets": [
-                "GND",
-                "UART_TX",
+                "VCC",
                 "SWDIO",
-                "VCC"
+                "GND",
+                "SWCLK"
             ],
             "region": null,
             "metrics": {
@@ -1034,31 +1034,106 @@
                 "fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "priority": "medium"
             }
+        },
+        {
+            "rule_id": "physics_power_density",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests VCC is running high current density (142.9 A/mm\u00b2)",
+            "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+            "components": [],
+            "nets": [
+                "VCC"
+            ],
+            "region": null,
+            "metrics": {
+                "current_density_a_per_mm2": 142.86,
+                "estimated_current_a": 0.8,
+                "cross_section_mm2": 0.0056,
+                "threshold": 12.0
+            },
+            "confidence": 0.8,
+            "short_title": "Physics-based current-density risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power_integrity",
+            "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+            "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+            "observed_label": "Observed current density 142.9 A/mm\u00b2",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "physics_signal_integrity",
+            "category": "signal_integrity",
+            "severity": "high",
+            "message": "Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)",
+            "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+            "components": [],
+            "nets": [
+                "SWCLK"
+            ],
+            "region": null,
+            "metrics": {
+                "estimated_impedance_ohms": 78.73,
+                "target_impedance_ohms": 50.0,
+                "mismatch_pct": 57.5,
+                "delay_ps": 163.7,
+                "via_inductance_nh": 0.0
+            },
+            "confidence": 0.84,
+            "short_title": "Physics-based impedance mismatch",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal_integrity",
+            "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+            "suggested_actions": [],
+            "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+            "threshold_label": "Maximum impedance mismatch 12.0%",
+            "observed_label": "Observed mismatch 57.5% at 78.7 ohms",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "priority": "high"
+            }
         }
     ],
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 116.0,
-        "total_penalty_raw_10": 11.6,
+        "total_penalty": 128.0,
+        "total_penalty_raw_10": 12.8,
         "severity_totals": {
             "medium": 9.2,
-            "high": 2.4
+            "high": 3.6
         },
         "category_totals": {
             "assembly_testability": 2.0,
             "component_design": 0.4,
-            "power_integrity": 3.6,
+            "power_integrity": 4.2,
             "manufacturing": 3.2,
-            "signal_integrity": 2.0,
+            "signal_integrity": 2.6,
             "stackup_return_path": 0.4
         },
-        "final_score": 10.8,
-        "final_score_raw_10": 1.08,
+        "final_score": 8.9,
+        "final_score_raw_10": 0.89,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 1.6,
-        "overflow_penalty": 16.0,
+        "overflow_penalty_raw_10": 2.8,
+        "overflow_penalty": 28.0,
         "details": [
             {
                 "severity": "medium",
@@ -1356,6 +1431,28 @@
                 "confidence": 0.83,
                 "suggested_fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests VCC is running high current density (142.9 A/mm\u00b2)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.8,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "penalty": 0.6,
+                "message": "Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.84,
+                "suggested_fix": "Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.",
+                "fix_priority": "high"
             }
         ]
     },
@@ -1369,17 +1466,17 @@
             "C1",
             "R1"
         ],
-        "risk_count": 27,
+        "risk_count": 29,
         "severity_counts": {
             "medium": 23,
-            "high": 4
+            "high": 6
         },
         "category_counts": {
             "assembly_testability": 5,
             "component_design": 1,
-            "power_integrity": 7,
+            "power_integrity": 8,
             "manufacturing": 8,
-            "signal_integrity": 5,
+            "signal_integrity": 6,
             "stackup_return_path": 1
         }
     },
@@ -1932,6 +2029,28 @@
         "emi": {
             "require_ground_reference": true
         },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
         "rules": {
             "spacing": {
                 "threshold": 3.0
@@ -2249,7 +2368,7 @@
     },
     "analysis_context": {
         "board_name": "assembly_testability_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:18:29.282764+00:00",
+        "timestamp": "2026-04-15T18:26:34.388541+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2332,6 +2451,28 @@
             },
             "emi": {
                 "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
             },
             "rules": {
                 "spacing": {
@@ -2651,6 +2792,110 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [
+            {
+                "net_name": "SWCLK",
+                "length_mm": 28.28,
+                "average_width_mm": 0.1,
+                "impedance_ohms": 78.73,
+                "target_ohms": 50.0,
+                "mismatch_pct": 57.5,
+                "delay_ps": 163.7,
+                "electrical_ratio": 0.33,
+                "via_inductance_nh": 0.0
+            }
+        ],
+        "power_models": [
+            {
+                "net_name": "VCC",
+                "length_mm": 6.32,
+                "average_width_mm": 0.16,
+                "estimated_current_a": 0.8,
+                "resistance_ohms": 0.0195,
+                "voltage_drop_mv": 15.58,
+                "current_density_a_per_mm2": 142.86,
+                "power_loss_mw": 12.46
+            }
+        ],
+        "summary": {
+            "signal_nets_modeled": 1,
+            "power_nets_modeled": 1,
+            "worst_impedance_mismatch_pct": 57.5,
+            "worst_voltage_drop_mv": 15.58
+        },
+        "risks": [
+            {
+                "rule_id": "physics_power_density",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests VCC is running high current density (142.9 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.",
+                "components": [],
+                "nets": [
+                    "VCC"
+                ],
+                "region": null,
+                "metrics": {
+                    "current_density_a_per_mm2": 142.86,
+                    "estimated_current_a": 0.8,
+                    "cross_section_mm2": 0.0056,
+                    "threshold": 12.0
+                },
+                "confidence": 0.8,
+                "short_title": "Physics-based current-density risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power_integrity",
+                "why_it_matters": "High current density raises heating, drop, and long-term reliability stress in power paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles current-density estimate exceeded the configured conductor limit.",
+                "threshold_label": "Maximum current density 12.0 A/mm\u00b2",
+                "observed_label": "Observed current density 142.9 A/mm\u00b2"
+            },
+            {
+                "rule_id": "physics_signal_integrity",
+                "category": "signal_integrity",
+                "severity": "high",
+                "message": "Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.",
+                "components": [],
+                "nets": [
+                    "SWCLK"
+                ],
+                "region": null,
+                "metrics": {
+                    "estimated_impedance_ohms": 78.73,
+                    "target_impedance_ohms": 50.0,
+                    "mismatch_pct": 57.5,
+                    "delay_ps": 163.7,
+                    "via_inductance_nh": 0.0
+                },
+                "confidence": 0.84,
+                "short_title": "Physics-based impedance mismatch",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal_integrity",
+                "why_it_matters": "A characteristic impedance shift can create reflection, eye closure, and timing margin loss on fast nets.",
+                "suggested_actions": [],
+                "trigger_condition": "A first-principles microstrip estimate exceeded the configured impedance tolerance.",
+                "threshold_label": "Maximum impedance mismatch 12.0%",
+                "observed_label": "Observed mismatch 57.5% at 78.7 ohms"
+            }
+        ]
+    },
     "raw_rule_result": {
         "risks": [
             {
@@ -2908,10 +3153,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
-                    "UART_TX",
+                    "VCC",
                     "SWDIO",
-                    "VCC"
+                    "GND",
+                    "SWCLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -3446,7 +3691,7 @@
         "score": 0.0,
         "total_penalty": 11.6
     },
-    "generated_at": "2026-04-15T18:18:29.282770+00:00",
+    "generated_at": "2026-04-15T18:26:34.388550+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -3501,25 +3746,25 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows high design risk. The main risk concentration is in manufacturing. The highest-priority issue is High-current net SWDIO bottlenecks through a narrow copper section. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows moderate design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms). The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
+            {
+                "severity": "high",
+                "category": "signal_integrity",
+                "message": "Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target."
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "message": "Physics estimate suggests VCC is running high current density (142.9 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
+            },
             {
                 "severity": "high",
                 "category": "power_integrity",
                 "message": "High-current net SWDIO bottlenecks through a narrow copper section",
                 "recommendation": "Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure."
-            },
-            {
-                "severity": "high",
-                "category": "power_integrity",
-                "message": "High-current net SWCLK bottlenecks through a narrow copper section",
-                "recommendation": "Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure."
-            },
-            {
-                "severity": "high",
-                "category": "power_integrity",
-                "message": "U1 appears to lack enough local decoupling support",
-                "recommendation": "Add or reposition local bypass capacitors close to the device supply pins with short return paths."
             }
         ]
     }

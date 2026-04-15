@@ -54,15 +54,15 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> high_speed_pair_bad.kicad_pcb</p>
-                <p><strong>Score:</strong> 7.0 / 100</p>
-                <p><strong>Total Risks:</strong> 35</p>
-                <p><strong>Total Penalty:</strong> 164.0</p>
+                <p><strong>Score:</strong> 6.4 / 100</p>
+                <p><strong>Total Risks:</strong> 40</p>
+                <p><strong>Total Penalty:</strong> 194.0</p>
             </div>
 
             <div class="card">
                 <h2>Executive Summary</h2>
                 <p><strong>Board needs focused engineering review</strong></p>
-                <p class="muted">This board shows moderate design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+                <p class="muted">This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
             </div>
 
             <div class="card">
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 3</p>
                 <p><strong>Net Count:</strong> 5</p>
-                <p><strong>Risk Count:</strong> 35</p>
+                <p><strong>Risk Count:</strong> 40</p>
                 <p><strong>Sample Components:</strong> J1, U1, Y1</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 10.4</li><li>high: 4.8</li><li>critical: 1.2</li></ul>
+                <ul><li>medium: 10.4</li><li>high: 7.8</li><li>critical: 1.2</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 2.0</li><li>signal_integrity: 3.4</li><li>component_design: 0.8</li><li>power_integrity: 3.2</li><li>high_speed: 0.6</li><li>emi_emc: 1.6</li><li>manufacturing: 0.8</li><li>reliability: 0.8</li><li>safety_high_voltage: 1.2</li><li>stackup_return_path: 2.0</li></ul>
+                <ul><li>assembly_testability: 2.0</li><li>signal_integrity: 5.2</li><li>component_design: 0.8</li><li>power_integrity: 4.4</li><li>high_speed: 0.6</li><li>emi_emc: 1.6</li><li>manufacturing: 0.8</li><li>reliability: 0.8</li><li>safety_high_voltage: 1.2</li><li>stackup_return_path: 2.0</li></ul>
             </div>
 
             <div class="card">
@@ -275,31 +275,6 @@
             <div class="risk-card">
                 <p><strong>Severity:</strong> medium</p>
                 <p><strong>Category:</strong> component_design</p>
-                <p><strong>Message:</strong> High-speed net USB_DN has a long route with no visible series or termination resistor</p>
-                <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
-                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
-                <p><strong>Observed vs Threshold:</strong> threshold=18.0</p>
-                <p><strong>Traceability:</strong> 100 / 100</p>
-                <p><strong>Evidence Count:</strong> 9</p>
-                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
-                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
-                
-                <p><strong>Root Cause:</strong> General design issue</p>
-                <p><strong>Impact:</strong> Unknown system impact</p>
-                <p><strong>Confidence:</strong> 70.0 / 100</p>
-                
-                
-                <p><strong>Suggested Fix:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
-                <p><strong>Fix Priority:</strong> medium</p>
-                
-                <p><strong>Components:</strong> J1, U1</p>
-                <p><strong>Nets:</strong> USB_DN</p>
-                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 118.2, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
-            </div>
-            
-            <div class="risk-card">
-                <p><strong>Severity:</strong> medium</p>
-                <p><strong>Category:</strong> component_design</p>
                 <p><strong>Message:</strong> High-speed net USB_DP has a long route with no visible series or termination resistor</p>
                 <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
                 <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
@@ -320,6 +295,31 @@
                 <p><strong>Components:</strong> J1, U1</p>
                 <p><strong>Nets:</strong> USB_DP</p>
                 <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.67, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> component_design</p>
+                <p><strong>Message:</strong> High-speed net USB_DN has a long route with no visible series or termination resistor</p>
+                <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=18.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 118.2, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
             </div>
             
             <div class="risk-card">
@@ -393,7 +393,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> CLK, USB_DN, GND, USB_DP</p>
+                <p><strong>Nets:</strong> GND, CLK, USB_DP, USB_DN</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -593,8 +593,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> J1</p>
-                <p><strong>Nets:</strong> USB_DN, GND, VBUS, USB_DP</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;USB_DN&quot;, &quot;GND&quot;, &quot;VBUS&quot;, &quot;USB_DP&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> GND, USB_DP, VBUS, USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;USB_DP&quot;, &quot;VBUS&quot;, &quot;USB_DN&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -618,8 +618,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U1</p>
-                <p><strong>Nets:</strong> CLK, USB_DN, GND, USB_DP</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CLK&quot;, &quot;USB_DN&quot;, &quot;GND&quot;, &quot;USB_DP&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> GND, CLK, USB_DP, USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CLK&quot;, &quot;USB_DP&quot;, &quot;USB_DN&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -643,8 +643,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> Y1</p>
-                <p><strong>Nets:</strong> CLK, GND</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CLK&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> GND, CLK</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CLK&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">
@@ -995,6 +995,131 @@
                 
                 <p><strong>Nets:</strong> CLK</p>
                 <p><strong>Metrics:</strong> {&quot;min_trace_width&quot;: 0.12, &quot;threshold&quot;: 0.15}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VBUS may incur high IR drop (248.3 mV)</p>
+                <p><strong>Recommendation:</strong> Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;voltage_drop_mv&quot;: 248.33, &quot;estimated_current_a&quot;: 1.5, &quot;resistance_ohms&quot;: 0.1656, &quot;threshold_mv&quot;: 75.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VBUS is running high current density (171.4 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=12.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;current_density_a_per_mm2&quot;: 171.43, &quot;estimated_current_a&quot;: 1.5, &quot;cross_section_mm2&quot;: 0.00875, &quot;threshold&quot;: 12.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests USB_DP is off target impedance (63.1 ohms vs 90.0 ohms)</p>
+                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 63.11, &quot;target_impedance_ohms&quot;: 90.0, &quot;mismatch_pct&quot;: 29.9, &quot;delay_ps&quot;: 497.6, &quot;via_inductance_nh&quot;: 68.97}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests USB_DN is off target impedance (63.1 ohms vs 90.0 ohms)</p>
+                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 63.11, &quot;target_impedance_ohms&quot;: 90.0, &quot;mismatch_pct&quot;: 29.9, &quot;delay_ps&quot;: 694.6, &quot;via_inductance_nh&quot;: 68.97}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)</p>
+                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> CLK</p>
+                <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 73.94, &quot;target_impedance_ohms&quot;: 50.0, &quot;mismatch_pct&quot;: 47.9, &quot;delay_ps&quot;: 92.0, &quot;via_inductance_nh&quot;: 0.0}</p>
             </div>
             
             </div>
