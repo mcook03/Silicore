@@ -869,12 +869,17 @@ def _build_dashboard_story(recent_runs, projects):
     if recurring_categories:
         top_category = sorted(recurring_categories.items(), key=lambda item: (-item[1], item[0].lower()))[0][0]
 
+    run_count = len(recent_runs)
+    workspace_count = len(projects)
+    run_label = "saved run" if run_count == 1 else "saved runs"
+    workspace_label = "engineering workspace" if workspace_count == 1 else "engineering workspaces"
+
     summary = (
-        f"Silicore is currently tracking {len(recent_runs)} saved run(s) and {len(projects)} engineering workspace(s). "
-        f"The latest scored run sits at {latest_score} / 100, and active projects average {average_project_score} / 100."
+        f"Silicore is currently tracking {run_count} {run_label} across {workspace_count} {workspace_label}. "
+        f"The latest scored run is {latest_score} / 100, while active workspaces average {average_project_score} / 100."
     )
     if top_category:
-        summary += f" The most repeated engineering pressure area across workspaces is {top_category}."
+        summary += f" The strongest recurring risk driver right now is {top_category}."
 
     pillars = [
         {
