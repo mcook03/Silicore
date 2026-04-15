@@ -2,7 +2,14 @@ import json
 import os
 import re
 from collections import defaultdict
-from engine.copilot_engine import build_board_copilot_brief, build_compare_copilot_brief, build_project_copilot_brief
+from engine.copilot_engine import (
+    build_board_assistant_console,
+    build_board_copilot_brief,
+    build_compare_assistant_console,
+    build_compare_copilot_brief,
+    build_project_assistant_console,
+    build_project_copilot_brief,
+)
 from engine.insight_engine import generate_comparison_insights
 
 from flask import (
@@ -3794,6 +3801,8 @@ def single_board_page():
             flash(f"Board analysis failed: {exc}")
             return redirect(url_for("single_board_page"))
 
+    board_copilot = build_board_copilot_brief(result, single_decision)
+
     return _render_page(
         active_page="single",
         page_title="Board Analysis",
@@ -3806,7 +3815,8 @@ def single_board_page():
             "project_options": _project_options(),
             "single_chart": single_chart,
             "single_decision": single_decision,
-            "board_copilot": build_board_copilot_brief(result, single_decision),
+            "board_copilot": board_copilot,
+            "board_assistant_console": build_board_assistant_console(board_copilot, single_decision),
             "board_review_layers": _build_board_review_layers(result),
             "board_value_metrics": _build_board_value_metrics(result),
             "analysis_modes": analysis_modes,
@@ -3960,6 +3970,12 @@ def project_detail_page(project_id):
     timeline_data = _build_project_timeline_data(project)
     workspace_review_layers = _build_workspace_review_layers(project)
     project_value_metrics = _build_project_value_metrics(project)
+    project_copilot = build_project_copilot_brief(
+        project,
+        workspace_intelligence,
+        timeline_data,
+        project_value_metrics,
+    )
 
     return _render_page(
         active_page="projects_workspace",
@@ -3974,12 +3990,8 @@ def project_detail_page(project_id):
             "timeline_data": timeline_data,
             "workspace_review_layers": workspace_review_layers,
             "project_value_metrics": project_value_metrics,
-            "project_copilot": build_project_copilot_brief(
-                project,
-                workspace_intelligence,
-                timeline_data,
-                project_value_metrics,
-            ),
+            "project_copilot": project_copilot,
+            "project_assistant_console": build_project_assistant_console(project_copilot),
             "available_users": [user for user in list_users() if user.get("user_id") != ((project.get("owner") or {}).get("user_id"))],
         },
     )
@@ -4198,6 +4210,8 @@ def compare_runs(project_id):
         },
     }
 
+    compare_copilot = build_compare_copilot_brief(comparison)
+
     return _render_page(
         active_page="projects_workspace",
         page_title="Run Comparison",
@@ -4208,7 +4222,8 @@ def compare_runs(project_id):
             "project": project,
             "comparison": comparison,
             "comparison_visuals": comparison_visuals,
-            "compare_copilot": build_compare_copilot_brief(comparison),
+            "compare_copilot": compare_copilot,
+            "compare_assistant_console": build_compare_assistant_console(compare_copilot),
         },
     )
 

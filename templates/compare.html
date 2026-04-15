@@ -10,6 +10,51 @@
     </div>
 </section>
 
+<section class="assistant-console-layout">
+    <section class="card assistant-console-main">
+        <div class="card-header">
+            <h2 class="section-title">{{ compare_assistant_console.title }}</h2>
+            <p class="section-copy">{{ compare_assistant_console.summary }}</p>
+        </div>
+        <div class="card-body">
+            <div class="summary-panel" data-assistant-compare-response>
+                <h3>{{ compare_assistant_console.eyebrow }}</h3>
+                <p>Select a question or revision lens to open a comparison-specific answer.</p>
+            </div>
+        </div>
+    </section>
+
+    <aside class="card assistant-console-side">
+        <div class="card-header">
+            <h2 class="section-title">Assistant Console</h2>
+            <p class="section-copy">Use revision questions and lens actions to drive the compare inspector.</p>
+        </div>
+        <div class="card-body">
+            <div class="assistant-console-group">
+                <div class="assistant-console-label">Follow-Up Questions</div>
+                <div class="assistant-console-list">
+                    {% for item in compare_assistant_console.questions %}
+                    <button type="button" class="assistant-console-chip" data-assistant-compare-question data-title="{{ item.label }}" data-answer="{{ item.answer }}">
+                        {{ item.label }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="assistant-console-group" style="margin-top:16px;">
+                <div class="assistant-console-label">Apply Review Lens</div>
+                <div class="assistant-console-list">
+                    {% for item in compare_assistant_console.review_lenses %}
+                    <button type="button" class="assistant-console-lens" data-assistant-compare-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}" data-components="{{ item.components|join('|') }}" data-nets="{{ item.nets|join('|') }}">
+                        <span>{{ item.label }}</span>
+                        <strong>{{ item.headline }}</strong>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Comparison Copilot</h2>
@@ -2206,6 +2251,66 @@
         margin-bottom: 14px;
     }
 
+    .assistant-console-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .assistant-console-side {
+        position: sticky;
+        top: 18px;
+    }
+
+    .assistant-console-group {
+        display: grid;
+        gap: 10px;
+    }
+
+    .assistant-console-label {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .assistant-console-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .assistant-console-chip,
+    .assistant-console-lens {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.02);
+        color: #ecf3ff;
+        border-radius: 14px;
+        padding: 12px 14px;
+        text-align: left;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-console-lens span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+    }
+
+    .assistant-console-lens strong {
+        display: block;
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
     .board-toolbar label {
         display: grid;
         gap: 6px;
@@ -2368,6 +2473,10 @@
     }
 
     @media (max-width: 980px) {
+        .assistant-console-layout {
+            grid-template-columns: 1fr;
+        }
+
         .mini-stat-row {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -2553,6 +2662,43 @@
 
     applyFilters();
     if (compareCards[0]) setActiveCompareCard(compareCards[0]);
+})();
+
+(() => {
+    const responsePanel = document.querySelector('[data-assistant-compare-response]');
+    const questionButtons = Array.from(document.querySelectorAll('[data-assistant-compare-question]'));
+    const lensButtons = Array.from(document.querySelectorAll('[data-assistant-compare-lens]'));
+    if (!responsePanel) return;
+
+    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+    const renderResponse = (title, answer) => {
+        responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    };
+
+    questionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
+        });
+    });
+
+    lensButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens answer available.');
+            const api = window.silicoreCompareInspector;
+            if (!api) return;
+            const nets = splitTokens(button.dataset.nets);
+            const components = splitTokens(button.dataset.components);
+            if (nets.length || components.length) {
+                api.focus(components, nets);
+            } else {
+                api.clear();
+            }
+        });
+    });
+
+    if (questionButtons[0]) {
+        renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
+    }
 })();
 </script>
 

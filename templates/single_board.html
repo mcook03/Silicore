@@ -101,6 +101,60 @@
     </div>
 </section>
 
+<section class="assistant-console-layout">
+    <section class="card assistant-console-main">
+        <div class="card-header">
+            <h2 class="section-title">{{ board_assistant_console.title }}</h2>
+            <p class="section-copy">{{ board_assistant_console.summary }}</p>
+        </div>
+        <div class="card-body">
+            <div class="summary-panel" data-assistant-board-response>
+                <h3>{{ board_assistant_console.eyebrow }}</h3>
+                <p>Select a follow-up question or review lens to open Silicore’s live guidance.</p>
+            </div>
+        </div>
+    </section>
+
+    <aside class="card assistant-console-side">
+        <div class="card-header">
+            <h2 class="section-title">Assistant Console</h2>
+            <p class="section-copy">Ask follow-up questions and push review lenses directly into the board view.</p>
+        </div>
+        <div class="card-body">
+            <div class="assistant-console-group">
+                <div class="assistant-console-label">Follow-Up Questions</div>
+                <div class="assistant-console-list">
+                    {% for item in board_assistant_console.questions %}
+                    <button type="button" class="assistant-console-chip" data-assistant-board-question data-answer="{{ item.answer }}" data-title="{{ item.label }}">
+                        {{ item.label }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="assistant-console-group" style="margin-top:16px;">
+                <div class="assistant-console-label">Apply Review Lens</div>
+                <div class="assistant-console-list">
+                    {% for item in board_assistant_console.review_lenses %}
+                    <button
+                        type="button"
+                        class="assistant-console-lens"
+                        data-assistant-board-lens
+                        data-title="{{ item.headline }}"
+                        data-answer="{{ item.copy }}"
+                        data-components="{{ item.components|join('|') }}"
+                        data-nets="{{ item.nets|join('|') }}"
+                        data-heat="{{ item.heat_mode }}">
+                        <span>{{ item.label }}</span>
+                        <strong>{{ item.headline }}</strong>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
 {% if not result %}
 <section class="grid grid-2">
     <section class="card spotlight-shell-card">
@@ -1225,6 +1279,15 @@
             if (matches > 0) zoomToContent();
             return matches;
         },
+        setFilters({layer = '', net = '', heat = ''} = {}) {
+            if (layerSelect) layerSelect.value = layer;
+            if (netSelect) netSelect.value = net;
+            if (heatSelect && heat) {
+                heatSelect.value = heat;
+                inspector.dataset.heatMode = heat;
+            }
+            applyFilters();
+        },
         clear() {
             clearFocus();
             applyFilters();
@@ -1233,6 +1296,45 @@
 
     applyFilters();
     if (boardActionCards[0]) setActiveActionCard(boardActionCards[0]);
+})();
+
+(() => {
+    const responsePanel = document.querySelector('[data-assistant-board-response]');
+    const questionButtons = Array.from(document.querySelectorAll('[data-assistant-board-question]'));
+    const lensButtons = Array.from(document.querySelectorAll('[data-assistant-board-lens]'));
+    if (!responsePanel) return;
+
+    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+    const renderResponse = (title, answer) => {
+        responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    };
+
+    questionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
+        });
+    });
+
+    lensButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens note available.');
+            const api = window.silicoreBoardInspector;
+            if (!api) return;
+            const nets = splitTokens(button.dataset.nets);
+            const components = splitTokens(button.dataset.components);
+            api.setFilters({heat: button.dataset.heat || 'hybrid', net: nets[0] || ''});
+            if (nets.length || components.length) {
+                api.focus(components, nets);
+            } else {
+                api.clear();
+                api.setFilters({heat: button.dataset.heat || 'hybrid'});
+            }
+        });
+    });
+
+    if (questionButtons[0]) {
+        renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
+    }
 })();
 </script>
 
@@ -1880,6 +1982,66 @@
         background:
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
             rgba(9, 18, 31, 0.8);
+    }
+
+    .assistant-console-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .assistant-console-side {
+        position: sticky;
+        top: 18px;
+    }
+
+    .assistant-console-group {
+        display: grid;
+        gap: 10px;
+    }
+
+    .assistant-console-label {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .assistant-console-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .assistant-console-chip,
+    .assistant-console-lens {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.02);
+        color: #ecf3ff;
+        border-radius: 14px;
+        padding: 12px 14px;
+        text-align: left;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-console-lens span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+    }
+
+    .assistant-console-lens strong {
+        display: block;
+        font-size: 14px;
+        line-height: 1.45;
     }
 
     .issue-top-row {
@@ -2532,6 +2694,7 @@
     }
 
     @media (max-width: 980px) {
+        .assistant-console-layout,
         .score-shell,
         .big-stat-grid,
         .score-breakdown-grid,

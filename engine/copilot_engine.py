@@ -399,3 +399,161 @@ def build_compare_copilot_brief(comparison):
             "What should I verify before approving this change?",
         ],
     }
+
+
+def build_board_assistant_console(board_copilot, decision_data):
+    board_copilot = board_copilot or {}
+    decision_data = decision_data or {}
+    actions = decision_data.get("next_actions", []) or []
+    top_action = actions[0] if actions else {}
+    top_domain = board_copilot.get("dominant_domain") or "General"
+
+    questions = [
+        {
+            "label": "What matters first?",
+            "answer": board_copilot.get("mission") or "No board mission is available yet.",
+        },
+        {
+            "label": "Why is this risky?",
+            "answer": board_copilot.get("likely_failure_path") or board_copilot.get("failure_mode") or "No failure-path hypothesis is available yet.",
+        },
+        {
+            "label": "What do I validate next?",
+            "answer": " ".join((board_copilot.get("validation_plan") or [])[:2]) or "No validation plan is available yet.",
+        },
+    ]
+
+    review_lenses = [
+        {
+            "label": "Top Driver",
+            "headline": f"Center the review on {top_domain}.",
+            "copy": board_copilot.get("mission") or "No dominant driver is available yet.",
+            "nets": top_action.get("nets") or [],
+            "components": top_action.get("components") or [],
+            "heat_mode": "heatmap",
+        },
+        {
+            "label": "Most Actionable",
+            "headline": f"Open {top_action.get('label') or 'the top action'} in context.",
+            "copy": top_action.get("recommendation_short") or top_action.get("recommendation") or "No direct recommendation is available yet.",
+            "nets": top_action.get("nets") or [],
+            "components": top_action.get("components") or [],
+            "heat_mode": "hybrid",
+        },
+        {
+            "label": "Geometry Review",
+            "headline": "Drop the heat layer and inspect physical routing.",
+            "copy": "Use geometry focus when you need to verify real placement, routing continuity, and board structure without the heat overlay dominating the view.",
+            "nets": [],
+            "components": [],
+            "heat_mode": "normal",
+        },
+    ]
+
+    return {
+        "title": "Assistant Console",
+        "eyebrow": "Board Copilot",
+        "summary": board_copilot.get("posture") or "Run a board analysis to activate assistant guidance.",
+        "questions": questions,
+        "review_lenses": review_lenses,
+    }
+
+
+def build_project_assistant_console(project_copilot):
+    project_copilot = project_copilot or {}
+    execution_plan = project_copilot.get("execution_plan", []) or []
+    first_item = execution_plan[0] if execution_plan else {}
+
+    questions = [
+        {
+            "label": "What is repeating?",
+            "answer": f"The strongest systemic pattern is {project_copilot.get('systemic_pattern', 'not clear yet')}.",
+        },
+        {
+            "label": "Are we improving?",
+            "answer": project_copilot.get("momentum") or project_copilot.get("trend_summary") or "No project momentum readout is available yet.",
+        },
+        {
+            "label": "What should the team do next?",
+            "answer": first_item.get("action") or "No team execution step is available yet.",
+        },
+    ]
+
+    review_lenses = [
+        {
+            "label": "Systemic Pattern",
+            "headline": f"Review {project_copilot.get('systemic_pattern', 'the dominant pattern')}.",
+            "copy": project_copilot.get("posture") or "No workspace posture is available yet.",
+        },
+        {
+            "label": "Trend Gate",
+            "headline": "Read the workspace as a release gate, not a dashboard.",
+            "copy": project_copilot.get("release_readiness") or "No release-readiness note is available yet.",
+        },
+        {
+            "label": "Team Loop",
+            "headline": "Treat the next rerun as a managed engineering cycle.",
+            "copy": "Use owner assignment, review notes, and a targeted rerun to verify whether the repeated issue family actually collapsed.",
+        },
+    ]
+
+    return {
+        "title": "Assistant Console",
+        "eyebrow": "Workspace Copilot",
+        "summary": project_copilot.get("posture") or "Link runs into this workspace to activate the assistant console.",
+        "questions": questions,
+        "review_lenses": review_lenses,
+    }
+
+
+def build_compare_assistant_console(compare_copilot):
+    compare_copilot = compare_copilot or {}
+    takeaways = compare_copilot.get("takeaways", []) or []
+    first_takeaway = takeaways[0] if takeaways else {}
+
+    questions = [
+        {
+            "label": "What changed most?",
+            "answer": compare_copilot.get("root_cause") or "No dominant revision change is available yet.",
+        },
+        {
+            "label": "Can I approve this?",
+            "answer": compare_copilot.get("signoff_note") or "No signoff note is available yet.",
+        },
+        {
+            "label": "What do I inspect next?",
+            "answer": first_takeaway.get("why") or compare_copilot.get("next_move") or "No follow-up inspection step is available yet.",
+        },
+    ]
+
+    review_lenses = [
+        {
+            "label": "Top Change Cluster",
+            "headline": first_takeaway.get("title") or "Open the top revision change",
+            "copy": first_takeaway.get("why") or compare_copilot.get("root_cause") or "No comparison cluster is available yet.",
+            "nets": first_takeaway.get("nets") or [],
+            "components": first_takeaway.get("components") or [],
+        },
+        {
+            "label": "Revision Signoff",
+            "headline": "Use the comparison as an approval gate.",
+            "copy": compare_copilot.get("signoff_note") or "No signoff note is available yet.",
+            "nets": [],
+            "components": [],
+        },
+        {
+            "label": "Inspector Focus",
+            "headline": "Jump both revisions to the same subsystem.",
+            "copy": compare_copilot.get("next_move") or "No inspector guidance is available yet.",
+            "nets": first_takeaway.get("nets") or [],
+            "components": first_takeaway.get("components") or [],
+        },
+    ]
+
+    return {
+        "title": "Assistant Console",
+        "eyebrow": "Comparison Copilot",
+        "summary": compare_copilot.get("posture") or "Run a comparison to activate the assistant console.",
+        "questions": questions,
+        "review_lenses": review_lenses,
+    }

@@ -11,6 +11,51 @@
 {% set timeline = timeline_data if timeline_data is defined else {} %}
 {% set workspace_intel = workspace_intelligence if workspace_intelligence is defined else {} %}
 
+<section class="assistant-console-layout">
+    <section class="card assistant-console-main">
+        <div class="card-header">
+            <h2 class="section-title">{{ project_assistant_console.title }}</h2>
+            <p class="section-copy">{{ project_assistant_console.summary }}</p>
+        </div>
+        <div class="card-body">
+            <div class="summary-panel" data-assistant-project-response>
+                <h3>{{ project_assistant_console.eyebrow }}</h3>
+                <p>Select a workspace question or review lens to open Silicore’s guidance.</p>
+            </div>
+        </div>
+    </section>
+
+    <aside class="card assistant-console-side">
+        <div class="card-header">
+            <h2 class="section-title">Assistant Console</h2>
+            <p class="section-copy">Use workspace prompts and review lenses to understand the project like an engineering lead.</p>
+        </div>
+        <div class="card-body">
+            <div class="assistant-console-group">
+                <div class="assistant-console-label">Follow-Up Questions</div>
+                <div class="assistant-console-list">
+                    {% for item in project_assistant_console.questions %}
+                    <button type="button" class="assistant-console-chip" data-assistant-project-question data-title="{{ item.label }}" data-answer="{{ item.answer }}">
+                        {{ item.label }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="assistant-console-group" style="margin-top:16px;">
+                <div class="assistant-console-label">Apply Review Lens</div>
+                <div class="assistant-console-list">
+                    {% for item in project_assistant_console.review_lenses %}
+                    <button type="button" class="assistant-console-lens" data-assistant-project-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}">
+                        <span>{{ item.label }}</span>
+                        <strong>{{ item.headline }}</strong>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
 <section class="grid grid-2">
 <section class="card">
     <div class="card-header">
@@ -987,6 +1032,66 @@
         margin-top: 16px;
     }
 
+    .assistant-console-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .assistant-console-side {
+        position: sticky;
+        top: 18px;
+    }
+
+    .assistant-console-group {
+        display: grid;
+        gap: 10px;
+    }
+
+    .assistant-console-label {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .assistant-console-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .assistant-console-chip,
+    .assistant-console-lens {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.02);
+        color: #ecf3ff;
+        border-radius: 14px;
+        padding: 12px 14px;
+        text-align: left;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-console-lens span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+    }
+
+    .assistant-console-lens strong {
+        display: block;
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
     .timeline-row {
         display: grid;
         gap: 10px;
@@ -1256,6 +1361,7 @@
     }
 
     @media (max-width: 860px) {
+        .assistant-console-layout,
         .project-trend-grid,
         .project-detail-compare-grid,
         .workspace-review-grid {
@@ -1308,6 +1414,33 @@
     });
 
     setActive(cards[0]);
+})();
+
+(() => {
+    const responsePanel = document.querySelector('[data-assistant-project-response]');
+    const questionButtons = Array.from(document.querySelectorAll('[data-assistant-project-question]'));
+    const lensButtons = Array.from(document.querySelectorAll('[data-assistant-project-lens]'));
+    if (!responsePanel) return;
+
+    const renderResponse = (title, answer) => {
+        responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    };
+
+    questionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
+        });
+    });
+
+    lensButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens note available.');
+        });
+    });
+
+    if (questionButtons[0]) {
+        renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
+    }
 })();
 </script>
 
