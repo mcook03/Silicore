@@ -172,7 +172,7 @@ def build_board_copilot_brief(result, decision_data):
 
     mission = (
         f"Focus first on {domain} because it is driving the highest concentration of engineering pressure on this board."
-        if risks else "Run an analysis to activate board copilot guidance."
+        if risks else "Run an analysis to activate Atlas Intelligence for this board."
     )
 
     fixes = []
@@ -273,7 +273,7 @@ def build_project_copilot_brief(project, workspace_intelligence, timeline_data, 
     posture = (
         f"Project trend is currently centered around {systemic}, and the workspace should be managed as an iterative review loop rather than isolated runs."
         if project.get("runs")
-        else "Link multiple runs into this workspace to activate project copilot guidance."
+        else "Link multiple runs into Silicore Nexus to activate Atlas Intelligence at the workspace level."
     )
 
     if score_delta > 5 and confidence_delta >= 0:
@@ -451,9 +451,9 @@ def build_board_assistant_console(board_copilot, decision_data):
     ]
 
     return {
-        "title": "Assistant Console",
-        "eyebrow": "Board Copilot",
-        "summary": board_copilot.get("posture") or "Run a board analysis to activate assistant guidance.",
+        "title": "Atlas Intelligence Console",
+        "eyebrow": "Atlas Intelligence",
+        "summary": board_copilot.get("posture") or "Run a board analysis to activate Atlas Intelligence guidance.",
         "questions": questions,
         "review_lenses": review_lenses,
     }
@@ -498,9 +498,9 @@ def build_project_assistant_console(project_copilot):
     ]
 
     return {
-        "title": "Assistant Console",
-        "eyebrow": "Workspace Copilot",
-        "summary": project_copilot.get("posture") or "Link runs into this workspace to activate the assistant console.",
+        "title": "Atlas Intelligence Console",
+        "eyebrow": "Silicore Nexus",
+        "summary": project_copilot.get("posture") or "Link runs into Silicore Nexus to activate the Atlas Intelligence console.",
         "questions": questions,
         "review_lenses": review_lenses,
     }
@@ -551,9 +551,9 @@ def build_compare_assistant_console(compare_copilot):
     ]
 
     return {
-        "title": "Assistant Console",
-        "eyebrow": "Comparison Copilot",
-        "summary": compare_copilot.get("posture") or "Run a comparison to activate the assistant console.",
+        "title": "Atlas Intelligence Console",
+        "eyebrow": "Atlas Intelligence",
+        "summary": compare_copilot.get("posture") or "Run a comparison to activate the Atlas Intelligence console.",
         "questions": questions,
         "review_lenses": review_lenses,
     }
