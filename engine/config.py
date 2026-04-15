@@ -83,6 +83,33 @@ DEFAULT_CONFIG = {
         "component_analysis": {
             "termination_length_threshold": 18.0,
         },
+        "emi_emc": {
+            "max_switch_trace_length": 18.0,
+            "sensitive_keepout": 6.0,
+            "return_via_radius": 3.0,
+            "max_loop_length": 45.0,
+        },
+        "stackup_return_path": {
+            "max_signal_layers": 2,
+            "signal_via_ground_radius": 3.5,
+            "max_two_layer_critical_length": 28.0,
+        },
+        "assembly_testability": {
+            "min_fiducials": 2,
+            "probe_access_radius": 6.0,
+            "min_ground_test_points": 1,
+        },
+        "safety_high_voltage": {
+            "min_clearance": 2.5,
+            "min_creepage": 5.0,
+            "high_voltage_net_keywords": ["HV", "VAC", "VDC", "VBUS", "48V", "24V", "PACK", "BATT"],
+        },
+        "power_path_realism": {
+            "neckdown_ratio_threshold": 2.5,
+            "max_high_current_length": 40.0,
+            "converter_cap_radius": 7.0,
+            "max_high_current_vias": 4,
+        },
     }
 }
 

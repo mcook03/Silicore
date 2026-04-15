@@ -218,6 +218,91 @@ EDITABLE_FIELD_MAP = {
             "form_keys": ["component_analysis_termination_length_threshold"],
             "config_path": ["component_analysis", "termination_length_threshold"],
         },
+        "emi_emc_max_switch_trace_length": {
+            "type": "float",
+            "form_keys": ["emi_emc_max_switch_trace_length"],
+            "config_path": ["emi_emc", "max_switch_trace_length"],
+        },
+        "emi_emc_sensitive_keepout": {
+            "type": "float",
+            "form_keys": ["emi_emc_sensitive_keepout"],
+            "config_path": ["emi_emc", "sensitive_keepout"],
+        },
+        "emi_emc_return_via_radius": {
+            "type": "float",
+            "form_keys": ["emi_emc_return_via_radius"],
+            "config_path": ["emi_emc", "return_via_radius"],
+        },
+        "emi_emc_max_loop_length": {
+            "type": "float",
+            "form_keys": ["emi_emc_max_loop_length"],
+            "config_path": ["emi_emc", "max_loop_length"],
+        },
+        "stackup_return_path_max_signal_layers": {
+            "type": "int",
+            "form_keys": ["stackup_return_path_max_signal_layers"],
+            "config_path": ["stackup_return_path", "max_signal_layers"],
+        },
+        "stackup_return_path_signal_via_ground_radius": {
+            "type": "float",
+            "form_keys": ["stackup_return_path_signal_via_ground_radius"],
+            "config_path": ["stackup_return_path", "signal_via_ground_radius"],
+        },
+        "stackup_return_path_max_two_layer_critical_length": {
+            "type": "float",
+            "form_keys": ["stackup_return_path_max_two_layer_critical_length"],
+            "config_path": ["stackup_return_path", "max_two_layer_critical_length"],
+        },
+        "assembly_testability_min_fiducials": {
+            "type": "int",
+            "form_keys": ["assembly_testability_min_fiducials"],
+            "config_path": ["assembly_testability", "min_fiducials"],
+        },
+        "assembly_testability_probe_access_radius": {
+            "type": "float",
+            "form_keys": ["assembly_testability_probe_access_radius"],
+            "config_path": ["assembly_testability", "probe_access_radius"],
+        },
+        "assembly_testability_min_ground_test_points": {
+            "type": "int",
+            "form_keys": ["assembly_testability_min_ground_test_points"],
+            "config_path": ["assembly_testability", "min_ground_test_points"],
+        },
+        "safety_high_voltage_min_clearance": {
+            "type": "float",
+            "form_keys": ["safety_high_voltage_min_clearance"],
+            "config_path": ["safety_high_voltage", "min_clearance"],
+        },
+        "safety_high_voltage_min_creepage": {
+            "type": "float",
+            "form_keys": ["safety_high_voltage_min_creepage"],
+            "config_path": ["safety_high_voltage", "min_creepage"],
+        },
+        "safety_high_voltage_net_keywords": {
+            "type": "list",
+            "form_keys": ["safety_high_voltage_net_keywords"],
+            "config_path": ["safety_high_voltage", "high_voltage_net_keywords"],
+        },
+        "power_path_realism_neckdown_ratio_threshold": {
+            "type": "float",
+            "form_keys": ["power_path_realism_neckdown_ratio_threshold"],
+            "config_path": ["power_path_realism", "neckdown_ratio_threshold"],
+        },
+        "power_path_realism_max_high_current_length": {
+            "type": "float",
+            "form_keys": ["power_path_realism_max_high_current_length"],
+            "config_path": ["power_path_realism", "max_high_current_length"],
+        },
+        "power_path_realism_converter_cap_radius": {
+            "type": "float",
+            "form_keys": ["power_path_realism_converter_cap_radius"],
+            "config_path": ["power_path_realism", "converter_cap_radius"],
+        },
+        "power_path_realism_max_high_current_vias": {
+            "type": "int",
+            "form_keys": ["power_path_realism_max_high_current_vias"],
+            "config_path": ["power_path_realism", "max_high_current_vias"],
+        },
     },
 }
 
@@ -313,6 +398,23 @@ def get_editable_config_view(config):
             "reliability_min_ground_vias": config.get("rules", {}).get("reliability", {}).get("min_ground_vias"),
             "reliability_min_ground_connections": config.get("rules", {}).get("reliability", {}).get("min_ground_connections"),
             "component_analysis_termination_length_threshold": config.get("rules", {}).get("component_analysis", {}).get("termination_length_threshold"),
+            "emi_emc_max_switch_trace_length": config.get("rules", {}).get("emi_emc", {}).get("max_switch_trace_length"),
+            "emi_emc_sensitive_keepout": config.get("rules", {}).get("emi_emc", {}).get("sensitive_keepout"),
+            "emi_emc_return_via_radius": config.get("rules", {}).get("emi_emc", {}).get("return_via_radius"),
+            "emi_emc_max_loop_length": config.get("rules", {}).get("emi_emc", {}).get("max_loop_length"),
+            "stackup_return_path_max_signal_layers": config.get("rules", {}).get("stackup_return_path", {}).get("max_signal_layers"),
+            "stackup_return_path_signal_via_ground_radius": config.get("rules", {}).get("stackup_return_path", {}).get("signal_via_ground_radius"),
+            "stackup_return_path_max_two_layer_critical_length": config.get("rules", {}).get("stackup_return_path", {}).get("max_two_layer_critical_length"),
+            "assembly_testability_min_fiducials": config.get("rules", {}).get("assembly_testability", {}).get("min_fiducials"),
+            "assembly_testability_probe_access_radius": config.get("rules", {}).get("assembly_testability", {}).get("probe_access_radius"),
+            "assembly_testability_min_ground_test_points": config.get("rules", {}).get("assembly_testability", {}).get("min_ground_test_points"),
+            "safety_high_voltage_min_clearance": config.get("rules", {}).get("safety_high_voltage", {}).get("min_clearance"),
+            "safety_high_voltage_min_creepage": config.get("rules", {}).get("safety_high_voltage", {}).get("min_creepage"),
+            "safety_high_voltage_net_keywords": config.get("rules", {}).get("safety_high_voltage", {}).get("high_voltage_net_keywords", []),
+            "power_path_realism_neckdown_ratio_threshold": config.get("rules", {}).get("power_path_realism", {}).get("neckdown_ratio_threshold"),
+            "power_path_realism_max_high_current_length": config.get("rules", {}).get("power_path_realism", {}).get("max_high_current_length"),
+            "power_path_realism_converter_cap_radius": config.get("rules", {}).get("power_path_realism", {}).get("converter_cap_radius"),
+            "power_path_realism_max_high_current_vias": config.get("rules", {}).get("power_path_realism", {}).get("max_high_current_vias"),
         },
     }
 
@@ -384,6 +486,11 @@ def _ensure_rule_sections(config):
     config["rules"].setdefault("thermal_management", {})
     config["rules"].setdefault("reliability", {})
     config["rules"].setdefault("component_analysis", {})
+    config["rules"].setdefault("emi_emc", {})
+    config["rules"].setdefault("stackup_return_path", {})
+    config["rules"].setdefault("assembly_testability", {})
+    config["rules"].setdefault("safety_high_voltage", {})
+    config["rules"].setdefault("power_path_realism", {})
 
 
 def _apply_rule_mirrors(config):
@@ -606,6 +713,57 @@ def build_sanitized_config(config):
     )
     merged["rules"]["component_analysis"]["termination_length_threshold"] = float(
         merged["rules"]["component_analysis"].get("termination_length_threshold", DEFAULT_CONFIG["rules"]["component_analysis"]["termination_length_threshold"])
+    )
+    merged["rules"]["emi_emc"]["max_switch_trace_length"] = float(
+        merged["rules"]["emi_emc"].get("max_switch_trace_length", DEFAULT_CONFIG["rules"]["emi_emc"]["max_switch_trace_length"])
+    )
+    merged["rules"]["emi_emc"]["sensitive_keepout"] = float(
+        merged["rules"]["emi_emc"].get("sensitive_keepout", DEFAULT_CONFIG["rules"]["emi_emc"]["sensitive_keepout"])
+    )
+    merged["rules"]["emi_emc"]["return_via_radius"] = float(
+        merged["rules"]["emi_emc"].get("return_via_radius", DEFAULT_CONFIG["rules"]["emi_emc"]["return_via_radius"])
+    )
+    merged["rules"]["emi_emc"]["max_loop_length"] = float(
+        merged["rules"]["emi_emc"].get("max_loop_length", DEFAULT_CONFIG["rules"]["emi_emc"]["max_loop_length"])
+    )
+    merged["rules"]["stackup_return_path"]["max_signal_layers"] = int(
+        merged["rules"]["stackup_return_path"].get("max_signal_layers", DEFAULT_CONFIG["rules"]["stackup_return_path"]["max_signal_layers"])
+    )
+    merged["rules"]["stackup_return_path"]["signal_via_ground_radius"] = float(
+        merged["rules"]["stackup_return_path"].get("signal_via_ground_radius", DEFAULT_CONFIG["rules"]["stackup_return_path"]["signal_via_ground_radius"])
+    )
+    merged["rules"]["stackup_return_path"]["max_two_layer_critical_length"] = float(
+        merged["rules"]["stackup_return_path"].get("max_two_layer_critical_length", DEFAULT_CONFIG["rules"]["stackup_return_path"]["max_two_layer_critical_length"])
+    )
+    merged["rules"]["assembly_testability"]["min_fiducials"] = int(
+        merged["rules"]["assembly_testability"].get("min_fiducials", DEFAULT_CONFIG["rules"]["assembly_testability"]["min_fiducials"])
+    )
+    merged["rules"]["assembly_testability"]["probe_access_radius"] = float(
+        merged["rules"]["assembly_testability"].get("probe_access_radius", DEFAULT_CONFIG["rules"]["assembly_testability"]["probe_access_radius"])
+    )
+    merged["rules"]["assembly_testability"]["min_ground_test_points"] = int(
+        merged["rules"]["assembly_testability"].get("min_ground_test_points", DEFAULT_CONFIG["rules"]["assembly_testability"]["min_ground_test_points"])
+    )
+    merged["rules"]["safety_high_voltage"]["min_clearance"] = float(
+        merged["rules"]["safety_high_voltage"].get("min_clearance", DEFAULT_CONFIG["rules"]["safety_high_voltage"]["min_clearance"])
+    )
+    merged["rules"]["safety_high_voltage"]["min_creepage"] = float(
+        merged["rules"]["safety_high_voltage"].get("min_creepage", DEFAULT_CONFIG["rules"]["safety_high_voltage"]["min_creepage"])
+    )
+    merged["rules"]["safety_high_voltage"]["high_voltage_net_keywords"] = _sanitize_list(
+        merged["rules"]["safety_high_voltage"].get("high_voltage_net_keywords", DEFAULT_CONFIG["rules"]["safety_high_voltage"]["high_voltage_net_keywords"])
+    )
+    merged["rules"]["power_path_realism"]["neckdown_ratio_threshold"] = float(
+        merged["rules"]["power_path_realism"].get("neckdown_ratio_threshold", DEFAULT_CONFIG["rules"]["power_path_realism"]["neckdown_ratio_threshold"])
+    )
+    merged["rules"]["power_path_realism"]["max_high_current_length"] = float(
+        merged["rules"]["power_path_realism"].get("max_high_current_length", DEFAULT_CONFIG["rules"]["power_path_realism"]["max_high_current_length"])
+    )
+    merged["rules"]["power_path_realism"]["converter_cap_radius"] = float(
+        merged["rules"]["power_path_realism"].get("converter_cap_radius", DEFAULT_CONFIG["rules"]["power_path_realism"]["converter_cap_radius"])
+    )
+    merged["rules"]["power_path_realism"]["max_high_current_vias"] = int(
+        merged["rules"]["power_path_realism"].get("max_high_current_vias", DEFAULT_CONFIG["rules"]["power_path_realism"]["max_high_current_vias"])
     )
 
     _apply_rule_mirrors(merged)

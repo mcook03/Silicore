@@ -2190,17 +2190,42 @@ def _build_settings_view_model(editable_config):
     emi_rules = [
         "reliability_min_ground_vias",
         "reliability_min_ground_connections",
+        "emi_emc_max_switch_trace_length",
+        "emi_emc_sensitive_keepout",
+        "emi_emc_return_via_radius",
+        "emi_emc_max_loop_length",
+        "stackup_return_path_max_signal_layers",
+        "stackup_return_path_signal_via_ground_radius",
+        "stackup_return_path_max_two_layer_critical_length",
+    ]
+    power_rules = [
+        "power_path_realism_neckdown_ratio_threshold",
+        "power_path_realism_max_high_current_length",
+        "power_path_realism_converter_cap_radius",
+        "power_path_realism_max_high_current_vias",
+    ]
+    layout_quality_rules = [
+        "assembly_testability_min_fiducials",
+        "assembly_testability_probe_access_radius",
+        "assembly_testability_min_ground_test_points",
+    ]
+    safety_rules = [
+        "safety_high_voltage_min_clearance",
+        "safety_high_voltage_min_creepage",
+        "safety_high_voltage_net_keywords",
     ]
     sections = {
         "layout": len([key for key, value in (editable_config.get("layout") or {}).items() if value is not None])
-        + len([key for key in layout_rules if rules.get(key) is not None]),
-        "power": len([key for key, value in (editable_config.get("power") or {}).items() if value not in [None, []]]),
+        + len([key for key in layout_rules + layout_quality_rules if rules.get(key) is not None]),
+        "power": len([key for key, value in (editable_config.get("power") or {}).items() if value not in [None, []]])
+        + len([key for key in power_rules if rules.get(key) is not None]),
         "signal": len([key for key, value in (editable_config.get("signal") or {}).items() if value not in [None, []]])
         + len([key for key in signal_rules if rules.get(key) is not None]),
         "thermal": len([key for key, value in (editable_config.get("thermal") or {}).items() if value is not None])
         + len([key for key in thermal_rules if rules.get(key) is not None]),
         "emi": len([key for key, value in (editable_config.get("emi") or {}).items() if value is not None])
         + len([key for key in emi_rules if rules.get(key) is not None]),
+        "safety": len([key for key in safety_rules if rules.get(key) not in [None, []]]),
         "score": len([key for key, value in (editable_config.get("score") or {}).items() if value is not None]),
     }
 
@@ -2222,7 +2247,7 @@ def _build_settings_view_model(editable_config):
         "section_counts": sections,
         "penalty_bars": _build_bar_chart(penalty_rows),
         "total_controls": sum(sections.values()),
-        "advanced_capability_count": 5,
+        "advanced_capability_count": 10,
     }
 
 

@@ -39,6 +39,23 @@ class ConfigLoaderTests(unittest.TestCase):
             "reliability_min_ground_vias": "3",
             "reliability_min_ground_connections": "6",
             "component_analysis_termination_length_threshold": "22",
+            "emi_emc_max_switch_trace_length": "21",
+            "emi_emc_sensitive_keepout": "7.5",
+            "emi_emc_return_via_radius": "4.0",
+            "emi_emc_max_loop_length": "52",
+            "stackup_return_path_max_signal_layers": "3",
+            "stackup_return_path_signal_via_ground_radius": "4.5",
+            "stackup_return_path_max_two_layer_critical_length": "30",
+            "assembly_testability_min_fiducials": "3",
+            "assembly_testability_probe_access_radius": "8",
+            "assembly_testability_min_ground_test_points": "2",
+            "safety_high_voltage_min_clearance": "3.2",
+            "safety_high_voltage_min_creepage": "6.8",
+            "safety_high_voltage_net_keywords": "HV, VAC, 48V",
+            "power_path_realism_neckdown_ratio_threshold": "3.1",
+            "power_path_realism_max_high_current_length": "55",
+            "power_path_realism_converter_cap_radius": "9",
+            "power_path_realism_max_high_current_vias": "5",
         }
 
         config = parse_config_form(form)
@@ -59,6 +76,11 @@ class ConfigLoaderTests(unittest.TestCase):
         self.assertEqual(editable["rules"]["thermal_management_min_thermal_vias"], 2)
         self.assertEqual(editable["rules"]["reliability_min_ground_connections"], 6)
         self.assertEqual(config["rules"]["component_analysis"]["termination_length_threshold"], 22.0)
+        self.assertEqual(editable["rules"]["emi_emc_max_switch_trace_length"], 21.0)
+        self.assertEqual(editable["rules"]["stackup_return_path_max_signal_layers"], 3)
+        self.assertEqual(editable["rules"]["assembly_testability_min_fiducials"], 3)
+        self.assertEqual(editable["rules"]["safety_high_voltage_net_keywords"], ["HV", "VAC", "48V"])
+        self.assertEqual(config["rules"]["power_path_realism"]["max_high_current_vias"], 5)
 
 
 if __name__ == "__main__":

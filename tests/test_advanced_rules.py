@@ -32,6 +32,10 @@ class AdvancedRuleCoverageTests(unittest.TestCase):
         _add_component(pcb, "J1", "CONN", 20, 0, "connector", ["USB_DP", "USB_DN", "RESET"])
         _add_component(pcb, "U2", "buck_reg", 30, 10, "regulator", ["VCC", "GND"])
         _add_component(pcb, "L1", "inductor", 36, 10, "inductor", ["SW_NODE", "VCC"])
+        _add_component(pcb, "U3", "ADC_REF", 9, 3, "ic", ["ADC_IN", "AGND"])
+        _add_component(pcb, "J2", "DEBUG_HEADER", 3, 6, "connector", ["SWDIO", "SWCLK", "GND"])
+        _add_component(pcb, "H1", "HV_CONN", 42, 2, "connector", ["HV_BUS"])
+        _add_component(pcb, "R1", "sense_res", 48, 2.2, "resistor", ["HV_BUS", "GND"])
 
         pcb.add_trace_segment("USB_DP", TraceSegment("USB_DP", 0, 0, 10, 0, 0.30, "F.Cu"))
         pcb.add_trace_segment("USB_DP", TraceSegment("USB_DP", 10, 0, 20, 0, 0.10, "F.Cu"))
@@ -39,12 +43,19 @@ class AdvancedRuleCoverageTests(unittest.TestCase):
         pcb.add_trace_segment("USB_DN", TraceSegment("USB_DN", 8, 1.2, 14, 1.2, 0.15, "F.Cu"))
         pcb.add_trace_segment("RESET", TraceSegment("RESET", 0, 2.4, 20, 2.4, 0.12, "F.Cu"))
         pcb.add_trace_segment("VCC", TraceSegment("VCC", 30, 10, 36, 10, 0.35, "F.Cu"))
+        pcb.add_trace_segment("SW_NODE", TraceSegment("SW_NODE", 30, 10, 42, 10, 1.20, "F.Cu"))
+        pcb.add_trace_segment("SW_NODE", TraceSegment("SW_NODE", 42, 10, 56, 10, 0.25, "B.Cu"))
+        pcb.add_trace_segment("SWDIO", TraceSegment("SWDIO", 3, 6, 15, 6, 0.18, "F.Cu"))
+        pcb.add_trace_segment("HV_BUS", TraceSegment("HV_BUS", 42, 2, 48, 2.2, 0.40, "F.Cu"))
 
         pcb.add_via("USB_DP", Via("USB_DP", 5, 0, 0.18, 0.30, ["F.Cu", "B.Cu"]))
         pcb.add_via("USB_DP", Via("USB_DP", 12, 0, 0.18, 0.30, ["F.Cu", "B.Cu"]))
         pcb.add_via("USB_DP", Via("USB_DP", 18, 0, 0.18, 0.30, ["F.Cu", "B.Cu"]))
         pcb.add_via("USB_DN", Via("USB_DN", 8, 1.2, 0.18, 0.30, ["F.Cu", "B.Cu"]))
         pcb.add_via("VCC", Via("VCC", 30.2, 10.0, 0.18, 0.30, ["F.Cu", "B.Cu"]))
+        pcb.add_via("SW_NODE", Via("SW_NODE", 42, 10, 0.18, 0.30, ["F.Cu", "B.Cu"]))
+        pcb.add_via("SW_NODE", Via("SW_NODE", 48, 10, 0.18, 0.30, ["F.Cu", "B.Cu"]))
+        pcb.add_via("SW_NODE", Via("SW_NODE", 52, 10, 0.18, 0.30, ["F.Cu", "B.Cu"]))
 
         pcb.estimate_board_bounds()
 
@@ -58,6 +69,11 @@ class AdvancedRuleCoverageTests(unittest.TestCase):
         self.assertIn("thermal_management", rule_ids)
         self.assertIn("component_analysis", rule_ids)
         self.assertIn("reliability", rule_ids)
+        self.assertIn("emi_emc", rule_ids)
+        self.assertIn("stackup_return_path", rule_ids)
+        self.assertIn("assembly_testability", rule_ids)
+        self.assertIn("safety_high_voltage", rule_ids)
+        self.assertIn("power_path_realism", rule_ids)
 
 
 if __name__ == "__main__":
