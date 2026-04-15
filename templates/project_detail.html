@@ -360,6 +360,151 @@
 <section class="grid grid-2">
 <section class="card">
     <div class="card-header">
+        <h2 class="section-title">Assignments & Mentions</h2>
+        <p class="section-copy">Turn workspace findings into named engineering work with ownership, priority, and due dates.</p>
+    </div>
+    <div class="card-body">
+        {% if current_user %}
+        <form method="post" action="{{ url_for('project_assignments_route', project_id=project.project_id) }}">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Assignment Title
+                    <input type="text" name="title" placeholder="Validate power rail under transient load" required>
+                </label>
+                <label>
+                    Assignee
+                    <input type="email" name="assignee_email" list="known-users" placeholder="teammate@example.com">
+                </label>
+            </div>
+            <div class="project-detail-compare-grid" style="margin-top:12px;">
+                <label>
+                    Priority
+                    <select name="priority">
+                        <option value="high">High</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </label>
+                <label>
+                    Due Date
+                    <input type="date" name="due_at">
+                </label>
+            </div>
+            <label style="display:block; margin-top:12px;">
+                Task Detail
+                <textarea name="body" rows="3" placeholder="Capture what should be checked, what evidence is needed, or who needs to follow up."></textarea>
+            </label>
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-primary">Create Assignment</button>
+            </div>
+        </form>
+        {% endif %}
+
+        {% if project.assignments %}
+        <div class="timeline-list" style="margin-top:16px;">
+            {% for item in project.assignments %}
+            <div class="timeline-row">
+                <div>
+                    <div class="timeline-title">{{ item.title }}</div>
+                    <div class="timeline-copy">
+                        {{ item.assignee_name or item.assignee_email or "Unassigned" }} · {{ item.priority|replace('_', ' ')|title }}
+                        {% if item.due_at %} · due {{ item.due_at }}{% endif %}
+                    </div>
+                </div>
+                <div class="timeline-copy">{{ item.body or item.status|replace('_', ' ')|title }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="margin-top:16px;">No workspace assignments have been created yet.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Release Gates</h2>
+        <p class="section-copy">Formal multi-approver readiness gates tied to a workspace or a specific linked run.</p>
+    </div>
+    <div class="card-body">
+        {% if current_user %}
+        <form method="post" action="{{ url_for('project_release_gate_route', project_id=project.project_id) }}">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Gate Title
+                    <input type="text" name="title" placeholder="Rev C signoff gate" required>
+                </label>
+                <label>
+                    Related Run
+                    <select name="run_id">
+                        <option value="">Workspace-level gate</option>
+                        {% for run in project.runs|reverse %}
+                        <option value="{{ run.run_id }}">{{ run.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div class="project-detail-compare-grid" style="margin-top:12px;">
+                <label>
+                    Required Approvals
+                    <input type="number" name="required_approvals" min="1" max="5" value="2">
+                </label>
+                <label>
+                    Target Date
+                    <input type="date" name="target_date">
+                </label>
+            </div>
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-secondary">Create Release Gate</button>
+            </div>
+        </form>
+        {% endif %}
+
+        {% if project.release_gates %}
+        <div class="timeline-list" style="margin-top:16px;">
+            {% for gate in project.release_gates %}
+            <div class="timeline-row" style="align-items:flex-start;">
+                <div>
+                    <div class="timeline-title">{{ gate.title }}</div>
+                    <div class="timeline-copy">
+                        {{ gate.approval_count }} / {{ gate.required_approvals }} approvals
+                        {% if gate.target_date %} · target {{ gate.target_date }}{% endif %}
+                        {% if gate.run_id %} · run {{ gate.run_id }}{% endif %}
+                    </div>
+                    {% if gate.approvals %}
+                    <div class="small-muted" style="margin-top:8px;">
+                        {% for approval in gate.approvals %}
+                        <span class="mini-chip mini-chip-medium">{{ approval.decision|replace('_', ' ')|title }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div style="min-width:220px;">
+                    <div class="timeline-copy">{{ gate.status|replace('_', ' ')|title }}</div>
+                    {% if current_user %}
+                    <form method="post" action="{{ url_for('project_release_gate_approval_route', project_id=project.project_id, gate_id=gate.gate_id) }}" style="margin-top:10px;">
+                        <input type="hidden" name="summary" value="Recorded from the Nexus workspace release gate panel.">
+                        <div class="btn-link-row">
+                            <button type="submit" class="mini-chip mini-chip-low" name="decision" value="approved">Approve</button>
+                            <button type="submit" class="mini-chip mini-chip-medium" name="decision" value="needs_changes">Needs Changes</button>
+                            <button type="submit" class="mini-chip mini-chip-critical" name="decision" value="rejected">Reject</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="margin-top:16px;">No release gates have been created for this workspace yet.</div>
+        {% endif %}
+    </div>
+</section>
+</section>
+
+<section class="grid grid-2">
+<section class="card">
+    <div class="card-header">
         <h2 class="section-title">Value Metrics</h2>
         <p class="section-copy">Business-facing change signals pulled directly from linked engineering runs.</p>
     </div>

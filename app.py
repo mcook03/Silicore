@@ -21,8 +21,11 @@ from engine.db import (
     list_atlas_agent_runs,
     list_atlas_messages,
     list_audit_events,
+    list_evaluation_runs,
+    list_integration_configs,
     list_review_decisions,
     persist_atlas_exchange,
+    upsert_integration_config,
 )
 from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_fixture_suite
@@ -59,11 +62,14 @@ from engine.project_store import (
     add_project_note,
     add_project_member,
     add_run_to_project,
+    create_project_assignment,
     create_review_decision,
+    create_release_gate,
     create_project,
     delete_project,
     get_project,
     list_projects,
+    record_release_approval,
     update_project_review_status,
 )
 from engine.runtime_config import get_runtime_config
@@ -1358,6 +1364,10 @@ def _enrich_project_for_display(project):
     enriched["owner_email"] = owner.get("email") or ""
     enriched["team_members"] = members
     enriched["team_size"] = len(members) + (1 if owner.get("user_id") else 0)
+    enriched["assignments"] = project.get("assignments", []) or []
+    enriched["open_assignment_count"] = sum(1 for item in enriched["assignments"] if str(item.get("status") or "").lower() in {"open", "in_progress"})
+    enriched["release_gates"] = project.get("release_gates", []) or []
+    enriched["open_release_gate_count"] = sum(1 for item in enriched["release_gates"] if str(item.get("status") or "").lower() not in {"approved", "rejected"})
 
     return enriched
 
@@ -3831,12 +3841,15 @@ def _build_operations_snapshot(current_user=None):
     reviews = list_review_decisions(limit=10) if current_user and has_role(current_user, "lead") else []
     audits = list_audit_events(limit=10) if current_user and has_role(current_user, "admin") else []
     worker = worker_status() if current_user and has_role(current_user, "lead") else {"running": False, "thread_name": None}
+    evaluations = list_evaluation_runs(limit=8) if current_user and has_role(current_user, "admin") else []
+    integrations = list_integration_configs() if current_user and has_role(current_user, "lead") else []
 
     queued = sum(1 for item in jobs if item.get("status") == "queued")
     failed = sum(1 for item in jobs if item.get("status") == "failed")
     completed = sum(1 for item in jobs if item.get("status") == "completed")
     latest_job = jobs[0] if jobs else None
     latest_review = reviews[0] if reviews else None
+    latest_evaluation = evaluations[0] if evaluations else None
 
     return {
         "worker": worker,
@@ -3850,12 +3863,15 @@ def _build_operations_snapshot(current_user=None):
         ],
         "reviews": reviews,
         "audit_events": audits,
+        "evaluations": evaluations,
+        "integrations": integrations,
         "summary": {
             "queued_jobs": queued,
             "failed_jobs": failed,
             "completed_jobs": completed,
             "latest_job_label": latest_job.get("job_type") if latest_job else "No jobs yet",
             "latest_review_status": latest_review.get("status") if latest_review else "No review decisions yet",
+            "latest_evaluation_label": latest_evaluation.get("evaluation_id") if latest_evaluation else "No calibration run yet",
             "worker_label": "Worker active" if worker.get("running") else "Worker idle",
         },
     }
@@ -4444,6 +4460,40 @@ def project_notes_route(project_id):
     return redirect(url_for("project_detail_page", project_id=project_id))
 
 
+@app.route("/projects/<project_id>/assignments", methods=["POST"])
+def project_assignments_route(project_id):
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    current_user = _current_user()
+    if not can_manage_project(current_user, project):
+        flash("You do not have permission to manage assignments for this workspace.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    title = (request.form.get("title") or "").strip()
+    body = (request.form.get("body") or "").strip()
+    priority = (request.form.get("priority") or "medium").strip().lower()
+    due_at = (request.form.get("due_at") or "").strip() or None
+    assignee_email = (request.form.get("assignee_email") or "").strip().lower()
+    assignee = get_user_by_email(assignee_email) if assignee_email else None
+
+    updated = create_project_assignment(
+        project_id,
+        title,
+        body=body,
+        assignee=assignee,
+        priority=priority,
+        due_at=due_at,
+        created_by_user_id=(current_user or {}).get("user_id"),
+    )
+    if updated is None:
+        flash("Assignment could not be created.")
+    else:
+        flash("Workspace assignment created.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
+
+
 @app.route("/projects/<project_id>/reviews", methods=["POST"])
 def project_review_decision_route(project_id):
     project = get_project(project_id)
@@ -4469,6 +4519,62 @@ def project_review_decision_route(project_id):
         return redirect(url_for("projects_page"))
 
     flash("Review decision recorded.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
+
+
+@app.route("/projects/<project_id>/release-gates", methods=["POST"])
+def project_release_gate_route(project_id):
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    current_user = _current_user()
+    if not can_manage_project(current_user, project):
+        flash("You do not have permission to manage release gates for this workspace.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+
+    title = (request.form.get("title") or "").strip()
+    run_id = (request.form.get("run_id") or "").strip() or None
+    target_date = (request.form.get("target_date") or "").strip() or None
+    required_approvals = _safe_int(request.form.get("required_approvals"), 2)
+    updated = create_release_gate(
+        project_id,
+        title,
+        run_id=run_id,
+        required_approvals=max(1, required_approvals),
+        target_date=target_date,
+        created_by_user_id=(current_user or {}).get("user_id"),
+    )
+    if updated is None:
+        flash("Release gate could not be created.")
+    else:
+        flash("Release gate created.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
+
+
+@app.route("/projects/<project_id>/release-gates/<gate_id>/approvals", methods=["POST"])
+def project_release_gate_approval_route(project_id, gate_id):
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    current_user = _current_user()
+    if not can_manage_project(current_user, project):
+        flash("You do not have permission to review this release gate.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+    decision = (request.form.get("decision") or "approved").strip().lower()
+    summary = (request.form.get("summary") or "").strip()
+    updated = record_release_approval(
+        project_id,
+        gate_id,
+        reviewer_user_id=(current_user or {}).get("user_id"),
+        decision=decision,
+        summary=summary,
+    )
+    if updated is None:
+        flash("Release gate approval could not be recorded.")
+    else:
+        flash("Release gate decision recorded.")
     return redirect(url_for("project_detail_page", project_id=project_id))
 
 
@@ -4510,6 +4616,28 @@ def project_members_route(project_id):
         return redirect(url_for("projects_page"))
     flash("Team member added to project.")
     return redirect(url_for("project_detail_page", project_id=project_id))
+
+
+@app.route("/nexus-ops/integrations", methods=["POST"])
+def nexus_ops_integrations_route():
+    current_user = _current_user()
+    if not current_user or not has_role(current_user, "lead"):
+        flash("Lead or admin access is required to manage integrations.")
+        return redirect(url_for("login_page"))
+    integration_type = (request.form.get("integration_type") or "").strip().lower()
+    label = (request.form.get("label") or "").strip() or integration_type.replace("_", " ").title()
+    status = (request.form.get("status") or "configured").strip().lower()
+    endpoint = (request.form.get("endpoint") or "").strip()
+    project_key = (request.form.get("project_key") or "").strip()
+    upsert_integration_config(
+        integration_type,
+        label,
+        status=status,
+        config={"endpoint": endpoint, "project_key": project_key},
+        created_by_user_id=current_user.get("user_id"),
+    )
+    flash("Integration registry updated.")
+    return redirect(url_for("nexus_ops_page"))
 
 
 @app.route("/projects/<project_id>/compare", methods=["GET"])

@@ -2,7 +2,16 @@ import unittest
 from uuid import uuid4
 
 from engine.db import list_atlas_agent_runs, list_atlas_messages, persist_atlas_exchange
-from engine.project_store import add_project_note, add_project_member, add_run_to_project, create_project, get_project
+from engine.project_store import (
+    add_project_note,
+    add_project_member,
+    add_run_to_project,
+    create_project,
+    create_project_assignment,
+    create_release_gate,
+    get_project,
+    record_release_approval,
+)
 from engine.user_store import (
     begin_authentication,
     create_email_verification_token,
@@ -49,6 +58,35 @@ class PersistenceTests(unittest.TestCase):
         fetched = get_project(project["project_id"])
         self.assertEqual(fetched["runs"][0]["run_id"], f"db_run_{suffix}")
         self.assertEqual(get_user_by_email(owner["email"])["user_id"], owner["user_id"])
+
+        updated = create_project_assignment(
+            project["project_id"],
+            "Probe the dominant rail",
+            body="Capture transient evidence before the next rerun.",
+            assignee=member,
+            priority="high",
+            created_by_user_id=owner["user_id"],
+        )
+        self.assertEqual(len(updated.get("assignments", [])), 1)
+
+        updated = create_release_gate(
+            project["project_id"],
+            "Revision A release gate",
+            run_id=f"db_run_{suffix}",
+            required_approvals=1,
+            created_by_user_id=owner["user_id"],
+        )
+        self.assertEqual(len(updated.get("release_gates", [])), 1)
+
+        gate_id = updated["release_gates"][0]["gate_id"]
+        updated = record_release_approval(
+            project["project_id"],
+            gate_id,
+            reviewer_user_id=owner["user_id"],
+            decision="approved",
+            summary="Ready after validation.",
+        )
+        self.assertEqual(updated["release_gates"][0]["status"], "approved")
 
     def test_atlas_threads_persist_to_backend(self):
         thread_key = f"atlas-thread-{uuid4()}"

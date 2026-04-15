@@ -1,3 +1,4 @@
+import json
 from uuid import uuid4
 
 from engine.db import get_connection, initialize_database, log_audit_event, utc_now_text
@@ -58,6 +59,94 @@ def _project_notes(connection, project_id):
         }
         for row in rows
     ]
+
+
+def _project_assignments(connection, project_id):
+    rows = connection.execute(
+        """
+        SELECT assignment_id, title, body, status, priority, assignee_user_id, assignee_name,
+               assignee_email, due_at, mentions_json, created_by_user_id, created_at, updated_at
+        FROM project_assignments
+        WHERE project_id = ?
+        ORDER BY created_at DESC
+        """,
+        (project_id,),
+    ).fetchall()
+    assignments = []
+    for row in rows:
+        assignments.append(
+            {
+                "assignment_id": row["assignment_id"],
+                "title": row["title"],
+                "body": row["body"] or "",
+                "status": row["status"] or "open",
+                "priority": row["priority"] or "medium",
+                "assignee_user_id": row["assignee_user_id"],
+                "assignee_name": row["assignee_name"],
+                "assignee_email": row["assignee_email"],
+                "due_at": row["due_at"],
+                "mentions": json.loads(row["mentions_json"] or "[]"),
+                "created_by_user_id": row["created_by_user_id"],
+                "created_at": row["created_at"],
+                "updated_at": row["updated_at"],
+            }
+        )
+    return assignments
+
+
+def _release_gate_approvals(connection, gate_id):
+    rows = connection.execute(
+        """
+        SELECT approval_id, reviewer_user_id, decision, summary, created_at
+        FROM release_approvals
+        WHERE gate_id = ?
+        ORDER BY created_at ASC
+        """,
+        (gate_id,),
+    ).fetchall()
+    return [
+        {
+            "approval_id": row["approval_id"],
+            "reviewer_user_id": row["reviewer_user_id"],
+            "decision": row["decision"],
+            "summary": row["summary"] or "",
+            "created_at": row["created_at"],
+        }
+        for row in rows
+    ]
+
+
+def _project_release_gates(connection, project_id):
+    rows = connection.execute(
+        """
+        SELECT gate_id, run_id, title, status, required_approvals, approval_count, packet_job_id,
+               target_date, created_by_user_id, created_at, updated_at
+        FROM release_gates
+        WHERE project_id = ?
+        ORDER BY created_at DESC
+        """,
+        (project_id,),
+    ).fetchall()
+    gates = []
+    for row in rows:
+        approvals = _release_gate_approvals(connection, row["gate_id"])
+        gates.append(
+            {
+                "gate_id": row["gate_id"],
+                "run_id": row["run_id"],
+                "title": row["title"],
+                "status": row["status"] or "open",
+                "required_approvals": int(row["required_approvals"] or 0),
+                "approval_count": int(row["approval_count"] or 0),
+                "packet_job_id": row["packet_job_id"],
+                "target_date": row["target_date"],
+                "created_by_user_id": row["created_by_user_id"],
+                "created_at": row["created_at"],
+                "updated_at": row["updated_at"],
+                "approvals": approvals,
+            }
+        )
+    return gates
 
 
 def _project_runs(connection, project_id):
@@ -146,6 +235,8 @@ def _row_to_project(connection, project_row):
         "runs": runs,
         "review_status": project_row["review_status"] or "active_review",
         "collaboration_notes": _project_notes(connection, project_id),
+        "assignments": _project_assignments(connection, project_id),
+        "release_gates": _project_release_gates(connection, project_id),
         "owner": _project_owner(project_row),
         "team_members": _project_members(connection, project_id),
         "run_count": len(runs),
@@ -555,5 +646,169 @@ def add_project_member(project_id, user):
         actor_user_id=row["owner_user_id"] if row else None,
         project_id=project_id,
         payload={"member_user_id": user.get("user_id"), "member_email": user.get("email")},
+    )
+    return get_project(project_id)
+
+
+def create_project_assignment(project_id, title, body="", assignee=None, priority="medium", due_at=None, created_by_user_id=None):
+    initialize_database()
+    if not (title or "").strip():
+        return None
+    connection = get_connection()
+    try:
+        row = connection.execute(
+            "SELECT owner_user_id FROM projects WHERE project_id = ?",
+            (project_id,),
+        ).fetchone()
+        if not row:
+            return None
+        now = _now_iso()
+        assignee = assignee if isinstance(assignee, dict) else {}
+        mentions = []
+        if assignee.get("email"):
+            mentions.append(assignee.get("email"))
+        connection.execute(
+            """
+            INSERT INTO project_assignments (
+                assignment_id, project_id, title, body, status, priority,
+                assignee_user_id, assignee_name, assignee_email, due_at, mentions_json,
+                created_by_user_id, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(uuid4())[:12],
+                project_id,
+                (title or "").strip(),
+                (body or "").strip(),
+                "open",
+                (priority or "medium").strip().lower(),
+                assignee.get("user_id"),
+                assignee.get("name"),
+                assignee.get("email"),
+                due_at or None,
+                json.dumps(mentions),
+                created_by_user_id or row["owner_user_id"],
+                now,
+                now,
+            ),
+        )
+        connection.execute("UPDATE projects SET updated_at = ? WHERE project_id = ?", (now, project_id))
+        connection.commit()
+    finally:
+        connection.close()
+    log_audit_event(
+        "project.assignment_created",
+        actor_user_id=created_by_user_id or (row["owner_user_id"] if row else None),
+        project_id=project_id,
+        payload={"title": (title or "").strip(), "assignee_email": assignee.get("email")},
+    )
+    return get_project(project_id)
+
+
+def create_release_gate(project_id, title, run_id=None, required_approvals=2, target_date=None, created_by_user_id=None):
+    initialize_database()
+    if not (title or "").strip():
+        return None
+    connection = get_connection()
+    try:
+        row = connection.execute("SELECT owner_user_id FROM projects WHERE project_id = ?", (project_id,)).fetchone()
+        if not row:
+            return None
+        now = _now_iso()
+        connection.execute(
+            """
+            INSERT INTO release_gates (
+                gate_id, project_id, run_id, title, status, required_approvals,
+                approval_count, packet_job_id, target_date, created_by_user_id, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(uuid4())[:12],
+                project_id,
+                run_id,
+                (title or "").strip(),
+                "open",
+                max(1, int(required_approvals or 2)),
+                0,
+                None,
+                target_date or None,
+                created_by_user_id or row["owner_user_id"],
+                now,
+                now,
+            ),
+        )
+        connection.execute("UPDATE projects SET updated_at = ? WHERE project_id = ?", (now, project_id))
+        connection.commit()
+    finally:
+        connection.close()
+    log_audit_event(
+        "project.release_gate_created",
+        actor_user_id=created_by_user_id or (row["owner_user_id"] if row else None),
+        project_id=project_id,
+        run_id=run_id,
+        payload={"title": (title or "").strip(), "required_approvals": max(1, int(required_approvals or 2))},
+    )
+    return get_project(project_id)
+
+
+def record_release_approval(project_id, gate_id, reviewer_user_id, decision, summary=""):
+    initialize_database()
+    normalized_decision = (decision or "approved").strip().lower()
+    if normalized_decision not in {"approved", "rejected", "needs_changes"}:
+        normalized_decision = "approved"
+    connection = get_connection()
+    try:
+        gate = connection.execute(
+            "SELECT gate_id, required_approvals, approval_count FROM release_gates WHERE gate_id = ? AND project_id = ?",
+            (gate_id, project_id),
+        ).fetchone()
+        if not gate:
+            return None
+        now = _now_iso()
+        connection.execute(
+            """
+            INSERT INTO release_approvals (
+                approval_id, gate_id, reviewer_user_id, decision, summary, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(uuid4())[:12],
+                gate_id,
+                reviewer_user_id,
+                normalized_decision,
+                (summary or "").strip() or None,
+                now,
+            ),
+        )
+        approval_rows = connection.execute(
+            "SELECT decision FROM release_approvals WHERE gate_id = ?",
+            (gate_id,),
+        ).fetchall()
+        approval_count = sum(1 for row in approval_rows if row["decision"] == "approved")
+        if any(row["decision"] == "rejected" for row in approval_rows):
+            gate_status = "rejected"
+        elif approval_count >= int(gate["required_approvals"] or 1):
+            gate_status = "approved"
+        elif any(row["decision"] == "needs_changes" for row in approval_rows):
+            gate_status = "needs_changes"
+        else:
+            gate_status = "open"
+        connection.execute(
+            """
+            UPDATE release_gates
+            SET approval_count = ?, status = ?, updated_at = ?
+            WHERE gate_id = ?
+            """,
+            (approval_count, gate_status, now, gate_id),
+        )
+        connection.execute("UPDATE projects SET updated_at = ? WHERE project_id = ?", (now, project_id))
+        connection.commit()
+    finally:
+        connection.close()
+    log_audit_event(
+        "project.release_gate_reviewed",
+        actor_user_id=reviewer_user_id,
+        project_id=project_id,
+        payload={"gate_id": gate_id, "decision": normalized_decision},
     )
     return get_project(project_id)

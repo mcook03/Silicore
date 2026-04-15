@@ -101,6 +101,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Nexus Review Architecture", page)
         self.assertIn("Nexus Review Workflow", page)
         self.assertIn("Formal Review Decisions", page)
+        self.assertIn("Assignments & Mentions", page)
+        self.assertIn("Release Gates", page)
         self.assertIn("Nexus Runtime Snapshot", page)
         self.assertIn("Value Metrics", page)
         self.assertIn("Nexus Access", page)
@@ -277,6 +279,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         ops_response = self.client.get("/nexus-ops")
         self.assertEqual(ops_response.status_code, 200)
         self.assertIn("Nexus Runtime", ops_response.get_data(as_text=True))
+        self.assertIn("Calibration History", ops_response.get_data(as_text=True))
+        self.assertIn("Integration Registry", ops_response.get_data(as_text=True))
 
     def test_project_review_decision_route_records_summary(self):
         suffix = str(uuid4())[:8]
@@ -308,6 +312,49 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Review decision recorded.", page)
         self.assertIn("Review gate passed after the latest rerun collapsed the top layout driver.", page)
+
+    def test_project_assignment_and_release_gate_routes_record_entries(self):
+        suffix = str(uuid4())[:8]
+        user = create_user("Workspace Lead B", f"workspace-lead-b-{suffix}@example.com", "password123")
+        connection = get_connection()
+        try:
+            connection.execute("UPDATE users SET role = ? WHERE user_id = ?", ("lead", user["user_id"]))
+            connection.execute(
+                "UPDATE projects SET owner_user_id = ?, owner_name = ?, owner_email = ? WHERE project_id = ?",
+                (user["user_id"], user["name"], user["email"], "ec66c9f0"),
+            )
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.client.session_transaction() as session:
+            session["user_id"] = user["user_id"]
+
+        assignment_response = self.client.post(
+            "/projects/ec66c9f0/assignments",
+            data={
+                "title": "Validate the dominant layout driver",
+                "body": "Capture evidence before signoff.",
+                "priority": "high",
+            },
+            follow_redirects=True,
+        )
+        self.assertEqual(assignment_response.status_code, 200)
+        self.assertIn("Workspace assignment created.", assignment_response.get_data(as_text=True))
+
+        gate_response = self.client.post(
+            "/projects/ec66c9f0/release-gates",
+            data={
+                "title": "Gate for latest rerun",
+                "run_id": self.project["runs"][-1]["run_id"],
+                "required_approvals": "1",
+            },
+            follow_redirects=True,
+        )
+        self.assertEqual(gate_response.status_code, 200)
+        page = gate_response.get_data(as_text=True)
+        self.assertIn("Release gate created.", page)
+        self.assertIn("Gate for latest rerun", page)
 
 
 if __name__ == "__main__":

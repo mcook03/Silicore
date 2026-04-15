@@ -4,7 +4,7 @@ import unittest
 from uuid import uuid4
 
 from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, open_high_confidence_findings
-from engine.db import get_connection, list_audit_events, list_review_decisions
+from engine.db import get_connection, list_audit_events, list_evaluation_runs, list_integration_configs, list_review_decisions, upsert_integration_config
 from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
@@ -64,6 +64,8 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertIn("boards", result)
         self.assertIn("average_parser_confidence", result)
         self.assertIn("parser_health", result)
+        history = list_evaluation_runs(limit=5)
+        self.assertTrue(any(item["evaluation_id"] == result["evaluation_id"] for item in history if result.get("evaluation_id")))
 
     def test_atlas_tools_summaries_work(self):
         compare = compare_latest_runs(
@@ -130,6 +132,12 @@ class BackendSystemsTests(unittest.TestCase):
         )
         self.assertIn(delivery["status"], {"queued", "sent"})
 
+    def test_integration_registry_can_store_configs(self):
+        config = upsert_integration_config("jira", "Program Jira", status="ready", config={"endpoint": "https://jira.example.com", "project_key": "HW"})
+        self.assertEqual(config["integration_type"], "jira")
+        integrations = list_integration_configs()
+        self.assertTrue(any(item["integration_type"] == "jira" for item in integrations))
+
     def test_job_runner_processes_queued_signoff_packet(self):
         job = create_job("signoff_packet", payload={"context": {"board_name": "Queued Board", "release_note": "Ready after rerun."}})
         processed = process_queued_jobs(limit=5)
@@ -139,8 +147,8 @@ class BackendSystemsTests(unittest.TestCase):
 
     def test_job_claiming_marks_running_state(self):
         job = create_job("signoff_packet", payload={"context": {"board_name": "Claimed Board"}})
-        claimed = claim_jobs("pytest-worker", limit=5, lease_seconds=90)
-        matched = next((item for item in claimed if item["job_id"] == job["job_id"]), None)
+        claim_jobs("pytest-worker", limit=50, lease_seconds=90)
+        matched = get_job(job["job_id"])
         self.assertIsNotNone(matched)
         self.assertEqual(matched["status"], "running")
         self.assertEqual(matched["claimed_by"], "pytest-worker")

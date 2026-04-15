@@ -359,6 +359,55 @@ def initialize_database():
                 FOREIGN KEY(actor_user_id) REFERENCES users(user_id) ON DELETE SET NULL
             );
 
+            CREATE TABLE IF NOT EXISTS release_gates (
+                gate_id TEXT PRIMARY KEY,
+                project_id TEXT,
+                run_id TEXT,
+                title TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'open',
+                required_approvals INTEGER NOT NULL DEFAULT 2,
+                approval_count INTEGER NOT NULL DEFAULT 0,
+                packet_job_id TEXT,
+                target_date TEXT,
+                created_by_user_id TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(project_id) REFERENCES projects(project_id) ON DELETE SET NULL,
+                FOREIGN KEY(run_id) REFERENCES runs(run_id) ON DELETE SET NULL,
+                FOREIGN KEY(created_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS release_approvals (
+                approval_id TEXT PRIMARY KEY,
+                gate_id TEXT NOT NULL,
+                reviewer_user_id TEXT,
+                decision TEXT NOT NULL,
+                summary TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(gate_id) REFERENCES release_gates(gate_id) ON DELETE CASCADE,
+                FOREIGN KEY(reviewer_user_id) REFERENCES users(user_id) ON DELETE SET NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS project_assignments (
+                assignment_id TEXT PRIMARY KEY,
+                project_id TEXT NOT NULL,
+                title TEXT NOT NULL,
+                body TEXT,
+                status TEXT NOT NULL DEFAULT 'open',
+                priority TEXT NOT NULL DEFAULT 'medium',
+                assignee_user_id TEXT,
+                assignee_name TEXT,
+                assignee_email TEXT,
+                due_at TEXT,
+                mentions_json TEXT NOT NULL DEFAULT '[]',
+                created_by_user_id TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
+                FOREIGN KEY(assignee_user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+                FOREIGN KEY(created_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL
+            );
+
             CREATE TABLE IF NOT EXISTS analysis_jobs (
                 job_id TEXT PRIMARY KEY,
                 job_type TEXT NOT NULL,
@@ -450,6 +499,29 @@ def initialize_database():
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL,
                 FOREIGN KEY(thread_id) REFERENCES atlas_threads(thread_id) ON DELETE SET NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS evaluation_runs (
+                evaluation_id TEXT PRIMARY KEY,
+                scope TEXT NOT NULL DEFAULT 'fixtures',
+                fixture_count INTEGER NOT NULL DEFAULT 0,
+                average_score REAL NOT NULL DEFAULT 0,
+                average_parser_confidence REAL NOT NULL DEFAULT 0,
+                failed_board_count INTEGER NOT NULL DEFAULT 0,
+                summary_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS integration_configs (
+                integration_id TEXT PRIMARY KEY,
+                integration_type TEXT NOT NULL,
+                label TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'configured',
+                config_json TEXT NOT NULL DEFAULT '{}',
+                created_by_user_id TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(created_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL
             );
 
             CREATE INDEX IF NOT EXISTS idx_runs_created_at ON runs(created_at DESC);
@@ -1084,6 +1156,158 @@ def list_review_decisions(project_id=None, limit=50):
                 "summary": row["summary"],
                 "actor_user_id": row["actor_user_id"],
                 "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+    finally:
+        connection.close()
+
+
+def record_evaluation_run(summary, scope="fixtures"):
+    initialize_database()
+    payload = summary or {}
+    created_at = _now_iso()
+    connection = get_connection()
+    try:
+        evaluation_id = str(uuid4())[:12]
+        connection.execute(
+            """
+            INSERT INTO evaluation_runs (
+                evaluation_id, scope, fixture_count, average_score, average_parser_confidence,
+                failed_board_count, summary_json, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                evaluation_id,
+                scope,
+                int(payload.get("fixture_count") or 0),
+                float(payload.get("average_score") or 0.0),
+                float(payload.get("average_parser_confidence") or 0.0),
+                int(payload.get("failed_board_count") or 0),
+                _json_dumps(payload),
+                created_at,
+            ),
+        )
+        connection.commit()
+        return {
+            "evaluation_id": evaluation_id,
+            "scope": scope,
+            "fixture_count": int(payload.get("fixture_count") or 0),
+            "average_score": float(payload.get("average_score") or 0.0),
+            "average_parser_confidence": float(payload.get("average_parser_confidence") or 0.0),
+            "failed_board_count": int(payload.get("failed_board_count") or 0),
+            "created_at": created_at,
+        }
+    finally:
+        connection.close()
+
+
+def list_evaluation_runs(limit=12):
+    initialize_database()
+    connection = get_connection()
+    try:
+        rows = connection.execute(
+            """
+            SELECT evaluation_id, scope, fixture_count, average_score, average_parser_confidence,
+                   failed_board_count, summary_json, created_at
+            FROM evaluation_runs
+            ORDER BY created_at DESC
+            LIMIT ?
+            """,
+            (int(limit or 12),),
+        ).fetchall()
+        return [
+            {
+                "evaluation_id": row["evaluation_id"],
+                "scope": row["scope"],
+                "fixture_count": row["fixture_count"],
+                "average_score": row["average_score"],
+                "average_parser_confidence": row["average_parser_confidence"],
+                "failed_board_count": row["failed_board_count"],
+                "summary": _json_loads(row["summary_json"], {}),
+                "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+    finally:
+        connection.close()
+
+
+def upsert_integration_config(integration_type, label, status="configured", config=None, created_by_user_id=None):
+    initialize_database()
+    normalized_type = str(integration_type or "").strip().lower()
+    if not normalized_type:
+        raise ValueError("integration_type is required")
+    now = _now_iso()
+    connection = get_connection()
+    try:
+        row = connection.execute(
+            "SELECT integration_id FROM integration_configs WHERE integration_type = ?",
+            (normalized_type,),
+        ).fetchone()
+        if row:
+            integration_id = row["integration_id"]
+            connection.execute(
+                """
+                UPDATE integration_configs
+                SET label = ?, status = ?, config_json = ?, updated_at = ?
+                WHERE integration_id = ?
+                """,
+                (label, status, _json_dumps(config), now, integration_id),
+            )
+        else:
+            integration_id = str(uuid4())[:12]
+            connection.execute(
+                """
+                INSERT INTO integration_configs (
+                    integration_id, integration_type, label, status, config_json,
+                    created_by_user_id, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    integration_id,
+                    normalized_type,
+                    label,
+                    status,
+                    _json_dumps(config),
+                    created_by_user_id,
+                    now,
+                    now,
+                ),
+            )
+        connection.commit()
+        return {
+            "integration_id": integration_id,
+            "integration_type": normalized_type,
+            "label": label,
+            "status": status,
+            "config": config or {},
+            "updated_at": now,
+        }
+    finally:
+        connection.close()
+
+
+def list_integration_configs():
+    initialize_database()
+    connection = get_connection()
+    try:
+        rows = connection.execute(
+            """
+            SELECT integration_id, integration_type, label, status, config_json, created_at, updated_at
+            FROM integration_configs
+            ORDER BY integration_type ASC
+            """
+        ).fetchall()
+        return [
+            {
+                "integration_id": row["integration_id"],
+                "integration_type": row["integration_type"],
+                "label": row["label"],
+                "status": row["status"],
+                "config": _json_loads(row["config_json"], {}),
+                "created_at": row["created_at"],
+                "updated_at": row["updated_at"],
             }
             for row in rows
         ]

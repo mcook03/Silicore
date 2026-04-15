@@ -1,6 +1,7 @@
 import os
 from collections import defaultdict
 
+from engine.db import record_evaluation_run
 from engine.job_store import update_job
 from engine.services.analysis_service import run_single_analysis_from_path
 
@@ -69,7 +70,7 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
             )
 
     fixture_count = len(boards)
-    return {
+    summary = {
         "fixture_count": fixture_count,
         "average_score": round(total_score / fixture_count, 1) if fixture_count else 0.0,
         "average_parser_confidence": round(parser_confidence_total / parser_confidence_count, 1) if parser_confidence_count else 0.0,
@@ -89,6 +90,12 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
             "failed_boards": failed_boards,
         },
     }
+    try:
+        record = record_evaluation_run(summary, scope="fixtures")
+        summary["evaluation_id"] = record.get("evaluation_id")
+    except Exception:
+        summary["evaluation_id"] = None
+    return summary
 
 
 def run_evaluation_job(job_id, fixtures_dir="fixtures", config="custom_config.json"):
