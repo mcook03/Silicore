@@ -1,99 +1,173 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="home-premium-hero">
-    <div class="hero-ambient hero-ambient-a"></div>
-    <div class="hero-ambient hero-ambient-b"></div>
-    <div class="hero-grid">
-        <div class="hero-copy-column">
-            <div class="hero-kicker">Engineering Intelligence Platform</div>
-            <h1 class="hero-title">Silicore turns PCB review into a live engineering decision system.</h1>
-            <p class="hero-description">
-                Analyze boards, surface the real failure pressure, explain why risk changed, and guide teams toward what to fix first with a UI that feels closer to a finished platform than a static dashboard.
+<section class="tech-hero">
+    <div class="tech-noise"></div>
+    <div class="tech-scan"></div>
+    <div class="tech-glow tech-glow-a"></div>
+    <div class="tech-glow tech-glow-b"></div>
+
+    <div class="tech-hero-grid">
+        <div class="tech-copy">
+            <div class="tech-kicker">PCB Intelligence Platform</div>
+            <h1 class="tech-title">Silicore makes engineering review feel like a live technical system, not a static report.</h1>
+            <p class="tech-description">
+                Analyze boards, expose risk pressure across signal, power, thermal, manufacturability, safety, and return-path behavior, then guide teams toward what matters first with a UI that feels fast, technical, and production-ready.
             </p>
 
-            <div class="hero-cta-row">
-                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze A Board</a>
-                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Review A Project</a>
+            <div class="tech-cta-row">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze Board</a>
+                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Review Project</a>
             </div>
 
-            <div class="hero-signal-strip">
-                <div class="hero-signal-card">
-                    <span class="hero-signal-label">Tracked Runs</span>
+            <div class="tech-metric-strip">
+                <article class="tech-metric-card">
+                    <span class="tech-metric-label">Tracked Runs</span>
                     <strong>{{ stats.total_runs }}</strong>
-                </div>
-                <div class="hero-signal-card">
-                    <span class="hero-signal-label">Active Workspaces</span>
+                </article>
+                <article class="tech-metric-card">
+                    <span class="tech-metric-label">Workspaces</span>
                     <strong>{{ projects|length }}</strong>
-                </div>
-                <div class="hero-signal-card">
-                    <span class="hero-signal-label">Latest Score</span>
+                </article>
+                <article class="tech-metric-card">
+                    <span class="tech-metric-label">Latest Score</span>
                     <strong>{{ home_chart.latest_score }}</strong>
-                </div>
+                </article>
             </div>
         </div>
 
-        <aside class="hero-visual-column">
-            <div class="hero-system-card">
-                <div class="hero-system-topline">
-                    <span class="hero-system-chip">Live Platform Posture</span>
-                    <span class="hero-system-source">
+        <aside class="tech-stage">
+            <div class="tech-stage-shell">
+                <div class="tech-stage-topline">
+                    <span class="tech-badge">Live Engineering Posture</span>
+                    <span class="tech-source">
                         {% if home_chart.latest_source %}
                             {{ home_chart.latest_source }}
                         {% else %}
-                            Waiting for scored run
+                            Waiting for scored input
                         {% endif %}
                     </span>
                 </div>
 
-                <div class="hero-system-center">
-                    <div class="hero-system-score-shell">
-                        <div class="hero-score-halo hero-score-halo-a"></div>
-                        <div class="hero-score-halo hero-score-halo-b"></div>
-                        <div class="hero-system-score-core">
-                            <span>Risk score</span>
+                <div class="tech-stage-main">
+                    <div class="tech-blueprint">
+                        <svg viewBox="0 0 540 390" class="tech-board-svg" aria-label="Silicore platform visual">
+                            <defs>
+                                <linearGradient id="traceGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="rgba(67,212,200,0.15)"></stop>
+                                    <stop offset="50%" stop-color="rgba(125,211,252,0.95)"></stop>
+                                    <stop offset="100%" stop-color="rgba(59,130,246,0.12)"></stop>
+                                </linearGradient>
+                                <linearGradient id="traceGlowAlt" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"></stop>
+                                    <stop offset="100%" stop-color="#43d4c8"></stop>
+                                </linearGradient>
+                                <filter id="softGlow">
+                                    <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
+                                    <feMerge>
+                                        <feMergeNode in="blur"></feMergeNode>
+                                        <feMergeNode in="SourceGraphic"></feMergeNode>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <rect x="26" y="26" width="488" height="338" rx="28" class="board-shell"></rect>
+                            <rect x="54" y="54" width="432" height="282" rx="18" class="board-inner"></rect>
+
+                            <g class="board-grid">
+                                {% for x in [90, 150, 210, 270, 330, 390, 450] %}
+                                <line x1="{{ x }}" y1="60" x2="{{ x }}" y2="330"></line>
+                                {% endfor %}
+                                {% for y in [90, 140, 190, 240, 290] %}
+                                <line x1="60" y1="{{ y }}" x2="480" y2="{{ y }}"></line>
+                                {% endfor %}
+                            </g>
+
+                            <path d="M94 116 H188 V166 H278 V112 H386 V150 H454" class="board-trace board-trace-a"></path>
+                            <path d="M92 244 H162 V198 H242 V258 H324 V214 H404 V274 H452" class="board-trace board-trace-b"></path>
+                            <path d="M120 312 V254 H194 V304 H296 V244 H356 V298 H420" class="board-trace board-trace-c"></path>
+                            <path d="M138 84 V144 H118 V196 H162" class="board-trace-thin"></path>
+                            <path d="M344 82 V132 H304 V178 H262" class="board-trace-thin"></path>
+                            <path d="M430 168 V228 H458 V284" class="board-trace-thin"></path>
+
+                            <g class="flow-pulses" filter="url(#softGlow)">
+                                <circle r="5" class="flow-dot flow-a"><animateMotion dur="4.8s" repeatCount="indefinite" path="M94 116 H188 V166 H278 V112 H386 V150 H454"></animateMotion></circle>
+                                <circle r="4" class="flow-dot flow-b"><animateMotion dur="5.6s" repeatCount="indefinite" path="M92 244 H162 V198 H242 V258 H324 V214 H404 V274 H452"></animateMotion></circle>
+                                <circle r="4" class="flow-dot flow-c"><animateMotion dur="5.1s" repeatCount="indefinite" path="M120 312 V254 H194 V304 H296 V244 H356 V298 H420"></animateMotion></circle>
+                            </g>
+
+                            <g class="board-nodes">
+                                <circle cx="94" cy="116" r="8"></circle>
+                                <circle cx="188" cy="166" r="7"></circle>
+                                <circle cx="278" cy="112" r="8"></circle>
+                                <circle cx="386" cy="150" r="7"></circle>
+                                <circle cx="162" cy="198" r="7"></circle>
+                                <circle cx="242" cy="258" r="8"></circle>
+                                <circle cx="324" cy="214" r="8"></circle>
+                                <circle cx="404" cy="274" r="7"></circle>
+                                <circle cx="194" cy="304" r="8"></circle>
+                                <circle cx="296" cy="244" r="7"></circle>
+                                <circle cx="356" cy="298" r="8"></circle>
+                            </g>
+
+                            <g class="board-modules">
+                                <rect x="98" y="84" width="76" height="44" rx="10"></rect>
+                                <rect x="222" y="92" width="84" height="50" rx="12"></rect>
+                                <rect x="352" y="112" width="90" height="56" rx="12"></rect>
+                                <rect x="142" y="214" width="76" height="52" rx="12"></rect>
+                                <rect x="280" y="192" width="86" height="58" rx="12"></rect>
+                            </g>
+
+                            <g class="board-labels">
+                                <text x="112" y="110">SIGNAL</text>
+                                <text x="240" y="118">POWER</text>
+                                <text x="372" y="142">EMI / EMC</text>
+                                <text x="154" y="244">THERMAL</text>
+                                <text x="296" y="226">DFM / DFA</text>
+                            </g>
+                        </svg>
+
+                        <div class="tech-stage-overlay tech-stage-overlay-a">
+                            <span>Score</span>
                             <strong>{{ home_chart.latest_score }}</strong>
+                        </div>
+                        <div class="tech-stage-overlay tech-stage-overlay-b">
+                            <span>Driver</span>
+                            <strong>{{ dashboard_story.top_category if dashboard_story else "General" }}</strong>
                         </div>
                     </div>
 
-                    <div class="hero-system-side">
-                        <div class="hero-system-side-card">
-                            <div class="hero-side-label">Trend</div>
-                            <div class="hero-side-value">
-                                {% if home_chart.trend.has_data %}
-                                    Live
-                                {% else %}
-                                    Idle
-                                {% endif %}
-                            </div>
-                            <div class="hero-side-copy">Recent score movement from saved run history.</div>
+                    <div class="tech-stage-side">
+                        <div class="tech-dock-card">
+                            <div class="tech-dock-label">Decision state</div>
+                            <div class="tech-dock-value">Live</div>
+                            <div class="tech-dock-copy">Real run history, project context, and next-action ranking feed the current posture.</div>
                         </div>
-                        <div class="hero-system-side-card">
-                            <div class="hero-side-label">Top Driver</div>
-                            <div class="hero-side-value">{{ dashboard_story.top_category if dashboard_story else "General" }}</div>
-                            <div class="hero-side-copy">Recurring engineering pressure across current workspaces.</div>
+
+                        <div class="tech-dock-card">
+                            <div class="tech-dock-label">Coverage</div>
+                            <div class="tech-dock-value">Multi-domain</div>
+                            <div class="tech-dock-copy">Signal, power, stackup, safety, thermal, manufacturability, and reliability are all part of the same review plane.</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="hero-mini-panels">
-                    <div class="hero-mini-panel">
-                        <div class="hero-mini-panel-label">Score curve</div>
+                <div class="tech-lower-band">
+                    <div class="tech-mini-panel">
+                        <div class="tech-mini-label">Recent score signal</div>
                         {% if home_chart.trend.has_data %}
-                        <svg class="hero-inline-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
+                        <svg class="tech-inline-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
                             <polygon points="{{ home_chart.trend.area_points }}" class="chart-area"></polygon>
                             <polyline points="{{ home_chart.trend.points }}" class="chart-line"></polyline>
                         </svg>
                         {% else %}
-                        <div class="compact-empty-state">Run more analyses to activate the curve.</div>
+                        <div class="compact-empty">Run more analyses to activate the score trace.</div>
                         {% endif %}
                     </div>
 
-                    <div class="hero-mini-panel">
-                        <div class="hero-mini-panel-label">Decision summary</div>
-                        <p class="hero-summary-copy">
-                            {{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}
-                        </p>
+                    <div class="tech-mini-panel">
+                        <div class="tech-mini-label">Platform summary</div>
+                        <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
                     </div>
                 </div>
             </div>
@@ -101,90 +175,91 @@
     </div>
 </section>
 
-<section class="hero-marquee-shell">
-    <div class="hero-marquee-track">
+<section class="signal-ribbon">
+    <div class="signal-ribbon-track">
         <span>Signal integrity</span>
         <span>Power integrity</span>
         <span>EMI / EMC</span>
-        <span>Thermal analysis</span>
+        <span>Return path</span>
+        <span>Stackup</span>
+        <span>Thermal</span>
         <span>Manufacturability</span>
-        <span>Assembly & testability</span>
-        <span>Stackup & return path</span>
+        <span>Assembly</span>
+        <span>Testability</span>
         <span>Safety spacing</span>
-        <span>Confidence & traceability</span>
+        <span>Confidence</span>
+        <span>Traceability</span>
         <span>Signal integrity</span>
         <span>Power integrity</span>
         <span>EMI / EMC</span>
-        <span>Thermal analysis</span>
-        <span>Manufacturability</span>
-        <span>Assembly & testability</span>
+        <span>Return path</span>
+        <span>Stackup</span>
+        <span>Thermal</span>
     </div>
 </section>
 
 <section class="grid grid-2">
-    <section class="card premium-card">
-        <div class="card-header premium-header">
+    <section class="card tech-surface-card">
+        <div class="card-header tech-header">
             <div>
-                <h2 class="section-title">Core Product Surface</h2>
-                <p class="section-copy">The main Silicore loops, presented more like a product system than a static dashboard grid.</p>
+                <h2 class="section-title">Product Command Layer</h2>
+                <p class="section-copy">Core Silicore functions surfaced as product modules with stronger technical hierarchy.</p>
             </div>
         </div>
 
         <div class="card-body">
-            <div class="premium-pillar-grid">
+            <div class="command-grid">
                 {% for pillar in dashboard_story.pillars %}
-                <article class="premium-pillar-card">
-                    <div class="premium-pillar-top">
-                        <div class="premium-pillar-title">{{ pillar.title }}</div>
-                        <div class="premium-pillar-metric">{{ pillar.value_label }}</div>
+                <article class="command-card">
+                    <div class="command-top">
+                        <div class="command-title">{{ pillar.title }}</div>
+                        <div class="command-value">{{ pillar.value_label }}</div>
                     </div>
-                    <div class="premium-pillar-copy">{{ pillar.description }}</div>
+                    <div class="command-copy">{{ pillar.description }}</div>
                 </article>
                 {% endfor %}
             </div>
 
-            <div class="premium-feature-band">
-                <div class="premium-feature-callout">
-                    <div class="premium-feature-label">Platform Story</div>
-                    <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
-                </div>
+            <div class="story-panel">
+                <div class="story-kicker">System Summary</div>
+                <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
             </div>
         </div>
     </section>
 
-    <section class="card premium-card">
-        <div class="card-header premium-header">
+    <section class="card tech-surface-card">
+        <div class="card-header tech-header">
             <div>
-                <h2 class="section-title">Operational Telemetry</h2>
-                <p class="section-copy">Real score, coverage mix, and workflow usage surfaced with richer motion and contrast.</p>
+                <h2 class="section-title">Telemetry Stack</h2>
+                <p class="section-copy">Live platform data with richer “systems UI” treatment instead of a basic dashboard presentation.</p>
             </div>
         </div>
 
         <div class="card-body">
-            <div class="telemetry-stat-row">
-                <div class="telemetry-stat">
-                    <span class="telemetry-label">Latest score</span>
+            <div class="telemetry-grid">
+                <div class="telemetry-block">
+                    <span class="telemetry-block-label">Latest score</span>
                     <strong>{{ home_chart.latest_score }}</strong>
                 </div>
-                <div class="telemetry-stat">
-                    <span class="telemetry-label">Exports</span>
-                    <strong>{{ stats.exported_runs }}</strong>
-                </div>
-                <div class="telemetry-stat">
-                    <span class="telemetry-label">Project runs</span>
+                <div class="telemetry-block">
+                    <span class="telemetry-block-label">Project runs</span>
                     <strong>{{ stats.project_runs }}</strong>
+                </div>
+                <div class="telemetry-block">
+                    <span class="telemetry-block-label">Exports</span>
+                    <strong>{{ stats.exported_runs }}</strong>
                 </div>
             </div>
 
-            <div class="premium-meter-card">
-                <div class="premium-meter-top">
+            <div class="telemetry-meter">
+                <div class="telemetry-meter-top">
                     <span>Risk score position</span>
                     <strong>{{ home_chart.latest_score }} / 100</strong>
                 </div>
-                <div class="premium-meter-track">
-                    <div class="premium-meter-fill" style="width: {{ home_chart.latest_score }}%;"></div>
+                <div class="telemetry-meter-track">
+                    <div class="telemetry-meter-fill" style="width: {{ home_chart.latest_score }}%;"></div>
                 </div>
-                <div class="premium-meter-scale">
+                <div class="telemetry-meter-scale">
                     <span>0</span>
                     <span>25</span>
                     <span>50</span>
@@ -193,11 +268,11 @@
                 </div>
             </div>
 
-            <div class="premium-chart-stack">
-                <div class="premium-chart-card">
-                    <div class="premium-chart-label">Recent score trend</div>
+            <div class="telemetry-chart-stack">
+                <div class="tech-chart-card">
+                    <div class="tech-chart-label">Recent score trend</div>
                     {% if home_chart.trend.has_data %}
-                    <svg class="real-line-chart large-line-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
+                    <svg class="tech-large-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
                         <polygon points="{{ home_chart.trend.area_points }}" class="chart-area"></polygon>
                         <polyline points="{{ home_chart.trend.points }}" class="chart-line"></polyline>
                     </svg>
@@ -206,8 +281,8 @@
                     {% endif %}
                 </div>
 
-                <div class="premium-chart-card">
-                    <div class="premium-chart-label">Engineering coverage mix</div>
+                <div class="tech-chart-card">
+                    <div class="tech-chart-label">Domain mix</div>
                     {% if home_chart.domain_distribution and home_chart.domain_distribution.has_data %}
                     <div class="distribution-bars">
                         {% for item in home_chart.domain_distribution["items"] %}
@@ -230,19 +305,19 @@
 </section>
 
 <section class="grid grid-2">
-    <section class="card premium-card">
-        <div class="card-header premium-header">
+    <section class="card tech-surface-card">
+        <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Capability Progression</h2>
-                <p class="section-copy">A cleaner product-maturity view with more breathing room and clearer narrative emphasis.</p>
+                <p class="section-copy">A more technical maturity surface with cleaner spacing and stronger emphasis.</p>
             </div>
         </div>
 
         <div class="card-body">
             <div class="capability-stack">
                 {% for row in dashboard_story.maturity_rows %}
-                <article class="capability-card">
-                    <div class="capability-top">
+                <article class="capability-tile">
+                    <div class="capability-tile-top">
                         <div>
                             <div class="capability-title">{{ row.title }}</div>
                             <div class="capability-evidence">{{ row.evidence }}</div>
@@ -256,25 +331,25 @@
         </div>
     </section>
 
-    <section class="card premium-card">
-        <div class="card-header premium-header">
+    <section class="card tech-surface-card">
+        <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Workspace Portfolio</h2>
-                <p class="section-copy">Project health cards with a clearer premium hierarchy instead of a plain list.</p>
+                <p class="section-copy">Live engineering workspaces presented in a more product-grade review surface.</p>
             </div>
         </div>
 
         <div class="card-body">
             {% if projects %}
-            <div class="workspace-portfolio-grid">
+            <div class="workspace-grid">
                 {% for project in projects[:4] %}
-                <article class="workspace-portfolio-card">
-                    <div class="workspace-portfolio-top">
-                        <div class="workspace-health-title">{{ project.name }}</div>
-                        <div class="workspace-score-pill">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
+                <article class="workspace-card">
+                    <div class="workspace-card-top">
+                        <div class="workspace-title">{{ project.name }}</div>
+                        <div class="workspace-score">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
                     </div>
-                    <div class="workspace-health-copy">{{ project.top_category }}</div>
-                    <div class="workspace-portfolio-meta">
+                    <div class="workspace-copy">{{ project.top_category }}</div>
+                    <div class="workspace-meta">
                         <span>{{ project.health_label }}</span>
                         <span>{{ project.run_count }} run(s)</span>
                     </div>
@@ -285,133 +360,130 @@
             <div class="empty-state">Create and populate workspaces to build a portfolio-level product story.</div>
             {% endif %}
 
-            <div class="parser-band">
-                <div class="premium-chart-label">Parser readiness</div>
-                {% if dashboard_story and dashboard_story.parser_readiness %}
-                <div class="parser-pill-grid">
-                    {% for item in dashboard_story.parser_readiness %}
-                    <div class="parser-pill">
-                        <span>{{ item.label }}</span>
-                        <strong>{{ item.status }}</strong>
-                    </div>
-                    {% endfor %}
+            {% if dashboard_story and dashboard_story.parser_readiness %}
+            <div class="parser-grid">
+                {% for item in dashboard_story.parser_readiness %}
+                <div class="parser-chip">
+                    <span>{{ item.label }}</span>
+                    <strong>{{ item.status }}</strong>
                 </div>
-                {% endif %}
+                {% endfor %}
             </div>
+            {% endif %}
         </div>
     </section>
 </section>
 
 <section class="grid grid-2">
-    <section class="card premium-card">
-        <div class="card-header premium-header">
+    <section class="card tech-surface-card">
+        <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Workflow Throughput</h2>
-                <p class="section-copy">Usage surfaced as product modules rather than generic dashboard cards.</p>
+                <p class="section-copy">Main product workflows presented as active modules instead of flat dashboard cards.</p>
             </div>
         </div>
 
         <div class="card-body">
-            <div class="workflow-card-grid">
-                <article class="workflow-card">
-                    <div class="workflow-card-top">
+            <div class="workflow-grid">
+                <article class="workflow-tile">
+                    <div class="workflow-top">
                         <div>
-                            <div class="result-card-title">Single Board Analysis</div>
-                            <div class="result-card-copy">Focused engineering review for one board file.</div>
+                            <div class="workflow-title">Single Board Analysis</div>
+                            <div class="workflow-copy">Focused engineering review for one board file.</div>
                         </div>
                         <span class="chip chip-soft">{{ stats.single_runs }}</span>
                     </div>
                     {% for item in home_chart.workflow_chart["items"] if item.label == "Single" %}
-                    <div class="real-bar-track"><div class="real-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                    <div class="workflow-bar"><div class="workflow-fill" style="width: {{ item.width_pct }}%;"></div></div>
                     {% endfor %}
                 </article>
 
-                <article class="workflow-card">
-                    <div class="workflow-card-top">
+                <article class="workflow-tile">
+                    <div class="workflow-top">
                         <div>
-                            <div class="result-card-title">Project Review</div>
-                            <div class="result-card-copy">Multi-board ranking and comparison workflow.</div>
+                            <div class="workflow-title">Project Review</div>
+                            <div class="workflow-copy">Multi-board ranking and comparison workflow.</div>
                         </div>
                         <span class="chip chip-soft">{{ stats.project_runs }}</span>
                     </div>
                     {% for item in home_chart.workflow_chart["items"] if item.label == "Project" %}
-                    <div class="real-bar-track"><div class="real-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                    <div class="workflow-bar"><div class="workflow-fill" style="width: {{ item.width_pct }}%;"></div></div>
                     {% endfor %}
                 </article>
 
-                <article class="workflow-card">
-                    <div class="workflow-card-top">
+                <article class="workflow-tile">
+                    <div class="workflow-top">
                         <div>
-                            <div class="result-card-title">Saved Runs & Exports</div>
-                            <div class="result-card-copy">Artifact generation, retention, and review continuity.</div>
+                            <div class="workflow-title">Saved Runs & Exports</div>
+                            <div class="workflow-copy">Retention, export packaging, and review continuity.</div>
                         </div>
                         <span class="chip chip-soft">{{ stats.exported_runs }}</span>
                     </div>
                     {% for item in home_chart.workflow_chart["items"] if item.label == "Exported" %}
-                    <div class="real-bar-track"><div class="real-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                    <div class="workflow-bar"><div class="workflow-fill" style="width: {{ item.width_pct }}%;"></div></div>
                     {% endfor %}
                 </article>
             </div>
         </div>
     </section>
 
-    <section class="card premium-card">
-        <div class="card-header premium-header">
+    <section class="card tech-surface-card">
+        <div class="card-header tech-header">
             <div>
                 <h2 class="section-title">Reporting Surface</h2>
-                <p class="section-copy">Exports and summaries presented like part of a finished review platform.</p>
+                <p class="section-copy">Exports and review artifacts presented more like part of a premium engineering platform.</p>
             </div>
         </div>
 
         <div class="card-body">
-            <div class="report-stack">
-                <div class="report-card">
-                    <div class="report-card-code">JSON</div>
+            <div class="report-grid">
+                <article class="report-tile">
+                    <div class="report-code">JSON</div>
                     <div>
-                        <div class="workspace-health-title">Structured Output</div>
-                        <div class="workspace-health-copy">Machine-readable results for downstream tooling, pipelines, and audit trails.</div>
+                        <div class="workflow-title">Structured Output</div>
+                        <div class="workflow-copy">Machine-readable results for downstream tooling, audit trails, and automation.</div>
                     </div>
-                </div>
-                <div class="report-card">
-                    <div class="report-card-code">HTML / MD</div>
+                </article>
+                <article class="report-tile">
+                    <div class="report-code">HTML / MD</div>
                     <div>
-                        <div class="workspace-health-title">Review-Ready Summaries</div>
-                        <div class="workspace-health-copy">Engineering reports now carry score, transparency, and review-readiness context.</div>
+                        <div class="workflow-title">Review Summaries</div>
+                        <div class="workflow-copy">Engineering reports now carry score, transparency, and review-readiness context.</div>
                     </div>
-                </div>
-                <div class="report-card">
-                    <div class="report-card-code">MANIFEST</div>
+                </article>
+                <article class="report-tile">
+                    <div class="report-code">MANIFEST</div>
                     <div>
-                        <div class="workspace-health-title">Artifact Registry</div>
-                        <div class="workspace-health-copy">Each saved run keeps a manifest describing what was generated and how ready it is for review.</div>
+                        <div class="workflow-title">Artifact Registry</div>
+                        <div class="workflow-copy">Each saved run keeps a manifest describing generated artifacts and format readiness.</div>
                     </div>
-                </div>
+                </article>
             </div>
         </div>
     </section>
 </section>
 
-<section class="card premium-card">
-    <div class="card-header premium-header">
+<section class="card tech-surface-card">
+    <div class="card-header tech-header">
         <div>
             <h2 class="section-title">Recent Activity</h2>
-            <p class="section-copy">Latest board and project runs, kept in a cleaner timeline-like surface.</p>
+            <p class="section-copy">Latest board and project runs in a cleaner, more technical timeline surface.</p>
         </div>
     </div>
 
     <div class="card-body">
         {% if recent_runs %}
-        <div class="recent-run-grid">
+        <div class="recent-grid">
             {% for run in recent_runs %}
-            <article class="recent-run-card">
-                <div class="recent-run-top">
+            <article class="recent-card">
+                <div class="recent-top">
                     <div>
-                        <div class="home-table-title">{{ run.name }}</div>
-                        <div class="home-table-date">{{ run.created_at }}</div>
+                        <div class="recent-title">{{ run.name }}</div>
+                        <div class="recent-date">{{ run.created_at }}</div>
                     </div>
                     <span class="chip chip-soft">{{ run.run_type|upper }}</span>
                 </div>
-                <div class="recent-run-actions">
+                <div class="recent-action">
                     <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
                 </div>
             </article>
@@ -427,366 +499,418 @@
 </section>
 
 <style>
-    .home-premium-hero {
+    .tech-hero {
         position: relative;
         overflow: hidden;
-        padding: 34px;
-        border-radius: 30px;
+        padding: 36px;
+        margin-bottom: 18px;
+        border-radius: 32px;
         border: 1px solid rgba(180, 212, 255, 0.1);
         background:
-            linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.015) 45%, rgba(255,255,255,0.03)),
-            radial-gradient(circle at 15% 12%, rgba(67,212,200,0.22), transparent 28%),
-            radial-gradient(circle at 82% 16%, rgba(47,137,255,0.22), transparent 30%),
-            radial-gradient(circle at 72% 88%, rgba(217,147,91,0.14), transparent 22%),
-            rgba(7, 17, 28, 0.84);
+            linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015) 44%, rgba(255,255,255,0.025)),
+            radial-gradient(circle at 8% 12%, rgba(67,212,200,0.16), transparent 25%),
+            radial-gradient(circle at 86% 12%, rgba(47,137,255,0.16), transparent 26%),
+            radial-gradient(circle at 70% 82%, rgba(217,147,91,0.12), transparent 18%),
+            rgba(5, 13, 22, 0.88);
         box-shadow: var(--shadow-xl);
-        margin-bottom: 18px;
         isolation: isolate;
     }
 
-    .hero-ambient {
+    .tech-noise,
+    .tech-scan,
+    .tech-glow {
         position: absolute;
-        border-radius: 999px;
-        filter: blur(12px);
-        opacity: 0.6;
+        inset: 0;
         pointer-events: none;
-        z-index: 0;
-        animation: homePulse 8s ease-in-out infinite;
     }
 
-    .hero-ambient-a {
-        width: 220px;
-        height: 220px;
-        top: -40px;
-        right: 12%;
-        background: radial-gradient(circle, rgba(96,165,250,0.25), transparent 68%);
+    .tech-noise {
+        opacity: 0.08;
+        background-image:
+            radial-gradient(rgba(255,255,255,0.7) 0.45px, transparent 0.45px);
+        background-size: 16px 16px;
+        mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
     }
 
-    .hero-ambient-b {
+    .tech-scan {
+        background: linear-gradient(180deg, transparent 0%, rgba(125,211,252,0.05) 48%, transparent 100%);
+        background-size: 100% 160px;
+        animation: scanDrift 11s linear infinite;
+        opacity: 0.8;
+    }
+
+    .tech-glow {
+        border-radius: 999px;
+        filter: blur(16px);
+        opacity: 0.42;
+        animation: heroBreath 8s ease-in-out infinite;
+    }
+
+    .tech-glow-a {
+        inset: auto auto -90px -70px;
         width: 240px;
         height: 240px;
-        left: -70px;
-        bottom: -80px;
-        background: radial-gradient(circle, rgba(67,212,200,0.18), transparent 70%);
+        background: radial-gradient(circle, rgba(67,212,200,0.24), transparent 72%);
+    }
+
+    .tech-glow-b {
+        inset: -60px -40px auto auto;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, rgba(59,130,246,0.22), transparent 70%);
         animation-delay: -3s;
     }
 
-    .hero-grid {
+    .tech-hero-grid {
         position: relative;
         z-index: 1;
         display: grid;
-        grid-template-columns: 1.08fr 0.92fr;
-        gap: 24px;
+        grid-template-columns: 1.02fr 0.98fr;
+        gap: 28px;
         align-items: stretch;
     }
 
-    .hero-copy-column {
+    .tech-copy {
         display: grid;
         align-content: center;
         gap: 18px;
     }
 
-    .hero-kicker {
-        color: #bfd9ff;
+    .tech-kicker,
+    .story-kicker,
+    .tech-mini-label,
+    .tech-chart-label,
+    .tech-metric-label,
+    .telemetry-block-label,
+    .tech-dock-label {
+        color: #bcd8ff;
         font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.16em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
     }
 
-    .hero-title {
+    .tech-title {
         margin: 0;
-        max-width: 11ch;
-        font-size: clamp(48px, 6.5vw, 76px);
-        line-height: 0.95;
-        letter-spacing: -0.06em;
+        max-width: 10.5ch;
+        font-size: clamp(52px, 6.8vw, 84px);
+        line-height: 0.94;
+        letter-spacing: -0.065em;
         font-weight: 800;
-        color: #f7fbff;
+        color: #f8fbff;
         text-wrap: balance;
     }
 
-    .hero-description {
+    .tech-description {
         margin: 0;
         max-width: 62ch;
-        color: rgba(223, 233, 255, 0.8);
+        color: rgba(224, 235, 255, 0.8);
         font-size: 16px;
-        line-height: 1.8;
+        line-height: 1.85;
     }
 
-    .hero-cta-row {
+    .tech-cta-row {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
-        margin-top: 4px;
     }
 
-    .hero-signal-strip {
+    .tech-metric-strip {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
-        margin-top: 10px;
+        margin-top: 8px;
     }
 
-    .hero-signal-card {
-        padding: 16px 18px;
+    .tech-metric-card,
+    .tech-dock-card,
+    .tech-mini-panel,
+    .command-card,
+    .capability-tile,
+    .workspace-card,
+    .workflow-tile,
+    .report-tile,
+    .recent-card,
+    .tech-chart-card {
         border-radius: 18px;
         border: 1px solid rgba(255,255,255,0.07);
         background:
-            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-            rgba(255,255,255,0.025);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.022);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
         transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
     }
 
-    .hero-signal-card:hover {
+    .tech-metric-card:hover,
+    .tech-dock-card:hover,
+    .tech-mini-panel:hover,
+    .command-card:hover,
+    .capability-tile:hover,
+    .workspace-card:hover,
+    .workflow-tile:hover,
+    .report-tile:hover,
+    .recent-card:hover,
+    .tech-chart-card:hover {
         transform: translateY(-2px);
-        border-color: rgba(96,165,250,0.22);
-        background: rgba(255,255,255,0.05);
+        border-color: rgba(125,211,252,0.2);
+        background: rgba(255,255,255,0.045);
     }
 
-    .hero-signal-label {
-        display: block;
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
+    .tech-metric-card {
+        padding: 16px 18px;
     }
 
-    .hero-signal-card strong {
+    .tech-metric-card strong,
+    .telemetry-block strong {
         display: block;
         margin-top: 8px;
         color: #f8fbff;
-        font-size: 30px;
+        font-size: 32px;
         line-height: 1;
         letter-spacing: -0.05em;
         font-weight: 800;
+        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
     }
 
-    .hero-visual-column {
-        min-width: 0;
-    }
-
-    .hero-system-card {
+    .tech-stage-shell {
         position: relative;
         overflow: hidden;
         height: 100%;
         padding: 22px;
-        border-radius: 24px;
+        border-radius: 26px;
         border: 1px solid rgba(180, 212, 255, 0.1);
         background:
-            linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)),
-            rgba(6, 14, 23, 0.78);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.018)),
+            rgba(7, 16, 26, 0.84);
     }
 
-    .hero-system-topline {
+    .tech-stage-topline {
         display: flex;
         justify-content: space-between;
-        gap: 12px;
-        align-items: center;
+        gap: 10px;
         flex-wrap: wrap;
+        align-items: center;
     }
 
-    .hero-system-chip {
+    .tech-badge,
+    .tech-source {
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .tech-badge {
         padding: 8px 12px;
         border-radius: 999px;
         border: 1px solid rgba(96,165,250,0.18);
         background: rgba(59,130,246,0.1);
         color: #dbeafe;
-        font-size: 12px;
-        font-weight: 700;
     }
 
-    .hero-system-source {
+    .tech-source {
         color: rgba(214, 226, 255, 0.7);
-        font-size: 12px;
-        font-weight: 700;
     }
 
-    .hero-system-center {
+    .tech-stage-main {
         display: grid;
         grid-template-columns: 1fr 220px;
-        gap: 18px;
-        align-items: center;
+        gap: 16px;
         margin: 18px 0;
+        align-items: stretch;
     }
 
-    .hero-system-score-shell {
+    .tech-blueprint {
         position: relative;
-        min-height: 260px;
-        display: grid;
-        place-items: center;
-    }
-
-    .hero-score-halo {
-        position: absolute;
-        border-radius: 999px;
-        border: 1px solid rgba(180, 212, 255, 0.12);
-        animation: orbitDrift 12s linear infinite;
-    }
-
-    .hero-score-halo-a {
-        width: 260px;
-        height: 260px;
-        box-shadow: inset 0 0 40px rgba(67,212,200,0.08);
-    }
-
-    .hero-score-halo-b {
-        width: 190px;
-        height: 190px;
-        border-color: rgba(217,147,91,0.18);
-        animation-direction: reverse;
-        animation-duration: 16s;
-    }
-
-    .hero-system-score-core {
-        position: relative;
-        z-index: 1;
-        width: 150px;
-        height: 150px;
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        text-align: center;
+        min-height: 390px;
+        padding: 10px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.06);
         background:
-            radial-gradient(circle at 30% 25%, rgba(255,255,255,0.18), transparent 35%),
-            linear-gradient(145deg, rgba(67,212,200,0.25), rgba(47,137,255,0.2) 58%, rgba(217,147,91,0.14));
-        border: 1px solid rgba(255,255,255,0.09);
-        box-shadow: 0 22px 44px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.08);
-        animation: softFloat 5.5s ease-in-out infinite;
+            radial-gradient(circle at center, rgba(59,130,246,0.07), transparent 48%),
+            rgba(4, 11, 19, 0.9);
     }
 
-    .hero-system-score-core span {
+    .tech-board-svg {
+        width: 100%;
+        height: 100%;
         display: block;
-        color: #c8d8ef;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        font-weight: 700;
     }
 
-    .hero-system-score-core strong {
-        display: block;
-        color: #f8fbff;
-        font-size: 48px;
-        line-height: 1;
-        letter-spacing: -0.06em;
+    .board-shell {
+        fill: rgba(5, 12, 20, 0.9);
+        stroke: rgba(125,211,252,0.18);
+        stroke-width: 1.6;
+    }
+
+    .board-inner {
+        fill: rgba(9, 22, 34, 0.72);
+        stroke: rgba(67,212,200,0.14);
+        stroke-width: 1.2;
+    }
+
+    .board-grid line {
+        stroke: rgba(191,219,254,0.07);
+        stroke-width: 1;
+    }
+
+    .board-trace,
+    .board-trace-thin {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .board-trace {
+        stroke: url(#traceGlowAlt);
+        stroke-width: 4.4;
+        filter: drop-shadow(0 0 7px rgba(96,165,250,0.26));
+        stroke-dasharray: 12 8;
+        animation: traceFlow 18s linear infinite;
+    }
+
+    .board-trace-thin {
+        stroke: rgba(125,211,252,0.62);
+        stroke-width: 2;
+        stroke-dasharray: 6 8;
+        animation: traceFlow 14s linear infinite reverse;
+    }
+
+    .board-modules rect {
+        fill: rgba(15, 28, 42, 0.88);
+        stroke: rgba(125,211,252,0.24);
+        stroke-width: 1.4;
+    }
+
+    .board-labels text {
+        fill: rgba(214, 226, 255, 0.82);
+        font-size: 12px;
         font-weight: 800;
+        letter-spacing: 0.14em;
+        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
     }
 
-    .hero-system-side {
+    .board-nodes circle {
+        fill: #7dd3fc;
+        stroke: rgba(255,255,255,0.58);
+        stroke-width: 1.4;
+        filter: drop-shadow(0 0 8px rgba(125,211,252,0.38));
+        animation: nodeBlink 3.2s ease-in-out infinite;
+    }
+
+    .flow-dot {
+        fill: #43d4c8;
+    }
+
+    .tech-stage-overlay {
+        position: absolute;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)),
+            rgba(6, 14, 23, 0.78);
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+    }
+
+    .tech-stage-overlay span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .tech-stage-overlay strong {
+        display: block;
+        margin-top: 6px;
+        color: #f8fbff;
+        font-size: 28px;
+        line-height: 1;
+        letter-spacing: -0.05em;
+        font-weight: 800;
+        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
+    }
+
+    .tech-stage-overlay-a {
+        top: 18px;
+        right: 18px;
+    }
+
+    .tech-stage-overlay-b {
+        left: 18px;
+        bottom: 18px;
+    }
+
+    .tech-stage-side {
         display: grid;
         gap: 12px;
     }
 
-    .hero-system-side-card,
-    .hero-mini-panel,
-    .premium-chart-card,
-    .premium-meter-card,
-    .premium-pillar-card,
-    .workflow-card,
-    .report-card,
-    .workspace-portfolio-card,
-    .recent-run-card,
-    .capability-card {
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
-            rgba(255,255,255,0.024);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-        transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    .tech-dock-card,
+    .tech-mini-panel,
+    .command-card,
+    .capability-tile,
+    .workspace-card,
+    .workflow-tile,
+    .report-tile,
+    .recent-card,
+    .tech-chart-card {
+        padding: 18px;
     }
 
-    .hero-system-side-card:hover,
-    .hero-mini-panel:hover,
-    .premium-chart-card:hover,
-    .premium-meter-card:hover,
-    .premium-pillar-card:hover,
-    .workflow-card:hover,
-    .report-card:hover,
-    .workspace-portfolio-card:hover,
-    .recent-run-card:hover,
-    .capability-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(96,165,250,0.18);
-        background: rgba(255,255,255,0.045);
-    }
-
-    .hero-system-side-card {
-        padding: 16px;
-    }
-
-    .hero-side-label,
-    .hero-mini-panel-label,
-    .premium-chart-label,
-    .telemetry-label {
-        color: var(--muted);
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.11em;
-        font-weight: 700;
-    }
-
-    .hero-side-value {
+    .tech-dock-value,
+    .command-value,
+    .workspace-score {
         color: #f8fbff;
         font-size: 24px;
-        line-height: 1.1;
+        line-height: 1.08;
+        letter-spacing: -0.04em;
         font-weight: 800;
-        letter-spacing: -0.05em;
-        margin: 8px 0 6px;
     }
 
-    .hero-side-copy,
-    .hero-summary-copy {
-        margin: 0;
+    .tech-dock-copy,
+    .command-copy,
+    .capability-copy,
+    .workspace-copy,
+    .workflow-copy,
+    .recent-date,
+    .tech-mini-panel p {
+        margin: 10px 0 0;
         color: rgba(214, 226, 255, 0.74);
         font-size: 13px;
-        line-height: 1.65;
+        line-height: 1.7;
     }
 
-    .hero-mini-panels {
+    .tech-lower-band {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
 
-    .hero-mini-panel,
-    .premium-chart-card,
-    .premium-meter-card,
-    .workflow-card,
-    .report-card,
-    .workspace-portfolio-card,
-    .recent-run-card,
-    .capability-card {
-        padding: 18px;
-    }
-
-    .hero-inline-chart,
-    .large-line-chart {
+    .tech-inline-chart,
+    .tech-large-chart {
         width: 100%;
         display: block;
+        margin-top: 10px;
     }
 
-    .hero-inline-chart {
+    .tech-inline-chart {
         height: 92px;
-        margin-top: 10px;
     }
 
-    .large-line-chart {
-        height: 110px;
-        margin-top: 10px;
+    .tech-large-chart {
+        height: 108px;
     }
 
-    .compact-empty-state {
+    .compact-empty {
+        margin-top: 10px;
         color: rgba(214, 226, 255, 0.62);
         font-size: 13px;
         line-height: 1.6;
-        margin-top: 10px;
     }
 
-    .hero-marquee-shell {
+    .signal-ribbon {
         overflow: hidden;
         margin: 16px 0 18px;
         padding: 12px 0;
@@ -795,14 +919,14 @@
         mask-image: linear-gradient(90deg, transparent, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, transparent);
     }
 
-    .hero-marquee-track {
+    .signal-ribbon-track {
         display: inline-flex;
         gap: 14px;
         white-space: nowrap;
-        animation: marqueeSlide 28s linear infinite;
+        animation: ribbonSlide 28s linear infinite;
     }
 
-    .hero-marquee-track span {
+    .signal-ribbon-track span {
         padding: 8px 14px;
         border-radius: 999px;
         border: 1px solid rgba(255,255,255,0.06);
@@ -814,124 +938,87 @@
         text-transform: uppercase;
     }
 
-    .premium-card {
+    .tech-surface-card {
         background:
-            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
-            rgba(8, 18, 30, 0.78);
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.014)),
+            rgba(7, 16, 26, 0.82);
     }
 
-    .premium-header {
-        padding-bottom: 6px;
+    .tech-header {
+        padding-bottom: 8px;
     }
 
-    .premium-pillar-grid,
-    .workflow-card-grid,
-    .workspace-portfolio-grid,
-    .recent-run-grid {
+    .command-grid,
+    .workflow-grid {
         display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 14px;
     }
 
-    .premium-pillar-grid,
-    .workflow-card-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .premium-pillar-top,
-    .workflow-card-top,
-    .recent-run-top,
-    .workspace-portfolio-top,
-    .capability-top {
+    .command-top,
+    .capability-tile-top,
+    .workspace-card-top,
+    .workflow-top,
+    .recent-top {
         display: flex;
         justify-content: space-between;
         gap: 12px;
         align-items: flex-start;
     }
 
-    .premium-pillar-title,
-    .capability-title {
+    .command-title,
+    .capability-title,
+    .workspace-title,
+    .workflow-title,
+    .recent-title {
         color: #f3f8ff;
         font-size: 16px;
+        line-height: 1.32;
         font-weight: 700;
-        line-height: 1.3;
     }
 
-    .premium-pillar-metric,
-    .workspace-score-pill {
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: rgba(59,130,246,0.12);
-        border: 1px solid rgba(96,165,250,0.16);
-        color: #dbeafe;
-        font-size: 12px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .premium-pillar-copy,
-    .capability-copy,
-    .workspace-portfolio-meta {
-        margin-top: 12px;
-        color: rgba(214, 226, 255, 0.74);
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    .premium-feature-band {
+    .story-panel {
         margin-top: 16px;
-    }
-
-    .premium-feature-callout {
-        padding: 18px 20px;
+        padding: 20px;
         border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.07);
         background:
-            radial-gradient(circle at left center, rgba(67,212,200,0.12), transparent 28%),
+            radial-gradient(circle at left center, rgba(67,212,200,0.12), transparent 30%),
             rgba(255,255,255,0.025);
     }
 
-    .premium-feature-label {
-        color: #bfdbfe;
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        margin-bottom: 10px;
-    }
-
-    .premium-feature-callout p {
-        margin: 0;
+    .story-panel p {
+        margin: 10px 0 0;
         color: rgba(228, 237, 255, 0.84);
         font-size: 15px;
         line-height: 1.8;
-        max-width: 64ch;
+        max-width: 66ch;
     }
 
-    .telemetry-stat-row {
+    .telemetry-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
         margin-bottom: 16px;
     }
 
-    .telemetry-stat {
+    .telemetry-block {
         padding: 16px;
         border-radius: 16px;
-        background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
     }
 
-    .telemetry-stat strong {
-        display: block;
-        margin-top: 8px;
-        font-size: 30px;
-        line-height: 1;
-        letter-spacing: -0.05em;
-        color: #f8fbff;
-        font-weight: 800;
+    .telemetry-meter {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.022);
     }
 
-    .premium-meter-top {
+    .telemetry-meter-top {
         display: flex;
         justify-content: space-between;
         gap: 12px;
@@ -941,7 +1028,7 @@
         margin-bottom: 12px;
     }
 
-    .premium-meter-track {
+    .telemetry-meter-track {
         position: relative;
         height: 16px;
         border-radius: 999px;
@@ -950,15 +1037,15 @@
             linear-gradient(90deg, rgba(16,185,129,0.34) 0%, rgba(132,204,22,0.34) 22%, rgba(250,204,21,0.34) 48%, rgba(251,146,60,0.34) 74%, rgba(239,68,68,0.34) 100%);
     }
 
-    .premium-meter-fill {
+    .telemetry-meter-fill {
         position: absolute;
         inset: 0 auto 0 0;
         border-radius: 999px;
         background: linear-gradient(90deg, #3b82f6, #7dd3fc);
-        box-shadow: 0 0 24px rgba(59,130,246,0.32);
+        box-shadow: 0 0 24px rgba(59,130,246,0.34);
     }
 
-    .premium-meter-scale {
+    .telemetry-meter-scale {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         margin-top: 10px;
@@ -967,102 +1054,110 @@
         font-weight: 700;
     }
 
-    .premium-meter-scale span:nth-child(2),
-    .premium-meter-scale span:nth-child(3),
-    .premium-meter-scale span:nth-child(4) {
+    .telemetry-meter-scale span:nth-child(2),
+    .telemetry-meter-scale span:nth-child(3),
+    .telemetry-meter-scale span:nth-child(4) {
         text-align: center;
     }
 
-    .premium-meter-scale span:last-child {
+    .telemetry-meter-scale span:last-child {
         text-align: right;
     }
 
-    .premium-chart-stack,
+    .telemetry-chart-stack,
     .capability-stack,
-    .report-stack {
+    .report-grid {
         display: grid;
+        gap: 14px;
+        margin-top: 16px;
+    }
+
+    .workspace-grid,
+    .recent-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 14px;
     }
 
-    .workspace-portfolio-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .workspace-portfolio-meta {
+    .workspace-meta {
         display: flex;
         justify-content: space-between;
         gap: 10px;
         flex-wrap: wrap;
+        margin-top: 12px;
+        color: rgba(214, 226, 255, 0.7);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .parser-band {
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .parser-pill-grid {
+    .parser-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 10px;
-        margin-top: 10px;
+        margin-top: 16px;
     }
 
-    .parser-pill {
-        padding: 12px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.025);
+    .parser-chip {
         display: flex;
         justify-content: space-between;
         gap: 10px;
         align-items: center;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
         color: rgba(228, 237, 255, 0.82);
         font-size: 12px;
         font-weight: 700;
     }
 
-    .parser-pill strong {
+    .parser-chip strong {
         color: #dbeafe;
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.08em;
     }
 
-    .capability-evidence {
-        color: #bfdbfe;
-        font-size: 12px;
-        font-weight: 700;
-        margin-top: 6px;
+    .workflow-bar {
+        margin-top: 14px;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        overflow: hidden;
     }
 
-    .report-card {
+    .workflow-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #3b82f6, #43d4c8);
+    }
+
+    .report-tile {
         display: grid;
-        grid-template-columns: 120px 1fr;
+        grid-template-columns: 128px 1fr;
         gap: 16px;
         align-items: start;
     }
 
-    .report-card-code {
+    .report-code {
         display: grid;
         place-items: center;
         min-height: 88px;
         border-radius: 16px;
+        border: 1px solid rgba(96,165,250,0.18);
         background:
-            linear-gradient(140deg, rgba(59,130,246,0.14), rgba(67,212,200,0.1)),
+            linear-gradient(145deg, rgba(59,130,246,0.14), rgba(67,212,200,0.1)),
             rgba(255,255,255,0.03);
-        border: 1px solid rgba(96,165,250,0.16);
         color: #f8fbff;
         font-size: 16px;
         font-weight: 800;
         letter-spacing: 0.06em;
+        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
     }
 
-    .recent-run-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .recent-run-actions {
+    .recent-action {
         margin-top: 14px;
         padding-top: 12px;
         border-top: 1px solid rgba(255,255,255,0.06);
@@ -1080,92 +1175,87 @@
         stroke-linejoin: round;
     }
 
-    @keyframes marqueeSlide {
+    @keyframes scanDrift {
+        from { transform: translateY(-160px); }
+        to { transform: translateY(160px); }
+    }
+
+    @keyframes heroBreath {
+        0%, 100% { transform: scale(1); opacity: 0.35; }
+        50% { transform: scale(1.08); opacity: 0.58; }
+    }
+
+    @keyframes traceFlow {
+        from { stroke-dashoffset: 0; }
+        to { stroke-dashoffset: -160; }
+    }
+
+    @keyframes nodeBlink {
+        0%, 100% { opacity: 0.75; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+
+    @keyframes ribbonSlide {
         from { transform: translateX(0); }
         to { transform: translateX(-50%); }
     }
 
-    @keyframes orbitDrift {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    @keyframes homePulse {
-        0%, 100% { transform: scale(1); opacity: 0.55; }
-        50% { transform: scale(1.08); opacity: 0.8; }
-    }
-
     @media (max-width: 1180px) {
-        .hero-grid,
-        .hero-system-center,
-        .premium-pillar-grid,
-        .workflow-card-grid,
-        .recent-run-grid {
+        .tech-hero-grid,
+        .tech-stage-main,
+        .command-grid,
+        .workflow-grid {
             grid-template-columns: 1fr;
         }
 
-        .workspace-portfolio-grid,
-        .parser-pill-grid,
-        .hero-mini-panels {
+        .tech-lower-band,
+        .workspace-grid,
+        .recent-grid,
+        .parser-grid {
             grid-template-columns: 1fr;
         }
     }
 
-    @media (max-width: 900px) {
-        .home-premium-hero {
+    @media (max-width: 920px) {
+        .tech-hero {
             padding: 24px 20px;
         }
 
-        .hero-signal-strip,
-        .telemetry-stat-row {
-            grid-template-columns: 1fr;
-        }
-
-        .report-card {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 720px) {
-        .hero-title {
+        .tech-title {
             max-width: none;
-            font-size: 44px;
+            font-size: 46px;
         }
 
-        .hero-system-score-shell {
-            min-height: 210px;
+        .tech-metric-strip,
+        .telemetry-grid {
+            grid-template-columns: 1fr;
         }
 
-        .hero-score-halo-a {
-            width: 210px;
-            height: 210px;
-        }
-
-        .hero-score-halo-b {
-            width: 150px;
-            height: 150px;
+        .report-tile {
+            grid-template-columns: 1fr;
         }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .hero-ambient,
-        .hero-score-halo,
-        .hero-system-score-core,
-        .hero-marquee-track {
+        .tech-scan,
+        .tech-glow,
+        .board-trace,
+        .board-trace-thin,
+        .board-nodes circle,
+        .signal-ribbon-track {
             animation: none;
         }
 
-        .hero-system-side-card:hover,
-        .hero-mini-panel:hover,
-        .premium-chart-card:hover,
-        .premium-meter-card:hover,
-        .premium-pillar-card:hover,
-        .workflow-card:hover,
-        .report-card:hover,
-        .workspace-portfolio-card:hover,
-        .recent-run-card:hover,
-        .capability-card:hover,
-        .hero-signal-card:hover {
+        .tech-metric-card:hover,
+        .tech-dock-card:hover,
+        .tech-mini-panel:hover,
+        .command-card:hover,
+        .capability-tile:hover,
+        .workspace-card:hover,
+        .workflow-tile:hover,
+        .report-tile:hover,
+        .recent-card:hover,
+        .tech-chart-card:hover {
             transform: none;
         }
     }
