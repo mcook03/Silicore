@@ -197,6 +197,57 @@
 <section class="grid grid-2">
     <section class="card">
         <div class="card-header">
+            <h2 class="section-title">Profile Architecture</h2>
+            <p class="section-copy">
+                The control surface is now organized around project posture, board context, enabled domains, and live rule depth.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if settings_architecture and settings_architecture.profile_cards %}
+            <div class="settings-architecture-grid">
+                {% for item in settings_architecture.profile_cards %}
+                <article class="settings-architecture-card">
+                    <div class="settings-architecture-title">{{ item.title }}</div>
+                    <div class="settings-architecture-value">{{ item.value }}</div>
+                    <div class="settings-architecture-copy">{{ item.copy }}</div>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">Profile architecture appears after the config is loaded.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Review Pillars</h2>
+            <p class="section-copy">
+                These control groups map directly to the deeper review layers now exposed across board, project, and reporting workflows.
+            </p>
+        </div>
+
+        <div class="card-body">
+            {% if settings_architecture and settings_architecture.domain_pillars %}
+            <div class="settings-pillar-list">
+                {% for item in settings_architecture.domain_pillars %}
+                <div class="settings-pillar-card">
+                    <div class="settings-pillar-title">{{ item.title }}</div>
+                    <div class="settings-pillar-copy">{{ item.copy }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">Review pillars are unavailable right now.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
             <h2 class="section-title">Why These Settings Matter</h2>
             <p class="section-copy">
                 Engineers are more likely to trust findings when they can tune the thresholds behind them.
@@ -1700,6 +1751,50 @@
         max-width: 700px;
     }
 
+    .settings-architecture-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .settings-architecture-card,
+    .settings-pillar-card {
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background:
+            linear-gradient(180deg, rgba(59,130,246,0.08), rgba(255,255,255,0.02)),
+            rgba(255,255,255,0.03);
+    }
+
+    .settings-architecture-title,
+    .settings-pillar-title {
+        color: #eff6ff;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .settings-architecture-value {
+        color: #f8fbff;
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 10px;
+    }
+
+    .settings-architecture-copy,
+    .settings-pillar-copy {
+        color: rgba(214, 226, 255, 0.74);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .settings-pillar-list {
+        display: grid;
+        gap: 14px;
+    }
+
     .settings-actions-row {
         display: flex;
         justify-content: flex-end;
@@ -1717,7 +1812,8 @@
         .settings-area-grid,
         .settings-summary-grid,
         .slider-control-grid,
-        .settings-text-grid {
+        .settings-text-grid,
+        .settings-architecture-grid {
             grid-template-columns: 1fr;
         }
 

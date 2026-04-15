@@ -2791,6 +2791,133 @@ def _build_single_decision_data(result):
     }
 
 
+def _build_board_review_layers(result):
+    risks = (result or {}).get("risks", []) or []
+    analysis_context = (result or {}).get("analysis_context_view") or {}
+    if not risks:
+        return {
+            "domain_cards": [],
+            "traceability_stats": [],
+            "signal_lane": {
+                "title": "Signal & timing review",
+                "summary": "Signal-depth surfaces appear after analysis.",
+                "detail": "Run a board to see clock placement, sensitive-circuit pressure, and routing priorities.",
+            },
+        }
+
+    domain_map = defaultdict(
+        lambda: {
+            "count": 0,
+            "confidence_sum": 0.0,
+            "traceability_sum": 0.0,
+            "evidence_sum": 0,
+            "highest_severity": 0,
+            "headline": "",
+        }
+    )
+    clock_related = []
+    audit_ready_count = 0
+    anchored_count = 0
+    evidence_rich_count = 0
+
+    severity_rank = {"critical": 4, "high": 3, "medium": 2, "low": 1}
+
+    for risk in risks:
+        domain_key = str(risk.get("design_domain") or risk.get("category") or "general").strip().lower()
+        bucket = domain_map[domain_key]
+        bucket["count"] += 1
+        bucket["confidence_sum"] += _extract_risk_confidence_score(risk)
+        bucket["traceability_sum"] += _traceability_score(risk)
+        bucket["evidence_sum"] += _evidence_count(risk)
+        bucket["highest_severity"] = max(
+            bucket["highest_severity"],
+            severity_rank.get(str(risk.get("severity", "low")).lower(), 1),
+        )
+        if not bucket["headline"]:
+            bucket["headline"] = risk.get("short_title") or risk.get("message") or "Finding"
+
+        if _traceability_score(risk) >= 85:
+            audit_ready_count += 1
+        if risk.get("components") or risk.get("nets") or isinstance(risk.get("region"), dict):
+            anchored_count += 1
+        if _evidence_count(risk) >= 4:
+            evidence_rich_count += 1
+        if str(risk.get("rule_id") or "").strip().lower() == "clock_sensitive_placement":
+            clock_related.append(risk)
+
+    domain_cards = []
+    for domain_key, bucket in domain_map.items():
+        count = bucket["count"]
+        average_confidence = round(bucket["confidence_sum"] / count, 1) if count else 0
+        average_traceability = round(bucket["traceability_sum"] / count, 1) if count else 0
+        average_evidence = round(bucket["evidence_sum"] / count, 1) if count else 0
+        severity_label = {4: "Critical pressure", 3: "High pressure", 2: "Watch closely", 1: "Light pressure"}.get(
+            bucket["highest_severity"],
+            "Light pressure",
+        )
+        domain_cards.append(
+            {
+                "title": _format_design_domain_name(domain_key),
+                "count": count,
+                "confidence": average_confidence,
+                "traceability": average_traceability,
+                "evidence": average_evidence,
+                "severity_label": severity_label,
+                "headline": str(bucket["headline"]).split(".")[0][:100],
+            }
+        )
+
+    domain_cards.sort(key=lambda item: (-item["count"], -item["traceability"], item["title"].lower()))
+
+    if clock_related:
+        top_clock_risk = sorted(
+            clock_related,
+            key=lambda item: (
+                -severity_rank.get(str(item.get("severity", "low")).lower(), 1),
+                -_extract_risk_confidence_score(item),
+            ),
+        )[0]
+        signal_summary = f"{len(clock_related)} clock or sensitive-circuit placement finding(s) were detected."
+        signal_detail = top_clock_risk.get("recommendation") or top_clock_risk.get("message") or "Review clock placement."
+    else:
+        signal_count = sum(
+            1 for risk in risks if str(risk.get("design_domain") or "").strip().lower() in {"signal_integrity", "high_speed"}
+        )
+        signal_summary = (
+            f"{signal_count} signal-path finding(s) were detected across routing, return path, and placement review."
+            if signal_count
+            else "No dedicated signal-path findings were generated on this run."
+        )
+        signal_detail = "Signal review combines routing quality, high-speed symmetry, and clock-adjacent placement checks."
+
+    return {
+        "domain_cards": domain_cards[:4],
+        "traceability_stats": [
+            {"label": "Audit-ready findings", "value": audit_ready_count, "subtext": "Traceability 85+"},
+            {"label": "Board-anchored findings", "value": anchored_count, "subtext": "Linked to nets, parts, or regions"},
+            {"label": "Evidence-rich findings", "value": evidence_rich_count, "subtext": "Four or more evidence points"},
+            {
+                "label": "Run profile",
+                "value": (
+                    str(analysis_context.get("profile") or "balanced").replace("_", " ").title()
+                    if isinstance(analysis_context, dict)
+                    else "Balanced"
+                ),
+                "subtext": (
+                    str(analysis_context.get("board_type") or "general").replace("_", " ").title()
+                    if isinstance(analysis_context, dict)
+                    else "General"
+                ),
+            },
+        ],
+        "signal_lane": {
+            "title": "Signal & timing review",
+            "summary": signal_summary,
+            "detail": signal_detail,
+        },
+    }
+
+
 def _build_project_review_intelligence(project_result):
     boards = project_result.get("boards", []) or []
     if not boards:
@@ -2944,6 +3071,77 @@ def _build_project_review_intelligence(project_result):
     }
 
 
+def _build_workspace_review_layers(project):
+    runs = (project or {}).get("runs", []) or []
+    all_risks = []
+    compare_ready_runs = 0
+    for run in runs:
+        run_risks = run.get("risk_snapshot") or run.get("risks") or []
+        all_risks.extend(run_risks)
+        if run.get("run_id"):
+            compare_ready_runs += 1
+
+    if not all_risks:
+        return {
+            "review_cards": [],
+            "workspace_posture": "Workspace review depth appears after linked runs accumulate scored findings.",
+        }
+
+    domain_counts = defaultdict(int)
+    audit_ready_count = 0
+    strong_signal_count = 0
+    for risk in all_risks:
+        domain_counts[_format_design_domain_name(risk.get("design_domain") or risk.get("category"))] += 1
+        if _traceability_score(risk) >= 85:
+            audit_ready_count += 1
+        if str(risk.get("design_domain") or "").strip().lower() in {"signal_integrity", "high_speed", "stackup_return_path"}:
+            strong_signal_count += 1
+
+    leading_domains = sorted(domain_counts.items(), key=lambda item: (-item[1], item[0].lower()))[:3]
+    recurring_patterns = _build_project_workspace_intelligence(project).get("chronic_patterns", [])[:3]
+    recurring_summary = (
+        ", ".join(f"{item['category']} ({item['appearances']})" for item in recurring_patterns)
+        if recurring_patterns
+        else "No recurring patterns yet."
+    )
+
+    review_cards = [
+        {
+            "title": "Domain coverage",
+            "value": len(domain_counts),
+            "subtext": "Engineering domains active",
+            "copy": (
+                "Leading pressure areas: " + ", ".join(f"{name} ({count})" for name, count in leading_domains)
+                if leading_domains
+                else "No domain coverage yet."
+            ),
+        },
+        {
+            "title": "Traceability",
+            "value": audit_ready_count,
+            "subtext": "Audit-ready findings",
+            "copy": "Findings with complete thresholds, observed values, and reasoning are now easier to review across revisions.",
+        },
+        {
+            "title": "Signal intelligence",
+            "value": strong_signal_count,
+            "subtext": "Signal, timing, or return-path findings",
+            "copy": "Workspace review now captures placement-sensitive signal issues alongside routing and return-path pressure.",
+        },
+        {
+            "title": "Compare readiness",
+            "value": compare_ready_runs,
+            "subtext": "Linked runs available",
+            "copy": "Revision comparisons are strongest when multiple linked runs carry current geometry and traceable findings.",
+        },
+    ]
+
+    return {
+        "review_cards": review_cards,
+        "workspace_posture": f"Recurring workspace pressure is concentrated in {recurring_summary}",
+    }
+
+
 def _build_settings_view_model(editable_config):
     editable_config = editable_config or {}
     rules = editable_config.get("rules") or {}
@@ -3030,6 +3228,69 @@ def _build_settings_view_model(editable_config):
         "penalty_bars": _build_bar_chart(penalty_rows),
         "total_controls": sum(sections.values()),
         "advanced_capability_count": 10,
+    }
+
+
+def _build_settings_architecture(editable_config, settings_view):
+    editable_config = editable_config or {}
+    settings_view = settings_view or {}
+    analysis = editable_config.get("analysis") or {}
+    category_toggles = analysis.get("category_toggles") or {}
+    enabled_domains = [
+        label
+        for key, label in [
+            ("layout_manufacturing", "Layout + DFM"),
+            ("power", "Power"),
+            ("signal", "Signal"),
+            ("thermal", "Thermal"),
+            ("emi_reliability", "EMI + Reliability"),
+            ("safety", "Safety"),
+        ]
+        if category_toggles.get(key, True)
+    ]
+    profile_name = str(analysis.get("profile") or "balanced").replace("_", " ").title()
+    if str(analysis.get("profile") or "").strip().lower() == "custom":
+        profile_name = analysis.get("custom_profile_name") or "Custom Profile"
+
+    profile_cards = [
+        {
+            "title": "Default posture",
+            "value": profile_name,
+            "copy": "This is the baseline review mode applied when a board is uploaded without a per-run override.",
+        },
+        {
+            "title": "Board context",
+            "value": str(analysis.get("board_type") or "general").replace("_", " ").title(),
+            "copy": "Board type shifts prioritization and tunes which rules matter most during ranking and reporting.",
+        },
+        {
+            "title": "Enabled domains",
+            "value": len(enabled_domains),
+            "copy": ", ".join(enabled_domains[:4]) + ("..." if len(enabled_domains) > 4 else ""),
+        },
+        {
+            "title": "Live controls",
+            "value": settings_view.get("total_controls", 0),
+            "copy": "Thresholds, toggles, and rule assumptions currently exposed through the engineering control surface.",
+        },
+    ]
+
+    return {
+        "profile_cards": profile_cards,
+        "domain_pillars": [
+            {
+                "title": "Signal, timing, and stackup",
+                "copy": "Covers routing quality, crosstalk spacing, differential behavior, clock placement, and return-path support.",
+            },
+            {
+                "title": "Power, thermal, and realism",
+                "copy": "Combines decoupling expectations, high-current bottlenecks, converter support, and thermal spreading checks.",
+            },
+            {
+                "title": "Production and validation",
+                "copy": "Keeps manufacturability, assembly quality, test access, and safety spacing inside one configurable workflow.",
+            },
+        ],
     }
 
 
@@ -3382,6 +3643,7 @@ def single_board_page():
             "project_options": _project_options(),
             "single_chart": single_chart,
             "single_decision": single_decision,
+            "board_review_layers": _build_board_review_layers(result),
             "analysis_modes": analysis_modes,
             "selected_profile": selected_profile,
             "selected_board_type": selected_board_type,
@@ -3523,6 +3785,7 @@ def project_detail_page(project_id):
             "workspace_chart": _build_project_workspace_chart_data(project),
             "workspace_intelligence": _build_project_workspace_intelligence(project),
             "timeline_data": _build_project_timeline_data(project),
+            "workspace_review_layers": _build_workspace_review_layers(project),
         },
     )
 
@@ -3773,7 +4036,11 @@ def settings_page():
         page_copy="Configure analysis thresholds and rule behavior.",
         template_name="settings.html",
         show_page_hero=False,
-        body_context={"editable_config": editable_config, "settings_view": settings_view},
+        body_context={
+            "editable_config": editable_config,
+            "settings_view": settings_view,
+            "settings_architecture": _build_settings_architecture(editable_config, settings_view),
+        },
     )
 
 

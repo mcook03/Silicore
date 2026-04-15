@@ -101,6 +101,30 @@
     </div>
 </section>
 
+{% if not result %}
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Advanced Review Lenses</h2>
+            <p class="section-copy">Signal, power, manufacturability, thermal, EMI, safety, and trust layers will appear here once a board is analyzed.</p>
+        </div>
+        <div class="card-body">
+            <div class="empty-state">Run a board to see domain-level pressure, ranking strength, and review posture in one place.</div>
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Traceability & Signal Posture</h2>
+            <p class="section-copy">This panel becomes the quick readout for audit-ready findings, evidence quality, and signal-depth coverage.</p>
+        </div>
+        <div class="card-body">
+            <div class="empty-state">No traceability posture is available yet because no board has been analyzed in this session.</div>
+        </div>
+    </section>
+</section>
+{% endif %}
+
 {% if result %}
 <section class="grid grid-2">
     <section class="card loud-card">
@@ -197,6 +221,69 @@
                     {% endfor %}
                 </div>
             </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Advanced Review Lenses</h2>
+            <p class="section-copy">A faster view of which engineering domains are driving this board review right now.</p>
+        </div>
+
+        <div class="card-body">
+            {% if board_review_layers and board_review_layers.domain_cards %}
+            <div class="review-lens-grid">
+                {% for item in board_review_layers.domain_cards %}
+                <article class="review-lens-card">
+                    <div class="review-lens-top">
+                        <div class="review-lens-title">{{ item.title }}</div>
+                        <div class="review-lens-count">{{ item.count }}</div>
+                    </div>
+                    <div class="review-lens-copy">{{ item.headline }}</div>
+                    <div class="focus-chip-row" style="margin: 12px 0 0;">
+                        <span class="mini-chip mini-chip-low">{{ item.severity_label }}</span>
+                        <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence }}</span>
+                        <span class="mini-chip mini-chip-low">Traceability {{ item.traceability }}</span>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">Domain-level review lenses appear after analysis.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Traceability & Signal Posture</h2>
+            <p class="section-copy">How defensible the findings are and whether signal-depth review is materially active on this board.</p>
+        </div>
+
+        <div class="card-body">
+            {% if board_review_layers and board_review_layers.traceability_stats %}
+            <div class="big-stat-grid compact-stat-grid">
+                {% for item in board_review_layers.traceability_stats %}
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ item.value }}</div>
+                    <div class="big-stat-label">{{ item.label }}</div>
+                    <div class="big-stat-sub">{{ item.subtext }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if board_review_layers and board_review_layers.signal_lane %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>{{ board_review_layers.signal_lane.title }}</h3>
+                <p>{{ board_review_layers.signal_lane.summary }}</p>
+                <p class="small-muted" style="margin-top:10px;">{{ board_review_layers.signal_lane.detail }}</p>
+            </div>
+            {% else %}
+            <div class="empty-state">Signal posture appears after analysis.</div>
             {% endif %}
         </div>
     </section>
@@ -1912,6 +1999,56 @@
         margin-top: 4px;
     }
 
+    .review-lens-grid {
+        display: grid;
+        gap: 14px;
+    }
+
+    .review-lens-card {
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background:
+            linear-gradient(180deg, rgba(96,165,250,0.08), rgba(15,23,42,0.02)),
+            rgba(255,255,255,0.03);
+    }
+
+    .review-lens-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .review-lens-title {
+        color: #eff6ff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .review-lens-count {
+        min-width: 36px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(59,130,246,0.14);
+        color: #dbeafe;
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
+    }
+
+    .review-lens-copy,
+    .big-stat-sub {
+        color: rgba(214, 226, 255, 0.72);
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .compact-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     @media (max-width: 1200px) {
         .review-hero-card {
             grid-template-columns: 1fr;
@@ -1945,6 +2082,10 @@
         .config-row-pill {
             flex-direction: column;
             align-items: flex-start;
+        }
+
+        .compact-stat-grid {
+            grid-template-columns: 1fr;
         }
     }
 

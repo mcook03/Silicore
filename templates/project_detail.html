@@ -206,6 +206,40 @@
 </section>
 </section>
 
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Workspace Review Architecture</h2>
+        <p class="section-copy">
+            The project workspace now surfaces domain depth, traceability posture, signal intelligence, and compare readiness as separate review layers.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if workspace_review_layers and workspace_review_layers.review_cards %}
+        <div class="workspace-review-grid">
+            {% for item in workspace_review_layers.review_cards %}
+            <article class="workspace-review-card">
+                <div class="workspace-review-top">
+                    <div>
+                        <div class="workspace-review-title">{{ item.title }}</div>
+                        <div class="workspace-review-copy">{{ item.copy }}</div>
+                    </div>
+                    <div class="workspace-review-value">{{ item.value }}</div>
+                </div>
+                <div class="small-muted">{{ item.subtext }}</div>
+            </article>
+            {% endfor %}
+        </div>
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Workspace Posture</h3>
+            <p>{{ workspace_review_layers.workspace_posture }}</p>
+        </div>
+        {% else %}
+        <div class="empty-state">Workspace review architecture will appear once runs are linked to this project.</div>
+        {% endif %}
+    </div>
+</section>
+
 <section class="grid grid-2">
 <section class="card">
     <div class="card-header">
@@ -843,9 +877,57 @@
         border: 1px solid rgba(59,130,246,0.16);
     }
 
+    .workspace-review-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .workspace-review-card {
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background:
+            radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 44%),
+            rgba(255,255,255,0.03);
+    }
+
+    .workspace-review-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .workspace-review-title {
+        color: #eff6ff;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .workspace-review-copy {
+        color: rgba(214, 226, 255, 0.74);
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .workspace-review-value {
+        min-width: 40px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(96,165,250,0.14);
+        color: #dbeafe;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
     @media (max-width: 860px) {
         .project-trend-grid,
-        .project-detail-compare-grid {
+        .project-detail-compare-grid,
+        .workspace-review-grid {
             grid-template-columns: 1fr;
         }
 

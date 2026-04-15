@@ -62,6 +62,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Custom Profile Name", page)
         self.assertIn("Custom Project Profile", page)
+        self.assertIn("Profile Architecture", page)
+        self.assertIn("Review Pillars", page)
 
     def test_project_detail_includes_timeline_and_workspace_intelligence(self):
         response = self.client.get("/projects/ec66c9f0")
@@ -70,6 +72,15 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Confidence Timeline", page)
         self.assertIn("Recurring Failure Pattern", page)
+        self.assertIn("Workspace Review Architecture", page)
+
+    def test_single_board_page_includes_advanced_review_surfaces(self):
+        response = self.client.get("/single-board")
+
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Advanced Review Lenses", page)
+        self.assertIn("Traceability & Signal Posture", page)
 
 
 if __name__ == "__main__":
