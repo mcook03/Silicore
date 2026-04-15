@@ -7,10 +7,12 @@ from engine.insight_engine import generate_comparison_insights
 from flask import (
     Flask,
     flash,
+    g,
     redirect,
     render_template,
     request,
     send_from_directory,
+    session,
     url_for,
 )
 
@@ -18,6 +20,7 @@ from engine.config_loader import ANALYSIS_PROFILE_PRESETS, SUPPORTED_ANALYSIS_PR
 from engine.dashboard_storage import get_recent_runs
 from engine.project_store import (
     add_project_note,
+    add_project_member,
     add_run_to_project,
     create_project,
     delete_project,
@@ -25,6 +28,7 @@ from engine.project_store import (
     list_projects,
     update_project_review_status,
 )
+from engine.user_store import authenticate_user, create_user, get_user_by_email, get_user_by_id, list_users
 from engine.services.analysis_service import (
     FORMAT_READINESS,
     analyze_project_files,
@@ -43,6 +47,25 @@ CONFIG_PATH = "custom_config.json"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RUNS_FOLDER, exist_ok=True)
 os.makedirs(PROJECTS_FOLDER, exist_ok=True)
+
+
+def _current_user():
+    user_id = session.get("user_id")
+    if not user_id:
+        return None
+    return get_user_by_id(user_id)
+
+
+@app.before_request
+def load_current_user():
+    g.current_user = _current_user()
+
+
+@app.context_processor
+def inject_global_view_context():
+    return {
+        "current_user": getattr(g, "current_user", None),
+    }
 
 
 def _safe_float(value, default=0.0):
@@ -1124,11 +1147,13 @@ def _build_projects_summary(projects):
     total_projects = len(projects or [])
     total_runs = sum(len(project.get("runs", [])) for project in (projects or []))
     populated_projects = sum(1 for project in (projects or []) if project.get("runs"))
+    shared_projects = sum(1 for project in (projects or []) if (project.get("team_size") or 0) > 1)
     return {
         "total_projects": total_projects,
         "total_runs": total_runs,
         "populated_projects": populated_projects,
         "empty_projects": max(total_projects - populated_projects, 0),
+        "shared_projects": shared_projects,
     }
 
 
@@ -1217,6 +1242,12 @@ def _enrich_project_for_display(project):
     enriched["review_status_view"] = _review_status_view(project.get("review_status"))
     enriched["collaboration_notes"] = project.get("collaboration_notes", []) or []
     enriched["note_count"] = len(enriched["collaboration_notes"])
+    owner = project.get("owner") or {}
+    members = project.get("team_members", []) or []
+    enriched["owner_name"] = owner.get("name") or "Unassigned"
+    enriched["owner_email"] = owner.get("email") or ""
+    enriched["team_members"] = members
+    enriched["team_size"] = len(members) + (1 if owner.get("user_id") else 0)
 
     return enriched
 
@@ -3841,6 +3872,15 @@ def project_page():
 @app.route("/projects", methods=["GET"])
 def projects_page():
     projects = [_enrich_project_for_display(project) for project in list_projects()]
+    current_user = _current_user()
+    if current_user:
+        visible_projects = []
+        for project in projects:
+            owner = project.get("owner") or {}
+            member_ids = {str(item.get("user_id") or "").strip() for item in (project.get("team_members") or [])}
+            if owner.get("user_id") == current_user.get("user_id") or current_user.get("user_id") in member_ids:
+                visible_projects.append(project)
+        projects = visible_projects
     return _render_page(
         active_page="projects_workspace",
         page_title="Projects",
@@ -3864,7 +3904,7 @@ def create_project_route():
         flash("Project name is required.")
         return redirect(url_for("projects_page"))
 
-    project = create_project(name, description)
+    project = create_project(name, description, owner=_current_user())
     flash(f"Project '{project['name']}' created successfully.")
     return redirect(url_for("project_detail_page", project_id=project["project_id"]))
 
@@ -3897,6 +3937,13 @@ def project_detail_page(project_id):
         return redirect(url_for("projects_page"))
 
     project = _enrich_project_for_display(project)
+    current_user = _current_user()
+    if current_user:
+        owner = project.get("owner") or {}
+        member_ids = {str(item.get("user_id") or "").strip() for item in (project.get("team_members") or [])}
+        if owner.get("user_id") not in [None, current_user.get("user_id")] and current_user.get("user_id") not in member_ids:
+            flash("You do not have access to that project.")
+            return redirect(url_for("projects_page"))
 
     return _render_page(
         active_page="projects_workspace",
@@ -3911,6 +3958,7 @@ def project_detail_page(project_id):
             "timeline_data": _build_project_timeline_data(project),
             "workspace_review_layers": _build_workspace_review_layers(project),
             "project_value_metrics": _build_project_value_metrics(project),
+            "available_users": [user for user in list_users() if user.get("user_id") != ((project.get("owner") or {}).get("user_id"))],
         },
     )
 
@@ -3935,6 +3983,21 @@ def project_status_route(project_id):
         flash("Project not found.")
         return redirect(url_for("projects_page"))
     flash("Review status updated.")
+    return redirect(url_for("project_detail_page", project_id=project_id))
+
+
+@app.route("/projects/<project_id>/members", methods=["POST"])
+def project_members_route(project_id):
+    email = (request.form.get("email") or "").strip().lower()
+    user = get_user_by_email(email)
+    if not user:
+        flash("No user with that email was found.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
+    project = add_project_member(project_id, user)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    flash("Team member added to project.")
     return redirect(url_for("project_detail_page", project_id=project_id))
 
 
@@ -4171,6 +4234,50 @@ def history_printable_page(run_dir):
         return redirect(url_for("history_page"))
 
     return render_template("history_print.html", run_detail=run_detail)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login_page():
+    if request.method == "POST":
+        action = (request.form.get("action") or "login").strip()
+        if action == "register":
+            try:
+                user = create_user(
+                    request.form.get("name"),
+                    request.form.get("email"),
+                    request.form.get("password"),
+                )
+                session["user_id"] = user["user_id"]
+                flash("Account created successfully.")
+                return redirect(url_for("index"))
+            except Exception as exc:
+                flash(str(exc))
+                return redirect(url_for("login_page"))
+
+        user = authenticate_user(request.form.get("email"), request.form.get("password"))
+        if not user:
+            flash("Login failed. Check your email and password.")
+            return redirect(url_for("login_page"))
+        session["user_id"] = user["user_id"]
+        flash("Signed in successfully.")
+        return redirect(url_for("index"))
+
+    return _render_page(
+        active_page="home",
+        page_title="Account Access",
+        page_eyebrow="User System",
+        page_copy="Sign in to access shared projects, review workflow features, and saved team context.",
+        template_name="login.html",
+        show_page_hero=False,
+        body_context={},
+    )
+
+
+@app.route("/logout", methods=["POST"])
+def logout_route():
+    session.pop("user_id", None)
+    flash("Signed out.")
+    return redirect(url_for("index"))
 
 
 @app.route("/settings", methods=["GET", "POST"])

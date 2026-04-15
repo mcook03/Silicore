@@ -206,6 +206,68 @@
 </section>
 </section>
 
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Team Access</h2>
+        <p class="section-copy">Project ownership and member visibility for shared engineering review.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Owner</div>
+                <div class="metric-value" style="font-size:22px;">{{ project.owner_name }}</div>
+                <div class="metric-sub">{{ project.owner_email if project.owner_email else "No owner assigned" }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Team Size</div>
+                <div class="metric-value">{{ project.team_size }}</div>
+                <div class="metric-sub">Users with project access</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Notes</div>
+                <div class="metric-value">{{ project.note_count }}</div>
+                <div class="metric-sub">Review comments captured</div>
+            </div>
+        </div>
+
+        {% if current_user %}
+        <form method="post" action="{{ url_for('project_members_route', project_id=project.project_id) }}" style="margin-top:16px;">
+            <div class="project-detail-compare-grid">
+                <label>
+                    Add Team Member By Email
+                    <input type="email" name="email" list="known-users" placeholder="teammate@example.com" required>
+                    <datalist id="known-users">
+                        {% for user in available_users %}
+                        <option value="{{ user.email }}">{{ user.name }}</option>
+                        {% endfor %}
+                    </datalist>
+                </label>
+            </div>
+            <div class="btn-link-row" style="margin-top:14px;">
+                <button type="submit" class="btn btn-secondary">Add Member</button>
+            </div>
+        </form>
+        {% else %}
+        <div class="empty-state" style="margin-top:16px;">Sign in to manage project access and team members.</div>
+        {% endif %}
+
+        {% if project.team_members %}
+        <div class="timeline-list" style="margin-top:16px;">
+            {% for member in project.team_members %}
+            <div class="timeline-row">
+                <div>
+                    <div class="timeline-title">{{ member.name }}</div>
+                    <div class="timeline-copy">{{ member.email }}</div>
+                </div>
+                <div class="timeline-copy">Member</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
 <section class="grid grid-2">
 <section class="card">
     <div class="card-header">

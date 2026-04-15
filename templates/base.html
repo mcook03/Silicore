@@ -1185,6 +1185,12 @@
                                 <span class="status-value">Engineering review ready</span>
                             </span>
                         </div>
+                        <div class="status-pill" title="Account status">
+                            <span class="status-copy">
+                                <span class="status-label">Account</span>
+                                <span class="status-value">{{ current_user.name if current_user else "Guest Mode" }}</span>
+                            </span>
+                        </div>
                         {% if page_eyebrow %}
                         <div class="status-pill" title="Current page context">
                             <span class="status-copy">
@@ -1192,6 +1198,13 @@
                                 <span class="status-value">{{ page_eyebrow }}</span>
                             </span>
                         </div>
+                        {% endif %}
+                        {% if current_user %}
+                        <form method="post" action="{{ url_for('logout_route') }}">
+                            <button type="submit" class="btn btn-secondary">Sign Out</button>
+                        </form>
+                        {% else %}
+                        <a href="{{ url_for('login_page') }}" class="btn btn-secondary">Sign In</a>
                         {% endif %}
                     </div>
                 </div>

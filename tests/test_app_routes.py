@@ -14,6 +14,7 @@ class AppRouteSmokeTests(unittest.TestCase):
     def test_core_pages_render(self):
         for url in [
             "/",
+            "/login",
             "/single-board",
             "/project-review",
             "/projects",
@@ -83,6 +84,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Workspace Review Architecture", page)
         self.assertIn("Review Workflow", page)
         self.assertIn("Value Metrics", page)
+        self.assertIn("Team Access", page)
 
     def test_single_board_page_includes_advanced_review_surfaces(self):
         response = self.client.get("/single-board")
@@ -91,6 +93,14 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Advanced Review Lenses", page)
         self.assertIn("Traceability & Signal Posture", page)
+
+    def test_login_page_renders_account_forms(self):
+        response = self.client.get("/login")
+
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Sign In", page)
+        self.assertIn("Create Account", page)
 
 
 if __name__ == "__main__":

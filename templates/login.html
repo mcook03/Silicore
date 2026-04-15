@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="grid grid-2">
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Sign In</h2>
+            <p class="section-copy">Access saved user data, shared projects, and team-aware review workflow.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="login">
+                <label>
+                    Email
+                    <input type="email" name="email" required>
+                </label>
+                <label>
+                    Password
+                    <input type="password" name="password" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-primary" type="submit">Sign In</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Create Account</h2>
+            <p class="section-copy">Create a local Silicore user to own projects, invite teammates, and keep review context persistent.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="register">
+                <label>
+                    Name
+                    <input type="text" name="name" required>
+                </label>
+                <label>
+                    Email
+                    <input type="email" name="email" required>
+                </label>
+                <label>
+                    Password
+                    <input type="password" name="password" required>
+                </label>
+                <div class="btn-link-row">
+                    <button class="btn btn-primary" type="submit">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+
+<style>
+    .auth-form {
+        display: grid;
+        gap: 14px;
+    }
+
+    .auth-form label {
+        display: grid;
+        gap: 8px;
+        color: #dbeafe;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .auth-form input {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #f8fbff;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+    }
+</style>
+
+{% endblock %}

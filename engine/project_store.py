@@ -18,7 +18,7 @@ def _now_iso():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
 
-def create_project(name, description=""):
+def create_project(name, description="", owner=None):
     ensure_projects_folder()
     project_id = str(uuid.uuid4())[:8]
 
@@ -31,6 +31,12 @@ def create_project(name, description=""):
         "runs": [],
         "review_status": "active_review",
         "collaboration_notes": [],
+        "owner": {
+            "user_id": owner.get("user_id"),
+            "name": owner.get("name"),
+            "email": owner.get("email"),
+        } if isinstance(owner, dict) and owner.get("user_id") else None,
+        "team_members": [],
     }
 
     with open(_project_path(project_id), "w", encoding="utf-8") as f:
@@ -159,5 +165,24 @@ def update_project_review_status(project_id, status):
         "ready_for_signoff",
     }
     project["review_status"] = normalized if normalized in allowed else "active_review"
+    save_project(project)
+    return project
+
+
+def add_project_member(project_id, user):
+    project = get_project(project_id)
+    if not project or not isinstance(user, dict) or not user.get("user_id"):
+        return None
+
+    project.setdefault("team_members", [])
+    existing_ids = {str(item.get("user_id") or "").strip() for item in project["team_members"]}
+    if str(user.get("user_id")).strip() not in existing_ids:
+        project["team_members"].append(
+            {
+                "user_id": user.get("user_id"),
+                "name": user.get("name"),
+                "email": user.get("email"),
+            }
+        )
     save_project(project)
     return project
