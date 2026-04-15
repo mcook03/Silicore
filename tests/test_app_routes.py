@@ -36,6 +36,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         ready = self.client.get("/health/ready")
         self.assertEqual(ready.status_code, 200)
         self.assertIn("database", ready.get_json())
+        self.assertIn("database_runtime", ready.get_json())
 
     def test_compare_route_renders_for_existing_project_runs(self):
         run_a = self.project["runs"][-2]["run_id"]
@@ -190,6 +191,11 @@ class AppRouteSmokeTests(unittest.TestCase):
         body = response.get_data(as_text=True)
         self.assertIn('"type": "status"', body)
         self.assertIn('"type": "final"', body)
+
+    def test_atlas_agent_runs_route_returns_payload(self):
+        response = self.client.get("/atlas/agent-runs?thread_key=stream-test-thread")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("runs", response.get_json())
 
     def test_atlas_action_route_returns_job_payload(self):
         response = self.client.post(

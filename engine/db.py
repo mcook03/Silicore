@@ -2,11 +2,28 @@ import json
 import os
 import sqlite3
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 from uuid import uuid4
 
 
 DB_FOLDER = "dashboard_data"
-DB_PATH = os.environ.get("SILICORE_DB_PATH") or os.path.join(DB_FOLDER, "silicore.db")
+
+
+def _resolve_db_settings():
+    database_url = os.environ.get("SILICORE_DATABASE_URL") or os.environ.get("DATABASE_URL")
+    db_path = os.environ.get("SILICORE_DB_PATH") or os.path.join(DB_FOLDER, "silicore.db")
+    if not database_url:
+        return {"engine": "sqlite", "path": db_path, "uri": False}
+    if database_url.startswith("sqlite:///"):
+        return {"engine": "sqlite", "path": database_url.replace("sqlite:///", "", 1), "uri": False}
+    if database_url.startswith("file:"):
+        return {"engine": "sqlite", "path": database_url, "uri": True}
+    parsed = urlparse(database_url)
+    return {"engine": parsed.scheme or "unknown", "path": database_url, "uri": False}
+
+
+DB_SETTINGS = _resolve_db_settings()
+DB_PATH = DB_SETTINGS["path"]
 
 
 def _now_iso():
@@ -36,10 +53,20 @@ def _ensure_db_folder():
 
 def get_connection():
     _ensure_db_folder()
-    connection = sqlite3.connect(DB_PATH)
+    if DB_SETTINGS["engine"] != "sqlite":
+        raise RuntimeError(f"Database engine '{DB_SETTINGS['engine']}' is configured but this local build currently supports sqlite query execution.")
+    connection = sqlite3.connect(DB_PATH, uri=bool(DB_SETTINGS.get("uri")))
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     return connection
+
+
+def database_runtime_info():
+    return {
+        "engine": DB_SETTINGS["engine"],
+        "path": DB_SETTINGS["path"],
+        "uri_mode": bool(DB_SETTINGS.get("uri")),
+    }
 
 
 def _table_exists(connection, table_name):

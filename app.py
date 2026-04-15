@@ -15,7 +15,16 @@ from engine.atlas_intelligence import (
 from engine.atlas_workflow import build_workflow_plan, run_workflow_plan
 from engine.authz import can_manage_project, has_role, project_is_visible_to_user
 from engine.atlas_tools import run_tool_action
-from engine.db import initialize_database, list_atlas_messages, list_audit_events, list_review_decisions, persist_atlas_exchange
+from engine.db import (
+    database_runtime_info,
+    initialize_database,
+    list_atlas_agent_runs,
+    list_atlas_messages,
+    list_audit_events,
+    list_review_decisions,
+    persist_atlas_exchange,
+)
+from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.insight_engine import generate_comparison_insights
 from engine.job_store import get_job, list_jobs
@@ -4819,6 +4828,12 @@ def atlas_thread_route():
     return jsonify({"messages": list_atlas_messages(thread_key)})
 
 
+@app.route("/atlas/agent-runs", methods=["GET"])
+def atlas_agent_runs_route():
+    thread_key = str(request.args.get("thread_key") or "").strip()
+    return jsonify({"runs": list_atlas_agent_runs(thread_key=thread_key or None, limit=_safe_int(request.args.get("limit"), 12))})
+
+
 @app.route("/atlas/action", methods=["POST"])
 def atlas_action_route():
     payload = request.get_json(silent=True) or {}
@@ -4856,6 +4871,7 @@ def health_ready_route():
         "service": "silicore-web",
         "environment": RUNTIME_CONFIG["environment"],
         "database": db_health,
+        "database_runtime": database_runtime_info(),
         "worker": worker,
     }
     return jsonify(payload), (200 if db_health["ok"] else 503)
@@ -4868,6 +4884,7 @@ def runtime_meta_route():
     return jsonify(
         {
             "runtime": RUNTIME_CONFIG,
+            "database_runtime": database_runtime_info(),
             "worker": worker_status(),
             "jobs": {
                 "queued": len([job for job in list_jobs(limit=50) if job.get("status") == "queued"]),
@@ -5025,7 +5042,17 @@ def login_page():
                 session["session_token"] = session_record["session_token"]
                 flash("Account created successfully.")
                 if verification:
-                    flash(f"Verification token: {verification['token']}")
+                    delivery = send_identity_email(
+                        user["email"],
+                        "verification",
+                        verification["token"],
+                        context={"organization_name": (organization or {}).get("name") or "Silicore Nexus"},
+                    )
+                    flash(
+                        "Verification email queued."
+                        if delivery.get("transport") == "smtp"
+                        else f"Verification email written to outbox: {delivery.get('path')}"
+                    )
                 return redirect(url_for("index"))
             except Exception as exc:
                 flash(str(exc))
@@ -5036,7 +5063,12 @@ def login_page():
             if not token_info:
                 flash("No account with that email was found.")
             else:
-                flash(f"Verification token generated. Use token: {token_info['token']}")
+                delivery = send_identity_email(token_info["email"], "verification", token_info["token"])
+                flash(
+                    "Verification email queued."
+                    if delivery.get("transport") == "smtp"
+                    else f"Verification email written to outbox: {delivery.get('path')}"
+                )
             return redirect(url_for("login_page"))
 
         if action == "verify_email":
@@ -5049,7 +5081,12 @@ def login_page():
             if not token_info:
                 flash("No account with that email was found.")
             else:
-                flash(f"Password reset token generated. Use token: {token_info['token']}")
+                delivery = send_identity_email(token_info["email"], "password_reset", token_info["token"])
+                flash(
+                    "Password reset email queued."
+                    if delivery.get("transport") == "smtp"
+                    else f"Password reset email written to outbox: {delivery.get('path')}"
+                )
             return redirect(url_for("login_page"))
 
         if action == "reset_password":
@@ -5092,14 +5129,29 @@ def login_page():
         if auth_result.get("status") == "verification_required":
             verification = auth_result.get("verification") or {}
             flash("Email verification is required before Atlas team access is fully trusted.")
-            if verification.get("token"):
-                flash(f"Verification token: {verification['token']}")
+            if verification.get("token") and verification.get("email"):
+                delivery = send_identity_email(verification["email"], "verification", verification["token"])
+                flash(
+                    "Verification email queued."
+                    if delivery.get("transport") == "smtp"
+                    else f"Verification email written to outbox: {delivery.get('path')}"
+                )
             return redirect(url_for("login_page"))
         if auth_result.get("status") == "mfa_required":
             challenge = auth_result.get("challenge") or {}
             flash("Multi-factor verification is required.")
-            if challenge.get("token") and challenge.get("code"):
-                flash(f"MFA token: {challenge['token']} | Code: {challenge['code']}")
+            if challenge.get("code") and auth_result.get("user", {}).get("email"):
+                delivery = send_identity_email(
+                    auth_result["user"]["email"],
+                    "mfa",
+                    challenge["code"],
+                    context={"challenge_token": challenge.get("token")},
+                )
+                flash(
+                    "MFA challenge queued."
+                    if delivery.get("transport") == "smtp"
+                    else f"MFA challenge written to outbox: {delivery.get('path')}"
+                )
             return redirect(url_for("login_page"))
         session_record = auth_result.get("session") or {}
         session.clear()

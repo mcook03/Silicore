@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, open_high_confidence_findings
 from engine.db import get_connection, list_audit_events, list_review_decisions
+from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
 from engine.job_store import claim_jobs, create_job, get_job
@@ -119,6 +120,15 @@ class BackendSystemsTests(unittest.TestCase):
         invite = create_organization_invitation(org["organization_key"], f"invite-{uuid4().hex[:8]}@example.com")
         accepted = accept_organization_invitation(invite["token"], accepted_user_id=user["user_id"])
         self.assertEqual(accepted["organization_key"], org["organization_key"])
+
+    def test_email_service_writes_outbox_when_smtp_is_not_configured(self):
+        delivery = send_identity_email(
+            f"notify-{uuid4().hex[:8]}@example.com",
+            "verification",
+            "token-123",
+            context={"organization_name": "Silicore Nexus"},
+        )
+        self.assertIn(delivery["status"], {"queued", "sent"})
 
     def test_job_runner_processes_queued_signoff_packet(self):
         job = create_job("signoff_packet", payload={"context": {"board_name": "Queued Board", "release_note": "Ready after rerun."}})

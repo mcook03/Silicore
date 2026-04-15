@@ -230,8 +230,8 @@
                 "U2"
             ],
             "nets": [
-                "VOUT",
-                "GND"
+                "GND",
+                "VOUT"
             ],
             "region": null,
             "metrics": {
@@ -347,8 +347,8 @@
                 "U2"
             ],
             "nets": [
-                "VOUT",
-                "GND"
+                "GND",
+                "VOUT"
             ],
             "region": null,
             "metrics": {
@@ -366,8 +366,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VOUT",
-                    "GND"
+                    "GND",
+                    "VOUT"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1713,7 +1713,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-15T19:06:03.544588+00:00",
+        "timestamp": "2026-04-15T19:11:15.579802+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2404,8 +2404,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "VOUT",
-                    "GND"
+                    "GND",
+                    "VOUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -2494,8 +2494,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "VOUT",
-                    "GND"
+                    "GND",
+                    "VOUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -2513,8 +2513,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VOUT",
-                        "GND"
+                        "GND",
+                        "VOUT"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2735,7 +2735,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-15T19:06:03.544599+00:00",
+    "generated_at": "2026-04-15T19:11:15.579812+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
