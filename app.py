@@ -2677,21 +2677,25 @@ def compare_runs(project_id):
     if len(runs) < 2:
         flash("At least two runs are required for comparison.")
         return redirect(url_for("project_detail_page", project_id=project_id))
+    fallback_run_a = runs[-2]
+    fallback_run_b = runs[-1]
 
     if not run_a_id or not run_b_id:
-        flash("Select two runs to compare.")
-        return redirect(url_for("project_detail_page", project_id=project_id))
+        run_a = fallback_run_a
+        run_b = fallback_run_b
+        flash("No compare pair was selected, so Silicore opened the latest two linked runs.")
+    elif run_a_id == run_b_id:
+        run_a = fallback_run_a
+        run_b = fallback_run_b
+        flash("The same run was selected twice, so Silicore switched to the latest two different linked runs.")
+    else:
+        run_a = next((run for run in runs if str(run.get("run_id")) == run_a_id), None)
+        run_b = next((run for run in runs if str(run.get("run_id")) == run_b_id), None)
 
-    if run_a_id == run_b_id:
-        flash("Choose two different runs for comparison.")
-        return redirect(url_for("project_detail_page", project_id=project_id))
-
-    run_a = next((run for run in runs if str(run.get("run_id")) == run_a_id), None)
-    run_b = next((run for run in runs if str(run.get("run_id")) == run_b_id), None)
-
-    if not run_a or not run_b:
-        flash("One or both selected runs could not be found.")
-        return redirect(url_for("project_detail_page", project_id=project_id))
+        if not run_a or not run_b:
+            run_a = fallback_run_a
+            run_b = fallback_run_b
+            flash("One or both requested runs could not be found, so Silicore opened the latest valid comparison pair.")
 
     score_a = _safe_float(run_a.get("score"), 0.0)
     score_b = _safe_float(run_b.get("score"), 0.0)

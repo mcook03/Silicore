@@ -36,6 +36,14 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Engineering Domain Shift", page)
         self.assertIn("Recurring Engineering Domains", page)
 
+    def test_compare_route_recovers_when_run_ids_are_invalid(self):
+        response = self.client.get("/projects/ec66c9f0/compare?run_a=missing_a&run_b=missing_b", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Run Comparison", page)
+        self.assertIn("Project Score Trend", page)
+
     def test_history_detail_includes_export_center_and_transparency(self):
         response = self.client.get("/history/project_20260410_234649_970160")
 
