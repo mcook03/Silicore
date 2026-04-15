@@ -714,6 +714,14 @@
                     {% endfor %}
                 </select>
             </label>
+            <label>
+                Heat Map
+                <select class="board-filter-select" data-board-filter="heat">
+                    <option value="hybrid">Hybrid View</option>
+                    <option value="heatmap">Heat Map Focus</option>
+                    <option value="normal">Geometry Focus</option>
+                </select>
+            </label>
             <div class="board-toolbar-actions">
                 <button type="button" class="btn btn-secondary board-tool-btn" data-board-action="reset">Reset View</button>
                 <button type="button" class="btn btn-secondary board-tool-btn" data-board-action="clear">Clear Focus</button>
@@ -722,7 +730,25 @@
         <div class="board-view-shell" data-board-inspector>
             <div>
             <svg class="board-view-svg" viewBox="{{ result.board_view.base_view_box }}" data-base-view-box="{{ result.board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="Board viewer">
+                <defs>
+                    <filter id="board-heat-blur" x="-80%" y="-80%" width="260%" height="260%">
+                        <feGaussianBlur stdDeviation="18"></feGaussianBlur>
+                    </filter>
+                    <filter id="board-heat-soft" x="-40%" y="-40%" width="180%" height="180%">
+                        <feGaussianBlur stdDeviation="8"></feGaussianBlur>
+                    </filter>
+                </defs>
                 <rect x="6" y="6" width="{{ result.board_view.width - 12 }}" height="{{ result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                <g class="board-heat-layer board-heat-layer-blended">
+                {% for hotspot in result.board_view.hotspots %}
+                    <circle cx="{{ hotspot.x }}" cy="{{ hotspot.y }}" r="{{ hotspot.radius * 1.75 }}" class="board-heat-halo board-heat-halo-{{ hotspot.tone }} board-entity" data-components="{{ hotspot.components|join('|') }}" data-nets="{{ hotspot.nets|join('|') }}" data-kind="heatmap" filter="url(#board-heat-blur)">
+                        <title>{{ hotspot.message }}</title>
+                    </circle>
+                    <circle cx="{{ hotspot.x }}" cy="{{ hotspot.y }}" r="{{ hotspot.radius * 1.15 }}" class="board-heat-core board-heat-core-{{ hotspot.tone }} board-entity" data-components="{{ hotspot.components|join('|') }}" data-nets="{{ hotspot.nets|join('|') }}" data-kind="heatmap" filter="url(#board-heat-soft)">
+                        <title>{{ hotspot.message }}</title>
+                    </circle>
+                {% endfor %}
+                </g>
                 {% for hotspot in result.board_view.hotspots %}
                 <circle cx="{{ hotspot.x }}" cy="{{ hotspot.y }}" r="{{ hotspot.radius }}" class="board-hotspot board-hotspot-{{ hotspot.tone }} board-entity" data-components="{{ hotspot.components|join('|') }}" data-nets="{{ hotspot.nets|join('|') }}" data-kind="hotspot">
                     <title>{{ hotspot.message }}</title>
@@ -759,6 +785,21 @@
                 <span class="board-legend-chip"><span class="board-legend-swatch board-legend-via"></span>Vias</span>
                 <span class="board-legend-chip"><span class="board-legend-swatch board-legend-risk"></span>Risk Anchors</span>
                 <span class="board-legend-chip"><span class="board-legend-swatch board-legend-heat"></span>Heatmap</span>
+            </div>
+            <div class="board-heat-legend">
+                <div class="board-heat-legend-title">Heat Intensity</div>
+                <div class="board-heat-scale">
+                    <span class="board-heat-stop board-heat-stop-low"></span>
+                    <span class="board-heat-stop board-heat-stop-medium"></span>
+                    <span class="board-heat-stop board-heat-stop-high"></span>
+                    <span class="board-heat-stop board-heat-stop-critical"></span>
+                </div>
+                <div class="board-heat-scale-labels">
+                    <span>Low</span>
+                    <span>Warning</span>
+                    <span>High</span>
+                    <span>Critical</span>
+                </div>
             </div>
             </div>
 
@@ -836,6 +877,7 @@
     const entities = Array.from(inspector.querySelectorAll('.board-entity'));
     const layerSelect = document.querySelector('[data-board-filter="layer"]');
     const netSelect = document.querySelector('[data-board-filter="net"]');
+    const heatSelect = document.querySelector('[data-board-filter="heat"]');
     const focusButtons = Array.from(inspector.querySelectorAll('[data-board-focus]'));
     const resetButton = document.querySelector('[data-board-action="reset"]');
     const clearButton = document.querySelector('[data-board-action="clear"]');
@@ -904,6 +946,13 @@
 
     if (layerSelect) layerSelect.addEventListener('change', applyFilters);
     if (netSelect) netSelect.addEventListener('change', applyFilters);
+    if (heatSelect) {
+        const applyHeatMode = () => {
+            inspector.dataset.heatMode = heatSelect.value || 'hybrid';
+        };
+        heatSelect.addEventListener('change', applyHeatMode);
+        applyHeatMode();
+    }
 
     focusButtons.forEach((button) => {
         button.addEventListener('click', () => {
@@ -918,7 +967,9 @@
     if (resetButton) resetButton.addEventListener('click', () => {
         if (layerSelect) layerSelect.value = '';
         if (netSelect) netSelect.value = '';
+        if (heatSelect) heatSelect.value = 'hybrid';
         clearFocus();
+        if (heatSelect) inspector.dataset.heatMode = 'hybrid';
         applyFilters();
     });
 
@@ -1861,6 +1912,38 @@
         stroke-width: 1;
     }
 
+    .board-heat-layer {
+        pointer-events: none;
+        transition: opacity 0.22s ease;
+    }
+
+    .board-heat-halo,
+    .board-heat-core {
+        mix-blend-mode: screen;
+        opacity: 0.28;
+        transition: opacity 0.22s ease;
+    }
+
+    .board-heat-halo-low,
+    .board-heat-core-low {
+        fill: rgba(96,165,250,0.42);
+    }
+
+    .board-heat-halo-medium,
+    .board-heat-core-medium {
+        fill: rgba(250,204,21,0.44);
+    }
+
+    .board-heat-halo-high,
+    .board-heat-core-high {
+        fill: rgba(251,146,60,0.46);
+    }
+
+    .board-heat-halo-critical,
+    .board-heat-core-critical {
+        fill: rgba(248,113,113,0.48);
+    }
+
     .board-outline {
         stroke: rgba(191,219,254,0.95);
         stroke-width: 1.6;
@@ -1922,9 +2005,79 @@
         filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.42));
     }
 
+    [data-board-inspector][data-heat-mode="normal"] .board-heat-layer,
+    [data-board-inspector][data-heat-mode="normal"] .board-hotspot {
+        opacity: 0;
+    }
+
+    [data-board-inspector][data-heat-mode="heatmap"] .board-zone,
+    [data-board-inspector][data-heat-mode="heatmap"] .board-trace,
+    [data-board-inspector][data-heat-mode="heatmap"] .board-via,
+    [data-board-inspector][data-heat-mode="heatmap"] .board-component,
+    [data-board-inspector][data-heat-mode="heatmap"] .board-outline {
+        opacity: 0.18;
+    }
+
+    [data-board-inspector][data-heat-mode="heatmap"] .board-heat-layer {
+        opacity: 1;
+    }
+
+    [data-board-inspector][data-heat-mode="heatmap"] .board-heat-halo,
+    [data-board-inspector][data-heat-mode="heatmap"] .board-heat-core {
+        opacity: 0.65;
+    }
+
+    [data-board-inspector][data-heat-mode="hybrid"] .board-heat-layer {
+        opacity: 0.86;
+    }
+
     .board-focus-list {
         display: grid;
         gap: 12px;
+    }
+
+    .board-heat-legend {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .board-heat-legend-title {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+    }
+
+    .board-heat-scale {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .board-heat-stop {
+        height: 14px;
+        border-radius: 999px;
+        display: block;
+    }
+
+    .board-heat-stop-low { background: rgba(96,165,250,0.65); }
+    .board-heat-stop-medium { background: rgba(250,204,21,0.72); }
+    .board-heat-stop-high { background: rgba(251,146,60,0.8); }
+    .board-heat-stop-critical { background: rgba(248,113,113,0.82); }
+
+    .board-heat-scale-labels {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+        color: rgba(226,232,240,0.82);
+        font-size: 11px;
+        font-weight: 700;
     }
 
     .board-view-legend {
@@ -1961,7 +2114,7 @@
     .board-legend-heat { background: rgba(245,158,11,0.62); }
 
     .board-hotspot {
-        opacity: 0.22;
+        opacity: 0.26;
         stroke-width: 1.2;
         animation: boardHeatPulse 2.8s ease-in-out infinite;
     }
