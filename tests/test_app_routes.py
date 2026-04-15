@@ -37,6 +37,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Engineering Domain Shift", page)
         self.assertIn("Recurring Engineering Domains", page)
         self.assertIn("Revision Inspector", page)
+        self.assertIn("Comparison Copilot", page)
+        self.assertIn("Fix-First Readout", page)
 
     def test_compare_route_recovers_when_run_ids_are_invalid(self):
         response = self.client.get("/projects/ec66c9f0/compare?run_a=missing_a&run_b=missing_b", follow_redirects=True)
@@ -81,6 +83,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Confidence Timeline", page)
         self.assertIn("Recurring Failure Pattern", page)
+        self.assertIn("Workspace Copilot", page)
         self.assertIn("Workspace Review Architecture", page)
         self.assertIn("Review Workflow", page)
         self.assertIn("Value Metrics", page)
@@ -91,6 +94,7 @@ class AppRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         page = response.get_data(as_text=True)
+        self.assertIn("Silicore Copilot", page)
         self.assertIn("Advanced Review Lenses", page)
         self.assertIn("Traceability & Signal Posture", page)
 

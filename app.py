@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections import defaultdict
+from engine.copilot_engine import build_board_copilot_brief, build_compare_copilot_brief, build_project_copilot_brief
 from engine.insight_engine import generate_comparison_insights
 
 from flask import (
@@ -3797,6 +3798,7 @@ def single_board_page():
             "project_options": _project_options(),
             "single_chart": single_chart,
             "single_decision": single_decision,
+            "board_copilot": build_board_copilot_brief(result, single_decision),
             "board_review_layers": _build_board_review_layers(result),
             "board_value_metrics": _build_board_value_metrics(result),
             "analysis_modes": analysis_modes,
@@ -3945,6 +3947,12 @@ def project_detail_page(project_id):
             flash("You do not have access to that project.")
             return redirect(url_for("projects_page"))
 
+    workspace_chart = _build_project_workspace_chart_data(project)
+    workspace_intelligence = _build_project_workspace_intelligence(project)
+    timeline_data = _build_project_timeline_data(project)
+    workspace_review_layers = _build_workspace_review_layers(project)
+    project_value_metrics = _build_project_value_metrics(project)
+
     return _render_page(
         active_page="projects_workspace",
         page_title=project.get("name", "Project"),
@@ -3953,11 +3961,17 @@ def project_detail_page(project_id):
         template_name="project_detail.html",
         body_context={
             "project": project,
-            "workspace_chart": _build_project_workspace_chart_data(project),
-            "workspace_intelligence": _build_project_workspace_intelligence(project),
-            "timeline_data": _build_project_timeline_data(project),
-            "workspace_review_layers": _build_workspace_review_layers(project),
-            "project_value_metrics": _build_project_value_metrics(project),
+            "workspace_chart": workspace_chart,
+            "workspace_intelligence": workspace_intelligence,
+            "timeline_data": timeline_data,
+            "workspace_review_layers": workspace_review_layers,
+            "project_value_metrics": project_value_metrics,
+            "project_copilot": build_project_copilot_brief(
+                project,
+                workspace_intelligence,
+                timeline_data,
+                project_value_metrics,
+            ),
             "available_users": [user for user in list_users() if user.get("user_id") != ((project.get("owner") or {}).get("user_id"))],
         },
     )
@@ -4186,6 +4200,7 @@ def compare_runs(project_id):
             "project": project,
             "comparison": comparison,
             "comparison_visuals": comparison_visuals,
+            "compare_copilot": build_compare_copilot_brief(comparison),
         },
     )
 

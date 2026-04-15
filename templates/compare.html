@@ -12,6 +12,103 @@
 
 <section class="card">
     <div class="card-header">
+        <h2 class="section-title">Comparison Copilot</h2>
+        <p class="section-copy">
+            Revision guidance that explains what changed, where the pressure moved, and what to validate before approval.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if compare_copilot %}
+        <div class="grid grid-2">
+            <div>
+                <div class="summary-panel">
+                    <h3>Revision Call</h3>
+                    <p>{{ compare_copilot.posture }}</p>
+                    <p class="small-muted" style="margin-top:10px;">{{ compare_copilot.root_cause }}</p>
+                </div>
+
+                <div class="metric-grid" style="margin-top:16px;">
+                    <div class="metric-card">
+                        <div class="metric-label">Score Delta</div>
+                        <div class="metric-value">{% if compare_copilot.score_diff > 0 %}+{% endif %}{{ compare_copilot.score_diff|round|int }}</div>
+                        <div class="metric-sub">0-100 movement</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Risk Delta</div>
+                        <div class="metric-value">{% if compare_copilot.risk_diff > 0 %}+{% endif %}{{ compare_copilot.risk_diff }}</div>
+                        <div class="metric-sub">Net finding change</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Critical Delta</div>
+                        <div class="metric-value">{% if compare_copilot.critical_diff > 0 %}+{% endif %}{{ compare_copilot.critical_diff }}</div>
+                        <div class="metric-sub">Critical finding movement</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="summary-panel">
+                    <h3>Signoff Note</h3>
+                    <p>{{ compare_copilot.signoff_note }}</p>
+                </div>
+
+                <div class="summary-panel" style="margin-top:16px;">
+                    <h3>Ask Silicore</h3>
+                    <div class="focus-chip-row" style="margin-top:10px;">
+                        {% for prompt in compare_copilot.prompt_starters %}
+                        <span class="mini-chip mini-chip-medium">{{ prompt }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="grid grid-2" style="margin-top:16px;">
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Fix-First Readout</h2>
+                    <p class="section-copy">What this comparison says to inspect before accepting the revision.</p>
+                </div>
+                <div class="card-body">
+                    {% if compare_copilot.takeaways %}
+                    <div class="focus-list">
+                        {% for item in compare_copilot.takeaways %}
+                        <article class="focus-card">
+                            <div class="focus-top">
+                                <div class="focus-title">{{ item.title }}</div>
+                            </div>
+                            <p class="focus-copy">{{ item.why }}</p>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">No comparison takeaways were generated for this revision pair.</div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Next Move</h2>
+                    <p class="section-copy">How to use the comparison tools for the fastest engineering answer.</p>
+                </div>
+                <div class="card-body">
+                    <div class="summary-panel">
+                        <h3>Recommended Review Action</h3>
+                        <p>{{ compare_copilot.next_move }}</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+        {% else %}
+        <div class="empty-state">No comparison copilot guidance is available for this revision pair.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
         <h2 class="section-title">Revision Inspector</h2>
         <p class="section-copy">
             Filter by layer or net, then click a changed finding to focus the affected region across both revisions.

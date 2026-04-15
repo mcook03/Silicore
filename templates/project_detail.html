@@ -366,6 +366,136 @@
 
 <section class="card">
     <div class="card-header">
+        <h2 class="section-title">Workspace Copilot</h2>
+        <p class="section-copy">
+            Portfolio-level guidance for repeated issue families, release posture, and the next engineering loop.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if project_copilot %}
+        <div class="grid grid-2">
+            <div>
+                <div class="summary-panel">
+                    <h3>Workspace Call</h3>
+                    <p>{{ project_copilot.posture }}</p>
+                    <p class="small-muted" style="margin-top:10px;">{{ project_copilot.momentum }}</p>
+                </div>
+
+                <div class="big-stat-grid compact-stat-grid" style="margin-top:16px;">
+                    <div class="big-stat-card">
+                        <div class="big-stat-value">{{ project_copilot.health_score|round|int }}</div>
+                        <div class="big-stat-label">Workspace Health</div>
+                        <div class="big-stat-sub">0-100 posture</div>
+                    </div>
+                    <div class="big-stat-card">
+                        <div class="big-stat-value">{{ project_copilot.average_confidence|round|int }}</div>
+                        <div class="big-stat-label">Confidence</div>
+                        <div class="big-stat-sub">{{ project_copilot.confidence_band }} support</div>
+                    </div>
+                    <div class="big-stat-card">
+                        <div class="big-stat-value">{{ project.runs|length }}</div>
+                        <div class="big-stat-label">Linked Runs</div>
+                        <div class="big-stat-sub">{{ project_copilot.systemic_pattern }}</div>
+                    </div>
+                </div>
+
+                <div class="summary-panel" style="margin-top:16px;">
+                    <h3>Release Readiness</h3>
+                    <p>{{ project_copilot.release_readiness }}</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="summary-panel">
+                    <h3>Trend Readout</h3>
+                    <p>{{ project_copilot.trend_summary }}</p>
+                </div>
+
+                <div class="summary-panel" style="margin-top:16px;">
+                    <h3>Ask Silicore</h3>
+                    <div class="focus-chip-row" style="margin-top:10px;">
+                        {% for prompt in project_copilot.prompt_starters %}
+                        <span class="mini-chip mini-chip-medium">{{ prompt }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if project_copilot.metric_notes %}
+                <div class="summary-panel" style="margin-top:16px;">
+                    <h3>Value Readout</h3>
+                    <div class="timeline-list" style="margin-top:10px;">
+                        {% for item in project_copilot.metric_notes %}
+                        <div class="timeline-row">
+                            <div class="timeline-copy">{{ item }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <section class="grid grid-2" style="margin-top:16px;">
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Execution Plan</h2>
+                    <p class="section-copy">What the team should attack next across the workspace.</p>
+                </div>
+
+                <div class="card-body">
+                    {% if project_copilot.execution_plan %}
+                    <div class="focus-list">
+                        {% for item in project_copilot.execution_plan %}
+                        <article class="focus-card">
+                            <div class="focus-top">
+                                <div>
+                                    <div class="focus-title">{{ item.title }}</div>
+                                    <div class="small-muted">{{ item.why }}</div>
+                                </div>
+                                <div class="focus-score">{{ item.priority_score|round|int }}</div>
+                            </div>
+                            <div class="focus-chip-row">
+                                <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
+                            </div>
+                            <p class="focus-copy">{{ item.action }}</p>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">Link more runs to activate a project execution plan.</div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Team Guidance</h2>
+                    <p class="section-copy">How to run the next design-review loop as a coordinated team.</p>
+                </div>
+
+                <div class="card-body">
+                    <div class="timeline-list">
+                        {% for item in project_copilot.team_guidance %}
+                        <div class="timeline-row">
+                            <div>
+                                <div class="timeline-title">Guidance {{ loop.index }}</div>
+                                <div class="timeline-copy">{{ item }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </section>
+        {% else %}
+        <div class="empty-state">Project copilot guidance appears once the workspace has enough run history.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
         <h2 class="section-title">Workspace Review Architecture</h2>
         <p class="section-copy">
             The project workspace now surfaces domain depth, traceability posture, signal intelligence, and compare readiness as separate review layers.

@@ -105,6 +105,16 @@
 <section class="grid grid-2">
     <section class="card spotlight-shell-card">
         <div class="card-header">
+            <h2 class="section-title">Silicore Copilot</h2>
+            <p class="section-copy">Board-level decision guidance, failure-path reasoning, and validation planning will appear here after analysis.</p>
+        </div>
+        <div class="card-body">
+            <div class="empty-state">Upload a board to activate copilot guidance on what matters most, what to fix first, and how to validate the next revision.</div>
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
             <h2 class="section-title">Advanced Review Lenses</h2>
             <p class="section-copy">Signal, power, manufacturability, thermal, EMI, safety, and trust layers will appear here once a board is analyzed.</p>
         </div>
@@ -224,6 +234,130 @@
             {% endif %}
         </div>
     </section>
+</section>
+
+<section class="card spotlight-shell-card">
+    <div class="card-header">
+        <h2 class="section-title">Silicore Copilot</h2>
+        <p class="section-copy">Decision-ready guidance for what this board is telling the engineering team right now.</p>
+    </div>
+
+    <div class="card-body">
+        {% if board_copilot and result %}
+        <div class="grid grid-2">
+            <div>
+                <div class="summary-panel">
+                    <h3>Current Call</h3>
+                    <p>{{ board_copilot.posture }}</p>
+                    <p class="small-muted" style="margin-top:10px;">{{ board_copilot.mission }}</p>
+                </div>
+
+                <div class="big-stat-grid compact-stat-grid" style="margin-top:16px;">
+                    <div class="big-stat-card">
+                        <div class="big-stat-value">{{ board_copilot.score|round|int }}</div>
+                        <div class="big-stat-label">Board Posture</div>
+                        <div class="big-stat-sub">{{ board_copilot.score_posture }}</div>
+                    </div>
+                    <div class="big-stat-card">
+                        <div class="big-stat-value">{{ board_copilot.average_confidence|round|int }}</div>
+                        <div class="big-stat-label">Confidence</div>
+                        <div class="big-stat-sub">{{ board_copilot.confidence_band }} support</div>
+                    </div>
+                    <div class="big-stat-card">
+                        <div class="big-stat-value">{{ board_copilot.traceability_ready }}</div>
+                        <div class="big-stat-label">Traceability Ready</div>
+                        <div class="big-stat-sub">{{ board_copilot.traceability_ratio }} findings well-instrumented</div>
+                    </div>
+                </div>
+
+                <div class="summary-panel" style="margin-top:16px;">
+                    <h3>Likely Failure Path</h3>
+                    <p>{{ board_copilot.likely_failure_path }}</p>
+                    <p class="small-muted" style="margin-top:10px;">{{ board_copilot.release_note }}</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="summary-panel">
+                    <h3>Domain Pressure</h3>
+                    {% if board_copilot.pressure_mix %}
+                    <div class="focus-chip-row" style="margin-top:10px;">
+                        {% for item in board_copilot.pressure_mix %}
+                        <span class="mini-chip mini-chip-low">{{ item }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>No domain pressure mix is available yet.</p>
+                    {% endif %}
+                </div>
+
+                <div class="summary-panel" style="margin-top:16px;">
+                    <h3>Ask Silicore</h3>
+                    <div class="focus-chip-row" style="margin-top:10px;">
+                        {% for prompt in board_copilot.prompt_starters %}
+                        <span class="mini-chip mini-chip-medium">{{ prompt }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:16px;">
+            <section class="card spotlight-shell-card">
+                <div class="card-header">
+                    <h2 class="section-title">Fix Sequence</h2>
+                    <p class="section-copy">What to change first, and why Silicore is ranking it that way.</p>
+                </div>
+                <div class="card-body">
+                    {% if board_copilot.fix_plan %}
+                    <div class="focus-list">
+                        {% for item in board_copilot.fix_plan %}
+                        <article class="focus-card">
+                            <div class="focus-top">
+                                <div>
+                                    <div class="focus-title">{{ item.title }}</div>
+                                    <div class="small-muted">{{ item.category }}</div>
+                                </div>
+                                <div class="focus-score">{{ item.priority_score|round|int }}</div>
+                            </div>
+                            <div class="focus-chip-row">
+                                <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
+                                <span class="mini-chip mini-chip-low">{{ item.fix_priority }}</span>
+                            </div>
+                            <p class="focus-copy">{{ item.why }}</p>
+                            <p class="focus-copy"><strong>Next move:</strong> {{ item.action }}</p>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">Run a board analysis to activate fix sequencing.</div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="card spotlight-shell-card">
+                <div class="card-header">
+                    <h2 class="section-title">Validation Plan</h2>
+                    <p class="section-copy">What to confirm after the next board revision lands.</p>
+                </div>
+                <div class="card-body">
+                    <div class="timeline-list">
+                        {% for item in board_copilot.validation_plan %}
+                        <div class="timeline-row">
+                            <div>
+                                <div class="timeline-title">Validation Step {{ loop.index }}</div>
+                                <div class="timeline-copy">{{ item }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+        {% else %}
+        <div class="empty-state">Run a board analysis to activate board-level copilot guidance.</div>
+        {% endif %}
+    </div>
 </section>
 
 <section class="grid grid-2">
