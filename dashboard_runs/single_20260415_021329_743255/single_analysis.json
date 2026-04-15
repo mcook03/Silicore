@@ -1,0 +1,2459 @@
+{
+    "filename": "power_board_bad.kicad_pcb",
+    "file_path": "dashboard_uploads/power_board_bad.kicad_pcb",
+    "score": 1.8,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Critical or debug-oriented net CTRL has no visible test point",
+            "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+            "components": [
+                "U2"
+            ],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "has_testpoint": false
+            },
+            "confidence": 0.72,
+            "short_title": "Missing critical-net test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+            "suggested_actions": [],
+            "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+            "threshold_label": "Expected at least one visible access point on critical nets",
+            "observed_label": "Observed visible access point: none",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72
+            },
+            "fix_suggestion": {
+                "fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U2 (mcu) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": null,
+                "threshold": 4.0
+            },
+            "confidence": 0.9,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+            "threshold_label": "Maximum decoupling distance 4.00 units",
+            "observed_label": "Observed nearest capacitor distance: none found",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "emi_emc",
+            "category": "emi_emc",
+            "severity": "medium",
+            "message": "Switching or power net VIN forms a long exposed loop path",
+            "recommendation": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 85.0,
+                "max_loop_length": 45.0,
+                "via_count": 7
+            },
+            "confidence": 0.74,
+            "short_title": "Large switching loop area",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "Large current loops increase magnetic field radiation and make noisy power stages harder to contain.",
+            "suggested_actions": [],
+            "trigger_condition": "A switching or power-oriented net exceeded the configured loop-length threshold.",
+            "threshold_label": "Maximum switching loop length 45.00 units",
+            "observed_label": "Observed routed length 85.00 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74
+            },
+            "fix_suggestion": {
+                "fix": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "manufacturability",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net GND uses a trace width below the fab-oriented limit (0.12)",
+            "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_width": 0.12,
+                "threshold": 0.15
+            },
+            "confidence": 0.9,
+            "short_title": "Trace width below fab target",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+            "suggested_actions": [],
+            "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+            "threshold_label": "Minimum manufacturable width 0.15",
+            "observed_label": "Observed trace width 0.12",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "manufacturability",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CTRL uses a trace width below the fab-oriented limit (0.10)",
+            "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+            "components": [],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_width": 0.1,
+                "threshold": 0.15
+            },
+            "confidence": 0.9,
+            "short_title": "Trace width below fab target",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+            "suggested_actions": [],
+            "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+            "threshold_label": "Minimum manufacturable width 0.15",
+            "observed_label": "Observed trace width 0.10",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_distribution",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+            "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+            "components": [
+                "U2",
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "distance": 85.0,
+                "threshold": 20.0
+            },
+            "confidence": 0.88,
+            "short_title": "Weak power distribution path",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Load-to-regulator distance exceeded the configured power-distribution threshold.",
+            "threshold_label": "Maximum regulator distance 20.00 units",
+            "observed_label": "Observed regulator distance 85.00 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.88
+            },
+            "fix_suggestion": {
+                "fix": "Move the regulator closer to the load or reduce the power path length from its current distance of 85.0. Also consider wider copper or a lower-impedance distribution path.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "power_path_realism",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "High-current net VIN uses a long routed path",
+            "recommendation": "Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 85.0,
+                "threshold": 40.0
+            },
+            "confidence": 0.76,
+            "short_title": "Long high-current path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "Longer high-current routes add drop, loop inductance, and dynamic noise in power delivery paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-current net exceeded the configured maximum routed-length threshold.",
+            "threshold_label": "Maximum high-current path length 40.00 units",
+            "observed_label": "Observed routed length 85.00 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_path_realism",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "High-current net VIN uses many vias (7)",
+            "recommendation": "Reduce via count or use stronger parallel current return paths on this power route.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "via_count": 7,
+                "threshold": 4
+            },
+            "confidence": 0.72,
+            "short_title": "Power path uses many vias",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "Excessive vias in high-current paths can increase resistance, heat, and transient impedance.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-current net exceeded the configured via-count limit.",
+            "threshold_label": "Maximum high-current vias 4",
+            "observed_label": "Observed high-current vias 7",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.72
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_path_realism",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+            "recommendation": "Move input or output capacitors closer to the converter power pins so current loops stay compact.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "GND",
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "nearest_shared_cap_distance": null,
+                "threshold": 7.0
+            },
+            "confidence": 0.75,
+            "short_title": "Converter capacitor placement is weak",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "Converters rely on tight capacitor placement to keep di/dt loops small and power noise under control.",
+            "suggested_actions": [],
+            "trigger_condition": "A regulator-like component had no nearby shared capacitor inside the configured converter-cap radius.",
+            "threshold_label": "Maximum shared capacitor radius 7.00 units",
+            "observed_label": "Observed shared capacitor distance: none",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN has excessive routed length (85.00 units)",
+            "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 85.0,
+                "threshold": 50.0
+            },
+            "confidence": 0.86,
+            "short_title": "Excessive power path length",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Power-net routed length exceeded the configured maximum length threshold.",
+            "threshold_label": "Maximum trace length 50.00 units",
+            "observed_label": "Observed trace length 85.00 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.86
+            },
+            "fix_suggestion": {
+                "fix": "Shorten the power route and improve placement to reduce the current routed length of 85.0.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN uses a narrow trace width (0.15)",
+            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_width": 0.15,
+                "minimum_expected": 0.5
+            },
+            "confidence": 0.9,
+            "short_title": "Power trace too narrow",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+            "threshold_label": "Minimum trace width 0.50",
+            "observed_label": "Observed trace width 0.15",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the power trace width from 0.15 to at least 0.5 or more, depending on current demand.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "Power net VIN uses many vias (7) which may increase impedance",
+            "recommendation": "Reduce unnecessary via transitions on critical power nets where possible.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "via_count": 7,
+                "threshold": 5
+            },
+            "confidence": 0.78,
+            "short_title": "Too many power vias",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Power-net via count exceeded the configured maximum via threshold.",
+            "threshold_label": "Maximum via count 5",
+            "observed_label": "Observed via count 7",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Reduce via transitions on this power net. It currently uses 7 vias versus a threshold of 5.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "reliability",
+            "category": "reliability",
+            "severity": "medium",
+            "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+            "recommendation": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_via_count": 0,
+                "threshold": 2,
+                "board_layers": 2
+            },
+            "confidence": 0.82,
+            "short_title": "Sparse ground stitching",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "reliability",
+            "why_it_matters": "Weak ground stitching can reduce return-path quality and board robustness outside ideal lab conditions.",
+            "suggested_actions": [],
+            "trigger_condition": "Ground via count fell below the configured minimum stitching threshold for a multi-layer board.",
+            "threshold_label": "Minimum ground vias 2",
+            "observed_label": "Observed ground vias 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "reliability",
+            "category": "reliability",
+            "severity": "medium",
+            "message": "Ground net GND has limited visible connectivity (2 connections)",
+            "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_connections": 2,
+                "threshold": 4
+            },
+            "confidence": 0.74,
+            "short_title": "Weak visible ground coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "reliability",
+            "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+            "suggested_actions": [],
+            "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+            "threshold_label": "Minimum ground connections 4",
+            "observed_label": "Observed ground connections 2",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74
+            },
+            "fix_suggestion": {
+                "fix": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "thermal_management",
+            "category": "thermal",
+            "severity": "medium",
+            "message": "U1 appears to have limited nearby thermal via support (0)",
+            "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "GND",
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "nearby_thermal_vias": 0,
+                "threshold": 1,
+                "radius": 4.0
+            },
+            "confidence": 0.8,
+            "short_title": "Limited thermal-via support",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "thermal",
+            "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+            "suggested_actions": [],
+            "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+            "threshold_label": "Minimum nearby thermal vias 1",
+            "observed_label": "Observed nearby thermal vias 0",
+            "explanation": {
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "thermal_management",
+            "category": "thermal",
+            "severity": "medium",
+            "message": "U1 connects to relatively narrow copper for heat spreading (0.15)",
+            "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "GND",
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "max_connected_width": 0.15,
+                "threshold": 0.5
+            },
+            "confidence": 0.76,
+            "short_title": "Weak local heat spreading",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "thermal",
+            "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+            "suggested_actions": [],
+            "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+            "threshold_label": "Minimum heat-spread width 0.50",
+            "observed_label": "Observed heat-spread width 0.15",
+            "explanation": {
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CTRL contains a very narrow trace (0.10)",
+            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+            "components": [],
+            "nets": [
+                "CTRL"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.1,
+                "threshold": 0.15
+            },
+            "confidence": 0.83,
+            "short_title": "Very narrow trace",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+            "suggested_actions": [
+                "Increase trace width if routing space allows.",
+                "Check board-house minimum trace capability.",
+                "Review whether this narrow section is intentional."
+            ],
+            "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+            "threshold_label": "Minimum general trace width 0.15",
+            "observed_label": "Observed trace width 0.10",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.83
+            },
+            "fix_suggestion": {
+                "fix": "Increase the narrow trace width from 0.1 to at least 0.15, subject to board-space and fabrication constraints.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 10.0,
+        "total_penalty": 8.2,
+        "severity_totals": {
+            "medium": 6.4,
+            "high": 1.8
+        },
+        "category_totals": {
+            "assembly_testability": 1.2,
+            "power_integrity": 3.8,
+            "emi_emc": 0.4,
+            "manufacturing": 1.2,
+            "reliability": 0.8,
+            "thermal": 0.8
+        },
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Critical or debug-oriented net CTRL has no visible test point",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72,
+                "suggested_fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "U2 (mcu) has no nearby decoupling capacitor",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9,
+                "suggested_fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_emc",
+                "penalty": 0.4,
+                "message": "Switching or power net VIN forms a long exposed loop path",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74,
+                "suggested_fix": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "penalty": 0.4,
+                "message": "Net GND uses a trace width below the fab-oriented limit (0.12)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.9,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "penalty": 0.4,
+                "message": "Net CTRL uses a trace width below the fab-oriented limit (0.10)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.9,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.88,
+                "suggested_fix": "Move the regulator closer to the load or reduce the power path length from its current distance of 85.0. Also consider wider copper or a lower-impedance distribution path.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "High-current net VIN uses a long routed path",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.76,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "High-current net VIN uses many vias (7)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.72,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.75,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Power net VIN has excessive routed length (85.00 units)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.86,
+                "suggested_fix": "Shorten the power route and improve placement to reduce the current routed length of 85.0.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Power net VIN uses a narrow trace width (0.15)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the power trace width from 0.15 to at least 0.5 or more, depending on current demand.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "Power net VIN uses many vias (7) which may increase impedance",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.78,
+                "suggested_fix": "Reduce via transitions on this power net. It currently uses 7 vias versus a threshold of 5.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "reliability",
+                "penalty": 0.4,
+                "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82,
+                "suggested_fix": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "reliability",
+                "penalty": 0.4,
+                "message": "Ground net GND has limited visible connectivity (2 connections)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74,
+                "suggested_fix": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "thermal",
+                "penalty": 0.4,
+                "message": "U1 appears to have limited nearby thermal via support (0)",
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8,
+                "suggested_fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "thermal",
+                "penalty": 0.4,
+                "message": "U1 connects to relatively narrow copper for heat spreading (0.15)",
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.76,
+                "suggested_fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "penalty": 0.4,
+                "message": "Net CTRL contains a very narrow trace (0.10)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.83,
+                "suggested_fix": "Increase the narrow trace width from 0.1 to at least 0.15, subject to board-space and fabrication constraints.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "power_board_bad.kicad_pcb",
+        "component_count": 2,
+        "net_count": 3,
+        "sample_components": [
+            "U1",
+            "U2"
+        ],
+        "risk_count": 19,
+        "severity_counts": {
+            "medium": 16,
+            "high": 3
+        },
+        "category_counts": {
+            "assembly_testability": 3,
+            "power_integrity": 8,
+            "emi_emc": 1,
+            "manufacturing": 3,
+            "reliability": 2,
+            "thermal": 2
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "power_board_bad.kicad_pcb",
+        "layers": [
+            "B.Cu",
+            "F.Cu"
+        ],
+        "board_bounds": {
+            "min_x": 10.0,
+            "max_x": 97.0,
+            "min_y": 10.0,
+            "max_y": 14.0,
+            "width": 87.0,
+            "height": 4.0
+        },
+        "board_width": 87.0,
+        "board_height": 4.0,
+        "source_format": "kicad_pcb",
+        "components": [
+            {
+                "ref": "U1",
+                "value": "regulator",
+                "x": 10.0,
+                "y": 10.0,
+                "layer": "F.Cu",
+                "type": "regulator",
+                "footprint": "Regulator",
+                "rotation": 0.0,
+                "net_name": "VIN",
+                "net_names": [
+                    "VIN",
+                    "GND"
+                ],
+                "connected_nets": [
+                    "VIN",
+                    "GND"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "VIN",
+                        "x": 10.0,
+                        "y": 10.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    },
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "GND",
+                        "x": 12.0,
+                        "y": 10.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    }
+                ]
+            },
+            {
+                "ref": "U2",
+                "value": "mcu",
+                "x": 95.0,
+                "y": 10.0,
+                "layer": "F.Cu",
+                "type": "ic",
+                "footprint": "MCU",
+                "rotation": 0.0,
+                "net_name": "VIN",
+                "net_names": [
+                    "VIN",
+                    "GND",
+                    "CTRL"
+                ],
+                "connected_nets": [
+                    "VIN",
+                    "GND",
+                    "CTRL"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "U2",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "VIN",
+                        "x": 95.0,
+                        "y": 10.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "component_ref": "U2",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "GND",
+                        "x": 97.0,
+                        "y": 10.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "component_ref": "U2",
+                        "pad_name": "3",
+                        "pad_number": "3",
+                        "net_name": "CTRL",
+                        "x": 96.0,
+                        "y": 12.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    }
+                ]
+            }
+        ],
+        "nets": {
+            "VIN": {
+                "name": "VIN",
+                "connections": [
+                    [
+                        "U1",
+                        "1"
+                    ],
+                    [
+                        "U2",
+                        "1"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "VIN",
+                        "x1": 10.0,
+                        "y1": 10.0,
+                        "x2": 40.0,
+                        "y2": 10.0,
+                        "width": 0.15,
+                        "layer": "F.Cu",
+                        "length": 30.0
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x1": 40.0,
+                        "y1": 10.0,
+                        "x2": 70.0,
+                        "y2": 10.0,
+                        "width": 0.15,
+                        "layer": "F.Cu",
+                        "length": 30.0
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x1": 70.0,
+                        "y1": 10.0,
+                        "x2": 95.0,
+                        "y2": 10.0,
+                        "width": 0.15,
+                        "layer": "F.Cu",
+                        "length": 25.0
+                    }
+                ],
+                "vias": [
+                    {
+                        "net_name": "VIN",
+                        "x": 25.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x": 35.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x": 45.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x": 55.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x": 65.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x": 75.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "VIN",
+                        "x": 85.0,
+                        "y": 10.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    }
+                ],
+                "total_trace_length": 85.0,
+                "min_trace_width": 0.15,
+                "max_trace_width": 0.15,
+                "via_count": 7,
+                "layer_count": 2
+            },
+            "GND": {
+                "name": "GND",
+                "connections": [
+                    [
+                        "U1",
+                        "2"
+                    ],
+                    [
+                        "U2",
+                        "2"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "GND",
+                        "x1": 10.0,
+                        "y1": 12.0,
+                        "x2": 95.0,
+                        "y2": 12.0,
+                        "width": 0.12,
+                        "layer": "F.Cu",
+                        "length": 85.0
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 85.0,
+                "min_trace_width": 0.12,
+                "max_trace_width": 0.12,
+                "via_count": 0,
+                "layer_count": 1
+            },
+            "CTRL": {
+                "name": "CTRL",
+                "connections": [
+                    [
+                        "U2",
+                        "3"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "CTRL",
+                        "x1": 95.0,
+                        "y1": 12.0,
+                        "x2": 96.0,
+                        "y2": 14.0,
+                        "width": 0.1,
+                        "layer": "F.Cu",
+                        "length": 2.2361
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 2.2361,
+                "min_trace_width": 0.1,
+                "max_trace_width": 0.1,
+                "via_count": 0,
+                "layer_count": 1
+            }
+        },
+        "traces": [
+            {
+                "net_name": "VIN",
+                "x1": 10.0,
+                "y1": 10.0,
+                "x2": 40.0,
+                "y2": 10.0,
+                "width": 0.15,
+                "layer": "F.Cu",
+                "length": 30.0
+            },
+            {
+                "net_name": "VIN",
+                "x1": 40.0,
+                "y1": 10.0,
+                "x2": 70.0,
+                "y2": 10.0,
+                "width": 0.15,
+                "layer": "F.Cu",
+                "length": 30.0
+            },
+            {
+                "net_name": "VIN",
+                "x1": 70.0,
+                "y1": 10.0,
+                "x2": 95.0,
+                "y2": 10.0,
+                "width": 0.15,
+                "layer": "F.Cu",
+                "length": 25.0
+            },
+            {
+                "net_name": "GND",
+                "x1": 10.0,
+                "y1": 12.0,
+                "x2": 95.0,
+                "y2": 12.0,
+                "width": 0.12,
+                "layer": "F.Cu",
+                "length": 85.0
+            },
+            {
+                "net_name": "CTRL",
+                "x1": 95.0,
+                "y1": 12.0,
+                "x2": 96.0,
+                "y2": 14.0,
+                "width": 0.1,
+                "layer": "F.Cu",
+                "length": 2.2361
+            }
+        ],
+        "vias": [
+            {
+                "net_name": "VIN",
+                "x": 25.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "VIN",
+                "x": 35.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "VIN",
+                "x": 45.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "VIN",
+                "x": 55.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "VIN",
+                "x": 65.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "VIN",
+                "x": 75.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "VIN",
+                "x": 85.0,
+                "y": 10.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            }
+        ],
+        "zones": [],
+        "outline_segments": []
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "power_board_bad.kicad_pcb",
+        "timestamp": "2026-04-15T07:13:29.748957+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Critical or debug-oriented net CTRL has no visible test point",
+                "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "components": [
+                    "U2"
+                ],
+                "nets": [
+                    "CTRL"
+                ],
+                "region": null,
+                "metrics": {
+                    "has_testpoint": false
+                },
+                "confidence": 0.72,
+                "short_title": "Missing critical-net test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+                "suggested_actions": [],
+                "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+                "threshold_label": "Expected at least one visible access point on critical nets",
+                "observed_label": "Observed visible access point: none"
+            },
+            {
+                "rule_id": "decoupling",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U2 (mcu) has no nearby decoupling capacitor",
+                "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                "components": [
+                    "U2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "nearest_cap_distance": null,
+                    "threshold": 4.0
+                },
+                "confidence": 0.9,
+                "short_title": "Missing nearby decoupling",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+                "threshold_label": "Maximum decoupling distance 4.00 units",
+                "observed_label": "Observed nearest capacitor distance: none found"
+            },
+            {
+                "rule_id": "emi_emc",
+                "category": "emi_emc",
+                "severity": "medium",
+                "message": "Switching or power net VIN forms a long exposed loop path",
+                "recommendation": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+                "components": [
+                    "U1",
+                    "U2"
+                ],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 85.0,
+                    "max_loop_length": 45.0,
+                    "via_count": 7
+                },
+                "confidence": 0.74,
+                "short_title": "Large switching loop area",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "Large current loops increase magnetic field radiation and make noisy power stages harder to contain.",
+                "suggested_actions": [],
+                "trigger_condition": "A switching or power-oriented net exceeded the configured loop-length threshold.",
+                "threshold_label": "Maximum switching loop length 45.00 units",
+                "observed_label": "Observed routed length 85.00 units"
+            },
+            {
+                "rule_id": "manufacturability",
+                "category": "manufacturing",
+                "severity": "medium",
+                "message": "Net GND uses a trace width below the fab-oriented limit (0.12)",
+                "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+                "components": [],
+                "nets": [
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_width": 0.12,
+                    "threshold": 0.15
+                },
+                "confidence": 0.9,
+                "short_title": "Trace width below fab target",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+                "suggested_actions": [],
+                "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+                "threshold_label": "Minimum manufacturable width 0.15",
+                "observed_label": "Observed trace width 0.12"
+            },
+            {
+                "rule_id": "manufacturability",
+                "category": "manufacturing",
+                "severity": "medium",
+                "message": "Net CTRL uses a trace width below the fab-oriented limit (0.10)",
+                "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+                "components": [],
+                "nets": [
+                    "CTRL"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_width": 0.1,
+                    "threshold": 0.15
+                },
+                "confidence": 0.9,
+                "short_title": "Trace width below fab target",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+                "suggested_actions": [],
+                "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+                "threshold_label": "Minimum manufacturable width 0.15",
+                "observed_label": "Observed trace width 0.10"
+            },
+            {
+                "rule_id": "power_distribution",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+                "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+                "components": [
+                    "U2",
+                    "U1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "distance": 85.0,
+                    "threshold": 20.0
+                },
+                "confidence": 0.88,
+                "short_title": "Weak power distribution path",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Load-to-regulator distance exceeded the configured power-distribution threshold.",
+                "threshold_label": "Maximum regulator distance 20.00 units",
+                "observed_label": "Observed regulator distance 85.00 units"
+            },
+            {
+                "rule_id": "power_path_realism",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "High-current net VIN uses a long routed path",
+                "recommendation": "Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.",
+                "components": [
+                    "U1",
+                    "U2"
+                ],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 85.0,
+                    "threshold": 40.0
+                },
+                "confidence": 0.76,
+                "short_title": "Long high-current path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "Longer high-current routes add drop, loop inductance, and dynamic noise in power delivery paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-current net exceeded the configured maximum routed-length threshold.",
+                "threshold_label": "Maximum high-current path length 40.00 units",
+                "observed_label": "Observed routed length 85.00 units"
+            },
+            {
+                "rule_id": "power_path_realism",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "High-current net VIN uses many vias (7)",
+                "recommendation": "Reduce via count or use stronger parallel current return paths on this power route.",
+                "components": [
+                    "U1",
+                    "U2"
+                ],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "via_count": 7,
+                    "threshold": 4
+                },
+                "confidence": 0.72,
+                "short_title": "Power path uses many vias",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "Excessive vias in high-current paths can increase resistance, heat, and transient impedance.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-current net exceeded the configured via-count limit.",
+                "threshold_label": "Maximum high-current vias 4",
+                "observed_label": "Observed high-current vias 7"
+            },
+            {
+                "rule_id": "power_path_realism",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+                "recommendation": "Move input or output capacitors closer to the converter power pins so current loops stay compact.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "GND",
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "nearest_shared_cap_distance": null,
+                    "threshold": 7.0
+                },
+                "confidence": 0.75,
+                "short_title": "Converter capacitor placement is weak",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "Converters rely on tight capacitor placement to keep di/dt loops small and power noise under control.",
+                "suggested_actions": [],
+                "trigger_condition": "A regulator-like component had no nearby shared capacitor inside the configured converter-cap radius.",
+                "threshold_label": "Maximum shared capacitor radius 7.00 units",
+                "observed_label": "Observed shared capacitor distance: none"
+            },
+            {
+                "rule_id": "power_rail",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Power net VIN has excessive routed length (85.00 units)",
+                "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 85.0,
+                    "threshold": 50.0
+                },
+                "confidence": 0.86,
+                "short_title": "Excessive power path length",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Power-net routed length exceeded the configured maximum length threshold.",
+                "threshold_label": "Maximum trace length 50.00 units",
+                "observed_label": "Observed trace length 85.00 units"
+            },
+            {
+                "rule_id": "power_rail",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Power net VIN uses a narrow trace width (0.15)",
+                "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_width": 0.15,
+                    "minimum_expected": 0.5
+                },
+                "confidence": 0.9,
+                "short_title": "Power trace too narrow",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+                "threshold_label": "Minimum trace width 0.50",
+                "observed_label": "Observed trace width 0.15"
+            },
+            {
+                "rule_id": "power_rail",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "Power net VIN uses many vias (7) which may increase impedance",
+                "recommendation": "Reduce unnecessary via transitions on critical power nets where possible.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "via_count": 7,
+                    "threshold": 5
+                },
+                "confidence": 0.78,
+                "short_title": "Too many power vias",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Power-net via count exceeded the configured maximum via threshold.",
+                "threshold_label": "Maximum via count 5",
+                "observed_label": "Observed via count 7"
+            },
+            {
+                "rule_id": "reliability",
+                "category": "reliability",
+                "severity": "medium",
+                "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+                "recommendation": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+                "components": [],
+                "nets": [
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "ground_via_count": 0,
+                    "threshold": 2,
+                    "board_layers": 2
+                },
+                "confidence": 0.82,
+                "short_title": "Sparse ground stitching",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "reliability",
+                "why_it_matters": "Weak ground stitching can reduce return-path quality and board robustness outside ideal lab conditions.",
+                "suggested_actions": [],
+                "trigger_condition": "Ground via count fell below the configured minimum stitching threshold for a multi-layer board.",
+                "threshold_label": "Minimum ground vias 2",
+                "observed_label": "Observed ground vias 0"
+            },
+            {
+                "rule_id": "reliability",
+                "category": "reliability",
+                "severity": "medium",
+                "message": "Ground net GND has limited visible connectivity (2 connections)",
+                "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "components": [],
+                "nets": [
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "ground_connections": 2,
+                    "threshold": 4
+                },
+                "confidence": 0.74,
+                "short_title": "Weak visible ground coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "reliability",
+                "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+                "suggested_actions": [],
+                "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+                "threshold_label": "Minimum ground connections 4",
+                "observed_label": "Observed ground connections 2"
+            },
+            {
+                "rule_id": "thermal_management",
+                "category": "thermal",
+                "severity": "medium",
+                "message": "U1 appears to have limited nearby thermal via support (0)",
+                "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "GND",
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "nearby_thermal_vias": 0,
+                    "threshold": 1,
+                    "radius": 4.0
+                },
+                "confidence": 0.8,
+                "short_title": "Limited thermal-via support",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "thermal",
+                "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+                "suggested_actions": [],
+                "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+                "threshold_label": "Minimum nearby thermal vias 1",
+                "observed_label": "Observed nearby thermal vias 0"
+            },
+            {
+                "rule_id": "thermal_management",
+                "category": "thermal",
+                "severity": "medium",
+                "message": "U1 connects to relatively narrow copper for heat spreading (0.15)",
+                "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "GND",
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "max_connected_width": 0.15,
+                    "threshold": 0.5
+                },
+                "confidence": 0.76,
+                "short_title": "Weak local heat spreading",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "thermal",
+                "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+                "suggested_actions": [],
+                "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+                "threshold_label": "Minimum heat-spread width 0.50",
+                "observed_label": "Observed heat-spread width 0.15"
+            },
+            {
+                "rule_id": "trace_quality",
+                "category": "manufacturing",
+                "severity": "medium",
+                "message": "Net CTRL contains a very narrow trace (0.10)",
+                "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+                "components": [],
+                "nets": [
+                    "CTRL"
+                ],
+                "region": null,
+                "metrics": {
+                    "min_trace_width": 0.1,
+                    "threshold": 0.15
+                },
+                "confidence": 0.83,
+                "short_title": "Very narrow trace",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "layout",
+                "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+                "suggested_actions": [
+                    "Increase trace width if routing space allows.",
+                    "Check board-house minimum trace capability.",
+                    "Review whether this narrow section is intentional."
+                ],
+                "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+                "threshold_label": "Minimum general trace width 0.15",
+                "observed_label": "Observed trace width 0.10"
+            }
+        ],
+        "score": 1.8,
+        "total_penalty": 8.2
+    },
+    "generated_at": "2026-04-15T07:13:29.749016+00:00",
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 85.00 units away. The current design snapshot includes 2 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "message": "U2 may have poor power delivery because nearest regulator U1 is 85.00 units away",
+                "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing."
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "message": "Power net VIN has excessive routed length (85.00 units)",
+                "recommendation": "Reduce power path length or improve distribution topology to lower impedance and voltage drop risk."
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "message": "Power net VIN uses a narrow trace width (0.15)",
+                "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop."
+            }
+        ]
+    }
+}

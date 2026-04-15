@@ -102,6 +102,16 @@
 </section>
 
 {% if result %}
+<details class="card fold-card">
+    <summary class="fold-summary">
+        <div>
+            <div class="fold-kicker">Run Detail</div>
+            <div class="fold-title">Analysis context and score breakdown</div>
+        </div>
+        <span class="fold-indicator">Expand</span>
+    </summary>
+
+    <div class="card-body fold-body">
 <section class="grid grid-2">
     <section class="card loud-card">
         <div class="card-header">
@@ -201,7 +211,19 @@
         </div>
     </section>
 </section>
+    </div>
+</details>
 
+<details class="card fold-card">
+    <summary class="fold-summary">
+        <div>
+            <div class="fold-kicker">Category Insight</div>
+            <div class="fold-title">Category distribution and penalty pressure</div>
+        </div>
+        <span class="fold-indicator">Expand</span>
+    </summary>
+
+    <div class="card-body fold-body">
 <section class="grid grid-2">
     <section class="card spotlight-shell-card">
         <div class="card-header">
@@ -297,6 +319,8 @@
         </div>
     </section>
 </section>
+    </div>
+</details>
 
 <section class="grid grid-2">
     <section class="card spotlight-shell-card">
@@ -461,13 +485,16 @@
     </section>
 </section>
 
-<section class="card spotlight-shell-card">
-    <div class="card-header">
-            <h2 class="section-title">Priority Signal</h2>
-        <p class="section-copy">Live board-analysis mix across score pressure, category concentration, and issue severity.</p>
-    </div>
+<details class="card fold-card">
+    <summary class="fold-summary">
+        <div>
+            <div class="fold-kicker">Signal Mix</div>
+            <div class="fold-title">Priority signal, confidence mix, and domain coverage</div>
+        </div>
+        <span class="fold-indicator">Expand</span>
+    </summary>
 
-    <div class="card-body">
+    <div class="card-body fold-body">
         <div class="grid grid-3">
             <div class="visual-chart-card">
                 <div class="visual-chart-header">
@@ -561,7 +588,7 @@
             </div>
         </div>
     </div>
-</section>
+</details>
 
 {% if result and result.board_view %}
 <section class="card">
@@ -802,13 +829,16 @@
 })();
 </script>
 
-<section class="card boards-card">
-    <div class="card-header">
-        <h2 class="section-title">Findings by Category</h2>
-        <p class="section-copy">Grouped engineering findings with severity, metrics, and recommendations.</p>
-    </div>
+<details class="card fold-card">
+    <summary class="fold-summary">
+        <div>
+            <div class="fold-kicker">Full Findings</div>
+            <div class="fold-title">Grouped findings, evidence, and detailed recommendations</div>
+        </div>
+        <span class="fold-indicator">Expand</span>
+    </summary>
 
-    <div class="card-body">
+    <div class="card-body fold-body">
         {% if result.grouped_risks %}
         <div class="risk-section-stack">
             {% for section in result.grouped_risks %}
@@ -901,10 +931,91 @@
         <div class="empty-state">No grouped findings available yet.</div>
         {% endif %}
     </div>
-</section>
+</details>
 {% endif %}
 
 <style>
+    .fold-card {
+        overflow: hidden;
+    }
+
+    .fold-summary {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .fold-summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .fold-kicker {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .fold-title {
+        color: #f8fbff;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .fold-indicator {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(96,165,250,0.18);
+        background: rgba(59,130,246,0.10);
+        flex-shrink: 0;
+    }
+
+    .fold-card[open] .fold-indicator {
+        content: "Collapse";
+    }
+
+    .fold-card[open] .fold-indicator::after {
+        content: "Collapse";
+    }
+
+    .fold-card:not([open]) .fold-indicator::after {
+        content: "Expand";
+    }
+
+    .fold-card .fold-indicator {
+        color: transparent;
+        position: relative;
+    }
+
+    .fold-card .fold-indicator::after {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #dbeafe;
+    }
+
+    .fold-body {
+        padding-top: 0;
+    }
+
+    .fold-inner-card {
+        background: rgba(255,255,255,0.02);
+    }
+
     .review-hero-card {
         position: relative;
         overflow: hidden;
