@@ -1021,6 +1021,18 @@
         box-shadow: 0 24px 60px rgba(0,0,0,0.28);
     }
 
+    .review-hero-card::after {
+        content: "";
+        position: absolute;
+        inset: auto -10% -40% auto;
+        width: 240px;
+        height: 240px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(84,178,255,0.12), transparent 70%);
+        animation: softFloat 7s ease-in-out infinite;
+        pointer-events: none;
+    }
+
     .review-kicker {
         color: #bfdbfe;
         font-size: 11px;
@@ -1072,6 +1084,7 @@
         top: 8%;
         right: 10%;
         background: rgba(59,130,246,0.20);
+        animation: softFloat 8s ease-in-out infinite;
     }
 
     .hero-orb-b {
@@ -1080,6 +1093,7 @@
         bottom: 12%;
         left: 12%;
         background: rgba(147,197,253,0.12);
+        animation: softFloat 10s ease-in-out infinite reverse;
     }
 
     .hero-panel {
@@ -1094,6 +1108,7 @@
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
             rgba(255,255,255,0.03);
         backdrop-filter: blur(14px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .hero-panel-label {
@@ -1541,6 +1556,16 @@
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
             rgba(16, 28, 46, 0.66);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .compact-action-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(125,211,252,0.24);
+        background:
+            radial-gradient(circle at top right, rgba(125,211,252,0.14), transparent 34%),
+            linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.024)),
+            rgba(18, 30, 48, 0.72);
     }
 
     .compact-action-top {
@@ -1819,11 +1844,18 @@
         text-align: left;
         cursor: pointer;
         color: inherit;
+        transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
 
     .board-focus-button.is-active {
         border-color: rgba(125,211,252,0.36);
         background: rgba(59,130,246,0.08);
+        animation: gentlePulse 1.8s ease-in-out infinite;
+    }
+
+    .board-focus-button:hover {
+        transform: translateY(-1px);
+        border-color: rgba(125,211,252,0.2);
     }
 
     .board-stat-grid {

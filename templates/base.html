@@ -97,6 +97,22 @@
             opacity: 0.55;
         }
 
+        @keyframes softFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes shimmerSweep {
+            0% { transform: translateX(-120%); opacity: 0; }
+            30% { opacity: 0.35; }
+            100% { transform: translateX(120%); opacity: 0; }
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(84, 178, 255, 0.12); }
+            50% { box-shadow: 0 0 0 8px rgba(84, 178, 255, 0); }
+        }
+
         a {
             color: inherit;
             text-decoration: none;
@@ -713,14 +729,28 @@
         }
 
         .btn-primary {
+            position: relative;
+            overflow: hidden;
             color: #f8fbff;
             background: linear-gradient(135deg, var(--teal), var(--blue) 54%, var(--blue-2));
             box-shadow: 0 14px 28px rgba(47, 137, 255, 0.22);
         }
 
+        .btn-primary::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,0.22) 50%, transparent 78%);
+            transform: translateX(-120%);
+        }
+
         .btn-primary:hover {
             transform: translateY(-1px);
             box-shadow: 0 18px 34px rgba(47, 103, 255, 0.28);
+        }
+
+        .btn-primary:hover::after {
+            animation: shimmerSweep 1.05s ease;
         }
 
         .btn-secondary {
@@ -846,6 +876,7 @@
             background:
                 linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
                 rgba(255,255,255,0.02);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
         }
 
         .summary-panel h3 {
@@ -962,13 +993,48 @@
         }
 
         .empty-state {
+            position: relative;
+            overflow: hidden;
             padding: 24px;
             text-align: center;
             border-radius: 16px;
             border: 1px dashed rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.025);
+            background:
+                radial-gradient(circle at top center, rgba(84,178,255,0.1), transparent 46%),
+                rgba(255,255,255,0.025);
             color: var(--muted);
             line-height: 1.7;
+        }
+
+        .empty-state::before {
+            content: "Inspection pending";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: var(--text-soft);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition-duration: 0.01ms !important;
+                transition-delay: 0ms !important;
+            }
         }
 
         .stack {
