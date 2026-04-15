@@ -1,4 +1,5 @@
 from engine.job_store import create_job, get_job, update_job
+from engine.signoff_engine import evaluate_signoff_gate
 
 
 def _safe_int(value, default=0):
@@ -80,6 +81,30 @@ def queue_signoff_packet(context, actor_user_id=None):
     return {"job": get_job(job["job_id"]), "result": {"status": "queued"}}
 
 
+def evaluate_signoff_readiness(context):
+    result = context or {}
+    signoff_gate = result.get("signoff_gate") or {}
+    if signoff_gate:
+        return {
+            "status": "ready",
+            "summary": signoff_gate.get("summary") or "Signoff gate is available.",
+            "decision": signoff_gate.get("decision"),
+            "release_score": signoff_gate.get("release_score"),
+            "blockers": signoff_gate.get("blockers") or [],
+            "next_checks": signoff_gate.get("next_checks") or [],
+        }
+
+    gate = evaluate_signoff_gate(result)
+    return {
+        "status": "ready",
+        "summary": gate.get("summary") or "Signoff gate is available.",
+        "decision": gate.get("decision"),
+        "release_score": gate.get("release_score"),
+        "blockers": gate.get("blockers") or [],
+        "next_checks": gate.get("next_checks") or [],
+    }
+
+
 def run_tool_action(action_name, context=None, actor_user_id=None, params=None):
     context = context or {}
     params = params or {}
@@ -114,6 +139,12 @@ def run_tool_action(action_name, context=None, actor_user_id=None, params=None):
             config=params.get("config", "custom_config.json"),
             actor_user_id=actor_user_id,
         )
+
+    if action_name == "evaluate_signoff_gate":
+        result = evaluate_signoff_readiness(context)
+        job = create_job("evaluate_signoff_gate", payload={"context_type": context.get("board_name") or context.get("project_name")}, actor_user_id=actor_user_id)
+        update_job(job["job_id"], status="completed", result=result)
+        return {"job": get_job(job["job_id"]), "result": result}
 
     job = create_job("unknown_action", payload={"action_name": action_name, "params": params}, actor_user_id=actor_user_id)
     update_job(job["job_id"], status="failed", error_text=f"Unknown Atlas tool action: {action_name}")

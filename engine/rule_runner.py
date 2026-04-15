@@ -145,7 +145,8 @@ def run_analysis(pcb, config):
     print("\n============= FINAL DEBUG =============")
     print(f"Total risks found: {len(risks)}")
     print(f"Total penalty: {total_penalty}")
-    print(f"Final score: {score} / 10")
+    print(f"Core rule score: {score} / 10")
+    print("Final product score may differ after service-level scaling, soft-floor protection, and physics-informed adjustments.")
     print("=======================================\n")
 
     return {

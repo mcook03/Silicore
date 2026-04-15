@@ -61,6 +61,54 @@ class AtlasEngineTests(unittest.TestCase):
         self.assertEqual(response["title"], "Approval Readiness")
         self.assertTrue(response["citations"])
 
+    def test_board_question_can_explain_signoff_and_physics_context(self):
+        response = answer_atlas_question(
+            "board",
+            "Am I signoff ready and what is the model saying?",
+            context={
+                "score": 64,
+                "release_note": "Board is not yet ready for signoff.",
+                "signoff_gate": {
+                    "decision": "needs_validation",
+                    "label": "Needs Validation",
+                    "summary": "Board is not yet ready for signoff.",
+                    "release_score": 58,
+                    "blockers": ["Estimated IR drop peaks at 88.0 mV."],
+                    "next_checks": ["Measure the worst power rail under load."],
+                },
+                "parser_confidence": {"score": 81, "component_count": 12, "trace_count": 28, "outline_count": 4},
+                "physics_summary": {
+                    "signal_models": [{"net_name": "CLK", "impedance_ohms": 73.9, "mismatch_pct": 47.9, "delay_ps": 694.6}],
+                    "power_models": [{"net_name": "VBUS", "voltage_drop_mv": 88.0, "current_density_a_per_mm2": 17.4}],
+                    "summary": {"worst_impedance_mismatch_pct": 47.9, "worst_voltage_drop_mv": 88.0},
+                    "assumptions": {"dielectric_er": 4.2, "dielectric_height_mm": 0.18},
+                },
+                "risk_sources": [{"severity": "high", "message": "Power bottleneck", "domain": "power integrity"}],
+            },
+            history=[],
+        )
+
+        self.assertEqual(response["intent"], "signoff")
+        self.assertIn("release score", response["detail"].lower())
+        self.assertIn("parser confidence", response["detail"].lower())
+
+        physics_response = answer_atlas_question(
+            "board",
+            "What is the physics model saying?",
+            context={
+                "physics_summary": {
+                    "signal_models": [{"net_name": "CLK", "impedance_ohms": 73.9, "mismatch_pct": 47.9, "delay_ps": 694.6}],
+                    "power_models": [{"net_name": "VBUS", "voltage_drop_mv": 88.0, "current_density_a_per_mm2": 17.4}],
+                    "summary": {"worst_impedance_mismatch_pct": 47.9, "worst_voltage_drop_mv": 88.0},
+                    "assumptions": {"dielectric_er": 4.2, "dielectric_height_mm": 0.18},
+                },
+                "risk_sources": [{"severity": "high", "message": "Power bottleneck", "domain": "power integrity"}],
+            },
+            history=[],
+        )
+        self.assertEqual(physics_response["intent"], "physics")
+        self.assertIn("modeled", physics_response["answer"].lower())
+
 
 if __name__ == "__main__":
     unittest.main()

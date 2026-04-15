@@ -26,6 +26,42 @@ FORMAT_READINESS = {
 }
 
 
+def _estimate_parser_confidence(pcb, extension):
+    extension = str(extension or "").lower()
+    readiness = FORMAT_READINESS.get(extension, {"status": "experimental"}).get("status", "experimental")
+    base = {"supported": 86.0, "experimental": 62.0}.get(readiness, 55.0)
+
+    component_count = len(getattr(pcb, "components", []) or [])
+    net_count = len(getattr(pcb, "nets", {}) or {})
+    trace_count = len(getattr(pcb, "traces", []) or [])
+    via_count = len(getattr(pcb, "vias", []) or [])
+    outline_count = len(getattr(pcb, "outline_segments", []) or [])
+    zone_count = len(getattr(pcb, "zones", []) or [])
+
+    geometry_bonus = min((trace_count * 0.35) + (via_count * 0.5) + (outline_count * 1.2) + (zone_count * 0.8), 12.0)
+    richness_bonus = min((component_count * 0.4) + (net_count * 0.35), 10.0)
+    missing_penalty = 0.0
+    if component_count == 0:
+        missing_penalty += 10.0
+    if net_count == 0:
+        missing_penalty += 10.0
+    if trace_count == 0:
+        missing_penalty += 8.0
+
+    score = round(max(20.0, min(100.0, base + geometry_bonus + richness_bonus - missing_penalty)), 1)
+    return {
+        "score": score,
+        "status": readiness,
+        "component_count": component_count,
+        "net_count": net_count,
+        "trace_count": trace_count,
+        "via_count": via_count,
+        "outline_count": outline_count,
+        "zone_count": zone_count,
+        "summary": f"Parser confidence is {score} / 100 for this {FORMAT_READINESS.get(extension, {}).get('label', extension or 'board')} input.",
+    }
+
+
 def _utc_now_iso():
     return datetime.now(UTC).isoformat()
 
@@ -1301,6 +1337,7 @@ def _build_project_run_record(project_result, run_dir_name, saved_names):
 def _analyze_board_file(file_path, config):
     pcb = _load_board(file_path)
     pcb = _normalize_board(pcb)
+    extension = os.path.splitext(file_path)[1].lower()
 
     risks, raw_rule_result = _run_rule_engine(pcb, config)
     physics_analysis_func = _optional_function(
@@ -1338,6 +1375,7 @@ def _analyze_board_file(file_path, config):
             "profile": (config.get("analysis", {}) or {}).get("profile", "balanced"),
             "board_type": (config.get("analysis", {}) or {}).get("board_type", "general"),
         },
+        "parser_confidence": _estimate_parser_confidence(pcb, extension),
         "physics_summary": physics_summary,
         "raw_rule_result": raw_rule_result,
         "generated_at": _utc_now_iso(),

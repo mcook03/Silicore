@@ -495,6 +495,7 @@ def _enrich_single_result(result):
     result["health_summary"] = _build_health_summary(result.get("display_score", result.get("score", 0)), risks)
     result["analysis_context_view"] = _build_analysis_context(result)
     result["board_view"] = _build_board_view_data(result.get("pcb_snapshot") or {}, risks)
+    result["signoff_gate"] = _build_signoff_gate_view(result)
     return result
 
 
@@ -2276,6 +2277,8 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "domain_breakdown": domain_breakdown,
         "traceability_stats": board_review_layers.get("traceability_stats") or [],
         "physics_summary": result.get("physics_summary") or {},
+        "parser_confidence": result.get("parser_confidence") or {},
+        "signoff_gate": result.get("signoff_gate") or {},
         "value_metrics": board_value_metrics or [],
         "subsystem_summary": result.get("subsystem_summary") or {},
         "risk_sources": risk_sources,
@@ -3245,6 +3248,15 @@ def _build_board_review_layers(result):
         },
         "physics_lane": physics_lane,
         "physics_summary": physics_summary,
+        "parser_lane": {
+            "title": "Parser confidence",
+            "summary": ((result or {}).get("parser_confidence") or {}).get("summary") or "Parser confidence is not available for this run.",
+            "detail": (
+                f"Confidence score {((result or {}).get('parser_confidence') or {}).get('score', 0)} / 100 with "
+                f"{((result or {}).get('parser_confidence') or {}).get('trace_count', 0)} traces and "
+                f"{((result or {}).get('parser_confidence') or {}).get('component_count', 0)} components recognized."
+            ),
+        },
     }
 
 
@@ -3277,6 +3289,42 @@ def _build_board_value_metrics(result):
             "subtext": "Live 0-100 engineering position",
         },
     ]
+
+
+def _build_signoff_gate_view(result):
+    result = result or {}
+    try:
+        from engine.signoff_engine import evaluate_signoff_gate
+
+        gate = evaluate_signoff_gate(result)
+    except Exception:
+        gate = {
+            "decision": "validation_pending",
+            "release_score": 0.0,
+            "critical_count": 0,
+            "high_count": 0,
+            "parser_confidence": 0.0,
+            "physics_risk_count": 0,
+            "blockers": [],
+            "next_checks": [],
+            "summary": "Signoff gate evaluation is unavailable.",
+        }
+
+    tone_map = {
+        "ready_for_signoff": "low",
+        "validation_pending": "medium",
+        "needs_validation": "medium",
+        "blocked": "critical",
+    }
+    label_map = {
+        "ready_for_signoff": "Ready For Signoff",
+        "validation_pending": "Validation Pending",
+        "needs_validation": "Needs Validation",
+        "blocked": "Blocked",
+    }
+    gate["tone"] = tone_map.get(gate.get("decision"), "medium")
+    gate["label"] = label_map.get(gate.get("decision"), "Validation Pending")
+    return gate
 
 
 def _build_project_review_intelligence(project_result):
@@ -4648,7 +4696,7 @@ def atlas_query_route():
         owner_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
     )
     tool_suggestions = {
-        "board": ["generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
+        "board": ["evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
         "project": ["compare_latest_runs", "generate_signoff_packet", "run_fixture_evaluation"],
         "compare": ["generate_signoff_packet", "open_high_confidence_findings"],
     }

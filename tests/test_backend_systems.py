@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from uuid import uuid4
 
-from engine.atlas_tools import compare_latest_runs, open_high_confidence_findings
+from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, open_high_confidence_findings
 from engine.db import get_connection, list_audit_events, list_review_decisions
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
@@ -64,6 +64,19 @@ class BackendSystemsTests(unittest.TestCase):
             domain="power",
         )
         self.assertEqual(findings["count"], 1)
+
+        signoff = evaluate_signoff_readiness(
+            {
+                "score": 61,
+                "risks": [{"severity": "high"}, {"severity": "critical"}],
+                "parser_confidence": {"score": 74},
+                "physics_summary": {"summary": {"worst_voltage_drop_mv": 82.0, "worst_impedance_mismatch_pct": 18.0}, "risks": [{"severity": "high"}]},
+                "score_explanation": {"overflow_penalty": 0},
+            }
+        )
+        self.assertEqual(signoff["status"], "ready")
+        self.assertIn("decision", signoff)
+        self.assertTrue(signoff["blockers"])
 
     def test_review_and_audit_records_are_queryable(self):
         suffix = str(uuid4())[:8]

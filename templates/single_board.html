@@ -338,6 +338,96 @@
     </section>
 </section>
 
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Signoff Gate</h2>
+            <p class="section-copy">Release posture based on severity, parser trust, and physics-modeled readiness.</p>
+        </div>
+
+        <div class="card-body">
+            {% set gate = result.signoff_gate %}
+            <div class="summary-panel compact-summary">
+                <h3>{{ gate.label }}</h3>
+                <p>{{ gate.summary }}</p>
+                <div class="focus-chip-row" style="margin: 12px 0 0;">
+                    <span class="mini-chip mini-chip-{{ gate.tone }}">{{ gate.release_score }} / 100 release score</span>
+                    <span class="mini-chip mini-chip-low">{{ gate.critical_count }} critical</span>
+                    <span class="mini-chip mini-chip-medium">{{ gate.high_count }} high</span>
+                    <span class="mini-chip mini-chip-low">{{ gate.physics_risk_count }} physics risk(s)</span>
+                </div>
+            </div>
+
+            {% if gate.blockers %}
+            <div class="summary-panel compact-summary" style="margin-top:16px;">
+                <h3>Primary Blockers</h3>
+                <ul class="clean-list">
+                    {% for item in gate.blockers[:3] %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if gate.next_checks %}
+            <div class="summary-panel compact-summary" style="margin-top:16px;">
+                <h3>Next Validation Checks</h3>
+                <ul class="clean-list">
+                    {% for item in gate.next_checks[:3] %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">Parser & Model Trust</h2>
+            <p class="section-copy">How much geometry and source structure Silicore could confidently read for this run.</p>
+        </div>
+
+        <div class="card-body">
+            {% set parser = result.parser_confidence or {} %}
+            <div class="big-stat-grid compact-stat-grid">
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ parser.score|default(0)|round|int }}</div>
+                    <div class="big-stat-label">Parser Confidence</div>
+                    <div class="big-stat-sub">0-100 trust score</div>
+                </div>
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ parser.component_count|default(0) }}</div>
+                    <div class="big-stat-label">Components</div>
+                    <div class="big-stat-sub">Recognized by parser</div>
+                </div>
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ parser.trace_count|default(0) }}</div>
+                    <div class="big-stat-label">Traces</div>
+                    <div class="big-stat-sub">Usable routed geometry</div>
+                </div>
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ parser.net_count|default(0) }}</div>
+                    <div class="big-stat-label">Nets</div>
+                    <div class="big-stat-sub">Net-aware context</div>
+                </div>
+            </div>
+
+            <div class="summary-panel compact-summary" style="margin-top:16px;">
+                <h3>Trust Summary</h3>
+                <p>{{ parser.summary or "Parser confidence is not available for this run." }}</p>
+                {% if result.physics_summary and result.physics_summary.assumptions %}
+                <p class="small-muted" style="margin-top:10px;">
+                    Physics assumptions: dielectric er {{ result.physics_summary.assumptions.dielectric_er }},
+                    dielectric height {{ result.physics_summary.assumptions.dielectric_height_mm }} mm,
+                    copper thickness {{ result.physics_summary.assumptions.copper_thickness_mm }} mm.
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</section>
+
 <section class="card spotlight-shell-card">
     <div class="card-header">
         <h2 class="section-title">Atlas Intelligence</h2>

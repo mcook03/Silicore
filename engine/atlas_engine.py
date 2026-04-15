@@ -169,7 +169,10 @@ def _resolve_board_intent(prompt, context, history):
     mapping = [
         ("signoff", _keywords(["signoff", "release", "ship", "ready", "approve"])),
         ("validation", _keywords(["validate", "validation", "rerun", "recheck", "test", "measure"])),
-        ("traceability", _keywords(["traceability", "evidence", "confidence", "proof", "defensible"])),
+        ("traceability", _keywords(["traceability", "evidence", "proof", "defensible"])),
+        ("parser", _keywords(["parser", "import", "parse confidence", "geometry confidence", "recognition"])),
+        ("physics", _keywords(["physics", "impedance", "ir drop", "current density", "voltage drop", "delay", "modeled"])),
+        ("confidence", _keywords(["confidence", "trust", "certainty", "reliable"])),
         ("fix_priority", _keywords(["fix first", "priority", "prioritize", "first", "top issue", "top action"])),
         ("score", _keywords(["score", "rating", "posture"])),
         ("power", _keywords(["power", "voltage", "current", "rail", "decoupling", "supply"])),
@@ -229,12 +232,18 @@ def answer_board_question(prompt, context, history=None):
 
     if intent == "score":
         citations = [_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)]
+        signoff_gate = context.get("signoff_gate") or {}
+        gate_note = (
+            f" Release posture is currently {str(signoff_gate.get('label') or signoff_gate.get('decision') or 'validation pending').replace('_', ' ')}."
+            if signoff_gate else ""
+        )
         return _make_response(
             "score",
             "Score Story",
             context.get("posture") or "No board posture is available yet.",
             detail=(
                 f"Score {context.get('score', 0)} / 100 reflects the balance of risk severity, evidence depth, and release readiness. Atlas currently sees {dominant_domain} as the strongest score driver."
+                + gate_note
             ),
             follow_ups=[
                 "What is hurting the score most?",
@@ -247,15 +256,32 @@ def answer_board_question(prompt, context, history=None):
 
     if intent == "signoff":
         criticals = _pick_top_risks(risk_sources, limit=3, matcher=lambda item: _lower(item.get("severity")) == "critical")
+        signoff_gate = context.get("signoff_gate") or {}
+        blockers = _listify(signoff_gate.get("blockers"))
+        next_checks = _listify(signoff_gate.get("next_checks"))
+        parser_confidence = context.get("parser_confidence") or {}
+        release_score = signoff_gate.get("release_score")
+        answer = signoff_gate.get("summary") or context.get("release_note") or "No signoff note is available for this board yet."
+        detail_parts = [
+            "Atlas treats signoff as a confidence-backed engineering decision.",
+        ]
+        if release_score is not None:
+            detail_parts.append(f"The current release score is {release_score} / 100.")
+        if parser_confidence.get("score"):
+            detail_parts.append(f"Parser confidence is {parser_confidence.get('score')} / 100.")
+        if blockers:
+            detail_parts.append(f"Primary blocker: {blockers[0]}")
+        elif next_checks:
+            detail_parts.append(f"Next validation move: {next_checks[0]}")
         return _make_response(
             "signoff",
             "Signoff Readiness",
-            context.get("release_note") or "No signoff note is available for this board yet.",
-            detail="Atlas treats signoff as a confidence-backed engineering decision. The board needs clean validation on the top drivers, stable evidence, and no unresolved critical blockers before it is truly ready.",
+            answer,
+            detail=" ".join(detail_parts),
             follow_ups=[
                 "What blocks signoff right now?",
                 "What should I validate next?",
-                "Show me the strongest evidence",
+                "How trustworthy is the parser and model coverage?",
             ],
             citations=[_source_to_citation(item) for item in criticals] or [_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             confidence=0.84,
@@ -295,6 +321,66 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
             confidence=0.76,
+        )
+
+    if intent == "parser":
+        parser_confidence = context.get("parser_confidence") or {}
+        return _make_response(
+            "parser",
+            "Parser and Geometry Trust",
+            parser_confidence.get("summary") or "Parser confidence is not available for this board yet.",
+            detail=(
+                f"Confidence is {parser_confidence.get('score', 0)} / 100 with "
+                f"{parser_confidence.get('component_count', 0)} components, "
+                f"{parser_confidence.get('trace_count', 0)} traces, and "
+                f"{parser_confidence.get('outline_count', 0)} outline feature(s) recognized."
+            ),
+            follow_ups=[
+                "How does parser confidence affect signoff?",
+                "What assumptions were used in the model?",
+                "Show me the strongest evidence",
+            ],
+            citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
+            confidence=0.79,
+        )
+
+    if intent in {"physics", "confidence"}:
+        physics_summary = context.get("physics_summary") or {}
+        summary = physics_summary.get("summary") or {}
+        signal_models = _listify(physics_summary.get("signal_models"))
+        power_models = _listify(physics_summary.get("power_models"))
+        assumptions = physics_summary.get("assumptions") or {}
+        answer = "Physics-informed SI/PI modeling is not available for this board yet."
+        detail_parts = []
+        if signal_models or power_models:
+            answer = (
+                f"Atlas modeled {len(signal_models)} critical signal net(s) and {len(power_models)} power net(s) "
+                "from board geometry and configured material assumptions."
+            )
+            if summary.get("worst_impedance_mismatch_pct") is not None:
+                detail_parts.append(
+                    f"Worst impedance mismatch is {summary.get('worst_impedance_mismatch_pct')}%."
+                )
+            if summary.get("worst_voltage_drop_mv") is not None:
+                detail_parts.append(
+                    f"Worst estimated voltage drop is {summary.get('worst_voltage_drop_mv')} mV."
+                )
+            if assumptions.get("dielectric_er") is not None:
+                detail_parts.append(
+                    f"Model assumptions currently use dielectric er {assumptions.get('dielectric_er')} and dielectric height {assumptions.get('dielectric_height_mm')} mm."
+                )
+        return _make_response(
+            intent,
+            "Physics Integrity",
+            answer,
+            detail=" ".join(detail_parts) or "Atlas uses first-principles estimates so signal and power posture are tied to geometry, not only rule hits.",
+            follow_ups=[
+                "Which net looks worst in the model?",
+                "How does this affect signoff?",
+                "What should I fix first?",
+            ],
+            citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
+            confidence=0.82,
         )
 
     domain_intents = {

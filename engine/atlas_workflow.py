@@ -24,6 +24,15 @@ def build_workflow_plan(page_type, prompt, context=None):
             }
         )
 
+    if page_type == "board" and _contains_any(lowered, ["signoff", "release readiness", "ready to ship", "ready for approval", "blocked"]):
+        steps.append(
+            {
+                "action_name": "evaluate_signoff_gate",
+                "reason": "User asked whether the current board is actually ready for signoff or what is blocking release.",
+                "params": {},
+            }
+        )
+
     if page_type == "project" and _contains_any(lowered, ["compare latest", "latest runs", "compare revisions", "latest comparison"]):
         steps.append(
             {

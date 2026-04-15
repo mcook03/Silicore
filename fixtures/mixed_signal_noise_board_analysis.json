@@ -228,9 +228,9 @@
                 "U1"
             ],
             "nets": [
-                "SW",
                 "GND",
-                "VIN"
+                "VIN",
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -268,9 +268,9 @@
                 "U1"
             ],
             "nets": [
-                "SW",
                 "GND",
-                "VIN"
+                "VIN",
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -307,9 +307,9 @@
                 "U2"
             ],
             "nets": [
-                "ADC_IN",
                 "GND",
-                "SENSOR_OUT"
+                "SENSOR_OUT",
+                "ADC_IN"
             ],
             "region": null,
             "metrics": {
@@ -456,8 +456,8 @@
                 "L1"
             ],
             "nets": [
-                "SW",
-                "VIN"
+                "VIN",
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -475,8 +475,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -511,9 +511,9 @@
                 "U2"
             ],
             "nets": [
-                "ADC_IN",
                 "GND",
-                "SENSOR_OUT"
+                "SENSOR_OUT",
+                "ADC_IN"
             ],
             "region": null,
             "metrics": {
@@ -531,9 +531,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "ADC_IN",
                     "GND",
-                    "SENSOR_OUT"
+                    "SENSOR_OUT",
+                    "ADC_IN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2361,7 +2361,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:26:34.414636+00:00",
+        "timestamp": "2026-04-15T18:35:13.425990+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2785,6 +2785,17 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "parser_confidence": {
+        "score": 91.1,
+        "status": "supported",
+        "component_count": 4,
+        "net_count": 5,
+        "trace_count": 5,
+        "via_count": 0,
+        "outline_count": 0,
+        "zone_count": 0,
+        "summary": "Parser confidence is 91.1 / 100 for this KiCad PCB input."
+    },
     "physics_summary": {
         "enabled": true,
         "assumptions": {
@@ -3049,9 +3060,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "SW",
                     "GND",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -3080,9 +3091,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "SW",
                     "GND",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -3110,9 +3121,9 @@
                     "U2"
                 ],
                 "nets": [
-                    "ADC_IN",
                     "GND",
-                    "SENSOR_OUT"
+                    "SENSOR_OUT",
+                    "ADC_IN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3223,8 +3234,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -3242,8 +3253,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW",
-                        "VIN"
+                        "VIN",
+                        "SW"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3269,9 +3280,9 @@
                     "U2"
                 ],
                 "nets": [
-                    "ADC_IN",
                     "GND",
-                    "SENSOR_OUT"
+                    "SENSOR_OUT",
+                    "ADC_IN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3289,9 +3300,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "ADC_IN",
                         "GND",
-                        "SENSOR_OUT"
+                        "SENSOR_OUT",
+                        "ADC_IN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3702,7 +3713,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-15T18:26:34.414644+00:00",
+    "generated_at": "2026-04-15T18:35:13.426002+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

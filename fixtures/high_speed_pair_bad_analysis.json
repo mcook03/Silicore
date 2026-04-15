@@ -224,45 +224,6 @@
             "rule_id": "component_analysis",
             "category": "component_design",
             "severity": "medium",
-            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
-            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-            "components": [
-                "J1",
-                "U1"
-            ],
-            "nets": [
-                "USB_DP"
-            ],
-            "region": null,
-            "metrics": {
-                "trace_length": 84.67,
-                "threshold": 18.0,
-                "has_resistor": false
-            },
-            "confidence": 0.7,
-            "short_title": "Possible missing signal termination",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "component",
-            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-            "suggested_actions": [],
-            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-            "threshold_label": "Termination review length 18.00 units",
-            "observed_label": "Observed route length 84.67 units",
-            "explanation": {
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.7
-            },
-            "fix_suggestion": {
-                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "priority": "medium"
-            }
-        },
-        {
-            "rule_id": "component_analysis",
-            "category": "component_design",
-            "severity": "medium",
             "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
             "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
             "components": [
@@ -288,6 +249,45 @@
             "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
             "threshold_label": "Termination review length 18.00 units",
             "observed_label": "Observed route length 118.20 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "component_analysis",
+            "category": "component_design",
+            "severity": "medium",
+            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.67,
+                "threshold": 18.0,
+                "has_resistor": false
+            },
+            "confidence": 0.7,
+            "short_title": "Possible missing signal termination",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "component",
+            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+            "threshold_label": "Termination review length 18.00 units",
+            "observed_label": "Observed route length 84.67 units",
             "explanation": {
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
@@ -382,10 +382,10 @@
                 "U1"
             ],
             "nets": [
-                "GND",
+                "USB_DN",
                 "CLK",
                 "USB_DP",
-                "USB_DN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -690,10 +690,10 @@
                 "J1"
             ],
             "nets": [
-                "GND",
-                "USB_DP",
                 "VBUS",
-                "USB_DN"
+                "USB_DN",
+                "USB_DP",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -711,10 +711,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "USB_DP",
                     "VBUS",
-                    "USB_DN"
+                    "USB_DN",
+                    "USB_DP",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -749,10 +749,10 @@
                 "U1"
             ],
             "nets": [
-                "GND",
+                "USB_DN",
                 "CLK",
                 "USB_DP",
-                "USB_DN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -770,10 +770,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
+                    "USB_DN",
                     "CLK",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1674,7 +1674,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -1685,7 +1685,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -3120,7 +3120,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-15T18:26:34.394638+00:00",
+        "timestamp": "2026-04-15T18:35:13.631965+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3544,6 +3544,17 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "parser_confidence": {
+        "score": 94.8,
+        "status": "supported",
+        "component_count": 3,
+        "net_count": 5,
+        "trace_count": 11,
+        "via_count": 4,
+        "outline_count": 0,
+        "zone_count": 0,
+        "summary": "Parser confidence is 94.8 / 100 for this KiCad PCB input."
+    },
     "physics_summary": {
         "enabled": true,
         "assumptions": {
@@ -3925,36 +3936,6 @@
                 "rule_id": "component_analysis",
                 "category": "component_design",
                 "severity": "medium",
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
-                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "components": [
-                    "J1",
-                    "U1"
-                ],
-                "nets": [
-                    "USB_DP"
-                ],
-                "region": null,
-                "metrics": {
-                    "trace_length": 84.67,
-                    "threshold": 18.0,
-                    "has_resistor": false
-                },
-                "confidence": 0.7,
-                "short_title": "Possible missing signal termination",
-                "fix_priority": "medium",
-                "estimated_impact": "moderate",
-                "design_domain": "component",
-                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-                "suggested_actions": [],
-                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-                "threshold_label": "Termination review length 18.00 units",
-                "observed_label": "Observed route length 84.67 units"
-            },
-            {
-                "rule_id": "component_analysis",
-                "category": "component_design",
-                "severity": "medium",
                 "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
                 "components": [
@@ -3980,6 +3961,36 @@
                 "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
                 "threshold_label": "Termination review length 18.00 units",
                 "observed_label": "Observed route length 118.20 units"
+            },
+            {
+                "rule_id": "component_analysis",
+                "category": "component_design",
+                "severity": "medium",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.67,
+                    "threshold": 18.0,
+                    "has_resistor": false
+                },
+                "confidence": 0.7,
+                "short_title": "Possible missing signal termination",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "component",
+                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+                "threshold_label": "Termination review length 18.00 units",
+                "observed_label": "Observed route length 84.67 units"
             },
             {
                 "rule_id": "current_density",
@@ -4047,10 +4058,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
+                    "USB_DN",
                     "CLK",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4283,10 +4294,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "GND",
-                    "USB_DP",
                     "VBUS",
-                    "USB_DN"
+                    "USB_DN",
+                    "USB_DP",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4304,10 +4315,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "USB_DP",
                         "VBUS",
-                        "USB_DN"
+                        "USB_DN",
+                        "USB_DP",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4333,10 +4344,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
+                    "USB_DN",
                     "CLK",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4354,10 +4365,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
+                        "USB_DN",
                         "CLK",
                         "USB_DP",
-                        "USB_DN"
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4830,7 +4841,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-15T18:26:34.394643+00:00",
+    "generated_at": "2026-04-15T18:35:13.631973+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

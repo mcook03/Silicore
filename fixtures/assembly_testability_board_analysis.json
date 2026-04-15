@@ -339,10 +339,10 @@
                 "U1"
             ],
             "nets": [
-                "VCC",
-                "SWDIO",
                 "GND",
-                "SWCLK"
+                "SWDIO",
+                "VCC",
+                "UART_TX"
             ],
             "region": null,
             "metrics": {
@@ -633,8 +633,8 @@
                 "J1"
             ],
             "nets": [
-                "GND",
-                "UART_TX"
+                "UART_TX",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -652,8 +652,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -688,8 +688,8 @@
                 "R1"
             ],
             "nets": [
-                "GND",
-                "UART_TX"
+                "UART_TX",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -707,8 +707,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2368,7 +2368,7 @@
     },
     "analysis_context": {
         "board_name": "assembly_testability_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:26:34.388541+00:00",
+        "timestamp": "2026-04-15T18:35:13.400142+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2792,6 +2792,17 @@
         "profile": "balanced",
         "board_type": "general"
     },
+    "parser_confidence": {
+        "score": 91.4,
+        "status": "supported",
+        "component_count": 4,
+        "net_count": 5,
+        "trace_count": 6,
+        "via_count": 0,
+        "outline_count": 0,
+        "zone_count": 0,
+        "summary": "Parser confidence is 91.4 / 100 for this KiCad PCB input."
+    },
     "physics_summary": {
         "enabled": true,
         "assumptions": {
@@ -3153,10 +3164,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "VCC",
-                    "SWDIO",
                     "GND",
-                    "SWCLK"
+                    "SWDIO",
+                    "VCC",
+                    "UART_TX"
                 ],
                 "region": null,
                 "metrics": {
@@ -3375,8 +3386,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3394,8 +3405,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "UART_TX"
+                        "UART_TX",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3421,8 +3432,8 @@
                     "R1"
                 ],
                 "nets": [
-                    "GND",
-                    "UART_TX"
+                    "UART_TX",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3440,8 +3451,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "UART_TX"
+                        "UART_TX",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3691,7 +3702,7 @@
         "score": 0.0,
         "total_penalty": 11.6
     },
-    "generated_at": "2026-04-15T18:26:34.388550+00:00",
+    "generated_at": "2026-04-15T18:35:13.400153+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

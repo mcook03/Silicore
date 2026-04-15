@@ -180,6 +180,26 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("result", payload)
         self.assertIn("summary", payload["result"])
 
+    def test_atlas_signoff_action_route_returns_gate_payload(self):
+        response = self.client.post(
+            "/atlas/action",
+            json={
+                "action_name": "evaluate_signoff_gate",
+                "context": {
+                    "score": 58,
+                    "risks": [{"severity": "critical", "message": "Critical fault"}],
+                    "parser_confidence": {"score": 68},
+                    "physics_summary": {"summary": {"worst_voltage_drop_mv": 88.0, "worst_impedance_mismatch_pct": 24.0}, "risks": [{"severity": "high"}]},
+                    "score_explanation": {"overflow_penalty": 2.0},
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertIn("job", payload)
+        self.assertIn("result", payload)
+        self.assertIn("decision", payload["result"])
+
     def test_evaluation_route_returns_fixture_summary(self):
         with self.client.session_transaction() as session:
             session.clear()

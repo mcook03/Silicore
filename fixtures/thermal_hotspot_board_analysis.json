@@ -1713,7 +1713,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:26:34.421028+00:00",
+        "timestamp": "2026-04-15T18:35:13.432197+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2136,6 +2136,17 @@
         },
         "profile": "balanced",
         "board_type": "general"
+    },
+    "parser_confidence": {
+        "score": 90.0,
+        "status": "supported",
+        "component_count": 3,
+        "net_count": 3,
+        "trace_count": 5,
+        "via_count": 0,
+        "outline_count": 0,
+        "zone_count": 0,
+        "summary": "Parser confidence is 90.0 / 100 for this KiCad PCB input."
     },
     "physics_summary": {
         "enabled": true,
@@ -2706,7 +2717,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-15T18:26:34.421033+00:00",
+    "generated_at": "2026-04-15T18:35:13.432206+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
