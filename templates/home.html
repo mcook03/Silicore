@@ -118,6 +118,18 @@
                                 <rect x="280" y="192" width="86" height="58" rx="12"></rect>
                             </g>
 
+                            <g class="board-risk-zones">
+                                <circle cx="392" cy="142" r="40" class="risk-zone risk-zone-critical"></circle>
+                                <circle cx="318" cy="220" r="32" class="risk-zone risk-zone-warning"></circle>
+                                <circle cx="182" cy="236" r="28" class="risk-zone risk-zone-warning"></circle>
+                            </g>
+
+                            <g class="board-pulse-group">
+                                <circle cx="392" cy="142" r="11" class="board-pulse board-pulse-critical"></circle>
+                                <circle cx="318" cy="220" r="10" class="board-pulse board-pulse-warning"></circle>
+                                <circle cx="182" cy="236" r="10" class="board-pulse board-pulse-warning"></circle>
+                            </g>
+
                             <g class="board-labels">
                                 <text x="112" y="110">SIGNAL</text>
                                 <text x="240" y="118">POWER</text>
@@ -134,6 +146,19 @@
                         <div class="tech-stage-overlay tech-stage-overlay-b">
                             <span>Driver</span>
                             <strong>{{ dashboard_story.top_category if dashboard_story else "General" }}</strong>
+                        </div>
+
+                        <div class="insight-flash insight-flash-a">
+                            <span>Thermal Risk</span>
+                            <strong>+2.3</strong>
+                        </div>
+                        <div class="insight-flash insight-flash-b">
+                            <span>Routing Issue Detected</span>
+                            <strong>USB_DP</strong>
+                        </div>
+                        <div class="insight-flash insight-flash-c">
+                            <span>Critical Region</span>
+                            <strong>EMI / EMC</strong>
                         </div>
                     </div>
 
@@ -727,29 +752,35 @@
         background:
             radial-gradient(circle at center, rgba(59,130,246,0.07), transparent 48%),
             rgba(4, 11, 19, 0.9);
+        perspective: 1200px;
     }
 
     .tech-board-svg {
         width: 100%;
         height: 100%;
         display: block;
+        transform-origin: 50% 50%;
+        animation: boardCinematic 12s ease-in-out infinite;
     }
 
     .board-shell {
         fill: rgba(5, 12, 20, 0.9);
         stroke: rgba(125,211,252,0.18);
         stroke-width: 1.6;
+        animation: boardReveal 12s ease-in-out infinite;
     }
 
     .board-inner {
         fill: rgba(9, 22, 34, 0.72);
         stroke: rgba(67,212,200,0.14);
         stroke-width: 1.2;
+        animation: boardReveal 12s ease-in-out infinite;
     }
 
     .board-grid line {
         stroke: rgba(191,219,254,0.07);
         stroke-width: 1;
+        animation: gridReveal 12s ease-in-out infinite;
     }
 
     .board-trace,
@@ -764,20 +795,21 @@
         stroke-width: 4.4;
         filter: drop-shadow(0 0 7px rgba(96,165,250,0.26));
         stroke-dasharray: 12 8;
-        animation: traceFlow 18s linear infinite;
+        animation: traceFlow 18s linear infinite, traceSequence 12s ease-in-out infinite;
     }
 
     .board-trace-thin {
         stroke: rgba(125,211,252,0.62);
         stroke-width: 2;
         stroke-dasharray: 6 8;
-        animation: traceFlow 14s linear infinite reverse;
+        animation: traceFlow 14s linear infinite reverse, traceSequence 12s ease-in-out infinite;
     }
 
     .board-modules rect {
         fill: rgba(15, 28, 42, 0.88);
         stroke: rgba(125,211,252,0.24);
         stroke-width: 1.4;
+        animation: moduleGlow 12s ease-in-out infinite;
     }
 
     .board-labels text {
@@ -793,11 +825,46 @@
         stroke: rgba(255,255,255,0.58);
         stroke-width: 1.4;
         filter: drop-shadow(0 0 8px rgba(125,211,252,0.38));
-        animation: nodeBlink 3.2s ease-in-out infinite;
+        animation: nodeBlink 3.2s ease-in-out infinite, moduleGlow 12s ease-in-out infinite;
     }
 
     .flow-dot {
         fill: #43d4c8;
+        animation: flowSequence 12s linear infinite;
+    }
+
+    .risk-zone {
+        opacity: 0;
+        animation: riskOverlaySequence 12s ease-in-out infinite;
+    }
+
+    .risk-zone-critical {
+        fill: rgba(248, 113, 113, 0.18);
+        stroke: rgba(248, 113, 113, 0.62);
+        stroke-width: 2;
+    }
+
+    .risk-zone-warning {
+        fill: rgba(245, 184, 79, 0.14);
+        stroke: rgba(245, 184, 79, 0.62);
+        stroke-width: 2;
+    }
+
+    .board-pulse {
+        fill: transparent;
+        opacity: 0;
+        transform-origin: center;
+        animation: boardPulseSequence 12s ease-in-out infinite;
+    }
+
+    .board-pulse-critical {
+        stroke: rgba(248,113,113,0.9);
+        stroke-width: 3;
+    }
+
+    .board-pulse-warning {
+        stroke: rgba(245,184,79,0.86);
+        stroke-width: 2.5;
     }
 
     .tech-stage-overlay {
@@ -810,6 +877,7 @@
             rgba(6, 14, 23, 0.78);
         box-shadow: var(--shadow-md);
         backdrop-filter: blur(10px);
+        animation: overlayDimCycle 12s ease-in-out infinite;
     }
 
     .tech-stage-overlay span {
@@ -840,6 +908,58 @@
     .tech-stage-overlay-b {
         left: 18px;
         bottom: 18px;
+    }
+
+    .insight-flash {
+        position: absolute;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+            rgba(7, 16, 26, 0.84);
+        color: #eef6ff;
+        box-shadow: 0 14px 36px rgba(0,0,0,0.28);
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+        animation: insightFlashSequence 12s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    .insight-flash span {
+        display: block;
+        color: rgba(191,219,254,0.78);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .insight-flash strong {
+        display: block;
+        margin-top: 6px;
+        color: #f8fbff;
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .insight-flash-a {
+        top: 32px;
+        left: 26px;
+    }
+
+    .insight-flash-b {
+        top: 92px;
+        right: 24px;
+        animation-delay: 0.35s;
+    }
+
+    .insight-flash-c {
+        bottom: 30px;
+        right: 38px;
+        animation-delay: 0.7s;
     }
 
     .tech-stage-side {
@@ -1180,6 +1300,91 @@
         to { transform: translateY(160px); }
     }
 
+    @keyframes boardCinematic {
+        0%, 16% {
+            transform: rotateX(66deg) rotateZ(-22deg) scale(0.9);
+            opacity: 0.12;
+        }
+        24%, 40% {
+            transform: rotateX(60deg) rotateZ(-14deg) scale(1);
+            opacity: 1;
+        }
+        52%, 68% {
+            transform: rotateX(56deg) rotateZ(-6deg) scale(1.05);
+            opacity: 1;
+        }
+        82% {
+            transform: rotateX(58deg) rotateZ(-10deg) scale(1.02);
+            opacity: 1;
+        }
+        100% {
+            transform: rotateX(66deg) rotateZ(-22deg) scale(0.92);
+            opacity: 0.18;
+        }
+    }
+
+    @keyframes boardReveal {
+        0%, 14% { opacity: 0.08; filter: brightness(0.4); }
+        24%, 78% { opacity: 1; filter: brightness(1); }
+        100% { opacity: 0.12; filter: brightness(0.45); }
+    }
+
+    @keyframes gridReveal {
+        0%, 16% { opacity: 0.08; }
+        28%, 76% { opacity: 1; }
+        100% { opacity: 0.1; }
+    }
+
+    @keyframes traceSequence {
+        0%, 18% { opacity: 0.06; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+        28%, 46% { opacity: 1; filter: drop-shadow(0 0 12px rgba(96,165,250,0.34)); }
+        58%, 76% { opacity: 1; filter: drop-shadow(0 0 16px rgba(67,212,200,0.36)); }
+        100% { opacity: 0.12; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+    }
+
+    @keyframes moduleGlow {
+        0%, 18% { opacity: 0.16; filter: brightness(0.6); }
+        28%, 46% { opacity: 1; filter: brightness(1.08); }
+        58%, 74% { opacity: 1; filter: brightness(1.16); }
+        100% { opacity: 0.22; filter: brightness(0.62); }
+    }
+
+    @keyframes flowSequence {
+        0%, 18% { opacity: 0; }
+        24%, 48% { opacity: 1; }
+        52%, 78% { opacity: 0.85; }
+        100% { opacity: 0; }
+    }
+
+    @keyframes riskOverlaySequence {
+        0%, 40% { opacity: 0; transform: scale(0.86); }
+        48%, 70% { opacity: 1; transform: scale(1); }
+        80% { opacity: 0.45; transform: scale(1.03); }
+        100% { opacity: 0; transform: scale(0.9); }
+    }
+
+    @keyframes boardPulseSequence {
+        0%, 44% { opacity: 0; transform: scale(0.6); }
+        50% { opacity: 0.95; transform: scale(1); }
+        58% { opacity: 0; transform: scale(2.8); }
+        66% { opacity: 0.82; transform: scale(1); }
+        74% { opacity: 0; transform: scale(2.7); }
+        100% { opacity: 0; transform: scale(0.8); }
+    }
+
+    @keyframes overlayDimCycle {
+        0%, 18% { opacity: 0.22; }
+        28%, 76% { opacity: 1; }
+        100% { opacity: 0.35; }
+    }
+
+    @keyframes insightFlashSequence {
+        0%, 63% { opacity: 0; transform: translateY(12px) scale(0.96); }
+        68%, 76% { opacity: 1; transform: translateY(0) scale(1); }
+        82% { opacity: 0; transform: translateY(-6px) scale(1.02); }
+        100% { opacity: 0; transform: translateY(10px) scale(0.96); }
+    }
+
     @keyframes heroBreath {
         0%, 100% { transform: scale(1); opacity: 0.35; }
         50% { transform: scale(1.08); opacity: 0.58; }
@@ -1239,9 +1444,19 @@
     @media (prefers-reduced-motion: reduce) {
         .tech-scan,
         .tech-glow,
+        .tech-board-svg,
         .board-trace,
         .board-trace-thin,
         .board-nodes circle,
+        .board-shell,
+        .board-inner,
+        .board-grid line,
+        .board-modules rect,
+        .flow-dot,
+        .risk-zone,
+        .board-pulse,
+        .tech-stage-overlay,
+        .insight-flash,
         .signal-ribbon-track {
             animation: none;
         }
