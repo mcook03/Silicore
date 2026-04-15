@@ -107,6 +107,44 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Sign In", page)
         self.assertIn("Create Account", page)
 
+    def test_atlas_query_route_returns_answer_payload(self):
+        response = self.client.post(
+            "/atlas/query",
+            json={
+                "page_type": "board",
+                "prompt": "What should I fix first?",
+                "context": {
+                    "dominant_domain": "Signal Integrity",
+                    "mission": "Focus first on signal integrity.",
+                    "risk_sources": [
+                        {
+                            "id": "risk-1",
+                            "domain": "signal integrity",
+                            "category": "signal_integrity",
+                            "severity": "high",
+                            "message": "Differential pair mismatch",
+                            "components": ["U1"],
+                            "nets": ["USB_DP", "USB_DN"],
+                        }
+                    ],
+                    "top_actions": [
+                        {
+                            "label": "Fix differential pair mismatch",
+                            "components": ["U1"],
+                            "nets": ["USB_DP", "USB_DN"],
+                        }
+                    ],
+                },
+                "history": [],
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertIn("title", payload)
+        self.assertIn("answer", payload)
+        self.assertIn("follow_ups", payload)
+
 
 if __name__ == "__main__":
     unittest.main()

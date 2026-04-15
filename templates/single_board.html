@@ -180,7 +180,8 @@
     "assistant": board_assistant_console,
     "copilot": board_copilot,
     "validation_plan": board_copilot.validation_plan if board_copilot else [],
-    "top_actions": single_decision.next_actions if single_decision and single_decision.next_actions else []
+    "top_actions": single_decision.next_actions if single_decision and single_decision.next_actions else [],
+    "atlas_context": board_atlas_context if board_atlas_context is defined else {}
 }|tojson }}
 </script>
 
@@ -1340,6 +1341,7 @@
 
     const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
     const boardData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const atlasContext = boardData.atlas_context || {};
     const assistantData = boardData.assistant || {};
     const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
     const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
@@ -1386,7 +1388,7 @@
         const followUps = renderFollowUps(result.follow_ups);
         responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${followUps}`;
         responsePanel.querySelectorAll('[data-assistant-board-followup]').forEach((button) => {
-            button.addEventListener('click', () => pushThreadExchange(button.dataset.assistantBoardFollowup, answerBoardPrompt(button.dataset.assistantBoardFollowup)));
+            button.addEventListener('click', () => submitPrompt(button.dataset.assistantBoardFollowup));
         });
     };
 
@@ -1424,7 +1426,7 @@
         });
         thread.querySelectorAll('[data-assistant-board-followup]').forEach((button) => {
             button.addEventListener('click', () => {
-                pushThreadExchange(button.dataset.assistantBoardFollowup, answerBoardPrompt(button.dataset.assistantBoardFollowup));
+                submitPrompt(button.dataset.assistantBoardFollowup);
             });
         });
         thread.scrollTop = thread.scrollHeight;
@@ -1445,6 +1447,12 @@
             return [];
         }
     };
+
+    const serializeHistory = () => loadThread().slice(-8).map((item) => ({
+        role: item.role,
+        intent: item.intent || '',
+        copy: String(item.copy || '').replace(/<[^>]+>/g, ' ').trim(),
+    }));
 
     const sourcesForDomain = (term) => {
         const normalized = String(term || '').toLowerCase();
@@ -1495,7 +1503,7 @@
         return null;
     };
 
-    const answerBoardPrompt = (prompt) => {
+    const fallbackBoardPrompt = (prompt) => {
         const text = String(prompt || '').trim();
         const lower = text.toLowerCase();
         const copilot = boardData.copilot || {};
@@ -1603,10 +1611,41 @@
         };
     };
 
+    const requestAtlas = async (promptText) => {
+        try {
+            const response = await fetch('/atlas/query', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    page_type: 'board',
+                    prompt: promptText,
+                    history: serializeHistory(),
+                    context: {
+                        ...atlasContext,
+                        risk_sources: riskSources,
+                    },
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`Atlas request failed with ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.debug('atlas board query fallback', error);
+            return fallbackBoardPrompt(promptText);
+        }
+    };
+
     const pushThreadExchange = (promptText, result) => {
         const current = loadThread();
         current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: resultToMarkup(result), citations: result.citations || [], follow_ups: result.follow_ups || []});
+        current.push({
+            role: 'assistant',
+            copy: resultToMarkup(result),
+            citations: result.citations || [],
+            follow_ups: result.follow_ups || [],
+            intent: result.intent || '',
+        });
         saveThread(current);
         renderThread(current);
         renderResponse({
@@ -1615,21 +1654,19 @@
         });
     };
 
+    const submitPrompt = async (promptText) => {
+        const result = await requestAtlas(promptText);
+        pushThreadExchange(promptText, result);
+    };
+
     questionButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const route = routesByKey[button.dataset.routeKey || ''];
-            const result = route ? routeResult(route, citationsForRoute(route)) : {
-                title: button.dataset.title || 'Question',
-                answer: button.dataset.answer || 'No answer available.',
-                citations: [],
-                follow_ups: [],
-            };
-            pushThreadExchange(button.dataset.title || 'Question', result);
+        button.addEventListener('click', async () => {
+            await submitPrompt(button.dataset.title || 'Question');
         });
     });
 
     lensButtons.forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             const api = window.silicoreBoardInspector;
             if (!api) return;
             const nets = splitTokens(button.dataset.nets);
@@ -1641,31 +1678,22 @@
                 api.clear();
                 api.setFilters({heat: button.dataset.heat || 'hybrid'});
             }
-            const route = routesByKey[button.dataset.routeKey || ''];
-            const result = route ? routeResult(route, citationsForRoute(route)) : {
-                title: button.dataset.title || 'Review Lens',
-                answer: button.dataset.answer || 'No review-lens note available.',
-                citations: [],
-                follow_ups: [],
-            };
-            pushThreadExchange(button.dataset.title || 'Review Lens', result);
+            await submitPrompt(button.dataset.title || 'Review Lens');
         });
     });
 
     promptButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const result = answerBoardPrompt(button.dataset.assistantBoardPrompt || button.textContent);
-            pushThreadExchange(button.dataset.assistantBoardPrompt || button.textContent, result);
+        button.addEventListener('click', async () => {
+            await submitPrompt(button.dataset.assistantBoardPrompt || button.textContent);
         });
     });
 
     if (form && input) {
-        form.addEventListener('submit', (event) => {
+        form.addEventListener('submit', async (event) => {
             event.preventDefault();
             const value = input.value.trim();
             if (!value) return;
-            const result = answerBoardPrompt(value);
-            pushThreadExchange(value, result);
+            await submitPrompt(value);
             input.value = '';
         });
     }

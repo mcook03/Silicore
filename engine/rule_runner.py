@@ -11,6 +11,7 @@ RULE_CATEGORY_MAP = {
     "power_rail_rule": "power",
     "decoupling_rule": "power",
     "power_path_realism_rule": "power",
+    "current_density_rule": "power",
     "signal_path_rule": "signal",
     "net_length_rule": "signal",
     "trace_quality_rule": "signal",
@@ -24,6 +25,7 @@ RULE_CATEGORY_MAP = {
     "return_path_rule": "emi_reliability",
     "reliability_rule": "emi_reliability",
     "emi_emc_rule": "emi_reliability",
+    "analog_isolation_rule": "emi_reliability",
     "stackup_return_path_rule": "emi_reliability",
     "safety_high_voltage_rule": "safety",
 }

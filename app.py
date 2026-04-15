@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections import defaultdict
+from engine.atlas_engine import answer_atlas_question
 from engine.copilot_engine import (
     build_board_assistant_console,
     build_board_copilot_brief,
@@ -16,6 +17,7 @@ from flask import (
     Flask,
     flash,
     g,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -2169,6 +2171,126 @@ def _build_project_workspace_intelligence(project):
     }
 
 
+def _build_board_atlas_context(result, decision_data, board_copilot, board_review_layers, board_value_metrics):
+    result = result or {}
+    decision_data = decision_data or {}
+    board_copilot = board_copilot or {}
+    board_review_layers = board_review_layers or {}
+    risks = result.get("risks", []) or []
+    board_summary = result.get("board_summary", {}) or {}
+    analysis_context = result.get("analysis_context_view", {}) or {}
+
+    domain_breakdown = []
+    for item in board_review_layers.get("domain_cards", []) or []:
+        domain_breakdown.append(
+            {
+                "label": item.get("title"),
+                "count": item.get("count"),
+                "severity": item.get("severity_label"),
+                "confidence": item.get("confidence"),
+                "traceability": item.get("traceability"),
+                "headline": item.get("headline"),
+            }
+        )
+
+    risk_sources = []
+    for risk in risks[:40]:
+        risk_sources.append(
+            {
+                "category": _format_category_name(risk.get("category")),
+                "domain": _format_design_domain_name(risk.get("design_domain") or risk.get("category")),
+                "severity": risk.get("severity"),
+                "message": risk.get("message"),
+                "recommendation": risk.get("recommendation"),
+                "components": risk.get("components") or [],
+                "nets": risk.get("nets") or [],
+                "confidence": _extract_risk_confidence_score(risk),
+            }
+        )
+
+    return {
+        "board_name": analysis_context.get("board_name") or board_summary.get("filename") or result.get("filename") or "Board",
+        "score": _score_to_100(result.get("score")),
+        "posture": board_copilot.get("posture"),
+        "summary": (result.get("executive_summary") or {}).get("summary") or (result.get("health_summary") or {}).get("summary"),
+        "mission": board_copilot.get("mission"),
+        "release_note": board_copilot.get("release_note"),
+        "dominant_domain": board_copilot.get("dominant_domain"),
+        "validation_plan": board_copilot.get("validation_plan") or [],
+        "top_actions": decision_data.get("next_actions") or [],
+        "domain_breakdown": domain_breakdown,
+        "traceability_stats": board_review_layers.get("traceability_stats") or [],
+        "value_metrics": board_value_metrics or [],
+        "risk_sources": risk_sources,
+        "analysis_profile": analysis_context.get("profile"),
+        "board_type": analysis_context.get("board_type"),
+    }
+
+
+def _build_project_atlas_context(project, workspace_intelligence, timeline_data, project_copilot):
+    project = project or {}
+    workspace_intelligence = workspace_intelligence or {}
+    timeline_data = timeline_data or {}
+    project_copilot = project_copilot or {}
+
+    run_summaries = []
+    for run in _sort_project_runs(project.get("runs", [])):
+        run_summaries.append(
+            {
+                "name": run.get("name", "Run"),
+                "score": _score_to_100(run.get("score")) if run.get("score") is not None else 0,
+                "risk_count": _safe_int(run.get("risk_count"), 0),
+                "critical_count": _safe_int(run.get("critical_count"), 0),
+            }
+        )
+
+    return {
+        "project_name": project.get("name", "Workspace"),
+        "posture": project_copilot.get("posture"),
+        "health_score": workspace_intelligence.get("health_score", 0),
+        "health_summary": workspace_intelligence.get("health_summary"),
+        "average_confidence": workspace_intelligence.get("average_confidence", 0),
+        "confidence_summary": workspace_intelligence.get("confidence_summary"),
+        "trend_summary": workspace_intelligence.get("trend_summary") or timeline_data.get("summary"),
+        "momentum": project_copilot.get("momentum"),
+        "release_readiness": project_copilot.get("release_readiness"),
+        "recurring_family_summary": workspace_intelligence.get("recurring_family_summary"),
+        "trusted_focus_items": workspace_intelligence.get("trusted_focus_items") or [],
+        "next_actions": workspace_intelligence.get("next_actions") or [],
+        "run_summaries": run_summaries,
+    }
+
+
+def _build_compare_atlas_context(comparison, compare_copilot):
+    comparison = comparison or {}
+    compare_copilot = compare_copilot or {}
+    focus_sources = []
+    for index, item in enumerate(comparison.get("compare_focus_items", []) or []):
+        focus_sources.append(
+            {
+                "id": f"compare-focus-{index + 1}",
+                "label": item.get("label") or item.get("message") or "Changed finding",
+                "components": item.get("components") or [],
+                "nets": item.get("nets") or [],
+                "severity": item.get("severity"),
+            }
+        )
+
+    return {
+        "posture": compare_copilot.get("posture"),
+        "signoff_note": compare_copilot.get("signoff_note"),
+        "root_cause": compare_copilot.get("root_cause"),
+        "direction": compare_copilot.get("direction"),
+        "score_diff": compare_copilot.get("score_diff"),
+        "risk_diff": compare_copilot.get("risk_diff"),
+        "critical_diff": compare_copilot.get("critical_diff"),
+        "takeaways": compare_copilot.get("takeaways") or [],
+        "next_move": compare_copilot.get("next_move"),
+        "domain_impacts": ((comparison.get("insights") or {}).get("domain_impacts") or []),
+        "focus_sources": focus_sources,
+    }
+
+
 def _build_compare_visual_data(project_intelligence, insights):
     score_history = project_intelligence.get("score_history", []) if isinstance(project_intelligence, dict) else []
     risk_history = project_intelligence.get("risk_history", []) if isinstance(project_intelligence, dict) else []
@@ -3802,6 +3924,9 @@ def single_board_page():
             return redirect(url_for("single_board_page"))
 
     board_copilot = build_board_copilot_brief(result, single_decision)
+    board_review_layers = _build_board_review_layers(result)
+    board_value_metrics = _build_board_value_metrics(result)
+    board_assistant_console = build_board_assistant_console(board_copilot, single_decision)
 
     return _render_page(
         active_page="single",
@@ -3816,9 +3941,16 @@ def single_board_page():
             "single_chart": single_chart,
             "single_decision": single_decision,
             "board_copilot": board_copilot,
-            "board_assistant_console": build_board_assistant_console(board_copilot, single_decision),
-            "board_review_layers": _build_board_review_layers(result),
-            "board_value_metrics": _build_board_value_metrics(result),
+            "board_assistant_console": board_assistant_console,
+            "board_review_layers": board_review_layers,
+            "board_value_metrics": board_value_metrics,
+            "board_atlas_context": _build_board_atlas_context(
+                result,
+                single_decision,
+                board_copilot,
+                board_review_layers,
+                board_value_metrics,
+            ),
             "analysis_modes": analysis_modes,
             "selected_profile": selected_profile,
             "selected_board_type": selected_board_type,
@@ -3976,6 +4108,7 @@ def project_detail_page(project_id):
         timeline_data,
         project_value_metrics,
     )
+    project_assistant_console = build_project_assistant_console(project_copilot)
 
     return _render_page(
         active_page="projects_workspace",
@@ -3991,7 +4124,13 @@ def project_detail_page(project_id):
             "workspace_review_layers": workspace_review_layers,
             "project_value_metrics": project_value_metrics,
             "project_copilot": project_copilot,
-            "project_assistant_console": build_project_assistant_console(project_copilot),
+            "project_assistant_console": project_assistant_console,
+            "project_atlas_context": _build_project_atlas_context(
+                project,
+                workspace_intelligence,
+                timeline_data,
+                project_copilot,
+            ),
             "available_users": [user for user in list_users() if user.get("user_id") != ((project.get("owner") or {}).get("user_id"))],
         },
     )
@@ -4211,6 +4350,7 @@ def compare_runs(project_id):
     }
 
     compare_copilot = build_compare_copilot_brief(comparison)
+    compare_assistant_console = build_compare_assistant_console(compare_copilot)
 
     return _render_page(
         active_page="projects_workspace",
@@ -4223,9 +4363,28 @@ def compare_runs(project_id):
             "comparison": comparison,
             "comparison_visuals": comparison_visuals,
             "compare_copilot": compare_copilot,
-            "compare_assistant_console": build_compare_assistant_console(compare_copilot),
+            "compare_assistant_console": compare_assistant_console,
+            "compare_atlas_context": _build_compare_atlas_context(comparison, compare_copilot),
         },
     )
+
+
+@app.route("/atlas/query", methods=["POST"])
+def atlas_query_route():
+    payload = request.get_json(silent=True) or {}
+    page_type = str(payload.get("page_type") or "").strip().lower()
+    prompt = str(payload.get("prompt") or "").strip()
+    context = payload.get("context") or {}
+    history = payload.get("history") or []
+
+    if not prompt:
+        return jsonify({"error": "A prompt is required."}), 400
+
+    if page_type not in {"board", "project", "compare"}:
+        return jsonify({"error": "Unsupported Atlas page type."}), 400
+
+    answer = answer_atlas_question(page_type, prompt, context=context, history=history)
+    return jsonify(answer)
 
 
 @app.route("/history", methods=["GET"])

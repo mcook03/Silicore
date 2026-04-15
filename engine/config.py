@@ -132,6 +132,20 @@ DEFAULT_CONFIG = {
             "converter_cap_radius": 7.0,
             "max_high_current_vias": 4,
         },
+        "current_density": {
+            "min_high_current_width": 0.7,
+            "max_bottleneck_length": 24.0,
+            "neckdown_ratio_threshold": 2.5,
+            "max_bottleneck_vias": 3,
+            "high_current_net_keywords": ["VIN", "VBUS", "VCC", "VBAT", "5V", "12V", "PACK", "BATT", "SW", "PHASE"],
+        },
+        "analog_isolation": {
+            "sensitive_component_keepout": 8.0,
+            "max_analog_route_length": 20.0,
+            "sensitive_component_keywords": ["ADC", "DAC", "REF", "SENSOR", "OPAMP", "AFE", "AMP", "LNA", "ANALOG"],
+            "aggressor_component_keywords": ["REG", "BUCK", "BOOST", "PMIC", "INDUCTOR", "MOSFET", "SW", "USB", "ETH", "DDR", "MCU", "CPU"],
+            "analog_net_keywords": ["ADC", "REF", "SENSE", "ANALOG", "VREF", "THERM", "CURRENT", "SHUNT"],
+        },
     }
 }
 

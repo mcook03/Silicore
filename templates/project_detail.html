@@ -77,7 +77,8 @@
 <script id="project-assistant-data" type="application/json">
 {{ {
     "assistant": project_assistant_console,
-    "copilot": project_copilot
+    "copilot": project_copilot,
+    "atlas_context": project_atlas_context if project_atlas_context is defined else {}
 }|tojson }}
 </script>
 
@@ -1533,6 +1534,7 @@
     if (!responsePanel) return;
 
     const projectData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const atlasContext = projectData.atlas_context || {};
     const assistantData = projectData.assistant || {};
     const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
     const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
@@ -1564,7 +1566,7 @@
         const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
         responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${renderFollowUps(result.follow_ups)}`;
         responsePanel.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
-            button.addEventListener('click', () => pushThreadExchange(button.dataset.assistantProjectFollowup, answerPrompt(button.dataset.assistantProjectFollowup)));
+            button.addEventListener('click', () => submitPrompt(button.dataset.assistantProjectFollowup));
         });
     };
 
@@ -1582,6 +1584,11 @@
             return [];
         }
     };
+    const serializeHistory = () => loadThread().slice(-8).map((item) => ({
+        role: item.role,
+        intent: item.intent || '',
+        copy: String(item.copy || '').replace(/<[^>]+>/g, ' ').trim(),
+    }));
     const renderThread = (messages) => {
         if (!thread) return;
         thread.innerHTML = messages.map((item) => `
@@ -1593,7 +1600,7 @@
         `).join('');
         thread.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
             button.addEventListener('click', () => {
-                pushThreadExchange(button.dataset.assistantProjectFollowup, answerPrompt(button.dataset.assistantProjectFollowup));
+                submitPrompt(button.dataset.assistantProjectFollowup);
             });
         });
     };
@@ -1613,7 +1620,7 @@
         }
         return null;
     };
-    const answerPrompt = (text) => {
+    const fallbackProjectPrompt = (text) => {
         const lower = String(text || '').toLowerCase();
         const copilot = projectData.copilot || {};
         const assistantRoute = matchAssistantRoute(text);
@@ -1641,49 +1648,64 @@
             follow_ups: ['What is repeating across this workspace?', 'What should the team do next?', 'Are we review-gate ready?'],
         };
     };
+    const requestAtlas = async (promptText) => {
+        try {
+            const response = await fetch('/atlas/query', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    page_type: 'project',
+                    prompt: promptText,
+                    history: serializeHistory(),
+                    context: atlasContext,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`Atlas request failed with ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.debug('atlas project query fallback', error);
+            return fallbackProjectPrompt(promptText);
+        }
+    };
     const pushThreadExchange = (promptText, result) => {
         const current = loadThread();
         current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: resultToMarkup(result), follow_ups: result.follow_ups || []});
+        current.push({role: 'assistant', copy: resultToMarkup(result), follow_ups: result.follow_ups || [], intent: result.intent || ''});
         saveThread(current);
         renderThread(current);
         renderResponse(result);
     };
+    const submitPrompt = async (promptText) => {
+        const result = await requestAtlas(promptText);
+        pushThreadExchange(promptText, result);
+    };
 
     questionButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const route = routesByKey[button.dataset.routeKey || ''];
-            pushThreadExchange(button.dataset.title || 'Question', route ? routeResult(route) : {
-                title: button.dataset.title || 'Question',
-                answer: button.dataset.answer || 'No answer available.',
-                follow_ups: [],
-            });
+        button.addEventListener('click', async () => {
+            await submitPrompt(button.dataset.title || 'Question');
         });
     });
 
     lensButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const route = routesByKey[button.dataset.routeKey || ''];
-            pushThreadExchange(button.dataset.title || 'Review Lens', route ? routeResult(route) : {
-                title: button.dataset.title || 'Review Lens',
-                answer: button.dataset.answer || 'No review-lens note available.',
-                follow_ups: [],
-            });
+        button.addEventListener('click', async () => {
+            await submitPrompt(button.dataset.title || 'Review Lens');
         });
     });
 
     promptButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            pushThreadExchange(button.dataset.assistantProjectPrompt || button.textContent, answerPrompt(button.dataset.assistantProjectPrompt || button.textContent));
+        button.addEventListener('click', async () => {
+            await submitPrompt(button.dataset.assistantProjectPrompt || button.textContent);
         });
     });
 
     if (form && input) {
-        form.addEventListener('submit', (event) => {
+        form.addEventListener('submit', async (event) => {
             event.preventDefault();
             const value = input.value.trim();
             if (!value) return;
-            pushThreadExchange(value, answerPrompt(value));
+            await submitPrompt(value);
             input.value = '';
         });
     }
