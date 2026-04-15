@@ -379,12 +379,29 @@ def _build_analysis_context(result):
     }
 
 
+def _resolve_display_score(result):
+    score_value = _safe_float(result.get("score"), None)
+    score_breakdown = result.get("score_explanation") or {}
+    breakdown_final = _safe_float(score_breakdown.get("final_score"), None)
+
+    if score_value is not None and score_value > 0:
+        return _score_to_100(score_value)
+    if breakdown_final is not None and breakdown_final > 0:
+        return _score_to_100(breakdown_final)
+    if score_value is not None:
+        return _score_to_100(score_value)
+    if breakdown_final is not None:
+        return _score_to_100(breakdown_final)
+    return 0.0
+
+
 def _enrich_single_result(result):
     risks = _enrich_risks_with_transparency(result.get("risks", []) or [])
     result["risks"] = risks
     result["grouped_risks"] = _prepare_grouped_risks(risks)
     result["top_issues"] = _prepare_top_issues(risks)
-    result["health_summary"] = _build_health_summary(result.get("score", 0), risks)
+    result["display_score"] = _resolve_display_score(result)
+    result["health_summary"] = _build_health_summary(result.get("display_score", result.get("score", 0)), risks)
     result["analysis_context_view"] = _build_analysis_context(result)
     result["board_view"] = _build_board_view_data(result.get("pcb_snapshot") or {}, risks)
     return result
@@ -396,7 +413,8 @@ def _enrich_project_result(project_result):
         board_risks = _enrich_risks_with_transparency(board.get("risks", []) or [])
         board["risks"] = board_risks
         board["top_issues"] = _prepare_top_issues(board_risks, limit=2)
-        board["health_summary"] = _build_health_summary(board.get("score", 0), board_risks)
+        board["display_score"] = _resolve_display_score(board)
+        board["health_summary"] = _build_health_summary(board.get("display_score", board.get("score", 0)), board_risks)
         board["analysis_context_view"] = _build_analysis_context(board)
     project_result["project_health_summary"] = _build_project_health_summary(project_result)
     return project_result
