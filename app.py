@@ -11,7 +11,10 @@ from engine.atlas_intelligence import (
     build_project_assistant_console,
     build_project_copilot_brief,
 )
+from engine.atlas_tools import run_tool_action
+from engine.evaluation_backend import evaluate_fixture_suite
 from engine.insight_engine import generate_comparison_insights
+from engine.job_store import get_job, list_jobs
 
 from flask import (
     Flask,
@@ -2252,6 +2255,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "domain_breakdown": domain_breakdown,
         "traceability_stats": board_review_layers.get("traceability_stats") or [],
         "value_metrics": board_value_metrics or [],
+        "subsystem_summary": result.get("subsystem_summary") or {},
         "risk_sources": risk_sources,
         "analysis_profile": analysis_context.get("profile"),
         "board_type": analysis_context.get("board_type"),
@@ -4431,7 +4435,19 @@ def atlas_query_route():
         answer_payload=answer,
         owner_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
     )
-    return jsonify({**answer, "thread_key": thread_key, "thread": thread_messages})
+    tool_suggestions = {
+        "board": ["generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
+        "project": ["compare_latest_runs", "generate_signoff_packet", "run_fixture_evaluation"],
+        "compare": ["generate_signoff_packet", "open_high_confidence_findings"],
+    }
+    return jsonify(
+        {
+            **answer,
+            "thread_key": thread_key,
+            "thread": thread_messages,
+            "tool_suggestions": tool_suggestions.get(page_type, []),
+        }
+    )
 
 
 @app.route("/atlas/thread", methods=["GET"])
@@ -4440,6 +4456,41 @@ def atlas_thread_route():
     if not thread_key:
         return jsonify({"messages": []})
     return jsonify({"messages": list_atlas_messages(thread_key)})
+
+
+@app.route("/atlas/action", methods=["POST"])
+def atlas_action_route():
+    payload = request.get_json(silent=True) or {}
+    action_name = str(payload.get("action_name") or "").strip()
+    context = payload.get("context") or {}
+    params = payload.get("params") or {}
+    if not action_name:
+        return jsonify({"error": "An action_name is required."}), 400
+    result = run_tool_action(
+        action_name,
+        context=context,
+        actor_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
+        params=params,
+    )
+    return jsonify(result)
+
+
+@app.route("/jobs", methods=["GET"])
+def jobs_route():
+    return jsonify({"jobs": list_jobs(limit=_safe_int(request.args.get("limit"), 20))})
+
+
+@app.route("/jobs/<job_id>", methods=["GET"])
+def job_detail_route(job_id):
+    job = get_job(job_id)
+    if not job:
+        return jsonify({"error": "Job not found."}), 404
+    return jsonify(job)
+
+
+@app.route("/admin/evaluation", methods=["GET"])
+def evaluation_route():
+    return jsonify(evaluate_fixture_suite())
 
 
 @app.route("/history", methods=["GET"])

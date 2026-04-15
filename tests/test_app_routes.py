@@ -154,6 +154,32 @@ class AppRouteSmokeTests(unittest.TestCase):
         thread_payload = thread_response.get_json()
         self.assertGreaterEqual(len(thread_payload.get("messages", [])), 2)
 
+    def test_atlas_action_route_returns_job_payload(self):
+        response = self.client.post(
+            "/atlas/action",
+            json={
+                "action_name": "generate_signoff_packet",
+                "context": {
+                    "board_name": "Demo Board",
+                    "release_note": "Needs one more validation pass.",
+                    "top_actions": [{"label": "Tighten decoupling loop"}],
+                    "validation_plan": ["Probe the input rail under load."],
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertIn("job", payload)
+        self.assertIn("result", payload)
+        self.assertIn("summary", payload["result"])
+
+    def test_evaluation_route_returns_fixture_summary(self):
+        response = self.client.get("/admin/evaluation")
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertIn("fixture_count", payload)
+        self.assertIn("boards", payload)
+
 
 if __name__ == "__main__":
     unittest.main()

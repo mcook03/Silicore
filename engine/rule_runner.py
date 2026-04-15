@@ -10,6 +10,7 @@ RULE_CATEGORY_MAP = {
     "power_distribution_rule": "power",
     "power_rail_rule": "power",
     "decoupling_rule": "power",
+    "decoupling_strategy_rule": "power",
     "power_path_realism_rule": "power",
     "current_density_rule": "power",
     "signal_path_rule": "signal",

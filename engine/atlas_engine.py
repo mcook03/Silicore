@@ -334,6 +334,8 @@ def answer_board_question(prompt, context, history=None):
         )
 
     overview_citations = [_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)]
+    subsystem_summary = context.get("subsystem_summary") or {}
+    dominant_subsystem = subsystem_summary.get("dominant_subsystem")
     return _make_response(
         "overview",
         "Board Overview",
@@ -341,7 +343,12 @@ def answer_board_question(prompt, context, history=None):
         or context.get("posture")
         or f"Atlas currently sees {dominant_domain} as the main engineering driver on this board.",
         detail=(
-            f"The board is currently at {context.get('score', 0)} / 100. The most useful next step is to focus on {dominant_domain}, close the top action cleanly, and verify that the rerun improves trust as well as score."
+            f"The board is currently at {context.get('score', 0)} / 100. "
+            + (
+                f"Atlas sees the strongest subsystem pressure in {dominant_subsystem}. "
+                if dominant_subsystem else ""
+            )
+            + f"The most useful next step is to focus on {dominant_domain}, close the top action cleanly, and verify that the rerun improves trust as well as score."
         ),
         follow_ups=[
             "What should I fix first?",

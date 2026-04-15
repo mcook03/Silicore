@@ -12,13 +12,17 @@ from engine.dashboard_storage import (
     create_run_directory,
     save_run_meta,
 )
+from engine.subsystem_classifier import classify_pcb_subsystems
 
-SUPPORTED_EXTENSIONS = {".txt", ".brd", ".kicad_pcb"}
+SUPPORTED_EXTENSIONS = {".txt", ".brd", ".kicad_pcb", ".gbr", ".gko", ".ger", ".pcbdocascii"}
 FORMAT_READINESS = {
     ".kicad_pcb": {"label": "KiCad PCB", "status": "supported"},
     ".txt": {"label": "Structured Demo Text", "status": "supported"},
     ".brd": {"label": "Legacy Structured Board", "status": "supported"},
-    ".gbr": {"label": "Gerber", "status": "planned"},
+    ".gbr": {"label": "Gerber", "status": "experimental"},
+    ".gko": {"label": "Gerber Outline", "status": "experimental"},
+    ".ger": {"label": "Gerber Layer", "status": "experimental"},
+    ".pcbdocascii": {"label": "Altium ASCII Export", "status": "experimental"},
 }
 
 
@@ -1304,6 +1308,7 @@ def _analyze_board_file(file_path, config):
         "raw_rule_result": raw_rule_result,
         "generated_at": _utc_now_iso(),
     }
+    result["subsystem_summary"] = classify_pcb_subsystems(pcb)
 
     result["executive_summary"] = _generate_executive_summary(result)
     return result
