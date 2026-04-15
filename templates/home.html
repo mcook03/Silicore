@@ -110,6 +110,23 @@
                 <div class="empty-state">No recent scored runs available for a live trend yet.</div>
                 {% endif %}
             </div>
+
+            {% if home_chart.score_distribution and home_chart.score_distribution.has_data %}
+            <div class="home-sparkline-card" style="margin-top:14px;">
+                <div class="sparkline-label">Run Quality Mix</div>
+                <div class="distribution-bars">
+                    {% for item in home_chart.score_distribution["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label distribution-bar-label-wrap">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-blue" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
         </div>
     </section>
 </section>
@@ -252,7 +269,7 @@
         </div>
 
         <div class="card-body">
-            <div class="home-table">
+            <div class="home-table maturity-table">
                 <div class="home-table-header">
                     <div>Capability</div>
                     <div>Status</div>
@@ -260,26 +277,14 @@
                     <div>Meaning</div>
                 </div>
 
+                {% for row in dashboard_story.maturity_rows %}
                 <div class="home-table-row">
-                    <div class="home-table-title">Design Analysis Engine</div>
-                    <div><span class="chip chip-low">LIVE</span></div>
-                    <div class="home-table-date">{{ stats.total_runs }} runs</div>
-                    <div class="result-card-copy">The platform is generating persistent scored analyses and artifacts.</div>
+                    <div class="home-table-title">{{ row.title }}</div>
+                    <div><span class="chip chip-{{ row.status_tone }}">{{ row.status }}</span></div>
+                    <div class="home-table-date">{{ row.evidence }}</div>
+                    <div class="result-card-copy">{{ row.meaning }}</div>
                 </div>
-
-                <div class="home-table-row">
-                    <div class="home-table-title">AI Insight Engine</div>
-                    <div><span class="chip chip-low">ACTIVE</span></div>
-                    <div class="home-table-date">{{ dashboard_story.top_category if dashboard_story is defined else "Growing" }}</div>
-                    <div class="result-card-copy">Comparison and workspace views are now surfacing trusted focus areas and chronic patterns.</div>
-                </div>
-
-                <div class="home-table-row">
-                    <div class="home-table-title">Project Intelligence</div>
-                    <div><span class="chip chip-medium">ADVANCING</span></div>
-                    <div class="home-table-date">{{ projects|length if projects is defined else 0 }} workspaces</div>
-                    <div class="result-card-copy">Workspace trends, project heatmaps, and timeline views are now tied to real linked runs.</div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -537,7 +542,7 @@
 
     .home-table-header {
         display: grid;
-        grid-template-columns: minmax(260px, 1.5fr) 120px 220px 140px;
+        grid-template-columns: minmax(190px, 1.2fr) 120px minmax(120px, 0.9fr) minmax(280px, 2fr);
         gap: 14px;
         padding: 12px 16px;
         border: 1px solid var(--border);
@@ -552,7 +557,7 @@
 
     .home-table-row {
         display: grid;
-        grid-template-columns: minmax(260px, 1.5fr) 120px 220px 140px;
+        grid-template-columns: minmax(190px, 1.2fr) 120px minmax(120px, 0.9fr) minmax(280px, 2fr);
         gap: 14px;
         align-items: center;
         padding: 16px;
@@ -572,11 +577,15 @@
         font-size: 15px;
         font-weight: 600;
         color: var(--text);
+        min-width: 0;
+        word-break: break-word;
     }
 
     .home-table-date {
         color: var(--text);
         font-size: 13px;
+        min-width: 0;
+        word-break: break-word;
     }
 
     .workspace-health-list {
@@ -612,6 +621,22 @@
         font-size: 28px;
         font-weight: 800;
         letter-spacing: -0.04em;
+    }
+
+    .maturity-table .home-table-row,
+    .maturity-table .home-table-header {
+        align-items: start;
+    }
+
+    .maturity-table .result-card-copy {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .distribution-bar-label-wrap {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
     }
 
     @media (max-width: 1100px) {

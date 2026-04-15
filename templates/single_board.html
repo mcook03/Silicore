@@ -41,7 +41,20 @@
             <div class="hero-panel-label">Board Mode</div>
             <div class="hero-panel-value">Focused Review</div>
 
-            {% if single_chart and single_chart["severity_bars"] and single_chart["severity_bars"]["has_data"] %}
+            {% if single_decision and single_decision.focus_bars and single_decision.focus_bars.has_data %}
+            <div class="hero-mini-bars">
+                {% for item in single_decision.focus_bars["items"] %}
+                <div class="hero-mini-row">
+                    <div class="hero-mini-label">{{ item["label"] }}</div>
+                    <div class="hero-mini-track">
+                        <div class="hero-mini-fill tone-violet" style="width: {{ item['width_pct'] }}%;"></div>
+                    </div>
+                    <div class="hero-mini-value">{{ item["value"]|round|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="chart-fallback-empty" style="margin-top:10px;">Priority score by live next-action ranking</div>
+            {% elif single_chart and single_chart["severity_bars"] and single_chart["severity_bars"]["has_data"] %}
             <div class="hero-mini-bars">
                 {% for item in single_chart["severity_bars"]["items"] %}
                 <div class="hero-mini-row">
@@ -406,6 +419,83 @@
             {% endif %}
         </div>
     </section>
+</section>
+
+<section class="card spotlight-shell-card">
+    <div class="card-header">
+        <h2 class="section-title">Focused Review Signal</h2>
+        <p class="section-copy">Live board-analysis mix across score pressure, category concentration, and issue severity.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="grid grid-3">
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Score Pressure</span>
+                    <span>Board vs penalty</span>
+                </div>
+                {% if single_chart and single_chart.score_card and single_chart.score_card.has_data %}
+                <div class="distribution-bars">
+                    {% for item in single_chart.score_card["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-blue" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">No score pressure data available yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Category Focus</span>
+                    <span>Live findings by domain</span>
+                </div>
+                {% if single_chart and single_chart["category_bars"] and single_chart["category_bars"]["has_data"] %}
+                <div class="distribution-bars">
+                    {% for item in single_chart["category_bars"]["items"][:4] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item["label"] }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-blue" style="width: {{ item['width_pct'] }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item["value"]|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">No category focus data available yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Confidence Mix</span>
+                    <span>Evidence quality</span>
+                </div>
+                {% if single_decision and single_decision.confidence_bars and single_decision.confidence_bars.has_data %}
+                <div class="distribution-bars">
+                    {% for item in single_decision.confidence_bars["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-violet" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">No confidence data available yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </section>
 
 <section class="card boards-card">

@@ -22,7 +22,21 @@
         <div class="settings-hero-panel">
             <div class="settings-panel-label">Config Mode</div>
             <div class="settings-panel-value">Live Rule Tuning</div>
+            {% if settings_view and settings_view.penalty_bars and settings_view.penalty_bars.has_data %}
+            <div class="settings-panel-bars">
+                {% for item in settings_view.penalty_bars["items"] %}
+                <div class="settings-panel-bar-row">
+                    <div class="settings-panel-bar-label">{{ item.label }}</div>
+                    <div class="settings-panel-bar-track">
+                        <div class="settings-panel-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                    <div class="settings-panel-bar-value">{{ item.value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
             <div class="settings-panel-chart"></div>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -112,23 +126,23 @@
         <div class="card-body">
             <div class="settings-summary-grid">
                 <div class="settings-summary-card">
-                    <div class="settings-summary-value">3</div>
+                    <div class="settings-summary-value">{{ settings_view.section_counts.layout if settings_view else 0 }}</div>
                     <div class="settings-summary-label">Layout Controls</div>
                 </div>
 
                 <div class="settings-summary-card">
-                    <div class="settings-summary-value">5</div>
+                    <div class="settings-summary-value">{{ settings_view.section_counts.power if settings_view else 0 }}</div>
                     <div class="settings-summary-label">Power Controls</div>
                 </div>
 
                 <div class="settings-summary-card">
-                    <div class="settings-summary-value">2</div>
+                    <div class="settings-summary-value">{{ settings_view.section_counts.signal if settings_view else 0 }}</div>
                     <div class="settings-summary-label">Signal Controls</div>
                 </div>
 
                 <div class="settings-summary-card">
-                    <div class="settings-summary-value">2</div>
-                    <div class="settings-summary-label">System Toggles</div>
+                    <div class="settings-summary-value">{{ settings_view.total_controls if settings_view else 0 }}</div>
+                    <div class="settings-summary-label">Total Live Controls</div>
                 </div>
             </div>
 
@@ -479,6 +493,36 @@
                         <div class="slider-card">
                             <div class="slider-card-top">
                                 <div>
+                                    <div class="slider-label">Minimum Power Connections</div>
+                                    <div class="slider-help">Minimum number of visible connections expected on a power rail before coverage is flagged.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="power-min-connections-value">
+                                        {{ editable_config.power.min_connections if editable_config and editable_config.power and editable_config.power.min_connections is defined else 2 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="1"
+                                max="10"
+                                step="1"
+                                name="power_min_connections"
+                                value="{{ editable_config.power.min_connections if editable_config and editable_config.power and editable_config.power.min_connections is defined else 2 }}"
+                                oninput="document.getElementById('power-min-connections-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>1</span>
+                                <span>5</span>
+                                <span>10</span>
+                            </div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
                                     <div class="slider-label">Max Via Count</div>
                                     <div class="slider-help">Maximum number of vias on a critical power rail before it is flagged.</div>
                                 </div>
@@ -547,6 +591,36 @@
                                 <span>200</span>
                             </div>
                         </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Minimum General Trace Width</div>
+                                    <div class="slider-help">Manufacturing-oriented floor for non-power traces before a trace-quality warning appears.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="signal-min-width-value">
+                                        {{ editable_config.signal.min_general_trace_width if editable_config and editable_config.signal and editable_config.signal.min_general_trace_width is defined else 0.15 }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input
+                                class="styled-range"
+                                type="range"
+                                min="0.05"
+                                max="1.0"
+                                step="0.01"
+                                name="signal_min_general_trace_width"
+                                value="{{ editable_config.signal.min_general_trace_width if editable_config and editable_config.signal and editable_config.signal.min_general_trace_width is defined else 0.15 }}"
+                                oninput="document.getElementById('signal-min-width-value').textContent=this.value"
+                            >
+                            <div class="range-scale">
+                                <span>0.05</span>
+                                <span>0.50</span>
+                                <span>1.00</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="settings-text-grid">
@@ -558,6 +632,17 @@
                                 name="signal_critical_nets"
                                 value="{{ editable_config.signal.critical_nets|join(', ') if editable_config and editable_config.signal and editable_config.signal.critical_nets else '' }}"
                                 placeholder="CLK, SCL, SDA, MOSI"
+                            >
+                        </label>
+
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Excluded Nets</span>
+                            <span class="text-input-help">Comma-separated power or reference nets that should be ignored by general signal-routing quality checks.</span>
+                            <input
+                                type="text"
+                                name="signal_excluded_net_keywords"
+                                value="{{ editable_config.signal.excluded_net_keywords|join(', ') if editable_config and editable_config.signal and editable_config.signal.excluded_net_keywords else '' }}"
+                                placeholder="GND, VCC, VIN, 3V3, 5V"
                             >
                         </label>
                     </div>
@@ -601,6 +686,82 @@
                                 <span>10</span>
                                 <span>20</span>
                             </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
+                            <h3>Scoring</h3>
+                            <p>Calibrate how strongly each severity level affects the final engineering score.</p>
+                        </div>
+                        <span class="chip chip-soft">Score Model</span>
+                    </div>
+
+                    <div class="slider-control-grid">
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Low Severity Penalty</div>
+                                    <div class="slider-help">Score deduction applied to low-severity findings.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="score-penalty-low-value">
+                                        {{ editable_config.score.penalty_low if editable_config and editable_config.score and editable_config.score.penalty_low is defined else 0.5 }}
+                                    </span>
+                                </div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="5" step="0.1" name="score_penalty_low" value="{{ editable_config.score.penalty_low if editable_config and editable_config.score and editable_config.score.penalty_low is defined else 0.5 }}" oninput="document.getElementById('score-penalty-low-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>2.5</span><span>5</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Medium Severity Penalty</div>
+                                    <div class="slider-help">Score deduction applied to medium-severity findings.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="score-penalty-medium-value">
+                                        {{ editable_config.score.penalty_medium if editable_config and editable_config.score and editable_config.score.penalty_medium is defined else 1.0 }}
+                                    </span>
+                                </div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="5" step="0.1" name="score_penalty_medium" value="{{ editable_config.score.penalty_medium if editable_config and editable_config.score and editable_config.score.penalty_medium is defined else 1.0 }}" oninput="document.getElementById('score-penalty-medium-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>2.5</span><span>5</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">High Severity Penalty</div>
+                                    <div class="slider-help">Score deduction applied to high-severity findings.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="score-penalty-high-value">
+                                        {{ editable_config.score.penalty_high if editable_config and editable_config.score and editable_config.score.penalty_high is defined else 1.5 }}
+                                    </span>
+                                </div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="5" step="0.1" name="score_penalty_high" value="{{ editable_config.score.penalty_high if editable_config and editable_config.score and editable_config.score.penalty_high is defined else 1.5 }}" oninput="document.getElementById('score-penalty-high-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>2.5</span><span>5</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div>
+                                    <div class="slider-label">Critical Severity Penalty</div>
+                                    <div class="slider-help">Score deduction applied to critical findings.</div>
+                                </div>
+                                <div class="slider-value-pill">
+                                    <span id="score-penalty-critical-value">
+                                        {{ editable_config.score.penalty_critical if editable_config and editable_config.score and editable_config.score.penalty_critical is defined else 2.0 }}
+                                    </span>
+                                </div>
+                            </div>
+                            <input class="styled-range" type="range" min="0" max="5" step="0.1" name="score_penalty_critical" value="{{ editable_config.score.penalty_critical if editable_config and editable_config.score and editable_config.score.penalty_critical is defined else 2.0 }}" oninput="document.getElementById('score-penalty-critical-value').textContent=this.value">
+                            <div class="range-scale"><span>0</span><span>2.5</span><span>5</span></div>
                         </div>
                     </div>
                 </section>
@@ -754,6 +915,38 @@
             linear-gradient(90deg, rgba(59,130,246,0.18), rgba(96,165,250,0.08));
         background-size: 18px 18px, 18px 18px, auto;
         border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .settings-panel-bars {
+        display: grid;
+        gap: 10px;
+    }
+
+    .settings-panel-bar-row {
+        display: grid;
+        grid-template-columns: 68px 1fr 42px;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .settings-panel-bar-label,
+    .settings-panel-bar-value {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .settings-panel-bar-track {
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.08);
+        overflow: hidden;
+    }
+
+    .settings-panel-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--blue), var(--blue-2));
     }
 
     .settings-area-grid,

@@ -65,6 +65,17 @@
                     {% endfor %}
                 </svg>
             </div>
+            <div class="hero-mini-bars" style="margin-top:12px;">
+                {% for point in project_chart.summary_points %}
+                <div class="hero-mini-row">
+                    <div class="hero-mini-label">{{ point.label }}</div>
+                    <div class="hero-mini-track">
+                        <div class="hero-mini-fill tone-blue" style="width: {{ point.value }}%;"></div>
+                    </div>
+                    <div class="hero-mini-value">{{ point.value }}</div>
+                </div>
+                {% endfor %}
+            </div>
             {% else %}
             <div class="chart-fallback chart-fallback-hero">
                 <div class="chart-fallback-empty">Project trend will appear after analysis</div>
@@ -149,7 +160,7 @@
 
             <div class="visual-chart-card">
                 <div class="visual-chart-header">
-                    <span>Project Trend</span>
+                    <span>Board Score Distribution</span>
                     <span>{{ project_result.project_summary.total_boards if project_result.project_summary else 0 }} boards</span>
                 </div>
 
@@ -179,7 +190,7 @@
                 </div>
                 {% else %}
                 <div class="chart-fallback">
-                    <div class="chart-fallback-empty">No score trend available yet</div>
+                    <div class="chart-fallback-empty">No board score distribution available yet</div>
                 </div>
                 {% endif %}
             </div>
@@ -276,6 +287,27 @@
                 </div>
             </div>
             {% endif %}
+
+            {% if project_chart is defined and project_chart["risk_bars"] and project_chart["risk_bars"].has_data %}
+            <div class="distribution-chart-shell" style="margin-top:16px;">
+                <div class="distribution-chart-header">
+                    <span>Board Risk Volume</span>
+                    <span>Findings per board</span>
+                </div>
+
+                <div class="distribution-bars">
+                    {% for bar in project_chart["risk_bars"]["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ bar.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-violet" style="width: {{ bar.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ bar.value|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
         </div>
     </section>
 </section>
@@ -298,6 +330,83 @@
                 <p>
                     Multi-board review helps engineers rank quality, identify weaker designs faster, and understand whether project-level risk is concentrated in one board or spread across the portfolio.
                 </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Portfolio Review Signal</h2>
+        <p class="section-copy">Live project-level concentration across categories, board health, and prioritized action pressure.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="grid grid-3">
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Category Concentration</span>
+                    <span>Across all boards</span>
+                </div>
+                {% if project_chart is defined and project_chart["category_bars"] and project_chart["category_bars"].has_data %}
+                <div class="distribution-bars">
+                    {% for item in project_chart["category_bars"]["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-blue" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state compact-empty">No category concentration data available yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Board Health Mix</span>
+                    <span>Portfolio quality states</span>
+                </div>
+                {% if project_intelligence_review and project_intelligence_review.board_health_bars and project_intelligence_review.board_health_bars.has_data %}
+                <div class="distribution-bars">
+                    {% for item in project_intelligence_review.board_health_bars["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill good" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state compact-empty">No board health data available yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="visual-chart-card">
+                <div class="visual-chart-header">
+                    <span>Portfolio Ranking</span>
+                    <span>Board scores</span>
+                </div>
+                {% if project_chart is defined and project_chart["ranking"] %}
+                <div class="distribution-bars">
+                    {% for item in project_chart["ranking"][:4] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill {{ item.tone }}" style="width: {{ item.width }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state compact-empty">No ranking data available yet.</div>
+                {% endif %}
             </div>
         </div>
     </div>

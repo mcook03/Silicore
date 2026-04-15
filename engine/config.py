@@ -29,11 +29,14 @@ DEFAULT_CONFIG = {
         "decoupling_distance_threshold": 4.0,
         "max_trace_length": 50.0,
         "min_trace_width": 0.5,
-        "max_via_count": 5
+        "max_via_count": 5,
+        "min_connections": 2
     },
     "signal": {
         "max_trace_length": 25.0,
-        "critical_nets": ["CLK", "SCL", "SDA", "MOSI", "MISO", "CS"]
+        "critical_nets": ["CLK", "SCL", "SDA", "MOSI", "MISO", "CS"],
+        "min_general_trace_width": 0.15,
+        "excluded_net_keywords": ["GND", "GROUND", "VCC", "VIN", "VBAT", "3V3", "5V", "12V", "VDD"]
     },
     "thermal": {
         "hotspot_distance_threshold": 4.0
@@ -49,7 +52,8 @@ DEFAULT_CONFIG = {
         "power_distribution": {},
         "return_path": {},
         "signal_path": {},
-        "power_rail": {}
+        "power_rail": {},
+        "trace_quality": {}
     }
 }
 

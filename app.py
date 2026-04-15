@@ -24,6 +24,7 @@ from engine.project_store import (
     list_projects,
 )
 from engine.services.analysis_service import (
+    FORMAT_READINESS,
     analyze_project_files,
     analyze_single_board,
     get_dashboard_config,
@@ -885,16 +886,53 @@ def _build_dashboard_story(recent_runs, projects):
         },
     ]
 
+    maturity_rows = [
+        {
+            "title": "Design Analysis Engine",
+            "status": "LIVE",
+            "status_tone": "low",
+            "evidence": f"{len(recent_runs)} saved run(s)",
+            "meaning": "Persistent scored analyses, export artifacts, and traceable findings are now available across saved runs.",
+        },
+        {
+            "title": "AI Insight Engine",
+            "status": "ACTIVE",
+            "status_tone": "low",
+            "evidence": top_category or "Growing insight coverage",
+            "meaning": "Findings now carry transparency, confidence, clustered patterns, and fix-priority guidance instead of raw issue lists alone.",
+        },
+        {
+            "title": "Project Intelligence",
+            "status": "ADVANCING",
+            "status_tone": "medium",
+            "evidence": f"{len(projects)} workspace(s)",
+            "meaning": "Workspace trends, recurring category pressure, board comparison, and timeline summaries are tied to real linked project runs.",
+        },
+        {
+            "title": "Engineering Decision Layer",
+            "status": "ACTIVE" if scored_runs else "BOOTSTRAPPING",
+            "status_tone": "low" if scored_runs else "medium",
+            "evidence": f"{len(active_projects)} active workspace(s)",
+            "meaning": "Next-action panels now rank work by severity, confidence, repetition, and board-level impact so engineers know what to fix first.",
+        },
+    ]
+
+    parser_readiness = []
+    for extension, metadata in sorted(FORMAT_READINESS.items()):
+        parser_readiness.append(
+            {
+                "label": metadata.get("label", extension.upper()),
+                "status": str(metadata.get("status", "planned")).title(),
+                "extension": extension,
+            }
+        )
+
     return {
         "summary": summary,
         "pillars": pillars,
         "top_category": top_category or "No recurring category yet",
-        "parser_readiness": [
-            {"label": "KiCad PCB", "status": "Supported"},
-            {"label": "Structured Demo Text", "status": "Supported"},
-            {"label": "Altium", "status": "Planned"},
-            {"label": "Gerber", "status": "Planned"},
-        ],
+        "parser_readiness": parser_readiness,
+        "maturity_rows": maturity_rows,
     }
 
 
@@ -1395,11 +1433,24 @@ def _build_home_chart_data(recent_runs, stats):
         ]
     )
 
+    score_distribution = {"Strong": 0, "Watch": 0, "Risk": 0}
+    for item in scored_runs:
+        value = _safe_float(item.get("value"), 0.0)
+        if value >= 80:
+            score_distribution["Strong"] += 1
+        elif value >= 50:
+            score_distribution["Watch"] += 1
+        else:
+            score_distribution["Risk"] += 1
+
     return {
         "trend": trend,
         "latest_score": latest_score,
         "latest_source": latest_source,
         "workflow_chart": workflow_chart,
+        "score_distribution": _build_bar_chart(
+            [{"label": key, "value": value} for key, value in score_distribution.items() if value > 0]
+        ),
         "run_fill_pct": min(round((_safe_int(stats.get("total_runs"), 0) / 20) * 100), 100),
     }
 
@@ -1414,8 +1465,14 @@ def _build_projects_chart_data(projects):
     ]
     portfolio_average_score = round(sum(portfolio_scores) / len(portfolio_scores), 1) if portfolio_scores else 0
 
-    creation_values = list(range(1, len(projects) + 1))
-    creation_labels = [project.get("name", "Project") for project in reversed(projects)]
+    creation_values = []
+    creation_labels = []
+    running_active = 0
+    for project in projects:
+        if project.get("run_count", 0) > 0:
+            running_active += 1
+        creation_values.append(running_active)
+        creation_labels.append(project.get("name", "Project"))
 
     activity_items = [
         {"label": _short_board_label(project.get("name", "Project"), limit=18), "value": project.get("run_count", 0)}
@@ -1542,6 +1599,9 @@ def _build_project_chart_data(project_result, comparison):
     watch_count = 0
     risk_count = 0
     board_score_values = []
+    board_labels = []
+    board_risk_items = []
+    category_totals = defaultdict(int)
 
     sorted_boards = sorted(
         boards,
@@ -1564,6 +1624,13 @@ def _build_project_chart_data(project_result, comparison):
             risk_count += 1
 
         board_score_values.append(score_100)
+        board_labels.append(_short_board_label(filename))
+        board_risk_items.append(
+            {
+                "label": _short_board_label(filename),
+                "value": _safe_int(len(board.get("risks", []) or []), 0),
+            }
+        )
         ranking.append(
             {
                 "label": _short_board_label(filename),
@@ -1572,6 +1639,10 @@ def _build_project_chart_data(project_result, comparison):
                 "tone": tone,
             }
         )
+
+        for risk in board.get("risks", []) or []:
+            category = risk.get("category") or "uncategorized"
+            category_totals[category] += 1
 
     total_boards = max(len(sorted_boards), 1)
     distribution_bars = []
@@ -1597,14 +1668,28 @@ def _build_project_chart_data(project_result, comparison):
     best_score_100 = _score_to_100(project_summary.get("best_score", 0))
     worst_score_100 = _score_to_100(project_summary.get("worst_score", 0))
 
-    hero_trend = _project_chart_point_set([worst_score_100, average_score_100, best_score_100])
+    hero_trend = _project_chart_point_set(board_score_values)
     score_trend = _project_chart_point_set(board_score_values)
+    category_bars = _build_bar_chart(
+        [
+            {"label": _format_category_name(category), "value": value}
+            for category, value in sorted(category_totals.items(), key=lambda item: (-item[1], item[0]))[:5]
+        ]
+    )
 
     return {
         "hero_trend": hero_trend,
         "score_trend": score_trend,
         "distribution_bars": distribution_bars,
+        "risk_bars": _build_bar_chart(board_risk_items),
+        "category_bars": category_bars,
         "ranking": ranking,
+        "board_labels": board_labels,
+        "summary_points": [
+            {"label": "Average", "value": int(round(average_score_100))},
+            {"label": "Best", "value": int(round(best_score_100))},
+            {"label": "Worst", "value": int(round(worst_score_100))},
+        ],
         "comparison": comparison or {},
     }
 
@@ -1676,6 +1761,7 @@ def _build_compare_visual_data(project_intelligence, insights):
 def _build_single_chart_data(result):
     risks = result.get("risks", []) or []
     grouped = result.get("grouped_risks", []) or []
+    score_value = _score_to_100(result.get("score"))
 
     severity_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
     for risk in risks:
@@ -1709,6 +1795,12 @@ def _build_single_chart_data(result):
         )
 
     return {
+        "score_card": _build_bar_chart(
+            [
+                {"label": "Board Score", "value": score_value},
+                {"label": "Penalty", "value": round(_safe_float(score_explanation.get("total_penalty", 0.0), 0.0) * 10, 1)},
+            ]
+        ),
         "severity_bars": _build_bar_chart(
             [{"label": key, "value": value} for key, value in severity_counts.items()]
         ),
@@ -1818,12 +1910,22 @@ def _build_single_decision_data(result):
         else "No next action is available."
     )
 
+    focus_items = []
+    for item in ranked_actions[:4]:
+        focus_items.append(
+            {
+                "label": item["category"],
+                "value": item["priority_score"],
+            }
+        )
+
     return {
         "average_confidence": average_confidence,
         "confidence_summary": confidence_summary,
         "confidence_bars": _build_bar_chart(
             [{"label": key, "value": value} for key, value in band_counts.items() if value > 0]
         ),
+        "focus_bars": _build_bar_chart(focus_items),
         "next_actions": ranked_actions[:3],
         "trust_note": trust_note,
     }
@@ -1976,6 +2078,38 @@ def _build_project_review_intelligence(project_result):
         "chronic_patterns": chronic_patterns[:5],
         "next_actions": action_candidates[:5],
         "category_heatmap": category_heatmap,
+    }
+
+
+def _build_settings_view_model(editable_config):
+    editable_config = editable_config or {}
+    sections = {
+        "layout": len([key for key, value in (editable_config.get("layout") or {}).items() if value is not None]),
+        "power": len([key for key, value in (editable_config.get("power") or {}).items() if value not in [None, []]]),
+        "signal": len([key for key, value in (editable_config.get("signal") or {}).items() if value not in [None, []]]),
+        "thermal": len([key for key, value in (editable_config.get("thermal") or {}).items() if value is not None]),
+        "emi": len([key for key, value in (editable_config.get("emi") or {}).items() if value is not None]),
+        "score": len([key for key, value in (editable_config.get("score") or {}).items() if value is not None]),
+    }
+
+    penalty_rows = []
+    for severity, label in [
+        ("penalty_low", "Low"),
+        ("penalty_medium", "Medium"),
+        ("penalty_high", "High"),
+        ("penalty_critical", "Critical"),
+    ]:
+        penalty_rows.append(
+            {
+                "label": label,
+                "value": _safe_float((editable_config.get("score") or {}).get(severity), 0.0),
+            }
+        )
+
+    return {
+        "section_counts": sections,
+        "penalty_bars": _build_bar_chart(penalty_rows),
+        "total_controls": sum(sections.values()),
     }
 
 
@@ -2609,9 +2743,8 @@ def history_detail_page(run_dir):
 def settings_page():
     if request.method == "POST":
         try:
-            current_config, _ = get_dashboard_config(CONFIG_PATH)
             updated_fields = parse_config_form(request.form)
-            save_config(CONFIG_PATH, current_config, updated_fields)
+            save_config(updated_fields, CONFIG_PATH)
             flash("Config saved successfully.")
             return redirect(url_for("settings_page"))
         except Exception as exc:
@@ -2619,6 +2752,7 @@ def settings_page():
             return redirect(url_for("settings_page"))
 
     _, editable_config = get_dashboard_config(CONFIG_PATH)
+    settings_view = _build_settings_view_model(editable_config)
 
     return _render_page(
         active_page="settings",
@@ -2626,16 +2760,15 @@ def settings_page():
         page_eyebrow="Configuration Controls",
         page_copy="Configure analysis thresholds and rule behavior.",
         template_name="settings.html",
-        body_context={"editable_config": editable_config},
+        body_context={"editable_config": editable_config, "settings_view": settings_view},
     )
 
 
 @app.route("/save-config", methods=["POST"])
 def save_config_route():
     try:
-        current_config, _ = get_dashboard_config(CONFIG_PATH)
         updated_fields = parse_config_form(request.form)
-        save_config(CONFIG_PATH, current_config, updated_fields)
+        save_config(updated_fields, CONFIG_PATH)
         flash("Config saved successfully.")
     except Exception as exc:
         flash(f"Config save failed: {exc}")

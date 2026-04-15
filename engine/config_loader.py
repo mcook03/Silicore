@@ -17,6 +17,11 @@ EDITABLE_FIELD_MAP = {
             "form_keys": ["layout_density_threshold", "density_threshold"],
             "rules_targets": [("density", "component_threshold")],
         },
+        "density_region_size": {
+            "type": "float",
+            "form_keys": ["layout_density_region_size", "density_region_size"],
+            "rules_targets": [("density", "region_size")],
+        },
     },
     "power": {
         "required_power_nets": {
@@ -32,6 +37,36 @@ EDITABLE_FIELD_MAP = {
                 ("ground_reference", "ground_net_keywords"),
                 ("return_path", "ground_net_keywords"),
             ],
+        },
+        "distribution_distance_threshold": {
+            "type": "float",
+            "form_keys": ["power_distribution_distance_threshold", "distribution_distance_threshold"],
+            "rules_targets": [("power_distribution", "threshold")],
+        },
+        "decoupling_distance_threshold": {
+            "type": "float",
+            "form_keys": ["power_decoupling_distance_threshold", "decoupling_distance_threshold"],
+            "rules_targets": [("decoupling", "threshold")],
+        },
+        "max_trace_length": {
+            "type": "float",
+            "form_keys": ["power_max_trace_length", "max_trace_length"],
+            "rules_targets": [("power_rail", "max_trace_length")],
+        },
+        "min_trace_width": {
+            "type": "float",
+            "form_keys": ["power_min_trace_width", "min_trace_width"],
+            "rules_targets": [("power_rail", "min_trace_width")],
+        },
+        "max_via_count": {
+            "type": "int",
+            "form_keys": ["power_max_via_count", "max_via_count"],
+            "rules_targets": [("power_rail", "max_via_count")],
+        },
+        "min_connections": {
+            "type": "int",
+            "form_keys": ["power_min_connections", "min_connections"],
+            "rules_targets": [("power_rail", "min_connections")],
         },
     },
     "signal": {
@@ -51,6 +86,55 @@ EDITABLE_FIELD_MAP = {
                 ("ground_reference", "critical_net_keywords"),
                 ("return_path", "critical_net_keywords"),
             ],
+        },
+        "min_general_trace_width": {
+            "type": "float",
+            "form_keys": ["signal_min_general_trace_width", "min_general_trace_width"],
+            "rules_targets": [("trace_quality", "min_general_trace_width")],
+        },
+        "excluded_net_keywords": {
+            "type": "list",
+            "form_keys": ["signal_excluded_net_keywords", "excluded_net_keywords"],
+            "rules_targets": [
+                ("trace_quality", "excluded_net_keywords"),
+                ("signal_path", "excluded_nets"),
+            ],
+        },
+    },
+    "thermal": {
+        "hotspot_distance_threshold": {
+            "type": "float",
+            "form_keys": ["thermal_hotspot_distance_threshold", "hotspot_distance_threshold"],
+            "rules_targets": [("thermal", "threshold")],
+        },
+    },
+    "emi": {
+        "require_ground_reference": {
+            "type": "bool",
+            "form_keys": ["emi_require_ground_reference", "require_ground_reference"],
+            "rules_targets": [("return_path", "require_ground_reference")],
+        },
+    },
+    "score": {
+        "penalty_low": {
+            "type": "float",
+            "form_keys": ["score_penalty_low"],
+            "config_path": ["severity_penalties", "low"],
+        },
+        "penalty_medium": {
+            "type": "float",
+            "form_keys": ["score_penalty_medium"],
+            "config_path": ["severity_penalties", "medium"],
+        },
+        "penalty_high": {
+            "type": "float",
+            "form_keys": ["score_penalty_high"],
+            "config_path": ["severity_penalties", "high"],
+        },
+        "penalty_critical": {
+            "type": "float",
+            "form_keys": ["score_penalty_critical"],
+            "config_path": ["severity_penalties", "critical"],
         },
     },
 }
@@ -100,14 +184,35 @@ def get_editable_config_view(config):
         "layout": {
             "min_component_spacing": config.get("layout", {}).get("min_component_spacing"),
             "density_threshold": config.get("layout", {}).get("density_threshold"),
+            "density_region_size": config.get("layout", {}).get("density_region_size"),
         },
         "power": {
             "required_power_nets": config.get("power", {}).get("required_power_nets", []),
             "required_ground_nets": config.get("power", {}).get("required_ground_nets", []),
+            "distribution_distance_threshold": config.get("power", {}).get("distribution_distance_threshold"),
+            "decoupling_distance_threshold": config.get("power", {}).get("decoupling_distance_threshold"),
+            "max_trace_length": config.get("power", {}).get("max_trace_length"),
+            "min_trace_width": config.get("power", {}).get("min_trace_width"),
+            "max_via_count": config.get("power", {}).get("max_via_count"),
+            "min_connections": config.get("power", {}).get("min_connections"),
         },
         "signal": {
             "max_trace_length": config.get("signal", {}).get("max_trace_length"),
             "critical_nets": config.get("signal", {}).get("critical_nets", []),
+            "min_general_trace_width": config.get("signal", {}).get("min_general_trace_width"),
+            "excluded_net_keywords": config.get("signal", {}).get("excluded_net_keywords", []),
+        },
+        "thermal": {
+            "hotspot_distance_threshold": config.get("thermal", {}).get("hotspot_distance_threshold"),
+        },
+        "emi": {
+            "require_ground_reference": config.get("emi", {}).get("require_ground_reference", True),
+        },
+        "score": {
+            "penalty_low": config.get("score", {}).get("severity_penalties", {}).get("low"),
+            "penalty_medium": config.get("score", {}).get("severity_penalties", {}).get("medium"),
+            "penalty_high": config.get("score", {}).get("severity_penalties", {}).get("high"),
+            "penalty_critical": config.get("score", {}).get("severity_penalties", {}).get("critical"),
         },
     }
 
@@ -153,13 +258,24 @@ def _parse_list(raw_value, fallback):
     return _sanitize_list(raw_value.split(","))
 
 
+def _parse_bool(raw_value, fallback):
+    if raw_value == "":
+        return fallback
+    return str(raw_value).strip().lower() in {"true", "1", "yes", "on", "enabled"}
+
+
 def _ensure_rule_sections(config):
     config.setdefault("rules", {})
     config["rules"].setdefault("spacing", {})
     config["rules"].setdefault("density", {})
     config["rules"].setdefault("signal_path", {})
     config["rules"].setdefault("net_length", {})
+    config["rules"].setdefault("trace_quality", {})
     config["rules"].setdefault("power_connectivity", {})
+    config["rules"].setdefault("power_distribution", {})
+    config["rules"].setdefault("power_rail", {})
+    config["rules"].setdefault("decoupling", {})
+    config["rules"].setdefault("thermal", {})
     config["rules"].setdefault("ground_reference", {})
     config["rules"].setdefault("return_path", {})
 
@@ -169,7 +285,16 @@ def _apply_rule_mirrors(config):
 
     for section_name, fields in EDITABLE_FIELD_MAP.items():
         for field_name, metadata in fields.items():
-            value = config.get(section_name, {}).get(field_name)
+            config_path = metadata.get("config_path")
+            if config_path:
+                value = config.get(section_name, {})
+                for key in config_path:
+                    if not isinstance(value, dict):
+                        value = None
+                        break
+                    value = value.get(key)
+            else:
+                value = config.get(section_name, {}).get(field_name)
 
             for rule_name, rule_field in metadata.get("rules_targets", []):
                 config["rules"].setdefault(rule_name, {})
@@ -185,10 +310,20 @@ def validate_config(config):
 
     min_spacing = layout.get("min_component_spacing")
     density_threshold = layout.get("density_threshold")
+    density_region_size = layout.get("density_region_size")
     max_trace_length = signal.get("max_trace_length")
     required_power_nets = power.get("required_power_nets", [])
     required_ground_nets = power.get("required_ground_nets", [])
     critical_nets = signal.get("critical_nets", [])
+    min_general_trace_width = signal.get("min_general_trace_width")
+    distribution_distance_threshold = power.get("distribution_distance_threshold")
+    decoupling_distance_threshold = power.get("decoupling_distance_threshold")
+    power_max_trace_length = power.get("max_trace_length")
+    power_min_trace_width = power.get("min_trace_width")
+    power_max_via_count = power.get("max_via_count")
+    power_min_connections = power.get("min_connections")
+    hotspot_distance_threshold = config.get("thermal", {}).get("hotspot_distance_threshold")
+    severity_penalties = config.get("score", {}).get("severity_penalties", {})
 
     if not isinstance(min_spacing, (int, float)) or min_spacing <= 0:
         errors.append("layout.min_component_spacing must be a positive number.")
@@ -196,8 +331,14 @@ def validate_config(config):
     if not isinstance(density_threshold, int) or density_threshold <= 0:
         errors.append("layout.density_threshold must be a positive integer.")
 
+    if not isinstance(density_region_size, (int, float)) or density_region_size <= 0:
+        errors.append("layout.density_region_size must be a positive number.")
+
     if not isinstance(max_trace_length, (int, float)) or max_trace_length <= 0:
         errors.append("signal.max_trace_length must be a positive number.")
+
+    if not isinstance(min_general_trace_width, (int, float)) or min_general_trace_width <= 0:
+        errors.append("signal.min_general_trace_width must be a positive number.")
 
     if not isinstance(required_power_nets, list) or not required_power_nets:
         errors.append("power.required_power_nets must contain at least one net.")
@@ -208,6 +349,32 @@ def validate_config(config):
     if not isinstance(critical_nets, list):
         errors.append("signal.critical_nets must be a list.")
 
+    if not isinstance(distribution_distance_threshold, (int, float)) or distribution_distance_threshold <= 0:
+        errors.append("power.distribution_distance_threshold must be a positive number.")
+
+    if not isinstance(decoupling_distance_threshold, (int, float)) or decoupling_distance_threshold <= 0:
+        errors.append("power.decoupling_distance_threshold must be a positive number.")
+
+    if not isinstance(power_max_trace_length, (int, float)) or power_max_trace_length <= 0:
+        errors.append("power.max_trace_length must be a positive number.")
+
+    if not isinstance(power_min_trace_width, (int, float)) or power_min_trace_width <= 0:
+        errors.append("power.min_trace_width must be a positive number.")
+
+    if not isinstance(power_max_via_count, int) or power_max_via_count < 0:
+        errors.append("power.max_via_count must be a non-negative integer.")
+
+    if not isinstance(power_min_connections, int) or power_min_connections <= 0:
+        errors.append("power.min_connections must be a positive integer.")
+
+    if not isinstance(hotspot_distance_threshold, (int, float)) or hotspot_distance_threshold <= 0:
+        errors.append("thermal.hotspot_distance_threshold must be a positive number.")
+
+    for severity in ["low", "medium", "high", "critical"]:
+        penalty = severity_penalties.get(severity)
+        if not isinstance(penalty, (int, float)) or penalty < 0:
+            errors.append(f"score.severity_penalties.{severity} must be a non-negative number.")
+
     return errors
 
 
@@ -217,12 +384,19 @@ def build_sanitized_config(config):
     merged.setdefault("layout", {})
     merged.setdefault("power", {})
     merged.setdefault("signal", {})
+    merged.setdefault("thermal", {})
+    merged.setdefault("emi", {})
+    merged.setdefault("score", {})
+    merged["score"].setdefault("severity_penalties", {})
 
     merged["layout"]["min_component_spacing"] = float(
         merged["layout"].get("min_component_spacing", DEFAULT_CONFIG["layout"]["min_component_spacing"])
     )
     merged["layout"]["density_threshold"] = int(
         merged["layout"].get("density_threshold", DEFAULT_CONFIG["layout"]["density_threshold"])
+    )
+    merged["layout"]["density_region_size"] = float(
+        merged["layout"].get("density_region_size", DEFAULT_CONFIG["layout"]["density_region_size"])
     )
 
     merged["power"]["required_power_nets"] = _sanitize_list(
@@ -231,6 +405,24 @@ def build_sanitized_config(config):
     merged["power"]["required_ground_nets"] = _sanitize_list(
         merged["power"].get("required_ground_nets", DEFAULT_CONFIG["power"]["required_ground_nets"])
     )
+    merged["power"]["distribution_distance_threshold"] = float(
+        merged["power"].get("distribution_distance_threshold", DEFAULT_CONFIG["power"]["distribution_distance_threshold"])
+    )
+    merged["power"]["decoupling_distance_threshold"] = float(
+        merged["power"].get("decoupling_distance_threshold", DEFAULT_CONFIG["power"]["decoupling_distance_threshold"])
+    )
+    merged["power"]["max_trace_length"] = float(
+        merged["power"].get("max_trace_length", DEFAULT_CONFIG["power"]["max_trace_length"])
+    )
+    merged["power"]["min_trace_width"] = float(
+        merged["power"].get("min_trace_width", DEFAULT_CONFIG["power"]["min_trace_width"])
+    )
+    merged["power"]["max_via_count"] = int(
+        merged["power"].get("max_via_count", DEFAULT_CONFIG["power"]["max_via_count"])
+    )
+    merged["power"]["min_connections"] = int(
+        merged["power"].get("min_connections", DEFAULT_CONFIG["power"]["min_connections"])
+    )
 
     merged["signal"]["max_trace_length"] = float(
         merged["signal"].get("max_trace_length", DEFAULT_CONFIG["signal"]["max_trace_length"])
@@ -238,6 +430,26 @@ def build_sanitized_config(config):
     merged["signal"]["critical_nets"] = _sanitize_list(
         merged["signal"].get("critical_nets", DEFAULT_CONFIG["signal"]["critical_nets"])
     )
+    merged["signal"]["min_general_trace_width"] = float(
+        merged["signal"].get("min_general_trace_width", DEFAULT_CONFIG["signal"]["min_general_trace_width"])
+    )
+    merged["signal"]["excluded_net_keywords"] = _sanitize_list(
+        merged["signal"].get("excluded_net_keywords", DEFAULT_CONFIG["signal"]["excluded_net_keywords"])
+    )
+    merged["thermal"]["hotspot_distance_threshold"] = float(
+        merged["thermal"].get("hotspot_distance_threshold", DEFAULT_CONFIG["thermal"]["hotspot_distance_threshold"])
+    )
+    merged["emi"]["require_ground_reference"] = bool(
+        merged["emi"].get("require_ground_reference", DEFAULT_CONFIG["emi"]["require_ground_reference"])
+    )
+
+    for severity in ["low", "medium", "high", "critical"]:
+        merged["score"]["severity_penalties"][severity] = float(
+            merged["score"]["severity_penalties"].get(
+                severity,
+                DEFAULT_CONFIG["score"]["severity_penalties"][severity],
+            )
+        )
 
     _apply_rule_mirrors(merged)
     return merged
@@ -250,14 +462,30 @@ def parse_config_form(form_data, config_path="custom_config.json"):
     config.setdefault("layout", {})
     config.setdefault("power", {})
     config.setdefault("signal", {})
+    config.setdefault("thermal", {})
+    config.setdefault("emi", {})
+    config.setdefault("score", {})
+    config["score"].setdefault("severity_penalties", {})
 
     for section_name, fields in EDITABLE_FIELD_MAP.items():
         for field_name, metadata in fields.items():
             raw_value = _get_first_present(form_data, metadata["form_keys"], "")
-            current_value = config.get(section_name, {}).get(
-                field_name,
-                DEFAULT_CONFIG.get(section_name, {}).get(field_name),
-            )
+            config_path_keys = metadata.get("config_path")
+            if config_path_keys:
+                current_value = config.get(section_name, {})
+                default_value = DEFAULT_CONFIG.get(section_name, {})
+                for key in config_path_keys:
+                    if isinstance(current_value, dict):
+                        current_value = current_value.get(key)
+                    if isinstance(default_value, dict):
+                        default_value = default_value.get(key)
+                if current_value is None:
+                    current_value = default_value
+            else:
+                current_value = config.get(section_name, {}).get(
+                    field_name,
+                    DEFAULT_CONFIG.get(section_name, {}).get(field_name),
+                )
 
             if metadata["type"] == "float":
                 parsed_value = _parse_float(raw_value, current_value)
@@ -265,10 +493,18 @@ def parse_config_form(form_data, config_path="custom_config.json"):
                 parsed_value = _parse_int(raw_value, current_value)
             elif metadata["type"] == "list":
                 parsed_value = _parse_list(raw_value, current_value)
+            elif metadata["type"] == "bool":
+                parsed_value = _parse_bool(raw_value, current_value)
             else:
                 parsed_value = current_value
 
-            config[section_name][field_name] = parsed_value
+            if config_path_keys:
+                target = config[section_name]
+                for key in config_path_keys[:-1]:
+                    target = target.setdefault(key, {})
+                target[config_path_keys[-1]] = parsed_value
+            else:
+                config[section_name][field_name] = parsed_value
 
     config = build_sanitized_config(config)
 
