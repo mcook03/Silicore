@@ -40,39 +40,40 @@
             <p class="tech-description">
                 Silicore Nexus surfaces board risk, trust, and fix priority across signal, power, thermal, manufacturability, safety, and return-path behavior without wasting the engineer’s attention.
             </p>
-
-            <div class="tech-cta-row">
-                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze Board</a>
-                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Review Project</a>
-            </div>
-
-            <div class="tech-metric-strip">
-                <article class="tech-metric-card">
-                    <span class="tech-metric-label">Runs</span>
-                    <strong>{{ stats.total_runs }}</strong>
-                </article>
-                <article class="tech-metric-card">
-                    <span class="tech-metric-label">Workspaces</span>
-                    <strong>{{ projects|length }}</strong>
-                </article>
-                <article class="tech-metric-card">
-                    <span class="tech-metric-label">Latest</span>
-                    <strong>{{ home_chart.latest_score }}</strong>
-                </article>
-            </div>
         </div>
 
         <aside class="tech-stage tech-stage-primary">
             <div class="tech-stage-shell">
                 <div class="tech-stage-topline">
-                    <span class="tech-badge">Live Engineering Posture</span>
-                    <span class="tech-source">
-                        {% if home_chart.latest_source %}
-                            {{ home_chart.latest_source }}
-                        {% else %}
-                            Waiting for scored input
-                        {% endif %}
-                    </span>
+                    <div class="tech-stage-topline-left">
+                        <span class="tech-badge">Live Engineering Posture</span>
+                        <span class="tech-source">
+                            {% if home_chart.latest_source %}
+                                {{ home_chart.latest_source }}
+                            {% else %}
+                                Waiting for scored input
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="tech-stage-actions">
+                        <a class="btn btn-primary btn-compact" href="{{ url_for('single_board_page') }}">Analyze</a>
+                        <a class="btn btn-secondary btn-compact" href="{{ url_for('project_page') }}">Review</a>
+                    </div>
+                </div>
+
+                <div class="tech-stage-metrics">
+                    <article class="tech-metric-card">
+                        <span class="tech-metric-label">Runs</span>
+                        <strong>{{ stats.total_runs }}</strong>
+                    </article>
+                    <article class="tech-metric-card">
+                        <span class="tech-metric-label">Workspaces</span>
+                        <strong>{{ projects|length }}</strong>
+                    </article>
+                    <article class="tech-metric-card">
+                        <span class="tech-metric-label">Latest</span>
+                        <strong>{{ home_chart.latest_score }}</strong>
+                    </article>
                 </div>
 
                 <div class="tech-stage-main">
@@ -593,16 +594,17 @@
         position: relative;
         z-index: 1;
         display: grid;
-        grid-template-columns: 0.82fr 1.18fr;
-        gap: 30px;
+        grid-template-columns: minmax(280px, 0.66fr) minmax(0, 1.34fr);
+        gap: 22px;
         align-items: stretch;
     }
 
     .tech-copy {
         display: grid;
-        align-content: center;
-        gap: 14px;
+        align-content: start;
+        gap: 12px;
         padding-right: 4px;
+        padding-top: 10px;
     }
 
     .tech-brand-row {
@@ -642,8 +644,8 @@
 
     .tech-title {
         margin: 0;
-        max-width: 12ch;
-        font-size: clamp(40px, 4.9vw, 60px);
+        max-width: 11ch;
+        font-size: clamp(34px, 4.2vw, 52px);
         line-height: 0.98;
         letter-spacing: -0.065em;
         font-weight: 800;
@@ -653,23 +655,10 @@
 
     .tech-description {
         margin: 0;
-        max-width: 48ch;
+        max-width: 34ch;
         color: rgba(224, 235, 255, 0.8);
-        font-size: 15px;
-        line-height: 1.58;
-    }
-
-    .tech-cta-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .tech-metric-strip {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 2px;
+        font-size: 14px;
+        line-height: 1.46;
     }
 
     .tech-metric-card,
@@ -730,7 +719,7 @@
         position: relative;
         overflow: hidden;
         height: 100%;
-        padding: 26px;
+        padding: 22px;
         border-radius: 30px;
         border: 1px solid rgba(180, 212, 255, 0.1);
         background:
@@ -751,6 +740,15 @@
         align-items: center;
     }
 
+    .tech-stage-topline-left,
+    .tech-stage-actions,
+    .tech-stage-metrics {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
     .tech-badge,
     .tech-source {
         font-size: 12px;
@@ -769,11 +767,21 @@
         color: rgba(214, 226, 255, 0.7);
     }
 
+    .btn-compact {
+        padding: 9px 14px;
+        min-height: auto;
+        font-size: 12px;
+    }
+
+    .tech-stage-metrics {
+        margin-top: 12px;
+    }
+
     .tech-stage-main {
         display: grid;
         grid-template-columns: 1fr 200px;
         gap: 16px;
-        margin: 18px 0;
+        margin: 14px 0 16px;
         align-items: stretch;
     }
 
@@ -1460,6 +1468,10 @@
             padding: 24px 20px;
         }
 
+        .tech-copy {
+            padding-top: 0;
+        }
+
         .tech-title {
             max-width: none;
             font-size: 46px;
@@ -1469,9 +1481,11 @@
             transform: none;
         }
 
-        .tech-metric-strip,
+        .tech-stage-topline-left,
+        .tech-stage-actions,
+        .tech-stage-metrics,
         .telemetry-grid {
-            grid-template-columns: 1fr;
+            width: 100%;
         }
 
         .report-tile {
