@@ -886,13 +886,18 @@
 
     .maturity-table-header,
     .maturity-table-row {
-        grid-template-columns: minmax(180px, 1.15fr) 110px minmax(140px, 0.9fr) minmax(0, 2.2fr);
+        grid-template-columns: minmax(180px, 1.1fr) minmax(132px, 0.8fr) minmax(160px, 0.95fr) minmax(0, 2.15fr);
     }
 
     .maturity-cell,
     .maturity-evidence,
     .maturity-meaning {
         min-width: 0;
+    }
+
+    .maturity-cell {
+        display: flex;
+        align-items: flex-start;
     }
 
     .maturity-evidence,
@@ -932,7 +937,7 @@
 
         .maturity-table-header,
         .maturity-table-row {
-            grid-template-columns: minmax(170px, 1fr) 100px minmax(130px, 0.85fr) minmax(0, 1.8fr);
+            grid-template-columns: minmax(170px, 1fr) minmax(120px, 0.8fr) minmax(145px, 0.9fr) minmax(0, 1.75fr);
         }
     }
 
