@@ -447,7 +447,7 @@
                     {% if project_copilot.execution_plan %}
                     <div class="focus-list">
                         {% for item in project_copilot.execution_plan %}
-                        <article class="focus-card">
+                        <article class="focus-card" data-project-copilot-item data-title="{{ item.title }}" data-why="{{ item.why }}" data-action="{{ item.action }}">
                             <div class="focus-top">
                                 <div>
                                     <div class="focus-title">{{ item.title }}</div>
@@ -459,6 +459,9 @@
                                 <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
                             </div>
                             <p class="focus-copy">{{ item.action }}</p>
+                            <div class="focus-chip-row" style="margin-top:10px;">
+                                <button type="button" class="mini-chip mini-chip-medium copilot-inline-btn" data-project-copilot-explain>Open Drilldown</button>
+                            </div>
                         </article>
                         {% endfor %}
                     </div>
@@ -484,6 +487,10 @@
                             </div>
                         </div>
                         {% endfor %}
+                    </div>
+                    <div class="summary-panel" style="margin-top:16px;" data-project-copilot-detail>
+                        <h3>Select an execution plan item</h3>
+                        <p>Silicore will show the workspace rationale and next action detail here.</p>
                     </div>
                 </div>
             </section>
@@ -1030,6 +1037,20 @@
         background: rgba(255,255,255,0.03);
     }
 
+    .focus-card.is-selected {
+        border-color: rgba(96,165,250,0.34);
+        box-shadow: 0 0 0 1px rgba(96,165,250,0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.024)),
+            rgba(17, 30, 48, 0.82);
+    }
+
+    .copilot-inline-btn {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+    }
+
     .focus-top {
         display: flex;
         justify-content: space-between;
@@ -1230,6 +1251,10 @@
         font-weight: 800;
     }
 
+    .project-copilot-inline-script {
+        display: none;
+    }
+
     @media (max-width: 860px) {
         .project-trend-grid,
         .project-detail-compare-grid,
@@ -1248,5 +1273,42 @@
         }
     }
 </style>
+
+<script class="project-copilot-inline-script">
+(() => {
+    const cards = Array.from(document.querySelectorAll('[data-project-copilot-item]'));
+    const detailPanel = document.querySelector('[data-project-copilot-detail]');
+    if (!cards.length || !detailPanel) return;
+
+    const renderDetail = (card) => {
+        detailPanel.innerHTML = `
+            <h3>${card.dataset.title || 'Workspace item'}</h3>
+            <p><strong>Why this matters:</strong> ${card.dataset.why || 'No rationale preserved.'}</p>
+            <p><strong>Next move:</strong> ${card.dataset.action || 'No action preserved.'}</p>
+        `;
+    };
+
+    const setActive = (card) => {
+        cards.forEach((item) => item.classList.toggle('is-selected', item === card));
+        renderDetail(card);
+    };
+
+    cards.forEach((card) => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('button')) return;
+            setActive(card);
+        });
+        const explainButton = card.querySelector('[data-project-copilot-explain]');
+        if (explainButton) {
+            explainButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                setActive(card);
+            });
+        }
+    });
+
+    setActive(cards[0]);
+})();
+</script>
 
 {% endblock %}

@@ -187,6 +187,14 @@ def build_board_copilot_brief(result, decision_data):
                 "priority_score": item.get("priority_score"),
                 "fix_priority": _fix_priority_label(item),
                 "validation": _build_validation_step(item),
+                "components": item.get("components") or [],
+                "nets": item.get("nets") or [],
+                "rule_id": item.get("rule_id") or "unknown_rule",
+                "trigger_condition": item.get("trigger_condition") or "No trigger condition preserved.",
+                "threshold_label": item.get("threshold_label") or "No threshold preserved.",
+                "observed_label": item.get("observed_label") or "No observed value preserved.",
+                "reasoning": item.get("reasoning") or item.get("message") or "No reasoning preserved.",
+                "engineering_impact": item.get("engineering_impact") or "Engineering impact was not explicitly preserved.",
             }
         )
 
@@ -331,6 +339,7 @@ def build_compare_copilot_brief(comparison):
     comparison = comparison or {}
     insights = comparison.get("insights") or {}
     recommendations = insights.get("recommendations", []) or []
+    focus_items = comparison.get("compare_focus_items") or []
     score_diff = _safe_float(comparison.get("score_diff"), 0.0)
     risk_diff = _safe_int(comparison.get("risk_diff"), 0)
     critical_diff = _safe_int(comparison.get("critical_diff"), 0)
@@ -344,11 +353,15 @@ def build_compare_copilot_brief(comparison):
         posture = "The revision is mixed, so domain-level movement matters more than the headline score alone."
 
     takeaways = []
-    for item in recommendations[:3]:
+    for index, item in enumerate(recommendations[:3]):
+        focus_item = focus_items[index] if index < len(focus_items) else {}
         takeaways.append(
             {
                 "title": item.get("title") or item.get("category") or "Comparison recommendation",
                 "why": _compact(item.get("summary") or item.get("description") or "No comparison rationale preserved.", 120),
+                "components": focus_item.get("components") or [],
+                "nets": focus_item.get("nets") or [],
+                "change_type": focus_item.get("change_type") or "change",
             }
         )
 

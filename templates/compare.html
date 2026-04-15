@@ -74,11 +74,20 @@
                     {% if compare_copilot.takeaways %}
                     <div class="focus-list">
                         {% for item in compare_copilot.takeaways %}
-                        <article class="focus-card">
+                        <article class="focus-card compare-copilot-card"
+                            data-copilot-compare-item
+                            data-title="{{ item.title }}"
+                            data-why="{{ item.why }}"
+                            data-components="{{ item.components|join('|') }}"
+                            data-nets="{{ item.nets|join('|') }}">
                             <div class="focus-top">
                                 <div class="focus-title">{{ item.title }}</div>
                             </div>
                             <p class="focus-copy">{{ item.why }}</p>
+                            <div class="focus-chip-row" style="margin-top:10px;">
+                                <button type="button" class="mini-chip mini-chip-medium copilot-inline-btn" data-copilot-compare-explain>Explain This</button>
+                                <button type="button" class="mini-chip mini-chip-low copilot-inline-btn" data-copilot-compare-focus>Focus In Compare</button>
+                            </div>
                         </article>
                         {% endfor %}
                     </div>
@@ -97,6 +106,10 @@
                     <div class="summary-panel">
                         <h3>Recommended Review Action</h3>
                         <p>{{ compare_copilot.next_move }}</p>
+                    </div>
+                    <div class="summary-panel" style="margin-top:16px;" data-copilot-compare-detail>
+                        <h3>Select a comparison takeaway</h3>
+                        <p>Silicore will open the revision rationale and focus path here.</p>
                     </div>
                 </div>
             </section>
@@ -2241,6 +2254,20 @@
         background: rgba(59,130,246,0.08);
     }
 
+    .focus-card.is-selected {
+        border-color: rgba(96, 165, 250, 0.34);
+        box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.024)),
+            rgba(18, 30, 49, 0.8);
+    }
+
+    .copilot-inline-btn {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+    }
+
     .compare-board-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2366,15 +2393,48 @@
 <script>
 (() => {
     const inspectors = Array.from(document.querySelectorAll('[data-compare-inspector]'));
-    if (!inspectors.length) return;
+    const compareCards = Array.from(document.querySelectorAll('[data-copilot-compare-item]'));
+    const detailPanel = document.querySelector('[data-copilot-compare-detail]');
+    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+
+    const renderCompareDetail = (source) => {
+        if (!detailPanel || !source) return;
+        detailPanel.innerHTML = `
+            <h3>${source.dataset.title || 'Revision takeaway'}</h3>
+            <p>${source.dataset.why || 'No comparison rationale preserved.'}</p>
+            <p class="small-muted" style="margin-top:10px;">Use the focus action to jump both revisions to the affected region or net.</p>
+        `;
+    };
+
+    const setActiveCompareCard = (card) => {
+        compareCards.forEach((item) => item.classList.toggle('is-selected', item === card));
+        renderCompareDetail(card);
+    };
+
+    compareCards.forEach((card) => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('button')) return;
+            setActiveCompareCard(card);
+        });
+        const explainButton = card.querySelector('[data-copilot-compare-explain]');
+        if (explainButton) {
+            explainButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                setActiveCompareCard(card);
+            });
+        }
+    });
+
+    if (!inspectors.length) {
+        if (compareCards[0]) setActiveCompareCard(compareCards[0]);
+        return;
+    }
 
     const layerSelect = document.querySelector('[data-compare-filter="layer"]');
     const netSelect = document.querySelector('[data-compare-filter="net"]');
     const focusButtons = Array.from(document.querySelectorAll('[data-compare-focus]'));
     const resetButton = document.querySelector('[data-compare-action="reset"]');
     const clearButton = document.querySelector('[data-compare-action="clear"]');
-
-    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
     const entitiesByInspector = inspectors.map((panel) => ({
         panel,
         svg: panel.querySelector('.compare-board-svg'),
@@ -2467,7 +2527,32 @@
         applyFilters();
     });
 
+    compareCards.forEach((card) => {
+        const focusButton = card.querySelector('[data-copilot-compare-focus]');
+        if (!focusButton) return;
+        focusButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            setActiveCompareCard(card);
+            applyFilters();
+            focusEntities(splitTokens(card.dataset.components), splitTokens(card.dataset.nets));
+            entitiesByInspector.forEach(zoomInspector);
+        });
+    });
+
+    window.silicoreCompareInspector = {
+        focus(componentNames = [], netNames = []) {
+            applyFilters();
+            focusEntities(componentNames, netNames);
+            entitiesByInspector.forEach(zoomInspector);
+        },
+        clear() {
+            clearFocus();
+            applyFilters();
+        },
+    };
+
     applyFilters();
+    if (compareCards[0]) setActiveCompareCard(compareCards[0]);
 })();
 </script>
 

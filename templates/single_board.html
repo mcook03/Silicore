@@ -312,7 +312,19 @@
                     {% if board_copilot.fix_plan %}
                     <div class="focus-list">
                         {% for item in board_copilot.fix_plan %}
-                        <article class="focus-card">
+                        <article class="focus-card copilot-action-card"
+                            data-copilot-board-item
+                            data-title="{{ item.title }}"
+                            data-category="{{ item.category }}"
+                            data-why="{{ item.why }}"
+                            data-action="{{ item.action }}"
+                            data-trigger="{{ item.trigger_condition }}"
+                            data-threshold="{{ item.threshold_label }}"
+                            data-observed="{{ item.observed_label }}"
+                            data-reasoning="{{ item.reasoning }}"
+                            data-impact="{{ item.engineering_impact }}"
+                            data-components="{{ item.components|join('|') }}"
+                            data-nets="{{ item.nets|join('|') }}">
                             <div class="focus-top">
                                 <div>
                                     <div class="focus-title">{{ item.title }}</div>
@@ -326,6 +338,10 @@
                             </div>
                             <p class="focus-copy">{{ item.why }}</p>
                             <p class="focus-copy"><strong>Next move:</strong> {{ item.action }}</p>
+                            <div class="focus-chip-row" style="margin-top:10px;">
+                                <button type="button" class="mini-chip mini-chip-medium copilot-inline-btn" data-copilot-explain>Explain This</button>
+                                <button type="button" class="mini-chip mini-chip-low copilot-inline-btn" data-copilot-focus-board>Focus On Board</button>
+                            </div>
                         </article>
                         {% endfor %}
                     </div>
@@ -354,6 +370,19 @@
                 </div>
             </section>
         </div>
+
+        <section class="card spotlight-shell-card" style="margin-top:16px;">
+            <div class="card-header">
+                <h2 class="section-title">Copilot Drilldown</h2>
+                <p class="section-copy">Click any fix sequence card to open a deeper engineering explanation and board focus path.</p>
+            </div>
+            <div class="card-body">
+                <div class="summary-panel" data-copilot-board-detail>
+                    <h3>Select a fix sequence item</h3>
+                    <p>Silicore will show trigger logic, observed condition, threshold, engineering impact, and the fastest board-focus path here.</p>
+                </div>
+            </div>
+        </section>
         {% else %}
         <div class="empty-state">Run a board analysis to activate board-level copilot guidance.</div>
         {% endif %}
@@ -641,7 +670,19 @@
             {% if single_decision and single_decision.next_actions %}
             <div class="compact-action-list">
                 {% for item in single_decision.next_actions %}
-                <div class="compact-action-card">
+                <div class="compact-action-card"
+                    data-copilot-board-item
+                    data-title="{{ item.label }}"
+                    data-category="{{ item.category }}"
+                    data-why="{{ item.message_short }}"
+                    data-action="{{ item.recommendation_short }}"
+                    data-trigger="{{ item.trigger_condition }}"
+                    data-threshold="{{ item.threshold_label }}"
+                    data-observed="{{ item.observed_label }}"
+                    data-reasoning="{{ item.reasoning }}"
+                    data-impact="{{ item.engineering_impact }}"
+                    data-components="{{ item.components|join('|') }}"
+                    data-nets="{{ item.nets|join('|') }}">
                     <div class="compact-action-top">
                         <div class="compact-action-heading">
                             <div class="compact-action-title">{{ item.label }}</div>
@@ -656,6 +697,10 @@
                         <span class="mini-chip mini-chip-low">Priority {{ item.priority_score }}</span>
                         <span class="mini-chip mini-chip-low">{{ item.fix_priority }}</span>
                         <span class="mini-chip mini-chip-low">{{ item.evidence_count }} evidence point(s)</span>
+                    </div>
+                    <div class="focus-chip-row" style="margin-top:10px;">
+                        <button type="button" class="mini-chip mini-chip-medium copilot-inline-btn" data-copilot-explain>Explain This</button>
+                        <button type="button" class="mini-chip mini-chip-low copilot-inline-btn" data-copilot-focus-board>Focus On Board</button>
                     </div>
                 </div>
                 {% endfor %}
@@ -1005,7 +1050,58 @@
 <script>
 (() => {
     const inspector = document.querySelector('[data-board-inspector]');
-    if (!inspector) return;
+    const detailPanel = document.querySelector('[data-copilot-board-detail]');
+    const boardActionCards = Array.from(document.querySelectorAll('[data-copilot-board-item]'));
+    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+
+    const renderBoardDetail = (source) => {
+        if (!detailPanel || !source) return;
+        const title = source.dataset.title || 'Engineering item';
+        const category = source.dataset.category || 'General';
+        const why = source.dataset.why || 'No explanation preserved.';
+        const action = source.dataset.action || 'No action preserved.';
+        const trigger = source.dataset.trigger || 'No trigger preserved.';
+        const threshold = source.dataset.threshold || 'No threshold preserved.';
+        const observed = source.dataset.observed || 'No observed value preserved.';
+        const reasoning = source.dataset.reasoning || 'No reasoning preserved.';
+        const impact = source.dataset.impact || 'No engineering impact preserved.';
+        detailPanel.innerHTML = `
+            <h3>${title}</h3>
+            <p><strong>${category}:</strong> ${why}</p>
+            <div class="focus-chip-row" style="margin:10px 0 12px;">
+                <span class="mini-chip mini-chip-low">Trigger ${trigger}</span>
+                <span class="mini-chip mini-chip-medium">Threshold ${threshold}</span>
+                <span class="mini-chip mini-chip-medium">Observed ${observed}</span>
+            </div>
+            <p><strong>Reasoning:</strong> ${reasoning}</p>
+            <p><strong>Engineering impact:</strong> ${impact}</p>
+            <p><strong>Recommended next move:</strong> ${action}</p>
+        `;
+    };
+
+    const setActiveActionCard = (targetCard) => {
+        boardActionCards.forEach((card) => card.classList.toggle('is-selected', card === targetCard));
+        renderBoardDetail(targetCard);
+    };
+
+    boardActionCards.forEach((card) => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('button')) return;
+            setActiveActionCard(card);
+        });
+        const explainButton = card.querySelector('[data-copilot-explain]');
+        if (explainButton) {
+            explainButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                setActiveActionCard(card);
+            });
+        }
+    });
+
+    if (!inspector) {
+        if (boardActionCards[0]) setActiveActionCard(boardActionCards[0]);
+        return;
+    }
 
     const svg = inspector.querySelector('.board-view-svg');
     const entities = Array.from(inspector.querySelectorAll('.board-entity'));
@@ -1016,8 +1112,6 @@
     const resetButton = document.querySelector('[data-board-action="reset"]');
     const clearButton = document.querySelector('[data-board-action="clear"]');
     const baseViewBox = svg.getAttribute('data-base-view-box') || svg.getAttribute('viewBox');
-
-    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
 
     const applyFilters = () => {
         const activeLayer = layerSelect ? layerSelect.value : '';
@@ -1112,7 +1206,33 @@
         applyFilters();
     });
 
+    boardActionCards.forEach((card) => {
+        const focusButton = card.querySelector('[data-copilot-focus-board]');
+        if (!focusButton) return;
+        focusButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            setActiveActionCard(card);
+            applyFilters();
+            const matches = focusEntities(splitTokens(card.dataset.components), splitTokens(card.dataset.nets));
+            if (matches > 0) zoomToContent();
+        });
+    });
+
+    window.silicoreBoardInspector = {
+        focus(componentNames = [], netNames = []) {
+            applyFilters();
+            const matches = focusEntities(componentNames, netNames);
+            if (matches > 0) zoomToContent();
+            return matches;
+        },
+        clear() {
+            clearFocus();
+            applyFilters();
+        },
+    };
+
     applyFilters();
+    if (boardActionCards[0]) setActiveActionCard(boardActionCards[0]);
 })();
 </script>
 
@@ -1889,6 +2009,22 @@
             radial-gradient(circle at top right, rgba(125,211,252,0.14), transparent 34%),
             linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.024)),
             rgba(18, 30, 48, 0.72);
+    }
+
+    .compact-action-card.is-selected,
+    .focus-card.is-selected {
+        border-color: rgba(96, 165, 250, 0.38);
+        box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.18) inset, 0 18px 34px rgba(0, 0, 0, 0.2);
+        background:
+            radial-gradient(circle at top right, rgba(96,165,250,0.14), transparent 34%),
+            linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025)),
+            rgba(20, 32, 52, 0.82);
+    }
+
+    .copilot-inline-btn {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
     }
 
     .compact-action-top {

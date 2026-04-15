@@ -2835,6 +2835,14 @@ def _build_single_decision_data(result):
                 "evidence_count": _evidence_count(risk),
                 "repeat_count": repeat_count,
                 "domain": _format_design_domain_name(risk.get("design_domain") or risk.get("category")),
+                "components": risk.get("components") or [],
+                "nets": risk.get("nets") or [],
+                "rule_id": risk.get("rule_id") or "unknown_rule",
+                "trigger_condition": risk.get("trigger_condition") or "No explicit trigger condition preserved.",
+                "threshold_label": risk.get("threshold_label") or "No threshold preserved.",
+                "observed_label": risk.get("observed_label") or "No observed value preserved.",
+                "reasoning": risk.get("reasoning") or risk.get("message") or "No reasoning preserved.",
+                "engineering_impact": risk.get("engineering_impact") or "Engineering impact was not explicitly preserved for this finding.",
             }
         )
 
