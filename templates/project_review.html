@@ -751,16 +751,17 @@
         position: relative;
         overflow: hidden;
         display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 24px;
-        padding: 28px;
-        border-radius: 28px;
-        border: 1px solid rgba(255,255,255,0.08);
+        grid-template-columns: minmax(0, 1.16fr) minmax(340px, 0.84fr);
+        gap: 28px;
+        padding: 34px;
+        border-radius: 34px;
+        border: 1px solid rgba(255,255,255,0.06);
         background:
-            radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 28%),
-            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-            rgba(10,16,32,0.78);
-        box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+            radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
+            radial-gradient(circle at 92% 18%, rgba(67,212,200,0.12), transparent 24%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
+            rgba(8,16,29,0.82);
+        box-shadow: 0 32px 84px rgba(0,0,0,0.34);
     }
 
     .review-hero-card::after {
@@ -798,7 +799,7 @@
         color: var(--muted);
         font-size: 15px;
         line-height: 1.8;
-        max-width: 760px;
+        max-width: 62ch;
     }
 
     .review-upload-form {
@@ -809,7 +810,7 @@
 
     .review-hero-right {
         position: relative;
-        min-height: 320px;
+        min-height: 360px;
     }
 
     .hero-orb {
@@ -838,17 +839,17 @@
 
     .hero-panel {
         position: absolute;
-        right: 20px;
-        bottom: 20px;
-        left: 20px;
-        padding: 22px;
-        border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.08);
+        right: 16px;
+        bottom: 16px;
+        left: 16px;
+        padding: 24px;
+        border-radius: 26px;
+        border: 1px solid rgba(255,255,255,0.07);
         background:
-            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-            rgba(255,255,255,0.03);
-        backdrop-filter: blur(14px);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.016)),
+            rgba(19,29,44,0.6);
+        backdrop-filter: blur(18px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 16px 30px rgba(0,0,0,0.16);
     }
 
     .hero-panel-label {

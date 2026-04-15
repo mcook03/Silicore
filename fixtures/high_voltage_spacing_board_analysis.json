@@ -1844,7 +1844,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-15T19:33:44.708344+00:00",
+        "timestamp": "2026-04-15T19:47:02.308171+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2951,7 +2951,7 @@
         "score": 0.2,
         "total_penalty": 9.8
     },
-    "generated_at": "2026-04-15T19:33:44.708351+00:00",
+    "generated_at": "2026-04-15T19:47:02.308180+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
