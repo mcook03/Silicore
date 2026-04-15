@@ -393,8 +393,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: VBUS, USB_DP, GND, USB_DN
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VBUS", "USB_DP", "GND", "USB_DN"], "has_power": false, "has_ground": true}
+- Nets: USB_DP, GND, USB_DN, VBUS
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DP", "GND", "USB_DN", "VBUS"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U1 has ground but no visible power rail

@@ -135,7 +135,7 @@
     }
 
     .home-redesign .recent-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     @media (max-width: 1380px) {
@@ -1453,6 +1453,14 @@
         gap: 14px;
     }
 
+    .workspace-card,
+    .workflow-tile,
+    .report-tile,
+    .recent-card {
+        min-width: 0;
+        align-content: start;
+    }
+
     .workspace-meta {
         display: flex;
         justify-content: space-between;
@@ -1466,18 +1474,31 @@
         letter-spacing: 0.05em;
     }
 
+    .workspace-card-top,
+    .workflow-top,
+    .recent-top,
+    .report-tile {
+        min-width: 0;
+    }
+
+    .workspace-card-top > div,
+    .workflow-top > div,
+    .recent-top > div {
+        min-width: 0;
+    }
+
     .parser-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
         margin-top: 16px;
     }
 
     .parser-chip {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr;
         gap: 10px;
-        align-items: center;
+        align-items: start;
         padding: 12px 14px;
         border-radius: 14px;
         border: 1px solid rgba(255,255,255,0.06);
@@ -1485,9 +1506,12 @@
         color: rgba(228, 237, 255, 0.82);
         font-size: 12px;
         font-weight: 700;
+        overflow: hidden;
+        overflow-wrap: anywhere;
     }
 
     .parser-chip strong {
+        justify-self: start;
         color: #dbeafe;
         font-size: 11px;
         text-transform: uppercase;
@@ -1535,6 +1559,33 @@
         margin-top: 14px;
         padding-top: 12px;
         border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .workspace-title,
+    .workspace-copy,
+    .workflow-title,
+    .workflow-copy,
+    .recent-title,
+    .recent-date,
+    .report-tile .workflow-title,
+    .report-tile .workflow-copy,
+    .parser-chip,
+    .workspace-meta {
+        overflow-wrap: anywhere;
+    }
+
+    .workspace-score {
+        flex-shrink: 0;
+        padding-left: 10px;
+    }
+
+    .recent-date {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .recent-title {
+        line-height: 1.45;
     }
 
     .chart-area {
@@ -1702,6 +1753,16 @@
 
         .report-tile {
             grid-template-columns: 1fr;
+        }
+
+        .workspace-card-top,
+        .workflow-top,
+        .recent-top {
+            flex-direction: column;
+        }
+
+        .workspace-score {
+            padding-left: 0;
         }
     }
 

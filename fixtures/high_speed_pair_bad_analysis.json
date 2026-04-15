@@ -690,10 +690,10 @@
                 "J1"
             ],
             "nets": [
-                "VBUS",
                 "USB_DP",
                 "GND",
-                "USB_DN"
+                "USB_DN",
+                "VBUS"
             ],
             "region": null,
             "metrics": {
@@ -711,10 +711,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VBUS",
                     "USB_DP",
                     "GND",
-                    "USB_DN"
+                    "USB_DN",
+                    "VBUS"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -3206,7 +3206,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-15T20:23:14.203815+00:00",
+        "timestamp": "2026-04-15T20:25:14.146283+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4401,10 +4401,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "VBUS",
                     "USB_DP",
                     "GND",
-                    "USB_DN"
+                    "USB_DN",
+                    "VBUS"
                 ],
                 "region": null,
                 "metrics": {
@@ -4422,10 +4422,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VBUS",
                         "USB_DP",
                         "GND",
-                        "USB_DN"
+                        "USB_DN",
+                        "VBUS"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4948,7 +4948,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-15T20:23:14.203825+00:00",
+    "generated_at": "2026-04-15T20:25:14.146291+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
