@@ -847,10 +847,12 @@
 
     .hero-panel-value {
         color: #f8fbff;
-        font-size: 26px;
+        font-size: clamp(24px, 2.4vw, 28px);
         font-weight: 800;
-        letter-spacing: -0.04em;
-        margin-bottom: 18px;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        margin-bottom: 16px;
+        text-wrap: balance;
     }
 
     .chart-frame {
@@ -911,9 +913,9 @@
 
     .score-number {
         font-size: 72px;
-        line-height: 0.95;
+        line-height: 0.96;
         font-weight: 800;
-        letter-spacing: -0.06em;
+        letter-spacing: -0.05em;
         color: #f8fbff;
     }
 
@@ -921,8 +923,7 @@
         color: var(--muted);
         font-size: 13px;
         font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.02em;
         margin-top: 8px;
     }
 
@@ -951,8 +952,19 @@
     .score-scale span,
     .score-tags span {
         text-align: center;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
+    }
+
+    .score-scale span {
+        color: var(--muted);
+    }
+
+    .score-tags span {
+        padding: 6px 0;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.05);
+        background: rgba(255,255,255,0.025);
     }
 
     .score-tag.risk { color: #ffb0b0; }
@@ -982,9 +994,9 @@
     .project-board-meta-value,
     .context-mini-value {
         font-size: 30px;
-        line-height: 1;
+        line-height: 1.05;
         font-weight: 800;
-        letter-spacing: -0.05em;
+        letter-spacing: -0.04em;
         color: #f8fbff;
         margin-bottom: 8px;
         word-break: break-word;
@@ -1130,16 +1142,19 @@
         color: #f8fbff;
         font-size: 22px;
         font-weight: 800;
-        letter-spacing: -0.04em;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
         margin-bottom: 8px;
+        overflow-wrap: anywhere;
+        text-wrap: pretty;
     }
 
     .spotlight-score {
         color: #bfdbfe;
         font-size: 40px;
         font-weight: 800;
-        letter-spacing: -0.05em;
-        line-height: 1;
+        letter-spacing: -0.04em;
+        line-height: 1.05;
         margin-bottom: 8px;
     }
 

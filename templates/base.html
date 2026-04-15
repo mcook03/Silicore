@@ -65,7 +65,10 @@
                 radial-gradient(circle at 88% 12%, rgba(47, 137, 255, 0.18), transparent 22%),
                 radial-gradient(circle at 50% 100%, rgba(217, 147, 91, 0.14), transparent 28%),
                 linear-gradient(140deg, var(--bg-0) 0%, var(--bg-1) 24%, var(--bg-2) 64%, var(--bg-3) 100%);
-            letter-spacing: -0.01em;
+            letter-spacing: -0.006em;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
         }
 
@@ -181,7 +184,7 @@
             line-height: 1;
             font-weight: 700;
             color: var(--text);
-            letter-spacing: -0.05em;
+            letter-spacing: -0.035em;
         }
 
         .brand-subtitle {
@@ -480,17 +483,20 @@
         .section-title {
             margin: 0;
             font-size: 19px;
-            line-height: 1.2;
+            line-height: 1.25;
             font-weight: 700;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.03em;
             color: var(--text);
+            text-wrap: balance;
         }
 
         .section-copy {
             margin: 10px 0 0;
             color: var(--muted);
             font-size: 14px;
-            line-height: 1.7;
+            line-height: 1.65;
+            max-width: 68ch;
+            text-wrap: pretty;
         }
 
         .divider {
@@ -569,15 +575,16 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.09em;
         }
 
         .metric-value {
             font-size: clamp(28px, 3vw, 38px);
-            line-height: 1;
+            line-height: 1.05;
             font-weight: 700;
-            letter-spacing: -0.05em;
+            letter-spacing: -0.04em;
             color: var(--text);
+            overflow-wrap: anywhere;
         }
 
         .metric-sub {

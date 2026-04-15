@@ -1,0 +1,2057 @@
+{
+    "filename": "thermal_hotspot_board.kicad_pcb",
+    "file_path": "dashboard_uploads/thermal_hotspot_board.kicad_pcb",
+    "score": 42.0,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U1 (linear_reg) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": 40.0,
+                "threshold": 4.0
+            },
+            "confidence": 0.9,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+            "threshold_label": "Maximum decoupling distance 4.00 units",
+            "observed_label": "Observed nearest capacitor distance 40.00 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U2 (processor) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U2",
+                "U1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": 40.0,
+                "threshold": 4.0
+            },
+            "confidence": 0.9,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+            "threshold_label": "Maximum decoupling distance 4.00 units",
+            "observed_label": "Observed nearest capacitor distance 40.00 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "net_length",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VOUT has a long path between U1 and U2 (40.00 units)",
+            "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 40.0,
+                "threshold": 25.0,
+                "is_critical_net": false
+            },
+            "confidence": 0.78,
+            "short_title": "Long net path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Shorten the net path from 40.0 toward 25.0 or below by improving placement or route topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "net_length",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VOUT has a long path between Q1 and U2 (35.00 units)",
+            "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+            "components": [
+                "Q1",
+                "U2"
+            ],
+            "nets": [
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 35.0,
+                "threshold": 25.0,
+                "is_critical_net": false
+            },
+            "confidence": 0.78,
+            "short_title": "Long net path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Shorten the net path from 35.0 toward 25.0 or below by improving placement or route topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_connectivity",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U2 has ground but no visible power rail",
+            "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+            "components": [
+                "U2"
+            ],
+            "nets": [
+                "GND",
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "observed_component_nets": [
+                    "GND",
+                    "VOUT"
+                ],
+                "has_power": false,
+                "has_ground": true
+            },
+            "confidence": 0.7,
+            "short_title": "Ground without power",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_path_realism",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+            "recommendation": "Move input or output capacitors closer to the converter power pins so current loops stay compact.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "GND",
+                "VIN",
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "nearest_shared_cap_distance": null,
+                "threshold": 7.0
+            },
+            "confidence": 0.75,
+            "short_title": "Converter capacitor placement is weak",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "Converters rely on tight capacitor placement to keep di/dt loops small and power noise under control.",
+            "suggested_actions": [],
+            "trigger_condition": "A regulator-like component had no nearby shared capacitor inside the configured converter-cap radius.",
+            "threshold_label": "Maximum shared capacitor radius 7.00 units",
+            "observed_label": "Observed shared capacitor distance: none",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.75
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_rail",
+            "category": "power_integrity",
+            "severity": "high",
+            "message": "Power net VIN uses a narrow trace width (0.20)",
+            "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+            "components": [],
+            "nets": [
+                "VIN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_width": 0.2,
+                "minimum_expected": 0.5
+            },
+            "confidence": 0.9,
+            "short_title": "Power trace too narrow",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+            "threshold_label": "Minimum trace width 0.50",
+            "observed_label": "Observed trace width 0.20",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the power trace width from 0.2 to at least 0.5 or more, depending on current demand.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "reliability",
+            "category": "reliability",
+            "severity": "medium",
+            "message": "Ground net GND has limited visible connectivity (3 connections)",
+            "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_connections": 3,
+                "threshold": 4
+            },
+            "confidence": 0.74,
+            "short_title": "Weak visible ground coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "reliability",
+            "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+            "suggested_actions": [],
+            "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+            "threshold_label": "Minimum ground connections 4",
+            "observed_label": "Observed ground connections 3",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74
+            },
+            "fix_suggestion": {
+                "fix": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VOUT has a long signal path between U1 and U2 (40.00 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+            "components": [
+                "U1",
+                "U2"
+            ],
+            "nets": [
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 40.0,
+                "threshold": 25.0
+            },
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+            "threshold_label": "Maximum signal path distance 25.00 units",
+            "observed_label": "Observed signal path distance 40.00 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Reduce the signal path length from 40.0 to at or below 25.0 by improving placement or rerouting.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VOUT has a long signal path between Q1 and U2 (35.00 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+            "components": [
+                "Q1",
+                "U2"
+            ],
+            "nets": [
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 35.0,
+                "threshold": 25.0
+            },
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+            "threshold_label": "Maximum signal path distance 25.00 units",
+            "observed_label": "Observed signal path distance 35.00 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Reduce the signal path length from 35.0 to at or below 25.0 by improving placement or rerouting.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "thermal_management",
+            "category": "thermal",
+            "severity": "medium",
+            "message": "Q1 appears to have limited nearby thermal via support (0)",
+            "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+            "components": [
+                "Q1"
+            ],
+            "nets": [
+                "GND",
+                "VIN",
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "nearby_thermal_vias": 0,
+                "threshold": 1,
+                "radius": 4.0
+            },
+            "confidence": 0.8,
+            "short_title": "Limited thermal-via support",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "thermal",
+            "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+            "suggested_actions": [],
+            "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+            "threshold_label": "Minimum nearby thermal vias 1",
+            "observed_label": "Observed nearby thermal vias 0",
+            "explanation": {
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8
+            },
+            "fix_suggestion": {
+                "fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "thermal_management",
+            "category": "thermal",
+            "severity": "medium",
+            "message": "Q1 connects to relatively narrow copper for heat spreading (0.20)",
+            "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+            "components": [
+                "Q1"
+            ],
+            "nets": [
+                "GND",
+                "VIN",
+                "VOUT"
+            ],
+            "region": null,
+            "metrics": {
+                "max_connected_width": 0.2,
+                "threshold": 0.5
+            },
+            "confidence": 0.76,
+            "short_title": "Weak local heat spreading",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "thermal",
+            "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+            "suggested_actions": [],
+            "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+            "threshold_label": "Minimum heat-spread width 0.50",
+            "observed_label": "Observed heat-spread width 0.20",
+            "explanation": {
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 100.0,
+        "start_score_raw_10": 10.0,
+        "total_penalty": 58.0,
+        "total_penalty_raw_10": 5.8,
+        "severity_totals": {
+            "medium": 5.2,
+            "high": 0.6
+        },
+        "category_totals": {
+            "assembly_testability": 0.8,
+            "power_integrity": 2.2,
+            "signal_integrity": 1.6,
+            "reliability": 0.4,
+            "thermal": 0.8
+        },
+        "final_score": 42.0,
+        "final_score_raw_10": 4.2,
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "U1 (linear_reg) has no nearby decoupling capacitor",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9,
+                "suggested_fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "U2 (processor) has no nearby decoupling capacitor",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9,
+                "suggested_fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net VOUT has a long path between U1 and U2 (40.00 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Shorten the net path from 40.0 toward 25.0 or below by improving placement or route topology.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net VOUT has a long path between Q1 and U2 (35.00 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Shorten the net path from 35.0 toward 25.0 or below by improving placement or route topology.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "U2 has ground but no visible power rail",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7,
+                "suggested_fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.75,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "penalty": 0.6,
+                "message": "Power net VIN uses a narrow trace width (0.20)",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the power trace width from 0.2 to at least 0.5 or more, depending on current demand.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "reliability",
+                "penalty": 0.4,
+                "message": "Ground net GND has limited visible connectivity (3 connections)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74,
+                "suggested_fix": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net VOUT has a long signal path between U1 and U2 (40.00 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82,
+                "suggested_fix": "Reduce the signal path length from 40.0 to at or below 25.0 by improving placement or rerouting.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net VOUT has a long signal path between Q1 and U2 (35.00 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82,
+                "suggested_fix": "Reduce the signal path length from 35.0 to at or below 25.0 by improving placement or rerouting.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "thermal",
+                "penalty": 0.4,
+                "message": "Q1 appears to have limited nearby thermal via support (0)",
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.8,
+                "suggested_fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "thermal",
+                "penalty": 0.4,
+                "message": "Q1 connects to relatively narrow copper for heat spreading (0.20)",
+                "root_cause": "Thermal concentration or poor heat spreading",
+                "impact": "Hotspots, reduced reliability, or thermal stress",
+                "confidence": 0.76,
+                "suggested_fix": "Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "thermal_hotspot_board.kicad_pcb",
+        "component_count": 3,
+        "net_count": 3,
+        "sample_components": [
+            "U1",
+            "Q1",
+            "U2"
+        ],
+        "risk_count": 14,
+        "severity_counts": {
+            "medium": 13,
+            "high": 1
+        },
+        "category_counts": {
+            "assembly_testability": 2,
+            "power_integrity": 5,
+            "signal_integrity": 4,
+            "reliability": 1,
+            "thermal": 2
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "thermal_hotspot_board.kicad_pcb",
+        "layers": [
+            "F.Cu"
+        ],
+        "board_bounds": {
+            "min_x": 22.0,
+            "max_x": 64.0,
+            "min_y": 18.0,
+            "max_y": 20.0,
+            "width": 42.0,
+            "height": 2.0
+        },
+        "board_width": 42.0,
+        "board_height": 2.0,
+        "source_format": "kicad_pcb",
+        "components": [
+            {
+                "ref": "U1",
+                "value": "linear_reg",
+                "x": 22.0,
+                "y": 18.0,
+                "layer": "F.Cu",
+                "type": "ic",
+                "footprint": "Regulator",
+                "rotation": 0.0,
+                "net_name": "VIN",
+                "net_names": [
+                    "VIN",
+                    "VOUT",
+                    "GND"
+                ],
+                "connected_nets": [
+                    "VIN",
+                    "VOUT",
+                    "GND"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "VIN",
+                        "x": 22.0,
+                        "y": 18.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    },
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "VOUT",
+                        "x": 24.0,
+                        "y": 18.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    },
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "3",
+                        "pad_number": "3",
+                        "net_name": "GND",
+                        "x": 23.0,
+                        "y": 20.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    }
+                ]
+            },
+            {
+                "ref": "Q1",
+                "value": "mosfet",
+                "x": 27.0,
+                "y": 18.0,
+                "layer": "F.Cu",
+                "type": "transistor",
+                "footprint": "MOSFET",
+                "rotation": 0.0,
+                "net_name": "VIN",
+                "net_names": [
+                    "VIN",
+                    "VOUT",
+                    "GND"
+                ],
+                "connected_nets": [
+                    "VIN",
+                    "VOUT",
+                    "GND"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "Q1",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "VIN",
+                        "x": 27.0,
+                        "y": 18.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    },
+                    {
+                        "component_ref": "Q1",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "VOUT",
+                        "x": 29.0,
+                        "y": 18.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    },
+                    {
+                        "component_ref": "Q1",
+                        "pad_name": "3",
+                        "pad_number": "3",
+                        "net_name": "GND",
+                        "x": 28.0,
+                        "y": 20.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.2
+                    }
+                ]
+            },
+            {
+                "ref": "U2",
+                "value": "processor",
+                "x": 62.0,
+                "y": 18.0,
+                "layer": "F.Cu",
+                "type": "ic",
+                "footprint": "Load",
+                "rotation": 0.0,
+                "net_name": "VOUT",
+                "net_names": [
+                    "VOUT",
+                    "GND"
+                ],
+                "connected_nets": [
+                    "VOUT",
+                    "GND"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "U2",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "VOUT",
+                        "x": 62.0,
+                        "y": 18.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.1,
+                        "size_y": 1.1
+                    },
+                    {
+                        "component_ref": "U2",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "GND",
+                        "x": 64.0,
+                        "y": 18.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.1,
+                        "size_y": 1.1
+                    }
+                ]
+            }
+        ],
+        "nets": {
+            "VIN": {
+                "name": "VIN",
+                "connections": [
+                    [
+                        "U1",
+                        "1"
+                    ],
+                    [
+                        "Q1",
+                        "1"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "VIN",
+                        "x1": 22.0,
+                        "y1": 18.0,
+                        "x2": 27.0,
+                        "y2": 18.0,
+                        "width": 0.2,
+                        "layer": "F.Cu",
+                        "length": 5.0
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 5.0,
+                "min_trace_width": 0.2,
+                "max_trace_width": 0.2,
+                "via_count": 0,
+                "layer_count": 1
+            },
+            "VOUT": {
+                "name": "VOUT",
+                "connections": [
+                    [
+                        "U1",
+                        "2"
+                    ],
+                    [
+                        "Q1",
+                        "2"
+                    ],
+                    [
+                        "U2",
+                        "1"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "VOUT",
+                        "x1": 24.0,
+                        "y1": 18.0,
+                        "x2": 29.0,
+                        "y2": 18.0,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 5.0
+                    },
+                    {
+                        "net_name": "VOUT",
+                        "x1": 29.0,
+                        "y1": 18.0,
+                        "x2": 62.0,
+                        "y2": 18.0,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 33.0
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 38.0,
+                "min_trace_width": 0.18,
+                "max_trace_width": 0.18,
+                "via_count": 0,
+                "layer_count": 1
+            },
+            "GND": {
+                "name": "GND",
+                "connections": [
+                    [
+                        "U1",
+                        "3"
+                    ],
+                    [
+                        "Q1",
+                        "3"
+                    ],
+                    [
+                        "U2",
+                        "2"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "GND",
+                        "x1": 24.0,
+                        "y1": 20.0,
+                        "x2": 28.0,
+                        "y2": 20.0,
+                        "width": 0.2,
+                        "layer": "F.Cu",
+                        "length": 4.0
+                    },
+                    {
+                        "net_name": "GND",
+                        "x1": 24.0,
+                        "y1": 20.0,
+                        "x2": 64.0,
+                        "y2": 20.0,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 40.0
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 44.0,
+                "min_trace_width": 0.18,
+                "max_trace_width": 0.2,
+                "via_count": 0,
+                "layer_count": 1
+            }
+        },
+        "traces": [
+            {
+                "net_name": "VIN",
+                "x1": 22.0,
+                "y1": 18.0,
+                "x2": 27.0,
+                "y2": 18.0,
+                "width": 0.2,
+                "layer": "F.Cu",
+                "length": 5.0
+            },
+            {
+                "net_name": "GND",
+                "x1": 24.0,
+                "y1": 20.0,
+                "x2": 28.0,
+                "y2": 20.0,
+                "width": 0.2,
+                "layer": "F.Cu",
+                "length": 4.0
+            },
+            {
+                "net_name": "VOUT",
+                "x1": 24.0,
+                "y1": 18.0,
+                "x2": 29.0,
+                "y2": 18.0,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 5.0
+            },
+            {
+                "net_name": "VOUT",
+                "x1": 29.0,
+                "y1": 18.0,
+                "x2": 62.0,
+                "y2": 18.0,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 33.0
+            },
+            {
+                "net_name": "GND",
+                "x1": 24.0,
+                "y1": 20.0,
+                "x2": 64.0,
+                "y2": 20.0,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 40.0
+            }
+        ],
+        "vias": [],
+        "zones": [],
+        "outline_segments": []
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "thermal_hotspot_board.kicad_pcb",
+        "timestamp": "2026-04-15T07:48:01.016186+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            },
+            {
+                "rule_id": "decoupling",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U1 (linear_reg) has no nearby decoupling capacitor",
+                "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                "components": [
+                    "U1",
+                    "U2"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "nearest_cap_distance": 40.0,
+                    "threshold": 4.0
+                },
+                "confidence": 0.9,
+                "short_title": "Missing nearby decoupling",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+                "threshold_label": "Maximum decoupling distance 4.00 units",
+                "observed_label": "Observed nearest capacitor distance 40.00 units"
+            },
+            {
+                "rule_id": "decoupling",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U2 (processor) has no nearby decoupling capacitor",
+                "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                "components": [
+                    "U2",
+                    "U1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "nearest_cap_distance": 40.0,
+                    "threshold": 4.0
+                },
+                "confidence": 0.9,
+                "short_title": "Missing nearby decoupling",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+                "threshold_label": "Maximum decoupling distance 4.00 units",
+                "observed_label": "Observed nearest capacitor distance 40.00 units"
+            },
+            {
+                "rule_id": "net_length",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net VOUT has a long path between U1 and U2 (40.00 units)",
+                "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+                "components": [
+                    "U1",
+                    "U2"
+                ],
+                "nets": [
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 40.0,
+                    "threshold": 25.0,
+                    "is_critical_net": false
+                },
+                "confidence": 0.78,
+                "short_title": "Long net path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "net_length",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net VOUT has a long path between Q1 and U2 (35.00 units)",
+                "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+                "components": [
+                    "Q1",
+                    "U2"
+                ],
+                "nets": [
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 35.0,
+                    "threshold": 25.0,
+                    "is_critical_net": false
+                },
+                "confidence": 0.78,
+                "short_title": "Long net path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_connectivity",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U2 has ground but no visible power rail",
+                "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+                "components": [
+                    "U2"
+                ],
+                "nets": [
+                    "GND",
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "observed_component_nets": [
+                        "GND",
+                        "VOUT"
+                    ],
+                    "has_power": false,
+                    "has_ground": true
+                },
+                "confidence": 0.7,
+                "short_title": "Ground without power",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_path_realism",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+                "recommendation": "Move input or output capacitors closer to the converter power pins so current loops stay compact.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "GND",
+                    "VIN",
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "nearest_shared_cap_distance": null,
+                    "threshold": 7.0
+                },
+                "confidence": 0.75,
+                "short_title": "Converter capacitor placement is weak",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "Converters rely on tight capacitor placement to keep di/dt loops small and power noise under control.",
+                "suggested_actions": [],
+                "trigger_condition": "A regulator-like component had no nearby shared capacitor inside the configured converter-cap radius.",
+                "threshold_label": "Maximum shared capacitor radius 7.00 units",
+                "observed_label": "Observed shared capacitor distance: none"
+            },
+            {
+                "rule_id": "power_rail",
+                "category": "power_integrity",
+                "severity": "high",
+                "message": "Power net VIN uses a narrow trace width (0.20)",
+                "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+                "components": [],
+                "nets": [
+                    "VIN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_width": 0.2,
+                    "minimum_expected": 0.5
+                },
+                "confidence": 0.9,
+                "short_title": "Power trace too narrow",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+                "threshold_label": "Minimum trace width 0.50",
+                "observed_label": "Observed trace width 0.20"
+            },
+            {
+                "rule_id": "reliability",
+                "category": "reliability",
+                "severity": "medium",
+                "message": "Ground net GND has limited visible connectivity (3 connections)",
+                "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "components": [],
+                "nets": [
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "ground_connections": 3,
+                    "threshold": 4
+                },
+                "confidence": 0.74,
+                "short_title": "Weak visible ground coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "reliability",
+                "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+                "suggested_actions": [],
+                "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+                "threshold_label": "Minimum ground connections 4",
+                "observed_label": "Observed ground connections 3"
+            },
+            {
+                "rule_id": "signal_path",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net VOUT has a long signal path between U1 and U2 (40.00 units)",
+                "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+                "components": [
+                    "U1",
+                    "U2"
+                ],
+                "nets": [
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 40.0,
+                    "threshold": 25.0
+                },
+                "confidence": 0.82,
+                "short_title": "Long signal path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+                "threshold_label": "Maximum signal path distance 25.00 units",
+                "observed_label": "Observed signal path distance 40.00 units"
+            },
+            {
+                "rule_id": "signal_path",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net VOUT has a long signal path between Q1 and U2 (35.00 units)",
+                "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+                "components": [
+                    "Q1",
+                    "U2"
+                ],
+                "nets": [
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 35.0,
+                    "threshold": 25.0
+                },
+                "confidence": 0.82,
+                "short_title": "Long signal path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+                "threshold_label": "Maximum signal path distance 25.00 units",
+                "observed_label": "Observed signal path distance 35.00 units"
+            },
+            {
+                "rule_id": "thermal_management",
+                "category": "thermal",
+                "severity": "medium",
+                "message": "Q1 appears to have limited nearby thermal via support (0)",
+                "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+                "components": [
+                    "Q1"
+                ],
+                "nets": [
+                    "GND",
+                    "VIN",
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "nearby_thermal_vias": 0,
+                    "threshold": 1,
+                    "radius": 4.0
+                },
+                "confidence": 0.8,
+                "short_title": "Limited thermal-via support",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "thermal",
+                "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+                "suggested_actions": [],
+                "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+                "threshold_label": "Minimum nearby thermal vias 1",
+                "observed_label": "Observed nearby thermal vias 0"
+            },
+            {
+                "rule_id": "thermal_management",
+                "category": "thermal",
+                "severity": "medium",
+                "message": "Q1 connects to relatively narrow copper for heat spreading (0.20)",
+                "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+                "components": [
+                    "Q1"
+                ],
+                "nets": [
+                    "GND",
+                    "VIN",
+                    "VOUT"
+                ],
+                "region": null,
+                "metrics": {
+                    "max_connected_width": 0.2,
+                    "threshold": 0.5
+                },
+                "confidence": 0.76,
+                "short_title": "Weak local heat spreading",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "thermal",
+                "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+                "suggested_actions": [],
+                "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+                "threshold_label": "Minimum heat-spread width 0.50",
+                "observed_label": "Observed heat-spread width 0.20"
+            }
+        ],
+        "score": 4.2,
+        "total_penalty": 5.8
+    },
+    "generated_at": "2026-04-15T07:48:01.016202+00:00",
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows elevated design risk. The main risk concentration is in power integrity. The highest-priority issue is Power net VIN uses a narrow trace width (0.20). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "high",
+                "category": "power_integrity",
+                "message": "Power net VIN uses a narrow trace width (0.20)",
+                "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency."
+            }
+        ]
+    }
+}

@@ -1,0 +1,744 @@
+{
+    "filename": "sensor_board_v2.txt",
+    "file_path": "dashboard_uploads/sensor_board_v2.txt",
+    "score": 92.0,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 100.0,
+        "start_score_raw_10": 10.0,
+        "total_penalty": 8.0,
+        "total_penalty_raw_10": 0.8,
+        "severity_totals": {
+            "medium": 0.8
+        },
+        "category_totals": {
+            "assembly_testability": 0.8
+        },
+        "final_score": 92.0,
+        "final_score_raw_10": 9.2,
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "sensor_board_v2.txt",
+        "component_count": 0,
+        "net_count": 0,
+        "sample_components": [],
+        "risk_count": 2,
+        "severity_counts": {
+            "medium": 2
+        },
+        "category_counts": {
+            "assembly_testability": 2
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "sensor_board_v2.txt",
+        "layers": [],
+        "board_bounds": {
+            "min_x": 0.0,
+            "max_x": 0.0,
+            "min_y": 0.0,
+            "max_y": 0.0,
+            "width": 0.0,
+            "height": 0.0
+        },
+        "board_width": 0.0,
+        "board_height": 0.0,
+        "source_format": "structured_text",
+        "components": [],
+        "nets": {},
+        "traces": [],
+        "vias": [],
+        "zones": [],
+        "outline_segments": []
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "sensor_board_v2.txt",
+        "timestamp": "2026-04-15T07:47:42.104734+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            }
+        ],
+        "score": 9.2,
+        "total_penalty": 0.8
+    },
+    "generated_at": "2026-04-15T07:47:42.104755+00:00",
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows very low design risk. The main risk concentration is in assembly testability. The highest-priority issue is Ground test-point coverage appears limited for bring-up and probing. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency."
+            }
+        ]
+    }
+}
