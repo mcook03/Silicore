@@ -1,0 +1,582 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .issue-card, .risk-card {
+                background: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            h1, h2, h3 {
+                margin-top: 0;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .muted {
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Engineering Report</h1>
+                <p><strong>File:</strong> risky_board_fixed_gnd.txt</p>
+                <p><strong>Score:</strong> 1.2 / 10</p>
+                <p><strong>Total Risks:</strong> 20</p>
+                <p><strong>Total Penalty:</strong> 8.8</p>
+            </div>
+
+            <div class="card">
+                <h2>Executive Summary</h2>
+                <p><strong>Board needs focused engineering review</strong></p>
+                <p class="muted">This board shows high design risk. The main risk concentration is in emi return path. The highest-priority issue is U1 and C1 are too close (1.41 units). The current design snapshot includes 8 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+
+            <div class="card">
+                <h2>Parser Capability</h2>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .txt</p>
+                <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            <div class="card">
+                <h2>Top Issues</h2>
+                
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — layout</p>
+                <p>U1 and C1 are too close (1.41 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — layout</p>
+                <p>U2 and C2 are too close (1.41 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — layout</p>
+                <p>C1 and R1 are too close (2.83 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+            </div>
+            
+            </div>
+
+            <div class="card">
+                <h2>Board Summary</h2>
+                <p><strong>Component Count:</strong> 8</p>
+                <p><strong>Net Count:</strong> 4</p>
+                <p><strong>Risk Count:</strong> 20</p>
+                <p><strong>Sample Components:</strong> U1, U2, U3, C1, C2, J1, R1, R2</p>
+            </div>
+
+            <div class="card">
+                <h2>Severity Penalties</h2>
+                <ul><li>medium: 6.4</li><li>high: 2.4</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Category Penalties</h2>
+                <ul><li>assembly_testability: 1.2</li><li>power_integrity: 0.8</li><li>emi_return_path: 3.2</li><li>reliability: 0.4</li><li>layout: 2.4</li><li>thermal: 0.8</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Detailed Findings</h2>
+                
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Board has limited visible fiducial strategy for assembly alignment</p>
+                <p><strong>Recommendation:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 76.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 76.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;fiducials&quot;: 0, &quot;threshold&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Ground test-point coverage appears limited for bring-up and probing</p>
+                <p><strong>Recommendation:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=1</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 81.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 81.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;ground_test_points&quot;: 0, &quot;threshold&quot;: 1}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Critical or debug-oriented net CLK has no visible test point</p>
+                <p><strong>Recommendation:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> CLK</p>
+                <p><strong>Metrics:</strong> {&quot;has_testpoint&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U3 (SENSOR) has no nearby decoupling capacitor</p>
+                <p><strong>Recommendation:</strong> Place a decoupling capacitor close to the device power pin and on the relevant supply net.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4.0</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U3, C2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;nearest_cap_distance&quot;: 5.1, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> U1 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> U2 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> U3 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U3</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> C1 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> C1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> C2 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> C2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> J1 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> R1 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> R1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_return_path</p>
+                <p><strong>Message:</strong> R2 has no assigned net, so its ground reference cannot be verified</p>
+                <p><strong>Recommendation:</strong> Assign the component to the correct signal or power net and verify its reference to ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Missing or poor return path</p>
+                <p><strong>Impact:</strong> Increased EMI and unstable signal reference</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Ensure the component has a valid ground reference and a clear low-impedance return path to the board ground network.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> R2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;ground_reference_required&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Power net VCC has too few connections (0)</p>
+                <p><strong>Recommendation:</strong> Check whether the power net is properly distributed to all intended loads.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Verify that all intended loads are actually connected to this power net and confirm the rail is distributed across the required pins and devices.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> VCC</p>
+                <p><strong>Metrics:</strong> {&quot;connections&quot;: 0, &quot;minimum_expected&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> reliability</p>
+                <p><strong>Message:</strong> Ground net GND has limited visible connectivity (0 connections)</p>
+                <p><strong>Recommendation:</strong> Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 74.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 74.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> GND</p>
+                <p><strong>Metrics:</strong> {&quot;ground_connections&quot;: 0, &quot;threshold&quot;: 4}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> U1 and C1 are too close (1.41 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                <p><strong>Trigger Condition:</strong> Component spacing dropped below the configured safe threshold.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=1.41, threshold=3.0</p>
+                <p><strong>Engineering Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Trust Confidence:</strong> 95.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 95.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.41 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U1, C1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.41, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> U2 and C2 are too close (1.41 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                <p><strong>Trigger Condition:</strong> Component spacing dropped below the configured safe threshold.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=1.41, threshold=3.0</p>
+                <p><strong>Engineering Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Trust Confidence:</strong> 95.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 95.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 1.41 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U2, C2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.41, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> C1 and R1 are too close (2.83 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                <p><strong>Trigger Condition:</strong> Component spacing dropped below the configured safe threshold.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=2.83, threshold=3.0</p>
+                <p><strong>Engineering Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Trust Confidence:</strong> 95.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 95.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 2.83 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> C1, R1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 2.83, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> layout</p>
+                <p><strong>Message:</strong> C2 and R2 are too close (2.83 units)</p>
+                <p><strong>Recommendation:</strong> Increase spacing between these components to improve manufacturability and routing clearance.</p>
+                <p><strong>Trigger Condition:</strong> Component spacing dropped below the configured safe threshold.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=2.83, threshold=3.0</p>
+                <p><strong>Engineering Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Trust Confidence:</strong> 95.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Component placement constraint violation</p>
+                <p><strong>Impact:</strong> Routing congestion or manufacturability issues</p>
+                <p><strong>Confidence:</strong> 95.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between the affected components from 2.83 to at least 3.0.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> C2, R2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 2.83, &quot;threshold&quot;: 3.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> U1 and C1 may create a thermal hotspot (1.41 units apart)</p>
+                <p><strong>Recommendation:</strong> Increase spacing, improve copper spreading, or review local thermal management around these components.</p>
+                <p><strong>Trigger Condition:</strong> Component proximity indicated likely thermal concentration.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=1.41, threshold=4.0</p>
+                <p><strong>Engineering Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1, C1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.41, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> U2 and C2 may create a thermal hotspot (1.41 units apart)</p>
+                <p><strong>Recommendation:</strong> Increase spacing, improve copper spreading, or review local thermal management around these components.</p>
+                <p><strong>Trigger Condition:</strong> Component proximity indicated likely thermal concentration.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=1.41, threshold=4.0</p>
+                <p><strong>Engineering Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase spacing between hot components or add more copper area, thermal relief, or airflow-aware placement to reduce hotspot risk.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U2, C2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 1.41, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            </div>
+        </div>
+    </body>
+    </html>
+    

@@ -1,0 +1,40 @@
+{
+    "run_type": "single",
+    "title": "sensor_board_v2.txt",
+    "generated_at": "2026-04-15T07:00:02.287047+00:00",
+    "artifacts": [
+        {
+            "name": "single_analysis.json",
+            "kind": "json"
+        },
+        {
+            "name": "single_report.md",
+            "kind": "markdown"
+        },
+        {
+            "name": "single_report.html",
+            "kind": "html"
+        }
+    ],
+    "parser_capabilities": {
+        ".kicad_pcb": {
+            "label": "KiCad PCB",
+            "status": "supported"
+        },
+        ".txt": {
+            "label": "Structured Demo Text",
+            "status": "supported"
+        },
+        ".brd": {
+            "label": "Legacy Structured Board",
+            "status": "supported"
+        },
+        ".gbr": {
+            "label": "Gerber",
+            "status": "planned"
+        }
+    },
+    "notes": [
+        "Artifacts include structured analysis, engineering summary, and print-friendly HTML."
+    ]
+}
