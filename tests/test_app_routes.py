@@ -33,6 +33,8 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Project Score Trend", page)
         self.assertIn("Category Shift Bar View", page)
+        self.assertIn("Engineering Domain Shift", page)
+        self.assertIn("Recurring Engineering Domains", page)
 
     def test_history_detail_includes_export_center_and_transparency(self):
         response = self.client.get("/history/project_20260410_234649_970160")

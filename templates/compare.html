@@ -10,6 +10,63 @@
     </div>
 </section>
 
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Engineering Domain Shift</h2>
+        <p class="section-copy">
+            Domain-level movement across the selected comparison so you can see whether signal, thermal, manufacturing, reliability, or component pressure changed.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison_visuals and comparison_visuals.domain_shift_bars %}
+            <div class="compare-bar-list">
+                {% for item in comparison_visuals.domain_shift_bars %}
+                <div class="compare-bar-row">
+                    <div class="compare-bar-label">{{ item.label }}</div>
+                    <div class="compare-bar-track">
+                        <div class="compare-bar-fill {% if item.tone == 'better' %}compare-bar-better{% elif item.tone == 'worse' %}compare-bar-worse{% else %}compare-bar-flat{% endif %}" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                    <div class="compare-bar-value {% if item.tone == 'better' %}chip-low-text{% elif item.tone == 'worse' %}chip-critical-text{% endif %}">
+                        {% if item.signed_delta > 0 %}+{% endif %}{{ item.signed_delta }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if comparison.insights.domain_impacts %}
+            <div class="finding-list" style="margin-top:16px;">
+                {% for item in comparison.insights.domain_impacts[:4] %}
+                <div class="finding impact-finding">
+                    <div class="finding-top">
+                        <div>
+                            <div class="chip {% if item.direction == 'worse' %}chip-critical{% elif item.direction == 'better' %}chip-low{% else %}chip-medium{% endif %}">
+                                {{ item.direction|upper }}
+                            </div>
+                            <h4>{{ item.domain }}</h4>
+                        </div>
+                        <div class="small-muted">
+                            {% if item.delta > 0 %}+{% endif %}{{ item.delta }}
+                        </div>
+                    </div>
+
+                    <div class="finding-block">
+                        <span class="finding-label">Domain insight:</span>
+                        {{ item.summary }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No domain shift bars available</h3>
+                <p>This comparison did not produce enough engineering-domain movement data to render the domain shift view.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
 <section class="grid grid-2">
     <section class="card">
         <div class="card-header">
@@ -502,6 +559,46 @@
             {% endif %}
         </div>
     </section>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Recurring Engineering Domains</h2>
+        <p class="section-copy">
+            Broader engineering areas that keep showing pressure across linked project runs.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if comparison.project_intelligence and comparison.project_intelligence.recurring_domains %}
+            <div class="finding-list">
+                {% for item in comparison.project_intelligence.recurring_domains %}
+                <div class="finding">
+                    <div class="finding-top">
+                        <div>
+                            <div class="chip chip-soft">DOMAIN</div>
+                            <h4>{{ item.domain }}</h4>
+                        </div>
+
+                        <div class="small-muted">
+                            {{ item.appearances }} run(s)
+                        </div>
+                    </div>
+
+                    <div class="finding-block">
+                        <span class="finding-label">Project signal:</span>
+                        {{ item.domain }} appeared in {{ item.appearances }} linked run(s) and contributed {{ item.total_findings }} total finding(s) across recorded project history.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state refined-empty-state">
+                <h3>No recurring engineering domains yet</h3>
+                <p>No single engineering domain has repeated enough across project history to stand out as a broad pressure area.</p>
+            </div>
+        {% endif %}
+    </div>
 </section>
 
 <section class="card trust-hero-card">

@@ -1097,6 +1097,7 @@ def _normalize_snapshot(snapshot):
         risk["recommendation"] = risk.get("recommendation") or "Review this finding."
         risk["components"] = risk.get("components") or []
         risk["nets"] = risk.get("nets") or []
+        risk["design_domain"] = risk.get("design_domain") or risk.get("category") or "general"
         risk["base_signature"] = risk.get("base_signature") or signatures["base_signature"]
         risk["signature"] = risk.get("signature") or signatures["signature"]
         risk["normalized_message"] = signatures["normalized_message"]
@@ -1219,6 +1220,38 @@ def _build_delta_analysis(run_a, run_b):
         key=lambda item: (-abs(item["delta"]), item["category"]),
     )
 
+    domain_totals_a = defaultdict(int)
+    domain_totals_b = defaultdict(int)
+    for item in snapshot_a:
+        domain = str(item.get("design_domain") or item.get("category") or "general").strip().lower()
+        domain_totals_a[domain] += 1
+    for item in snapshot_b:
+        domain = str(item.get("design_domain") or item.get("category") or "general").strip().lower()
+        domain_totals_b[domain] += 1
+
+    all_domains = sorted(set(domain_totals_a.keys()) | set(domain_totals_b.keys()))
+    domain_deltas = []
+    for domain in all_domains:
+        before_count = _safe_int(domain_totals_a.get(domain), 0)
+        after_count = _safe_int(domain_totals_b.get(domain), 0)
+        delta = after_count - before_count
+        if delta != 0:
+            domain_deltas.append(
+                {
+                    "domain": domain,
+                    "label": _format_category_name(domain),
+                    "before": before_count,
+                    "after": after_count,
+                    "delta": delta,
+                    "direction": "increased" if delta > 0 else "decreased",
+                }
+            )
+
+    domain_deltas = sorted(
+        domain_deltas,
+        key=lambda item: (-abs(item["delta"]), item["label"].lower()),
+    )
+
     added_critical = [
         risk for risk in added_risks
         if str(risk.get("severity", "")).lower() == "critical"
@@ -1254,6 +1287,13 @@ def _build_delta_analysis(run_a, run_b):
         else:
             insight_lines.append(f"{category_name} issues improved the most.")
 
+    if domain_deltas:
+        top_domain = domain_deltas[0]
+        if top_domain["delta"] > 0:
+            insight_lines.append(f"{top_domain['label']} pressure increased across the selected revision window.")
+        else:
+            insight_lines.append(f"{top_domain['label']} pressure improved across the selected revision window.")
+
     if not insight_lines:
         insight_lines.append("No finding-level changes were detected between these runs.")
 
@@ -1271,6 +1311,7 @@ def _build_delta_analysis(run_a, run_b):
         "added_critical_count": len(added_critical),
         "removed_critical_count": len(removed_critical),
         "category_deltas": category_deltas,
+        "domain_deltas": domain_deltas,
         "insight_text": " ".join(insight_lines),
     }
 
@@ -1745,6 +1786,22 @@ def _build_compare_visual_data(project_intelligence, insights):
     for item in category_items:
         item["width_pct"] = round((_safe_float(item.get("value"), 0.0) / max_category_value) * 100, 1)
 
+    domain_items = []
+    for item in (insights.get("domain_impacts") or [])[:6]:
+        delta = _safe_int(item.get("delta"), 0)
+        domain_items.append(
+            {
+                "label": item.get("domain", "General"),
+                "value": abs(delta),
+                "tone": "better" if delta < 0 else "worse" if delta > 0 else "flat",
+                "signed_delta": delta,
+            }
+        )
+
+    max_domain_value = max([_safe_float(item.get("value"), 0.0) for item in domain_items] or [1.0])
+    for item in domain_items:
+        item["width_pct"] = round((_safe_float(item.get("value"), 0.0) / max_domain_value) * 100, 1)
+
     return {
         "score_history_chart": _build_series_chart(
             [item.get("value", 0) for item in score_history],
@@ -1755,6 +1812,7 @@ def _build_compare_visual_data(project_intelligence, insights):
             [item.get("label", "Run") for item in risk_history],
         ),
         "category_shift_bars": category_items,
+        "domain_shift_bars": domain_items,
     }
 
 
@@ -2233,6 +2291,8 @@ def _build_project_intelligence(project, run_a, run_b):
 
     category_presence = defaultdict(int)
     category_total_findings = defaultdict(int)
+    domain_presence = defaultdict(int)
+    domain_total_findings = defaultdict(int)
 
     pattern_presence = defaultdict(int)
     pattern_examples = {}
@@ -2251,8 +2311,15 @@ def _build_project_intelligence(project, run_a, run_b):
 
         snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
         seen_base_signatures = set()
+        run_seen_domains = set()
 
         for item in snapshot:
+            domain = str(item.get("design_domain") or item.get("category") or "general").strip().lower()
+            if domain not in run_seen_domains:
+                domain_presence[domain] += 1
+                run_seen_domains.add(domain)
+            domain_total_findings[domain] += 1
+
             base_signature = item.get("base_signature")
             if not base_signature or base_signature in seen_base_signatures:
                 continue
@@ -2304,6 +2371,23 @@ def _build_project_intelligence(project, run_a, run_b):
 
     recurring_patterns.sort(
         key=lambda item: (-item["appearances"], item["category"].lower(), item["message"].lower())
+    )
+
+    recurring_domains = []
+    for domain, appearances in domain_presence.items():
+        if appearances < 2:
+            continue
+        recurring_domains.append(
+            {
+                "domain": _format_category_name(domain),
+                "raw_domain": domain,
+                "appearances": appearances,
+                "total_findings": domain_total_findings.get(domain, 0),
+            }
+        )
+
+    recurring_domains.sort(
+        key=lambda item: (-item["appearances"], -item["total_findings"], item["domain"].lower())
     )
 
     attention_areas = []
@@ -2359,10 +2443,11 @@ def _build_project_intelligence(project, run_a, run_b):
 
     if recurring_categories:
         top_category = recurring_categories[0]["category"]
+        top_domain = recurring_domains[0]["domain"] if recurring_domains else top_category
         project_takeaway = (
             f"The selected comparison improved by {selected_score_delta} points, but {top_category} remains the strongest recurring "
-            "issue family across project history. This means the current revision may be improving while the broader project still "
-            "shows repeated weakness in the same engineering area."
+            f"issue family across project history. {top_domain} remains the strongest recurring engineering domain, so the current "
+            "revision may be improving while the broader project still shows repeated weakness in the same engineering area."
         )
     else:
         project_takeaway = (
@@ -2376,6 +2461,7 @@ def _build_project_intelligence(project, run_a, run_b):
         "score_history": score_history,
         "risk_history": risk_history,
         "recurring_categories": recurring_categories[:5],
+        "recurring_domains": recurring_domains[:5],
         "recurring_patterns": recurring_patterns[:5],
         "attention_areas": attention_areas,
         "stability_label": stability_label,
@@ -2692,6 +2778,29 @@ def compare_runs(project_id):
                 "summary": "Noise reduction summary unavailable because insight generation failed.",
             },
         }
+
+    domain_impacts = []
+    for item in delta_analysis.get("domain_deltas", []):
+        delta = _safe_int(item.get("delta"), 0)
+        domain_impacts.append(
+            {
+                "domain": item.get("label", "General"),
+                "delta": delta,
+                "direction": "worse" if delta > 0 else "better" if delta < 0 else "flat",
+                "summary": f"{item.get('label', 'General')} findings moved from {item.get('before', 0)} to {item.get('after', 0)} across the selected runs.",
+                "before": item.get("before", 0),
+                "after": item.get("after", 0),
+            }
+        )
+
+    insights["domain_impacts"] = domain_impacts
+    if domain_impacts:
+        leading_domain = domain_impacts[0]
+        direction_text = "worsened" if leading_domain["delta"] > 0 else "improved"
+        insights["engineering_takeaway"] = (
+            f"{insights.get('engineering_takeaway', '')} "
+            f"The strongest domain-level movement is in {leading_domain['domain']}, which {direction_text} from {leading_domain['before']} to {leading_domain['after']} finding(s)."
+        ).strip()
 
     project_intelligence = _build_project_intelligence(project, run_a, run_b)
     comparison_visuals = _build_compare_visual_data(project_intelligence, insights)
