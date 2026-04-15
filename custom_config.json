@@ -1,18 +1,33 @@
 {
+    "analysis": {
+        "profile": "balanced",
+        "board_type": "general",
+        "custom_profile_name": "Custom Profile",
+        "category_toggles": {
+            "layout_manufacturing": true,
+            "power": true,
+            "signal": true,
+            "thermal": true,
+            "emi_reliability": true,
+            "safety": true
+        },
+        "rule_toggles": {}
+    },
     "score": {
         "start_score": 10.0,
         "min_score": 0.0,
         "max_score": 10.0,
         "severity_penalties": {
-            "low": 0.15,
-            "medium": 0.35,
+            "low": 0.2,
+            "medium": 0.4,
             "high": 0.6,
             "critical": 1.2
         }
     },
     "layout": {
         "min_component_spacing": 3.0,
-        "density_threshold": 6
+        "density_threshold": 6,
+        "density_region_size": 25.0
     },
     "power": {
         "required_power_nets": [
@@ -27,7 +42,13 @@
             "GND",
             "GROUND",
             "PGND"
-        ]
+        ],
+        "distribution_distance_threshold": 20.0,
+        "decoupling_distance_threshold": 4.0,
+        "max_trace_length": 50.0,
+        "min_trace_width": 0.5,
+        "max_via_count": 5,
+        "min_connections": 2
     },
     "signal": {
         "max_trace_length": 25.0,
@@ -39,6 +60,18 @@
             "MISO",
             "CS",
             "CTRL"
+        ],
+        "min_general_trace_width": 0.15,
+        "excluded_net_keywords": [
+            "GND",
+            "GROUND",
+            "VCC",
+            "VIN",
+            "VBAT",
+            "3V3",
+            "5V",
+            "12V",
+            "VDD"
         ]
     },
     "thermal": {
@@ -52,10 +85,133 @@
             "threshold": 3.0
         },
         "density": {
-            "component_threshold": 6
+            "component_threshold": 6,
+            "region_size": 25.0
+        },
+        "thermal": {
+            "threshold": 4.0
+        },
+        "decoupling": {
+            "threshold": 4.0
+        },
+        "power_distribution": {
+            "threshold": 20.0
+        },
+        "return_path": {
+            "ground_net_keywords": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "critical_net_keywords": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "require_ground_reference": true
         },
         "signal_path": {
-            "threshold": 25.0
+            "threshold": 25.0,
+            "excluded_nets": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "power_rail": {
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "trace_quality": {
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "signal_integrity_advanced": {
+            "max_signal_vias": 2,
+            "width_ratio_threshold": 2.2,
+            "detour_ratio_threshold": 1.8,
+            "stub_length_threshold": 12.0,
+            "crosstalk_spacing_threshold": 2.5
+        },
+        "differential_pair": {
+            "length_mismatch_threshold": 5.0,
+            "via_mismatch_threshold": 1
+        },
+        "manufacturability": {
+            "min_trace_width": 0.15,
+            "min_drill": 0.2,
+            "min_annular_ring": 0.1,
+            "via_in_pad_distance": 0.35
+        },
+        "thermal_management": {
+            "thermal_via_radius": 4.0,
+            "min_thermal_vias": 1,
+            "min_heat_spread_width": 0.5
+        },
+        "reliability": {
+            "min_ground_vias": 2,
+            "min_ground_connections": 4
+        },
+        "component_analysis": {
+            "termination_length_threshold": 18.0
+        },
+        "emi_emc": {
+            "max_switch_trace_length": 18.0,
+            "sensitive_keepout": 6.0,
+            "return_via_radius": 3.0,
+            "max_loop_length": 45.0
+        },
+        "stackup_return_path": {
+            "max_signal_layers": 2,
+            "signal_via_ground_radius": 3.5,
+            "max_two_layer_critical_length": 28.0
+        },
+        "assembly_testability": {
+            "min_fiducials": 2,
+            "probe_access_radius": 6.0,
+            "min_ground_test_points": 1
+        },
+        "safety_high_voltage": {
+            "min_clearance": 2.5,
+            "min_creepage": 5.0,
+            "high_voltage_net_keywords": [
+                "HV",
+                "VAC",
+                "VDC",
+                "VBUS",
+                "48V",
+                "24V",
+                "PACK",
+                "BATT"
+            ]
+        },
+        "power_path_realism": {
+            "neckdown_ratio_threshold": 2.5,
+            "max_high_current_length": 40.0,
+            "converter_cap_radius": 7.0,
+            "max_high_current_vias": 4
         },
         "net_length": {
             "max_trace_length": 25.0,
@@ -85,22 +241,6 @@
             ]
         },
         "ground_reference": {
-            "ground_net_keywords": [
-                "GND",
-                "GROUND",
-                "PGND"
-            ],
-            "critical_net_keywords": [
-                "CLK",
-                "SCL",
-                "SDA",
-                "MOSI",
-                "MISO",
-                "CS",
-                "CTRL"
-            ]
-        },
-        "return_path": {
             "ground_net_keywords": [
                 "GND",
                 "GROUND",
