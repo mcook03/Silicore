@@ -27,6 +27,7 @@ from flask import (
 )
 
 from engine.config_loader import ANALYSIS_PROFILE_PRESETS, SUPPORTED_ANALYSIS_PROFILES, parse_config_form, save_config
+from engine.db import initialize_database, list_atlas_messages, persist_atlas_exchange
 from engine.dashboard_storage import get_recent_runs
 from engine.project_store import (
     add_project_note,
@@ -47,13 +48,42 @@ from engine.services.analysis_service import (
 )
 
 app = Flask(__name__)
-app.secret_key = "silicore-dev-secret"
+
+
+def _load_app_secret():
+    env_secret = os.environ.get("SILICORE_SECRET_KEY") or os.environ.get("FLASK_SECRET_KEY")
+    if env_secret:
+        return env_secret
+
+    secret_dir = "dashboard_data"
+    secret_path = os.path.join(secret_dir, "app_secret.txt")
+    os.makedirs(secret_dir, exist_ok=True)
+    if os.path.isfile(secret_path):
+        try:
+            with open(secret_path, "r", encoding="utf-8") as handle:
+                stored = handle.read().strip()
+            if stored:
+                return stored
+        except OSError:
+            pass
+
+    generated = os.urandom(32).hex()
+    try:
+        with open(secret_path, "w", encoding="utf-8") as handle:
+            handle.write(generated)
+    except OSError:
+        return generated
+    return generated
+
+
+app.secret_key = _load_app_secret()
 
 UPLOAD_FOLDER = "dashboard_uploads"
 RUNS_FOLDER = "dashboard_runs"
 PROJECTS_FOLDER = "dashboard_projects"
 CONFIG_PATH = "custom_config.json"
 
+initialize_database()
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RUNS_FOLDER, exist_ok=True)
 os.makedirs(PROJECTS_FOLDER, exist_ok=True)
@@ -2209,6 +2239,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         )
 
     return {
+        "run_id": result.get("run_dir") or result.get("filename"),
         "board_name": analysis_context.get("board_name") or board_summary.get("filename") or result.get("filename") or "Board",
         "score": _score_to_100(result.get("score")),
         "posture": board_copilot.get("posture"),
@@ -2245,6 +2276,7 @@ def _build_project_atlas_context(project, workspace_intelligence, timeline_data,
         )
 
     return {
+        "project_id": project.get("project_id"),
         "project_name": project.get("name", "Workspace"),
         "posture": project_copilot.get("posture"),
         "health_score": workspace_intelligence.get("health_score", 0),
@@ -2277,6 +2309,9 @@ def _build_compare_atlas_context(comparison, compare_copilot):
         )
 
     return {
+        "project_id": comparison.get("project_id"),
+        "run_a_id": (comparison.get("run_a") or {}).get("run_id"),
+        "run_b_id": (comparison.get("run_b") or {}).get("run_id"),
         "posture": compare_copilot.get("posture"),
         "signoff_note": compare_copilot.get("signoff_note"),
         "root_cause": compare_copilot.get("root_cause"),
@@ -4376,6 +4411,7 @@ def atlas_query_route():
     prompt = str(payload.get("prompt") or "").strip()
     context = payload.get("context") or {}
     history = payload.get("history") or []
+    thread_key = str(payload.get("thread_key") or "").strip()
 
     if not prompt:
         return jsonify({"error": "A prompt is required."}), 400
@@ -4384,7 +4420,26 @@ def atlas_query_route():
         return jsonify({"error": "Unsupported Atlas page type."}), 400
 
     answer = answer_atlas_with_agent(page_type, prompt, context=context, history=history)
-    return jsonify(answer)
+    if not thread_key:
+        thread_key = f"{page_type}::{_normalize_compare_text(context.get('project_id') or context.get('board_name') or context.get('project_name') or context.get('direction') or 'atlas')}"
+
+    thread_messages = persist_atlas_exchange(
+        thread_key=thread_key,
+        page_type=page_type,
+        context=context,
+        prompt=prompt,
+        answer_payload=answer,
+        owner_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
+    )
+    return jsonify({**answer, "thread_key": thread_key, "thread": thread_messages})
+
+
+@app.route("/atlas/thread", methods=["GET"])
+def atlas_thread_route():
+    thread_key = str(request.args.get("thread_key") or "").strip()
+    if not thread_key:
+        return jsonify({"messages": []})
+    return jsonify({"messages": list_atlas_messages(thread_key)})
 
 
 @app.route("/history", methods=["GET"])

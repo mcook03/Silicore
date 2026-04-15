@@ -1538,7 +1538,8 @@
     const assistantData = projectData.assistant || {};
     const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
     const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
-    const threadKey = `silicore-project-thread::${((projectData.copilot || {}).systemic_pattern || 'workspace').toLowerCase()}`;
+    const threadKey = `silicore-project-thread::${atlasContext.project_id || atlasContext.project_name || 'workspace'}`;
+    let threadState = [];
     const escapeHtml = (value) => String(value || '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -1570,21 +1571,7 @@
         });
     };
 
-    const saveThread = (messages) => {
-        try {
-            sessionStorage.setItem(threadKey, JSON.stringify(messages));
-        } catch (error) {
-            console.debug('project assistant thread storage skipped', error);
-        }
-    };
-    const loadThread = () => {
-        try {
-            return JSON.parse(sessionStorage.getItem(threadKey) || '[]');
-        } catch (error) {
-            return [];
-        }
-    };
-    const serializeHistory = () => loadThread().slice(-8).map((item) => ({
+    const serializeHistory = () => threadState.slice(-8).map((item) => ({
         role: item.role,
         intent: item.intent || '',
         copy: String(item.copy || '').replace(/<[^>]+>/g, ' ').trim(),
@@ -1656,6 +1643,7 @@
                 body: JSON.stringify({
                     page_type: 'project',
                     prompt: promptText,
+                    thread_key: threadKey,
                     history: serializeHistory(),
                     context: atlasContext,
                 }),
@@ -1670,11 +1658,16 @@
         }
     };
     const pushThreadExchange = (promptText, result) => {
-        const current = loadThread();
-        current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: resultToMarkup(result), follow_ups: result.follow_ups || [], intent: result.intent || ''});
-        saveThread(current);
-        renderThread(current);
+        if (Array.isArray(result.thread) && result.thread.length) {
+            threadState = result.thread;
+        } else {
+            threadState = [
+                ...threadState,
+                {role: 'user', copy: promptText},
+                {role: 'assistant', copy: resultToMarkup(result), follow_ups: result.follow_ups || [], intent: result.intent || ''},
+            ];
+        }
+        renderThread(threadState);
         renderResponse(result);
     };
     const submitPrompt = async (promptText) => {
@@ -1710,16 +1703,32 @@
         });
     }
 
-    const saved = loadThread();
-    if (saved.length) renderThread(saved);
-    if (questionButtons[0]) {
-        const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
-        renderResponse(route ? routeResult(route) : {
-            title: questionButtons[0].dataset.title || 'Question',
-            answer: questionButtons[0].dataset.answer || 'No answer available.',
-            follow_ups: [],
-        });
-    }
+    const hydrateThread = async () => {
+        try {
+            const response = await fetch(`/atlas/thread?thread_key=${encodeURIComponent(threadKey)}`);
+            if (!response.ok) {
+                throw new Error(`Thread request failed with ${response.status}`);
+            }
+            const payload = await response.json();
+            threadState = Array.isArray(payload.messages) ? payload.messages : [];
+            if (threadState.length) {
+                renderThread(threadState);
+            }
+        } catch (error) {
+            console.debug('project assistant thread hydrate skipped', error);
+            threadState = [];
+        }
+        if (questionButtons[0]) {
+            const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
+            renderResponse(route ? routeResult(route) : {
+                title: questionButtons[0].dataset.title || 'Question',
+                answer: questionButtons[0].dataset.answer || 'No answer available.',
+                follow_ups: [],
+            });
+        }
+    };
+
+    hydrateThread();
 })();
 </script>
 

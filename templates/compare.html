@@ -393,7 +393,7 @@
             <div class="metric-grid">
                 <div class="metric-card">
                     <div class="metric-label">Score</div>
-                    <div class="metric-value">{{ (comparison.run_a.score * 10)|round|int }}</div>
+                    <div class="metric-value">{{ (comparison.run_a.score or 0)|round|int }}</div>
                     <div class="metric-sub">0–100 scale</div>
                 </div>
 
@@ -429,7 +429,7 @@
             <div class="metric-grid">
                 <div class="metric-card">
                     <div class="metric-label">Score</div>
-                    <div class="metric-value">{{ (comparison.run_b.score * 10)|round|int }}</div>
+                    <div class="metric-value">{{ (comparison.run_b.score or 0)|round|int }}</div>
                     <div class="metric-sub">0–100 scale</div>
                 </div>
 
@@ -2819,22 +2819,9 @@
         });
     };
 
-    const threadKey = `silicore-compare-thread::${((compareData.copilot || {}).direction || 'mixed')}::${((compareData.copilot || {}).score_diff || 0)}`;
-    const saveThread = (messages) => {
-        try {
-            sessionStorage.setItem(threadKey, JSON.stringify(messages));
-        } catch (error) {
-            console.debug('compare assistant thread storage skipped', error);
-        }
-    };
-    const loadThread = () => {
-        try {
-            return JSON.parse(sessionStorage.getItem(threadKey) || '[]');
-        } catch (error) {
-            return [];
-        }
-    };
-    const serializeHistory = () => loadThread().slice(-8).map((item) => ({
+    const threadKey = `silicore-compare-thread::${atlasContext.project_id || 'compare'}::${atlasContext.run_a_id || 'a'}::${atlasContext.run_b_id || 'b'}`;
+    let threadState = [];
+    const serializeHistory = () => threadState.slice(-8).map((item) => ({
         role: item.role,
         intent: item.intent || '',
         copy: String(item.copy || '').replace(/<[^>]+>/g, ' ').trim(),
@@ -2938,6 +2925,7 @@
                 body: JSON.stringify({
                     page_type: 'compare',
                     prompt: promptText,
+                    thread_key: threadKey,
                     history: serializeHistory(),
                     context: {
                         ...atlasContext,
@@ -2956,11 +2944,16 @@
     };
 
     const pushThreadExchange = (promptText, result) => {
-        const current = loadThread();
-        current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: resultToMarkup(result), citations: result.citations || [], follow_ups: result.follow_ups || [], intent: result.intent || ''});
-        saveThread(current);
-        renderThread(current);
+        if (Array.isArray(result.thread) && result.thread.length) {
+            threadState = result.thread;
+        } else {
+            threadState = [
+                ...threadState,
+                {role: 'user', copy: promptText},
+                {role: 'assistant', copy: resultToMarkup(result), citations: result.citations || [], follow_ups: result.follow_ups || [], intent: result.intent || ''},
+            ];
+        }
+        renderThread(threadState);
         renderResponse(result);
     };
     const submitPrompt = async (promptText) => {
@@ -3005,16 +2998,32 @@
         });
     }
 
-    const saved = loadThread();
-    if (saved.length) renderThread(saved);
-    if (questionButtons[0]) {
-        const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
-        renderResponse(route ? routeResult(route, []) : {
-            title: questionButtons[0].dataset.title || 'Question',
-            answer: questionButtons[0].dataset.answer || 'No answer available.',
-            follow_ups: [],
-        });
-    }
+    const hydrateThread = async () => {
+        try {
+            const response = await fetch(`/atlas/thread?thread_key=${encodeURIComponent(threadKey)}`);
+            if (!response.ok) {
+                throw new Error(`Thread request failed with ${response.status}`);
+            }
+            const payload = await response.json();
+            threadState = Array.isArray(payload.messages) ? payload.messages : [];
+            if (threadState.length) {
+                renderThread(threadState);
+            }
+        } catch (error) {
+            console.debug('compare assistant thread hydrate skipped', error);
+            threadState = [];
+        }
+        if (questionButtons[0]) {
+            const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
+            renderResponse(route ? routeResult(route, []) : {
+                title: questionButtons[0].dataset.title || 'Question',
+                answer: questionButtons[0].dataset.answer || 'No answer available.',
+                follow_ups: [],
+            });
+        }
+    };
+
+    hydrateThread();
 })();
 </script>
 

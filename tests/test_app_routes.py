@@ -108,11 +108,13 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Create Account", page)
 
     def test_atlas_query_route_returns_answer_payload(self):
+        thread_key = "test-board-thread"
         response = self.client.post(
             "/atlas/query",
             json={
                 "page_type": "board",
                 "prompt": "What should I fix first?",
+                "thread_key": thread_key,
                 "context": {
                     "dominant_domain": "Signal Integrity",
                     "mission": "Focus first on signal integrity.",
@@ -144,6 +146,13 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("title", payload)
         self.assertIn("answer", payload)
         self.assertIn("follow_ups", payload)
+        self.assertIn("thread", payload)
+        self.assertEqual(payload.get("thread_key"), thread_key)
+
+        thread_response = self.client.get(f"/atlas/thread?thread_key={thread_key}")
+        self.assertEqual(thread_response.status_code, 200)
+        thread_payload = thread_response.get_json()
+        self.assertGreaterEqual(len(thread_payload.get("messages", [])), 2)
 
 
 if __name__ == "__main__":
