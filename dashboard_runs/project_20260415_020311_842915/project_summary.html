@@ -1,0 +1,87 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Project Summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .board-card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 18px;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Project Summary</h1>
+                <p><strong>Total Boards:</strong> 3</p>
+                <p><strong>Average Score:</strong> 0.53 / 10</p>
+                <p><strong>Best Score:</strong> 1.6 / 10</p>
+                <p><strong>Worst Score:</strong> 0.0 / 10</p>
+            </div>
+
+            
+        <div class="hero">
+            <p><strong>Project comparison complete</strong></p>
+            <p>The strongest board is risky_board_no_gnd.txt at 1.6 / 10, while the weakest board is sensor_board_v1.txt at 0.0 / 10. The current score spread across the project is 1.6 points. The most recurring issue area across the project is layout.</p>
+        </div>
+        
+
+            <div class="hero">
+                <p><strong>Parser Capability</strong></p>
+                <p>Current production-ready inputs: .kicad_pcb, .txt</p>
+                <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            
+            <div class="board-card">
+                <h3>#1 — risky_board_no_gnd.txt</h3>
+                <p><strong>Score:</strong> 1.6 / 10</p>
+                <p><strong>Total Risks:</strong> 17</p>
+                <p><strong>Total Penalty:</strong> 8.4</p>
+                <p>This board shows high design risk. The main risk concentration is in layout. The highest-priority issue is U1 and U2 are too close (1.00 units). The current design snapshot includes 8 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#2 — power_board_v1.txt</h3>
+                <p><strong>Score:</strong> 0.0 / 10</p>
+                <p><strong>Total Risks:</strong> 29</p>
+                <p><strong>Total Penalty:</strong> 13.0</p>
+                <p>This board shows high design risk. The main risk concentration is in emi return path. The highest-priority issue is J1 and LED1 are too close (1.41 units). The current design snapshot includes 10 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#3 — sensor_board_v1.txt</h3>
+                <p><strong>Score:</strong> 0.0 / 10</p>
+                <p><strong>Total Risks:</strong> 31</p>
+                <p><strong>Total Penalty:</strong> 14.6</p>
+                <p>This board shows high design risk. The main risk concentration is in layout. The highest-priority issue is J1 and LED1 are too close (2.83 units). The current design snapshot includes 9 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
+    

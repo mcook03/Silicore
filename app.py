@@ -850,7 +850,7 @@ def _build_dashboard_story(recent_runs, projects):
     projects = projects or []
 
     scored_runs = [run for run in recent_runs if run.get("score") is not None]
-    latest_scored = scored_runs[0] if scored_runs else None
+    latest_scored = scored_runs[-1] if scored_runs else None
     latest_score = _score_to_100(latest_scored.get("score")) if latest_scored else 0
 
     active_projects = [project for project in projects if project.get("run_count")]
@@ -2413,6 +2413,12 @@ def _build_single_decision_data(result):
             compact = compact[:27].rstrip() + "..."
         return compact or "Unnamed issue"
 
+    def _compact_line(text, limit):
+        value = str(text or "").strip()
+        if len(value) <= limit:
+            return value
+        return value[: limit - 3].rstrip() + "..."
+
     confidence_scores = [_extract_risk_confidence_score(risk) for risk in risks]
     average_confidence = round(sum(confidence_scores) / len(confidence_scores), 1) if confidence_scores else 0
 
@@ -2433,7 +2439,12 @@ def _build_single_decision_data(result):
                 "category": _format_category_name(risk.get("category")),
                 "label": _decision_label(risk),
                 "message": risk.get("message", "Unnamed issue"),
+                "message_short": _compact_line(risk.get("message", "Unnamed issue"), 96),
                 "recommendation": risk.get("recommendation") or "Review this issue in layout.",
+                "recommendation_short": _compact_line(
+                    risk.get("recommendation") or "Review this issue in layout.",
+                    96,
+                ),
                 "confidence_score": confidence_score,
                 "priority_score": round((severity_weight * 24) + (confidence_score * 0.55), 1),
                 "severity": str(risk.get("severity", "low")).lower(),
@@ -2482,7 +2493,7 @@ def _build_single_decision_data(result):
         "domain_bars": _build_engineering_domain_bars(risks),
         "focus_bars": _build_bar_chart(focus_items),
         "focus_item_count": len(focus_items),
-        "next_actions": ranked_actions[:3],
+        "next_actions": ranked_actions[:2],
         "trust_note": trust_note,
     }
 

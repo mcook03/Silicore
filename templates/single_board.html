@@ -387,21 +387,27 @@
 
         <div class="card-body">
             {% if single_decision and single_decision.next_actions %}
-            <div class="board-issue-list">
+            <div class="compact-action-list">
                 {% for item in single_decision.next_actions %}
-                <div class="board-issue-item">
-                    <div class="issue-top-row">
+                <div class="compact-action-card">
+                    <div class="compact-action-top">
+                        <div class="compact-action-heading">
+                            <div class="compact-action-title">{{ item.label }}</div>
+                            <div class="compact-action-category">{{ item.category }}</div>
+                        </div>
                         <span class="chip {{ chip_class(item.severity) }}">{{ item.severity }}</span>
-                        <span class="issue-category">{{ item.category }}</span>
                     </div>
-                    <div class="board-issue-text strong-issue-text">{{ item.message }}</div>
-                    <div class="issue-recommendation">{{ item.recommendation }}</div>
-                    <div class="issue-confidence-row">
+                    <div class="compact-action-copy">{{ item.message_short }}</div>
+                    <div class="compact-action-recommendation">{{ item.recommendation_short }}</div>
+                    <div class="issue-confidence-row compact-action-meta">
                         <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
                         <span class="mini-chip mini-chip-low">Priority {{ item.priority_score }}</span>
                     </div>
                 </div>
                 {% endfor %}
+            </div>
+            <div class="small-muted" style="margin-top:12px;">
+                Showing the top two ranked actions here to keep the analysis page focused.
             </div>
             {% else %}
             <div class="empty-state">No ranked next actions are available yet.</div>
@@ -1374,6 +1380,63 @@
         color: #dbeafe;
         line-height: 1.7;
         margin-top: 8px;
+    }
+
+    .compact-action-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .compact-action-card {
+        padding: 15px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .compact-action-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .compact-action-heading {
+        min-width: 0;
+    }
+
+    .compact-action-title {
+        color: #f8fbff;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .compact-action-category {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .compact-action-copy {
+        color: var(--text-soft);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .compact-action-recommendation {
+        margin-top: 8px;
+        color: #dbeafe;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .compact-action-meta {
+        margin-top: 12px;
     }
 
     .issue-confidence-row {
