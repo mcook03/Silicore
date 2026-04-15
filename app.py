@@ -1027,7 +1027,7 @@ def _build_dashboard_story(recent_runs, projects):
     workspace_label = "engineering workspace" if workspace_count == 1 else "engineering workspaces"
 
     summary = (
-        f"Silicore is currently tracking {run_count} {run_label} across {workspace_count} {workspace_label}. "
+        f"Silicore Nexus is currently tracking {run_count} {run_label} across {workspace_count} {workspace_label}. "
         f"The latest scored run is {latest_score} / 100, while active workspaces average {average_project_score} / 100."
     )
     if top_category:
@@ -1038,7 +1038,7 @@ def _build_dashboard_story(recent_runs, projects):
             "title": "Analyze",
             "value": len(recent_runs),
             "value_label": f"{len(recent_runs)} runs tracked",
-            "description": "Review uploaded boards against Silicore's engineering rules with saved run history for added context.",
+            "description": "Review uploaded boards against Atlas Intelligence rule logic with saved run history for added context.",
         },
         {
             "title": "Explain",
@@ -1772,7 +1772,7 @@ def _build_history_chart_data(history_runs):
 
     archive_metrics = [
         {
-            "label": "Saved Runs",
+            "label": "Nexus Runs",
             "value": len(history_runs or []),
             "note": "Total archived analysis folders",
         },
@@ -3475,11 +3475,11 @@ def _download_href(item):
 
 def _get_nav_items(active_page):
     return [
-        {"key": "home", "label": "Dashboard", "subtitle": "Platform overview", "href": url_for("index"), "icon": "◈", "active": active_page == "home"},
+        {"key": "home", "label": "Nexus", "subtitle": "Platform overview", "href": url_for("index"), "icon": "◈", "active": active_page == "home"},
         {"key": "single", "label": "Board Analysis", "subtitle": "Single-board review", "href": url_for("single_board_page"), "icon": "▣", "active": active_page == "single"},
-        {"key": "project", "label": "Project Review", "subtitle": "Multi-board comparison", "href": url_for("project_page"), "icon": "▤", "active": active_page == "project"},
+        {"key": "project", "label": "Nexus Review", "subtitle": "Multi-board comparison", "href": url_for("project_page"), "icon": "▤", "active": active_page == "project"},
         {"key": "projects_workspace", "label": "Projects", "subtitle": "Engineering workspaces", "href": url_for("projects_page"), "icon": "◆", "active": active_page == "projects_workspace"},
-        {"key": "history", "label": "Saved Runs", "subtitle": "History and outputs", "href": url_for("history_page"), "icon": "◷", "active": active_page == "history"},
+        {"key": "history", "label": "Nexus History", "subtitle": "History and outputs", "href": url_for("history_page"), "icon": "◷", "active": active_page == "history"},
         {"key": "settings", "label": "Settings", "subtitle": "Configuration controls", "href": url_for("settings_page"), "icon": "⚙", "active": active_page == "settings"},
     ]
 
@@ -3806,8 +3806,8 @@ def single_board_page():
     return _render_page(
         active_page="single",
         page_title="Board Analysis",
-        page_eyebrow="Engineering Review",
-        page_copy="Upload a PCB design to generate a focused engineering review, inspect prioritized findings, and export structured analysis outputs.",
+        page_eyebrow="Powered by Atlas Intelligence",
+        page_copy="Upload a PCB design to generate an Atlas Intelligence review, inspect prioritized findings, and export structured engineering outputs.",
         template_name="single_board.html",
         show_page_hero=False,
         body_context={
@@ -3871,9 +3871,9 @@ def project_page():
 
     return _render_page(
         active_page="project",
-        page_title="Project Review",
-        page_eyebrow="Multi-Board Analysis",
-        page_copy="Compare multiple boards within a project to evaluate design quality, rank designs, and review overall project health.",
+        page_title="Silicore Nexus Review",
+        page_eyebrow="Powered by Atlas Intelligence",
+        page_copy="Compare multiple boards inside Silicore Nexus to evaluate design quality, rank revisions, and review overall project health.",
         template_name="project_review.html",
         show_page_hero=False,
         body_context={
@@ -4056,11 +4056,11 @@ def compare_runs(project_id):
     if not run_a_id or not run_b_id:
         run_a = fallback_run_a
         run_b = fallback_run_b
-        flash("No compare pair was selected, so Silicore opened the latest two linked runs.")
+        flash("No compare pair was selected, so Silicore Nexus opened the latest two linked runs.")
     elif run_a_id == run_b_id:
         run_a = fallback_run_a
         run_b = fallback_run_b
-        flash("The same run was selected twice, so Silicore switched to the latest two different linked runs.")
+        flash("The same run was selected twice, so Silicore Nexus switched to the latest two different linked runs.")
     else:
         run_a = next((run for run in runs if str(run.get("run_id")) == run_a_id), None)
         run_b = next((run for run in runs if str(run.get("run_id")) == run_b_id), None)
@@ -4068,7 +4068,7 @@ def compare_runs(project_id):
         if not run_a or not run_b:
             run_a = fallback_run_a
             run_b = fallback_run_b
-            flash("One or both requested runs could not be found, so Silicore opened the latest valid comparison pair.")
+            flash("One or both requested runs could not be found, so Silicore Nexus opened the latest valid comparison pair.")
 
     score_a = _safe_float(run_a.get("score"), 0.0)
     score_b = _safe_float(run_b.get("score"), 0.0)
@@ -4214,9 +4214,9 @@ def compare_runs(project_id):
 
     return _render_page(
         active_page="projects_workspace",
-        page_title="Run Comparison",
-        page_eyebrow="Project Comparison",
-        page_copy="Compare two linked runs to measure engineering progress, regression, and overall risk movement.",
+        page_title="Nexus Comparison",
+        page_eyebrow="Powered by Atlas Intelligence",
+        page_copy="Compare two linked runs inside Silicore Nexus to measure engineering progress, regression, and overall risk movement.",
         template_name="compare.html",
         body_context={
             "project": project,
@@ -4233,9 +4233,9 @@ def history_page():
     history_runs = _build_history_runs()
     return _render_page(
         active_page="history",
-        page_title="Saved Runs",
-        page_eyebrow="Analysis History",
-        page_copy="Browse previous analyses, inspect saved outputs, and revisit engineering findings across earlier work.",
+        page_title="Nexus History",
+        page_eyebrow="Silicore Nexus Archive",
+        page_copy="Browse previous analyses, inspect saved outputs, and revisit engineering findings across earlier work inside Silicore Nexus.",
         template_name="history.html",
         body_context={
             "history_runs": history_runs,
@@ -4255,8 +4255,8 @@ def history_detail_page(run_dir):
 
     return _render_page(
         active_page="history",
-        page_title="Run Detail",
-        page_eyebrow="Saved Run Detail",
+        page_title="Nexus Run Detail",
+        page_eyebrow="Silicore Nexus Archive",
         page_copy="Review a saved analysis run in more detail and access every artifact generated for it.",
         template_name="history_detail.html",
         body_context={"run_detail": run_detail},
@@ -4302,9 +4302,9 @@ def login_page():
 
     return _render_page(
         active_page="home",
-        page_title="Account Access",
-        page_eyebrow="User System",
-        page_copy="Sign in to access shared projects, review workflow features, and saved team context.",
+        page_title="Silicore Access",
+        page_eyebrow="Silicore Nexus Identity",
+        page_copy="Sign in to access Silicore Nexus workspaces, review workflow features, and saved team context.",
         template_name="login.html",
         show_page_hero=False,
         body_context={},
@@ -4336,8 +4336,8 @@ def settings_page():
     return _render_page(
         active_page="settings",
         page_title="Settings",
-        page_eyebrow="Configuration Controls",
-        page_copy="Configure analysis thresholds and rule behavior.",
+        page_eyebrow="Atlas Intelligence Controls",
+        page_copy="Configure Atlas Intelligence thresholds, profiles, and rule behavior.",
         template_name="settings.html",
         show_page_hero=False,
         body_context={

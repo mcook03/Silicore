@@ -45,7 +45,7 @@ class AppRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         page = response.get_data(as_text=True)
-        self.assertIn("Run Comparison", page)
+        self.assertIn("Nexus Comparison", page)
         self.assertIn("Project Score Trend", page)
 
     def test_history_detail_includes_export_center_and_transparency(self):
@@ -63,7 +63,7 @@ class AppRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         page = response.get_data(as_text=True)
-        self.assertIn("Silicore Printable Review", page)
+        self.assertIn("Silicore Nexus Printable Review", page)
         self.assertIn("Save As PDF", page)
 
     def test_settings_page_includes_custom_profile_controls(self):

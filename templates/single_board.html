@@ -129,7 +129,7 @@
 
             <div class="summary-panel" data-assistant-board-response style="margin-top:16px;">
                 <h3>{{ board_assistant_console.eyebrow }}</h3>
-                <p>Select a follow-up question or review lens to open Silicore’s live guidance.</p>
+                <p>Select a follow-up question or review lens to open Atlas Intelligence guidance.</p>
             </div>
         </div>
     </section>
@@ -390,7 +390,7 @@
             <section class="card spotlight-shell-card">
                 <div class="card-header">
                     <h2 class="section-title">Fix Sequence</h2>
-                    <p class="section-copy">What to change first, and why Silicore is ranking it that way.</p>
+                    <p class="section-copy">What to change first, and why Atlas Intelligence is ranking it that way.</p>
                 </div>
                 <div class="card-body">
                     {% if board_copilot.fix_plan %}
@@ -925,7 +925,7 @@
         <div class="visual-chart-card" style="margin-top:16px;">
             <div class="visual-chart-header">
                 <span>Engineering Domain Coverage</span>
-                <span>Where Silicore is finding electrical, production, and safety depth</span>
+                <span>Where Atlas Intelligence is finding electrical, production, and safety depth</span>
             </div>
             {% if single_decision and single_decision.domain_bars and single_decision.domain_bars.has_data %}
             <div class="distribution-bars">
@@ -1367,7 +1367,7 @@
             `).join('');
             return `
                 <div class="assistant-message assistant-message-${item.role}">
-                    <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Silicore Assistant'}</div>
+                    <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Atlas Intelligence'}</div>
                     <div class="assistant-message-copy">${item.copy}</div>
                     ${citations ? `<div class="assistant-citation-list">${citations}</div>` : ''}
                 </div>
@@ -1430,7 +1430,7 @@
             return {
                 title: 'EMI / EMC Review',
                 answer: matches.length
-                    ? `Silicore is flagging EMI/EMC pressure because the board has noisy-path or return-path findings that can escape the layout and show up as real-world instability. Focus on routing containment, stitching support, and aggressor proximity first.`
+                    ? `Atlas Intelligence is flagging EMI/EMC pressure because the board has noisy-path or return-path findings that can escape the layout and show up as real-world instability. Focus on routing containment, stitching support, and aggressor proximity first.`
                     : 'No explicit EMI/EMC findings are currently dominating this board review.',
                 citations: matches.map(sourceToCitation),
             };

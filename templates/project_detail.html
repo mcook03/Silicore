@@ -38,7 +38,7 @@
 
             <div class="summary-panel" data-assistant-project-response style="margin-top:16px;">
                 <h3>{{ project_assistant_console.eyebrow }}</h3>
-                <p>Select a workspace question or review lens to open Silicore’s guidance.</p>
+                <p>Select a workspace question or review lens to open Atlas Intelligence guidance.</p>
             </div>
         </div>
     </section>
@@ -403,7 +403,7 @@
             <div class="project-detail-compare-grid">
                 <label>
                     Reviewer
-                    <input type="text" name="author" placeholder="Engineering Review">
+                    <input type="text" name="author" placeholder="Silicore Nexus Review">
                 </label>
             </div>
             <label style="display:block; margin-top:12px;">
@@ -560,7 +560,7 @@
                     </div>
                     <div class="summary-panel" style="margin-top:16px;" data-project-copilot-detail>
                         <h3>Select an execution plan item</h3>
-                        <p>Silicore will show the workspace rationale and next action detail here.</p>
+                        <p>Atlas Intelligence will show the workspace rationale and next action detail here.</p>
                     </div>
                 </div>
             </section>
@@ -1548,7 +1548,7 @@
         if (!thread) return;
         thread.innerHTML = messages.map((item) => `
             <div class="assistant-message assistant-message-${item.role}">
-                <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Silicore Assistant'}</div>
+                    <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Atlas Intelligence'}</div>
                 <div class="assistant-message-copy">${item.copy}</div>
             </div>
         `).join('');
