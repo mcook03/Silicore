@@ -85,10 +85,10 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Recurring Failure Pattern", page)
         self.assertIn("Silicore Nexus", page)
         self.assertIn("Atlas Intelligence", page)
-        self.assertIn("Workspace Review Architecture", page)
-        self.assertIn("Review Workflow", page)
+        self.assertIn("Nexus Review Architecture", page)
+        self.assertIn("Nexus Review Workflow", page)
         self.assertIn("Value Metrics", page)
-        self.assertIn("Team Access", page)
+        self.assertIn("Nexus Access", page)
 
     def test_single_board_page_includes_advanced_review_surfaces(self):
         response = self.client.get("/single-board")

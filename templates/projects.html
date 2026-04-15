@@ -32,9 +32,9 @@
 <section class="projects-hero-grid">
     <section class="card projects-score-card">
         <div class="card-header">
-            <h2 class="section-title">Project Control</h2>
+            <h2 class="section-title">Silicore Nexus Control</h2>
             <p class="section-copy">
-                Portfolio-style view of engineering workspaces, activity, and workspace spread.
+                Portfolio-style view of Nexus workspaces, activity, and system-level workspace spread.
             </p>
         </div>
 
@@ -43,7 +43,7 @@
                 <div class="projects-score-main">
                     <div class="projects-score-number">{{ projects_summary.total_projects }}</div>
                     <div class="projects-score-label">total projects</div>
-                    <div class="projects-score-pill">Workspace Portfolio</div>
+                    <div class="projects-score-pill">Nexus Portfolio</div>
                 </div>
 
                 <div class="projects-score-visual">
@@ -63,16 +63,16 @@
             </div>
 
             <div class="projects-foot-note">
-                Track total workspaces, active projects, and project spread from one product-style management surface.
+                Track total Nexus workspaces, active projects, and portfolio spread from one system-level management surface.
             </div>
         </div>
     </section>
 
     <section class="card projects-overview-card">
         <div class="card-header">
-            <h2 class="section-title">Workspace Overview</h2>
+            <h2 class="section-title">Nexus Overview</h2>
             <p class="section-copy">
-                Current management-level metrics across all saved project workspaces.
+                Current management-level metrics across all saved Silicore Nexus workspaces.
             </p>
         </div>
 
@@ -85,12 +85,12 @@
 
                 <div class="overview-mini-card">
                     <div class="overview-mini-value">{{ projects_summary.populated_projects }}</div>
-                    <div class="overview-mini-label">Active Projects</div>
+                    <div class="overview-mini-label">Active Nexus Workspaces</div>
                 </div>
 
                 <div class="overview-mini-card">
                     <div class="overview-mini-value">{{ projects_summary.empty_projects }}</div>
-                    <div class="overview-mini-label">Empty Projects</div>
+                    <div class="overview-mini-label">Empty Nexus Workspaces</div>
                 </div>
             </div>
 
@@ -135,12 +135,12 @@
             <div>
                 <h2 class="section-title">Create Project</h2>
                 <p class="section-copy">
-                    Start a new engineering workspace for boards, runs, and later comparisons.
+                    Start a new Silicore Nexus workspace for boards, runs, later comparisons, and team review flow.
                 </p>
             </div>
 
             <div class="btn-link-row">
-                <a class="btn-link" href="#workspace-gallery">View Workspaces</a>
+                <a class="btn-link" href="#workspace-gallery">View Nexus Workspaces</a>
             </div>
         </div>
     </div>
@@ -171,16 +171,16 @@
 <section class="grid grid-2">
     <section class="card">
         <div class="card-header">
-            <h2 class="section-title">Workspace Spotlight</h2>
+            <h2 class="section-title">Nexus Spotlight</h2>
             <p class="section-copy">
-                Quick visual comparison of the strongest workspace activity versus the lightest one.
+                Quick visual comparison of the strongest Nexus activity versus the lightest one.
             </p>
         </div>
 
         <div class="card-body">
             <div class="spotlight-grid">
                 <div class="spotlight-card spotlight-best">
-                    <div class="spotlight-kicker">Most Active Project</div>
+                    <div class="spotlight-kicker">Most Active Nexus Workspace</div>
                     <div class="spotlight-title">{{ ns.most_active_name }}</div>
                     <div class="spotlight-copy">
                         {{ ns.most_active_runs }} linked run{% if ns.most_active_runs != 1 %}s{% endif %}
@@ -188,7 +188,7 @@
                 </div>
 
                 <div class="spotlight-card spotlight-worst">
-                    <div class="spotlight-kicker">Least Active Project</div>
+                    <div class="spotlight-kicker">Least Active Nexus Workspace</div>
                     <div class="spotlight-title">{{ ns.least_active_name }}</div>
                     <div class="spotlight-copy">
                         {{ ns.least_active_runs }} linked run{% if ns.least_active_runs != 1 %}s{% endif %}
@@ -200,18 +200,18 @@
 
     <section class="card">
         <div class="card-header">
-            <h2 class="section-title">Project Distribution</h2>
+            <h2 class="section-title">Nexus Distribution</h2>
             <p class="section-copy">
-                Product-style breakdown of workspace status across your project list.
+                Product-style breakdown of Nexus workspace status across your project list.
             </p>
         </div>
 
         <div class="card-body">
             <div class="distribution-grid">
                 <div class="metric-card">
-                    <div class="metric-label">Total Workspaces</div>
+                    <div class="metric-label">Total Nexus Workspaces</div>
                     <div class="metric-value">{{ projects_summary.total_projects }}</div>
-                    <div class="metric-sub">All saved project shells</div>
+                    <div class="metric-sub">All saved Silicore Nexus shells</div>
                 </div>
 
                 <div class="metric-card">
@@ -242,7 +242,7 @@
             {% if chart and chart.activity_bars and chart.activity_bars.has_data %}
             <div class="workspace-bars-panel">
                 <div class="workspace-trend-header">
-                    <span>Most Active Workspaces</span>
+                    <span>Most Active Nexus Workspaces</span>
                     <span>Linked run volume</span>
                 </div>
                 <div class="workspace-bars-list">
@@ -293,27 +293,27 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Workspace Insight</h2>
+        <h2 class="section-title">Nexus Insight</h2>
         <p class="section-copy">
-            A clearer summary surface for project activity and portfolio direction.
+            A clearer summary surface for Nexus activity and portfolio direction.
         </p>
     </div>
 
     <div class="card-body">
         <div class="summary-strip">
             <div class="summary-panel">
-                <h3>Most Active Workspace</h3>
+                <h3>Most Active Nexus Workspace</h3>
                 <p>
-                    <strong>{{ ns.most_active_name }}</strong> currently leads the workspace list with
+                    <strong>{{ ns.most_active_name }}</strong> currently leads the Nexus list with
                     {{ ns.most_active_runs }} linked run{% if ns.most_active_runs != 1 %}s{% endif %}.
                 </p>
             </div>
 
             <div class="summary-panel">
-                <h3>Newest Workspace</h3>
+                <h3>Newest Nexus Workspace</h3>
                 <p>
                     <strong>{{ ns.newest_name }}</strong> is the most recently listed project in the current
-                    workspace set, with creation timestamp {{ ns.newest_date }}.
+                    Nexus set, with creation timestamp {{ ns.newest_date }}.
                 </p>
             </div>
         </div>
@@ -322,9 +322,9 @@
 
 <section class="card" id="workspace-gallery">
     <div class="card-header">
-        <h2 class="section-title">Workspace Gallery</h2>
+        <h2 class="section-title">Nexus Gallery</h2>
         <p class="section-copy">
-            Card-based project view with stronger visual hierarchy and direct actions.
+            Card-based Silicore Nexus view with stronger visual hierarchy and direct actions.
         </p>
     </div>
 
@@ -337,7 +337,7 @@
                             <div>
                                 <div class="workspace-card-title">{{ project.name }}</div>
                                 <div class="workspace-card-copy">
-                                    {{ project.description if project.description else "No description provided for this workspace yet." }}
+                                    {{ project.description if project.description else "No description provided for this Nexus workspace yet." }}
                                 </div>
                             </div>
 
@@ -394,7 +394,7 @@
             </div>
         {% else %}
             <div class="empty-state">
-                No projects yet. Create your first engineering workspace above.
+                No projects yet. Create your first Silicore Nexus workspace above.
             </div>
         {% endif %}
     </div>

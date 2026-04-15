@@ -3903,9 +3903,9 @@ def projects_page():
         projects = visible_projects
     return _render_page(
         active_page="projects_workspace",
-        page_title="Projects",
-        page_eyebrow="Engineering Workspaces",
-        page_copy="Organize boards and saved runs into durable engineering workspaces for cleaner project-level visibility.",
+        page_title="Silicore Nexus",
+        page_eyebrow="Workspace System Layer",
+        page_copy="Organize boards and saved runs into Silicore Nexus workspaces for cleaner project-level visibility, review flow, and team coordination.",
         template_name="projects.html",
         body_context={
             "projects": projects,
@@ -3980,8 +3980,8 @@ def project_detail_page(project_id):
     return _render_page(
         active_page="projects_workspace",
         page_title=project.get("name", "Project"),
-        page_eyebrow="Project Workspace",
-        page_copy="Review linked analysis runs, compare revisions, and monitor design progress within this project.",
+        page_eyebrow="Silicore Nexus Workspace",
+        page_copy="Review linked analysis runs, compare revisions, and monitor design progress inside this Silicore Nexus workspace.",
         template_name="project_detail.html",
         body_context={
             "project": project,

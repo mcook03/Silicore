@@ -84,7 +84,7 @@
 <section class="grid grid-2">
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Workspace Overview</h2>
+        <h2 class="section-title">Nexus Workspace Overview</h2>
         <p class="section-copy">
             {{ project.description if project.description else "No description yet for this project." }}
         </p>
@@ -95,7 +95,7 @@
             <div class="metric-card">
                 <div class="metric-label">Project ID</div>
                 <div class="metric-value" style="font-size:22px;">{{ project.project_id }}</div>
-                <div class="metric-sub">Workspace identifier</div>
+                <div class="metric-sub">Nexus workspace identifier</div>
             </div>
 
             <div class="metric-card">
@@ -133,7 +133,7 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Workspace Trends</h2>
+        <h2 class="section-title">Nexus Workspace Trends</h2>
         <p class="section-copy">
             Real run history for this workspace, including score movement and issue volume across linked analyses.
         </p>
@@ -255,7 +255,7 @@
                     <strong>{{ workspace_intel.average_confidence|round|int if workspace_intel else "N/A" }}</strong>
                 </div>
                 <div class="summary-panel compact-summary">
-                    <h3>Workspace Health Summary</h3>
+                    <h3>Nexus Health Summary</h3>
                     <p>{{ workspace_intel.health_summary if workspace_intel else "No workspace health summary yet." }}</p>
                 </div>
                 <p class="trend-summary-copy">{{ workspace_intel.confidence_summary if workspace_intel else "No confidence summary yet." }}</p>
@@ -278,7 +278,7 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Team Access</h2>
+        <h2 class="section-title">Nexus Access</h2>
         <p class="section-copy">Project ownership and member visibility for shared engineering review.</p>
     </div>
 
@@ -372,7 +372,7 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Review Workflow</h2>
+        <h2 class="section-title">Nexus Review Workflow</h2>
         <p class="section-copy">Lightweight collaboration and iteration tracking for shared engineering review.</p>
     </div>
 
@@ -447,7 +447,7 @@
         <div class="grid grid-2">
             <div>
                 <div class="summary-panel">
-                    <h3>Workspace Call</h3>
+                    <h3>Nexus Call</h3>
                     <p>{{ project_copilot.posture }}</p>
                     <p class="small-muted" style="margin-top:10px;">{{ project_copilot.momentum }}</p>
                 </div>
@@ -455,7 +455,7 @@
                 <div class="big-stat-grid compact-stat-grid" style="margin-top:16px;">
                     <div class="big-stat-card">
                         <div class="big-stat-value">{{ project_copilot.health_score|round|int }}</div>
-                        <div class="big-stat-label">Workspace Health</div>
+                        <div class="big-stat-label">Nexus Health</div>
                         <div class="big-stat-sub">0-100 posture</div>
                     </div>
                     <div class="big-stat-card">
@@ -573,7 +573,7 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Workspace Review Architecture</h2>
+        <h2 class="section-title">Nexus Review Architecture</h2>
         <p class="section-copy">
             The project workspace now surfaces domain depth, traceability posture, signal intelligence, and compare readiness as separate review layers.
         </p>
@@ -596,11 +596,11 @@
             {% endfor %}
         </div>
         <div class="summary-panel" style="margin-top:16px;">
-            <h3>Workspace Posture</h3>
+            <h3>Nexus Posture</h3>
             <p>{{ workspace_review_layers.workspace_posture }}</p>
         </div>
         {% else %}
-        <div class="empty-state">Workspace review architecture will appear once runs are linked to this project.</div>
+        <div class="empty-state">Nexus review architecture will appear once runs are linked to this project.</div>
         {% endif %}
     </div>
 </section>
@@ -608,7 +608,7 @@
 <section class="grid grid-2">
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Trusted Focus</h2>
+        <h2 class="section-title">Nexus Trusted Focus</h2>
         <p class="section-copy">
             Repeated, confidence-backed issue patterns that deserve project-wide attention first.
         </p>
@@ -643,7 +643,7 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Workspace Next Actions</h2>
+        <h2 class="section-title">Nexus Next Actions</h2>
         <p class="section-copy">
             Ranked actions driven by recurrence, severity pressure, and available evidence across the project timeline.
         </p>
@@ -691,7 +691,7 @@
 
 <section class="card">
     <div class="card-header">
-        <h2 class="section-title">Project Timeline Intelligence</h2>
+        <h2 class="section-title">Nexus Timeline Intelligence</h2>
         <p class="section-copy">Revision-over-time movement for score and issue count, plus event-by-event engineering context.</p>
     </div>
 
