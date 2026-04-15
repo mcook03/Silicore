@@ -643,4 +643,87 @@ def list_atlas_messages(thread_key):
         connection.close()
 
 
+def list_audit_events(limit=100, event_type=None):
+    initialize_database()
+    connection = get_connection()
+    try:
+        if event_type:
+            rows = connection.execute(
+                """
+                SELECT event_id, event_type, actor_user_id, project_id, run_id, thread_id, payload_json, created_at
+                FROM audit_events
+                WHERE event_type = ?
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (event_type, int(limit or 100)),
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                """
+                SELECT event_id, event_type, actor_user_id, project_id, run_id, thread_id, payload_json, created_at
+                FROM audit_events
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (int(limit or 100),),
+            ).fetchall()
+        return [
+            {
+                "event_id": row["event_id"],
+                "event_type": row["event_type"],
+                "actor_user_id": row["actor_user_id"],
+                "project_id": row["project_id"],
+                "run_id": row["run_id"],
+                "thread_id": row["thread_id"],
+                "payload": _json_loads(row["payload_json"], {}),
+                "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+    finally:
+        connection.close()
+
+
+def list_review_decisions(project_id=None, limit=50):
+    initialize_database()
+    connection = get_connection()
+    try:
+        if project_id:
+            rows = connection.execute(
+                """
+                SELECT decision_id, project_id, run_id, status, summary, actor_user_id, created_at
+                FROM review_decisions
+                WHERE project_id = ?
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (project_id, int(limit or 50)),
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                """
+                SELECT decision_id, project_id, run_id, status, summary, actor_user_id, created_at
+                FROM review_decisions
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (int(limit or 50),),
+            ).fetchall()
+        return [
+            {
+                "decision_id": row["decision_id"],
+                "project_id": row["project_id"],
+                "run_id": row["run_id"],
+                "status": row["status"],
+                "summary": row["summary"],
+                "actor_user_id": row["actor_user_id"],
+                "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+    finally:
+        connection.close()
+
+
 initialize_database()

@@ -1,12 +1,16 @@
 import os
 import tempfile
 import unittest
+from uuid import uuid4
 
 from engine.atlas_tools import compare_latest_runs, open_high_confidence_findings
+from engine.db import get_connection, list_audit_events, list_review_decisions
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_file
 from engine.subsystem_classifier import classify_pcb_subsystems
 from engine.parser import parse_structured_board_file
+from engine.project_store import create_project, update_project_review_status
+from engine.user_store import create_user
 
 
 class BackendSystemsTests(unittest.TestCase):
@@ -57,6 +61,16 @@ class BackendSystemsTests(unittest.TestCase):
             domain="power",
         )
         self.assertEqual(findings["count"], 1)
+
+    def test_review_and_audit_records_are_queryable(self):
+        suffix = str(uuid4())[:8]
+        owner = create_user("Lead Owner", f"lead-owner-{suffix}@example.com", "password123")
+        project = create_project("Governance Workspace", owner=owner)
+        update_project_review_status(project["project_id"], "ready_for_signoff")
+        reviews = list_review_decisions(project_id=project["project_id"])
+        self.assertGreaterEqual(len(reviews), 1)
+        audit_events = list_audit_events(limit=20)
+        self.assertTrue(any(event["event_type"] == "project.review_status_updated" for event in audit_events))
 
 
 if __name__ == "__main__":

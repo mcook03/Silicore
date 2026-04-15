@@ -1,7 +1,10 @@
 import json
 import unittest
+from uuid import uuid4
 
 from app import app
+from engine.db import get_connection
+from engine.user_store import create_user
 
 
 class AppRouteSmokeTests(unittest.TestCase):
@@ -174,11 +177,34 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("summary", payload["result"])
 
     def test_evaluation_route_returns_fixture_summary(self):
+        with self.client.session_transaction() as session:
+            session.clear()
         response = self.client.get("/admin/evaluation")
-        self.assertEqual(response.status_code, 200)
-        payload = response.get_json()
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin_routes_allow_lead_or_admin_session(self):
+        suffix = str(uuid4())[:8]
+        user = create_user("Lead Reviewer", f"lead-reviewer-{suffix}@example.com", "password123")
+        connection = get_connection()
+        try:
+            connection.execute("UPDATE users SET role = ? WHERE user_id = ?", ("admin", user["user_id"]))
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.client.session_transaction() as session:
+            session["user_id"] = user["user_id"]
+
+        evaluation_response = self.client.get("/admin/evaluation")
+        self.assertEqual(evaluation_response.status_code, 200)
+        payload = evaluation_response.get_json()
         self.assertIn("fixture_count", payload)
         self.assertIn("boards", payload)
+
+        audit_response = self.client.get("/admin/audit")
+        self.assertEqual(audit_response.status_code, 200)
+        audit_payload = audit_response.get_json()
+        self.assertIn("events", audit_payload)
 
 
 if __name__ == "__main__":

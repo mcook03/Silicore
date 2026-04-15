@@ -226,7 +226,7 @@ This board shows high design risk. The main risk concentration is in manufacturi
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: SWCLK, SWDIO, GND, UART_TX
+- Nets: SWDIO, UART_TX, VCC, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — manufacturing

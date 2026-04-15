@@ -11,10 +11,14 @@ from engine.atlas_intelligence import (
     build_project_assistant_console,
     build_project_copilot_brief,
 )
+from engine.atlas_workflow import build_workflow_plan, run_workflow_plan
+from engine.authz import can_manage_project, has_role, project_is_visible_to_user
 from engine.atlas_tools import run_tool_action
+from engine.db import initialize_database, list_atlas_messages, list_audit_events, list_review_decisions, persist_atlas_exchange
 from engine.evaluation_backend import evaluate_fixture_suite
 from engine.insight_engine import generate_comparison_insights
 from engine.job_store import get_job, list_jobs
+from engine.job_runner import process_queued_jobs
 
 from flask import (
     Flask,
@@ -30,7 +34,6 @@ from flask import (
 )
 
 from engine.config_loader import ANALYSIS_PROFILE_PRESETS, SUPPORTED_ANALYSIS_PROFILES, parse_config_form, save_config
-from engine.db import initialize_database, list_atlas_messages, persist_atlas_exchange
 from engine.dashboard_storage import get_recent_runs
 from engine.project_store import (
     add_project_note,
@@ -97,6 +100,13 @@ def _current_user():
     if not user_id:
         return None
     return get_user_by_id(user_id)
+
+
+def _require_role(minimum_role):
+    user = getattr(g, "current_user", None)
+    if not user or not has_role(user, minimum_role):
+        return False
+    return True
 
 
 @app.before_request
@@ -4067,9 +4077,7 @@ def projects_page():
     if current_user:
         visible_projects = []
         for project in projects:
-            owner = project.get("owner") or {}
-            member_ids = {str(item.get("user_id") or "").strip() for item in (project.get("team_members") or [])}
-            if owner.get("user_id") == current_user.get("user_id") or current_user.get("user_id") in member_ids:
+            if project_is_visible_to_user(current_user, project):
                 visible_projects.append(project)
         projects = visible_projects
     return _render_page(
@@ -4129,12 +4137,9 @@ def project_detail_page(project_id):
 
     project = _enrich_project_for_display(project)
     current_user = _current_user()
-    if current_user:
-        owner = project.get("owner") or {}
-        member_ids = {str(item.get("user_id") or "").strip() for item in (project.get("team_members") or [])}
-        if owner.get("user_id") not in [None, current_user.get("user_id")] and current_user.get("user_id") not in member_ids:
-            flash("You do not have access to that project.")
-            return redirect(url_for("projects_page"))
+    if current_user and not project_is_visible_to_user(current_user, project):
+        flash("You do not have access to that project.")
+        return redirect(url_for("projects_page"))
 
     workspace_chart = _build_project_workspace_chart_data(project)
     workspace_intelligence = _build_project_workspace_intelligence(project)
@@ -4179,6 +4184,13 @@ def project_detail_page(project_id):
 def project_notes_route(project_id):
     author = (request.form.get("author") or "").strip()
     body = (request.form.get("body") or "").strip()
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    if not can_manage_project(_current_user(), project):
+        flash("You do not have permission to update this workspace.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
     project = add_project_note(project_id, author, body)
     if project is None:
         flash("Project not found.")
@@ -4190,6 +4202,13 @@ def project_notes_route(project_id):
 @app.route("/projects/<project_id>/status", methods=["POST"])
 def project_status_route(project_id):
     status = (request.form.get("review_status") or "").strip()
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    if not can_manage_project(_current_user(), project):
+        flash("You do not have permission to update this workspace.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
     project = update_project_review_status(project_id, status)
     if project is None:
         flash("Project not found.")
@@ -4201,6 +4220,13 @@ def project_status_route(project_id):
 @app.route("/projects/<project_id>/members", methods=["POST"])
 def project_members_route(project_id):
     email = (request.form.get("email") or "").strip().lower()
+    project = get_project(project_id)
+    if project is None:
+        flash("Project not found.")
+        return redirect(url_for("projects_page"))
+    if not can_manage_project(_current_user(), project):
+        flash("You do not have permission to manage this workspace.")
+        return redirect(url_for("project_detail_page", project_id=project_id))
     user = get_user_by_email(email)
     if not user:
         flash("No user with that email was found.")
@@ -4424,6 +4450,13 @@ def atlas_query_route():
         return jsonify({"error": "Unsupported Atlas page type."}), 400
 
     answer = answer_atlas_with_agent(page_type, prompt, context=context, history=history)
+    workflow_plan = build_workflow_plan(page_type, prompt, context=context)
+    workflow_results = run_workflow_plan(
+        page_type,
+        prompt,
+        context=context,
+        actor_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
+    ) if workflow_plan else []
     if not thread_key:
         thread_key = f"{page_type}::{_normalize_compare_text(context.get('project_id') or context.get('board_name') or context.get('project_name') or context.get('direction') or 'atlas')}"
 
@@ -4446,6 +4479,8 @@ def atlas_query_route():
             "thread_key": thread_key,
             "thread": thread_messages,
             "tool_suggestions": tool_suggestions.get(page_type, []),
+            "workflow_plan": workflow_plan,
+            "workflow_results": workflow_results,
         }
     )
 
@@ -4477,11 +4512,15 @@ def atlas_action_route():
 
 @app.route("/jobs", methods=["GET"])
 def jobs_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
     return jsonify({"jobs": list_jobs(limit=_safe_int(request.args.get("limit"), 20))})
 
 
 @app.route("/jobs/<job_id>", methods=["GET"])
 def job_detail_route(job_id):
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
     job = get_job(job_id)
     if not job:
         return jsonify({"error": "Job not found."}), 404
@@ -4490,7 +4529,40 @@ def job_detail_route(job_id):
 
 @app.route("/admin/evaluation", methods=["GET"])
 def evaluation_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
     return jsonify(evaluate_fixture_suite())
+
+
+@app.route("/jobs/process", methods=["POST"])
+def jobs_process_route():
+    if not _require_role("lead"):
+        return jsonify({"error": "Lead or admin access is required."}), 403
+    return jsonify({"processed": process_queued_jobs(limit=_safe_int(request.args.get("limit"), 10))})
+
+
+@app.route("/admin/audit", methods=["GET"])
+def audit_route():
+    if not _require_role("admin"):
+        return jsonify({"error": "Admin access is required."}), 403
+    return jsonify(
+        {
+            "events": list_audit_events(
+                limit=_safe_int(request.args.get("limit"), 100),
+                event_type=(request.args.get("event_type") or "").strip() or None,
+            )
+        }
+    )
+
+
+@app.route("/projects/<project_id>/reviews", methods=["GET"])
+def project_reviews_route(project_id):
+    project = get_project(project_id)
+    if not project:
+        return jsonify({"error": "Project not found."}), 404
+    if _current_user() and not project_is_visible_to_user(_current_user(), project):
+        return jsonify({"error": "You do not have access to that project."}), 403
+    return jsonify({"reviews": list_review_decisions(project_id=project_id)})
 
 
 @app.route("/history", methods=["GET"])

@@ -207,7 +207,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U2
-- Nets: GND, ADC_IN, SENSOR_OUT
+- Nets: GND, SENSOR_OUT, ADC_IN
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — power_integrity
@@ -277,8 +277,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: L1
-- Nets: VIN, SW
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VIN", "SW"], "has_power": true, "has_ground": false}
+- Nets: SW, VIN
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["SW", "VIN"], "has_power": true, "has_ground": false}
 
 ### MEDIUM — power_integrity
 - Message: U2 has ground but no visible power rail
@@ -295,8 +295,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U2
-- Nets: GND, ADC_IN, SENSOR_OUT
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "ADC_IN", "SENSOR_OUT"], "has_power": false, "has_ground": true}
+- Nets: GND, SENSOR_OUT, ADC_IN
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "SENSOR_OUT", "ADC_IN"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U3 has ground but no visible power rail
