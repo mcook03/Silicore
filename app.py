@@ -880,20 +880,20 @@ def _build_dashboard_story(recent_runs, projects):
         {
             "title": "Analyze",
             "value": len(recent_runs),
-            "value_label": f"{len(recent_runs)} saved run(s)",
-            "description": "Persistent run history gives each new board review real context instead of isolated one-off outputs.",
+            "value_label": f"{len(recent_runs)} runs tracked",
+            "description": "Review uploaded boards against Silicore's engineering rules with saved run history for added context.",
         },
         {
             "title": "Explain",
             "value": latest_score,
-            "value_label": f"{latest_score} / 100 score context",
-            "description": "The latest risk position is supported by trends, confidence signals, and explainable engineering reasoning.",
+            "value_label": f"{latest_score} latest score",
+            "description": "Show why the score moved, which domains are driving risk, and how much confidence to place in the findings.",
         },
         {
             "title": "Prioritize",
             "value": len(active_projects),
-            "value_label": f"{len(active_projects)} active workspace(s)",
-            "description": "Project workspaces highlight recurring weaknesses, trusted focus areas, and what teams should fix next.",
+            "value_label": f"{len(active_projects)} active workspace",
+            "description": "Rank the next engineering actions by severity, confidence, recurrence, and expected project impact.",
         },
     ]
 

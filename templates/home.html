@@ -18,13 +18,13 @@
                 <div class="dashboard-pillar-grid">
                     {% for pillar in dashboard_story.pillars %}
                     <div class="result-card dashboard-pillar-card">
-                        <div class="result-card-top">
+                        <div class="dashboard-pillar-top">
                             <div>
                                 <div class="result-card-title">{{ pillar.title }}</div>
-                                <div class="result-card-copy">{{ pillar.description }}</div>
+                                <div class="result-card-copy dashboard-pillar-copy">{{ pillar.description }}</div>
                             </div>
-                            <span class="chip chip-soft">{{ pillar.value_label }}</span>
                         </div>
+                        <div class="dashboard-pillar-metric">{{ pillar.value_label }}</div>
                     </div>
                     {% endfor %}
                 </div>
@@ -530,10 +530,42 @@
     }
 
     .dashboard-pillar-card {
-        min-height: 148px;
+        min-height: 176px;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: 14px;
         background:
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
             rgba(255,255,255,0.022);
+    }
+
+    .dashboard-pillar-top {
+        display: grid;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .dashboard-pillar-copy {
+        max-width: 34ch;
+    }
+
+    .dashboard-pillar-metric {
+        align-self: end;
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        max-width: 100%;
+        padding: 9px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(75,141,255,0.18);
+        background: rgba(47,103,255,0.10);
+        color: #dbe7ff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        line-height: 1.4;
+        white-space: normal;
+        word-break: break-word;
     }
 
     .dashboard-orbit-panel {
@@ -875,6 +907,10 @@
 
         .orbit-mini-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .dashboard-pillar-card {
+            min-height: auto;
         }
     }
 
