@@ -27,6 +27,26 @@
             </label>
             {% endif %}
 
+            {% if analysis_modes is defined %}
+            <label>
+                Analysis Profile
+                <select name="analysis_profile">
+                    {% for option in analysis_modes.profiles %}
+                        <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                Board Type
+                <select name="analysis_board_type">
+                    {% for option in analysis_modes.board_types %}
+                        <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% endif %}
+
             <div class="btn-link-row">
                 <button class="btn btn-primary" type="submit">Analyze Project</button>
             </div>

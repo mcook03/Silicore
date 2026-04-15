@@ -1,6 +1,48 @@
 import importlib
 import os
 
+RULE_CATEGORY_MAP = {
+    "spacing_rule": "layout_manufacturing",
+    "density_rule": "layout_manufacturing",
+    "manufacturability_rule": "layout_manufacturing",
+    "assembly_testability_rule": "layout_manufacturing",
+    "power_connectivity_rule": "power",
+    "power_distribution_rule": "power",
+    "power_rail_rule": "power",
+    "decoupling_rule": "power",
+    "power_path_realism_rule": "power",
+    "signal_path_rule": "signal",
+    "net_length_rule": "signal",
+    "trace_quality_rule": "signal",
+    "signal_integrity_advanced_rule": "signal",
+    "differential_pair_rule": "signal",
+    "component_analysis_rule": "signal",
+    "thermal_rule": "thermal",
+    "thermal_management_rule": "thermal",
+    "ground_reference_rule": "emi_reliability",
+    "return_path_rule": "emi_reliability",
+    "reliability_rule": "emi_reliability",
+    "emi_emc_rule": "emi_reliability",
+    "stackup_return_path_rule": "emi_reliability",
+    "safety_high_voltage_rule": "safety",
+}
+
+
+def _rule_is_enabled(filename, config):
+    stem = filename[:-3]
+    analysis = (config or {}).get("analysis", {}) or {}
+    category_toggles = analysis.get("category_toggles", {}) or {}
+    rule_toggles = analysis.get("rule_toggles", {}) or {}
+
+    category_key = RULE_CATEGORY_MAP.get(stem)
+    if category_key and category_toggles.get(category_key) is False:
+        return False
+
+    if rule_toggles.get(stem) is False:
+        return False
+
+    return True
+
 
 def calculate_score(risks, config=None):
     score_config = (config or {}).get("score", {})
@@ -50,6 +92,9 @@ def run_analysis(pcb, config):
         if not filename.endswith(".py"):
             continue
         if filename == "__init__.py":
+            continue
+        if not _rule_is_enabled(filename, config):
+            print(f"Skipping disabled rule module: {filename}")
             continue
 
         module_name = f"engine.rules.{filename[:-3]}"

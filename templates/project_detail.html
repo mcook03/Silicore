@@ -4,10 +4,12 @@
 {% set score_trend = workspace_chart.score_trend if workspace_chart is defined else {} %}
 {% set risk_trend = workspace_chart.risk_trend if workspace_chart is defined else {} %}
 {% set critical_trend = workspace_chart.critical_trend if workspace_chart is defined else {} %}
+{% set confidence_trend = workspace_chart.confidence_trend if workspace_chart is defined else {} %}
 {% set category_bars = workspace_chart.category_bars if workspace_chart is defined else {} %}
 {% set quality_mix = workspace_chart.quality_mix if workspace_chart is defined else {} %}
 {% set latest_compare_ids = workspace_chart.latest_compare_run_ids if workspace_chart is defined else [] %}
 {% set timeline = timeline_data if timeline_data is defined else {} %}
+{% set workspace_intel = workspace_intelligence if workspace_intelligence is defined else {} %}
 
 <section class="grid grid-2">
 <section class="card">
@@ -48,6 +50,12 @@
                 <div class="metric-label">Updated</div>
                 <div class="metric-value" style="font-size:22px;">{{ project.updated_at }}</div>
                 <div class="metric-sub">Latest change time</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Project Health</div>
+                <div class="metric-value" style="font-size:22px;">{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</div>
+                <div class="metric-sub">Confidence + recurrence adjusted</div>
             </div>
         </div>
     </div>
@@ -147,6 +155,125 @@
                 <div class="trend-empty">Workspace mix will appear after scored runs are linked.</div>
                 {% endif %}
             </div>
+        </div>
+
+        <div class="project-trend-grid" style="margin-top:16px;">
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Confidence Trend</span>
+                    <strong>{{ confidence_trend.last_value|round|int if confidence_trend and confidence_trend.has_data else "N/A" }}</strong>
+                </div>
+                {% if confidence_trend and confidence_trend.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in confidence_trend.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in confidence_trend.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ confidence_trend.points[loop.index0 - 1].x }}" y1="{{ confidence_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-confidence-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">Confidence history will appear after linked runs include evidence-backed findings.</div>
+                {% endif %}
+            </div>
+
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Trust Summary</span>
+                    <strong>{{ workspace_intel.average_confidence|round|int if workspace_intel else "N/A" }}</strong>
+                </div>
+                <div class="summary-panel compact-summary">
+                    <h3>Workspace Health Summary</h3>
+                    <p>{{ workspace_intel.health_summary if workspace_intel else "No workspace health summary yet." }}</p>
+                </div>
+                <p class="trend-summary-copy">{{ workspace_intel.confidence_summary if workspace_intel else "No confidence summary yet." }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+</section>
+
+<section class="grid grid-2">
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Trusted Focus</h2>
+        <p class="section-copy">
+            Repeated, confidence-backed issue patterns that deserve project-wide attention first.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if workspace_intel and workspace_intel.trusted_focus_items %}
+        <div class="focus-list">
+            {% for item in workspace_intel.trusted_focus_items %}
+            <article class="focus-card">
+                <div class="focus-top">
+                    <div>
+                        <div class="focus-title">{{ item.category }}</div>
+                        <div class="small-muted">{{ item.message }}</div>
+                    </div>
+                    <div class="focus-score">{{ item.priority_score|round|int }}</div>
+                </div>
+                <div class="focus-chip-row">
+                    <span class="mini-chip mini-chip-low">Confidence {{ item.confidence_score }}</span>
+                    <span class="mini-chip mini-chip-medium">{{ item.appearances }} finding(s)</span>
+                    <span class="mini-chip mini-chip-medium">{{ item.run_count }} run(s)</span>
+                </div>
+                <p class="focus-copy">{{ item.recommendation }}</p>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">Trusted focus items will appear once repeated patterns emerge across linked runs.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Workspace Next Actions</h2>
+        <p class="section-copy">
+            Ranked actions driven by recurrence, severity pressure, and available evidence across the project timeline.
+        </p>
+    </div>
+
+    <div class="card-body">
+        {% if workspace_intel and workspace_intel.next_actions %}
+        <div class="focus-list">
+            {% for item in workspace_intel.next_actions %}
+            <article class="focus-card">
+                <div class="focus-top">
+                    <div>
+                        <div class="focus-title">{{ item.category }}</div>
+                        <div class="small-muted">{{ item.message }}</div>
+                    </div>
+                    <div class="focus-score">{{ item.priority_score|round|int }}</div>
+                </div>
+                <p class="focus-copy">{{ item.recommendation }}</p>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No ranked workspace actions are available yet.</div>
+        {% endif %}
+
+        <div style="margin-top:16px;">
+            <h3 style="margin-bottom:10px;">Engineering Domain Pressure</h3>
+            {% if workspace_intel and workspace_intel.domain_bars and workspace_intel.domain_bars.has_data %}
+            <div class="mini-bar-list">
+                {% for item in workspace_intel.domain_bars["items"] %}
+                <div class="mini-bar-row">
+                    <div class="mini-bar-label">{{ item.label }}</div>
+                    <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                    <div class="mini-bar-value">{{ item.value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="trend-empty">Domain pressure appears once the workspace accumulates categorized findings.</div>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -429,7 +556,8 @@
 
     .trend-score-line,
     .trend-risk-line,
-    .trend-critical-line {
+    .trend-critical-line,
+    .trend-confidence-line {
         fill: none;
         stroke-width: 1.8;
         stroke-linecap: round;
@@ -446,6 +574,10 @@
 
     .trend-critical-line {
         stroke: rgba(251,191,36,0.94);
+    }
+
+    .trend-confidence-line {
+        stroke: rgba(125,211,252,0.96);
     }
 
     .trend-empty {
@@ -493,6 +625,68 @@
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+    }
+
+    .compact-summary {
+        margin-bottom: 12px;
+    }
+
+    .trend-summary-copy {
+        margin: 0;
+        color: rgba(214, 226, 255, 0.78);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .focus-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .focus-card {
+        padding: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        background: rgba(255,255,255,0.03);
+    }
+
+    .focus-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .focus-title {
+        margin-bottom: 4px;
+        color: #eaf2ff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .focus-score {
+        min-width: 44px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(96,165,250,0.14);
+        color: #dbeafe;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .focus-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0 10px;
+    }
+
+    .focus-copy {
+        margin: 0;
+        color: rgba(214, 226, 255, 0.82);
+        font-size: 13px;
+        line-height: 1.6;
     }
 
     .mini-bar-row {

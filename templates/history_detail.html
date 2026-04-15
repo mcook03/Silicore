@@ -133,6 +133,14 @@
                     <div class="context-label">Performed At</div>
                     <div class="context-value">{{ context.performed_at }}</div>
                 </div>
+                <div class="context-card">
+                    <div class="context-label">Profile</div>
+                    <div class="context-value">{{ context.profile.replace('_', ' ')|title if context.profile else "Balanced" }}</div>
+                </div>
+                <div class="context-card">
+                    <div class="context-label">Board Type</div>
+                    <div class="context-value">{{ context.board_type.replace('_', ' ')|title if context.board_type else "General" }}</div>
+                </div>
             </div>
 
             {% if context.config_rows %}
@@ -215,6 +223,40 @@
 
     <div class="card-body">
         <div class="preview-box">{{ run_detail.preview }}</div>
+    </div>
+</section>
+{% endif %}
+
+{% if run_detail.result and run_detail.result.board_view %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Board Viewer</h2>
+        <p class="section-copy">Saved 2D geometry view for this run with risk-colored traces, vias, and components.</p>
+    </div>
+
+    <div class="card-body">
+        {% if run_detail.result.board_view.has_data %}
+        <div class="board-view-shell">
+            <svg class="board-view-svg" viewBox="0 0 {{ run_detail.result.board_view.width }} {{ run_detail.result.board_view.height }}" preserveAspectRatio="xMidYMid meet" aria-label="Saved board viewer">
+                <rect x="6" y="6" width="{{ run_detail.result.board_view.width - 12 }}" height="{{ run_detail.result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                {% for trace in run_detail.result.board_view.traces %}
+                <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }}"><title>{{ trace.net }}</title></line>
+                {% endfor %}
+                {% for via in run_detail.result.board_view.vias %}
+                <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }}"><title>{{ via.net }}</title></circle>
+                {% endfor %}
+                {% for component in run_detail.result.board_view.components %}
+                <g class="board-component board-component-{{ component.tone }}">
+                    <circle cx="{{ component.x }}" cy="{{ component.y }}" r="5.2"></circle>
+                    <text x="{{ component.x + 7 }}" y="{{ component.y - 7 }}">{{ component.ref }}</text>
+                    <title>{{ component.ref }} · {{ component.value }}{% if component.nets %} · {{ component.nets }}{% endif %}</title>
+                </g>
+                {% endfor %}
+            </svg>
+        </div>
+        {% else %}
+        <div class="empty-state">No saved geometry is available for this run.</div>
+        {% endif %}
     </div>
 </section>
 {% endif %}
@@ -406,6 +448,45 @@
         color: #dbeafe;
         line-height: 1.7;
         white-space: pre-wrap;
+    }
+
+    .board-view-shell {
+        display: grid;
+        gap: 16px;
+    }
+
+    .board-view-svg {
+        width: 100%;
+        min-height: 420px;
+        border-radius: 22px;
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .board-view-frame {
+        fill: rgba(8,14,30,0.58);
+        stroke: rgba(255,255,255,0.08);
+        stroke-width: 1;
+    }
+
+    .board-trace {
+        stroke-linecap: round;
+        stroke-width: 2.2;
+        opacity: 0.88;
+    }
+
+    .board-trace-safe, .board-via-safe, .board-component-safe circle { stroke: #7dd3fc; fill: rgba(125,211,252,0.75); }
+    .board-trace-low, .board-via-low, .board-component-low circle { stroke: #93c5fd; fill: rgba(147,197,253,0.78); }
+    .board-trace-medium, .board-via-medium, .board-component-medium circle { stroke: #fcd34d; fill: rgba(245,158,11,0.78); }
+    .board-trace-high, .board-via-high, .board-component-high circle { stroke: #fb923c; fill: rgba(251,146,60,0.82); }
+    .board-trace-critical, .board-via-critical, .board-component-critical circle { stroke: #f87171; fill: rgba(239,68,68,0.86); }
+
+    .board-component text {
+        fill: #e5eefc;
+        font-size: 11px;
+        font-weight: 700;
     }
 
     .finding-top {

@@ -14,7 +14,7 @@ from flask import (
     url_for,
 )
 
-from engine.config_loader import parse_config_form, save_config
+from engine.config_loader import ANALYSIS_PROFILE_PRESETS, parse_config_form, save_config
 from engine.dashboard_storage import get_recent_runs
 from engine.project_store import (
     add_run_to_project,
@@ -293,6 +293,7 @@ def _flatten_config_snapshot(config_snapshot):
         return []
 
     ordered_sections = [
+        "analysis",
         "layout",
         "power",
         "signal",
@@ -370,6 +371,8 @@ def _build_analysis_context(result):
     return {
         "board_name": board_name,
         "performed_at": performed_at,
+        "profile": (result.get("analysis_context") or {}).get("profile") or (config_snapshot.get("analysis", {}) or {}).get("profile", "balanced"),
+        "board_type": (result.get("analysis_context") or {}).get("board_type") or (config_snapshot.get("analysis", {}) or {}).get("board_type", "general"),
         "config_snapshot": config_snapshot,
         "config_rows": _flatten_config_snapshot(config_snapshot),
         "score_breakdown": _build_score_breakdown(result),
@@ -383,6 +386,7 @@ def _enrich_single_result(result):
     result["top_issues"] = _prepare_top_issues(risks)
     result["health_summary"] = _build_health_summary(result.get("score", 0), risks)
     result["analysis_context_view"] = _build_analysis_context(result)
+    result["board_view"] = _build_board_view_data(result.get("pcb_snapshot") or {}, risks)
     return result
 
 
@@ -566,6 +570,10 @@ def _build_run_detail(run_name):
     preview = _primary_preview_for_run(run_name)
 
     result_json = _safe_json_load(os.path.join(run_dir, "result.json"), {})
+    if not result_json:
+        result_json = _safe_json_load(os.path.join(run_dir, "single_analysis.json"), {})
+    if not result_json:
+        result_json = _safe_json_load(os.path.join(run_dir, "project_summary.json"), {})
     run_record_json = _safe_json_load(os.path.join(run_dir, "run_record.json"), {})
     metadata_json = _safe_json_load(os.path.join(run_dir, "metadata.json"), {})
 
@@ -1105,6 +1113,28 @@ def _normalize_snapshot(snapshot):
         normalized.append(risk)
 
     return normalized
+
+
+def _analysis_mode_options():
+    return {
+        "profiles": [
+            {"value": "balanced", "label": "Balanced"},
+            {"value": "high_speed", "label": "High-Speed"},
+            {"value": "power_delivery", "label": "Power Delivery"},
+            {"value": "mixed_signal", "label": "Mixed Signal"},
+            {"value": "production_readiness", "label": "Production Ready"},
+            {"value": "high_voltage", "label": "High Voltage"},
+        ],
+        "board_types": [
+            {"value": "general", "label": "General"},
+            {"value": "high_speed", "label": "High-Speed Digital"},
+            {"value": "power", "label": "Power Electronics"},
+            {"value": "mixed_signal", "label": "Mixed Signal"},
+            {"value": "analog", "label": "Analog"},
+            {"value": "rf", "label": "RF"},
+            {"value": "industrial", "label": "Industrial"},
+        ],
+    }
 
 
 def _normalize_category_summary(summary):
@@ -1745,6 +1775,18 @@ def _build_project_workspace_chart_data(project):
     risk_values = [_safe_int(run.get("risk_count"), 0) for run in runs]
     risk_labels = [run.get("name", "Run") for run in runs]
     critical_values = [_safe_int(run.get("critical_count"), 0) for run in runs]
+    confidence_values = []
+    confidence_labels = []
+
+    for run in runs:
+        snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
+        if not snapshot:
+            continue
+        confidence_scores = [_extract_risk_confidence_score(risk) for risk in snapshot]
+        if not confidence_scores:
+            continue
+        confidence_values.append(round(sum(confidence_scores) / len(confidence_scores), 1))
+        confidence_labels.append(run.get("name", "Run"))
 
     category_bars = _build_bar_chart(_aggregate_project_categories(runs, limit=5))
 
@@ -1763,9 +1805,139 @@ def _build_project_workspace_chart_data(project):
         "score_trend": _build_series_chart(score_values, score_labels),
         "risk_trend": _build_series_chart(risk_values, risk_labels),
         "critical_trend": _build_series_chart(critical_values, risk_labels),
+        "confidence_trend": _build_series_chart(confidence_values, confidence_labels),
         "category_bars": category_bars,
         "quality_mix": _build_bar_chart(quality_items),
         "latest_compare_run_ids": [run.get("run_id") for run in latest_two if run.get("run_id")],
+    }
+
+
+def _build_project_workspace_intelligence(project):
+    runs = _sort_project_runs(project.get("runs", []))
+    if not runs:
+        return {
+            "health_score": 0,
+            "health_summary": "Link analysis runs into this workspace to unlock trend, trust, and decision support.",
+            "average_confidence": 0,
+            "confidence_summary": "No run-level evidence is available yet.",
+            "trusted_focus_items": [],
+            "next_actions": [],
+            "domain_bars": _build_bar_chart([]),
+        }
+
+    recurring_patterns = defaultdict(
+        lambda: {
+            "count": 0,
+            "runs": set(),
+            "category": "uncategorized",
+            "message": "",
+            "recommendation": "",
+            "severity_weight": 0,
+            "confidence_sum": 0.0,
+        }
+    )
+    all_risks = []
+    all_confidence_scores = []
+    latest_score = _score_to_100(runs[-1].get("score")) if runs[-1].get("score") is not None else 0
+
+    for run in runs:
+        run_name = run.get("name", "Run")
+        snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
+        all_risks.extend(snapshot)
+
+        for risk in snapshot:
+            confidence_score = _extract_risk_confidence_score(risk)
+            all_confidence_scores.append(confidence_score)
+
+            pattern_key = f"{str(risk.get('rule_id') or 'rule').lower()}|{risk.get('base_signature') or _normalize_pattern_message(risk.get('message'))}"
+            entry = recurring_patterns[pattern_key]
+            entry["count"] += 1
+            entry["runs"].add(run_name)
+            entry["category"] = risk.get("category") or entry["category"]
+            entry["message"] = entry["message"] or risk.get("message") or "Unnamed issue"
+            entry["recommendation"] = entry["recommendation"] or risk.get("recommendation") or "Review this issue."
+            entry["confidence_sum"] += confidence_score
+            entry["severity_weight"] = max(
+                entry["severity_weight"],
+                {"critical": 4, "high": 3, "medium": 2, "low": 1}.get(str(risk.get("severity", "")).lower(), 1),
+            )
+
+    average_confidence = round(sum(all_confidence_scores) / len(all_confidence_scores), 1) if all_confidence_scores else 0
+
+    pattern_rows = []
+    for pattern in recurring_patterns.values():
+        appearances = pattern["count"]
+        average_pattern_confidence = round(pattern["confidence_sum"] / max(appearances, 1), 1)
+        repeated_runs = len(pattern["runs"])
+        pattern_rows.append(
+            {
+                "category": _format_category_name(pattern["category"]),
+                "message": pattern["message"],
+                "recommendation": pattern["recommendation"],
+                "appearances": appearances,
+                "run_count": repeated_runs,
+                "confidence_score": average_pattern_confidence,
+                "priority_score": round(
+                    (pattern["severity_weight"] * 28)
+                    + (repeated_runs * 16)
+                    + (average_pattern_confidence * 0.5),
+                    1,
+                ),
+            }
+        )
+
+    pattern_rows.sort(
+        key=lambda item: (-item["priority_score"], -item["appearances"], item["category"].lower(), item["message"].lower())
+    )
+
+    repeated_penalty = min(sum(max(item["appearances"] - 1, 0) for item in pattern_rows[:6]) * 2.5, 22.0)
+    health_score = round(
+        max(
+            0.0,
+            min(
+                100.0,
+                (latest_score * 0.58) + (average_confidence * 0.34) + (max(0, 12 - repeated_penalty) * 0.7),
+            ),
+        ),
+        1,
+    )
+
+    if health_score >= 82:
+        health_summary = "This workspace is showing strong recent board health with confidence-backed findings and limited repeated issue pressure."
+    elif health_score >= 65:
+        health_summary = "The workspace is in a credible engineering position, but repeated categories and confidence spread still leave meaningful cleanup before final sign-off."
+    else:
+        health_summary = "This workspace still has repeated risk pressure across linked runs, so project-level cleanup should happen before calling the design stream release-ready."
+
+    if average_confidence >= 80:
+        confidence_summary = "Most linked-run findings are strongly supported, so workspace recommendations are credible enough to drive active engineering prioritization."
+    elif average_confidence >= 60:
+        confidence_summary = "The workspace has usable confidence coverage overall, but a few weaker patterns still deserve engineering validation before major decisions."
+    else:
+        confidence_summary = "Confidence is still uneven across linked runs, so use the workspace guidance directionally and validate weaker findings before committing large changes."
+
+    trusted_focus_items = []
+    for item in pattern_rows[:4]:
+        trusted_focus_items.append(
+            {
+                "category": item["category"],
+                "message": item["message"],
+                "recommendation": item["recommendation"],
+                "appearances": item["appearances"],
+                "run_count": item["run_count"],
+                "confidence_score": item["confidence_score"],
+                "priority_score": item["priority_score"],
+            }
+        )
+
+    return {
+        "health_score": health_score,
+        "health_summary": health_summary,
+        "average_confidence": average_confidence,
+        "confidence_summary": confidence_summary,
+        "trusted_focus_items": trusted_focus_items,
+        "next_actions": trusted_focus_items[:3],
+        "domain_bars": _build_engineering_domain_bars(all_risks),
     }
 
 
@@ -1889,6 +2061,123 @@ def _build_engineering_domain_bars(risks, limit=6):
     ]
     items.sort(key=lambda item: (-item["value"], item["label"].lower()))
     return _build_bar_chart(items[:limit])
+
+
+def _board_view_bounds(pcb_snapshot):
+    bounds = (pcb_snapshot or {}).get("board_bounds") or {}
+    min_x = _safe_float(bounds.get("min_x"), 0.0)
+    max_x = _safe_float(bounds.get("max_x"), 100.0)
+    min_y = _safe_float(bounds.get("min_y"), 0.0)
+    max_y = _safe_float(bounds.get("max_y"), 100.0)
+    width = max(max_x - min_x, 1.0)
+    height = max(max_y - min_y, 1.0)
+    return min_x, min_y, width, height
+
+
+def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
+    pcb_snapshot = pcb_snapshot or {}
+    components = pcb_snapshot.get("components", []) or []
+    traces = pcb_snapshot.get("traces", []) or []
+    vias = pcb_snapshot.get("vias", []) or []
+
+    if not components and not traces and not vias:
+        return {"has_data": False, "components": [], "traces": [], "vias": [], "focus_items": []}
+
+    min_x, min_y, board_width, board_height = _board_view_bounds(pcb_snapshot)
+    padding = 20.0
+    scale_x = (width - (padding * 2)) / board_width
+    scale_y = (height - (padding * 2)) / board_height
+    scale = max(min(scale_x, scale_y), 0.1)
+
+    risk_by_component = {}
+    risk_by_net = {}
+    for risk in risks or []:
+        severity = str(risk.get("severity", "low")).lower()
+        score = {"low": 1, "medium": 2, "high": 3, "critical": 4}.get(severity, 1)
+        for ref in risk.get("components", []) or []:
+            if score > risk_by_component.get(ref, 0):
+                risk_by_component[ref] = score
+        for net in risk.get("nets", []) or []:
+            if score > risk_by_net.get(net, 0):
+                risk_by_net[net] = score
+
+    def _map_x(value):
+        return round(((value - min_x) * scale) + padding, 2)
+
+    def _map_y(value):
+        return round(((value - min_y) * scale) + padding, 2)
+
+    tones = {0: "safe", 1: "low", 2: "medium", 3: "high", 4: "critical"}
+    component_points = []
+    for component in components:
+        ref = component.get("ref", "U?")
+        tone_key = tones.get(risk_by_component.get(ref, 0), "safe")
+        nets = component.get("connected_nets") or component.get("net_names") or []
+        component_points.append(
+            {
+                "ref": ref,
+                "value": component.get("value", ref),
+                "x": _map_x(_safe_float(component.get("x"), 0.0)),
+                "y": _map_y(_safe_float(component.get("y"), 0.0)),
+                "tone": tone_key,
+                "nets": ", ".join(nets[:3]),
+            }
+        )
+
+    trace_segments = []
+    focus_items = []
+    for trace in traces[:500]:
+        net_name = trace.get("net_name", "")
+        tone_key = tones.get(risk_by_net.get(net_name, 0), "safe")
+        trace_segments.append(
+            {
+                "net": net_name,
+                "x1": _map_x(_safe_float(trace.get("x1"), 0.0)),
+                "y1": _map_y(_safe_float(trace.get("y1"), 0.0)),
+                "x2": _map_x(_safe_float(trace.get("x2"), 0.0)),
+                "y2": _map_y(_safe_float(trace.get("y2"), 0.0)),
+                "tone": tone_key,
+            }
+        )
+
+    via_points = []
+    for via in vias[:400]:
+        net_name = via.get("net_name", "")
+        tone_key = tones.get(risk_by_net.get(net_name, 0), "safe")
+        via_points.append(
+            {
+                "net": net_name,
+                "x": _map_x(_safe_float(via.get("x"), 0.0)),
+                "y": _map_y(_safe_float(via.get("y"), 0.0)),
+                "tone": tone_key,
+            }
+        )
+
+    seen_focus = set()
+    for risk in (risks or [])[:12]:
+        label = risk.get("short_title") or risk.get("message", "Finding")
+        key = label.lower()
+        if key in seen_focus:
+            continue
+        seen_focus.add(key)
+        focus_items.append(
+            {
+                "label": label,
+                "severity": str(risk.get("severity", "low")).lower(),
+                "components": ", ".join((risk.get("components") or [])[:3]) or "No linked component",
+                "nets": ", ".join((risk.get("nets") or [])[:3]) or "No linked net",
+            }
+        )
+
+    return {
+        "has_data": True,
+        "width": width,
+        "height": height,
+        "components": component_points,
+        "traces": trace_segments,
+        "vias": via_points,
+        "focus_items": focus_items,
+    }
 
 
 def _extract_risk_confidence_score(risk):
@@ -2555,10 +2844,17 @@ def single_board_page():
     result = None
     single_chart = None
     single_decision = None
+    analysis_modes = _analysis_mode_options()
+    _, editable_config = get_dashboard_config(CONFIG_PATH)
+    default_analysis = editable_config.get("analysis", {}) if isinstance(editable_config, dict) else {}
+    selected_profile = default_analysis.get("profile", "balanced")
+    selected_board_type = default_analysis.get("board_type", "general")
 
     if request.method == "POST":
         board_file = request.files.get("board_file")
         selected_project_id = (request.form.get("project_id") or "").strip()
+        selected_profile = (request.form.get("analysis_profile") or selected_profile).strip() or "balanced"
+        selected_board_type = (request.form.get("analysis_board_type") or selected_board_type).strip() or "general"
 
         try:
             response = analyze_single_board(
@@ -2566,6 +2862,8 @@ def single_board_page():
                 upload_folder=UPLOAD_FOLDER,
                 runs_folder=RUNS_FOLDER,
                 config_path=CONFIG_PATH,
+                profile_name=selected_profile,
+                board_type=selected_board_type,
             )
 
             result = _enrich_single_result(response.get("result") or {})
@@ -2591,6 +2889,9 @@ def single_board_page():
             "project_options": _project_options(),
             "single_chart": single_chart,
             "single_decision": single_decision,
+            "analysis_modes": analysis_modes,
+            "selected_profile": selected_profile,
+            "selected_board_type": selected_board_type,
         },
     )
 
@@ -2601,10 +2902,17 @@ def project_page():
     comparison = None
     project_chart = None
     project_intelligence_review = None
+    analysis_modes = _analysis_mode_options()
+    _, editable_config = get_dashboard_config(CONFIG_PATH)
+    default_analysis = editable_config.get("analysis", {}) if isinstance(editable_config, dict) else {}
+    selected_profile = default_analysis.get("profile", "balanced")
+    selected_board_type = default_analysis.get("board_type", "general")
 
     if request.method == "POST":
         project_files = request.files.getlist("project_files")
         selected_project_id = (request.form.get("project_id") or "").strip()
+        selected_profile = (request.form.get("analysis_profile") or selected_profile).strip() or "balanced"
+        selected_board_type = (request.form.get("analysis_board_type") or selected_board_type).strip() or "general"
 
         try:
             response = analyze_project_files(
@@ -2612,6 +2920,8 @@ def project_page():
                 upload_folder=UPLOAD_FOLDER,
                 runs_folder=RUNS_FOLDER,
                 config_path=CONFIG_PATH,
+                profile_name=selected_profile,
+                board_type=selected_board_type,
             )
 
             project_result = response.get("project_result", {})
@@ -2641,6 +2951,9 @@ def project_page():
             "project_options": _project_options(),
             "project_chart": project_chart,
             "project_intelligence_review": project_intelligence_review,
+            "analysis_modes": analysis_modes,
+            "selected_profile": selected_profile,
+            "selected_board_type": selected_board_type,
         },
     )
 
@@ -2714,6 +3027,7 @@ def project_detail_page(project_id):
         body_context={
             "project": project,
             "workspace_chart": _build_project_workspace_chart_data(project),
+            "workspace_intelligence": _build_project_workspace_intelligence(project),
             "timeline_data": _build_project_timeline_data(project),
         },
     )

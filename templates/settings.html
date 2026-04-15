@@ -260,6 +260,106 @@
                 <section class="settings-section-card">
                     <div class="settings-section-heading">
                         <div>
+                            <h3>Analysis Modes</h3>
+                            <p>Set the default board context, preset profile, and active review domains used by Silicore.</p>
+                        </div>
+                        <span class="chip chip-medium">Profiles + Toggles</span>
+                    </div>
+
+                    <div class="settings-text-grid">
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Default Profile</span>
+                            <span class="text-input-help">Choose the default review preset used when no upload-time override is selected.</span>
+                            <select name="analysis_profile" class="settings-select">
+                                {% for option in editable_config.analysis.available_profiles %}
+                                <option value="{{ option }}" {% if editable_config.analysis.profile == option %}selected{% endif %}>{{ option.replace('_', ' ')|title }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label class="settings-input-card">
+                            <span class="text-input-label">Default Board Type</span>
+                            <span class="text-input-help">Choose the default board context used for prioritization and rule tuning.</span>
+                            <select name="analysis_board_type" class="settings-select">
+                                {% for option in editable_config.analysis.available_board_types %}
+                                <option value="{{ option }}" {% if editable_config.analysis.board_type == option %}selected{% endif %}>{{ option.replace('_', ' ')|title }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="settings-toggle-grid" style="margin-top:18px;">
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Layout + DFM</span>
+                                <span class="settings-toggle-help">Spacing, manufacturability, assembly, and testability checks.</span>
+                            </span>
+                            <select name="analysis_toggle_layout_manufacturing" class="settings-select">
+                                <option value="true" {% if editable_config.analysis.category_toggles.layout_manufacturing %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if not editable_config.analysis.category_toggles.layout_manufacturing %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Power</span>
+                                <span class="settings-toggle-help">Power integrity, decoupling, and current-path realism.</span>
+                            </span>
+                            <select name="analysis_toggle_power" class="settings-select">
+                                <option value="true" {% if editable_config.analysis.category_toggles.power %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if not editable_config.analysis.category_toggles.power %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Signal</span>
+                                <span class="settings-toggle-help">Signal integrity, differential pairs, and component intent checks.</span>
+                            </span>
+                            <select name="analysis_toggle_signal" class="settings-select">
+                                <option value="true" {% if editable_config.analysis.category_toggles.signal %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if not editable_config.analysis.category_toggles.signal %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Thermal</span>
+                                <span class="settings-toggle-help">Hotspot, thermal-via, and heat spreading checks.</span>
+                            </span>
+                            <select name="analysis_toggle_thermal" class="settings-select">
+                                <option value="true" {% if editable_config.analysis.category_toggles.thermal %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if not editable_config.analysis.category_toggles.thermal %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">EMI + Reliability</span>
+                                <span class="settings-toggle-help">EMC, return-path, stackup, and robustness checks.</span>
+                            </span>
+                            <select name="analysis_toggle_emi_reliability" class="settings-select">
+                                <option value="true" {% if editable_config.analysis.category_toggles.emi_reliability %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if not editable_config.analysis.category_toggles.emi_reliability %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+
+                        <label class="settings-toggle-card">
+                            <span class="settings-toggle-copy">
+                                <span class="settings-toggle-title">Safety</span>
+                                <span class="settings-toggle-help">High-voltage clearance and creepage review.</span>
+                            </span>
+                            <select name="analysis_toggle_safety" class="settings-select">
+                                <option value="true" {% if editable_config.analysis.category_toggles.safety %}selected{% endif %}>Enabled</option>
+                                <option value="false" {% if not editable_config.analysis.category_toggles.safety %}selected{% endif %}>Disabled</option>
+                            </select>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-heading">
+                        <div>
                             <h3>Layout & Manufacturability</h3>
                             <p>Controls spacing, density, and fab-readiness assumptions in one physical-design category.</p>
                         </div>

@@ -4,8 +4,145 @@ from copy import deepcopy
 
 from engine.config import DEFAULT_CONFIG
 
+ANALYSIS_PROFILE_PRESETS = {
+    "balanced": {},
+    "high_speed": {
+        "signal": {
+            "critical_nets": ["CLK", "USB", "DDR", "PCIE", "ETH", "MIPI", "CAN", "REFCLK"],
+            "max_trace_length": 22.0,
+        },
+        "rules": {
+            "signal_integrity_advanced": {
+                "max_signal_vias": 1,
+                "width_ratio_threshold": 1.8,
+                "detour_ratio_threshold": 1.45,
+                "stub_length_threshold": 8.0,
+                "crosstalk_spacing_threshold": 4.0,
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 3.0,
+                "via_mismatch_threshold": 0,
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 2.5,
+                "max_two_layer_critical_length": 20.0,
+            },
+        },
+    },
+    "power_delivery": {
+        "power": {
+            "distribution_distance_threshold": 16.0,
+            "decoupling_distance_threshold": 3.0,
+            "min_trace_width": 0.8,
+            "max_via_count": 4,
+        },
+        "rules": {
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 1.9,
+                "max_high_current_length": 28.0,
+                "converter_cap_radius": 5.5,
+                "max_high_current_vias": 2,
+            },
+            "thermal_management": {
+                "min_thermal_vias": 2,
+                "min_heat_spread_width": 0.8,
+            },
+            "emi_emc": {
+                "max_loop_length": 28.0,
+                "max_switch_trace_length": 12.0,
+            },
+        },
+    },
+    "mixed_signal": {
+        "power": {
+            "required_ground_nets": ["GND", "AGND", "DGND"],
+        },
+        "rules": {
+            "emi_emc": {
+                "sensitive_keepout": 8.0,
+            },
+            "stackup_return_path": {
+                "signal_via_ground_radius": 3.0,
+            },
+            "component_analysis": {
+                "termination_length_threshold": 16.0,
+            },
+        },
+    },
+    "production_readiness": {
+        "layout": {
+            "min_component_spacing": 4.0,
+        },
+        "rules": {
+            "manufacturability": {
+                "min_drill": 0.25,
+                "min_annular_ring": 0.12,
+                "via_in_pad_distance": 0.45,
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 7.0,
+                "min_ground_test_points": 1,
+            },
+        },
+    },
+    "high_voltage": {
+        "rules": {
+            "safety_high_voltage": {
+                "min_clearance": 4.0,
+                "min_creepage": 8.0,
+                "high_voltage_net_keywords": ["HV", "VAC", "VDC", "VBUS", "48V", "24V", "PACK", "BATT", "MAINS"],
+            },
+            "manufacturability": {
+                "via_in_pad_distance": 0.5,
+            },
+        },
+    },
+}
+
 
 EDITABLE_FIELD_MAP = {
+    "analysis": {
+        "profile": {
+            "type": "str",
+            "form_keys": ["analysis_profile", "profile"],
+        },
+        "board_type": {
+            "type": "str",
+            "form_keys": ["analysis_board_type", "board_type"],
+        },
+        "toggle_layout_manufacturing": {
+            "type": "bool",
+            "form_keys": ["analysis_toggle_layout_manufacturing"],
+            "config_path": ["category_toggles", "layout_manufacturing"],
+        },
+        "toggle_power": {
+            "type": "bool",
+            "form_keys": ["analysis_toggle_power"],
+            "config_path": ["category_toggles", "power"],
+        },
+        "toggle_signal": {
+            "type": "bool",
+            "form_keys": ["analysis_toggle_signal"],
+            "config_path": ["category_toggles", "signal"],
+        },
+        "toggle_thermal": {
+            "type": "bool",
+            "form_keys": ["analysis_toggle_thermal"],
+            "config_path": ["category_toggles", "thermal"],
+        },
+        "toggle_emi_reliability": {
+            "type": "bool",
+            "form_keys": ["analysis_toggle_emi_reliability"],
+            "config_path": ["category_toggles", "emi_reliability"],
+        },
+        "toggle_safety": {
+            "type": "bool",
+            "form_keys": ["analysis_toggle_safety"],
+            "config_path": ["category_toggles", "safety"],
+        },
+    },
     "layout": {
         "min_component_spacing": {
             "type": "float",
@@ -348,6 +485,13 @@ def save_config(config_data, config_path="custom_config.json"):
 
 def get_editable_config_view(config):
     return {
+        "analysis": {
+            "profile": config.get("analysis", {}).get("profile", "balanced"),
+            "board_type": config.get("analysis", {}).get("board_type", "general"),
+            "category_toggles": config.get("analysis", {}).get("category_toggles", {}),
+            "available_profiles": sorted(ANALYSIS_PROFILE_PRESETS.keys()),
+            "available_board_types": ["general", "high_speed", "power", "mixed_signal", "analog", "rf", "industrial"],
+        },
         "layout": {
             "min_component_spacing": config.get("layout", {}).get("min_component_spacing"),
             "density_threshold": config.get("layout", {}).get("density_threshold"),
@@ -466,7 +610,16 @@ def _parse_bool(raw_value, fallback):
     return str(raw_value).strip().lower() in {"true", "1", "yes", "on", "enabled"}
 
 
+def _parse_string(raw_value, fallback):
+    if raw_value == "":
+        return fallback
+    return str(raw_value).strip()
+
+
 def _ensure_rule_sections(config):
+    config.setdefault("analysis", {})
+    config["analysis"].setdefault("category_toggles", {})
+    config["analysis"].setdefault("rule_toggles", {})
     config.setdefault("rules", {})
     config["rules"].setdefault("spacing", {})
     config["rules"].setdefault("density", {})
@@ -517,6 +670,7 @@ def _apply_rule_mirrors(config):
 def validate_config(config):
     errors = []
 
+    analysis = config.get("analysis", {})
     layout = config.get("layout", {})
     power = config.get("power", {})
     signal = config.get("signal", {})
@@ -537,6 +691,14 @@ def validate_config(config):
     power_min_connections = power.get("min_connections")
     hotspot_distance_threshold = config.get("thermal", {}).get("hotspot_distance_threshold")
     severity_penalties = config.get("score", {}).get("severity_penalties", {})
+    profile = analysis.get("profile", "balanced")
+    board_type = analysis.get("board_type", "general")
+
+    if profile not in ANALYSIS_PROFILE_PRESETS:
+        errors.append("analysis.profile must be a supported preset.")
+
+    if not isinstance(board_type, str) or not board_type.strip():
+        errors.append("analysis.board_type must be a non-empty string.")
 
     if not isinstance(min_spacing, (int, float)) or min_spacing <= 0:
         errors.append("layout.min_component_spacing must be a positive number.")
@@ -594,6 +756,7 @@ def validate_config(config):
 def build_sanitized_config(config):
     merged = _deep_merge(DEFAULT_CONFIG, config)
 
+    merged.setdefault("analysis", {})
     merged.setdefault("layout", {})
     merged.setdefault("power", {})
     merged.setdefault("signal", {})
@@ -602,6 +765,27 @@ def build_sanitized_config(config):
     merged.setdefault("score", {})
     merged["score"].setdefault("severity_penalties", {})
     merged.setdefault("rules", {})
+
+    merged["analysis"]["profile"] = str(
+        merged["analysis"].get("profile", DEFAULT_CONFIG["analysis"]["profile"])
+    ).strip() or DEFAULT_CONFIG["analysis"]["profile"]
+    if merged["analysis"]["profile"] not in ANALYSIS_PROFILE_PRESETS:
+        merged["analysis"]["profile"] = DEFAULT_CONFIG["analysis"]["profile"]
+
+    merged["analysis"]["board_type"] = str(
+        merged["analysis"].get("board_type", DEFAULT_CONFIG["analysis"]["board_type"])
+    ).strip() or DEFAULT_CONFIG["analysis"]["board_type"]
+    merged["analysis"]["category_toggles"] = deepcopy(
+        _deep_merge(
+            DEFAULT_CONFIG["analysis"]["category_toggles"],
+            merged["analysis"].get("category_toggles", {}),
+        )
+    )
+    merged["analysis"]["rule_toggles"] = deepcopy(merged["analysis"].get("rule_toggles", {}))
+    for key, value in list(merged["analysis"]["category_toggles"].items()):
+        merged["analysis"]["category_toggles"][key] = bool(value)
+    for key, value in list(merged["analysis"]["rule_toggles"].items()):
+        merged["analysis"]["rule_toggles"][key] = bool(value)
 
     merged["layout"]["min_component_spacing"] = float(
         merged["layout"].get("min_component_spacing", DEFAULT_CONFIG["layout"]["min_component_spacing"])
@@ -810,6 +994,8 @@ def parse_config_form(form_data, config_path="custom_config.json"):
                 parsed_value = _parse_list(raw_value, current_value)
             elif metadata["type"] == "bool":
                 parsed_value = _parse_bool(raw_value, current_value)
+            elif metadata["type"] == "str":
+                parsed_value = _parse_string(raw_value, current_value)
             else:
                 parsed_value = current_value
 
@@ -828,3 +1014,32 @@ def parse_config_form(form_data, config_path="custom_config.json"):
         raise ValueError(" ".join(errors))
 
     return config
+
+
+def _deep_merge_in_place(base, overlay):
+    for key, value in (overlay or {}).items():
+        if key in base and isinstance(base[key], dict) and isinstance(value, dict):
+            _deep_merge_in_place(base[key], value)
+        else:
+            base[key] = deepcopy(value)
+    return base
+
+
+def apply_analysis_profile(config, profile_name=None, board_type=None):
+    merged = _deep_merge(DEFAULT_CONFIG, config or {})
+    analysis = merged.setdefault("analysis", {})
+    selected_profile = str(profile_name or analysis.get("profile") or "balanced").strip().lower()
+    selected_board_type = str(board_type or analysis.get("board_type") or "general").strip().lower()
+
+    overlays = []
+    if selected_board_type in ANALYSIS_PROFILE_PRESETS and selected_board_type != "general":
+        overlays.append(ANALYSIS_PROFILE_PRESETS[selected_board_type])
+    if selected_profile in ANALYSIS_PROFILE_PRESETS and selected_profile != "balanced":
+        overlays.append(ANALYSIS_PROFILE_PRESETS[selected_profile])
+
+    for overlay in overlays:
+        _deep_merge_in_place(merged, overlay)
+
+    analysis["profile"] = selected_profile if selected_profile in ANALYSIS_PROFILE_PRESETS else "balanced"
+    analysis["board_type"] = selected_board_type or "general"
+    return build_sanitized_config(merged)

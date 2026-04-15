@@ -6,7 +6,7 @@ import shutil
 from datetime import datetime, UTC
 from html import escape
 
-from engine.config_loader import load_config, get_editable_config_view
+from engine.config_loader import load_config, get_editable_config_view, apply_analysis_profile
 from engine.dashboard_storage import (
     ensure_runs_folder,
     create_run_directory,
@@ -1158,6 +1158,7 @@ def _build_category_summary_from_risks(risks):
 
 def _build_run_record(result, run_dir_name, run_type):
     risks = result.get("risks", []) or []
+    analysis_context = result.get("analysis_context", {}) or {}
 
     return {
         "run_id": run_dir_name,
@@ -1171,6 +1172,8 @@ def _build_run_record(result, run_dir_name, run_type):
         ),
         "summary": result.get("executive_summary", {}).get("summary"),
         "path": run_dir_name,
+        "analysis_context": analysis_context,
+        "config_snapshot": result.get("config_snapshot", {}),
         "risk_snapshot": _build_risk_snapshot(risks),
         "category_summary": _build_category_summary_from_risks(risks),
     }
@@ -1199,6 +1202,8 @@ def _build_project_run_record(project_result, run_dir_name, saved_names):
         ),
         "summary": project_result.get("project_insight", {}).get("summary"),
         "path": run_dir_name,
+        "analysis_context": project_result.get("analysis_context", {}),
+        "config_snapshot": project_result.get("config_snapshot", {}),
         "risk_snapshot": _build_risk_snapshot(all_risks),
         "category_summary": _build_category_summary_from_risks(all_risks),
     }
@@ -1219,6 +1224,15 @@ def _analyze_board_file(file_path, config):
         "risks": risks,
         "score_explanation": score_explanation,
         "board_summary": board_summary,
+        "pcb_snapshot": pcb.to_dict() if hasattr(pcb, "to_dict") else {},
+        "config_snapshot": config,
+        "analysis_context": {
+            "board_name": os.path.basename(file_path),
+            "timestamp": _utc_now_iso(),
+            "config_snapshot": config,
+            "profile": (config.get("analysis", {}) or {}).get("profile", "balanced"),
+            "board_type": (config.get("analysis", {}) or {}).get("board_type", "general"),
+        },
         "raw_rule_result": raw_rule_result,
         "generated_at": _utc_now_iso(),
     }
@@ -1227,7 +1241,7 @@ def _analyze_board_file(file_path, config):
     return result
 
 
-def run_single_analysis_from_path(file_path, config=None, output_dir=None):
+def run_single_analysis_from_path(file_path, config=None, output_dir=None, profile_name=None, board_type=None):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Board file not found: {file_path}")
 
@@ -1235,7 +1249,7 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None):
     if extension not in SUPPORTED_EXTENSIONS:
         raise ValueError(f"Unsupported file type: {extension}")
 
-    config = _resolve_config(config)
+    config = apply_analysis_profile(_resolve_config(config), profile_name=profile_name, board_type=board_type)
 
     result = _analyze_board_file(file_path, config)
 
@@ -1280,8 +1294,8 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None):
     return result
 
 
-def analyze_project_paths(file_paths, config=None, output_dir=None):
-    config = _resolve_config(config)
+def analyze_project_paths(file_paths, config=None, output_dir=None, profile_name=None, board_type=None):
+    config = apply_analysis_profile(_resolve_config(config), profile_name=profile_name, board_type=board_type)
 
     boards = []
     for file_path in file_paths:
@@ -1301,6 +1315,14 @@ def analyze_project_paths(file_paths, config=None, output_dir=None):
         "summary": summary,
         "project_insight": project_insight,
         "boards": boards,
+        "config_snapshot": config,
+        "analysis_context": {
+            "board_name": "Project Analysis",
+            "timestamp": _utc_now_iso(),
+            "config_snapshot": config,
+            "profile": (config.get("analysis", {}) or {}).get("profile", "balanced"),
+            "board_type": (config.get("analysis", {}) or {}).get("board_type", "general"),
+        },
     }
 
     summary_json_path = None
@@ -1370,7 +1392,7 @@ def analyze_project_directory(directory_path, config=None):
     return analyze_project_paths(file_paths, config=config, output_dir=output_dir)
 
 
-def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path):
+def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path, profile_name=None, board_type=None):
     if uploaded_file is None or not getattr(uploaded_file, "filename", ""):
         raise ValueError("Please upload a board file first.")
 
@@ -1386,7 +1408,8 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path)
     file_path = os.path.join(upload_folder, filename)
     uploaded_file.save(file_path)
 
-    config, config_view = get_dashboard_config(config_path)
+    base_config, config_view = get_dashboard_config(config_path)
+    config = apply_analysis_profile(base_config, profile_name=profile_name, board_type=board_type)
 
     run_dir_name, run_dir = create_run_directory("single", runs_folder)
 
@@ -1394,6 +1417,8 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path)
         file_path=file_path,
         config=config,
         output_dir=run_dir,
+        profile_name=profile_name,
+        board_type=board_type,
     )
 
     result["downloads"] = build_single_downloads(run_dir_name)
@@ -1419,7 +1444,7 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path)
     }
 
 
-def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_path):
+def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_path, profile_name=None, board_type=None):
     files = [file for file in uploaded_files if file and getattr(file, "filename", "").strip()]
     if not files:
         raise ValueError("Please upload at least one board file.")
@@ -1445,7 +1470,8 @@ def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_pat
     if not saved_paths:
         raise ValueError("No supported board files were uploaded.")
 
-    config, config_view = get_dashboard_config(config_path)
+    base_config, config_view = get_dashboard_config(config_path)
+    config = apply_analysis_profile(base_config, profile_name=profile_name, board_type=board_type)
 
     run_dir_name, run_dir = create_run_directory("project", runs_folder)
 
@@ -1453,6 +1479,8 @@ def analyze_project_files(uploaded_files, upload_folder, runs_folder, config_pat
         file_paths=saved_paths,
         config=config,
         output_dir=run_dir,
+        profile_name=profile_name,
+        board_type=board_type,
     )
 
     project_result["downloads"] = build_project_downloads(run_dir_name)

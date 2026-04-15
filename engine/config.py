@@ -6,6 +6,19 @@ CONFIG_FILE = "silicore_config.json"
 
 
 DEFAULT_CONFIG = {
+    "analysis": {
+        "profile": "balanced",
+        "board_type": "general",
+        "category_toggles": {
+            "layout_manufacturing": True,
+            "power": True,
+            "signal": True,
+            "thermal": True,
+            "emi_reliability": True,
+            "safety": True,
+        },
+        "rule_toggles": {},
+    },
     "score": {
         "start_score": 10.0,
         "min_score": 0.0,

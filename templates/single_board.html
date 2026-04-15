@@ -27,6 +27,26 @@
             </label>
             {% endif %}
 
+            {% if analysis_modes is defined %}
+            <label>
+                Analysis Profile
+                <select name="analysis_profile">
+                    {% for option in analysis_modes.profiles %}
+                        <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                Board Type
+                <select name="analysis_board_type">
+                    {% for option in analysis_modes.board_types %}
+                        <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% endif %}
+
             <div class="btn-link-row">
                 <button class="btn btn-primary" type="submit">Analyze Board</button>
             </div>
@@ -202,6 +222,14 @@
                 <div class="context-meta-card">
                     <div class="context-meta-label">Penalty</div>
                     <div class="context-meta-value">{{ context.score_breakdown.total_penalty }}</div>
+                </div>
+                <div class="context-meta-card">
+                    <div class="context-meta-label">Profile</div>
+                    <div class="context-meta-value">{{ context.profile.replace('_', ' ')|title if context.profile else "Balanced" }}</div>
+                </div>
+                <div class="context-meta-card">
+                    <div class="context-meta-label">Board Type</div>
+                    <div class="context-meta-value">{{ context.board_type.replace('_', ' ')|title if context.board_type else "General" }}</div>
                 </div>
             </div>
 
@@ -523,6 +551,59 @@
         </div>
     </div>
 </section>
+
+{% if result and result.board_view %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Board Viewer</h2>
+        <p class="section-copy">2D geometry inspection with risk-colored traces, vias, and components.</p>
+    </div>
+
+    <div class="card-body">
+        {% if result.board_view.has_data %}
+        <div class="board-view-shell">
+            <svg class="board-view-svg" viewBox="0 0 {{ result.board_view.width }} {{ result.board_view.height }}" preserveAspectRatio="xMidYMid meet" aria-label="Board viewer">
+                <rect x="6" y="6" width="{{ result.board_view.width - 12 }}" height="{{ result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                {% for trace in result.board_view.traces %}
+                <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }}">
+                    <title>{{ trace.net }}</title>
+                </line>
+                {% endfor %}
+                {% for via in result.board_view.vias %}
+                <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }}">
+                    <title>{{ via.net }}</title>
+                </circle>
+                {% endfor %}
+                {% for component in result.board_view.components %}
+                <g class="board-component board-component-{{ component.tone }}">
+                    <circle cx="{{ component.x }}" cy="{{ component.y }}" r="5.2"></circle>
+                    <text x="{{ component.x + 7 }}" y="{{ component.y - 7 }}">{{ component.ref }}</text>
+                    <title>{{ component.ref }} · {{ component.value }}{% if component.nets %} · {{ component.nets }}{% endif %}</title>
+                </g>
+                {% endfor %}
+            </svg>
+
+            {% if result.board_view.focus_items %}
+            <div class="board-focus-list">
+                {% for item in result.board_view.focus_items %}
+                <div class="board-focus-item">
+                    <div class="board-focus-top">
+                        <span class="mini-chip mini-chip-{{ item.severity }}">{{ item.severity|title }}</span>
+                        <strong>{{ item.label }}</strong>
+                    </div>
+                    <div class="small-muted">Components: {{ item.components }}</div>
+                    <div class="small-muted">Nets: {{ item.nets }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="empty-state">No parsed geometry is available yet for board inspection.</div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
 
 <section class="card boards-card">
     <div class="card-header">
@@ -1140,6 +1221,67 @@
         font-weight: 700;
     }
 
+    .board-view-shell {
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .board-view-svg {
+        width: 100%;
+        min-height: 420px;
+        border-radius: 22px;
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .board-view-frame {
+        fill: rgba(8,14,30,0.58);
+        stroke: rgba(255,255,255,0.08);
+        stroke-width: 1;
+    }
+
+    .board-trace {
+        stroke-linecap: round;
+        stroke-width: 2.2;
+        opacity: 0.88;
+    }
+
+    .board-trace-safe, .board-via-safe, .board-component-safe circle { stroke: #7dd3fc; fill: rgba(125,211,252,0.75); }
+    .board-trace-low, .board-via-low, .board-component-low circle { stroke: #93c5fd; fill: rgba(147,197,253,0.78); }
+    .board-trace-medium, .board-via-medium, .board-component-medium circle { stroke: #fcd34d; fill: rgba(245,158,11,0.78); }
+    .board-trace-high, .board-via-high, .board-component-high circle { stroke: #fb923c; fill: rgba(251,146,60,0.82); }
+    .board-trace-critical, .board-via-critical, .board-component-critical circle { stroke: #f87171; fill: rgba(239,68,68,0.86); }
+
+    .board-component text {
+        fill: #e5eefc;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .board-focus-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .board-focus-item {
+        padding: 14px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .board-focus-top {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+    }
+
     @media (max-width: 1200px) {
         .review-hero-card {
             grid-template-columns: 1fr;
@@ -1150,7 +1292,8 @@
         .score-shell,
         .big-stat-grid,
         .score-breakdown-grid,
-        .context-meta-grid {
+        .context-meta-grid,
+        .board-view-shell {
             grid-template-columns: 1fr;
         }
 
