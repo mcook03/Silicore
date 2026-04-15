@@ -2401,6 +2401,17 @@ def _build_single_decision_data(result):
             "trust_note": "No findings were generated, so no next-action ranking is needed.",
         }
 
+    def _decision_label(risk):
+        short_title = str(risk.get("short_title") or "").strip()
+        if short_title:
+            return short_title
+
+        message = str(risk.get("message") or "Unnamed issue").strip()
+        compact = message.split(".")[0].strip()
+        if len(compact) > 42:
+            compact = compact[:39].rstrip() + "..."
+        return compact or "Unnamed issue"
+
     confidence_scores = [_extract_risk_confidence_score(risk) for risk in risks]
     average_confidence = round(sum(confidence_scores) / len(confidence_scores), 1) if confidence_scores else 0
 
@@ -2419,6 +2430,7 @@ def _build_single_decision_data(result):
         ranked_actions.append(
             {
                 "category": _format_category_name(risk.get("category")),
+                "label": _decision_label(risk),
                 "message": risk.get("message", "Unnamed issue"),
                 "recommendation": risk.get("recommendation") or "Review this issue in layout.",
                 "confidence_score": confidence_score,
@@ -2446,10 +2458,16 @@ def _build_single_decision_data(result):
     )
 
     focus_items = []
+    seen_focus_labels = set()
     for item in ranked_actions[:4]:
+        focus_key = f"{item['category']}::{item['label']}".lower()
+        if focus_key in seen_focus_labels:
+            continue
+        seen_focus_labels.add(focus_key)
         focus_items.append(
             {
-                "label": item["category"],
+                "label": item["label"],
+                "category": item["category"],
                 "value": item["priority_score"],
             }
         )
