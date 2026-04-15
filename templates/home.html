@@ -74,7 +74,7 @@
     <section class="card">
         <div class="card-header">
             <h2 class="section-title">Board Overview</h2>
-            <p class="section-copy">Current platform usage and analysis coverage.</p>
+            <p class="section-copy">Current platform usage, score history, and live engineering review coverage.</p>
         </div>
 
         <div class="card-body">
@@ -127,6 +127,28 @@
                 </div>
             </div>
             {% endif %}
+
+            <div class="home-sparkline-card" style="margin-top:14px;">
+                <div class="sparkline-label">Engineering Coverage Mix</div>
+                {% if home_chart.domain_distribution and home_chart.domain_distribution.has_data %}
+                <div class="distribution-bars">
+                    {% for item in home_chart.domain_distribution["items"] %}
+                    <div class="distribution-bar-row">
+                        <div class="distribution-bar-label distribution-bar-label-wrap">{{ item.label }}</div>
+                        <div class="distribution-bar-track">
+                            <div class="distribution-bar-fill tone-blue" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                        <div class="distribution-bar-value">{{ item.value|int }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">Recent runs have not produced enough domain data yet to render a live coverage mix.</div>
+                {% endif %}
+                <div class="small-muted" style="margin-top:10px;">
+                    Live domain mix across recent runs, including EMC, stackup, power-path, manufacturability, thermal, safety, and testability pressure.
+                </div>
+            </div>
         </div>
     </section>
 </section>

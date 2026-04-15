@@ -6,7 +6,7 @@
         <div class="review-kicker">Single Board Intelligence</div>
         <h1 class="review-title">Board Analysis</h1>
         <p class="review-copy">
-            Upload one PCB design to generate a focused engineering review, inspect prioritized findings, and understand board health through a cleaner product-style analysis surface.
+            Upload one PCB design to generate a focused engineering review across signal integrity, power behavior, EMI/EMC, stackup and return-path quality, manufacturability, testability, and safety.
         </p>
 
         <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="single-board-upload">
@@ -40,6 +40,7 @@
         <div class="hero-panel">
             <div class="hero-panel-label">Board Mode</div>
             <div class="hero-panel-value">Focused Review</div>
+            <div class="chart-fallback-empty" style="margin-top:10px;">Deep single-board review for electrical, production, and safety risk.</div>
 
             {% if single_decision and single_decision.focus_bars and single_decision.focus_bars.has_data %}
             <div class="hero-mini-bars">
@@ -496,12 +497,12 @@
             </div>
         </div>
 
-        {% if single_decision and single_decision.domain_bars and single_decision.domain_bars.has_data %}
         <div class="visual-chart-card" style="margin-top:16px;">
             <div class="visual-chart-header">
                 <span>Engineering Domain Coverage</span>
-                <span>Where Silicore is finding depth</span>
+                <span>Where Silicore is finding electrical, production, and safety depth</span>
             </div>
+            {% if single_decision and single_decision.domain_bars and single_decision.domain_bars.has_data %}
             <div class="distribution-bars">
                 {% for item in single_decision.domain_bars["items"] %}
                 <div class="distribution-bar-row">
@@ -513,8 +514,13 @@
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="empty-state">This board has not produced enough domain-tagged findings yet to render a live coverage view.</div>
+            {% endif %}
+            <div class="small-muted" style="margin-top:10px;">
+                Coverage can now include signal integrity, power integrity, EMI/EMC, stackup and return-path behavior, thermal risk, manufacturability, testability, and safety review.
+            </div>
         </div>
-        {% endif %}
     </div>
 </section>
 

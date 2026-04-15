@@ -1447,6 +1447,7 @@ def _build_series_chart(values, labels=None, width=100, height=36):
 
 def _build_home_chart_data(recent_runs, stats):
     scored_runs = []
+    recent_risks = []
     for run in reversed(recent_runs or []):
         score = run.get("score")
         if score is None:
@@ -1457,6 +1458,7 @@ def _build_home_chart_data(recent_runs, stats):
                 "value": _score_to_100(score),
             }
         )
+        recent_risks.extend(run.get("risk_snapshot") or run.get("risks") or [])
 
     trend = _build_line_chart(
         [item["value"] for item in scored_runs],
@@ -1489,6 +1491,7 @@ def _build_home_chart_data(recent_runs, stats):
         "latest_score": latest_score,
         "latest_source": latest_source,
         "workflow_chart": workflow_chart,
+        "domain_distribution": _build_engineering_domain_bars(recent_risks),
         "score_distribution": _build_bar_chart(
             [{"label": key, "value": value} for key, value in score_distribution.items() if value > 0]
         ),

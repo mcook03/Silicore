@@ -6,7 +6,7 @@
         <div class="review-kicker">Multi Board Intelligence</div>
         <h1 class="review-title">Project Review</h1>
         <p class="review-copy">
-            Upload multiple boards to compare design quality, rank the strongest and weakest designs, and review project-wide engineering health from one premium analysis surface.
+            Upload multiple boards to compare design quality, rank the strongest and weakest designs, and review project-wide health across signal, power, EMC, stackup, manufacturability, testability, and safety.
         </p>
 
         <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="project-upload">
@@ -40,6 +40,7 @@
         <div class="hero-panel">
             <div class="hero-panel-label">Project Mode</div>
             <div class="hero-panel-value">Portfolio Review</div>
+            <div class="chart-fallback-empty" style="margin-top:10px;">Cross-board review for recurring electrical, production, and safety pressure.</div>
 
             {% if project_chart is defined and project_chart["hero_trend"] and project_chart["hero_trend"]["points"] %}
             <div class="chart-frame chart-frame-hero">
@@ -410,12 +411,12 @@
             </div>
         </div>
 
-        {% if project_intelligence_review and project_intelligence_review.domain_bars and project_intelligence_review.domain_bars.has_data %}
         <div class="visual-chart-card" style="margin-top:16px;">
             <div class="visual-chart-header">
                 <span>Engineering Domain Coverage</span>
-                <span>Portfolio-wide finding depth</span>
+                <span>Portfolio-wide electrical, production, and safety depth</span>
             </div>
+            {% if project_intelligence_review and project_intelligence_review.domain_bars and project_intelligence_review.domain_bars.has_data %}
             <div class="distribution-bars">
                 {% for item in project_intelligence_review.domain_bars["items"] %}
                 <div class="distribution-bar-row">
@@ -427,8 +428,13 @@
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="empty-state compact-empty">This portfolio does not have enough domain-tagged findings yet to render coverage bars.</div>
+            {% endif %}
+            <div class="small-muted" style="margin-top:10px;">
+                Portfolio review now rolls up deeper domains such as EMC, stackup, power-path realism, testability, assembly readiness, and high-voltage safety.
+            </div>
         </div>
-        {% endif %}
     </div>
 </section>
 
