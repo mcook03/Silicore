@@ -3,10 +3,10 @@
 
 <section class="settings-hero-card">
     <div class="settings-hero-left">
-        <div class="settings-kicker">Configuration Surface</div>
+        <div class="settings-kicker">Analysis Controls</div>
         <h1 class="settings-title">Settings</h1>
         <p class="settings-copy">
-            Tune Silicore thresholds and rule-facing controls from a cleaner engineering control surface with more visual, product-style configuration blocks.
+            Tune thresholds, default analysis context, and rule behavior from one engineering control surface built for real project workflows.
         </p>
 
         <div class="settings-hero-actions">
@@ -20,8 +20,26 @@
         <div class="settings-glow settings-glow-b"></div>
 
         <div class="settings-hero-panel">
-            <div class="settings-panel-label">Config Mode</div>
-            <div class="settings-panel-value">Live Rule Tuning</div>
+            <div class="settings-panel-label">Default Analysis Profile</div>
+            <div class="settings-panel-value">
+                {% if editable_config and editable_config.analysis and editable_config.analysis.profile %}
+                    {% if editable_config.analysis.profile == 'custom' %}
+                        {{ editable_config.analysis.custom_profile_name if editable_config.analysis.custom_profile_name else 'Custom Profile' }}
+                    {% else %}
+                        {{ editable_config.analysis.profile.replace('_', ' ')|title }}
+                    {% endif %}
+                {% else %}
+                    Balanced
+                {% endif %}
+            </div>
+            <div class="small-muted" style="margin-top:8px;">
+                Default board type:
+                {% if editable_config and editable_config.analysis and editable_config.analysis.board_type %}
+                    {{ editable_config.analysis.board_type.replace('_', ' ')|title }}
+                {% else %}
+                    General
+                {% endif %}
+            </div>
             {% if settings_view and settings_view.penalty_bars and settings_view.penalty_bars.has_data %}
             <div class="settings-panel-bars">
                 {% for item in settings_view.penalty_bars["items"] %}
@@ -46,7 +64,7 @@
         <div class="card-header">
             <h2 class="section-title">Configuration Areas</h2>
             <p class="section-copy">
-                Settings are grouped by engineering category so tuning stays organized and easier to review.
+                Settings are grouped by engineering domain so project-specific tuning stays easier to review and maintain.
             </p>
         </div>
 
@@ -130,7 +148,7 @@
         <div class="card-header">
             <h2 class="section-title">Control Summary</h2>
             <p class="section-copy">
-                Product-style overview of the current editable threshold groups.
+                Snapshot of the analysis surface currently exposed to your team.
             </p>
         </div>
 
@@ -247,7 +265,7 @@
     <div class="card-header">
         <h2 class="section-title">Config Editor</h2>
         <p class="section-copy">
-            Update threshold values below and save them into the current Silicore configuration flow.
+            Update thresholds, presets, and domain toggles below to shape how Silicore evaluates your boards.
         </p>
     </div>
 
@@ -295,7 +313,7 @@
 
                         <label class="settings-input-card">
                             <span class="text-input-label">Custom Profile Name</span>
-                            <span class="text-input-help">When `Custom` is selected, the thresholds and toggles on this page become the active profile definition for your project.</span>
+                            <span class="text-input-help">When `Custom` is selected, the thresholds and toggles on this page become the active profile definition for your project. The default starter name is `Custom Project Profile`.</span>
                             <input type="text" name="analysis_custom_profile_name" class="settings-text-input" value="{{ editable_config.analysis.custom_profile_name if editable_config and editable_config.analysis else 'Custom Project Profile' }}" placeholder="Example: Audio Control Board">
                         </label>
                     </div>

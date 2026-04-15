@@ -2719,13 +2719,14 @@ def _get_nav_items(active_page):
     ]
 
 
-def _render_page(*, active_page, page_title, page_eyebrow, page_copy, template_name, body_context=None):
+def _render_page(*, active_page, page_title, page_eyebrow, page_copy, template_name, body_context=None, show_page_hero=True):
     body_context = body_context or {}
     return render_template(
         template_name,
         page_title=page_title,
         page_eyebrow=page_eyebrow,
         page_copy=page_copy,
+        show_page_hero=show_page_hero,
         nav_items=_get_nav_items(active_page),
         chip_class=_chip_class,
         score_band_class=_score_band_class,
@@ -2985,6 +2986,7 @@ def index():
         page_eyebrow="Hardware Design Intelligence Platform",
         page_copy="Analyze PCB designs, identify engineering risks, compare revisions, and manage project-level design review from a unified control surface.",
         template_name="home.html",
+        show_page_hero=False,
         body_context={
             "stats": stats,
             "recent_runs": recent_runs,
@@ -3040,6 +3042,7 @@ def single_board_page():
         page_eyebrow="Engineering Review",
         page_copy="Upload a PCB design to generate a focused engineering review, inspect prioritized findings, and export structured analysis outputs.",
         template_name="single_board.html",
+        show_page_hero=False,
         body_context={
             "result": result,
             "project_options": _project_options(),
@@ -3101,6 +3104,7 @@ def project_page():
         page_eyebrow="Multi-Board Analysis",
         page_copy="Compare multiple boards within a project to evaluate design quality, rank designs, and review overall project health.",
         template_name="project_review.html",
+        show_page_hero=False,
         body_context={
             "project_result": project_result,
             "comparison": comparison,
@@ -3434,6 +3438,7 @@ def settings_page():
         page_eyebrow="Configuration Controls",
         page_copy="Configure analysis thresholds and rule behavior.",
         template_name="settings.html",
+        show_page_hero=False,
         body_context={"editable_config": editable_config, "settings_view": settings_view},
     )
 
