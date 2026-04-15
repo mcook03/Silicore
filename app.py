@@ -2116,7 +2116,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
     for component in components:
         ref = component.get("ref", "U?")
         tone_key = tones.get(risk_by_component.get(ref, 0), "safe")
-        nets = component.get("connected_nets") or component.get("net_names") or []
+        component_nets = component.get("connected_nets") or component.get("net_names") or []
         component_points.append(
             {
                 "ref": ref,
@@ -2124,7 +2124,9 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
                 "x": _map_x(_safe_float(component.get("x"), 0.0)),
                 "y": _map_y(_safe_float(component.get("y"), 0.0)),
                 "tone": tone_key,
-                "nets": ", ".join(nets[:3]),
+                "nets": ", ".join(component_nets[:3]),
+                "net_list": component_nets,
+                "layer": component.get("layer", ""),
             }
         )
 
@@ -2141,6 +2143,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
                 "x2": _map_x(_safe_float(trace.get("x2"), 0.0)),
                 "y2": _map_y(_safe_float(trace.get("y2"), 0.0)),
                 "tone": tone_key,
+                "layer": trace.get("layer", ""),
             }
         )
 
@@ -2154,6 +2157,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
                 "x": _map_x(_safe_float(via.get("x"), 0.0)),
                 "y": _map_y(_safe_float(via.get("y"), 0.0)),
                 "tone": tone_key,
+                "layers": via.get("layers", []) or [],
             }
         )
 
@@ -2173,6 +2177,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
                 "points": " ".join(polygon_points),
                 "tone": tone_key,
                 "area_estimate": zone.get("area_estimate", 0),
+                "net_list": [zone.get("net_name", "")] if zone.get("net_name") else [],
             }
         )
 
@@ -2200,6 +2205,8 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
                 "severity": str(risk.get("severity", "low")).lower(),
                 "components": ", ".join((risk.get("components") or [])[:3]) or "No linked component",
                 "nets": ", ".join((risk.get("nets") or [])[:3]) or "No linked net",
+                "component_list": risk.get("components") or [],
+                "net_list": risk.get("nets") or [],
             }
         )
 
@@ -2243,6 +2250,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
         "has_data": True,
         "width": width,
         "height": height,
+        "base_view_box": f"0 0 {width} {height}",
         "components": component_points,
         "traces": trace_segments,
         "vias": via_points,
@@ -2256,6 +2264,30 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
             [{"label": key, "value": value} for key, value in sorted(component_types.items(), key=lambda item: (-item[1], item[0].lower()))[:6]]
         ),
         "source_format": pcb_snapshot.get("source_format", "unknown"),
+        "available_layers": sorted(
+            {
+                str(layer).strip()
+                for layer in (
+                    list(layers)
+                    + [item.get("layer", "") for item in traces]
+                    + [item.get("layer", "") for item in zones]
+                    + [item.get("layer", "") for item in components]
+                )
+                if str(layer).strip()
+            }
+        ),
+        "available_nets": sorted(
+            {
+                str(net_name).strip()
+                for net_name in (
+                    list(nets.keys())
+                    + [item.get("net_name", "") for item in traces]
+                    + [item.get("net_name", "") for item in vias]
+                    + [item.get("net_name", "") for item in zones]
+                )
+                if str(net_name).strip()
+            }
+        )[:120],
     }
 
 

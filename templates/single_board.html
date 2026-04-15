@@ -561,28 +561,52 @@
 
     <div class="card-body">
         {% if result.board_view.has_data %}
-        <div class="board-view-shell">
+        <div class="board-toolbar">
+            <label>
+                Layer Filter
+                <select class="board-filter-select" data-board-filter="layer">
+                    <option value="">All layers</option>
+                    {% for layer in result.board_view.available_layers %}
+                    <option value="{{ layer }}">{{ layer }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Net Filter
+                <select class="board-filter-select" data-board-filter="net">
+                    <option value="">All nets</option>
+                    {% for net in result.board_view.available_nets %}
+                    <option value="{{ net }}">{{ net }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <div class="board-toolbar-actions">
+                <button type="button" class="btn btn-secondary board-tool-btn" data-board-action="reset">Reset View</button>
+                <button type="button" class="btn btn-secondary board-tool-btn" data-board-action="clear">Clear Focus</button>
+            </div>
+        </div>
+        <div class="board-view-shell" data-board-inspector>
             <div>
-            <svg class="board-view-svg" viewBox="0 0 {{ result.board_view.width }} {{ result.board_view.height }}" preserveAspectRatio="xMidYMid meet" aria-label="Board viewer">
+            <svg class="board-view-svg" viewBox="{{ result.board_view.base_view_box }}" data-base-view-box="{{ result.board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="Board viewer">
                 <rect x="6" y="6" width="{{ result.board_view.width - 12 }}" height="{{ result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
                 {% for zone in result.board_view.zones %}
-                <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }}"><title>{{ zone.net }} · {{ zone.layer }} · Area {{ zone.area_estimate }}</title></polygon>
+                <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }} board-entity" data-layer="{{ zone.layer }}" data-nets="{{ zone.net_list|join('|') }}" data-kind="zone"><title>{{ zone.net }} · {{ zone.layer }} · Area {{ zone.area_estimate }}</title></polygon>
                 {% endfor %}
                 {% for segment in result.board_view.outline_segments %}
-                <line x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}" class="board-outline"></line>
+                <line x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}" class="board-outline board-entity" data-kind="outline"></line>
                 {% endfor %}
                 {% for trace in result.board_view.traces %}
-                <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }}">
+                <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }} board-entity" data-layer="{{ trace.layer }}" data-nets="{{ trace.net }}" data-kind="trace">
                     <title>{{ trace.net }}</title>
                 </line>
                 {% endfor %}
                 {% for via in result.board_view.vias %}
-                <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }}">
+                <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }} board-entity" data-layer="{{ via.layers|join('|') }}" data-nets="{{ via.net }}" data-kind="via">
                     <title>{{ via.net }}</title>
                 </circle>
                 {% endfor %}
                 {% for component in result.board_view.components %}
-                <g class="board-component board-component-{{ component.tone }}">
+                <g class="board-component board-component-{{ component.tone }} board-entity" data-layer="{{ component.layer }}" data-components="{{ component.ref }}" data-nets="{{ component.net_list|join('|') }}" data-kind="component">
                     <circle cx="{{ component.x }}" cy="{{ component.y }}" r="5.2"></circle>
                     <text x="{{ component.x + 7 }}" y="{{ component.y - 7 }}">{{ component.ref }}</text>
                     <title>{{ component.ref }} · {{ component.value }}{% if component.nets %} · {{ component.nets }}{% endif %}</title>
@@ -644,14 +668,14 @@
 
                 {% if result.board_view.focus_items %}
                 {% for item in result.board_view.focus_items %}
-                <div class="board-focus-item">
+                <button type="button" class="board-focus-item board-focus-button" data-board-focus data-components="{{ item.component_list|join('|') }}" data-nets="{{ item.net_list|join('|') }}">
                     <div class="board-focus-top">
                         <span class="mini-chip mini-chip-{{ item.severity }}">{{ item.severity|title }}</span>
                         <strong>{{ item.label }}</strong>
                     </div>
                     <div class="small-muted">Components: {{ item.components }}</div>
                     <div class="small-muted">Nets: {{ item.nets }}</div>
-                </div>
+                </button>
                 {% endfor %}
                 {% endif %}
             </div>
@@ -662,6 +686,110 @@
     </div>
 </section>
 {% endif %}
+
+<script>
+(() => {
+    const inspector = document.querySelector('[data-board-inspector]');
+    if (!inspector) return;
+
+    const svg = inspector.querySelector('.board-view-svg');
+    const entities = Array.from(inspector.querySelectorAll('.board-entity'));
+    const layerSelect = document.querySelector('[data-board-filter="layer"]');
+    const netSelect = document.querySelector('[data-board-filter="net"]');
+    const focusButtons = Array.from(inspector.querySelectorAll('[data-board-focus]'));
+    const resetButton = document.querySelector('[data-board-action="reset"]');
+    const clearButton = document.querySelector('[data-board-action="clear"]');
+    const baseViewBox = svg.getAttribute('data-base-view-box') || svg.getAttribute('viewBox');
+
+    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+
+    const applyFilters = () => {
+        const activeLayer = layerSelect ? layerSelect.value : '';
+        const activeNet = netSelect ? netSelect.value : '';
+        entities.forEach((entity) => {
+            const layers = splitTokens(entity.dataset.layer);
+            const nets = splitTokens(entity.dataset.nets);
+            const layerMatch = !activeLayer || layers.length === 0 || layers.includes(activeLayer);
+            const netMatch = !activeNet || nets.length === 0 || nets.includes(activeNet);
+            entity.classList.toggle('board-hidden', !(layerMatch && netMatch));
+        });
+    };
+
+    const focusEntities = (componentNames, netNames) => {
+        const componentSet = new Set(componentNames);
+        const netSet = new Set(netNames);
+        let matched = 0;
+        entities.forEach((entity) => {
+            const entityComponents = splitTokens(entity.dataset.components);
+            const entityNets = splitTokens(entity.dataset.nets);
+            const isMatch =
+                (componentSet.size > 0 && entityComponents.some((value) => componentSet.has(value))) ||
+                (netSet.size > 0 && entityNets.some((value) => netSet.has(value)));
+            entity.classList.toggle('board-dimmed', !isMatch);
+            entity.classList.toggle('board-highlighted', isMatch);
+            if (isMatch) matched += 1;
+        });
+        return matched;
+    };
+
+    const clearFocus = () => {
+        entities.forEach((entity) => {
+            entity.classList.remove('board-dimmed', 'board-highlighted');
+        });
+        focusButtons.forEach((button) => button.classList.remove('is-active'));
+        svg.setAttribute('viewBox', baseViewBox);
+    };
+
+    const zoomToContent = () => {
+        const highlighted = entities.filter((entity) => entity.classList.contains('board-highlighted'));
+        if (!highlighted.length) return;
+
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        highlighted.forEach((entity) => {
+            const box = entity.getBBox();
+            minX = Math.min(minX, box.x);
+            minY = Math.min(minY, box.y);
+            maxX = Math.max(maxX, box.x + box.width);
+            maxY = Math.max(maxY, box.y + box.height);
+        });
+        if (!Number.isFinite(minX)) return;
+        const pad = 28;
+        const width = Math.max(80, maxX - minX + pad * 2);
+        const height = Math.max(80, maxY - minY + pad * 2);
+        svg.setAttribute('viewBox', `${Math.max(0, minX - pad)} ${Math.max(0, minY - pad)} ${width} ${height}`);
+    };
+
+    if (layerSelect) layerSelect.addEventListener('change', applyFilters);
+    if (netSelect) netSelect.addEventListener('change', applyFilters);
+
+    focusButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            focusButtons.forEach((item) => item.classList.remove('is-active'));
+            button.classList.add('is-active');
+            applyFilters();
+            const matches = focusEntities(splitTokens(button.dataset.components), splitTokens(button.dataset.nets));
+            if (matches > 0) zoomToContent();
+        });
+    });
+
+    if (resetButton) resetButton.addEventListener('click', () => {
+        if (layerSelect) layerSelect.value = '';
+        if (netSelect) netSelect.value = '';
+        clearFocus();
+        applyFilters();
+    });
+
+    if (clearButton) clearButton.addEventListener('click', () => {
+        clearFocus();
+        applyFilters();
+    });
+
+    applyFilters();
+})();
+</script>
 
 <section class="card boards-card">
     <div class="card-header">
@@ -1286,6 +1414,36 @@
         align-items: start;
     }
 
+    .board-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 14px;
+    }
+
+    .board-toolbar label {
+        display: grid;
+        gap: 6px;
+        color: #dbeafe;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .board-filter-select {
+        min-width: 180px;
+    }
+
+    .board-toolbar-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .board-tool-btn {
+        min-height: 42px;
+    }
+
     .board-view-svg {
         width: 100%;
         min-height: 420px;
@@ -1346,6 +1504,23 @@
         font-weight: 700;
     }
 
+    .board-entity {
+        transition: opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+    }
+
+    .board-hidden {
+        opacity: 0.08;
+    }
+
+    .board-dimmed {
+        opacity: 0.12;
+    }
+
+    .board-highlighted {
+        opacity: 1;
+        filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.42));
+    }
+
     .board-focus-list {
         display: grid;
         gap: 12px;
@@ -1398,6 +1573,18 @@
         margin-bottom: 8px;
     }
 
+    .board-focus-button {
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        color: inherit;
+    }
+
+    .board-focus-button.is-active {
+        border-color: rgba(125,211,252,0.36);
+        background: rgba(59,130,246,0.08);
+    }
+
     .board-stat-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1439,6 +1626,11 @@
         .context-meta-grid,
         .board-view-shell {
             grid-template-columns: 1fr;
+        }
+
+        .board-toolbar {
+            flex-direction: column;
+            align-items: stretch;
         }
 
         .hero-mini-row,
