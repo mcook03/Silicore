@@ -1350,7 +1350,10 @@
         padding: 18px;
         border-radius: 20px;
         border: 1px solid rgba(255,255,255,0.06);
-        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.018);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .visual-chart-header {
@@ -1400,6 +1403,27 @@
         border-radius: 24px;
     }
 
+    .loud-card {
+        background:
+            radial-gradient(circle at top left, rgba(67,212,200,0.12), transparent 26%),
+            radial-gradient(circle at bottom right, rgba(47,137,255,0.1), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(8, 18, 32, 0.84);
+    }
+
+    .insight-card {
+        background:
+            radial-gradient(circle at top right, rgba(47,137,255,0.1), transparent 24%),
+            linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
+            rgba(10, 20, 34, 0.82);
+    }
+
+    .spotlight-shell-card {
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+            rgba(9, 18, 31, 0.8);
+    }
+
     .issue-top-row {
         display: flex;
         align-items: center;
@@ -1428,7 +1452,10 @@
         padding: 16px;
         border-radius: 18px;
         border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.03);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.022);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .risk-section-top,
@@ -1508,8 +1535,12 @@
     .compact-action-card {
         padding: 15px 16px;
         border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(96,165,250,0.14);
+        background:
+            radial-gradient(circle at top right, rgba(96,165,250,0.1), transparent 34%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(16, 28, 46, 0.66);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .compact-action-top {
@@ -1526,8 +1557,8 @@
 
     .compact-action-title {
         color: #f8fbff;
-        font-size: 15px;
-        font-weight: 700;
+        font-size: 16px;
+        font-weight: 800;
         line-height: 1.35;
     }
 
@@ -1768,8 +1799,11 @@
     .board-focus-item {
         padding: 14px;
         border-radius: 16px;
-        background: rgba(255,255,255,0.03);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.02);
         border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .board-focus-top {

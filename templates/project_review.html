@@ -904,6 +904,21 @@
         font-weight: 700;
     }
 
+    .loud-card {
+        background:
+            radial-gradient(circle at top left, rgba(67,212,200,0.12), transparent 26%),
+            radial-gradient(circle at bottom right, rgba(47,137,255,0.1), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+            rgba(8, 18, 32, 0.84);
+    }
+
+    .insight-card {
+        background:
+            radial-gradient(circle at top right, rgba(47,137,255,0.1), transparent 24%),
+            linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
+            rgba(10, 20, 34, 0.82);
+    }
+
     .score-shell {
         display: grid;
         grid-template-columns: 220px 1fr;
@@ -1018,7 +1033,10 @@
         padding: 18px;
         border-radius: 20px;
         border: 1px solid rgba(255,255,255,0.06);
-        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.018);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .visual-chart-header,
@@ -1101,7 +1119,10 @@
         padding: 18px;
         border-radius: 18px;
         border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.03);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.022);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .summary-panel h3 {
@@ -1126,7 +1147,9 @@
         padding: 18px;
         border-radius: 20px;
         border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.03);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.022);
     }
 
     .spotlight-kicker {
@@ -1166,6 +1189,10 @@
     .project-board-card {
         display: grid;
         gap: 16px;
+        background:
+            radial-gradient(circle at top right, rgba(59,130,246,0.08), transparent 24%),
+            linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
+            rgba(10, 20, 34, 0.82);
     }
 
     .project-board-top {
@@ -1196,7 +1223,10 @@
         border-radius: 18px;
         text-align: center;
         border: 1px solid rgba(96,165,250,0.20);
-        background: rgba(59,130,246,0.12);
+        background:
+            radial-gradient(circle at top left, rgba(96,165,250,0.14), transparent 36%),
+            rgba(59,130,246,0.12);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .project-board-score {
@@ -1223,7 +1253,9 @@
     .project-board-section {
         padding: 16px;
         border-radius: 18px;
-        background: rgba(255,255,255,0.025);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015)),
+            rgba(255,255,255,0.02);
         border: 1px solid rgba(255,255,255,0.05);
     }
 
@@ -1344,6 +1376,12 @@
     .heatmap-table {
         display: grid;
         gap: 8px;
+        padding: 12px;
+        border-radius: 18px;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+            rgba(255,255,255,0.018);
+        border: 1px solid rgba(255,255,255,0.05);
     }
 
     .heatmap-row {
