@@ -107,8 +107,8 @@ class BackendSystemsTests(unittest.TestCase):
         update_project_review_status(project["project_id"], "ready_for_signoff")
         reviews = list_review_decisions(project_id=project["project_id"])
         self.assertGreaterEqual(len(reviews), 1)
-        audit_events = list_audit_events(limit=20)
-        self.assertTrue(any(event["event_type"] == "project.review_status_updated" for event in audit_events))
+        audit_events = list_audit_events(limit=20, event_type="project.review_status_updated")
+        self.assertTrue(any(event["project_id"] == project["project_id"] for event in audit_events))
 
     def test_org_and_password_reset_flow(self):
         org = create_organization("Backend Test Org")

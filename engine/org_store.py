@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
-from engine.db import get_connection, initialize_database, log_audit_event
+from engine.db import get_connection, initialize_database, log_audit_event, utc_now_text
 from engine.user_store import get_user_by_email, get_user_by_id
 
 
-def _now(connection=None):
-    if connection is not None:
-        return connection.execute("SELECT strftime('%Y-%m-%d %H:%M:%S', 'now') || ' UTC'").fetchone()[0]
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+def _now():
+    return utc_now_text()
 
 
 def _row_to_org(row):
@@ -33,7 +31,7 @@ def create_organization(name, domain=None, security=None):
     connection = get_connection()
     try:
         organization_key = str(uuid4())[:8]
-        now = _now(connection)
+        now = _now()
         security = security or {
             "require_verified_email": False,
             "enforce_mfa_for_leads": False,
@@ -92,7 +90,7 @@ def update_organization_security(organization_key, security):
     initialize_database()
     connection = get_connection()
     try:
-        now = _now(connection)
+        now = _now()
         connection.execute(
             "UPDATE organizations SET security_json = ?, updated_at = ? WHERE organization_key = ?",
             (json.dumps(security or {}, sort_keys=True), now, organization_key),
@@ -195,7 +193,7 @@ def accept_organization_invitation(token, accepted_user_id=None):
         if accepted_user_id:
             connection.execute(
                 "UPDATE users SET organization_key = ?, updated_at = ? WHERE user_id = ?",
-                (row["organization_key"], _now(connection), accepted_user_id),
+                (row["organization_key"], _now(), accepted_user_id),
             )
         connection.execute(
             """
@@ -203,7 +201,7 @@ def accept_organization_invitation(token, accepted_user_id=None):
             SET status = 'accepted', accepted_user_id = ?, accepted_at = ?
             WHERE invitation_id = ?
             """,
-            (accepted_user_id, _now(connection), row["invitation_id"]),
+            (accepted_user_id, _now(), row["invitation_id"]),
         )
         connection.commit()
     finally:

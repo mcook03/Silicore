@@ -2,11 +2,11 @@ import json
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
-from engine.db import get_connection, initialize_database, log_audit_event
+from engine.db import get_connection, initialize_database, log_audit_event, utc_now_text
 
 
-def _now(connection):
-    return connection.execute("SELECT strftime('%Y-%m-%d %H:%M:%S', 'now') || ' UTC'").fetchone()[0]
+def _now():
+    return utc_now_text()
 
 
 def _loads(value, default=None):
@@ -25,7 +25,7 @@ def create_job(job_type, payload=None, actor_user_id=None, status="queued"):
     connection = get_connection()
     try:
         job_id = str(uuid4())[:12]
-        now = _now(connection)
+        now = _now()
         connection.execute(
             """
             INSERT INTO analysis_jobs (
@@ -47,7 +47,7 @@ def update_job(job_id, status=None, result=None, error_text=None):
     initialize_database()
     connection = get_connection()
     try:
-        now = _now(connection)
+        now = _now()
         current = connection.execute(
             "SELECT result_json, error_text, status FROM analysis_jobs WHERE job_id = ?",
             (job_id,),
@@ -147,7 +147,7 @@ def claim_jobs(worker_id, limit=10, lease_seconds=90):
     connection = get_connection()
     try:
         now_dt = datetime.now(timezone.utc)
-        now = _now(connection)
+        now = _now()
         lease_cutoff = (now_dt - timedelta(seconds=float(lease_seconds or 90))).strftime("%Y-%m-%d %H:%M:%S UTC")
         rows = connection.execute(
             """

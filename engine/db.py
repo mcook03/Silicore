@@ -5,6 +5,19 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 from uuid import uuid4
 
+try:
+    import psycopg
+    from psycopg.rows import dict_row as psycopg_dict_row
+except Exception:
+    psycopg = None
+    psycopg_dict_row = None
+
+try:
+    import psycopg2
+    import psycopg2.extras
+except Exception:
+    psycopg2 = None
+
 
 DB_FOLDER = "dashboard_data"
 
@@ -26,8 +39,87 @@ DB_SETTINGS = _resolve_db_settings()
 DB_PATH = DB_SETTINGS["path"]
 
 
+def _driver_available(engine):
+    if engine == "sqlite":
+        return True
+    if engine in {"postgres", "postgresql"}:
+        return bool(psycopg or psycopg2)
+    return False
+
+
+def _normalize_sql(sql, engine):
+    sql = str(sql or "")
+    if engine == "sqlite":
+        return sql
+    if engine in {"postgres", "postgresql"}:
+        stripped = sql.lstrip()
+        upper = stripped.upper()
+        if upper.startswith("INSERT OR IGNORE INTO "):
+            sql = stripped.replace("INSERT OR IGNORE INTO ", "INSERT INTO ", 1)
+            sql = f"{sql} ON CONFLICT DO NOTHING"
+        result = []
+        in_single = False
+        in_double = False
+        for char in sql:
+            if char == "'" and not in_double:
+                in_single = not in_single
+                result.append(char)
+                continue
+            if char == '"' and not in_single:
+                in_double = not in_double
+                result.append(char)
+                continue
+            if char == "?" and not in_single and not in_double:
+                result.append("%s")
+            else:
+                result.append(char)
+        return "".join(result)
+    return sql
+
+
+class DatabaseConnection:
+    def __init__(self, engine, connection):
+        self.engine = engine
+        self._connection = connection
+
+    def execute(self, sql, params=None):
+        normalized = _normalize_sql(sql, self.engine)
+        if params is None:
+            return self._connection.execute(normalized)
+        return self._connection.execute(normalized, tuple(params))
+
+    def executescript(self, sql_script):
+        if self.engine == "sqlite":
+            return self._connection.executescript(sql_script)
+        statements = [item.strip() for item in str(sql_script or "").split(";") if item.strip()]
+        cursor = None
+        for statement in statements:
+            cursor = self._connection.execute(statement)
+        return cursor
+
+    def commit(self):
+        return self._connection.commit()
+
+    def rollback(self):
+        return self._connection.rollback()
+
+    def close(self):
+        return self._connection.close()
+
+    def __getattr__(self, name):
+        return getattr(self._connection, name)
+
+
 def _now_iso():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def _now_iso_precise():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f UTC")
+
+
+def utc_now_text():
+    return _now_iso()
 
 
 def _json_dumps(value):
@@ -48,17 +140,29 @@ def _json_loads(value, default=None):
 
 
 def _ensure_db_folder():
-    os.makedirs(DB_FOLDER, exist_ok=True)
+    if DB_SETTINGS["engine"] == "sqlite" and not DB_SETTINGS.get("uri"):
+        os.makedirs(DB_FOLDER, exist_ok=True)
 
 
 def get_connection():
     _ensure_db_folder()
-    if DB_SETTINGS["engine"] != "sqlite":
-        raise RuntimeError(f"Database engine '{DB_SETTINGS['engine']}' is configured but this local build currently supports sqlite query execution.")
-    connection = sqlite3.connect(DB_PATH, uri=bool(DB_SETTINGS.get("uri")))
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA foreign_keys = ON")
-    return connection
+    engine = DB_SETTINGS["engine"]
+    if engine == "sqlite":
+        connection = sqlite3.connect(DB_PATH, uri=bool(DB_SETTINGS.get("uri")))
+        connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA foreign_keys = ON")
+        return DatabaseConnection(engine, connection)
+
+    if engine in {"postgres", "postgresql"}:
+        if psycopg:
+            connection = psycopg.connect(DB_SETTINGS["path"], row_factory=psycopg_dict_row)
+            return DatabaseConnection(engine, connection)
+        if psycopg2:
+            connection = psycopg2.connect(DB_SETTINGS["path"], cursor_factory=psycopg2.extras.RealDictCursor)
+            return DatabaseConnection(engine, connection)
+        raise RuntimeError("PostgreSQL is configured, but no PostgreSQL driver is installed. Install psycopg or psycopg2.")
+
+    raise RuntimeError(f"Unsupported database engine: {engine}")
 
 
 def database_runtime_info():
@@ -66,20 +170,37 @@ def database_runtime_info():
         "engine": DB_SETTINGS["engine"],
         "path": DB_SETTINGS["path"],
         "uri_mode": bool(DB_SETTINGS.get("uri")),
+        "driver_available": _driver_available(DB_SETTINGS["engine"]),
     }
 
 
 def _table_exists(connection, table_name):
+    if connection.engine == "sqlite":
+        row = connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name = ?",
+            (table_name,),
+        ).fetchone()
+        return row is not None
     row = connection.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name = ?",
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = ?",
         (table_name,),
     ).fetchone()
     return row is not None
 
 
 def _column_exists(connection, table_name, column_name):
-    rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
-    return any(row["name"] == column_name for row in rows)
+    if connection.engine == "sqlite":
+        rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
+        return any(row["name"] == column_name for row in rows)
+    rows = connection.execute(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = ? AND column_name = ?
+        """,
+        (table_name, column_name),
+    ).fetchall()
+    return bool(rows)
 
 
 def _ensure_column(connection, table_name, column_name, definition):
@@ -648,7 +769,9 @@ def persist_atlas_exchange(thread_key, page_type, context, prompt, answer_payloa
     initialize_database()
     connection = get_connection()
     try:
-        now = _now_iso()
+        thread_now = _now_iso()
+        user_created_at = _now_iso_precise()
+        assistant_created_at = _now_iso_precise()
         project_id, run_id = _project_and_run_from_context(context)
         project_id = _existing_id(connection, "projects", "project_id", project_id)
         run_id = _existing_id(connection, "runs", "run_id", run_id)
@@ -672,7 +795,7 @@ def persist_atlas_exchange(thread_key, page_type, context, prompt, answer_payloa
                     project_id,
                     run_id,
                     _json_dumps(context),
-                    now,
+                    thread_now,
                     thread_id,
                 ),
             )
@@ -693,8 +816,8 @@ def persist_atlas_exchange(thread_key, page_type, context, prompt, answer_payloa
                     project_id,
                     run_id,
                     _json_dumps(context),
-                    now,
-                    now,
+                    thread_now,
+                    thread_now,
                 ),
             )
 
@@ -715,7 +838,7 @@ def persist_atlas_exchange(thread_key, page_type, context, prompt, answer_payloa
                 None,
                 "[]",
                 "[]",
-                now,
+                user_created_at,
             ),
         )
 
@@ -737,7 +860,7 @@ def persist_atlas_exchange(thread_key, page_type, context, prompt, answer_payloa
                 answer.get("intent"),
                 _json_dumps(answer.get("citations") or []),
                 _json_dumps(answer.get("follow_ups") or []),
-                now,
+                assistant_created_at,
             ),
         )
 
@@ -773,10 +896,10 @@ def list_atlas_messages(thread_key):
 
         rows = connection.execute(
             """
-            SELECT role, title, copy, detail, intent, citations_json, follow_ups_json, created_at
+            SELECT message_id, role, title, copy, detail, intent, citations_json, follow_ups_json, created_at
             FROM atlas_messages
             WHERE thread_id = ?
-            ORDER BY created_at ASC, rowid ASC
+            ORDER BY created_at ASC, message_id ASC
             """,
             (thread["thread_id"],),
         ).fetchall()

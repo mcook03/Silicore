@@ -1,10 +1,10 @@
 from uuid import uuid4
 
-from engine.db import get_connection, initialize_database, log_audit_event
+from engine.db import get_connection, initialize_database, log_audit_event, utc_now_text
 
 
-def _now_iso(connection):
-    return connection.execute("SELECT strftime('%Y-%m-%d %H:%M:%S', 'now') || ' UTC'").fetchone()[0]
+def _now_iso():
+    return utc_now_text()
 
 
 def _project_owner(project_row):
@@ -158,7 +158,7 @@ def create_project(name, description="", owner=None):
     connection = get_connection()
     try:
         project_id = str(uuid4())[:8]
-        now = _now_iso(connection)
+        now = _now_iso()
         owner_user_id = owner.get("user_id") if isinstance(owner, dict) else None
         owner_name = owner.get("name") if isinstance(owner, dict) else None
         owner_email = owner.get("email") if isinstance(owner, dict) else None
@@ -281,7 +281,7 @@ def add_run_to_project(project_id, run_record):
         if not project_row:
             return None
 
-        now = _now_iso(connection)
+        now = _now_iso()
         import json
 
         connection.execute(
@@ -323,8 +323,9 @@ def add_run_to_project(project_id, run_record):
         )
         connection.execute(
             """
-            INSERT OR IGNORE INTO project_runs (project_id, run_id, linked_at)
+            INSERT INTO project_runs (project_id, run_id, linked_at)
             VALUES (?, ?, ?)
+            ON CONFLICT(project_id, run_id) DO NOTHING
             """,
             (project_id, normalized_run["run_id"], now),
         )
@@ -360,7 +361,7 @@ def add_project_note(project_id, author, body):
         if not row:
             return None
         note_id = str(uuid4())[:10]
-        now = _now_iso(connection)
+        now = _now_iso()
         connection.execute(
             """
             INSERT INTO project_notes (note_id, project_id, author, body, created_at)
@@ -409,7 +410,7 @@ def update_project_review_status(project_id, status):
         ).fetchone()
         if not row:
             return None
-        now = _now_iso(connection)
+        now = _now_iso()
         connection.execute(
             """
             UPDATE projects
@@ -467,7 +468,7 @@ def create_review_decision(project_id, status, summary="", run_id=None, actor_us
         ).fetchone()
         if not row:
             return None
-        now = _now_iso(connection)
+        now = _now_iso()
         connection.execute(
             """
             INSERT INTO review_decisions (
@@ -524,12 +525,13 @@ def add_project_member(project_id, user):
         ).fetchone()
         if not row:
             return None
-        now = _now_iso(connection)
+        now = _now_iso()
         connection.execute(
             """
-            INSERT OR IGNORE INTO project_members (
+            INSERT INTO project_members (
                 project_id, user_id, name, email, member_role, added_at
             ) VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(project_id, user_id) DO NOTHING
             """,
             (
                 project_id,

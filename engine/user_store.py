@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from engine.db import get_connection, initialize_database, log_audit_event
+from engine.db import get_connection, initialize_database, log_audit_event, utc_now_text
 
 
 def _now_utc():
@@ -13,7 +13,7 @@ def _now_utc():
 
 
 def _now_utc_text():
-    return _now_utc().strftime("%Y-%m-%d %H:%M:%S UTC")
+    return utc_now_text()
 
 
 def _row_to_user(row):
@@ -99,7 +99,7 @@ def create_user(name, email, password, organization_key="personal", role="engine
 
     connection = get_connection()
     try:
-        now = connection.execute("SELECT strftime('%Y-%m-%d %H:%M:%S', 'now') || ' UTC'").fetchone()[0]
+        now = _now_utc_text()
         connection.execute(
             """
             INSERT INTO users (
