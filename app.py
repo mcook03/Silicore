@@ -401,6 +401,8 @@ def _enrich_single_result(result):
     result["grouped_risks"] = _prepare_grouped_risks(risks)
     result["top_issues"] = _prepare_top_issues(risks)
     result["display_score"] = _resolve_display_score(result)
+    result["score_raw"] = result.get("score")
+    result["score"] = result["display_score"]
     result["health_summary"] = _build_health_summary(result.get("display_score", result.get("score", 0)), risks)
     result["analysis_context_view"] = _build_analysis_context(result)
     result["board_view"] = _build_board_view_data(result.get("pcb_snapshot") or {}, risks)
@@ -414,6 +416,8 @@ def _enrich_project_result(project_result):
         board["risks"] = board_risks
         board["top_issues"] = _prepare_top_issues(board_risks, limit=2)
         board["display_score"] = _resolve_display_score(board)
+        board["score_raw"] = board.get("score")
+        board["score"] = board["display_score"]
         board["health_summary"] = _build_health_summary(board.get("display_score", board.get("score", 0)), board_risks)
         board["analysis_context_view"] = _build_analysis_context(board)
     project_result["project_health_summary"] = _build_project_health_summary(project_result)
