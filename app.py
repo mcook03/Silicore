@@ -2404,12 +2404,13 @@ def _build_single_decision_data(result):
     def _decision_label(risk):
         short_title = str(risk.get("short_title") or "").strip()
         if short_title:
-            return short_title
+            compact = short_title
+        else:
+            message = str(risk.get("message") or "Unnamed issue").strip()
+            compact = message.split(".")[0].strip()
 
-        message = str(risk.get("message") or "Unnamed issue").strip()
-        compact = message.split(".")[0].strip()
-        if len(compact) > 42:
-            compact = compact[:39].rstrip() + "..."
+        if len(compact) > 30:
+            compact = compact[:27].rstrip() + "..."
         return compact or "Unnamed issue"
 
     confidence_scores = [_extract_risk_confidence_score(risk) for risk in risks]
@@ -2459,7 +2460,7 @@ def _build_single_decision_data(result):
 
     focus_items = []
     seen_focus_labels = set()
-    for item in ranked_actions[:4]:
+    for item in ranked_actions[:3]:
         focus_key = f"{item['category']}::{item['label']}".lower()
         if focus_key in seen_focus_labels:
             continue
@@ -2480,6 +2481,7 @@ def _build_single_decision_data(result):
         ),
         "domain_bars": _build_engineering_domain_bars(risks),
         "focus_bars": _build_bar_chart(focus_items),
+        "focus_item_count": len(focus_items),
         "next_actions": ranked_actions[:3],
         "trust_note": trust_note,
     }

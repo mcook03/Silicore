@@ -66,11 +66,9 @@
             <div class="hero-mini-bars">
                 {% for item in single_decision.focus_bars["items"] %}
                 <div class="hero-mini-row">
-                    <div class="hero-mini-label">
-                        <span>{{ item["label"] }}</span>
-                        {% if item["category"] %}
-                        <small>{{ item["category"] }}</small>
-                        {% endif %}
+                    <div class="hero-mini-label" title="{{ item['category'] }} · {{ item['label'] }}">
+                        <span class="hero-mini-category">{{ item["category"] }}</span>
+                        <span class="hero-mini-title">{{ item["label"] }}</span>
                     </div>
                     <div class="hero-mini-track">
                         <div class="hero-mini-fill tone-violet" style="width: {{ item['width_pct'] }}%;"></div>
@@ -79,7 +77,9 @@
                 </div>
                 {% endfor %}
             </div>
-            <div class="chart-fallback-empty" style="margin-top:10px;">Priority score by live next-action ranking</div>
+            <div class="chart-fallback-empty" style="margin-top:10px;">
+                Top ranked actions. Full detail appears below in the priority review section.
+            </div>
             {% elif single_chart and single_chart["severity_bars"] and single_chart["severity_bars"]["has_data"] %}
             <div class="hero-mini-bars">
                 {% for item in single_chart["severity_bars"]["items"] %}
@@ -1018,7 +1018,7 @@
     .hero-mini-row,
     .distribution-bar-row {
         display: grid;
-        grid-template-columns: minmax(148px, 1.15fr) 1fr 48px;
+        grid-template-columns: minmax(172px, 1.1fr) 1fr 42px;
         gap: 12px;
         align-items: center;
     }
@@ -1032,20 +1032,26 @@
     }
 
     .hero-mini-label {
-        display: grid;
-        gap: 2px;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
     }
 
-    .hero-mini-label span {
-        overflow-wrap: anywhere;
-    }
-
-    .hero-mini-label small {
+    .hero-mini-category {
         color: var(--muted-2);
         font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.06em;
+        font-weight: 800;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .hero-mini-title {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .hero-mini-track,
