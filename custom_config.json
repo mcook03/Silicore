@@ -17,6 +17,7 @@
         "start_score": 10.0,
         "min_score": 0.0,
         "max_score": 10.0,
+        "soft_floor_score": 0.5,
         "severity_penalties": {
             "low": 0.2,
             "medium": 0.4,

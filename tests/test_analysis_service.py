@@ -108,6 +108,17 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertIn(".brd", manifest["parser_capabilities"])
         self.assertEqual(manifest["parser_capabilities"][".brd"]["status"], "supported")
 
+    def test_severely_penalized_boards_use_soft_floor_instead_of_zero(self):
+        result = run_single_analysis_from_path(
+            "fixtures/high_speed_pair_bad.kicad_pcb",
+            config=self.config,
+        )
+
+        explanation = result.get("score_explanation") or {}
+        self.assertGreater(result["score"], 0)
+        self.assertEqual(explanation.get("floor_mode"), "soft_floor")
+        self.assertGreater(explanation.get("overflow_penalty_raw_10", 0), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

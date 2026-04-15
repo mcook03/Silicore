@@ -1,7 +1,7 @@
 {
     "filename": "mixed_signal_noise_board.kicad_pcb",
     "file_path": "fixtures/mixed_signal_noise_board.kicad_pcb",
-    "score": 0.0,
+    "score": 9.4,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -228,9 +228,9 @@
                 "U1"
             ],
             "nets": [
+                "VIN",
                 "GND",
-                "SW",
-                "VIN"
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -268,9 +268,9 @@
                 "U1"
             ],
             "nets": [
+                "VIN",
                 "GND",
-                "SW",
-                "VIN"
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -307,9 +307,9 @@
                 "U2"
             ],
             "nets": [
+                "SENSOR_OUT",
                 "GND",
-                "ADC_IN",
-                "SENSOR_OUT"
+                "ADC_IN"
             ],
             "region": null,
             "metrics": {
@@ -347,8 +347,8 @@
                 "U3"
             ],
             "nets": [
-                "SENSOR_OUT",
-                "GND"
+                "GND",
+                "SENSOR_OUT"
             ],
             "region": null,
             "metrics": {
@@ -456,8 +456,8 @@
                 "L1"
             ],
             "nets": [
-                "SW",
-                "VIN"
+                "VIN",
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -475,8 +475,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -511,9 +511,9 @@
                 "U2"
             ],
             "nets": [
+                "SENSOR_OUT",
                 "GND",
-                "ADC_IN",
-                "SENSOR_OUT"
+                "ADC_IN"
             ],
             "region": null,
             "metrics": {
@@ -531,9 +531,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
+                    "SENSOR_OUT",
                     "GND",
-                    "ADC_IN",
-                    "SENSOR_OUT"
+                    "ADC_IN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -568,8 +568,8 @@
                 "U3"
             ],
             "nets": [
-                "SENSOR_OUT",
-                "GND"
+                "GND",
+                "SENSOR_OUT"
             ],
             "region": null,
             "metrics": {
@@ -587,8 +587,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SENSOR_OUT",
-                    "GND"
+                    "GND",
+                    "SENSOR_OUT"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1084,8 +1084,12 @@
             "reliability": 0.4,
             "thermal": 1.6
         },
-        "final_score": 0.0,
-        "final_score_raw_10": 0.0,
+        "final_score": 9.4,
+        "final_score_raw_10": 0.94,
+        "floor_mode": "soft_floor",
+        "soft_floor_score": 5.0,
+        "overflow_penalty_raw_10": 2.4,
+        "overflow_penalty": 24.0,
         "details": [
             {
                 "severity": "medium",
@@ -1858,6 +1862,7 @@
             "start_score": 10.0,
             "min_score": 0.0,
             "max_score": 10.0,
+            "soft_floor_score": 0.5,
             "severity_penalties": {
                 "low": 0.2,
                 "medium": 0.4,
@@ -2238,7 +2243,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:10:46.404742+00:00",
+        "timestamp": "2026-04-15T18:18:29.324101+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2258,6 +2263,7 @@
                 "start_score": 10.0,
                 "min_score": 0.0,
                 "max_score": 10.0,
+                "soft_floor_score": 0.5,
                 "severity_penalties": {
                     "low": 0.2,
                     "medium": 0.4,
@@ -2812,9 +2818,9 @@
                     "U1"
                 ],
                 "nets": [
+                    "VIN",
                     "GND",
-                    "SW",
-                    "VIN"
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -2843,9 +2849,9 @@
                     "U1"
                 ],
                 "nets": [
+                    "VIN",
                     "GND",
-                    "SW",
-                    "VIN"
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -2873,9 +2879,9 @@
                     "U2"
                 ],
                 "nets": [
+                    "SENSOR_OUT",
                     "GND",
-                    "ADC_IN",
-                    "SENSOR_OUT"
+                    "ADC_IN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2904,8 +2910,8 @@
                     "U3"
                 ],
                 "nets": [
-                    "SENSOR_OUT",
-                    "GND"
+                    "GND",
+                    "SENSOR_OUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -2986,8 +2992,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -3005,8 +3011,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW",
-                        "VIN"
+                        "VIN",
+                        "SW"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3032,9 +3038,9 @@
                     "U2"
                 ],
                 "nets": [
+                    "SENSOR_OUT",
                     "GND",
-                    "ADC_IN",
-                    "SENSOR_OUT"
+                    "ADC_IN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3052,9 +3058,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
+                        "SENSOR_OUT",
                         "GND",
-                        "ADC_IN",
-                        "SENSOR_OUT"
+                        "ADC_IN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3080,8 +3086,8 @@
                     "U3"
                 ],
                 "nets": [
-                    "SENSOR_OUT",
-                    "GND"
+                    "GND",
+                    "SENSOR_OUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -3099,8 +3105,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SENSOR_OUT",
-                        "GND"
+                        "GND",
+                        "SENSOR_OUT"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3465,7 +3471,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-15T18:10:46.404746+00:00",
+    "generated_at": "2026-04-15T18:18:29.324108+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -3512,7 +3518,7 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows very low design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "high",

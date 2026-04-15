@@ -1,7 +1,7 @@
 {
     "filename": "assembly_testability_board.kicad_pcb",
     "file_path": "fixtures/assembly_testability_board.kicad_pcb",
-    "score": 0.0,
+    "score": 10.8,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -340,9 +340,9 @@
             ],
             "nets": [
                 "GND",
+                "UART_TX",
                 "SWDIO",
-                "SWCLK",
-                "UART_TX"
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -1053,8 +1053,12 @@
             "signal_integrity": 2.0,
             "stackup_return_path": 0.4
         },
-        "final_score": 0.0,
-        "final_score_raw_10": 0.0,
+        "final_score": 10.8,
+        "final_score_raw_10": 1.08,
+        "floor_mode": "soft_floor",
+        "soft_floor_score": 5.0,
+        "overflow_penalty_raw_10": 1.6,
+        "overflow_penalty": 16.0,
         "details": [
             {
                 "severity": "medium",
@@ -1864,6 +1868,7 @@
             "start_score": 10.0,
             "min_score": 0.0,
             "max_score": 10.0,
+            "soft_floor_score": 0.5,
             "severity_penalties": {
                 "low": 0.2,
                 "medium": 0.4,
@@ -2244,7 +2249,7 @@
     },
     "analysis_context": {
         "board_name": "assembly_testability_board.kicad_pcb",
-        "timestamp": "2026-04-15T18:10:46.382552+00:00",
+        "timestamp": "2026-04-15T18:18:29.282764+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2264,6 +2269,7 @@
                 "start_score": 10.0,
                 "min_score": 0.0,
                 "max_score": 10.0,
+                "soft_floor_score": 0.5,
                 "severity_penalties": {
                     "low": 0.2,
                     "medium": 0.4,
@@ -2903,9 +2909,9 @@
                 ],
                 "nets": [
                     "GND",
+                    "UART_TX",
                     "SWDIO",
-                    "SWCLK",
-                    "UART_TX"
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -3440,7 +3446,7 @@
         "score": 0.0,
         "total_penalty": 11.6
     },
-    "generated_at": "2026-04-15T18:10:46.382558+00:00",
+    "generated_at": "2026-04-15T18:18:29.282770+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

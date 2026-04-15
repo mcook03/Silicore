@@ -24,6 +24,7 @@ DEFAULT_CONFIG = {
         "start_score": 10.0,
         "min_score": 0.0,
         "max_score": 10.0,
+        "soft_floor_score": 0.5,
         "severity_penalties": {
             "low": 0.5,
             "medium": 1.0,

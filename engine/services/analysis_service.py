@@ -250,6 +250,7 @@ def _compute_score_and_explanation(risks, config):
     start_score = float(score_config.get("start_score", 10.0))
     min_score = float(score_config.get("min_score", 0.0))
     max_score = float(score_config.get("max_score", 10.0))
+    soft_floor_score = float(score_config.get("soft_floor_score", max(min_score, 0.5)))
     severity_penalties = _severity_penalty_map(config)
 
     severity_totals = {}
@@ -282,6 +283,18 @@ def _compute_score_and_explanation(risks, config):
 
     score_raw_10 = start_score - total_penalty
     score_raw_10 = max(min_score, min(max_score, score_raw_10))
+    floor_mode = "linear"
+    overflow_penalty = 0.0
+    if risks and score_raw_10 <= min_score and total_penalty > start_score:
+        overflow_penalty = round(total_penalty - start_score, 2)
+        floor_mode = "soft_floor"
+        score_raw_10 = min(
+            max_score,
+            max(
+                soft_floor_score,
+                round(soft_floor_score + (1.5 / (1.0 + overflow_penalty)), 2),
+            ),
+        )
     score_raw_10 = round(score_raw_10, 2)
     score_100 = round(score_raw_10 * 10, 1)
 
@@ -294,6 +307,10 @@ def _compute_score_and_explanation(risks, config):
         "category_totals": category_totals,
         "final_score": score_100,
         "final_score_raw_10": score_raw_10,
+        "floor_mode": floor_mode,
+        "soft_floor_score": round(soft_floor_score * 10, 1),
+        "overflow_penalty_raw_10": overflow_penalty,
+        "overflow_penalty": round(overflow_penalty * 10, 1),
         "details": details,
     }
 
