@@ -18,7 +18,25 @@
             <p class="section-copy">{{ project_assistant_console.summary }}</p>
         </div>
         <div class="card-body">
-            <div class="summary-panel" data-assistant-project-response>
+            <div class="assistant-thread" data-assistant-project-thread>
+                <div class="assistant-message assistant-message-system">
+                    <div class="assistant-message-role">{{ project_assistant_console.eyebrow }}</div>
+                    <div class="assistant-message-copy">Ask about recurring patterns, trend direction, or next team action to build a workspace review thread.</div>
+                </div>
+            </div>
+
+            <div class="assistant-prompt-row">
+                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="What is repeating across this workspace?">What is repeating?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="Are we improving enough for the next review gate?">Are we improving?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="What should the team do next?">What should the team do next?</button>
+            </div>
+
+            <form class="assistant-composer" data-assistant-project-form>
+                <input type="text" class="assistant-composer-input" data-assistant-project-input placeholder="Ask about recurring issues, readiness, or execution plan">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+
+            <div class="summary-panel" data-assistant-project-response style="margin-top:16px;">
                 <h3>{{ project_assistant_console.eyebrow }}</h3>
                 <p>Select a workspace question or review lens to open Silicore’s guidance.</p>
             </div>
@@ -55,6 +73,13 @@
         </div>
     </aside>
 </section>
+
+<script id="project-assistant-data" type="application/json">
+{{ {
+    "assistant": project_assistant_console,
+    "copilot": project_copilot
+}|tojson }}
+</script>
 
 <section class="grid grid-2">
 <section class="card">
@@ -492,7 +517,7 @@
                     {% if project_copilot.execution_plan %}
                     <div class="focus-list">
                         {% for item in project_copilot.execution_plan %}
-                        <article class="focus-card" data-project-copilot-item data-title="{{ item.title }}" data-why="{{ item.why }}" data-action="{{ item.action }}">
+                        <article class="focus-card" id="project-execution-{{ loop.index }}" data-project-copilot-item data-title="{{ item.title }}" data-why="{{ item.why }}" data-action="{{ item.action }}">
                             <div class="focus-top">
                                 <div>
                                     <div class="focus-title">{{ item.title }}</div>
@@ -1092,6 +1117,78 @@
         line-height: 1.45;
     }
 
+    .assistant-thread {
+        display: grid;
+        gap: 10px;
+        max-height: 320px;
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .assistant-message {
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .assistant-message-user {
+        background: rgba(59,130,246,0.12);
+        border-color: rgba(96,165,250,0.18);
+    }
+
+    .assistant-message-role {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .assistant-message-copy {
+        color: #edf3ff;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .assistant-citation-list,
+    .assistant-prompt-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .assistant-citation,
+    .assistant-prompt-chip {
+        border: 1px solid rgba(96,165,250,0.18);
+        background: rgba(96,165,250,0.1);
+        color: #dbeafe;
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-composer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .assistant-composer-input {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: #eff6ff;
+        padding: 0 14px;
+        font: inherit;
+    }
+
     .timeline-row {
         display: grid;
         gap: 10px;
@@ -1420,24 +1517,100 @@
     const responsePanel = document.querySelector('[data-assistant-project-response]');
     const questionButtons = Array.from(document.querySelectorAll('[data-assistant-project-question]'));
     const lensButtons = Array.from(document.querySelectorAll('[data-assistant-project-lens]'));
+    const promptButtons = Array.from(document.querySelectorAll('[data-assistant-project-prompt]'));
+    const form = document.querySelector('[data-assistant-project-form]');
+    const input = document.querySelector('[data-assistant-project-input]');
+    const thread = document.querySelector('[data-assistant-project-thread]');
+    const rawData = document.querySelector('#project-assistant-data');
     if (!responsePanel) return;
 
+    const projectData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const threadKey = `silicore-project-thread::${((projectData.copilot || {}).systemic_pattern || 'workspace').toLowerCase()}`;
     const renderResponse = (title, answer) => {
         responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    };
+
+    const saveThread = (messages) => {
+        try {
+            sessionStorage.setItem(threadKey, JSON.stringify(messages));
+        } catch (error) {
+            console.debug('project assistant thread storage skipped', error);
+        }
+    };
+    const loadThread = () => {
+        try {
+            return JSON.parse(sessionStorage.getItem(threadKey) || '[]');
+        } catch (error) {
+            return [];
+        }
+    };
+    const renderThread = (messages) => {
+        if (!thread) return;
+        thread.innerHTML = messages.map((item) => `
+            <div class="assistant-message assistant-message-${item.role}">
+                <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Silicore Assistant'}</div>
+                <div class="assistant-message-copy">${item.copy}</div>
+            </div>
+        `).join('');
+    };
+    const answerPrompt = (text) => {
+        const lower = String(text || '').toLowerCase();
+        const copilot = projectData.copilot || {};
+        if (lower.includes('improv')) {
+            return {title: 'Workspace Momentum', answer: copilot.momentum || copilot.trend_summary || 'No workspace momentum note is available yet.'};
+        }
+        if (lower.includes('team') || lower.includes('next')) {
+            return {title: 'Next Team Action', answer: (copilot.execution_plan && copilot.execution_plan[0] && copilot.execution_plan[0].action) || 'No execution-plan action is available yet.'};
+        }
+        return {title: 'Recurring Pattern', answer: copilot.posture || 'No workspace posture is available yet.'};
+    };
+    const pushThreadExchange = (promptText, result) => {
+        const current = loadThread();
+        current.push({role: 'user', copy: promptText});
+        current.push({role: 'assistant', copy: `<p>${result.answer}</p>`});
+        saveThread(current);
+        renderThread(current);
+        renderResponse(result.title, result.answer);
     };
 
     questionButtons.forEach((button) => {
         button.addEventListener('click', () => {
             renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
+            pushThreadExchange(button.dataset.title || 'Question', {
+                title: button.dataset.title || 'Question',
+                answer: button.dataset.answer || 'No answer available.',
+            });
         });
     });
 
     lensButtons.forEach((button) => {
         button.addEventListener('click', () => {
             renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens note available.');
+            pushThreadExchange(button.dataset.title || 'Review Lens', {
+                title: button.dataset.title || 'Review Lens',
+                answer: button.dataset.answer || 'No review-lens note available.',
+            });
         });
     });
 
+    promptButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            pushThreadExchange(button.dataset.assistantProjectPrompt || button.textContent, answerPrompt(button.dataset.assistantProjectPrompt || button.textContent));
+        });
+    });
+
+    if (form && input) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const value = input.value.trim();
+            if (!value) return;
+            pushThreadExchange(value, answerPrompt(value));
+            input.value = '';
+        });
+    }
+
+    const saved = loadThread();
+    if (saved.length) renderThread(saved);
     if (questionButtons[0]) {
         renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
     }

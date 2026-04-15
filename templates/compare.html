@@ -17,7 +17,25 @@
             <p class="section-copy">{{ compare_assistant_console.summary }}</p>
         </div>
         <div class="card-body">
-            <div class="summary-panel" data-assistant-compare-response>
+            <div class="assistant-thread" data-assistant-compare-thread>
+                <div class="assistant-message assistant-message-system">
+                    <div class="assistant-message-role">{{ compare_assistant_console.eyebrow }}</div>
+                    <div class="assistant-message-copy">Ask about regressions, approval readiness, or dominant subsystem movement, then jump directly into the compare inspector.</div>
+                </div>
+            </div>
+
+            <div class="assistant-prompt-row">
+                <button type="button" class="assistant-prompt-chip" data-assistant-compare-prompt="What got worse?">What got worse?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-compare-prompt="Can I approve this revision?">Can I approve this revision?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-compare-prompt="Show the top change cluster">Show the top change cluster</button>
+            </div>
+
+            <form class="assistant-composer" data-assistant-compare-form>
+                <input type="text" class="assistant-composer-input" data-assistant-compare-input placeholder="Ask about the regression, best improvement, or signoff posture">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+
+            <div class="summary-panel" data-assistant-compare-response style="margin-top:16px;">
                 <h3>{{ compare_assistant_console.eyebrow }}</h3>
                 <p>Select a question or revision lens to open a comparison-specific answer.</p>
             </div>
@@ -54,6 +72,13 @@
         </div>
     </aside>
 </section>
+
+<script id="compare-assistant-data" type="application/json">
+{{ {
+    "assistant": compare_assistant_console,
+    "copilot": compare_copilot
+}|tojson }}
+</script>
 
 <section class="card">
     <div class="card-header">
@@ -120,6 +145,7 @@
                     <div class="focus-list">
                         {% for item in compare_copilot.takeaways %}
                         <article class="focus-card compare-copilot-card"
+                            id="compare-takeaway-{{ loop.index }}"
                             data-copilot-compare-item
                             data-title="{{ item.title }}"
                             data-why="{{ item.why }}"
@@ -2311,6 +2337,78 @@
         line-height: 1.45;
     }
 
+    .assistant-thread {
+        display: grid;
+        gap: 10px;
+        max-height: 320px;
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .assistant-message {
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .assistant-message-user {
+        background: rgba(59,130,246,0.12);
+        border-color: rgba(96,165,250,0.18);
+    }
+
+    .assistant-message-role {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .assistant-message-copy {
+        color: #edf3ff;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .assistant-citation-list,
+    .assistant-prompt-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .assistant-citation,
+    .assistant-prompt-chip {
+        border: 1px solid rgba(96,165,250,0.18);
+        background: rgba(96,165,250,0.1);
+        color: #dbeafe;
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-composer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .assistant-composer-input {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: #eff6ff;
+        padding: 0 14px;
+        font: inherit;
+    }
+
     .board-toolbar label {
         display: grid;
         gap: 6px;
@@ -2668,16 +2766,98 @@
     const responsePanel = document.querySelector('[data-assistant-compare-response]');
     const questionButtons = Array.from(document.querySelectorAll('[data-assistant-compare-question]'));
     const lensButtons = Array.from(document.querySelectorAll('[data-assistant-compare-lens]'));
+    const promptButtons = Array.from(document.querySelectorAll('[data-assistant-compare-prompt]'));
+    const form = document.querySelector('[data-assistant-compare-form]');
+    const input = document.querySelector('[data-assistant-compare-input]');
+    const thread = document.querySelector('[data-assistant-compare-thread]');
+    const rawData = document.querySelector('#compare-assistant-data');
     if (!responsePanel) return;
 
+    const compareData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
     const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
     const renderResponse = (title, answer) => {
         responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
     };
 
+    const threadKey = `silicore-compare-thread::${((compareData.copilot || {}).direction || 'mixed')}::${((compareData.copilot || {}).score_diff || 0)}`;
+    const saveThread = (messages) => {
+        try {
+            sessionStorage.setItem(threadKey, JSON.stringify(messages));
+        } catch (error) {
+            console.debug('compare assistant thread storage skipped', error);
+        }
+    };
+    const loadThread = () => {
+        try {
+            return JSON.parse(sessionStorage.getItem(threadKey) || '[]');
+        } catch (error) {
+            return [];
+        }
+    };
+    const renderThread = (messages) => {
+        if (!thread) return;
+        thread.innerHTML = messages.map((item) => {
+            const citations = (item.citations || []).map((citation) => `
+                <button type="button" class="assistant-citation" data-assistant-compare-citation data-target="${citation.target}" data-components="${(citation.components || []).join('|')}" data-nets="${(citation.nets || []).join('|')}">
+                    ${citation.label}
+                </button>
+            `).join('');
+            return `
+                <div class="assistant-message assistant-message-${item.role}">
+                    <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Silicore Assistant'}</div>
+                    <div class="assistant-message-copy">${item.copy}</div>
+                    ${citations ? `<div class="assistant-citation-list">${citations}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+        thread.querySelectorAll('[data-assistant-compare-citation]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const target = document.getElementById(button.dataset.target);
+                if (target) target.scrollIntoView({behavior: 'smooth', block: 'center'});
+                const api = window.silicoreCompareInspector;
+                if (api) {
+                    api.focus(splitTokens(button.dataset.components), splitTokens(button.dataset.nets));
+                }
+            });
+        });
+    };
+
+    const firstTakeaway = document.querySelector('[data-copilot-compare-item]');
+    const answerPrompt = (text) => {
+        const lower = String(text || '').toLowerCase();
+        const copilot = compareData.copilot || {};
+        const citation = firstTakeaway ? [{
+            label: firstTakeaway.dataset.title || 'Top change',
+            target: firstTakeaway.id,
+            components: splitTokens(firstTakeaway.dataset.components),
+            nets: splitTokens(firstTakeaway.dataset.nets),
+        }] : [];
+        if (lower.includes('approve') || lower.includes('signoff')) {
+            return {title: 'Approval Readiness', answer: copilot.signoff_note || 'No signoff note is available yet.', citations: citation};
+        }
+        if (lower.includes('worse') || lower.includes('regress')) {
+            return {title: 'What Got Worse', answer: copilot.root_cause || 'No dominant regression note is available yet.', citations: citation};
+        }
+        return {title: 'Top Change Cluster', answer: copilot.next_move || 'No next move is available yet.', citations: citation};
+    };
+
+    const pushThreadExchange = (promptText, result) => {
+        const current = loadThread();
+        current.push({role: 'user', copy: promptText});
+        current.push({role: 'assistant', copy: `<p>${result.answer}</p>`, citations: result.citations || []});
+        saveThread(current);
+        renderThread(current);
+        renderResponse(result.title, result.answer);
+    };
+
     questionButtons.forEach((button) => {
         button.addEventListener('click', () => {
             renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
+            pushThreadExchange(button.dataset.title || 'Question', {
+                title: button.dataset.title || 'Question',
+                answer: button.dataset.answer || 'No answer available.',
+                citations: [],
+            });
         });
     });
 
@@ -2693,9 +2873,32 @@
             } else {
                 api.clear();
             }
+            pushThreadExchange(button.dataset.title || 'Review Lens', {
+                title: button.dataset.title || 'Review Lens',
+                answer: button.dataset.answer || 'No review-lens answer available.',
+                citations: [],
+            });
         });
     });
 
+    promptButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            pushThreadExchange(button.dataset.assistantComparePrompt || button.textContent, answerPrompt(button.dataset.assistantComparePrompt || button.textContent));
+        });
+    });
+
+    if (form && input) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const value = input.value.trim();
+            if (!value) return;
+            pushThreadExchange(value, answerPrompt(value));
+            input.value = '';
+        });
+    }
+
+    const saved = loadThread();
+    if (saved.length) renderThread(saved);
     if (questionButtons[0]) {
         renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
     }

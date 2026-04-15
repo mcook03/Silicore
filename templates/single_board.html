@@ -108,7 +108,26 @@
             <p class="section-copy">{{ board_assistant_console.summary }}</p>
         </div>
         <div class="card-body">
-            <div class="summary-panel" data-assistant-board-response>
+            <div class="assistant-thread" data-assistant-board-thread>
+                <div class="assistant-message assistant-message-system">
+                    <div class="assistant-message-role">{{ board_assistant_console.eyebrow }}</div>
+                    <div class="assistant-message-copy">Ask a review question, choose a lens, or type a prompt like “show me EMI reasons” or “am I signoff ready?”</div>
+                </div>
+            </div>
+
+            <div class="assistant-prompt-row">
+                <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="Show EMI reasons">Show EMI reasons</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="Why is the score low?">Why is the score low?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="Am I signoff ready?">Am I signoff ready?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="What should I validate next?">What should I validate next?</button>
+            </div>
+
+            <form class="assistant-composer" data-assistant-board-form>
+                <input type="text" class="assistant-composer-input" data-assistant-board-input placeholder="Ask Silicore about EMI, power, signal, thermal, signoff, or fix priority">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+
+            <div class="summary-panel" data-assistant-board-response style="margin-top:16px;">
                 <h3>{{ board_assistant_console.eyebrow }}</h3>
                 <p>Select a follow-up question or review lens to open Silicore’s live guidance.</p>
             </div>
@@ -154,6 +173,17 @@
         </div>
     </aside>
 </section>
+
+<script id="board-assistant-data" type="application/json">
+{{ {
+    "summary": board_assistant_console.summary,
+    "questions": board_assistant_console.questions,
+    "review_lenses": board_assistant_console.review_lenses,
+    "copilot": board_copilot,
+    "validation_plan": board_copilot.validation_plan if board_copilot else [],
+    "top_actions": single_decision.next_actions if single_decision and single_decision.next_actions else []
+}|tojson }}
+</script>
 
 {% if not result %}
 <section class="grid grid-2">
@@ -1302,16 +1332,188 @@
     const responsePanel = document.querySelector('[data-assistant-board-response]');
     const questionButtons = Array.from(document.querySelectorAll('[data-assistant-board-question]'));
     const lensButtons = Array.from(document.querySelectorAll('[data-assistant-board-lens]'));
+    const promptButtons = Array.from(document.querySelectorAll('[data-assistant-board-prompt]'));
+    const form = document.querySelector('[data-assistant-board-form]');
+    const input = document.querySelector('[data-assistant-board-input]');
+    const thread = document.querySelector('[data-assistant-board-thread]');
+    const rawData = document.querySelector('#board-assistant-data');
     if (!responsePanel) return;
 
     const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
+    const boardData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const riskSources = Array.from(document.querySelectorAll('[data-risk-anchor]')).map((node) => ({
+        id: node.id,
+        domain: String(node.dataset.riskDomain || '').toLowerCase(),
+        category: String(node.dataset.riskCategory || '').toLowerCase(),
+        severity: String(node.dataset.riskSeverity || '').toLowerCase(),
+        message: node.dataset.riskMessage || 'Board finding',
+        recommendation: node.dataset.riskRecommendation || '',
+        nets: splitTokens(node.dataset.nets),
+        components: splitTokens(node.dataset.components),
+    }));
+    const threadKey = `silicore-board-thread::${(boardData.copilot || {}).score || 'empty'}::${((boardData.copilot || {}).dominant_domain || 'general').toLowerCase()}`;
+
     const renderResponse = (title, answer) => {
         responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    };
+
+    const renderThread = (messages) => {
+        if (!thread) return;
+        thread.innerHTML = messages.map((item) => {
+            const citations = (item.citations || []).map((citation) => `
+                <button type="button" class="assistant-citation" data-assistant-citation data-target="${citation.target}" data-components="${(citation.components || []).join('|')}" data-nets="${(citation.nets || []).join('|')}">
+                    ${citation.label}
+                </button>
+            `).join('');
+            return `
+                <div class="assistant-message assistant-message-${item.role}">
+                    <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Silicore Assistant'}</div>
+                    <div class="assistant-message-copy">${item.copy}</div>
+                    ${citations ? `<div class="assistant-citation-list">${citations}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+        thread.querySelectorAll('[data-assistant-citation]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const target = document.getElementById(button.dataset.target);
+                if (target) target.scrollIntoView({behavior: 'smooth', block: 'center'});
+                const api = window.silicoreBoardInspector;
+                if (api) {
+                    const nets = splitTokens(button.dataset.nets);
+                    const components = splitTokens(button.dataset.components);
+                    if (nets.length || components.length) {
+                        api.setFilters({heat: 'hybrid', net: nets[0] || ''});
+                        api.focus(components, nets);
+                    }
+                }
+            });
+        });
+        thread.scrollTop = thread.scrollHeight;
+    };
+
+    const saveThread = (messages) => {
+        try {
+            sessionStorage.setItem(threadKey, JSON.stringify(messages));
+        } catch (error) {
+            console.debug('board assistant thread storage skipped', error);
+        }
+    };
+
+    const loadThread = () => {
+        try {
+            return JSON.parse(sessionStorage.getItem(threadKey) || '[]');
+        } catch (error) {
+            return [];
+        }
+    };
+
+    const sourcesForDomain = (term) => {
+        const normalized = String(term || '').toLowerCase();
+        return riskSources.filter((item) => item.domain.includes(normalized) || item.category.includes(normalized)).slice(0, 3);
+    };
+
+    const sourceToCitation = (item) => ({
+        label: item.message,
+        target: item.id,
+        components: item.components,
+        nets: item.nets,
+    });
+
+    const answerBoardPrompt = (prompt) => {
+        const text = String(prompt || '').trim();
+        const lower = text.toLowerCase();
+        const copilot = boardData.copilot || {};
+        const topAction = (boardData.top_actions || [])[0] || {};
+
+        if (lower.includes('emi') || lower.includes('emc')) {
+            const matches = sourcesForDomain('emi');
+            return {
+                title: 'EMI / EMC Review',
+                answer: matches.length
+                    ? `Silicore is flagging EMI/EMC pressure because the board has noisy-path or return-path findings that can escape the layout and show up as real-world instability. Focus on routing containment, stitching support, and aggressor proximity first.`
+                    : 'No explicit EMI/EMC findings are currently dominating this board review.',
+                citations: matches.map(sourceToCitation),
+            };
+        }
+        if (lower.includes('power')) {
+            const matches = sourcesForDomain('power');
+            return {
+                title: 'Power Integrity Review',
+                answer: matches.length
+                    ? `Power behavior is part of the current review pressure. The strongest issues point to delivery realism, rail width, or regulator-support weaknesses that can translate into droop, noise, or unstable bring-up.`
+                    : 'Power integrity is not the strongest active pressure area on this board right now.',
+                citations: matches.map(sourceToCitation),
+            };
+        }
+        if (lower.includes('thermal')) {
+            const matches = sourcesForDomain('thermal');
+            return {
+                title: 'Thermal Review',
+                answer: matches.length
+                    ? `Thermal pressure is showing up through hotspot and heat-spreading weaknesses. Review nearby copper width, thermal vias, and clustered hot components before assuming the current placement is production-safe.`
+                    : 'Thermal findings are not currently leading this review.',
+                citations: matches.map(sourceToCitation),
+            };
+        }
+        if (lower.includes('signal') || lower.includes('return path') || lower.includes('stackup')) {
+            const matches = [...sourcesForDomain('signal'), ...sourcesForDomain('stackup')].slice(0, 3);
+            return {
+                title: 'Signal / Return-Path Review',
+                answer: matches.length
+                    ? `Signal quality pressure is active on this board. The current findings suggest timing, routing continuity, or return-path behavior that could break clean behavior under real operating conditions.`
+                    : 'Signal and return-path findings are not the main driver right now.',
+                citations: matches.map(sourceToCitation),
+            };
+        }
+        if (lower.includes('signoff') || lower.includes('release') || lower.includes('ready')) {
+            const criticals = riskSources.filter((item) => item.severity === 'critical').slice(0, 2);
+            return {
+                title: 'Signoff Readiness',
+                answer: copilot.release_note || 'No signoff note is available for this board yet.',
+                citations: criticals.map(sourceToCitation),
+            };
+        }
+        if (lower.includes('validate')) {
+            return {
+                title: 'Validation Plan',
+                answer: `<p>${(boardData.validation_plan || []).slice(0, 3).join('</p><p>')}</p>`,
+                citations: [],
+            };
+        }
+        if (lower.includes('score')) {
+            const matches = riskSources.slice(0, 3);
+            return {
+                title: 'Why The Score Is Low',
+                answer: `${copilot.posture || 'No score posture is available.'} ${copilot.mission || ''} ${copilot.release_note || ''}`.trim(),
+                citations: matches.map(sourceToCitation),
+            };
+        }
+        return {
+            title: 'Fix Priority',
+            answer: topAction.label
+                ? `${topAction.label} is still the best first move because it sits at the intersection of severity, confidence, evidence depth, and real-world impact. ${topAction.recommendation_short || topAction.recommendation || ''}`.trim()
+                : (copilot.mission || 'No priority guidance is available yet.'),
+            citations: riskSources.slice(0, 2).map(sourceToCitation),
+        };
+    };
+
+    const pushThreadExchange = (promptText, result) => {
+        const current = loadThread();
+        current.push({role: 'user', copy: promptText});
+        current.push({role: 'assistant', copy: `<p>${result.answer}</p>`, citations: result.citations || []});
+        saveThread(current);
+        renderThread(current);
+        renderResponse(result.title, result.answer.replace(/<[^>]+>/g, ' '));
     };
 
     questionButtons.forEach((button) => {
         button.addEventListener('click', () => {
             renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
+            pushThreadExchange(button.dataset.title || 'Question', {
+                title: button.dataset.title || 'Question',
+                answer: button.dataset.answer || 'No answer available.',
+                citations: [],
+            });
         });
     });
 
@@ -1329,10 +1531,37 @@
                 api.clear();
                 api.setFilters({heat: button.dataset.heat || 'hybrid'});
             }
+            pushThreadExchange(button.dataset.title || 'Review Lens', {
+                title: button.dataset.title || 'Review Lens',
+                answer: button.dataset.answer || 'No review-lens note available.',
+                citations: [],
+            });
         });
     });
 
-    if (questionButtons[0]) {
+    promptButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const result = answerBoardPrompt(button.dataset.assistantBoardPrompt || button.textContent);
+            pushThreadExchange(button.dataset.assistantBoardPrompt || button.textContent, result);
+        });
+    });
+
+    if (form && input) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const value = input.value.trim();
+            if (!value) return;
+            const result = answerBoardPrompt(value);
+            pushThreadExchange(value, result);
+            input.value = '';
+        });
+    }
+
+    const saved = loadThread();
+    if (saved.length) {
+        renderThread(saved);
+    }
+    if (questionButtons[0] && !saved.length) {
         renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
     }
 })();
@@ -1380,7 +1609,17 @@
 
                 <div class="risk-items">
                     {% for risk in section.risks %}
-                    <div class="risk-item">
+                    <div
+                        class="risk-item"
+                        id="risk-{{ section.key|replace('_', '-') }}-{{ loop.index }}"
+                        data-risk-anchor
+                        data-risk-domain="{{ risk.transparency_view.domain if risk.transparency_view else (risk.design_domain or risk.category or section.title) }}"
+                        data-risk-category="{{ section.title }}"
+                        data-risk-severity="{{ risk.severity }}"
+                        data-risk-message="{{ risk.message }}"
+                        data-risk-recommendation="{{ risk.recommendation or '' }}"
+                        data-components="{{ risk.components|join('|') if risk.components else '' }}"
+                        data-nets="{{ risk.nets|join('|') if risk.nets else '' }}">
                         <div class="risk-item-header">
                             <span class="chip {{ chip_class(risk.severity) }}">{{ risk.severity }}</span>
                             {% if risk.components %}
@@ -2042,6 +2281,101 @@
         display: block;
         font-size: 14px;
         line-height: 1.45;
+    }
+
+    .assistant-thread {
+        display: grid;
+        gap: 10px;
+        max-height: 360px;
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .assistant-message {
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .assistant-message-user {
+        background: rgba(59,130,246,0.12);
+        border-color: rgba(96,165,250,0.18);
+    }
+
+    .assistant-message-role {
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .assistant-message-copy {
+        color: #edf3ff;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .assistant-message-copy p {
+        margin: 0 0 8px;
+    }
+
+    .assistant-message-copy p:last-child {
+        margin-bottom: 0;
+    }
+
+    .assistant-citation-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .assistant-citation {
+        border: 1px solid rgba(96,165,250,0.18);
+        background: rgba(96,165,250,0.1);
+        color: #dbeafe;
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-prompt-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .assistant-prompt-chip {
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: #ecf3ff;
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-composer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .assistant-composer-input {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: #eff6ff;
+        padding: 0 14px;
+        font: inherit;
     }
 
     .issue-top-row {
