@@ -502,8 +502,8 @@
             </div>
         </div>
 
-        <div class="grid grid-2" style="margin-top:16px;">
-            <section class="card spotlight-shell-card">
+        <div class="grid grid-2 atlas-decision-grid" style="margin-top:16px;">
+            <section class="card spotlight-shell-card atlas-fix-primary">
                 <div class="card-header">
                     <h2 class="section-title">Fix Sequence</h2>
                     <p class="section-copy">What to change first, and why Atlas Intelligence is ranking it that way.</p>
@@ -551,7 +551,7 @@
                 </div>
             </section>
 
-            <section class="card spotlight-shell-card">
+            <section class="card spotlight-shell-card atlas-validation-side">
                 <div class="card-header">
                     <h2 class="section-title">Validation Plan</h2>
                     <p class="section-copy">What to confirm after the next board revision lands.</p>
@@ -2217,15 +2217,32 @@
             rgba(7, 15, 30, 0.94);
     }
 
+    .atlas-decision-grid {
+        grid-template-columns: minmax(0, 1.34fr) minmax(300px, 0.66fr) !important;
+        align-items: stretch;
+    }
+
+    .atlas-fix-primary .card-body,
+    .atlas-validation-side .card-body {
+        height: 100%;
+    }
+
+    .atlas-fix-primary {
+        min-height: 100%;
+    }
+
     .focus-list {
         display: grid;
         gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .focus-card {
         display: grid;
         gap: 12px;
-        padding: 18px;
+        align-content: start;
+        min-height: 100%;
+        padding: 20px;
         border-radius: 20px;
         border: 1px solid rgba(96,165,250,0.14);
         background:
@@ -2252,7 +2269,8 @@
     }
 
     .focus-score {
-        min-width: 56px;
+        min-width: 64px;
+        max-width: 92px;
         padding: 10px 12px;
         border-radius: 16px;
         text-align: center;
@@ -2282,8 +2300,26 @@
         align-items: flex-start;
     }
 
+    .atlas-validation-side .timeline-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .atlas-validation-side .timeline-row {
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
+            rgba(255,255,255,0.02);
+    }
+
     @media (max-width: 1380px) {
         .board-top-band {
+            grid-template-columns: 1fr;
+        }
+
+        .focus-list {
             grid-template-columns: 1fr;
         }
     }
@@ -2291,6 +2327,10 @@
     @media (max-width: 1080px) {
         .board-content-ribbon > .grid.grid-2 {
             grid-template-columns: 1fr;
+        }
+
+        .atlas-decision-grid {
+            grid-template-columns: 1fr !important;
         }
     }
 
