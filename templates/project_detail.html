@@ -1248,10 +1248,14 @@
     }
 
     .trend-panel {
-        padding: 16px;
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 16px;
-        background: rgba(255,255,255,0.03);
+        padding: 20px;
+        border: 1px solid rgba(255,255,255,0.055);
+        border-radius: 22px;
+        background:
+            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
+            rgba(255,255,255,0.02);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 14px 30px rgba(0,0,0,0.1);
     }
 
     .trend-header {
@@ -1269,6 +1273,14 @@
         width: 100%;
         height: 90px;
         display: block;
+        padding: 10px;
+        border-radius: 18px;
+        background:
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008));
+        background-size: 18px 18px, 18px 18px, auto;
+        border: 1px solid rgba(255,255,255,0.04);
     }
 
     .trend-grid-line {
@@ -1307,8 +1319,9 @@
         display: grid;
         place-items: center;
         color: rgba(191,219,254,0.8);
-        border-radius: 12px;
-        background: rgba(15,23,42,0.22);
+        border-radius: 18px;
+        background: rgba(15,23,42,0.24);
+        border: 1px solid rgba(255,255,255,0.04);
     }
 
     .mini-bar-list {
@@ -1465,10 +1478,12 @@
     .timeline-row {
         display: grid;
         gap: 10px;
-        padding: 16px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.03);
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.055);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
+            rgba(255,255,255,0.02);
     }
 
     .timeline-title {
@@ -1686,12 +1701,13 @@
     }
 
     .workspace-review-card {
-        padding: 18px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.06);
+        padding: 20px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.055);
         background:
             radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 44%),
-            rgba(255,255,255,0.03);
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
+            rgba(255,255,255,0.02);
     }
 
     .workspace-review-top {

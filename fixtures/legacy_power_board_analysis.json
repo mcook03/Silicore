@@ -229,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "SW_NODE",
-                "VCC"
+                "VCC",
+                "SW_NODE"
             ],
             "region": null,
             "metrics": {
@@ -248,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -284,8 +284,8 @@
                 "D1"
             ],
             "nets": [
-                "SW_NODE",
-                "GND"
+                "GND",
+                "SW_NODE"
             ],
             "region": null,
             "metrics": {
@@ -303,8 +303,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW_NODE",
-                    "GND"
+                    "GND",
+                    "SW_NODE"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -339,8 +339,8 @@
                 "R1"
             ],
             "nets": [
-                "CLK",
-                "GND"
+                "GND",
+                "CLK"
             ],
             "region": null,
             "metrics": {
@@ -358,8 +358,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2451,7 +2451,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-15T19:47:02.313573+00:00",
+        "timestamp": "2026-04-15T19:49:05.132824+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3032,15 +3032,15 @@
     "stackup_summary": {
         "layer_count": 2,
         "copper_layers": [
-            "B.Cu",
-            "F.Cu"
+            "F.Cu",
+            "B.Cu"
         ],
         "signal_layers": [
-            "B.Cu",
-            "F.Cu"
+            "F.Cu",
+            "B.Cu"
         ],
         "reference_layers": [
-            "F.Cu"
+            "B.Cu"
         ],
         "style": "two_layer",
         "reference_coverage_pct": 50.0,
@@ -3223,8 +3223,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "region": null,
                 "metrics": {
@@ -3242,8 +3242,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW_NODE",
-                        "VCC"
+                        "VCC",
+                        "SW_NODE"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3269,8 +3269,8 @@
                     "D1"
                 ],
                 "nets": [
-                    "SW_NODE",
-                    "GND"
+                    "GND",
+                    "SW_NODE"
                 ],
                 "region": null,
                 "metrics": {
@@ -3288,8 +3288,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW_NODE",
-                        "GND"
+                        "GND",
+                        "SW_NODE"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3315,8 +3315,8 @@
                     "R1"
                 ],
                 "nets": [
-                    "CLK",
-                    "GND"
+                    "GND",
+                    "CLK"
                 ],
                 "region": null,
                 "metrics": {
@@ -3334,8 +3334,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
-                        "GND"
+                        "GND",
+                        "CLK"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3635,7 +3635,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-15T19:47:02.313584+00:00",
+    "generated_at": "2026-04-15T19:49:05.132833+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

@@ -2209,16 +2209,28 @@
     }
 
     .compare-chart-shell {
-        padding: 12px;
-        border-radius: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.12);
-        background: rgba(15, 23, 42, 0.22);
+        padding: 16px;
+        border-radius: 22px;
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        background:
+            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
+            rgba(15, 23, 42, 0.22);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .compare-trend-svg {
         width: 100%;
         height: 100px;
         display: block;
+        padding: 8px;
+        border-radius: 16px;
+        background:
+            linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(255,255,255,0.016), rgba(255,255,255,0.008));
+        background-size: 18px 18px, 18px 18px, auto;
+        border: 1px solid rgba(255,255,255,0.04);
     }
 
     .compare-grid-line {
@@ -2250,8 +2262,12 @@
     .compare-bar-row {
         display: grid;
         grid-template-columns: 180px 1fr 52px;
-        gap: 12px;
+        gap: 14px;
         align-items: center;
+        padding: 10px 12px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.04);
     }
 
     .compare-bar-label,
@@ -2261,10 +2277,12 @@
     }
 
     .compare-bar-track {
-        height: 12px;
+        height: 14px;
         border-radius: 999px;
         overflow: hidden;
         background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.04);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.18);
     }
 
     .compare-bar-fill {
@@ -2294,14 +2312,14 @@
 
     .assistant-console-layout {
         display: grid;
-        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-        gap: 18px;
+        grid-template-columns: minmax(0, 1.42fr) minmax(330px, 0.7fr);
+        gap: 22px;
         align-items: start;
     }
 
     .assistant-console-side {
         position: sticky;
-        top: 18px;
+        top: 104px;
     }
 
     .assistant-console-group {
