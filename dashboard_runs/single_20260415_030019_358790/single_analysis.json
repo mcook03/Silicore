@@ -1,0 +1,3835 @@
+{
+    "filename": "high_speed_pair_bad.kicad_pcb",
+    "file_path": "dashboard_uploads/high_speed_pair_bad.kicad_pcb",
+    "score": 0.0,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Critical or debug-oriented net USB_DP has no visible test point",
+            "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "has_testpoint": false
+            },
+            "confidence": 0.72,
+            "short_title": "Missing critical-net test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+            "suggested_actions": [],
+            "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+            "threshold_label": "Expected at least one visible access point on critical nets",
+            "observed_label": "Observed visible access point: none",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72
+            },
+            "fix_suggestion": {
+                "fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Critical or debug-oriented net USB_DN has no visible test point",
+            "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "has_testpoint": false
+            },
+            "confidence": 0.72,
+            "short_title": "Missing critical-net test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+            "suggested_actions": [],
+            "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+            "threshold_label": "Expected at least one visible access point on critical nets",
+            "observed_label": "Observed visible access point: none",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72
+            },
+            "fix_suggestion": {
+                "fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Critical or debug-oriented net CLK has no visible test point",
+            "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+            "components": [
+                "U1",
+                "Y1"
+            ],
+            "nets": [
+                "CLK"
+            ],
+            "region": null,
+            "metrics": {
+                "has_testpoint": false
+            },
+            "confidence": 0.72,
+            "short_title": "Missing critical-net test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+            "suggested_actions": [],
+            "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+            "threshold_label": "Expected at least one visible access point on critical nets",
+            "observed_label": "Observed visible access point: none",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72
+            },
+            "fix_suggestion": {
+                "fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "component_analysis",
+            "category": "component_design",
+            "severity": "medium",
+            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.67,
+                "threshold": 18.0,
+                "has_resistor": false
+            },
+            "confidence": 0.7,
+            "short_title": "Possible missing signal termination",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "component",
+            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+            "threshold_label": "Termination review length 18.00 units",
+            "observed_label": "Observed route length 84.67 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "component_analysis",
+            "category": "component_design",
+            "severity": "medium",
+            "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 118.2,
+                "threshold": 18.0,
+                "has_resistor": false
+            },
+            "confidence": 0.7,
+            "short_title": "Possible missing signal termination",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "component",
+            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+            "threshold_label": "Termination review length 18.00 units",
+            "observed_label": "Observed route length 118.20 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "decoupling",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U1 (mcu) has no nearby decoupling capacitor",
+            "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+            "components": [
+                "U1",
+                "J1"
+            ],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "nearest_cap_distance": 84.02,
+                "threshold": 4.0
+            },
+            "confidence": 0.9,
+            "short_title": "Missing nearby decoupling",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+            "threshold_label": "Maximum decoupling distance 4.00 units",
+            "observed_label": "Observed nearest capacitor distance 84.02 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "differential_pair",
+            "category": "high_speed",
+            "severity": "high",
+            "message": "Differential pair USB has a length mismatch of 33.53 units",
+            "recommendation": "Length-match the positive and negative pair routes more closely to reduce skew.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "positive_length": 84.67,
+                "negative_length": 118.2,
+                "length_mismatch": 33.53,
+                "threshold": 5.0
+            },
+            "confidence": 0.9,
+            "short_title": "Differential pair skew risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "signal",
+            "why_it_matters": "Differential pair skew can collapse timing margin and degrade signal integrity on high-speed links.",
+            "suggested_actions": [],
+            "trigger_condition": "Differential-pair route length mismatch exceeded the configured skew threshold.",
+            "threshold_label": "Maximum pair mismatch 5.00 units",
+            "observed_label": "Observed pair mismatch 33.53 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Length-match the positive and negative pair routes more closely to reduce skew.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "emi_emc",
+            "category": "emi_emc",
+            "severity": "medium",
+            "message": "Switching or power net VBUS forms a long exposed loop path",
+            "recommendation": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "VBUS"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.02,
+                "max_loop_length": 45.0,
+                "via_count": 0
+            },
+            "confidence": 0.74,
+            "short_title": "Large switching loop area",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "emi",
+            "why_it_matters": "Large current loops increase magnetic field radiation and make noisy power stages harder to contain.",
+            "suggested_actions": [],
+            "trigger_condition": "A switching or power-oriented net exceeded the configured loop-length threshold.",
+            "threshold_label": "Maximum switching loop length 45.00 units",
+            "observed_label": "Observed routed length 84.02 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74
+            },
+            "fix_suggestion": {
+                "fix": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "emi_emc",
+            "category": "emi_emc",
+            "severity": "high",
+            "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+            "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "unsupported_vias": 2,
+                "return_via_radius": 3.0,
+                "trace_length": 84.67
+            },
+            "confidence": 0.82,
+            "short_title": "Weak EMC containment across layer changes",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "emi",
+            "why_it_matters": "Layer transitions without nearby ground stitching can force return current to spread and increase EMI.",
+            "suggested_actions": [],
+            "trigger_condition": "A fast or noisy net exceeded the switch-trace threshold and changed layers without nearby ground-via support.",
+            "threshold_label": "Maximum unsupported transition radius 3.00 units",
+            "observed_label": "Observed unsupported transitions 2",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "emi_emc",
+            "category": "emi_emc",
+            "severity": "high",
+            "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+            "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "unsupported_vias": 2,
+                "return_via_radius": 3.0,
+                "trace_length": 118.2
+            },
+            "confidence": 0.82,
+            "short_title": "Weak EMC containment across layer changes",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "emi",
+            "why_it_matters": "Layer transitions without nearby ground stitching can force return current to spread and increase EMI.",
+            "suggested_actions": [],
+            "trigger_condition": "A fast or noisy net exceeded the switch-trace threshold and changed layers without nearby ground-via support.",
+            "threshold_label": "Maximum unsupported transition radius 3.00 units",
+            "observed_label": "Observed unsupported transitions 2",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "manufacturability",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CLK uses a trace width below the fab-oriented limit (0.12)",
+            "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+            "components": [],
+            "nets": [
+                "CLK"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_width": 0.12,
+                "threshold": 0.15
+            },
+            "confidence": 0.9,
+            "short_title": "Trace width below fab target",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+            "suggested_actions": [],
+            "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+            "threshold_label": "Minimum manufacturable width 0.15",
+            "observed_label": "Observed trace width 0.12",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "net_length",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net USB_DP has a long path between J1 and U1 (84.02 units)",
+            "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 84.02,
+                "threshold": 25.0,
+                "is_critical_net": false
+            },
+            "confidence": 0.78,
+            "short_title": "Long net path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Shorten the net path from 84.02 toward 25.0 or below by improving placement or route topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "net_length",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net USB_DN has a long path between J1 and U1 (84.02 units)",
+            "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 84.02,
+                "threshold": 25.0,
+                "is_critical_net": false
+            },
+            "confidence": 0.78,
+            "short_title": "Long net path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Shorten the net path from 84.02 toward 25.0 or below by improving placement or route topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_connectivity",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "J1 has ground but no visible power rail",
+            "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "USB_DP",
+                "VBUS",
+                "GND",
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "observed_component_nets": [
+                    "USB_DP",
+                    "VBUS",
+                    "GND",
+                    "USB_DN"
+                ],
+                "has_power": false,
+                "has_ground": true
+            },
+            "confidence": 0.7,
+            "short_title": "Ground without power",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_connectivity",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "U1 has ground but no visible power rail",
+            "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "USB_DP",
+                "CLK",
+                "GND",
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "observed_component_nets": [
+                    "USB_DP",
+                    "CLK",
+                    "GND",
+                    "USB_DN"
+                ],
+                "has_power": false,
+                "has_ground": true
+            },
+            "confidence": 0.7,
+            "short_title": "Ground without power",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_connectivity",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "Y1 has ground but no visible power rail",
+            "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+            "components": [
+                "Y1"
+            ],
+            "nets": [
+                "CLK",
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "observed_component_nets": [
+                    "CLK",
+                    "GND"
+                ],
+                "has_power": false,
+                "has_ground": true
+            },
+            "confidence": 0.7,
+            "short_title": "Ground without power",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "",
+            "threshold_label": "",
+            "observed_label": "",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "power_path_realism",
+            "category": "power_integrity",
+            "severity": "medium",
+            "message": "High-current net VBUS uses a long routed path",
+            "recommendation": "Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "VBUS"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.02,
+                "threshold": 40.0
+            },
+            "confidence": 0.76,
+            "short_title": "Long high-current path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "power",
+            "why_it_matters": "Longer high-current routes add drop, loop inductance, and dynamic noise in power delivery paths.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-current net exceeded the configured maximum routed-length threshold.",
+            "threshold_label": "Maximum high-current path length 40.00 units",
+            "observed_label": "Observed routed length 84.02 units",
+            "explanation": {
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "reliability",
+            "category": "reliability",
+            "severity": "medium",
+            "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+            "recommendation": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_via_count": 0,
+                "threshold": 2,
+                "board_layers": 2
+            },
+            "confidence": 0.82,
+            "short_title": "Sparse ground stitching",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "reliability",
+            "why_it_matters": "Weak ground stitching can reduce return-path quality and board robustness outside ideal lab conditions.",
+            "suggested_actions": [],
+            "trigger_condition": "Ground via count fell below the configured minimum stitching threshold for a multi-layer board.",
+            "threshold_label": "Minimum ground vias 2",
+            "observed_label": "Observed ground vias 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "reliability",
+            "category": "reliability",
+            "severity": "medium",
+            "message": "Ground net GND has limited visible connectivity (3 connections)",
+            "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+            "components": [],
+            "nets": [
+                "GND"
+            ],
+            "region": null,
+            "metrics": {
+                "ground_connections": 3,
+                "threshold": 4
+            },
+            "confidence": 0.74,
+            "short_title": "Weak visible ground coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "reliability",
+            "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+            "suggested_actions": [],
+            "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+            "threshold_label": "Minimum ground connections 4",
+            "observed_label": "Observed ground connections 3",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74
+            },
+            "fix_suggestion": {
+                "fix": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "safety_high_voltage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
+            "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+            "components": [
+                "J1",
+                "J1"
+            ],
+            "nets": [
+                "VBUS",
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "clearance": 1.8,
+                "min_clearance": 2.5
+            },
+            "confidence": 0.83,
+            "short_title": "High-voltage clearance risk",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Clearance shortfalls in elevated-voltage regions can create direct insulation and safety failures.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-voltage pad-to-pad spacing fell below the configured clearance threshold.",
+            "threshold_label": "Minimum clearance 2.50 units",
+            "observed_label": "Observed nearest clearance 1.80 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.83
+            },
+            "fix_suggestion": {
+                "fix": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net USB_DP has a long signal path between J1 and U1 (84.02 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 84.02,
+                "threshold": 25.0
+            },
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+            "threshold_label": "Maximum signal path distance 25.00 units",
+            "observed_label": "Observed signal path distance 84.02 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Reduce the signal path length from 84.02 to at or below 25.0 by improving placement or rerouting.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "signal_path",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net USB_DN has a long signal path between J1 and U1 (84.02 units)",
+            "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "distance": 84.02,
+                "threshold": 25.0
+            },
+            "confidence": 0.82,
+            "short_title": "Long signal path",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "",
+            "suggested_actions": [],
+            "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+            "threshold_label": "Maximum signal path distance 25.00 units",
+            "observed_label": "Observed signal path distance 84.02 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Reduce the signal path length from 84.02 to at or below 25.0 by improving placement or rerouting.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "stackup_return_path",
+            "category": "stackup_return_path",
+            "severity": "medium",
+            "message": "Critical net USB_DP is long for a two-layer style stackup",
+            "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.67,
+                "threshold": 28.0,
+                "copper_layers": 2
+            },
+            "confidence": 0.7,
+            "short_title": "Limited stackup for critical routing",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "stackup",
+            "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+            "suggested_actions": [],
+            "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+            "threshold_label": "Maximum two-layer critical length 28.00 units",
+            "observed_label": "Observed critical routed length 84.67 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "stackup_return_path",
+            "category": "stackup_return_path",
+            "severity": "high",
+            "message": "Critical net USB_DP changes layers without nearby ground-return stitching",
+            "recommendation": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "unsupported_vias": 2,
+                "signal_via_ground_radius": 3.5
+            },
+            "confidence": 0.84,
+            "short_title": "Return-path support missing at signal transitions",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "stackup",
+            "why_it_matters": "Signal vias without nearby return stitching can break reference continuity and worsen both signal integrity and EMI.",
+            "suggested_actions": [],
+            "trigger_condition": "Critical-net vias were found outside the configured ground-stitch support radius.",
+            "threshold_label": "Ground-stitch support radius 3.50 units",
+            "observed_label": "Observed unsupported signal vias 2",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "stackup_return_path",
+            "category": "stackup_return_path",
+            "severity": "medium",
+            "message": "Critical net USB_DN is long for a two-layer style stackup",
+            "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 118.2,
+                "threshold": 28.0,
+                "copper_layers": 2
+            },
+            "confidence": 0.7,
+            "short_title": "Limited stackup for critical routing",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "stackup",
+            "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+            "suggested_actions": [],
+            "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+            "threshold_label": "Maximum two-layer critical length 28.00 units",
+            "observed_label": "Observed critical routed length 118.20 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "stackup_return_path",
+            "category": "stackup_return_path",
+            "severity": "high",
+            "message": "Critical net USB_DN changes layers without nearby ground-return stitching",
+            "recommendation": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "unsupported_vias": 2,
+                "signal_via_ground_radius": 3.5
+            },
+            "confidence": 0.84,
+            "short_title": "Return-path support missing at signal transitions",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "stackup",
+            "why_it_matters": "Signal vias without nearby return stitching can break reference continuity and worsen both signal integrity and EMI.",
+            "suggested_actions": [],
+            "trigger_condition": "Critical-net vias were found outside the configured ground-stitch support radius.",
+            "threshold_label": "Ground-stitch support radius 3.50 units",
+            "observed_label": "Observed unsupported signal vias 2",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.84
+            },
+            "fix_suggestion": {
+                "fix": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net VBUS has a long total routed trace length (84.02 units)",
+            "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+            "components": [],
+            "nets": [
+                "VBUS"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.02380615040002,
+                "threshold": 60.0
+            },
+            "confidence": 0.78,
+            "short_title": "Long routed signal length",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+            "suggested_actions": [
+                "Shorten the overall routing path.",
+                "Reduce unnecessary detours.",
+                "Review whether this net should be treated as timing- or noise-sensitive."
+            ],
+            "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+            "threshold_label": "Maximum signal trace length 60.00 units",
+            "observed_label": "Observed trace length 84.02 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Reduce total routed trace length from 84.02380615040002 toward or below 60.0 by tightening placement and simplifying the route.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net USB_DP has a long total routed trace length (84.67 units)",
+            "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+            "components": [],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.67372197262105,
+                "threshold": 60.0
+            },
+            "confidence": 0.78,
+            "short_title": "Long routed signal length",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+            "suggested_actions": [
+                "Shorten the overall routing path.",
+                "Reduce unnecessary detours.",
+                "Review whether this net should be treated as timing- or noise-sensitive."
+            ],
+            "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+            "threshold_label": "Maximum signal trace length 60.00 units",
+            "observed_label": "Observed trace length 84.67 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Reduce total routed trace length from 84.67372197262105 toward or below 60.0 by tightening placement and simplifying the route.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "signal_integrity",
+            "severity": "medium",
+            "message": "Net USB_DN has a long total routed trace length (118.20 units)",
+            "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+            "components": [],
+            "nets": [
+                "USB_DN"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 118.2,
+                "threshold": 60.0
+            },
+            "confidence": 0.78,
+            "short_title": "Long routed signal length",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "signal",
+            "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+            "suggested_actions": [
+                "Shorten the overall routing path.",
+                "Reduce unnecessary detours.",
+                "Review whether this net should be treated as timing- or noise-sensitive."
+            ],
+            "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+            "threshold_label": "Maximum signal trace length 60.00 units",
+            "observed_label": "Observed trace length 118.20 units",
+            "explanation": {
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78
+            },
+            "fix_suggestion": {
+                "fix": "Reduce total routed trace length from 118.2 toward or below 60.0 by tightening placement and simplifying the route.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "trace_quality",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Net CLK contains a very narrow trace (0.12)",
+            "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+            "components": [],
+            "nets": [
+                "CLK"
+            ],
+            "region": null,
+            "metrics": {
+                "min_trace_width": 0.12,
+                "threshold": 0.15
+            },
+            "confidence": 0.83,
+            "short_title": "Very narrow trace",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "layout",
+            "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+            "suggested_actions": [
+                "Increase trace width if routing space allows.",
+                "Check board-house minimum trace capability.",
+                "Review whether this narrow section is intentional."
+            ],
+            "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+            "threshold_label": "Minimum general trace width 0.15",
+            "observed_label": "Observed trace width 0.12",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.83
+            },
+            "fix_suggestion": {
+                "fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 100.0,
+        "start_score_raw_10": 10.0,
+        "total_penalty": 146.0,
+        "total_penalty_raw_10": 14.6,
+        "severity_totals": {
+            "medium": 10.4,
+            "high": 3.0,
+            "critical": 1.2
+        },
+        "category_totals": {
+            "assembly_testability": 2.0,
+            "component_design": 0.8,
+            "power_integrity": 2.0,
+            "high_speed": 0.6,
+            "emi_emc": 1.6,
+            "manufacturing": 0.8,
+            "signal_integrity": 2.8,
+            "reliability": 0.8,
+            "safety_high_voltage": 1.2,
+            "stackup_return_path": 2.0
+        },
+        "final_score": 0.0,
+        "final_score_raw_10": 0.0,
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Critical or debug-oriented net USB_DP has no visible test point",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72,
+                "suggested_fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Critical or debug-oriented net USB_DN has no visible test point",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72,
+                "suggested_fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Critical or debug-oriented net CLK has no visible test point",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.72,
+                "suggested_fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "component_design",
+                "penalty": 0.4,
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7,
+                "suggested_fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "component_design",
+                "penalty": 0.4,
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7,
+                "suggested_fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "U1 (mcu) has no nearby decoupling capacitor",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.9,
+                "suggested_fix": "Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "high_speed",
+                "penalty": 0.6,
+                "message": "Differential pair USB has a length mismatch of 33.53 units",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Length-match the positive and negative pair routes more closely to reduce skew.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "emi_emc",
+                "penalty": 0.4,
+                "message": "Switching or power net VBUS forms a long exposed loop path",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74,
+                "suggested_fix": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "emi_emc",
+                "penalty": 0.6,
+                "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82,
+                "suggested_fix": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "emi_emc",
+                "penalty": 0.6,
+                "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82,
+                "suggested_fix": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "penalty": 0.4,
+                "message": "Net CLK uses a trace width below the fab-oriented limit (0.12)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.9,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net USB_DP has a long path between J1 and U1 (84.02 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Shorten the net path from 84.02 toward 25.0 or below by improving placement or route topology.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net USB_DN has a long path between J1 and U1 (84.02 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Shorten the net path from 84.02 toward 25.0 or below by improving placement or route topology.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "J1 has ground but no visible power rail",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7,
+                "suggested_fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "U1 has ground but no visible power rail",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7,
+                "suggested_fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "Y1 has ground but no visible power rail",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.7,
+                "suggested_fix": "Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "power_integrity",
+                "penalty": 0.4,
+                "message": "High-current net VBUS uses a long routed path",
+                "root_cause": "Power delivery path impedance or placement issue",
+                "impact": "Voltage drop, instability, or noise",
+                "confidence": 0.76,
+                "suggested_fix": "Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "reliability",
+                "penalty": 0.4,
+                "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.82,
+                "suggested_fix": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "reliability",
+                "penalty": 0.4,
+                "message": "Ground net GND has limited visible connectivity (3 connections)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.74,
+                "suggested_fix": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.83,
+                "suggested_fix": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net USB_DP has a long signal path between J1 and U1 (84.02 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82,
+                "suggested_fix": "Reduce the signal path length from 84.02 to at or below 25.0 by improving placement or rerouting.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net USB_DN has a long signal path between J1 and U1 (84.02 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.82,
+                "suggested_fix": "Reduce the signal path length from 84.02 to at or below 25.0 by improving placement or rerouting.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "stackup_return_path",
+                "penalty": 0.4,
+                "message": "Critical net USB_DP is long for a two-layer style stackup",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7,
+                "suggested_fix": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "stackup_return_path",
+                "penalty": 0.6,
+                "message": "Critical net USB_DP changes layers without nearby ground-return stitching",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.84,
+                "suggested_fix": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "stackup_return_path",
+                "penalty": 0.4,
+                "message": "Critical net USB_DN is long for a two-layer style stackup",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7,
+                "suggested_fix": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "stackup_return_path",
+                "penalty": 0.6,
+                "message": "Critical net USB_DN changes layers without nearby ground-return stitching",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.84,
+                "suggested_fix": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net VBUS has a long total routed trace length (84.02 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Reduce total routed trace length from 84.02380615040002 toward or below 60.0 by tightening placement and simplifying the route.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net USB_DP has a long total routed trace length (84.67 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Reduce total routed trace length from 84.67372197262105 toward or below 60.0 by tightening placement and simplifying the route.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "signal_integrity",
+                "penalty": 0.4,
+                "message": "Net USB_DN has a long total routed trace length (118.20 units)",
+                "root_cause": "Signal path geometry or routing issue",
+                "impact": "Timing errors or signal degradation",
+                "confidence": 0.78,
+                "suggested_fix": "Reduce total routed trace length from 118.2 toward or below 60.0 by tightening placement and simplifying the route.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "penalty": 0.4,
+                "message": "Net CLK contains a very narrow trace (0.12)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.83,
+                "suggested_fix": "Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "high_speed_pair_bad.kicad_pcb",
+        "component_count": 3,
+        "net_count": 5,
+        "sample_components": [
+            "J1",
+            "U1",
+            "Y1"
+        ],
+        "risk_count": 32,
+        "severity_counts": {
+            "medium": 26,
+            "high": 5,
+            "critical": 1
+        },
+        "category_counts": {
+            "assembly_testability": 5,
+            "component_design": 2,
+            "power_integrity": 5,
+            "high_speed": 1,
+            "emi_emc": 3,
+            "manufacturing": 2,
+            "signal_integrity": 7,
+            "reliability": 2,
+            "safety_high_voltage": 1,
+            "stackup_return_path": 4
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "high_speed_pair_bad.kicad_pcb",
+        "layers": [
+            "B.Cu",
+            "F.Cu"
+        ],
+        "board_bounds": {
+            "min_x": 8.0,
+            "max_x": 92.0,
+            "min_y": 18.0,
+            "max_y": 41.0,
+            "width": 84.0,
+            "height": 23.0
+        },
+        "board_width": 84.0,
+        "board_height": 23.0,
+        "source_format": "kicad_pcb",
+        "components": [
+            {
+                "ref": "J1",
+                "value": "usb_c",
+                "x": 8.0,
+                "y": 20.0,
+                "layer": "F.Cu",
+                "type": "connector",
+                "footprint": "USB_Connector",
+                "rotation": 0.0,
+                "net_name": "VBUS",
+                "net_names": [
+                    "VBUS",
+                    "USB_DP",
+                    "USB_DN",
+                    "GND"
+                ],
+                "connected_nets": [
+                    "VBUS",
+                    "USB_DP",
+                    "USB_DN",
+                    "GND"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "J1",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "VBUS",
+                        "x": 8.0,
+                        "y": 20.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.0
+                    },
+                    {
+                        "component_ref": "J1",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "USB_DP",
+                        "x": 8.0,
+                        "y": 21.8,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "component_ref": "J1",
+                        "pad_name": "3",
+                        "pad_number": "3",
+                        "net_name": "USB_DN",
+                        "x": 8.0,
+                        "y": 23.6,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "component_ref": "J1",
+                        "pad_name": "4",
+                        "pad_number": "4",
+                        "net_name": "GND",
+                        "x": 8.0,
+                        "y": 25.4,
+                        "layer": "F.Cu",
+                        "size_x": 1.2,
+                        "size_y": 1.0
+                    }
+                ]
+            },
+            {
+                "ref": "U1",
+                "value": "mcu",
+                "x": 92.0,
+                "y": 22.0,
+                "layer": "F.Cu",
+                "type": "ic",
+                "footprint": "MCU",
+                "rotation": 0.0,
+                "net_name": "USB_DP",
+                "net_names": [
+                    "USB_DP",
+                    "USB_DN",
+                    "GND",
+                    "CLK"
+                ],
+                "connected_nets": [
+                    "USB_DP",
+                    "USB_DN",
+                    "GND",
+                    "CLK"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "USB_DP",
+                        "x": 92.0,
+                        "y": 22.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.1,
+                        "size_y": 1.1
+                    },
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "USB_DN",
+                        "x": 92.0,
+                        "y": 24.2,
+                        "layer": "F.Cu",
+                        "size_x": 1.1,
+                        "size_y": 1.1
+                    },
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "3",
+                        "pad_number": "3",
+                        "net_name": "GND",
+                        "x": 92.0,
+                        "y": 26.4,
+                        "layer": "F.Cu",
+                        "size_x": 1.1,
+                        "size_y": 1.1
+                    },
+                    {
+                        "component_ref": "U1",
+                        "pad_name": "4",
+                        "pad_number": "4",
+                        "net_name": "CLK",
+                        "x": 92.0,
+                        "y": 28.6,
+                        "layer": "F.Cu",
+                        "size_x": 1.1,
+                        "size_y": 1.1
+                    }
+                ]
+            },
+            {
+                "ref": "Y1",
+                "value": "24MHz",
+                "x": 78.0,
+                "y": 36.0,
+                "layer": "F.Cu",
+                "type": "unknown",
+                "footprint": "Crystal",
+                "rotation": 0.0,
+                "net_name": "CLK",
+                "net_names": [
+                    "CLK",
+                    "GND"
+                ],
+                "connected_nets": [
+                    "CLK",
+                    "GND"
+                ],
+                "pads": [
+                    {
+                        "component_ref": "Y1",
+                        "pad_name": "1",
+                        "pad_number": "1",
+                        "net_name": "CLK",
+                        "x": 78.0,
+                        "y": 36.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    },
+                    {
+                        "component_ref": "Y1",
+                        "pad_name": "2",
+                        "pad_number": "2",
+                        "net_name": "GND",
+                        "x": 80.0,
+                        "y": 36.0,
+                        "layer": "F.Cu",
+                        "size_x": 1.0,
+                        "size_y": 1.0
+                    }
+                ]
+            }
+        ],
+        "nets": {
+            "VBUS": {
+                "name": "VBUS",
+                "connections": [
+                    [
+                        "J1",
+                        "1"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "VBUS",
+                        "x1": 8.0,
+                        "y1": 20.0,
+                        "x2": 92.0,
+                        "y2": 18.0,
+                        "width": 0.25,
+                        "layer": "F.Cu",
+                        "length": 84.0238
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 84.0238,
+                "min_trace_width": 0.25,
+                "max_trace_width": 0.25,
+                "via_count": 0,
+                "layer_count": 1
+            },
+            "USB_DP": {
+                "name": "USB_DP",
+                "connections": [
+                    [
+                        "J1",
+                        "2"
+                    ],
+                    [
+                        "U1",
+                        "1"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "USB_DP",
+                        "x1": 8.0,
+                        "y1": 21.8,
+                        "x2": 26.0,
+                        "y2": 21.8,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 18.0
+                    },
+                    {
+                        "net_name": "USB_DP",
+                        "x1": 26.0,
+                        "y1": 21.8,
+                        "x2": 52.0,
+                        "y2": 26.5,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 26.4214
+                    },
+                    {
+                        "net_name": "USB_DP",
+                        "x1": 52.0,
+                        "y1": 26.5,
+                        "x2": 92.0,
+                        "y2": 22.0,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 40.2523
+                    }
+                ],
+                "vias": [
+                    {
+                        "net_name": "USB_DP",
+                        "x": 30.0,
+                        "y": 22.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "USB_DP",
+                        "x": 54.0,
+                        "y": 26.5,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    }
+                ],
+                "total_trace_length": 84.6737,
+                "min_trace_width": 0.18,
+                "max_trace_width": 0.18,
+                "via_count": 2,
+                "layer_count": 2
+            },
+            "USB_DN": {
+                "name": "USB_DN",
+                "connections": [
+                    [
+                        "J1",
+                        "3"
+                    ],
+                    [
+                        "U1",
+                        "2"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "USB_DN",
+                        "x1": 8.0,
+                        "y1": 23.6,
+                        "x2": 22.0,
+                        "y2": 23.6,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 14.0
+                    },
+                    {
+                        "net_name": "USB_DN",
+                        "x1": 22.0,
+                        "y1": 23.6,
+                        "x2": 22.0,
+                        "y2": 41.0,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 17.4
+                    },
+                    {
+                        "net_name": "USB_DN",
+                        "x1": 22.0,
+                        "y1": 41.0,
+                        "x2": 64.0,
+                        "y2": 41.0,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 42.0
+                    },
+                    {
+                        "net_name": "USB_DN",
+                        "x1": 64.0,
+                        "y1": 41.0,
+                        "x2": 64.0,
+                        "y2": 24.2,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 16.8
+                    },
+                    {
+                        "net_name": "USB_DN",
+                        "x1": 64.0,
+                        "y1": 24.2,
+                        "x2": 92.0,
+                        "y2": 24.2,
+                        "width": 0.18,
+                        "layer": "F.Cu",
+                        "length": 28.0
+                    }
+                ],
+                "vias": [
+                    {
+                        "net_name": "USB_DN",
+                        "x": 22.0,
+                        "y": 30.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    },
+                    {
+                        "net_name": "USB_DN",
+                        "x": 64.0,
+                        "y": 33.0,
+                        "drill": 0.4,
+                        "diameter": 0.8,
+                        "layers": [
+                            "F.Cu",
+                            "B.Cu"
+                        ]
+                    }
+                ],
+                "total_trace_length": 118.2,
+                "min_trace_width": 0.18,
+                "max_trace_width": 0.18,
+                "via_count": 2,
+                "layer_count": 2
+            },
+            "GND": {
+                "name": "GND",
+                "connections": [
+                    [
+                        "J1",
+                        "4"
+                    ],
+                    [
+                        "U1",
+                        "3"
+                    ],
+                    [
+                        "Y1",
+                        "2"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "GND",
+                        "x1": 8.0,
+                        "y1": 25.4,
+                        "x2": 92.0,
+                        "y2": 26.4,
+                        "width": 0.2,
+                        "layer": "F.Cu",
+                        "length": 84.006
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 84.006,
+                "min_trace_width": 0.2,
+                "max_trace_width": 0.2,
+                "via_count": 0,
+                "layer_count": 1
+            },
+            "CLK": {
+                "name": "CLK",
+                "connections": [
+                    [
+                        "U1",
+                        "4"
+                    ],
+                    [
+                        "Y1",
+                        "1"
+                    ]
+                ],
+                "trace_segments": [
+                    {
+                        "net_name": "CLK",
+                        "x1": 78.0,
+                        "y1": 36.0,
+                        "x2": 92.0,
+                        "y2": 28.6,
+                        "width": 0.12,
+                        "layer": "F.Cu",
+                        "length": 15.8354
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 15.8354,
+                "min_trace_width": 0.12,
+                "max_trace_width": 0.12,
+                "via_count": 0,
+                "layer_count": 1
+            }
+        },
+        "traces": [
+            {
+                "net_name": "USB_DP",
+                "x1": 8.0,
+                "y1": 21.8,
+                "x2": 26.0,
+                "y2": 21.8,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 18.0
+            },
+            {
+                "net_name": "USB_DP",
+                "x1": 26.0,
+                "y1": 21.8,
+                "x2": 52.0,
+                "y2": 26.5,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 26.4214
+            },
+            {
+                "net_name": "USB_DP",
+                "x1": 52.0,
+                "y1": 26.5,
+                "x2": 92.0,
+                "y2": 22.0,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 40.2523
+            },
+            {
+                "net_name": "USB_DN",
+                "x1": 8.0,
+                "y1": 23.6,
+                "x2": 22.0,
+                "y2": 23.6,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 14.0
+            },
+            {
+                "net_name": "USB_DN",
+                "x1": 22.0,
+                "y1": 23.6,
+                "x2": 22.0,
+                "y2": 41.0,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 17.4
+            },
+            {
+                "net_name": "USB_DN",
+                "x1": 22.0,
+                "y1": 41.0,
+                "x2": 64.0,
+                "y2": 41.0,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 42.0
+            },
+            {
+                "net_name": "USB_DN",
+                "x1": 64.0,
+                "y1": 41.0,
+                "x2": 64.0,
+                "y2": 24.2,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 16.8
+            },
+            {
+                "net_name": "USB_DN",
+                "x1": 64.0,
+                "y1": 24.2,
+                "x2": 92.0,
+                "y2": 24.2,
+                "width": 0.18,
+                "layer": "F.Cu",
+                "length": 28.0
+            },
+            {
+                "net_name": "CLK",
+                "x1": 78.0,
+                "y1": 36.0,
+                "x2": 92.0,
+                "y2": 28.6,
+                "width": 0.12,
+                "layer": "F.Cu",
+                "length": 15.8354
+            },
+            {
+                "net_name": "GND",
+                "x1": 8.0,
+                "y1": 25.4,
+                "x2": 92.0,
+                "y2": 26.4,
+                "width": 0.2,
+                "layer": "F.Cu",
+                "length": 84.006
+            },
+            {
+                "net_name": "VBUS",
+                "x1": 8.0,
+                "y1": 20.0,
+                "x2": 92.0,
+                "y2": 18.0,
+                "width": 0.25,
+                "layer": "F.Cu",
+                "length": 84.0238
+            }
+        ],
+        "vias": [
+            {
+                "net_name": "USB_DP",
+                "x": 30.0,
+                "y": 22.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "USB_DP",
+                "x": 54.0,
+                "y": 26.5,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "USB_DN",
+                "x": 22.0,
+                "y": 30.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            },
+            {
+                "net_name": "USB_DN",
+                "x": 64.0,
+                "y": 33.0,
+                "drill": 0.4,
+                "diameter": 0.8,
+                "layers": [
+                    "F.Cu",
+                    "B.Cu"
+                ]
+            }
+        ],
+        "zones": [],
+        "outline_segments": []
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "high_speed_pair_bad.kicad_pcb",
+        "timestamp": "2026-04-15T08:00:19.376874+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Critical or debug-oriented net USB_DP has no visible test point",
+                "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "has_testpoint": false
+                },
+                "confidence": 0.72,
+                "short_title": "Missing critical-net test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+                "suggested_actions": [],
+                "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+                "threshold_label": "Expected at least one visible access point on critical nets",
+                "observed_label": "Observed visible access point: none"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Critical or debug-oriented net USB_DN has no visible test point",
+                "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "has_testpoint": false
+                },
+                "confidence": 0.72,
+                "short_title": "Missing critical-net test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+                "suggested_actions": [],
+                "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+                "threshold_label": "Expected at least one visible access point on critical nets",
+                "observed_label": "Observed visible access point: none"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Critical or debug-oriented net CLK has no visible test point",
+                "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+                "components": [
+                    "U1",
+                    "Y1"
+                ],
+                "nets": [
+                    "CLK"
+                ],
+                "region": null,
+                "metrics": {
+                    "has_testpoint": false
+                },
+                "confidence": 0.72,
+                "short_title": "Missing critical-net test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+                "suggested_actions": [],
+                "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+                "threshold_label": "Expected at least one visible access point on critical nets",
+                "observed_label": "Observed visible access point: none"
+            },
+            {
+                "rule_id": "component_analysis",
+                "category": "component_design",
+                "severity": "medium",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.67,
+                    "threshold": 18.0,
+                    "has_resistor": false
+                },
+                "confidence": 0.7,
+                "short_title": "Possible missing signal termination",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "component",
+                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+                "threshold_label": "Termination review length 18.00 units",
+                "observed_label": "Observed route length 84.67 units"
+            },
+            {
+                "rule_id": "component_analysis",
+                "category": "component_design",
+                "severity": "medium",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 118.2,
+                    "threshold": 18.0,
+                    "has_resistor": false
+                },
+                "confidence": 0.7,
+                "short_title": "Possible missing signal termination",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "component",
+                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+                "threshold_label": "Termination review length 18.00 units",
+                "observed_label": "Observed route length 118.20 units"
+            },
+            {
+                "rule_id": "decoupling",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U1 (mcu) has no nearby decoupling capacitor",
+                "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+                "components": [
+                    "U1",
+                    "J1"
+                ],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "nearest_cap_distance": 84.02,
+                    "threshold": 4.0
+                },
+                "confidence": 0.9,
+                "short_title": "Missing nearby decoupling",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+                "threshold_label": "Maximum decoupling distance 4.00 units",
+                "observed_label": "Observed nearest capacitor distance 84.02 units"
+            },
+            {
+                "rule_id": "differential_pair",
+                "category": "high_speed",
+                "severity": "high",
+                "message": "Differential pair USB has a length mismatch of 33.53 units",
+                "recommendation": "Length-match the positive and negative pair routes more closely to reduce skew.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "positive_length": 84.67,
+                    "negative_length": 118.2,
+                    "length_mismatch": 33.53,
+                    "threshold": 5.0
+                },
+                "confidence": 0.9,
+                "short_title": "Differential pair skew risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "signal",
+                "why_it_matters": "Differential pair skew can collapse timing margin and degrade signal integrity on high-speed links.",
+                "suggested_actions": [],
+                "trigger_condition": "Differential-pair route length mismatch exceeded the configured skew threshold.",
+                "threshold_label": "Maximum pair mismatch 5.00 units",
+                "observed_label": "Observed pair mismatch 33.53 units"
+            },
+            {
+                "rule_id": "emi_emc",
+                "category": "emi_emc",
+                "severity": "medium",
+                "message": "Switching or power net VBUS forms a long exposed loop path",
+                "recommendation": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "VBUS"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.02,
+                    "max_loop_length": 45.0,
+                    "via_count": 0
+                },
+                "confidence": 0.74,
+                "short_title": "Large switching loop area",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "emi",
+                "why_it_matters": "Large current loops increase magnetic field radiation and make noisy power stages harder to contain.",
+                "suggested_actions": [],
+                "trigger_condition": "A switching or power-oriented net exceeded the configured loop-length threshold.",
+                "threshold_label": "Maximum switching loop length 45.00 units",
+                "observed_label": "Observed routed length 84.02 units"
+            },
+            {
+                "rule_id": "emi_emc",
+                "category": "emi_emc",
+                "severity": "high",
+                "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "unsupported_vias": 2,
+                    "return_via_radius": 3.0,
+                    "trace_length": 84.67
+                },
+                "confidence": 0.82,
+                "short_title": "Weak EMC containment across layer changes",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "emi",
+                "why_it_matters": "Layer transitions without nearby ground stitching can force return current to spread and increase EMI.",
+                "suggested_actions": [],
+                "trigger_condition": "A fast or noisy net exceeded the switch-trace threshold and changed layers without nearby ground-via support.",
+                "threshold_label": "Maximum unsupported transition radius 3.00 units",
+                "observed_label": "Observed unsupported transitions 2"
+            },
+            {
+                "rule_id": "emi_emc",
+                "category": "emi_emc",
+                "severity": "high",
+                "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "unsupported_vias": 2,
+                    "return_via_radius": 3.0,
+                    "trace_length": 118.2
+                },
+                "confidence": 0.82,
+                "short_title": "Weak EMC containment across layer changes",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "emi",
+                "why_it_matters": "Layer transitions without nearby ground stitching can force return current to spread and increase EMI.",
+                "suggested_actions": [],
+                "trigger_condition": "A fast or noisy net exceeded the switch-trace threshold and changed layers without nearby ground-via support.",
+                "threshold_label": "Maximum unsupported transition radius 3.00 units",
+                "observed_label": "Observed unsupported transitions 2"
+            },
+            {
+                "rule_id": "manufacturability",
+                "category": "manufacturing",
+                "severity": "medium",
+                "message": "Net CLK uses a trace width below the fab-oriented limit (0.12)",
+                "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+                "components": [],
+                "nets": [
+                    "CLK"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_width": 0.12,
+                    "threshold": 0.15
+                },
+                "confidence": 0.9,
+                "short_title": "Trace width below fab target",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+                "suggested_actions": [],
+                "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+                "threshold_label": "Minimum manufacturable width 0.15",
+                "observed_label": "Observed trace width 0.12"
+            },
+            {
+                "rule_id": "net_length",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net USB_DP has a long path between J1 and U1 (84.02 units)",
+                "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 84.02,
+                    "threshold": 25.0,
+                    "is_critical_net": false
+                },
+                "confidence": 0.78,
+                "short_title": "Long net path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "net_length",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net USB_DN has a long path between J1 and U1 (84.02 units)",
+                "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 84.02,
+                    "threshold": 25.0,
+                    "is_critical_net": false
+                },
+                "confidence": 0.78,
+                "short_title": "Long net path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_connectivity",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "J1 has ground but no visible power rail",
+                "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "USB_DP",
+                    "VBUS",
+                    "GND",
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "observed_component_nets": [
+                        "USB_DP",
+                        "VBUS",
+                        "GND",
+                        "USB_DN"
+                    ],
+                    "has_power": false,
+                    "has_ground": true
+                },
+                "confidence": 0.7,
+                "short_title": "Ground without power",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_connectivity",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "U1 has ground but no visible power rail",
+                "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP",
+                    "CLK",
+                    "GND",
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "observed_component_nets": [
+                        "USB_DP",
+                        "CLK",
+                        "GND",
+                        "USB_DN"
+                    ],
+                    "has_power": false,
+                    "has_ground": true
+                },
+                "confidence": 0.7,
+                "short_title": "Ground without power",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_connectivity",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "Y1 has ground but no visible power rail",
+                "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+                "components": [
+                    "Y1"
+                ],
+                "nets": [
+                    "CLK",
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "observed_component_nets": [
+                        "CLK",
+                        "GND"
+                    ],
+                    "has_power": false,
+                    "has_ground": true
+                },
+                "confidence": 0.7,
+                "short_title": "Ground without power",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "",
+                "threshold_label": "",
+                "observed_label": ""
+            },
+            {
+                "rule_id": "power_path_realism",
+                "category": "power_integrity",
+                "severity": "medium",
+                "message": "High-current net VBUS uses a long routed path",
+                "recommendation": "Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "VBUS"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.02,
+                    "threshold": 40.0
+                },
+                "confidence": 0.76,
+                "short_title": "Long high-current path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "power",
+                "why_it_matters": "Longer high-current routes add drop, loop inductance, and dynamic noise in power delivery paths.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-current net exceeded the configured maximum routed-length threshold.",
+                "threshold_label": "Maximum high-current path length 40.00 units",
+                "observed_label": "Observed routed length 84.02 units"
+            },
+            {
+                "rule_id": "reliability",
+                "category": "reliability",
+                "severity": "medium",
+                "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+                "recommendation": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+                "components": [],
+                "nets": [
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "ground_via_count": 0,
+                    "threshold": 2,
+                    "board_layers": 2
+                },
+                "confidence": 0.82,
+                "short_title": "Sparse ground stitching",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "reliability",
+                "why_it_matters": "Weak ground stitching can reduce return-path quality and board robustness outside ideal lab conditions.",
+                "suggested_actions": [],
+                "trigger_condition": "Ground via count fell below the configured minimum stitching threshold for a multi-layer board.",
+                "threshold_label": "Minimum ground vias 2",
+                "observed_label": "Observed ground vias 0"
+            },
+            {
+                "rule_id": "reliability",
+                "category": "reliability",
+                "severity": "medium",
+                "message": "Ground net GND has limited visible connectivity (3 connections)",
+                "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+                "components": [],
+                "nets": [
+                    "GND"
+                ],
+                "region": null,
+                "metrics": {
+                    "ground_connections": 3,
+                    "threshold": 4
+                },
+                "confidence": 0.74,
+                "short_title": "Weak visible ground coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "reliability",
+                "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+                "suggested_actions": [],
+                "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+                "threshold_label": "Minimum ground connections 4",
+                "observed_label": "Observed ground connections 3"
+            },
+            {
+                "rule_id": "safety_high_voltage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
+                "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+                "components": [
+                    "J1",
+                    "J1"
+                ],
+                "nets": [
+                    "VBUS",
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "clearance": 1.8,
+                    "min_clearance": 2.5
+                },
+                "confidence": 0.83,
+                "short_title": "High-voltage clearance risk",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Clearance shortfalls in elevated-voltage regions can create direct insulation and safety failures.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-voltage pad-to-pad spacing fell below the configured clearance threshold.",
+                "threshold_label": "Minimum clearance 2.50 units",
+                "observed_label": "Observed nearest clearance 1.80 units"
+            },
+            {
+                "rule_id": "signal_path",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net USB_DP has a long signal path between J1 and U1 (84.02 units)",
+                "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 84.02,
+                    "threshold": 25.0
+                },
+                "confidence": 0.82,
+                "short_title": "Long signal path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+                "threshold_label": "Maximum signal path distance 25.00 units",
+                "observed_label": "Observed signal path distance 84.02 units"
+            },
+            {
+                "rule_id": "signal_path",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net USB_DN has a long signal path between J1 and U1 (84.02 units)",
+                "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "distance": 84.02,
+                    "threshold": 25.0
+                },
+                "confidence": 0.82,
+                "short_title": "Long signal path",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "",
+                "suggested_actions": [],
+                "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+                "threshold_label": "Maximum signal path distance 25.00 units",
+                "observed_label": "Observed signal path distance 84.02 units"
+            },
+            {
+                "rule_id": "stackup_return_path",
+                "category": "stackup_return_path",
+                "severity": "medium",
+                "message": "Critical net USB_DP is long for a two-layer style stackup",
+                "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.67,
+                    "threshold": 28.0,
+                    "copper_layers": 2
+                },
+                "confidence": 0.7,
+                "short_title": "Limited stackup for critical routing",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "stackup",
+                "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+                "suggested_actions": [],
+                "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+                "threshold_label": "Maximum two-layer critical length 28.00 units",
+                "observed_label": "Observed critical routed length 84.67 units"
+            },
+            {
+                "rule_id": "stackup_return_path",
+                "category": "stackup_return_path",
+                "severity": "high",
+                "message": "Critical net USB_DP changes layers without nearby ground-return stitching",
+                "recommendation": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "unsupported_vias": 2,
+                    "signal_via_ground_radius": 3.5
+                },
+                "confidence": 0.84,
+                "short_title": "Return-path support missing at signal transitions",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "stackup",
+                "why_it_matters": "Signal vias without nearby return stitching can break reference continuity and worsen both signal integrity and EMI.",
+                "suggested_actions": [],
+                "trigger_condition": "Critical-net vias were found outside the configured ground-stitch support radius.",
+                "threshold_label": "Ground-stitch support radius 3.50 units",
+                "observed_label": "Observed unsupported signal vias 2"
+            },
+            {
+                "rule_id": "stackup_return_path",
+                "category": "stackup_return_path",
+                "severity": "medium",
+                "message": "Critical net USB_DN is long for a two-layer style stackup",
+                "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 118.2,
+                    "threshold": 28.0,
+                    "copper_layers": 2
+                },
+                "confidence": 0.7,
+                "short_title": "Limited stackup for critical routing",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "stackup",
+                "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+                "suggested_actions": [],
+                "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+                "threshold_label": "Maximum two-layer critical length 28.00 units",
+                "observed_label": "Observed critical routed length 118.20 units"
+            },
+            {
+                "rule_id": "stackup_return_path",
+                "category": "stackup_return_path",
+                "severity": "high",
+                "message": "Critical net USB_DN changes layers without nearby ground-return stitching",
+                "recommendation": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "unsupported_vias": 2,
+                    "signal_via_ground_radius": 3.5
+                },
+                "confidence": 0.84,
+                "short_title": "Return-path support missing at signal transitions",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "stackup",
+                "why_it_matters": "Signal vias without nearby return stitching can break reference continuity and worsen both signal integrity and EMI.",
+                "suggested_actions": [],
+                "trigger_condition": "Critical-net vias were found outside the configured ground-stitch support radius.",
+                "threshold_label": "Ground-stitch support radius 3.50 units",
+                "observed_label": "Observed unsupported signal vias 2"
+            },
+            {
+                "rule_id": "trace_quality",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net VBUS has a long total routed trace length (84.02 units)",
+                "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+                "components": [],
+                "nets": [
+                    "VBUS"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.02380615040002,
+                    "threshold": 60.0
+                },
+                "confidence": 0.78,
+                "short_title": "Long routed signal length",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+                "suggested_actions": [
+                    "Shorten the overall routing path.",
+                    "Reduce unnecessary detours.",
+                    "Review whether this net should be treated as timing- or noise-sensitive."
+                ],
+                "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+                "threshold_label": "Maximum signal trace length 60.00 units",
+                "observed_label": "Observed trace length 84.02 units"
+            },
+            {
+                "rule_id": "trace_quality",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net USB_DP has a long total routed trace length (84.67 units)",
+                "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+                "components": [],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.67372197262105,
+                    "threshold": 60.0
+                },
+                "confidence": 0.78,
+                "short_title": "Long routed signal length",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+                "suggested_actions": [
+                    "Shorten the overall routing path.",
+                    "Reduce unnecessary detours.",
+                    "Review whether this net should be treated as timing- or noise-sensitive."
+                ],
+                "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+                "threshold_label": "Maximum signal trace length 60.00 units",
+                "observed_label": "Observed trace length 84.67 units"
+            },
+            {
+                "rule_id": "trace_quality",
+                "category": "signal_integrity",
+                "severity": "medium",
+                "message": "Net USB_DN has a long total routed trace length (118.20 units)",
+                "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+                "components": [],
+                "nets": [
+                    "USB_DN"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 118.2,
+                    "threshold": 60.0
+                },
+                "confidence": 0.78,
+                "short_title": "Long routed signal length",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "signal",
+                "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+                "suggested_actions": [
+                    "Shorten the overall routing path.",
+                    "Reduce unnecessary detours.",
+                    "Review whether this net should be treated as timing- or noise-sensitive."
+                ],
+                "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+                "threshold_label": "Maximum signal trace length 60.00 units",
+                "observed_label": "Observed trace length 118.20 units"
+            },
+            {
+                "rule_id": "trace_quality",
+                "category": "manufacturing",
+                "severity": "medium",
+                "message": "Net CLK contains a very narrow trace (0.12)",
+                "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+                "components": [],
+                "nets": [
+                    "CLK"
+                ],
+                "region": null,
+                "metrics": {
+                    "min_trace_width": 0.12,
+                    "threshold": 0.15
+                },
+                "confidence": 0.83,
+                "short_title": "Very narrow trace",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "layout",
+                "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+                "suggested_actions": [
+                    "Increase trace width if routing space allows.",
+                    "Check board-house minimum trace capability.",
+                    "Review whether this narrow section is intentional."
+                ],
+                "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+                "threshold_label": "Minimum general trace width 0.15",
+                "observed_label": "Observed trace width 0.12"
+            }
+        ],
+        "score": 0.0,
+        "total_penalty": 14.6
+    },
+    "generated_at": "2026-04-15T08:00:19.376891+00:00",
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows high design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
+                "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target."
+            },
+            {
+                "severity": "high",
+                "category": "emi_emc",
+                "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption."
+            },
+            {
+                "severity": "high",
+                "category": "emi_emc",
+                "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption."
+            }
+        ]
+    }
+}

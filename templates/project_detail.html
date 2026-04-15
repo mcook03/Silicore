@@ -191,6 +191,17 @@
                 <p class="trend-summary-copy">{{ workspace_intel.confidence_summary if workspace_intel else "No confidence summary yet." }}</p>
             </div>
         </div>
+
+        <div class="summary-strip" style="margin-top:16px;">
+            <div class="summary-panel">
+                <h3>Trend Direction</h3>
+                <p>{{ workspace_intel.trend_summary if workspace_intel else "No trend summary yet." }}</p>
+            </div>
+            <div class="summary-panel">
+                <h3>Recurring Failure Pattern</h3>
+                <p>{{ workspace_intel.recurring_family_summary if workspace_intel else "No recurring family summary yet." }}</p>
+            </div>
+        </div>
     </div>
 </section>
 </section>
@@ -335,6 +346,53 @@
             </div>
         </div>
 
+        <div class="project-trend-grid" style="margin-top:16px;">
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Confidence Timeline</span>
+                    <strong>{{ timeline.confidence_chart.last_value|round|int if timeline and timeline.confidence_chart and timeline.confidence_chart.has_data else "N/A" }}</strong>
+                </div>
+                {% if timeline and timeline.confidence_chart and timeline.confidence_chart.has_data %}
+                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
+                    {% for guide in timeline.confidence_chart.guides %}
+                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
+                    {% endfor %}
+                    {% for point in timeline.confidence_chart.points %}
+                    {% if not loop.first %}
+                    <line x1="{{ timeline.confidence_chart.points[loop.index0 - 1].x }}" y1="{{ timeline.confidence_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-confidence-line"></line>
+                    {% endif %}
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="trend-empty">No confidence timeline yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="trend-panel">
+                <div class="trend-header">
+                    <span>Timeline Readout</span>
+                    <strong>{{ timeline.score_delta|round|int if timeline else "N/A" }}</strong>
+                </div>
+                <div class="mini-bar-list">
+                    <div class="mini-bar-row">
+                        <div class="mini-bar-label">Score Delta</div>
+                        <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ [timeline.score_delta|abs * 4, 100]|min if timeline else 0 }}%;"></div></div>
+                        <div class="mini-bar-value">{{ timeline.score_delta|round(1) if timeline else "0" }}</div>
+                    </div>
+                    <div class="mini-bar-row">
+                        <div class="mini-bar-label">Risk Delta</div>
+                        <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ [timeline.risk_delta|abs * 8, 100]|min if timeline else 0 }}%;"></div></div>
+                        <div class="mini-bar-value">{{ timeline.risk_delta if timeline else 0 }}</div>
+                    </div>
+                    <div class="mini-bar-row">
+                        <div class="mini-bar-label">Confidence Delta</div>
+                        <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ [timeline.confidence_delta|abs, 100]|min if timeline else 0 }}%;"></div></div>
+                        <div class="mini-bar-value">{{ timeline.confidence_delta|round(1) if timeline else "0" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% if timeline and timeline.events %}
         <div class="timeline-list">
             {% for event in timeline.events %}
@@ -461,7 +519,7 @@
                             <span class="metric-label">Score</span>
                             <span class="metric-value">
                                 {% if run.score is not none %}
-                                    {{ (run.score * 10)|round|int }}
+                                    {{ run.score|round|int if run.score > 10 else (run.score * 10)|round|int }}
                                 {% else %}
                                     N/A
                                 {% endif %}
@@ -492,7 +550,7 @@
                         <h3>{{ "Strong" if run.score is not none and run.score >= 8 else "Watch" if run.score is not none and run.score >= 5 else "Attention" if run.score is not none else "Unscored" }}</h3>
                         <p>
                             {% if run.score is not none %}
-                                This run scored {{ (run.score * 10)|round|int }} / 100 with {{ run.risk_count if run.risk_count is not none else 0 }} total finding(s).
+                                This run scored {{ run.score|round|int if run.score > 10 else (run.score * 10)|round|int }} / 100 with {{ run.risk_count if run.risk_count is not none else 0 }} total finding(s).
                             {% else %}
                                 This run does not include a score snapshot yet.
                             {% endif %}

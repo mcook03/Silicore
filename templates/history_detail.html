@@ -27,7 +27,7 @@
                 <div class="metric-label">Score</div>
                 <div class="metric-value">
                     {% if run_detail.get("score") is not none %}
-                        {{ (run_detail.get("score", 0) * 10)|round|int }}
+                        {{ run_detail.get("score", 0)|round|int if run_detail.get("score", 0) > 10 else (run_detail.get("score", 0) * 10)|round|int }}
                     {% else %}
                         N/A
                     {% endif %}
@@ -94,6 +94,17 @@
                 {% endfor %}
             </div>
             {% endif %}
+
+            <div class="summary-strip" style="margin-top:16px;">
+                <div class="summary-panel">
+                    <h3>Review Readiness</h3>
+                    <p>{{ run_detail.export_summary.review_ready_label }} at {{ run_detail.export_summary.review_ready_score }} / 100.</p>
+                </div>
+                <div class="summary-panel">
+                    <h3>Recommended Use</h3>
+                    <p>{{ run_detail.export_summary.recommended_uses|join(', ') if run_detail.export_summary.recommended_uses else "No suggested review workflow yet." }}</p>
+                </div>
+            </div>
 
             {% if run_detail.export_summary.share_links %}
             <div class="artifact-list" style="margin-top:16px;">
@@ -182,7 +193,7 @@
                 <div class="metric-card">
                     <div class="metric-label">Final Score</div>
                     <div class="metric-value">{{ score_data.final_score }}</div>
-                    <div class="metric-sub">Final 0–10 score</div>
+                    <div class="metric-sub">Final 0–100 score</div>
                 </div>
 
                 <div class="metric-card">

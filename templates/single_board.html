@@ -414,12 +414,14 @@
                     <div class="issue-confidence-row compact-action-meta">
                         <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
                         <span class="mini-chip mini-chip-low">Priority {{ item.priority_score }}</span>
+                        <span class="mini-chip mini-chip-low">{{ item.fix_priority }}</span>
+                        <span class="mini-chip mini-chip-low">{{ item.evidence_count }} evidence point(s)</span>
                     </div>
                 </div>
                 {% endfor %}
             </div>
             <div class="small-muted" style="margin-top:12px;">
-                Showing the top two ranked actions here to keep the analysis page focused.
+                Showing the top ranked actions here to keep the analysis page focused while still surfacing what matters first.
             </div>
             {% else %}
             <div class="empty-state">No ranked next actions are available yet.</div>
@@ -893,6 +895,14 @@
 
                         {% if risk.transparency_view %}
                         <div class="risk-meta-row">
+                            <span class="risk-meta-label">Rule</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.rule_id }}</span>
+                        </div>
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Domain</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.domain }}</span>
+                        </div>
+                        <div class="risk-meta-row">
                             <span class="risk-meta-label">Trigger</span>
                             <span class="risk-meta-value">{{ risk.transparency_view.trigger }}</span>
                         </div>
@@ -901,12 +911,28 @@
                             <span class="risk-meta-value">{{ risk.transparency_view.observed_text }}</span>
                         </div>
                         <div class="risk-meta-row">
+                            <span class="risk-meta-label">Location</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.location_text }}</span>
+                        </div>
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Reasoning</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.reasoning }}</span>
+                        </div>
+                        <div class="risk-meta-row">
                             <span class="risk-meta-label">Impact</span>
                             <span class="risk-meta-value">{{ risk.transparency_view.engineering_impact }}</span>
                         </div>
                         <div class="risk-meta-row">
+                            <span class="risk-meta-label">Traceability</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.traceability_score }} / 100 · {{ risk.transparency_view.traceability_label }}</span>
+                        </div>
+                        <div class="risk-meta-row">
                             <span class="risk-meta-label">Confidence</span>
                             <span class="risk-meta-value">{{ risk.transparency_view.confidence_score }} / 100</span>
+                        </div>
+                        <div class="risk-meta-row">
+                            <span class="risk-meta-label">Fix Priority</span>
+                            <span class="risk-meta-value">{{ risk.transparency_view.fix_priority }}</span>
                         </div>
                         {% endif %}
                     </div>

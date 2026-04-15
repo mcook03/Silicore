@@ -25,7 +25,7 @@ class AnalysisServiceExportTests(unittest.TestCase):
     def test_single_analysis_writes_manifest_and_rule_transparency(self):
         output_dir = self._make_tempdir("silicore_single_test_")
         result = run_single_analysis_from_path(
-            "fixtures/power_board_bad.kicad_pcb",
+            "fixtures/mixed_signal_noise_board.kicad_pcb",
             config=self.config,
             output_dir=output_dir,
         )
@@ -41,6 +41,8 @@ class AnalysisServiceExportTests(unittest.TestCase):
             manifest = json.load(file)
         with open(analysis_path, "r", encoding="utf-8") as file:
             analysis = json.load(file)
+        with open(result["report_md_path"], "r", encoding="utf-8") as file:
+            report_markdown = file.read()
         first_risk = analysis["risks"][0]
 
         self.assertEqual(manifest["run_type"], "single")
@@ -49,13 +51,15 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertTrue(first_risk.get("trigger_condition"))
         self.assertTrue(first_risk.get("threshold_label"))
         self.assertTrue(first_risk.get("observed_label"))
+        self.assertIn("Review Readiness", report_markdown)
+        self.assertIn("Traceability:", report_markdown)
 
     def test_project_analysis_writes_manifest_and_ranked_boards(self):
         output_dir = self._make_tempdir("silicore_project_test_")
         result = analyze_project_paths(
             [
-                "fixtures/power_board_good.kicad_pcb",
-                "fixtures/power_board_bad.kicad_pcb",
+                "fixtures/high_speed_pair_bad.kicad_pcb",
+                "fixtures/mixed_signal_noise_board.kicad_pcb",
             ],
             config=self.config,
             output_dir=output_dir,
@@ -72,11 +76,15 @@ class AnalysisServiceExportTests(unittest.TestCase):
             manifest = json.load(file)
         with open(project_path, "r", encoding="utf-8") as file:
             project_summary = json.load(file)
+        with open(result["summary_md_path"], "r", encoding="utf-8") as file:
+            project_report = file.read()
 
         self.assertEqual(manifest["run_type"], "project")
         self.assertEqual(len(manifest["artifacts"]), 3)
         self.assertGreaterEqual(len(project_summary["boards"]), 2)
         self.assertEqual(project_summary["boards"][0]["rank"], 1)
+        self.assertIn("Review Readiness", project_report)
+        self.assertIn("Traceability:", project_report)
 
     def test_single_analysis_accepts_config_path_and_supports_brd_inputs(self):
         output_dir = self._make_tempdir("silicore_brd_test_")

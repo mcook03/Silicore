@@ -650,12 +650,42 @@ def _build_transparency_lines(risk):
     if metrics.get("threshold") is not None:
         observed_parts.append(f"threshold={metrics.get('threshold')}")
 
+    evidence_count = 0
+    if risk.get("components"):
+        evidence_count += len(risk.get("components") or [])
+    if risk.get("nets"):
+        evidence_count += len(risk.get("nets") or [])
+    if metrics:
+        evidence_count += len(metrics)
+    if risk.get("trigger_condition"):
+        evidence_count += 1
+    if risk.get("threshold_label"):
+        evidence_count += 1
+    if risk.get("observed_label"):
+        evidence_count += 1
+
+    traceability_score = min(
+        100,
+        20
+        + (12 if risk.get("rule_id") else 0)
+        + (12 if risk.get("trigger_condition") else 0)
+        + (12 if risk.get("threshold_label") else 0)
+        + (12 if risk.get("observed_label") else 0)
+        + (10 if metrics else 0)
+        + (8 if risk.get("components") else 0)
+        + (8 if risk.get("nets") else 0)
+        + (8 if risk.get("recommendation") else 0),
+    )
+
     return {
         "trigger": trigger,
         "observed": ", ".join(observed_parts) if observed_parts else "No measured value preserved.",
         "reasoning": explanation.get("root_cause", "General design issue"),
         "impact": explanation.get("impact", "Unknown system impact"),
         "confidence": _format_confidence_display(explanation.get("confidence")),
+        "traceability_score": traceability_score,
+        "evidence_count": evidence_count,
+        "fix_priority": str((risk.get("fix_suggestion") or {}).get("priority") or risk.get("fix_priority") or "medium").title(),
     }
 
 
@@ -695,6 +725,12 @@ def _write_single_markdown(path, result):
         "",
         "- Current production-ready inputs: `.kicad_pcb`, `.txt`",
         "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
+        "",
+        "## Review Readiness",
+        "",
+        "- Output format: engineering review packet",
+        "- Includes: score rationale, finding traceability, recommendations, and saved analysis context",
+        "- Best use: design reviews, management updates, supplier communication, and internal signoff",
         "",
     ]
 
@@ -748,6 +784,8 @@ def _write_single_markdown(path, result):
             transparency = _build_transparency_lines(risk)
             lines.append(f"- Trigger Condition: {transparency['trigger']}")
             lines.append(f"- Observed vs Threshold: {transparency['observed']}")
+            lines.append(f"- Traceability: {transparency['traceability_score']} / 100")
+            lines.append(f"- Evidence Count: {transparency['evidence_count']}")
             lines.append(f"- Engineering Impact: {transparency['impact']}")
             lines.append(f"- Trust Confidence: {transparency['confidence']}")
 
@@ -755,6 +793,8 @@ def _write_single_markdown(path, result):
             if fix_suggestion:
                 lines.append(f"- Suggested Fix: {fix_suggestion.get('fix', 'Manual review required')}")
                 lines.append(f"- Fix Priority: {fix_suggestion.get('priority', 'medium')}")
+            else:
+                lines.append(f"- Fix Priority: {transparency['fix_priority']}")
 
             if risk.get("components"):
                 lines.append(f"- Components: {', '.join(risk['components'])}")
@@ -834,6 +874,8 @@ def _write_single_html(path, result):
                 <p><strong>Recommendation:</strong> {escape(str(risk['recommendation']))}</p>
                 <p><strong>Trigger Condition:</strong> {escape(str(transparency['trigger']))}</p>
                 <p><strong>Observed vs Threshold:</strong> {escape(str(transparency['observed']))}</p>
+                <p><strong>Traceability:</strong> {escape(str(transparency['traceability_score']))} / 100</p>
+                <p><strong>Evidence Count:</strong> {escape(str(transparency['evidence_count']))}</p>
                 <p><strong>Engineering Impact:</strong> {escape(str(transparency['impact']))}</p>
                 <p><strong>Trust Confidence:</strong> {escape(str(transparency['confidence']))}</p>
                 {explanation_html}
@@ -932,6 +974,13 @@ def _write_single_html(path, result):
             </div>
 
             <div class="card">
+                <h2>Review Readiness</h2>
+                <p><strong>Output format:</strong> engineering review packet</p>
+                <p><strong>Includes:</strong> score rationale, finding traceability, recommendations, and saved analysis context</p>
+                <p><strong>Best use:</strong> design reviews, management updates, supplier communication, and internal signoff</p>
+            </div>
+
+            <div class="card">
                 <h2>Top Issues</h2>
                 {top_issues_html}
             </div>
@@ -998,6 +1047,12 @@ def _write_project_markdown(path, project_data):
         "- Current production-ready inputs: `.kicad_pcb`, `.txt`",
         "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
         "",
+        "## Review Readiness",
+        "",
+        "- Output format: project review packet",
+        "- Includes: ranked boards, project insight summary, and per-board finding traceability",
+        "- Best use: revision meetings, program reviews, and cross-board engineering prioritization",
+        "",
     ])
 
     lines.extend(["## Ranked Boards", ""])
@@ -1016,6 +1071,7 @@ def _write_project_markdown(path, project_data):
                 lines.append(f"  - Finding: {risk.get('message', 'No message')}")
                 lines.append(f"    - Trigger: {transparency['trigger']}")
                 lines.append(f"    - Observed: {transparency['observed']}")
+                lines.append(f"    - Traceability: {transparency['traceability_score']} / 100")
                 lines.append(f"    - Confidence: {transparency['confidence']}")
             lines.append("")
     else:
@@ -1100,6 +1156,11 @@ def _write_project_html(path, project_data):
             </div>
 
             {insight_html}
+
+            <div class="hero">
+                <p><strong>Review Readiness</strong></p>
+                <p>Project packet includes ranked boards, project insight summary, and per-board finding traceability for revision reviews and signoff preparation.</p>
+            </div>
 
             <div class="hero">
                 <p><strong>Parser Capability</strong></p>

@@ -731,7 +731,20 @@ def _build_risk_transparency_view(risk):
     if fix_suggestion.get("fix"):
         evidence.append(f"Suggested fix: {fix_suggestion.get('fix')}")
 
+    traceability_score = _traceability_score(risk)
+    evidence_count = _evidence_count(risk)
+    domain_name = _format_design_domain_name(risk.get("design_domain") or risk.get("category"))
+    location_text = _risk_location_summary(risk)
+    fix_priority = str(
+        (fix_suggestion.get("priority") if isinstance(fix_suggestion, dict) else None)
+        or risk.get("fix_priority")
+        or "medium"
+    ).replace("_", " ").title()
+
     return {
+        "rule_id": str(risk.get("rule_id") or "rule").upper(),
+        "category": category,
+        "domain": domain_name,
         "trigger": trigger,
         "threshold": threshold,
         "observed_value": observed,
@@ -741,6 +754,12 @@ def _build_risk_transparency_view(risk):
         "confidence_score": confidence,
         "confidence_band": _confidence_band(confidence),
         "evidence": evidence,
+        "evidence_count": evidence_count,
+        "location_text": location_text,
+        "traceability_score": traceability_score,
+        "traceability_label": _traceability_label(traceability_score),
+        "fix_priority": fix_priority,
+        "audit_summary": f"{domain_name} finding with {evidence_count} preserved evidence point(s).",
         "message": message,
     }
 
@@ -786,6 +805,32 @@ def _build_export_summary(files, run_detail):
         else f"No artifacts were saved for {run_name}."
     )
 
+    review_ready_score = 22
+    if any(file.get("kind") == "json" for file in files):
+        review_ready_score += 24
+    if any(file.get("kind") == "markdown" for file in files):
+        review_ready_score += 18
+    if any(file.get("kind") == "html" for file in files):
+        review_ready_score += 18
+    if report_files:
+        review_ready_score += 10
+    if run_detail.get("result"):
+        result = run_detail.get("result") or {}
+        if result.get("risks"):
+            review_ready_score += 4
+        if (result.get("analysis_context_view") or {}).get("config_rows"):
+            review_ready_score += 4
+    review_ready_score = min(review_ready_score, 100)
+
+    if review_ready_score >= 85:
+        review_ready_label = "Design review ready"
+    elif review_ready_score >= 70:
+        review_ready_label = "Engineering summary ready"
+    elif review_ready_score >= 55:
+        review_ready_label = "Internal review ready"
+    else:
+        review_ready_label = "Artifact set still light"
+
     return {
         "summary": summary,
         "artifact_counts": [
@@ -794,6 +839,13 @@ def _build_export_summary(files, run_detail):
         ],
         "share_links": share_links,
         "report_ready": bool(report_files),
+        "review_ready_score": review_ready_score,
+        "review_ready_label": review_ready_label,
+        "recommended_uses": [
+            "Design review packet",
+            "Supplier or manufacturing handoff",
+            "Internal audit trail",
+        ] if files else [],
     }
 
 
@@ -804,7 +856,11 @@ def _build_project_timeline_data(project):
             "events": [],
             "score_chart": _build_series_chart([]),
             "risk_chart": _build_series_chart([]),
+            "confidence_chart": _build_series_chart([]),
             "summary": "No linked runs are available yet for timeline analysis.",
+            "confidence_delta": 0.0,
+            "score_delta": 0.0,
+            "risk_delta": 0,
         }
 
     events = []
@@ -847,8 +903,23 @@ def _build_project_timeline_data(project):
     score_labels = [event["name"] for event in events if event.get("score") is not None]
     risk_values = [event["risk_count"] for event in events]
     risk_labels = [event["name"] for event in events]
+    confidence_values = []
+    confidence_labels = []
+
+    for run in runs:
+        snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
+        if not snapshot:
+            continue
+        scores = [_extract_risk_confidence_score(risk) for risk in snapshot]
+        if not scores:
+            continue
+        confidence_values.append(round(sum(scores) / len(scores), 1))
+        confidence_labels.append(run.get("name", "Run"))
 
     latest = events[-1]
+    score_delta = round(score_values[-1] - score_values[0], 1) if len(score_values) >= 2 else 0.0
+    risk_delta = risk_values[-1] - risk_values[0] if len(risk_values) >= 2 else 0
+    confidence_delta = round(confidence_values[-1] - confidence_values[0], 1) if len(confidence_values) >= 2 else 0.0
     summary = (
         f"{len(events)} linked run(s) are now on the project timeline. "
         f"The latest run has {latest.get('risk_count', 0)} finding(s)"
@@ -858,12 +929,24 @@ def _build_project_timeline_data(project):
             else "."
         )
     )
+    if score_delta > 0:
+        summary += f" Timeline score improved by {score_delta} points over the selected run history."
+    elif score_delta < 0:
+        summary += f" Timeline score declined by {abs(score_delta)} points over the selected run history."
+    if risk_delta > 0:
+        summary += f" Total finding volume is up by {risk_delta}."
+    elif risk_delta < 0:
+        summary += f" Total finding volume is down by {abs(risk_delta)}."
 
     return {
         "events": list(reversed(events)),
         "score_chart": _build_series_chart(score_values, score_labels),
         "risk_chart": _build_series_chart(risk_values, risk_labels),
+        "confidence_chart": _build_series_chart(confidence_values, confidence_labels),
         "summary": summary,
+        "confidence_delta": confidence_delta,
+        "score_delta": score_delta,
+        "risk_delta": risk_delta,
     }
 
 
@@ -1880,15 +1963,21 @@ def _build_project_workspace_intelligence(project):
     all_risks = []
     all_confidence_scores = []
     latest_score = _score_to_100(runs[-1].get("score")) if runs[-1].get("score") is not None else 0
+    score_values = []
+    confidence_by_run = []
 
     for run in runs:
         run_name = run.get("name", "Run")
+        if run.get("score") is not None:
+            score_values.append(_score_to_100(run.get("score")))
         snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
         all_risks.extend(snapshot)
 
+        run_confidence_scores = []
         for risk in snapshot:
             confidence_score = _extract_risk_confidence_score(risk)
             all_confidence_scores.append(confidence_score)
+            run_confidence_scores.append(confidence_score)
 
             pattern_key = f"{str(risk.get('rule_id') or 'rule').lower()}|{risk.get('base_signature') or _normalize_pattern_message(risk.get('message'))}"
             entry = recurring_patterns[pattern_key]
@@ -1903,7 +1992,17 @@ def _build_project_workspace_intelligence(project):
                 {"critical": 4, "high": 3, "medium": 2, "low": 1}.get(str(risk.get("severity", "")).lower(), 1),
             )
 
+        if run_confidence_scores:
+            confidence_by_run.append(
+                {
+                    "label": run_name,
+                    "value": round(sum(run_confidence_scores) / len(run_confidence_scores), 1),
+                }
+            )
+
     average_confidence = round(sum(all_confidence_scores) / len(all_confidence_scores), 1) if all_confidence_scores else 0
+    score_delta = round(score_values[-1] - score_values[0], 1) if len(score_values) >= 2 else 0.0
+    confidence_delta = round(confidence_by_run[-1]["value"] - confidence_by_run[0]["value"], 1) if len(confidence_by_run) >= 2 else 0.0
 
     pattern_rows = []
     for pattern in recurring_patterns.values():
@@ -1971,6 +2070,31 @@ def _build_project_workspace_intelligence(project):
             }
         )
 
+    top_pattern = trusted_focus_items[0] if trusted_focus_items else None
+    if score_delta > 5 and confidence_delta >= 0:
+        trend_summary = "Workspace health is improving across linked runs, with score movement trending up and confidence staying stable or improving."
+    elif score_delta < -5:
+        trend_summary = "Workspace health is regressing across linked runs, which suggests recent revisions are adding meaningful engineering risk."
+    else:
+        trend_summary = "Workspace trend movement is mixed, so focus on repeated issue families rather than assuming the project is broadly improving."
+
+    recurring_family_summary = (
+        f"The strongest repeated issue family is {top_pattern['category']}, appearing {top_pattern['appearances']} times across {top_pattern['run_count']} runs."
+        if top_pattern
+        else "No repeated issue family is strong enough yet to dominate workspace review."
+    )
+
+    attention_areas = []
+    for item in trusted_focus_items[:3]:
+        attention_areas.append(
+            {
+                "title": item["category"],
+                "summary": item["message"],
+                "priority_score": item["priority_score"],
+                "confidence_score": item["confidence_score"],
+            }
+        )
+
     return {
         "health_score": health_score,
         "health_summary": health_summary,
@@ -1979,6 +2103,11 @@ def _build_project_workspace_intelligence(project):
         "trusted_focus_items": trusted_focus_items,
         "next_actions": trusted_focus_items[:3],
         "domain_bars": _build_engineering_domain_bars(all_risks),
+        "trend_summary": trend_summary,
+        "recurring_family_summary": recurring_family_summary,
+        "confidence_delta": confidence_delta,
+        "score_delta": score_delta,
+        "attention_areas": attention_areas,
     }
 
 
@@ -2413,6 +2542,107 @@ def _confidence_band(score):
     return "low"
 
 
+def _format_design_domain_name(value):
+    text = str(value or "").strip().replace("_", " ")
+    return text.title() if text else "General"
+
+
+def _risk_location_summary(risk):
+    components = [str(item).strip() for item in (risk.get("components") or []) if str(item).strip()]
+    nets = [str(item).strip() for item in (risk.get("nets") or []) if str(item).strip()]
+    region = risk.get("region")
+
+    parts = []
+    if components:
+        parts.append(f"Components {', '.join(components[:3])}")
+    if nets:
+        parts.append(f"Nets {', '.join(nets[:3])}")
+    if isinstance(region, dict):
+        x = region.get("x")
+        y = region.get("y")
+        if x is not None and y is not None:
+            parts.append(f"Approx. region ({x}, {y})")
+
+    if not parts:
+        return "No exact board anchor was preserved for this finding."
+    return " · ".join(parts)
+
+
+def _traceability_score(risk):
+    score = 18.0
+    if risk.get("rule_id"):
+        score += 12
+    if risk.get("trigger_condition"):
+        score += 12
+    if risk.get("threshold_label"):
+        score += 12
+    if risk.get("observed_label"):
+        score += 12
+    if risk.get("metrics"):
+        score += 10
+    if risk.get("components"):
+        score += 8
+    if risk.get("nets"):
+        score += 8
+    if isinstance(risk.get("explanation"), dict):
+        score += 10
+    if isinstance(risk.get("fix_suggestion"), dict) or risk.get("recommendation"):
+        score += 8
+    return round(min(score, 100.0), 1)
+
+
+def _traceability_label(score):
+    value = _safe_float(score, 0.0)
+    if value >= 85:
+        return "Audit ready"
+    if value >= 70:
+        return "Strong traceability"
+    if value >= 55:
+        return "Moderate traceability"
+    return "Needs stronger evidence"
+
+
+def _evidence_count(risk):
+    count = 0
+    if risk.get("components"):
+        count += len(risk.get("components") or [])
+    if risk.get("nets"):
+        count += len(risk.get("nets") or [])
+    if risk.get("metrics"):
+        count += len(risk.get("metrics") or {})
+    if risk.get("trigger_condition"):
+        count += 1
+    if risk.get("threshold_label"):
+        count += 1
+    if risk.get("observed_label"):
+        count += 1
+    return count
+
+
+def _fix_priority_weight(value):
+    normalized = str(value or "medium").strip().lower()
+    return {"critical": 4, "high": 3, "medium": 2, "low": 1}.get(normalized, 2)
+
+
+def _domain_priority_weight(value):
+    normalized = str(value or "").strip().lower()
+    weights = {
+        "signal_integrity": 1.35,
+        "high_speed": 1.35,
+        "power_integrity": 1.32,
+        "power_path": 1.28,
+        "emi_emc": 1.28,
+        "stackup_return_path": 1.24,
+        "safety_high_voltage": 1.34,
+        "thermal": 1.18,
+        "testability": 1.1,
+        "assembly": 1.08,
+        "manufacturability": 1.12,
+        "reliability": 1.18,
+    }
+    return weights.get(normalized, weights.get(normalized.replace(" ", "_"), 1.0))
+
+
 def _normalize_pattern_message(message):
     text = _normalize_compare_message(message)
     text = re.sub(r"\b[a-z]+[0-9]+\b", "<ref>", text, flags=re.IGNORECASE)
@@ -2456,6 +2686,9 @@ def _build_single_decision_data(result):
 
     band_counts = {"High": 0, "Medium": 0, "Low": 0}
     ranked_actions = []
+    category_counts = defaultdict(int)
+    for risk in risks:
+        category_counts[_format_category_name(risk.get("category"))] += 1
 
     for risk in risks:
         confidence_score = _extract_risk_confidence_score(risk)
@@ -2466,9 +2699,30 @@ def _build_single_decision_data(result):
             str(risk.get("severity", "")).lower(),
             1,
         )
+        category_name = _format_category_name(risk.get("category"))
+        evidence_score = min(_evidence_count(risk) * 6, 24)
+        fix_priority_weight = _fix_priority_weight(
+            (risk.get("fix_suggestion") or {}).get("priority") or risk.get("fix_priority")
+        )
+        repeat_count = category_counts.get(category_name, 1)
+        domain_weight = _domain_priority_weight(risk.get("design_domain") or risk.get("category"))
+        impact_weight = {"high": 1.2, "moderate": 1.0, "low": 0.82}.get(
+            str(risk.get("estimated_impact") or "moderate").lower(),
+            1.0,
+        )
+        traceability_score = _traceability_score(risk)
+        base_priority = (
+            (severity_weight * 22)
+            + (confidence_score * 0.42)
+            + (fix_priority_weight * 8)
+            + evidence_score
+            + (max(repeat_count - 1, 0) * 6)
+            + (traceability_score * 0.12)
+        )
+        priority_score = round(base_priority * domain_weight * impact_weight, 1)
         ranked_actions.append(
             {
-                "category": _format_category_name(risk.get("category")),
+                "category": category_name,
                 "label": _decision_label(risk),
                 "message": risk.get("message", "Unnamed issue"),
                 "message_short": _compact_line(risk.get("message", "Unnamed issue"), 96),
@@ -2478,8 +2732,15 @@ def _build_single_decision_data(result):
                     96,
                 ),
                 "confidence_score": confidence_score,
-                "priority_score": round((severity_weight * 24) + (confidence_score * 0.55), 1),
+                "priority_score": priority_score,
                 "severity": str(risk.get("severity", "low")).lower(),
+                "fix_priority": str(
+                    (risk.get("fix_suggestion") or {}).get("priority") or risk.get("fix_priority") or "medium"
+                ).replace("_", " ").title(),
+                "traceability_score": traceability_score,
+                "evidence_count": _evidence_count(risk),
+                "repeat_count": repeat_count,
+                "domain": _format_design_domain_name(risk.get("design_domain") or risk.get("category")),
             }
         )
 
@@ -2496,7 +2757,7 @@ def _build_single_decision_data(result):
 
     top_action = ranked_actions[0] if ranked_actions else None
     trust_note = (
-        f"Start with {top_action['category']} because it combines the highest severity and strongest available evidence."
+        f"Start with {top_action['category']} because it combines severity, confidence, evidence depth, and real-world impact better than the other current findings."
         if top_action
         else "No next action is available."
     )
@@ -2525,7 +2786,7 @@ def _build_single_decision_data(result):
         "domain_bars": _build_engineering_domain_bars(risks),
         "focus_bars": _build_bar_chart(focus_items),
         "focus_item_count": len(focus_items),
-        "next_actions": ranked_actions[:2],
+        "next_actions": ranked_actions[:3],
         "trust_note": trust_note,
     }
 

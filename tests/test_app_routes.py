@@ -53,6 +53,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Export Center", page)
         self.assertIn("Score Explainability", page)
         self.assertIn("Detailed Findings", page)
+        self.assertIn("Review Readiness", page)
 
     def test_settings_page_includes_custom_profile_controls(self):
         response = self.client.get("/settings")
@@ -61,6 +62,14 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Custom Profile Name", page)
         self.assertIn("Custom Project Profile", page)
+
+    def test_project_detail_includes_timeline_and_workspace_intelligence(self):
+        response = self.client.get("/projects/ec66c9f0")
+
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Confidence Timeline", page)
+        self.assertIn("Recurring Failure Pattern", page)
 
 
 if __name__ == "__main__":
