@@ -53,7 +53,7 @@
                 <div class="assistant-console-label">Follow-Up Questions</div>
                 <div class="assistant-console-list">
                     {% for item in project_assistant_console.questions %}
-                    <button type="button" class="assistant-console-chip" data-assistant-project-question data-title="{{ item.label }}" data-answer="{{ item.answer }}">
+                    <button type="button" class="assistant-console-chip" data-assistant-project-question data-title="{{ item.label }}" data-answer="{{ item.answer }}" data-route-key="{{ item.route_key }}">
                         {{ item.label }}
                     </button>
                     {% endfor %}
@@ -63,7 +63,7 @@
                 <div class="assistant-console-label">Apply Review Lens</div>
                 <div class="assistant-console-list">
                     {% for item in project_assistant_console.review_lenses %}
-                    <button type="button" class="assistant-console-lens" data-assistant-project-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}">
+                    <button type="button" class="assistant-console-lens" data-assistant-project-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}" data-route-key="{{ item.route_key }}">
                         <span>{{ item.label }}</span>
                         <strong>{{ item.headline }}</strong>
                     </button>
@@ -1153,6 +1153,7 @@
     }
 
     .assistant-citation-list,
+    .assistant-follow-row,
     .assistant-prompt-row {
         display: flex;
         flex-wrap: wrap;
@@ -1161,6 +1162,7 @@
     }
 
     .assistant-citation,
+    .assistant-follow-chip,
     .assistant-prompt-chip {
         border: 1px solid rgba(96,165,250,0.18);
         background: rgba(96,165,250,0.1);
@@ -1169,6 +1171,12 @@
         padding: 8px 10px;
         cursor: pointer;
         font: inherit;
+    }
+
+    .assistant-detail-copy {
+        margin-top: 10px;
+        color: #b8c7df;
+        font-size: 13px;
     }
 
     .assistant-composer {
@@ -1525,9 +1533,39 @@
     if (!responsePanel) return;
 
     const projectData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const assistantData = projectData.assistant || {};
+    const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
+    const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
     const threadKey = `silicore-project-thread::${((projectData.copilot || {}).systemic_pattern || 'workspace').toLowerCase()}`;
-    const renderResponse = (title, answer) => {
-        responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    const renderFollowUps = (followUps) => {
+        if (!Array.isArray(followUps) || !followUps.length) return '';
+        return `
+            <div class="assistant-follow-row">
+                ${followUps.map((item) => `
+                    <button type="button" class="assistant-follow-chip" data-assistant-project-followup="${escapeHtml(item)}">
+                        ${escapeHtml(item)}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    };
+    const resultToMarkup = (result) => {
+        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
+        return `<p>${result.answer}</p>${detail}`;
+    };
+    const renderResponse = (result) => {
+        if (!result) return;
+        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${renderFollowUps(result.follow_ups)}`;
+        responsePanel.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
+            button.addEventListener('click', () => pushThreadExchange(button.dataset.assistantProjectFollowup, answerPrompt(button.dataset.assistantProjectFollowup)));
+        });
     };
 
     const saveThread = (messages) => {
@@ -1547,48 +1585,89 @@
     const renderThread = (messages) => {
         if (!thread) return;
         thread.innerHTML = messages.map((item) => `
-            <div class="assistant-message assistant-message-${item.role}">
+                <div class="assistant-message assistant-message-${item.role}">
                     <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Atlas Intelligence'}</div>
-                <div class="assistant-message-copy">${item.copy}</div>
+                    <div class="assistant-message-copy">${item.copy}</div>
+                    ${renderFollowUps(item.follow_ups)}
             </div>
         `).join('');
+        thread.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
+            button.addEventListener('click', () => {
+                pushThreadExchange(button.dataset.assistantProjectFollowup, answerPrompt(button.dataset.assistantProjectFollowup));
+            });
+        });
+    };
+    const routeResult = (route) => ({
+        title: route.title || route.label || 'Atlas Intelligence',
+        answer: route.answer || 'No answer available yet.',
+        detail: route.detail || '',
+        follow_ups: route.follow_ups || [],
+    });
+    const matchAssistantRoute = (prompt) => {
+        const lower = String(prompt || '').toLowerCase();
+        for (const route of assistantRoutes) {
+            const keywords = Array.isArray(route.keywords) ? route.keywords : [];
+            if (keywords.some((keyword) => lower.includes(String(keyword).toLowerCase()))) return route;
+            if (route.label && lower.includes(String(route.label).toLowerCase())) return route;
+            if (route.title && lower.includes(String(route.title).toLowerCase())) return route;
+        }
+        return null;
     };
     const answerPrompt = (text) => {
         const lower = String(text || '').toLowerCase();
         const copilot = projectData.copilot || {};
+        const assistantRoute = matchAssistantRoute(text);
+        if (assistantRoute) return routeResult(assistantRoute);
         if (lower.includes('improv')) {
-            return {title: 'Workspace Momentum', answer: copilot.momentum || copilot.trend_summary || 'No workspace momentum note is available yet.'};
+            return {
+                title: 'Workspace Momentum',
+                answer: copilot.momentum || copilot.trend_summary || 'No workspace momentum note is available yet.',
+                detail: 'Atlas reads momentum as trend quality plus repeatability, not just whether one revision happened to score better.',
+                follow_ups: ['What is repeating across this workspace?', 'Are we review-gate ready?', 'What should the team do next?'],
+            };
         }
         if (lower.includes('team') || lower.includes('next')) {
-            return {title: 'Next Team Action', answer: (copilot.execution_plan && copilot.execution_plan[0] && copilot.execution_plan[0].action) || 'No execution-plan action is available yet.'};
+            return {
+                title: 'Next Team Action',
+                answer: (copilot.execution_plan && copilot.execution_plan[0] && copilot.execution_plan[0].action) || 'No execution-plan action is available yet.',
+                detail: (copilot.execution_plan && copilot.execution_plan[0] && copilot.execution_plan[0].why) || 'Use the next workspace cycle to close the strongest repeated issue family with one clear owner.',
+                follow_ups: ['Who should own this next?', 'What should we validate after the rerun?', 'Are we improving enough for the next review gate?'],
+            };
         }
-        return {title: 'Recurring Pattern', answer: copilot.posture || 'No workspace posture is available yet.'};
+        return {
+            title: 'Recurring Pattern',
+            answer: copilot.posture || 'No workspace posture is available yet.',
+            detail: 'Atlas is using this to frame the workspace as an engineering system, so repeated patterns matter more than one isolated board result.',
+            follow_ups: ['What is repeating across this workspace?', 'What should the team do next?', 'Are we review-gate ready?'],
+        };
     };
     const pushThreadExchange = (promptText, result) => {
         const current = loadThread();
         current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: `<p>${result.answer}</p>`});
+        current.push({role: 'assistant', copy: resultToMarkup(result), follow_ups: result.follow_ups || []});
         saveThread(current);
         renderThread(current);
-        renderResponse(result.title, result.answer);
+        renderResponse(result);
     };
 
     questionButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
-            pushThreadExchange(button.dataset.title || 'Question', {
+            const route = routesByKey[button.dataset.routeKey || ''];
+            pushThreadExchange(button.dataset.title || 'Question', route ? routeResult(route) : {
                 title: button.dataset.title || 'Question',
                 answer: button.dataset.answer || 'No answer available.',
+                follow_ups: [],
             });
         });
     });
 
     lensButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens note available.');
-            pushThreadExchange(button.dataset.title || 'Review Lens', {
+            const route = routesByKey[button.dataset.routeKey || ''];
+            pushThreadExchange(button.dataset.title || 'Review Lens', route ? routeResult(route) : {
                 title: button.dataset.title || 'Review Lens',
                 answer: button.dataset.answer || 'No review-lens note available.',
+                follow_ups: [],
             });
         });
     });
@@ -1612,7 +1691,12 @@
     const saved = loadThread();
     if (saved.length) renderThread(saved);
     if (questionButtons[0]) {
-        renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
+        const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
+        renderResponse(route ? routeResult(route) : {
+            title: questionButtons[0].dataset.title || 'Question',
+            answer: questionButtons[0].dataset.answer || 'No answer available.',
+            follow_ups: [],
+        });
     }
 })();
 </script>

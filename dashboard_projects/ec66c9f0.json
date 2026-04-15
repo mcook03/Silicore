@@ -3,7 +3,7 @@
   "name": "Test Project",
   "description": "",
   "created_at": "2026-04-05 00:51:23 UTC",
-  "updated_at": "2026-04-15 16:38:40 UTC",
+  "updated_at": "2026-04-15 16:39:29 UTC",
   "runs": [
     {
       "run_id": "project_20260404_195137_972138",
@@ -3067,6 +3067,2840 @@
       "critical_count": 3,
       "summary": "The strongest board is thermal_hotspot_board.kicad_pcb at 42.0 / 100, while the weakest board is high_speed_pair_bad.kicad_pcb at 0.0 / 100. The current score spread across the project is 42.0 points. The most recurring issue area across the project is power integrity.",
       "path": "project_20260415_113840_827640",
+      "risk_snapshot": [
+        {
+          "base_signature": "assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "signature": "medium|assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Board has limited visible fiducial strategy for assembly alignment",
+          "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "fiducials": 0,
+            "threshold": 2
+          },
+          "confidence": 0.76,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+          "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+          "threshold_label": "Minimum fiducials 2",
+          "observed_label": "Observed fiducials 0"
+        },
+        {
+          "base_signature": "assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "signature": "medium|assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Ground test-point coverage appears limited for bring-up and probing",
+          "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "ground_test_points": 0,
+            "threshold": 1
+          },
+          "confidence": 0.81,
+          "design_domain": "testability",
+          "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+          "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+          "threshold_label": "Minimum ground test points 1",
+          "observed_label": "Observed ground test points 0"
+        },
+        {
+          "base_signature": "power_integrity|U1 (linear_reg) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U1 (linear_reg) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U1 (linear_reg) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U1",
+            "U2"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": 40.0,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance 40.00 units"
+        },
+        {
+          "base_signature": "power_integrity|U2 (processor) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U2 (processor) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U2 (processor) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U2",
+            "U1"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": 40.0,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance 40.00 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net VOUT has a long path between U1 and U2 (40.00 units)",
+          "signature": "medium|signal_integrity|Net VOUT has a long path between U1 and U2 (40.00 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net VOUT has a long path between U1 and U2 (40.00 units)",
+          "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+          "components": [
+            "U1",
+            "U2"
+          ],
+          "nets": [
+            "VOUT"
+          ],
+          "metrics": {
+            "distance": 40.0,
+            "threshold": 25.0,
+            "is_critical_net": false
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "signal_integrity|Net VOUT has a long path between Q1 and U2 (35.00 units)",
+          "signature": "medium|signal_integrity|Net VOUT has a long path between Q1 and U2 (35.00 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net VOUT has a long path between Q1 and U2 (35.00 units)",
+          "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+          "components": [
+            "Q1",
+            "U2"
+          ],
+          "nets": [
+            "VOUT"
+          ],
+          "metrics": {
+            "distance": 35.0,
+            "threshold": 25.0,
+            "is_critical_net": false
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U2 has ground but no visible power rail",
+          "signature": "medium|power_integrity|U2 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U2 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "U2"
+          ],
+          "nets": [
+            "VOUT",
+            "GND"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "VOUT",
+              "GND"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|Regulator or converter U1 lacks a nearby shared capacitor network",
+          "signature": "medium|power_integrity|Regulator or converter U1 lacks a nearby shared capacitor network",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+          "recommendation": "Move input or output capacitors closer to the converter power pins so current loops stay compact.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "GND",
+            "VIN",
+            "VOUT"
+          ],
+          "metrics": {
+            "nearest_shared_cap_distance": null,
+            "threshold": 7.0
+          },
+          "confidence": 0.75,
+          "design_domain": "power",
+          "why_it_matters": "Converters rely on tight capacitor placement to keep di/dt loops small and power noise under control.",
+          "trigger_condition": "A regulator-like component had no nearby shared capacitor inside the configured converter-cap radius.",
+          "threshold_label": "Maximum shared capacitor radius 7.00 units",
+          "observed_label": "Observed shared capacitor distance: none"
+        },
+        {
+          "base_signature": "power_integrity|Power net VIN uses a narrow trace width (0.20)",
+          "signature": "high|power_integrity|Power net VIN uses a narrow trace width (0.20)",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "Power net VIN uses a narrow trace width (0.20)",
+          "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+          "components": [],
+          "nets": [
+            "VIN"
+          ],
+          "metrics": {
+            "trace_width": 0.2,
+            "minimum_expected": 0.5
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+          "threshold_label": "Minimum trace width 0.50",
+          "observed_label": "Observed trace width 0.20"
+        },
+        {
+          "base_signature": "reliability|Ground net GND has limited visible connectivity (3 connections)",
+          "signature": "medium|reliability|Ground net GND has limited visible connectivity (3 connections)",
+          "severity": "medium",
+          "category": "reliability",
+          "message": "Ground net GND has limited visible connectivity (3 connections)",
+          "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+          "components": [],
+          "nets": [
+            "GND"
+          ],
+          "metrics": {
+            "ground_connections": 3,
+            "threshold": 4
+          },
+          "confidence": 0.74,
+          "design_domain": "reliability",
+          "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+          "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+          "threshold_label": "Minimum ground connections 4",
+          "observed_label": "Observed ground connections 3"
+        },
+        {
+          "base_signature": "signal_integrity|Net VOUT has a long signal path between U1 and U2 (40.00 units)",
+          "signature": "medium|signal_integrity|Net VOUT has a long signal path between U1 and U2 (40.00 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net VOUT has a long signal path between U1 and U2 (40.00 units)",
+          "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+          "components": [
+            "U1",
+            "U2"
+          ],
+          "nets": [
+            "VOUT"
+          ],
+          "metrics": {
+            "distance": 40.0,
+            "threshold": 25.0
+          },
+          "confidence": 0.82,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+          "threshold_label": "Maximum signal path distance 25.00 units",
+          "observed_label": "Observed signal path distance 40.00 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net VOUT has a long signal path between Q1 and U2 (35.00 units)",
+          "signature": "medium|signal_integrity|Net VOUT has a long signal path between Q1 and U2 (35.00 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net VOUT has a long signal path between Q1 and U2 (35.00 units)",
+          "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+          "components": [
+            "Q1",
+            "U2"
+          ],
+          "nets": [
+            "VOUT"
+          ],
+          "metrics": {
+            "distance": 35.0,
+            "threshold": 25.0
+          },
+          "confidence": 0.82,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+          "threshold_label": "Maximum signal path distance 25.00 units",
+          "observed_label": "Observed signal path distance 35.00 units"
+        },
+        {
+          "base_signature": "thermal|Q1 appears to have limited nearby thermal via support (0)",
+          "signature": "medium|thermal|Q1 appears to have limited nearby thermal via support (0)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "Q1 appears to have limited nearby thermal via support (0)",
+          "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+          "components": [
+            "Q1"
+          ],
+          "nets": [
+            "GND",
+            "VIN",
+            "VOUT"
+          ],
+          "metrics": {
+            "nearby_thermal_vias": 0,
+            "threshold": 1,
+            "radius": 4.0
+          },
+          "confidence": 0.8,
+          "design_domain": "thermal",
+          "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+          "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+          "threshold_label": "Minimum nearby thermal vias 1",
+          "observed_label": "Observed nearby thermal vias 0"
+        },
+        {
+          "base_signature": "thermal|Q1 connects to relatively narrow copper for heat spreading (0.20)",
+          "signature": "medium|thermal|Q1 connects to relatively narrow copper for heat spreading (0.20)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "Q1 connects to relatively narrow copper for heat spreading (0.20)",
+          "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+          "components": [
+            "Q1"
+          ],
+          "nets": [
+            "GND",
+            "VIN",
+            "VOUT"
+          ],
+          "metrics": {
+            "max_connected_width": 0.2,
+            "threshold": 0.5
+          },
+          "confidence": 0.76,
+          "design_domain": "thermal",
+          "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+          "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+          "threshold_label": "Minimum heat-spread width 0.50",
+          "observed_label": "Observed heat-spread width 0.20"
+        },
+        {
+          "base_signature": "assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "signature": "medium|assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Board has limited visible fiducial strategy for assembly alignment",
+          "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "fiducials": 0,
+            "threshold": 2
+          },
+          "confidence": 0.76,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+          "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+          "threshold_label": "Minimum fiducials 2",
+          "observed_label": "Observed fiducials 0"
+        },
+        {
+          "base_signature": "assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "signature": "medium|assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Ground test-point coverage appears limited for bring-up and probing",
+          "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "ground_test_points": 0,
+            "threshold": 1
+          },
+          "confidence": 0.81,
+          "design_domain": "testability",
+          "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+          "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+          "threshold_label": "Minimum ground test points 1",
+          "observed_label": "Observed ground test points 0"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net CTRL has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net CTRL has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net CTRL has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "U1",
+            "U2"
+          ],
+          "nets": [
+            "CTRL"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "power_integrity|U1 (driver) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U1 (driver) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U1 (driver) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U1"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": null,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance: none found"
+        },
+        {
+          "base_signature": "power_integrity|U2 (mcu) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U2 (mcu) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U2 (mcu) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U2"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": null,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance: none found"
+        },
+        {
+          "base_signature": "emi_return_path|U1 is connected to a critical net but no ground reference was identified",
+          "signature": "medium|emi_return_path|U1 is connected to a critical net but no ground reference was identified",
+          "severity": "medium",
+          "category": "emi_return_path",
+          "message": "U1 is connected to a critical net but no ground reference was identified",
+          "recommendation": "Verify that this component has an appropriate nearby ground reference or return path for the connected critical net.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "HV+",
+            "HV-",
+            "CTRL"
+          ],
+          "metrics": {
+            "critical_net_keywords": [
+              "CLK",
+              "CS",
+              "CTRL",
+              "MISO",
+              "MOSI",
+              "SCL",
+              "SDA"
+            ],
+            "ground_net_keywords": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ]
+          },
+          "confidence": 0.7,
+          "design_domain": "emi",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|J1 is not connected to a valid power rail",
+          "signature": "high|power_integrity|J1 is not connected to a valid power rail",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "J1 is not connected to a valid power rail",
+          "recommendation": "Connect the component to the intended power net and confirm that its pad-to-net assignments are present in the board data.",
+          "components": [
+            "J1"
+          ],
+          "nets": [
+            "HV+",
+            "HV-"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "HV+",
+              "HV-"
+            ],
+            "has_power": false,
+            "has_ground": false
+          },
+          "confidence": 0.8,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U1 is not connected to a valid power rail",
+          "signature": "high|power_integrity|U1 is not connected to a valid power rail",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "U1 is not connected to a valid power rail",
+          "recommendation": "Connect the component to the intended power net and confirm that its pad-to-net assignments are present in the board data.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "HV+",
+            "HV-",
+            "CTRL"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "HV+",
+              "HV-",
+              "CTRL"
+            ],
+            "has_power": false,
+            "has_ground": false
+          },
+          "confidence": 0.8,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U2 has ground but no visible power rail",
+          "signature": "medium|power_integrity|U2 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U2 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "U2"
+          ],
+          "nets": [
+            "GND",
+            "CTRL"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "GND",
+              "CTRL"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "reliability|Ground net GND has limited visible connectivity (1 connections)",
+          "signature": "medium|reliability|Ground net GND has limited visible connectivity (1 connections)",
+          "severity": "medium",
+          "category": "reliability",
+          "message": "Ground net GND has limited visible connectivity (1 connections)",
+          "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+          "components": [],
+          "nets": [
+            "GND"
+          ],
+          "metrics": {
+            "ground_connections": 1,
+            "threshold": 4
+          },
+          "confidence": 0.74,
+          "design_domain": "reliability",
+          "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+          "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+          "threshold_label": "Minimum ground connections 4",
+          "observed_label": "Observed ground connections 1"
+        },
+        {
+          "base_signature": "emi_return_path|U1 is connected to critical net(s) CTRL but has no direct ground-reference net",
+          "signature": "high|emi_return_path|U1 is connected to critical net(s) CTRL but has no direct ground-reference net",
+          "severity": "high",
+          "category": "emi_return_path",
+          "message": "U1 is connected to critical net(s) CTRL but has no direct ground-reference net",
+          "recommendation": "Review this signal path and ensure it has a nearby continuous ground reference and a clean return path.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "CTRL"
+          ],
+          "metrics": {
+            "critical_nets": [
+              "CTRL"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "ground_present": true
+          },
+          "confidence": 0.82,
+          "design_domain": "emi",
+          "why_it_matters": "",
+          "trigger_condition": "Critical-signal component lacked a direct configured ground-reference net.",
+          "threshold_label": "Required ground nets: GND, GROUND, PGND",
+          "observed_label": "Observed critical nets: CTRL"
+        },
+        {
+          "base_signature": "safety_high_voltage|High-voltage pad on U1:HV+ is close to U1:CTRL",
+          "signature": "critical|safety_high_voltage|High-voltage pad on U1:HV+ is close to U1:CTRL",
+          "severity": "critical",
+          "category": "safety_high_voltage",
+          "message": "High-voltage pad on U1:HV+ is close to U1:CTRL",
+          "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+          "components": [
+            "U1",
+            "U1"
+          ],
+          "nets": [
+            "HV+",
+            "CTRL"
+          ],
+          "metrics": {
+            "clearance": 2.19,
+            "min_clearance": 2.5
+          },
+          "confidence": 0.83,
+          "design_domain": "safety",
+          "why_it_matters": "Clearance shortfalls in elevated-voltage regions can create direct insulation and safety failures.",
+          "trigger_condition": "A high-voltage pad-to-pad spacing fell below the configured clearance threshold.",
+          "threshold_label": "Minimum clearance 2.50 units",
+          "observed_label": "Observed nearest clearance 2.19 units"
+        },
+        {
+          "base_signature": "safety_high_voltage|High-voltage pad on U1:HV- is close to U1:CTRL",
+          "signature": "critical|safety_high_voltage|High-voltage pad on U1:HV- is close to U1:CTRL",
+          "severity": "critical",
+          "category": "safety_high_voltage",
+          "message": "High-voltage pad on U1:HV- is close to U1:CTRL",
+          "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+          "components": [
+            "U1",
+            "U1"
+          ],
+          "nets": [
+            "HV-",
+            "CTRL"
+          ],
+          "metrics": {
+            "clearance": 2.19,
+            "min_clearance": 2.5
+          },
+          "confidence": 0.83,
+          "design_domain": "safety",
+          "why_it_matters": "Clearance shortfalls in elevated-voltage regions can create direct insulation and safety failures.",
+          "trigger_condition": "A high-voltage pad-to-pad spacing fell below the configured clearance threshold.",
+          "threshold_label": "Minimum clearance 2.50 units",
+          "observed_label": "Observed nearest clearance 2.19 units"
+        },
+        {
+          "base_signature": "thermal|U1 appears to have limited nearby thermal via support (0)",
+          "signature": "medium|thermal|U1 appears to have limited nearby thermal via support (0)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 appears to have limited nearby thermal via support (0)",
+          "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "CTRL",
+            "HV+",
+            "HV-"
+          ],
+          "metrics": {
+            "nearby_thermal_vias": 0,
+            "threshold": 1,
+            "radius": 4.0
+          },
+          "confidence": 0.8,
+          "design_domain": "thermal",
+          "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+          "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+          "threshold_label": "Minimum nearby thermal vias 1",
+          "observed_label": "Observed nearby thermal vias 0"
+        },
+        {
+          "base_signature": "thermal|U1 connects to relatively narrow copper for heat spreading (0.24)",
+          "signature": "medium|thermal|U1 connects to relatively narrow copper for heat spreading (0.24)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 connects to relatively narrow copper for heat spreading (0.24)",
+          "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "CTRL",
+            "HV+",
+            "HV-"
+          ],
+          "metrics": {
+            "max_connected_width": 0.24,
+            "threshold": 0.5
+          },
+          "confidence": 0.76,
+          "design_domain": "thermal",
+          "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+          "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+          "threshold_label": "Minimum heat-spread width 0.50",
+          "observed_label": "Observed heat-spread width 0.24"
+        },
+        {
+          "base_signature": "assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "signature": "medium|assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Board has limited visible fiducial strategy for assembly alignment",
+          "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "fiducials": 0,
+            "threshold": 2
+          },
+          "confidence": 0.76,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+          "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+          "threshold_label": "Minimum fiducials 2",
+          "observed_label": "Observed fiducials 0"
+        },
+        {
+          "base_signature": "assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "signature": "medium|assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Ground test-point coverage appears limited for bring-up and probing",
+          "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "ground_test_points": 0,
+            "threshold": 1
+          },
+          "confidence": 0.81,
+          "design_domain": "testability",
+          "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+          "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+          "threshold_label": "Minimum ground test points 1",
+          "observed_label": "Observed ground test points 0"
+        },
+        {
+          "base_signature": "component_design|Control net SENSOR_OUT has no visible pull resistor component",
+          "signature": "medium|component_design|Control net SENSOR_OUT has no visible pull resistor component",
+          "severity": "medium",
+          "category": "component_design",
+          "message": "Control net SENSOR_OUT has no visible pull resistor component",
+          "recommendation": "Review whether this control or boot-related net should include an explicit pull-up or pull-down resistor.",
+          "components": [
+            "U2",
+            "U3"
+          ],
+          "nets": [
+            "SENSOR_OUT"
+          ],
+          "metrics": {
+            "component_count": 2,
+            "has_resistor": false
+          },
+          "confidence": 0.72,
+          "design_domain": "component",
+          "why_it_matters": "Boot, reset, chip-select, and interrupt nets often need a defined default state to behave reliably.",
+          "trigger_condition": "A control-sensitive net was identified without a visible pull resistor on the connected component set.",
+          "threshold_label": "Expected pull resistor presence on control-sensitive nets",
+          "observed_label": "Observed pull resistor presence: none"
+        },
+        {
+          "base_signature": "power_integrity|U2 (adc) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U2 (adc) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U2 (adc) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U2",
+            "U3"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": 13.15,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance 13.15 units"
+        },
+        {
+          "base_signature": "power_integrity|U3 (sensor) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U3 (sensor) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U3 (sensor) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U3",
+            "U2"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": 13.15,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance 13.15 units"
+        },
+        {
+          "base_signature": "manufacturing|Net ADC_IN uses a trace width below the fab-oriented limit (0.12)",
+          "signature": "medium|manufacturing|Net ADC_IN uses a trace width below the fab-oriented limit (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net ADC_IN uses a trace width below the fab-oriented limit (0.12)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "ADC_IN"
+          ],
+          "metrics": {
+            "trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "manufacturing|Net SENSOR_OUT uses a trace width below the fab-oriented limit (0.12)",
+          "signature": "medium|manufacturing|Net SENSOR_OUT uses a trace width below the fab-oriented limit (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net SENSOR_OUT uses a trace width below the fab-oriented limit (0.12)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "SENSOR_OUT"
+          ],
+          "metrics": {
+            "trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "power_integrity|L1 is not connected to a valid power rail",
+          "signature": "high|power_integrity|L1 is not connected to a valid power rail",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "L1 is not connected to a valid power rail",
+          "recommendation": "Connect the component to the intended power net and confirm that its pad-to-net assignments are present in the board data.",
+          "components": [
+            "L1"
+          ],
+          "nets": [
+            "VIN",
+            "SW"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "VIN",
+              "SW"
+            ],
+            "has_power": true,
+            "has_ground": false
+          },
+          "confidence": 0.8,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U2 has ground but no visible power rail",
+          "signature": "medium|power_integrity|U2 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U2 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "U2"
+          ],
+          "nets": [
+            "SENSOR_OUT",
+            "GND",
+            "ADC_IN"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "SENSOR_OUT",
+              "GND",
+              "ADC_IN"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U3 has ground but no visible power rail",
+          "signature": "medium|power_integrity|U3 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U3 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "U3"
+          ],
+          "nets": [
+            "SENSOR_OUT",
+            "GND"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "SENSOR_OUT",
+              "GND"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U2 may have poor power delivery because nearest regulator U1 is 24.08 units away",
+          "signature": "high|power_integrity|U2 may have poor power delivery because nearest regulator U1 is 24.08 units away",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "U2 may have poor power delivery because nearest regulator U1 is 24.08 units away",
+          "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+          "components": [
+            "U2",
+            "U1"
+          ],
+          "nets": [],
+          "metrics": {
+            "distance": 24.08,
+            "threshold": 20.0
+          },
+          "confidence": 0.88,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Load-to-regulator distance exceeded the configured power-distribution threshold.",
+          "threshold_label": "Maximum regulator distance 20.00 units",
+          "observed_label": "Observed regulator distance 24.08 units"
+        },
+        {
+          "base_signature": "power_integrity|U3 may have poor power delivery because nearest regulator U1 is 37.22 units away",
+          "signature": "high|power_integrity|U3 may have poor power delivery because nearest regulator U1 is 37.22 units away",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "U3 may have poor power delivery because nearest regulator U1 is 37.22 units away",
+          "recommendation": "Move the regulator closer to the load or improve the power delivery path with lower-impedance routing.",
+          "components": [
+            "U3",
+            "U1"
+          ],
+          "nets": [],
+          "metrics": {
+            "distance": 37.22,
+            "threshold": 20.0
+          },
+          "confidence": 0.88,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Load-to-regulator distance exceeded the configured power-distribution threshold.",
+          "threshold_label": "Maximum regulator distance 20.00 units",
+          "observed_label": "Observed regulator distance 37.22 units"
+        },
+        {
+          "base_signature": "power_integrity|High-current net VIN uses a long routed path",
+          "signature": "medium|power_integrity|High-current net VIN uses a long routed path",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "High-current net VIN uses a long routed path",
+          "recommendation": "Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.",
+          "components": [
+            "U1",
+            "L1"
+          ],
+          "nets": [
+            "VIN"
+          ],
+          "metrics": {
+            "trace_length": 42.05,
+            "threshold": 40.0
+          },
+          "confidence": 0.76,
+          "design_domain": "power",
+          "why_it_matters": "Longer high-current routes add drop, loop inductance, and dynamic noise in power delivery paths.",
+          "trigger_condition": "A high-current net exceeded the configured maximum routed-length threshold.",
+          "threshold_label": "Maximum high-current path length 40.00 units",
+          "observed_label": "Observed routed length 42.05 units"
+        },
+        {
+          "base_signature": "power_integrity|Regulator or converter U1 lacks a nearby shared capacitor network",
+          "signature": "medium|power_integrity|Regulator or converter U1 lacks a nearby shared capacitor network",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "Regulator or converter U1 lacks a nearby shared capacitor network",
+          "recommendation": "Move input or output capacitors closer to the converter power pins so current loops stay compact.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "GND",
+            "SW",
+            "VIN"
+          ],
+          "metrics": {
+            "nearest_shared_cap_distance": null,
+            "threshold": 7.0
+          },
+          "confidence": 0.75,
+          "design_domain": "power",
+          "why_it_matters": "Converters rely on tight capacitor placement to keep di/dt loops small and power noise under control.",
+          "trigger_condition": "A regulator-like component had no nearby shared capacitor inside the configured converter-cap radius.",
+          "threshold_label": "Maximum shared capacitor radius 7.00 units",
+          "observed_label": "Observed shared capacitor distance: none"
+        },
+        {
+          "base_signature": "power_integrity|Power net VIN uses a narrow trace width (0.18)",
+          "signature": "high|power_integrity|Power net VIN uses a narrow trace width (0.18)",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "Power net VIN uses a narrow trace width (0.18)",
+          "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+          "components": [],
+          "nets": [
+            "VIN"
+          ],
+          "metrics": {
+            "trace_width": 0.18,
+            "minimum_expected": 0.5
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+          "threshold_label": "Minimum trace width 0.50",
+          "observed_label": "Observed trace width 0.18"
+        },
+        {
+          "base_signature": "reliability|Ground net GND has limited visible connectivity (3 connections)",
+          "signature": "medium|reliability|Ground net GND has limited visible connectivity (3 connections)",
+          "severity": "medium",
+          "category": "reliability",
+          "message": "Ground net GND has limited visible connectivity (3 connections)",
+          "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+          "components": [],
+          "nets": [
+            "GND"
+          ],
+          "metrics": {
+            "ground_connections": 3,
+            "threshold": 4
+          },
+          "confidence": 0.74,
+          "design_domain": "reliability",
+          "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+          "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+          "threshold_label": "Minimum ground connections 4",
+          "observed_label": "Observed ground connections 3"
+        },
+        {
+          "base_signature": "thermal|U1 appears to have limited nearby thermal via support (0)",
+          "signature": "medium|thermal|U1 appears to have limited nearby thermal via support (0)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 appears to have limited nearby thermal via support (0)",
+          "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "GND",
+            "SW",
+            "VIN"
+          ],
+          "metrics": {
+            "nearby_thermal_vias": 0,
+            "threshold": 1,
+            "radius": 4.0
+          },
+          "confidence": 0.8,
+          "design_domain": "thermal",
+          "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+          "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+          "threshold_label": "Minimum nearby thermal vias 1",
+          "observed_label": "Observed nearby thermal vias 0"
+        },
+        {
+          "base_signature": "thermal|U1 connects to relatively narrow copper for heat spreading (0.22)",
+          "signature": "medium|thermal|U1 connects to relatively narrow copper for heat spreading (0.22)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "U1 connects to relatively narrow copper for heat spreading (0.22)",
+          "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "GND",
+            "SW",
+            "VIN"
+          ],
+          "metrics": {
+            "max_connected_width": 0.22,
+            "threshold": 0.5
+          },
+          "confidence": 0.76,
+          "design_domain": "thermal",
+          "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+          "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+          "threshold_label": "Minimum heat-spread width 0.50",
+          "observed_label": "Observed heat-spread width 0.22"
+        },
+        {
+          "base_signature": "thermal|L1 appears to have limited nearby thermal via support (0)",
+          "signature": "medium|thermal|L1 appears to have limited nearby thermal via support (0)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "L1 appears to have limited nearby thermal via support (0)",
+          "recommendation": "Add thermal vias or improve heat escape near this power-dissipating component.",
+          "components": [
+            "L1"
+          ],
+          "nets": [
+            "SW",
+            "VIN"
+          ],
+          "metrics": {
+            "nearby_thermal_vias": 0,
+            "threshold": 1,
+            "radius": 4.0
+          },
+          "confidence": 0.8,
+          "design_domain": "thermal",
+          "why_it_matters": "Power-dissipating parts often need nearby thermal vias to move heat into more copper area or additional layers.",
+          "trigger_condition": "Nearby thermal-via count fell below the configured heat-exit support threshold.",
+          "threshold_label": "Minimum nearby thermal vias 1",
+          "observed_label": "Observed nearby thermal vias 0"
+        },
+        {
+          "base_signature": "thermal|L1 connects to relatively narrow copper for heat spreading (0.22)",
+          "signature": "medium|thermal|L1 connects to relatively narrow copper for heat spreading (0.22)",
+          "severity": "medium",
+          "category": "thermal",
+          "message": "L1 connects to relatively narrow copper for heat spreading (0.22)",
+          "recommendation": "Increase local copper width or area around this component to improve heat spreading.",
+          "components": [
+            "L1"
+          ],
+          "nets": [
+            "SW",
+            "VIN"
+          ],
+          "metrics": {
+            "max_connected_width": 0.22,
+            "threshold": 0.5
+          },
+          "confidence": 0.76,
+          "design_domain": "thermal",
+          "why_it_matters": "Narrow connected copper can limit heat spreading and increase hotspot risk around power components.",
+          "trigger_condition": "Connected copper width fell below the configured thermal spreading threshold.",
+          "threshold_label": "Minimum heat-spread width 0.50",
+          "observed_label": "Observed heat-spread width 0.22"
+        },
+        {
+          "base_signature": "manufacturing|Net ADC_IN contains a very narrow trace (0.12)",
+          "signature": "medium|manufacturing|Net ADC_IN contains a very narrow trace (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net ADC_IN contains a very narrow trace (0.12)",
+          "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+          "components": [],
+          "nets": [
+            "ADC_IN"
+          ],
+          "metrics": {
+            "min_trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.83,
+          "design_domain": "layout",
+          "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+          "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+          "threshold_label": "Minimum general trace width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "manufacturing|Net SENSOR_OUT contains a very narrow trace (0.12)",
+          "signature": "medium|manufacturing|Net SENSOR_OUT contains a very narrow trace (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net SENSOR_OUT contains a very narrow trace (0.12)",
+          "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+          "components": [],
+          "nets": [
+            "SENSOR_OUT"
+          ],
+          "metrics": {
+            "min_trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.83,
+          "design_domain": "layout",
+          "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+          "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+          "threshold_label": "Minimum general trace width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "signature": "medium|assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Board has limited visible fiducial strategy for assembly alignment",
+          "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "fiducials": 0,
+            "threshold": 2
+          },
+          "confidence": 0.76,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+          "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+          "threshold_label": "Minimum fiducials 2",
+          "observed_label": "Observed fiducials 0"
+        },
+        {
+          "base_signature": "assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "signature": "medium|assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Ground test-point coverage appears limited for bring-up and probing",
+          "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "ground_test_points": 0,
+            "threshold": 1
+          },
+          "confidence": 0.81,
+          "design_domain": "testability",
+          "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+          "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+          "threshold_label": "Minimum ground test points 1",
+          "observed_label": "Observed ground test points 0"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net SWDIO has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net SWDIO has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net SWDIO has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "SWDIO"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net SWCLK has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net SWCLK has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net SWCLK has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "SWCLK"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net UART_TX has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net UART_TX has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net UART_TX has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "U1",
+            "J1",
+            "R1"
+          ],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "component_design|High-speed net SWCLK has a long route with no visible series or termination resistor",
+          "signature": "medium|component_design|High-speed net SWCLK has a long route with no visible series or termination resistor",
+          "severity": "medium",
+          "category": "component_design",
+          "message": "High-speed net SWCLK has a long route with no visible series or termination resistor",
+          "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "SWCLK"
+          ],
+          "metrics": {
+            "trace_length": 28.28,
+            "threshold": 18.0,
+            "has_resistor": false
+          },
+          "confidence": 0.7,
+          "design_domain": "component",
+          "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+          "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+          "threshold_label": "Termination review length 18.00 units",
+          "observed_label": "Observed route length 28.28 units"
+        },
+        {
+          "base_signature": "power_integrity|U1 (mcu) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U1 (mcu) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U1 (mcu) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U1",
+            "C1"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": 6.32,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance 6.32 units"
+        },
+        {
+          "base_signature": "manufacturing|Net GND uses a trace width below the fab-oriented limit (0.14)",
+          "signature": "medium|manufacturing|Net GND uses a trace width below the fab-oriented limit (0.14)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net GND uses a trace width below the fab-oriented limit (0.14)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "GND"
+          ],
+          "metrics": {
+            "trace_width": 0.14,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.14"
+        },
+        {
+          "base_signature": "manufacturing|Net SWDIO uses a trace width below the fab-oriented limit (0.10)",
+          "signature": "medium|manufacturing|Net SWDIO uses a trace width below the fab-oriented limit (0.10)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net SWDIO uses a trace width below the fab-oriented limit (0.10)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "SWDIO"
+          ],
+          "metrics": {
+            "trace_width": 0.1,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.10"
+        },
+        {
+          "base_signature": "manufacturing|Net SWCLK uses a trace width below the fab-oriented limit (0.10)",
+          "signature": "medium|manufacturing|Net SWCLK uses a trace width below the fab-oriented limit (0.10)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net SWCLK uses a trace width below the fab-oriented limit (0.10)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "SWCLK"
+          ],
+          "metrics": {
+            "trace_width": 0.1,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.10"
+        },
+        {
+          "base_signature": "manufacturing|Net UART_TX uses a trace width below the fab-oriented limit (0.12)",
+          "signature": "medium|manufacturing|Net UART_TX uses a trace width below the fab-oriented limit (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net UART_TX uses a trace width below the fab-oriented limit (0.12)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "manufacturing|Net UART_TX uses a trace width below the fab-oriented limit (0.12)",
+          "signature": "medium|manufacturing|Net UART_TX uses a trace width below the fab-oriented limit (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net UART_TX uses a trace width below the fab-oriented limit (0.12)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "signal_integrity|Net UART_TX has a long path between U1 and J1 (37.95 units)",
+          "signature": "medium|signal_integrity|Net UART_TX has a long path between U1 and J1 (37.95 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net UART_TX has a long path between U1 and J1 (37.95 units)",
+          "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+          "components": [
+            "U1",
+            "J1"
+          ],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "distance": 37.95,
+            "threshold": 25.0,
+            "is_critical_net": false
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "signal_integrity|Net UART_TX has a long path between J1 and R1 (34.18 units)",
+          "signature": "medium|signal_integrity|Net UART_TX has a long path between J1 and R1 (34.18 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net UART_TX has a long path between J1 and R1 (34.18 units)",
+          "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+          "components": [
+            "J1",
+            "R1"
+          ],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "distance": 34.18,
+            "threshold": 25.0,
+            "is_critical_net": false
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|J1 has ground but no visible power rail",
+          "signature": "medium|power_integrity|J1 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "J1 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "J1"
+          ],
+          "nets": [
+            "UART_TX",
+            "GND"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "UART_TX",
+              "GND"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|R1 has ground but no visible power rail",
+          "signature": "medium|power_integrity|R1 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "R1 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "R1"
+          ],
+          "nets": [
+            "UART_TX",
+            "GND"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "UART_TX",
+              "GND"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|Power net VCC uses a narrow trace width (0.16)",
+          "signature": "high|power_integrity|Power net VCC uses a narrow trace width (0.16)",
+          "severity": "high",
+          "category": "power_integrity",
+          "message": "Power net VCC uses a narrow trace width (0.16)",
+          "recommendation": "Increase power trace width to reduce resistance, heating, and voltage drop.",
+          "components": [],
+          "nets": [
+            "VCC"
+          ],
+          "metrics": {
+            "trace_width": 0.16,
+            "minimum_expected": 0.5
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Power trace width fell below the configured minimum width threshold.",
+          "threshold_label": "Minimum trace width 0.50",
+          "observed_label": "Observed trace width 0.16"
+        },
+        {
+          "base_signature": "signal_integrity|Critical net SWCLK appears to contain a dangling or stub-like route (28.28 units)",
+          "signature": "medium|signal_integrity|Critical net SWCLK appears to contain a dangling or stub-like route (28.28 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Critical net SWCLK appears to contain a dangling or stub-like route (28.28 units)",
+          "recommendation": "Remove unused stubs or terminate the route at the intended load to reduce reflection risk.",
+          "components": [],
+          "nets": [
+            "SWCLK"
+          ],
+          "metrics": {
+            "trace_length": 28.28,
+            "threshold": 12.0,
+            "connection_count": 1
+          },
+          "confidence": 0.72,
+          "design_domain": "signal",
+          "why_it_matters": "Dangling routes and long stubs can reflect energy back into the main signal path.",
+          "trigger_condition": "Critical-net routed length exceeded the stub threshold while endpoint connectivity stayed unusually low.",
+          "threshold_label": "Maximum stub length 12.00 units",
+          "observed_label": "Observed stub-like length 28.28 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net UART_TX has a long signal path between U1 and J1 (37.95 units)",
+          "signature": "medium|signal_integrity|Net UART_TX has a long signal path between U1 and J1 (37.95 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net UART_TX has a long signal path between U1 and J1 (37.95 units)",
+          "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+          "components": [
+            "U1",
+            "J1"
+          ],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "distance": 37.95,
+            "threshold": 25.0
+          },
+          "confidence": 0.82,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+          "threshold_label": "Maximum signal path distance 25.00 units",
+          "observed_label": "Observed signal path distance 37.95 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net UART_TX has a long signal path between J1 and R1 (34.18 units)",
+          "signature": "medium|signal_integrity|Net UART_TX has a long signal path between J1 and R1 (34.18 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net UART_TX has a long signal path between J1 and R1 (34.18 units)",
+          "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+          "components": [
+            "J1",
+            "R1"
+          ],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "distance": 34.18,
+            "threshold": 25.0
+          },
+          "confidence": 0.82,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+          "threshold_label": "Maximum signal path distance 25.00 units",
+          "observed_label": "Observed signal path distance 34.18 units"
+        },
+        {
+          "base_signature": "stackup_return_path|Critical net SWCLK is long for a two-layer style stackup",
+          "signature": "medium|stackup_return_path|Critical net SWCLK is long for a two-layer style stackup",
+          "severity": "medium",
+          "category": "stackup_return_path",
+          "message": "Critical net SWCLK is long for a two-layer style stackup",
+          "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "SWCLK"
+          ],
+          "metrics": {
+            "trace_length": 28.28,
+            "threshold": 28.0,
+            "copper_layers": 1
+          },
+          "confidence": 0.7,
+          "design_domain": "stackup",
+          "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+          "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+          "threshold_label": "Maximum two-layer critical length 28.00 units",
+          "observed_label": "Observed critical routed length 28.28 units"
+        },
+        {
+          "base_signature": "manufacturing|Net SWDIO contains a very narrow trace (0.10)",
+          "signature": "medium|manufacturing|Net SWDIO contains a very narrow trace (0.10)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net SWDIO contains a very narrow trace (0.10)",
+          "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+          "components": [],
+          "nets": [
+            "SWDIO"
+          ],
+          "metrics": {
+            "min_trace_width": 0.1,
+            "threshold": 0.15
+          },
+          "confidence": 0.83,
+          "design_domain": "layout",
+          "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+          "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+          "threshold_label": "Minimum general trace width 0.15",
+          "observed_label": "Observed trace width 0.10"
+        },
+        {
+          "base_signature": "manufacturing|Net SWCLK contains a very narrow trace (0.10)",
+          "signature": "medium|manufacturing|Net SWCLK contains a very narrow trace (0.10)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net SWCLK contains a very narrow trace (0.10)",
+          "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+          "components": [],
+          "nets": [
+            "SWCLK"
+          ],
+          "metrics": {
+            "min_trace_width": 0.1,
+            "threshold": 0.15
+          },
+          "confidence": 0.83,
+          "design_domain": "layout",
+          "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+          "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+          "threshold_label": "Minimum general trace width 0.15",
+          "observed_label": "Observed trace width 0.10"
+        },
+        {
+          "base_signature": "manufacturing|Net UART_TX contains a very narrow trace (0.12)",
+          "signature": "medium|manufacturing|Net UART_TX contains a very narrow trace (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net UART_TX contains a very narrow trace (0.12)",
+          "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+          "components": [],
+          "nets": [
+            "UART_TX"
+          ],
+          "metrics": {
+            "min_trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.83,
+          "design_domain": "layout",
+          "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+          "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+          "threshold_label": "Minimum general trace width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "signature": "medium|assembly_testability|Board has limited visible fiducial strategy for assembly alignment",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Board has limited visible fiducial strategy for assembly alignment",
+          "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "fiducials": 0,
+            "threshold": 2
+          },
+          "confidence": 0.76,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+          "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+          "threshold_label": "Minimum fiducials 2",
+          "observed_label": "Observed fiducials 0"
+        },
+        {
+          "base_signature": "assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "signature": "medium|assembly_testability|Ground test-point coverage appears limited for bring-up and probing",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Ground test-point coverage appears limited for bring-up and probing",
+          "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+          "components": [],
+          "nets": [],
+          "metrics": {
+            "ground_test_points": 0,
+            "threshold": 1
+          },
+          "confidence": 0.81,
+          "design_domain": "testability",
+          "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+          "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+          "threshold_label": "Minimum ground test points 1",
+          "observed_label": "Observed ground test points 0"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net USB_DP has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net USB_DP has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net USB_DP has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net USB_DN has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net USB_DN has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net USB_DN has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "assembly_testability|Critical or debug-oriented net CLK has no visible test point",
+          "signature": "medium|assembly_testability|Critical or debug-oriented net CLK has no visible test point",
+          "severity": "medium",
+          "category": "assembly_testability",
+          "message": "Critical or debug-oriented net CLK has no visible test point",
+          "recommendation": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
+          "components": [
+            "U1",
+            "Y1"
+          ],
+          "nets": [
+            "CLK"
+          ],
+          "metrics": {
+            "has_testpoint": false
+          },
+          "confidence": 0.72,
+          "design_domain": "testability",
+          "why_it_matters": "Critical nets that cannot be probed easily make validation, factory test, and field debug slower and more expensive.",
+          "trigger_condition": "A critical or debug-oriented net was identified without any visible test-point component.",
+          "threshold_label": "Expected at least one visible access point on critical nets",
+          "observed_label": "Observed visible access point: none"
+        },
+        {
+          "base_signature": "signal_integrity|Clock source Y1 is far from controller U1 (19.80 units)",
+          "signature": "high|signal_integrity|Clock source Y1 is far from controller U1 (19.80 units)",
+          "severity": "high",
+          "category": "signal_integrity",
+          "message": "Clock source Y1 is far from controller U1 (19.80 units)",
+          "recommendation": "Move the crystal or oscillator closer to the controller clock pins and keep the timing loop compact and isolated.",
+          "components": [
+            "Y1",
+            "U1"
+          ],
+          "nets": [
+            "CLK",
+            "GND"
+          ],
+          "metrics": {
+            "distance": 19.8,
+            "threshold": 12.0,
+            "shares_clock_net": true
+          },
+          "confidence": 0.84,
+          "design_domain": "signal_integrity",
+          "why_it_matters": "Oscillators and crystals work best when their loop to the controller is short, quiet, and physically compact.",
+          "trigger_condition": "A detected clock source was placed farther from the nearest likely controller than the configured timing-source distance threshold.",
+          "threshold_label": "Maximum clock-source distance 12.00 units",
+          "observed_label": "Observed source-to-controller distance 19.80 units"
+        },
+        {
+          "base_signature": "component_design|High-speed net USB_DN has a long route with no visible series or termination resistor",
+          "signature": "medium|component_design|High-speed net USB_DN has a long route with no visible series or termination resistor",
+          "severity": "medium",
+          "category": "component_design",
+          "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+          "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "trace_length": 118.2,
+            "threshold": 18.0,
+            "has_resistor": false
+          },
+          "confidence": 0.7,
+          "design_domain": "component",
+          "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+          "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+          "threshold_label": "Termination review length 18.00 units",
+          "observed_label": "Observed route length 118.20 units"
+        },
+        {
+          "base_signature": "component_design|High-speed net USB_DP has a long route with no visible series or termination resistor",
+          "signature": "medium|component_design|High-speed net USB_DP has a long route with no visible series or termination resistor",
+          "severity": "medium",
+          "category": "component_design",
+          "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+          "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "trace_length": 84.67,
+            "threshold": 18.0,
+            "has_resistor": false
+          },
+          "confidence": 0.7,
+          "design_domain": "component",
+          "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+          "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+          "threshold_label": "Termination review length 18.00 units",
+          "observed_label": "Observed route length 84.67 units"
+        },
+        {
+          "base_signature": "power_integrity|U1 (mcu) has no nearby decoupling capacitor",
+          "signature": "medium|power_integrity|U1 (mcu) has no nearby decoupling capacitor",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U1 (mcu) has no nearby decoupling capacitor",
+          "recommendation": "Place a decoupling capacitor close to the device power pin and on the relevant supply net.",
+          "components": [
+            "U1",
+            "J1"
+          ],
+          "nets": [],
+          "metrics": {
+            "nearest_cap_distance": 84.02,
+            "threshold": 4.0
+          },
+          "confidence": 0.9,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "Nearest valid decoupling capacitor exceeded the configured decoupling distance threshold.",
+          "threshold_label": "Maximum decoupling distance 4.00 units",
+          "observed_label": "Observed nearest capacitor distance 84.02 units"
+        },
+        {
+          "base_signature": "high_speed|Differential pair USB has a length mismatch of 33.53 units",
+          "signature": "high|high_speed|Differential pair USB has a length mismatch of 33.53 units",
+          "severity": "high",
+          "category": "high_speed",
+          "message": "Differential pair USB has a length mismatch of 33.53 units",
+          "recommendation": "Length-match the positive and negative pair routes more closely to reduce skew.",
+          "components": [],
+          "nets": [
+            "USB_DP",
+            "USB_DN"
+          ],
+          "metrics": {
+            "positive_length": 84.67,
+            "negative_length": 118.2,
+            "length_mismatch": 33.53,
+            "threshold": 5.0
+          },
+          "confidence": 0.9,
+          "design_domain": "signal",
+          "why_it_matters": "Differential pair skew can collapse timing margin and degrade signal integrity on high-speed links.",
+          "trigger_condition": "Differential-pair route length mismatch exceeded the configured skew threshold.",
+          "threshold_label": "Maximum pair mismatch 5.00 units",
+          "observed_label": "Observed pair mismatch 33.53 units"
+        },
+        {
+          "base_signature": "emi_emc|Switching or power net VBUS forms a long exposed loop path",
+          "signature": "medium|emi_emc|Switching or power net VBUS forms a long exposed loop path",
+          "severity": "medium",
+          "category": "emi_emc",
+          "message": "Switching or power net VBUS forms a long exposed loop path",
+          "recommendation": "Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.",
+          "components": [
+            "J1"
+          ],
+          "nets": [
+            "VBUS"
+          ],
+          "metrics": {
+            "trace_length": 84.02,
+            "max_loop_length": 45.0,
+            "via_count": 0
+          },
+          "confidence": 0.74,
+          "design_domain": "emi",
+          "why_it_matters": "Large current loops increase magnetic field radiation and make noisy power stages harder to contain.",
+          "trigger_condition": "A switching or power-oriented net exceeded the configured loop-length threshold.",
+          "threshold_label": "Maximum switching loop length 45.00 units",
+          "observed_label": "Observed routed length 84.02 units"
+        },
+        {
+          "base_signature": "emi_emc|Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+          "signature": "high|emi_emc|Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+          "severity": "high",
+          "category": "emi_emc",
+          "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+          "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "unsupported_vias": 2,
+            "return_via_radius": 3.0,
+            "trace_length": 84.67
+          },
+          "confidence": 0.82,
+          "design_domain": "emi",
+          "why_it_matters": "Layer transitions without nearby ground stitching can force return current to spread and increase EMI.",
+          "trigger_condition": "A fast or noisy net exceeded the switch-trace threshold and changed layers without nearby ground-via support.",
+          "threshold_label": "Maximum unsupported transition radius 3.00 units",
+          "observed_label": "Observed unsupported transitions 2"
+        },
+        {
+          "base_signature": "emi_emc|Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+          "signature": "high|emi_emc|Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+          "severity": "high",
+          "category": "emi_emc",
+          "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+          "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "unsupported_vias": 2,
+            "return_via_radius": 3.0,
+            "trace_length": 118.2
+          },
+          "confidence": 0.82,
+          "design_domain": "emi",
+          "why_it_matters": "Layer transitions without nearby ground stitching can force return current to spread and increase EMI.",
+          "trigger_condition": "A fast or noisy net exceeded the switch-trace threshold and changed layers without nearby ground-via support.",
+          "threshold_label": "Maximum unsupported transition radius 3.00 units",
+          "observed_label": "Observed unsupported transitions 2"
+        },
+        {
+          "base_signature": "manufacturing|Net CLK uses a trace width below the fab-oriented limit (0.12)",
+          "signature": "medium|manufacturing|Net CLK uses a trace width below the fab-oriented limit (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net CLK uses a trace width below the fab-oriented limit (0.12)",
+          "recommendation": "Increase the trace width or confirm that the chosen board house can reliably build this geometry.",
+          "components": [],
+          "nets": [
+            "CLK"
+          ],
+          "metrics": {
+            "trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.9,
+          "design_domain": "manufacturing",
+          "why_it_matters": "Very narrow traces can reduce yield margin, increase fabrication cost, or violate shop minimums.",
+          "trigger_condition": "Trace width fell below the configured manufacturability threshold.",
+          "threshold_label": "Minimum manufacturable width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        },
+        {
+          "base_signature": "signal_integrity|Net USB_DP has a long path between J1 and U1 (84.02 units)",
+          "signature": "medium|signal_integrity|Net USB_DP has a long path between J1 and U1 (84.02 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net USB_DP has a long path between J1 and U1 (84.02 units)",
+          "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "distance": 84.02,
+            "threshold": 25.0,
+            "is_critical_net": false
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "signal_integrity|Net USB_DN has a long path between J1 and U1 (84.02 units)",
+          "signature": "medium|signal_integrity|Net USB_DN has a long path between J1 and U1 (84.02 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net USB_DN has a long path between J1 and U1 (84.02 units)",
+          "recommendation": "Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "distance": 84.02,
+            "threshold": 25.0,
+            "is_critical_net": false
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|J1 has ground but no visible power rail",
+          "signature": "medium|power_integrity|J1 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "J1 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "J1"
+          ],
+          "nets": [
+            "USB_DN",
+            "VBUS",
+            "GND",
+            "USB_DP"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "USB_DN",
+              "VBUS",
+              "GND",
+              "USB_DP"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|U1 has ground but no visible power rail",
+          "signature": "medium|power_integrity|U1 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "U1 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "U1"
+          ],
+          "nets": [
+            "CLK",
+            "USB_DP",
+            "GND",
+            "USB_DN"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "CLK",
+              "USB_DP",
+              "GND",
+              "USB_DN"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|Y1 has ground but no visible power rail",
+          "signature": "medium|power_integrity|Y1 has ground but no visible power rail",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "Y1 has ground but no visible power rail",
+          "recommendation": "Verify that the component is connected to the intended supply net as well as ground.",
+          "components": [
+            "Y1"
+          ],
+          "nets": [
+            "CLK",
+            "GND"
+          ],
+          "metrics": {
+            "required_power_nets": [
+              "VIN",
+              "VCC",
+              "VBAT",
+              "5V",
+              "3V3",
+              "VDD"
+            ],
+            "required_ground_nets": [
+              "GND",
+              "GROUND",
+              "PGND"
+            ],
+            "observed_component_nets": [
+              "CLK",
+              "GND"
+            ],
+            "has_power": false,
+            "has_ground": true
+          },
+          "confidence": 0.7,
+          "design_domain": "power",
+          "why_it_matters": "",
+          "trigger_condition": "",
+          "threshold_label": "",
+          "observed_label": ""
+        },
+        {
+          "base_signature": "power_integrity|High-current net VBUS uses a long routed path",
+          "signature": "medium|power_integrity|High-current net VBUS uses a long routed path",
+          "severity": "medium",
+          "category": "power_integrity",
+          "message": "High-current net VBUS uses a long routed path",
+          "recommendation": "Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.",
+          "components": [
+            "J1"
+          ],
+          "nets": [
+            "VBUS"
+          ],
+          "metrics": {
+            "trace_length": 84.02,
+            "threshold": 40.0
+          },
+          "confidence": 0.76,
+          "design_domain": "power",
+          "why_it_matters": "Longer high-current routes add drop, loop inductance, and dynamic noise in power delivery paths.",
+          "trigger_condition": "A high-current net exceeded the configured maximum routed-length threshold.",
+          "threshold_label": "Maximum high-current path length 40.00 units",
+          "observed_label": "Observed routed length 84.02 units"
+        },
+        {
+          "base_signature": "reliability|Ground strategy looks light on stitching support for net GND (0 vias)",
+          "signature": "medium|reliability|Ground strategy looks light on stitching support for net GND (0 vias)",
+          "severity": "medium",
+          "category": "reliability",
+          "message": "Ground strategy looks light on stitching support for net GND (0 vias)",
+          "recommendation": "Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.",
+          "components": [],
+          "nets": [
+            "GND"
+          ],
+          "metrics": {
+            "ground_via_count": 0,
+            "threshold": 2,
+            "board_layers": 2
+          },
+          "confidence": 0.82,
+          "design_domain": "reliability",
+          "why_it_matters": "Weak ground stitching can reduce return-path quality and board robustness outside ideal lab conditions.",
+          "trigger_condition": "Ground via count fell below the configured minimum stitching threshold for a multi-layer board.",
+          "threshold_label": "Minimum ground vias 2",
+          "observed_label": "Observed ground vias 0"
+        },
+        {
+          "base_signature": "reliability|Ground net GND has limited visible connectivity (3 connections)",
+          "signature": "medium|reliability|Ground net GND has limited visible connectivity (3 connections)",
+          "severity": "medium",
+          "category": "reliability",
+          "message": "Ground net GND has limited visible connectivity (3 connections)",
+          "recommendation": "Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.",
+          "components": [],
+          "nets": [
+            "GND"
+          ],
+          "metrics": {
+            "ground_connections": 3,
+            "threshold": 4
+          },
+          "confidence": 0.74,
+          "design_domain": "reliability",
+          "why_it_matters": "Insufficient ground connectivity can increase susceptibility to EMI, transient issues, and inconsistent field behavior.",
+          "trigger_condition": "Ground connectivity count fell below the configured reliability threshold.",
+          "threshold_label": "Minimum ground connections 4",
+          "observed_label": "Observed ground connections 3"
+        },
+        {
+          "base_signature": "safety_high_voltage|High-voltage pad on J1:VBUS is close to J1:USB_DP",
+          "signature": "critical|safety_high_voltage|High-voltage pad on J1:VBUS is close to J1:USB_DP",
+          "severity": "critical",
+          "category": "safety_high_voltage",
+          "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
+          "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.",
+          "components": [
+            "J1",
+            "J1"
+          ],
+          "nets": [
+            "VBUS",
+            "USB_DP"
+          ],
+          "metrics": {
+            "clearance": 1.8,
+            "min_clearance": 2.5
+          },
+          "confidence": 0.83,
+          "design_domain": "safety",
+          "why_it_matters": "Clearance shortfalls in elevated-voltage regions can create direct insulation and safety failures.",
+          "trigger_condition": "A high-voltage pad-to-pad spacing fell below the configured clearance threshold.",
+          "threshold_label": "Minimum clearance 2.50 units",
+          "observed_label": "Observed nearest clearance 1.80 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net USB_DP has a long signal path between J1 and U1 (84.02 units)",
+          "signature": "medium|signal_integrity|Net USB_DP has a long signal path between J1 and U1 (84.02 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net USB_DP has a long signal path between J1 and U1 (84.02 units)",
+          "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "distance": 84.02,
+            "threshold": 25.0
+          },
+          "confidence": 0.82,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+          "threshold_label": "Maximum signal path distance 25.00 units",
+          "observed_label": "Observed signal path distance 84.02 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net USB_DN has a long signal path between J1 and U1 (84.02 units)",
+          "signature": "medium|signal_integrity|Net USB_DN has a long signal path between J1 and U1 (84.02 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net USB_DN has a long signal path between J1 and U1 (84.02 units)",
+          "recommendation": "Reduce path length or improve routing to lower noise and signal quality risks.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "distance": 84.02,
+            "threshold": 25.0
+          },
+          "confidence": 0.82,
+          "design_domain": "signal",
+          "why_it_matters": "",
+          "trigger_condition": "Signal path distance exceeded the configured path-length threshold.",
+          "threshold_label": "Maximum signal path distance 25.00 units",
+          "observed_label": "Observed signal path distance 84.02 units"
+        },
+        {
+          "base_signature": "stackup_return_path|Critical net USB_DP is long for a two-layer style stackup",
+          "signature": "medium|stackup_return_path|Critical net USB_DP is long for a two-layer style stackup",
+          "severity": "medium",
+          "category": "stackup_return_path",
+          "message": "Critical net USB_DP is long for a two-layer style stackup",
+          "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "trace_length": 84.67,
+            "threshold": 28.0,
+            "copper_layers": 2
+          },
+          "confidence": 0.7,
+          "design_domain": "stackup",
+          "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+          "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+          "threshold_label": "Maximum two-layer critical length 28.00 units",
+          "observed_label": "Observed critical routed length 84.67 units"
+        },
+        {
+          "base_signature": "stackup_return_path|Critical net USB_DP changes layers without nearby ground-return stitching",
+          "signature": "high|stackup_return_path|Critical net USB_DP changes layers without nearby ground-return stitching",
+          "severity": "high",
+          "category": "stackup_return_path",
+          "message": "Critical net USB_DP changes layers without nearby ground-return stitching",
+          "recommendation": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "unsupported_vias": 2,
+            "signal_via_ground_radius": 3.5
+          },
+          "confidence": 0.84,
+          "design_domain": "stackup",
+          "why_it_matters": "Signal vias without nearby return stitching can break reference continuity and worsen both signal integrity and EMI.",
+          "trigger_condition": "Critical-net vias were found outside the configured ground-stitch support radius.",
+          "threshold_label": "Ground-stitch support radius 3.50 units",
+          "observed_label": "Observed unsupported signal vias 2"
+        },
+        {
+          "base_signature": "stackup_return_path|Critical net USB_DN is long for a two-layer style stackup",
+          "signature": "medium|stackup_return_path|Critical net USB_DN is long for a two-layer style stackup",
+          "severity": "medium",
+          "category": "stackup_return_path",
+          "message": "Critical net USB_DN is long for a two-layer style stackup",
+          "recommendation": "Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "trace_length": 118.2,
+            "threshold": 28.0,
+            "copper_layers": 2
+          },
+          "confidence": 0.7,
+          "design_domain": "stackup",
+          "why_it_matters": "Long critical routes on a minimal stackup are harder to keep well referenced and more sensitive to return-path problems.",
+          "trigger_condition": "A critical net exceeded the two-layer critical-length threshold while board copper layers stayed limited.",
+          "threshold_label": "Maximum two-layer critical length 28.00 units",
+          "observed_label": "Observed critical routed length 118.20 units"
+        },
+        {
+          "base_signature": "stackup_return_path|Critical net USB_DN changes layers without nearby ground-return stitching",
+          "signature": "high|stackup_return_path|Critical net USB_DN changes layers without nearby ground-return stitching",
+          "severity": "high",
+          "category": "stackup_return_path",
+          "message": "Critical net USB_DN changes layers without nearby ground-return stitching",
+          "recommendation": "Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.",
+          "components": [
+            "J1",
+            "U1"
+          ],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "unsupported_vias": 2,
+            "signal_via_ground_radius": 3.5
+          },
+          "confidence": 0.84,
+          "design_domain": "stackup",
+          "why_it_matters": "Signal vias without nearby return stitching can break reference continuity and worsen both signal integrity and EMI.",
+          "trigger_condition": "Critical-net vias were found outside the configured ground-stitch support radius.",
+          "threshold_label": "Ground-stitch support radius 3.50 units",
+          "observed_label": "Observed unsupported signal vias 2"
+        },
+        {
+          "base_signature": "signal_integrity|Net VBUS has a long total routed trace length (84.02 units)",
+          "signature": "medium|signal_integrity|Net VBUS has a long total routed trace length (84.02 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net VBUS has a long total routed trace length (84.02 units)",
+          "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+          "components": [],
+          "nets": [
+            "VBUS"
+          ],
+          "metrics": {
+            "trace_length": 84.02380615040002,
+            "threshold": 60.0
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+          "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+          "threshold_label": "Maximum signal trace length 60.00 units",
+          "observed_label": "Observed trace length 84.02 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net USB_DP has a long total routed trace length (84.67 units)",
+          "signature": "medium|signal_integrity|Net USB_DP has a long total routed trace length (84.67 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net USB_DP has a long total routed trace length (84.67 units)",
+          "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+          "components": [],
+          "nets": [
+            "USB_DP"
+          ],
+          "metrics": {
+            "trace_length": 84.67372197262105,
+            "threshold": 60.0
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+          "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+          "threshold_label": "Maximum signal trace length 60.00 units",
+          "observed_label": "Observed trace length 84.67 units"
+        },
+        {
+          "base_signature": "signal_integrity|Net USB_DN has a long total routed trace length (118.20 units)",
+          "signature": "medium|signal_integrity|Net USB_DN has a long total routed trace length (118.20 units)",
+          "severity": "medium",
+          "category": "signal_integrity",
+          "message": "Net USB_DN has a long total routed trace length (118.20 units)",
+          "recommendation": "Review routing topology and shorten critical signal traces where practical.",
+          "components": [],
+          "nets": [
+            "USB_DN"
+          ],
+          "metrics": {
+            "trace_length": 118.2,
+            "threshold": 60.0
+          },
+          "confidence": 0.78,
+          "design_domain": "signal",
+          "why_it_matters": "Long signal routes can worsen noise sensitivity, delay, and routing quality on important nets.",
+          "trigger_condition": "Signal-net routed length exceeded the configured maximum signal trace threshold.",
+          "threshold_label": "Maximum signal trace length 60.00 units",
+          "observed_label": "Observed trace length 118.20 units"
+        },
+        {
+          "base_signature": "manufacturing|Net CLK contains a very narrow trace (0.12)",
+          "signature": "medium|manufacturing|Net CLK contains a very narrow trace (0.12)",
+          "severity": "medium",
+          "category": "manufacturing",
+          "message": "Net CLK contains a very narrow trace (0.12)",
+          "recommendation": "Review manufacturability limits and increase trace width if the design rules require it.",
+          "components": [],
+          "nets": [
+            "CLK"
+          ],
+          "metrics": {
+            "min_trace_width": 0.12,
+            "threshold": 0.15
+          },
+          "confidence": 0.83,
+          "design_domain": "layout",
+          "why_it_matters": "Very narrow traces can be harder to manufacture reliably and may reduce yield margin.",
+          "trigger_condition": "Signal trace width fell below the configured minimum manufacturable width threshold.",
+          "threshold_label": "Minimum general trace width 0.15",
+          "observed_label": "Observed trace width 0.12"
+        }
+      ],
+      "category_summary": {
+        "assembly_testability": 17,
+        "power_integrity": 29,
+        "signal_integrity": 17,
+        "reliability": 5,
+        "thermal": 8,
+        "emi_return_path": 2,
+        "safety_high_voltage": 3,
+        "component_design": 4,
+        "manufacturing": 14,
+        "stackup_return_path": 5,
+        "high_speed": 1,
+        "emi_emc": 3
+      }
+    },
+    {
+      "run_id": "project_20260415_113929_878295",
+      "name": "assembly_testability_board.kicad_pcb, mixed_signal_noise_board.kicad_pcb, thermal_hotspot_board.kicad_pcb...",
+      "run_type": "project",
+      "created_at": "2026-04-15T16:39:29.928866+00:00",
+      "score": 13.2,
+      "risk_count": 108,
+      "critical_count": 3,
+      "summary": "The strongest board is thermal_hotspot_board.kicad_pcb at 42.0 / 100, while the weakest board is high_speed_pair_bad.kicad_pcb at 0.0 / 100. The current score spread across the project is 42.0 points. The most recurring issue area across the project is power integrity.",
+      "path": "project_20260415_113929_878295",
       "risk_snapshot": [
         {
           "base_signature": "assembly_testability|Board has limited visible fiducial strategy for assembly alignment",

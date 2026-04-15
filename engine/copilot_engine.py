@@ -149,6 +149,18 @@ def _compare_direction(score_diff, risk_diff, critical_diff):
     return "mixed"
 
 
+def _conversation_route(key, label, title, answer, detail="", follow_ups=None, keywords=None):
+    return {
+        "key": key,
+        "label": label,
+        "title": title,
+        "answer": answer,
+        "detail": detail,
+        "follow_ups": follow_ups or [],
+        "keywords": keywords or [],
+    }
+
+
 def build_board_copilot_brief(result, decision_data):
     result = result or {}
     decision_data = decision_data or {}
@@ -407,19 +419,102 @@ def build_board_assistant_console(board_copilot, decision_data):
     actions = decision_data.get("next_actions", []) or []
     top_action = actions[0] if actions else {}
     top_domain = board_copilot.get("dominant_domain") or "General"
+    top_action_label = top_action.get("label") or top_action.get("category") or "the top issue"
+    validation_steps = (board_copilot.get("validation_plan") or [])[:3]
+
+    routes = [
+        _conversation_route(
+            "fix_priority",
+            "What matters first?",
+            "Fix Priority",
+            board_copilot.get("mission") or "No board mission is available yet.",
+            (
+                f"The current fix-first path starts with {top_action_label.lower()} because it combines the strongest severity, confidence, and engineering impact signal."
+                if top_action
+                else "Run an analysis to activate ranked fix sequencing."
+            ),
+            [
+                "Why is this issue ranked first?",
+                "Show the evidence behind that priority",
+                "What should I validate after I fix it?",
+            ],
+            ["fix", "first", "priority", "matter", "important", "rank"],
+        ),
+        _conversation_route(
+            "risk_story",
+            "Why is this risky?",
+            "Failure Path",
+            board_copilot.get("likely_failure_path") or board_copilot.get("failure_mode") or "No failure-path hypothesis is available yet.",
+            "Atlas is reading this as a real-world failure mechanism, not just a rule hit, so the key question is what will break first under operating stress.",
+            [
+                "Which subsystem is driving that risk?",
+                "What would failure look like in the lab?",
+                "Show me the strongest evidence",
+            ],
+            ["risk", "risky", "failure", "break", "danger", "concern"],
+        ),
+        _conversation_route(
+            "validation",
+            "What do I validate next?",
+            "Validation Plan",
+            " ".join(validation_steps) or "No validation plan is available yet.",
+            "Use the next rerun to confirm the top driver collapses, confidence stays stable, and the score improves for the right reason.",
+            [
+                "What should I re-measure after the rerun?",
+                "How do I know the score improved for the right reason?",
+                "Am I signoff ready after that?",
+            ],
+            ["validate", "validation", "recheck", "rerun", "test", "measure"],
+        ),
+        _conversation_route(
+            "score",
+            "Why is the score low?",
+            "Score Story",
+            " ".join(
+                [
+                    board_copilot.get("posture") or "",
+                    board_copilot.get("mission") or "",
+                    board_copilot.get("release_note") or "",
+                ]
+            ).strip() or "No score explanation is available yet.",
+            "Atlas weighs board posture, evidence quality, and release readiness together, so the score is a summary of engineering trust rather than a raw issue count.",
+            [
+                "What is hurting the score most?",
+                "What would raise the score fastest?",
+                "Show me the top risk driver",
+            ],
+            ["score", "low", "rating", "posture", "why"],
+        ),
+        _conversation_route(
+            "signoff",
+            "Am I signoff ready?",
+            "Signoff Readiness",
+            board_copilot.get("release_note") or "No signoff note is available for this board yet.",
+            "Treat signoff as a confidence decision. Atlas is looking for strong score posture, no unresolved criticals, and a clean validation loop before calling the board ready.",
+            [
+                "What blocks signoff right now?",
+                "What should I close before release?",
+                "Show me the critical evidence",
+            ],
+            ["signoff", "release", "ready", "approve", "ship"],
+        ),
+    ]
 
     questions = [
         {
             "label": "What matters first?",
             "answer": board_copilot.get("mission") or "No board mission is available yet.",
+            "route_key": "fix_priority",
         },
         {
             "label": "Why is this risky?",
             "answer": board_copilot.get("likely_failure_path") or board_copilot.get("failure_mode") or "No failure-path hypothesis is available yet.",
+            "route_key": "risk_story",
         },
         {
             "label": "What do I validate next?",
             "answer": " ".join((board_copilot.get("validation_plan") or [])[:2]) or "No validation plan is available yet.",
+            "route_key": "validation",
         },
     ]
 
@@ -431,6 +526,7 @@ def build_board_assistant_console(board_copilot, decision_data):
             "nets": top_action.get("nets") or [],
             "components": top_action.get("components") or [],
             "heat_mode": "heatmap",
+            "route_key": "fix_priority",
         },
         {
             "label": "Most Actionable",
@@ -439,6 +535,7 @@ def build_board_assistant_console(board_copilot, decision_data):
             "nets": top_action.get("nets") or [],
             "components": top_action.get("components") or [],
             "heat_mode": "hybrid",
+            "route_key": "risk_story",
         },
         {
             "label": "Geometry Review",
@@ -447,6 +544,7 @@ def build_board_assistant_console(board_copilot, decision_data):
             "nets": [],
             "components": [],
             "heat_mode": "normal",
+            "route_key": "validation",
         },
     ]
 
@@ -456,6 +554,7 @@ def build_board_assistant_console(board_copilot, decision_data):
         "summary": board_copilot.get("posture") or "Run a board analysis to activate Atlas Intelligence guidance.",
         "questions": questions,
         "review_lenses": review_lenses,
+        "routes": routes,
     }
 
 
@@ -463,19 +562,76 @@ def build_project_assistant_console(project_copilot):
     project_copilot = project_copilot or {}
     execution_plan = project_copilot.get("execution_plan", []) or []
     first_item = execution_plan[0] if execution_plan else {}
+    routes = [
+        _conversation_route(
+            "recurring_pattern",
+            "What is repeating?",
+            "Recurring Pattern",
+            f"The strongest systemic pattern is {project_copilot.get('systemic_pattern', 'not clear yet')}.",
+            project_copilot.get("posture") or "No workspace posture is available yet.",
+            [
+                "Why does that pattern keep showing up?",
+                "Which board or run is contributing most?",
+                "What should the team do first?",
+            ],
+            ["repeat", "repeating", "pattern", "systemic", "recurring"],
+        ),
+        _conversation_route(
+            "workspace_momentum",
+            "Are we improving?",
+            "Workspace Momentum",
+            project_copilot.get("momentum") or project_copilot.get("trend_summary") or "No project momentum readout is available yet.",
+            "Atlas is reading both trend direction and trust quality, so improvement only counts if the repeated issue family is genuinely collapsing over time.",
+            [
+                "What changed most across the timeline?",
+                "Are we improving enough for the next gate?",
+                "What is still holding the workspace back?",
+            ],
+            ["improv", "trend", "better", "momentum", "gate"],
+        ),
+        _conversation_route(
+            "team_action",
+            "What should the team do next?",
+            "Next Team Action",
+            first_item.get("action") or "No team execution step is available yet.",
+            first_item.get("why") or "The strongest next move should be assigned, tracked, and revalidated through the next workspace cycle.",
+            [
+                "Who should own this next?",
+                "What should we validate after the rerun?",
+                "What is the release risk if we skip it?",
+            ],
+            ["team", "next", "action", "owner", "do now"],
+        ),
+        _conversation_route(
+            "release_gate",
+            "Are we review-gate ready?",
+            "Release Gate",
+            project_copilot.get("release_readiness") or "No release-readiness note is available yet.",
+            "Atlas treats the workspace as a review gate, so the question is whether project trend, confidence, and repeated issues are all aligned enough for the next decision.",
+            [
+                "What blocks the next review gate?",
+                "Which repeated issue family matters most?",
+                "Show me the trend story",
+            ],
+            ["release", "gate", "ready", "signoff", "approval"],
+        ),
+    ]
 
     questions = [
         {
             "label": "What is repeating?",
             "answer": f"The strongest systemic pattern is {project_copilot.get('systemic_pattern', 'not clear yet')}.",
+            "route_key": "recurring_pattern",
         },
         {
             "label": "Are we improving?",
             "answer": project_copilot.get("momentum") or project_copilot.get("trend_summary") or "No project momentum readout is available yet.",
+            "route_key": "workspace_momentum",
         },
         {
             "label": "What should the team do next?",
             "answer": first_item.get("action") or "No team execution step is available yet.",
+            "route_key": "team_action",
         },
     ]
 
@@ -484,16 +640,19 @@ def build_project_assistant_console(project_copilot):
             "label": "Systemic Pattern",
             "headline": f"Review {project_copilot.get('systemic_pattern', 'the dominant pattern')}.",
             "copy": project_copilot.get("posture") or "No workspace posture is available yet.",
+            "route_key": "recurring_pattern",
         },
         {
             "label": "Trend Gate",
             "headline": "Read the workspace as a release gate, not a dashboard.",
             "copy": project_copilot.get("release_readiness") or "No release-readiness note is available yet.",
+            "route_key": "release_gate",
         },
         {
             "label": "Team Loop",
             "headline": "Treat the next rerun as a managed engineering cycle.",
             "copy": "Use owner assignment, review notes, and a targeted rerun to verify whether the repeated issue family actually collapsed.",
+            "route_key": "team_action",
         },
     ]
 
@@ -503,6 +662,7 @@ def build_project_assistant_console(project_copilot):
         "summary": project_copilot.get("posture") or "Link runs into Silicore Nexus to activate the Atlas Intelligence console.",
         "questions": questions,
         "review_lenses": review_lenses,
+        "routes": routes,
     }
 
 
@@ -510,19 +670,76 @@ def build_compare_assistant_console(compare_copilot):
     compare_copilot = compare_copilot or {}
     takeaways = compare_copilot.get("takeaways", []) or []
     first_takeaway = takeaways[0] if takeaways else {}
+    routes = [
+        _conversation_route(
+            "top_change",
+            "What changed most?",
+            "Top Change Cluster",
+            compare_copilot.get("root_cause") or "No dominant revision change is available yet.",
+            first_takeaway.get("why") or compare_copilot.get("next_move") or "No comparison cluster is available yet.",
+            [
+                "Show me what got worse",
+                "What should I inspect next?",
+                "Can I approve this revision?",
+            ],
+            ["change", "changed", "difference", "cluster", "moved"],
+        ),
+        _conversation_route(
+            "approval",
+            "Can I approve this?",
+            "Approval Readiness",
+            compare_copilot.get("signoff_note") or "No signoff note is available yet.",
+            "Atlas is treating this as an approval gate, so the compare view should confirm whether the changed findings cluster into one explainable subsystem before you accept the revision.",
+            [
+                "What blocks approval right now?",
+                "What got worse in the new revision?",
+                "Show me the top change cluster",
+            ],
+            ["approve", "approval", "signoff", "ready", "accept"],
+        ),
+        _conversation_route(
+            "inspect_next",
+            "What do I inspect next?",
+            "Next Inspection Step",
+            first_takeaway.get("why") or compare_copilot.get("next_move") or "No follow-up inspection step is available yet.",
+            "Use the inspector to verify whether the biggest movement is isolated or systemic across the revision.",
+            [
+                "Why did that subsystem move?",
+                "Is this revision actually healthier?",
+                "Can I approve this revision?",
+            ],
+            ["inspect", "next", "focus", "look", "verify"],
+        ),
+        _conversation_route(
+            "regression",
+            "What got worse?",
+            "What Got Worse",
+            compare_copilot.get("root_cause") or "No dominant regression note is available yet.",
+            "The important question is whether this is one concentrated regression or a broader shift across multiple engineering domains.",
+            [
+                "Show me the top change cluster",
+                "What should I verify before approval?",
+                "Is any domain improving enough to offset it?",
+            ],
+            ["worse", "regress", "regression", "degraded", "bad"],
+        ),
+    ]
 
     questions = [
         {
             "label": "What changed most?",
             "answer": compare_copilot.get("root_cause") or "No dominant revision change is available yet.",
+            "route_key": "top_change",
         },
         {
             "label": "Can I approve this?",
             "answer": compare_copilot.get("signoff_note") or "No signoff note is available yet.",
+            "route_key": "approval",
         },
         {
             "label": "What do I inspect next?",
             "answer": first_takeaway.get("why") or compare_copilot.get("next_move") or "No follow-up inspection step is available yet.",
+            "route_key": "inspect_next",
         },
     ]
 
@@ -533,6 +750,7 @@ def build_compare_assistant_console(compare_copilot):
             "copy": first_takeaway.get("why") or compare_copilot.get("root_cause") or "No comparison cluster is available yet.",
             "nets": first_takeaway.get("nets") or [],
             "components": first_takeaway.get("components") or [],
+            "route_key": "top_change",
         },
         {
             "label": "Revision Signoff",
@@ -540,6 +758,7 @@ def build_compare_assistant_console(compare_copilot):
             "copy": compare_copilot.get("signoff_note") or "No signoff note is available yet.",
             "nets": [],
             "components": [],
+            "route_key": "approval",
         },
         {
             "label": "Inspector Focus",
@@ -547,6 +766,7 @@ def build_compare_assistant_console(compare_copilot):
             "copy": compare_copilot.get("next_move") or "No inspector guidance is available yet.",
             "nets": first_takeaway.get("nets") or [],
             "components": first_takeaway.get("components") or [],
+            "route_key": "inspect_next",
         },
     ]
 
@@ -556,4 +776,5 @@ def build_compare_assistant_console(compare_copilot):
         "summary": compare_copilot.get("posture") or "Run a comparison to activate the Atlas Intelligence console.",
         "questions": questions,
         "review_lenses": review_lenses,
+        "routes": routes,
     }

@@ -144,7 +144,7 @@
                 <div class="assistant-console-label">Follow-Up Questions</div>
                 <div class="assistant-console-list">
                     {% for item in board_assistant_console.questions %}
-                    <button type="button" class="assistant-console-chip" data-assistant-board-question data-answer="{{ item.answer }}" data-title="{{ item.label }}">
+                    <button type="button" class="assistant-console-chip" data-assistant-board-question data-answer="{{ item.answer }}" data-title="{{ item.label }}" data-route-key="{{ item.route_key }}">
                         {{ item.label }}
                     </button>
                     {% endfor %}
@@ -163,7 +163,8 @@
                         data-answer="{{ item.copy }}"
                         data-components="{{ item.components|join('|') }}"
                         data-nets="{{ item.nets|join('|') }}"
-                        data-heat="{{ item.heat_mode }}">
+                        data-heat="{{ item.heat_mode }}"
+                        data-route-key="{{ item.route_key }}">
                         <span>{{ item.label }}</span>
                         <strong>{{ item.headline }}</strong>
                     </button>
@@ -176,9 +177,7 @@
 
 <script id="board-assistant-data" type="application/json">
 {{ {
-    "summary": board_assistant_console.summary,
-    "questions": board_assistant_console.questions,
-    "review_lenses": board_assistant_console.review_lenses,
+    "assistant": board_assistant_console,
     "copilot": board_copilot,
     "validation_plan": board_copilot.validation_plan if board_copilot else [],
     "top_actions": single_decision.next_actions if single_decision and single_decision.next_actions else []
@@ -1341,6 +1340,9 @@
 
     const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
     const boardData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const assistantData = boardData.assistant || {};
+    const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
+    const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
     const riskSources = Array.from(document.querySelectorAll('[data-risk-anchor]')).map((node) => ({
         id: node.id,
         domain: String(node.dataset.riskDomain || '').toLowerCase(),
@@ -1353,8 +1355,39 @@
     }));
     const threadKey = `silicore-board-thread::${(boardData.copilot || {}).score || 'empty'}::${((boardData.copilot || {}).dominant_domain || 'general').toLowerCase()}`;
 
-    const renderResponse = (title, answer) => {
-        responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const renderFollowUps = (followUps) => {
+        if (!Array.isArray(followUps) || !followUps.length) return '';
+        return `
+            <div class="assistant-follow-row">
+                ${followUps.map((item) => `
+                    <button type="button" class="assistant-follow-chip" data-assistant-board-followup="${escapeHtml(item)}">
+                        ${escapeHtml(item)}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    const resultToMarkup = (result) => {
+        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
+        return `<p>${result.answer}</p>${detail}`;
+    };
+
+    const renderResponse = (result) => {
+        if (!result) return;
+        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
+        const followUps = renderFollowUps(result.follow_ups);
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${followUps}`;
+        responsePanel.querySelectorAll('[data-assistant-board-followup]').forEach((button) => {
+            button.addEventListener('click', () => pushThreadExchange(button.dataset.assistantBoardFollowup, answerBoardPrompt(button.dataset.assistantBoardFollowup)));
+        });
     };
 
     const renderThread = (messages) => {
@@ -1370,6 +1403,7 @@
                     <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Atlas Intelligence'}</div>
                     <div class="assistant-message-copy">${item.copy}</div>
                     ${citations ? `<div class="assistant-citation-list">${citations}</div>` : ''}
+                    ${renderFollowUps(item.follow_ups)}
                 </div>
             `;
         }).join('');
@@ -1386,6 +1420,11 @@
                         api.focus(components, nets);
                     }
                 }
+            });
+        });
+        thread.querySelectorAll('[data-assistant-board-followup]').forEach((button) => {
+            button.addEventListener('click', () => {
+                pushThreadExchange(button.dataset.assistantBoardFollowup, answerBoardPrompt(button.dataset.assistantBoardFollowup));
             });
         });
         thread.scrollTop = thread.scrollHeight;
@@ -1419,11 +1458,52 @@
         nets: item.nets,
     });
 
+    const routeResult = (route, citations) => ({
+        title: route.title || route.label || 'Atlas Intelligence',
+        answer: route.answer || 'No answer available yet.',
+        detail: route.detail || '',
+        follow_ups: route.follow_ups || [],
+        citations: citations || [],
+    });
+
+    const citationsForRoute = (route) => {
+        const key = String((route && route.key) || '').toLowerCase();
+        if (key.includes('validation')) return [];
+        if (key.includes('signoff')) {
+            return riskSources.filter((item) => item.severity === 'critical').slice(0, 2).map(sourceToCitation);
+        }
+        if (key.includes('score')) {
+            return riskSources.slice(0, 3).map(sourceToCitation);
+        }
+        return riskSources.slice(0, 2).map(sourceToCitation);
+    };
+
+    const matchAssistantRoute = (prompt) => {
+        const lower = String(prompt || '').toLowerCase();
+        for (const route of assistantRoutes) {
+            const keywords = Array.isArray(route.keywords) ? route.keywords : [];
+            if (keywords.some((keyword) => lower.includes(String(keyword).toLowerCase()))) {
+                return route;
+            }
+            if (route.label && lower.includes(String(route.label).toLowerCase())) {
+                return route;
+            }
+            if (route.title && lower.includes(String(route.title).toLowerCase())) {
+                return route;
+            }
+        }
+        return null;
+    };
+
     const answerBoardPrompt = (prompt) => {
         const text = String(prompt || '').trim();
         const lower = text.toLowerCase();
         const copilot = boardData.copilot || {};
         const topAction = (boardData.top_actions || [])[0] || {};
+        const assistantRoute = matchAssistantRoute(text);
+        if (assistantRoute) {
+            return routeResult(assistantRoute, citationsForRoute(assistantRoute));
+        }
 
         if (lower.includes('emi') || lower.includes('emc')) {
             const matches = sourcesForDomain('emi');
@@ -1432,6 +1512,10 @@
                 answer: matches.length
                     ? `Atlas Intelligence is flagging EMI/EMC pressure because the board has noisy-path or return-path findings that can escape the layout and show up as real-world instability. Focus on routing containment, stitching support, and aggressor proximity first.`
                     : 'No explicit EMI/EMC findings are currently dominating this board review.',
+                detail: matches.length
+                    ? 'The next useful move is to inspect the cited traces and see whether containment, stitching, or plane continuity can collapse the risk without introducing new routing compromises.'
+                    : '',
+                follow_ups: ['Show me the strongest evidence', 'What should I fix first?', 'Am I signoff ready?'],
                 citations: matches.map(sourceToCitation),
             };
         }
@@ -1442,6 +1526,10 @@
                 answer: matches.length
                     ? `Power behavior is part of the current review pressure. The strongest issues point to delivery realism, rail width, or regulator-support weaknesses that can translate into droop, noise, or unstable bring-up.`
                     : 'Power integrity is not the strongest active pressure area on this board right now.',
+                detail: matches.length
+                    ? 'Treat this as a physical current-path question. Atlas wants you to verify whether supply routing, local support, and return structure are all consistent with the board load profile.'
+                    : '',
+                follow_ups: ['What should I validate after the rerun?', 'Show me the strongest evidence', 'Why is this risky?'],
                 citations: matches.map(sourceToCitation),
             };
         }
@@ -1452,6 +1540,10 @@
                 answer: matches.length
                     ? `Thermal pressure is showing up through hotspot and heat-spreading weaknesses. Review nearby copper width, thermal vias, and clustered hot components before assuming the current placement is production-safe.`
                     : 'Thermal findings are not currently leading this review.',
+                detail: matches.length
+                    ? 'Atlas is treating thermal behavior as both a reliability and power-path issue, so the practical question is whether the affected region can dissipate heat safely under operating load.'
+                    : '',
+                follow_ups: ['What matters first?', 'What should I validate next?', 'Show me the strongest evidence'],
                 citations: matches.map(sourceToCitation),
             };
         }
@@ -1462,6 +1554,10 @@
                 answer: matches.length
                     ? `Signal quality pressure is active on this board. The current findings suggest timing, routing continuity, or return-path behavior that could break clean behavior under real operating conditions.`
                     : 'Signal and return-path findings are not the main driver right now.',
+                detail: matches.length
+                    ? 'Atlas is looking for whether the physical routing story still supports clean return-current behavior, controlled transitions, and subsystem isolation once the board is built.'
+                    : '',
+                follow_ups: ['Show EMI reasons', 'What should I fix first?', 'What should I validate next?'],
                 citations: matches.map(sourceToCitation),
             };
         }
@@ -1470,6 +1566,8 @@
             return {
                 title: 'Signoff Readiness',
                 answer: copilot.release_note || 'No signoff note is available for this board yet.',
+                detail: 'Atlas treats signoff as an evidence-backed confidence call, so unresolved criticals and weak validation loops matter more than a single headline score.',
+                follow_ups: ['What blocks signoff right now?', 'What should I validate next?', 'Why is the score low?'],
                 citations: criticals.map(sourceToCitation),
             };
         }
@@ -1477,6 +1575,8 @@
             return {
                 title: 'Validation Plan',
                 answer: `<p>${(boardData.validation_plan || []).slice(0, 3).join('</p><p>')}</p>`,
+                detail: 'A good rerun should prove that the highest-priority driver collapsed for a physical reason, not just that the total flag count changed.',
+                follow_ups: ['How do I know the score improved for the right reason?', 'Am I signoff ready?', 'What matters first?'],
                 citations: [],
             };
         }
@@ -1485,6 +1585,8 @@
             return {
                 title: 'Why The Score Is Low',
                 answer: `${copilot.posture || 'No score posture is available.'} ${copilot.mission || ''} ${copilot.release_note || ''}`.trim(),
+                detail: 'Atlas is using the score as a trust summary, so the fastest path up is usually to collapse the strongest risk driver with a clean validation loop.',
+                follow_ups: ['What is hurting the score most?', 'What should I fix first?', 'Am I signoff ready?'],
                 citations: matches.map(sourceToCitation),
             };
         }
@@ -1493,6 +1595,10 @@
             answer: topAction.label
                 ? `${topAction.label} is still the best first move because it sits at the intersection of severity, confidence, evidence depth, and real-world impact. ${topAction.recommendation_short || topAction.recommendation || ''}`.trim()
                 : (copilot.mission || 'No priority guidance is available yet.'),
+            detail: topAction.label
+                ? 'If you want, Atlas can keep going from here and walk through the evidence, likely failure path, and what to validate after the fix.'
+                : '',
+            follow_ups: ['Why is this issue ranked first?', 'Show me the evidence behind that priority', 'What should I validate after I fix it?'],
             citations: riskSources.slice(0, 2).map(sourceToCitation),
         };
     };
@@ -1500,26 +1606,30 @@
     const pushThreadExchange = (promptText, result) => {
         const current = loadThread();
         current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: `<p>${result.answer}</p>`, citations: result.citations || []});
+        current.push({role: 'assistant', copy: resultToMarkup(result), citations: result.citations || [], follow_ups: result.follow_ups || []});
         saveThread(current);
         renderThread(current);
-        renderResponse(result.title, result.answer.replace(/<[^>]+>/g, ' '));
+        renderResponse({
+            ...result,
+            answer: result.answer.replace(/<[^>]+>/g, ' '),
+        });
     };
 
     questionButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
-            pushThreadExchange(button.dataset.title || 'Question', {
+            const route = routesByKey[button.dataset.routeKey || ''];
+            const result = route ? routeResult(route, citationsForRoute(route)) : {
                 title: button.dataset.title || 'Question',
                 answer: button.dataset.answer || 'No answer available.',
                 citations: [],
-            });
+                follow_ups: [],
+            };
+            pushThreadExchange(button.dataset.title || 'Question', result);
         });
     });
 
     lensButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens note available.');
             const api = window.silicoreBoardInspector;
             if (!api) return;
             const nets = splitTokens(button.dataset.nets);
@@ -1531,11 +1641,14 @@
                 api.clear();
                 api.setFilters({heat: button.dataset.heat || 'hybrid'});
             }
-            pushThreadExchange(button.dataset.title || 'Review Lens', {
+            const route = routesByKey[button.dataset.routeKey || ''];
+            const result = route ? routeResult(route, citationsForRoute(route)) : {
                 title: button.dataset.title || 'Review Lens',
                 answer: button.dataset.answer || 'No review-lens note available.',
                 citations: [],
-            });
+                follow_ups: [],
+            };
+            pushThreadExchange(button.dataset.title || 'Review Lens', result);
         });
     });
 
@@ -1562,7 +1675,12 @@
         renderThread(saved);
     }
     if (questionButtons[0] && !saved.length) {
-        renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
+        const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
+        renderResponse(route ? routeResult(route, []) : {
+            title: questionButtons[0].dataset.title || 'Question',
+            answer: questionButtons[0].dataset.answer || 'No answer available.',
+            follow_ups: [],
+        });
     }
 })();
 </script>
@@ -2333,10 +2451,27 @@
         margin-top: 10px;
     }
 
+    .assistant-follow-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
     .assistant-citation {
         border: 1px solid rgba(96,165,250,0.18);
         background: rgba(96,165,250,0.1);
         color: #dbeafe;
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .assistant-follow-chip {
+        border: 1px solid rgba(56,189,248,0.18);
+        background: rgba(56,189,248,0.08);
+        color: #dff7ff;
         border-radius: 999px;
         padding: 8px 10px;
         cursor: pointer;
@@ -2358,6 +2493,12 @@
         padding: 8px 10px;
         cursor: pointer;
         font: inherit;
+    }
+
+    .assistant-detail-copy {
+        margin-top: 10px;
+        color: #b8c7df;
+        font-size: 13px;
     }
 
     .assistant-composer {

@@ -52,7 +52,7 @@
                 <div class="assistant-console-label">Follow-Up Questions</div>
                 <div class="assistant-console-list">
                     {% for item in compare_assistant_console.questions %}
-                    <button type="button" class="assistant-console-chip" data-assistant-compare-question data-title="{{ item.label }}" data-answer="{{ item.answer }}">
+                    <button type="button" class="assistant-console-chip" data-assistant-compare-question data-title="{{ item.label }}" data-answer="{{ item.answer }}" data-route-key="{{ item.route_key }}">
                         {{ item.label }}
                     </button>
                     {% endfor %}
@@ -62,7 +62,7 @@
                 <div class="assistant-console-label">Apply Review Lens</div>
                 <div class="assistant-console-list">
                     {% for item in compare_assistant_console.review_lenses %}
-                    <button type="button" class="assistant-console-lens" data-assistant-compare-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}" data-components="{{ item.components|join('|') }}" data-nets="{{ item.nets|join('|') }}">
+                    <button type="button" class="assistant-console-lens" data-assistant-compare-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}" data-components="{{ item.components|join('|') }}" data-nets="{{ item.nets|join('|') }}" data-route-key="{{ item.route_key }}">
                         <span>{{ item.label }}</span>
                         <strong>{{ item.headline }}</strong>
                     </button>
@@ -2373,6 +2373,7 @@
     }
 
     .assistant-citation-list,
+    .assistant-follow-row,
     .assistant-prompt-row {
         display: flex;
         flex-wrap: wrap;
@@ -2381,6 +2382,7 @@
     }
 
     .assistant-citation,
+    .assistant-follow-chip,
     .assistant-prompt-chip {
         border: 1px solid rgba(96,165,250,0.18);
         background: rgba(96,165,250,0.1);
@@ -2389,6 +2391,12 @@
         padding: 8px 10px;
         cursor: pointer;
         font: inherit;
+    }
+
+    .assistant-detail-copy {
+        margin-top: 10px;
+        color: #b8c7df;
+        font-size: 13px;
     }
 
     .assistant-composer {
@@ -2774,9 +2782,39 @@
     if (!responsePanel) return;
 
     const compareData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
+    const assistantData = compareData.assistant || {};
+    const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
+    const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
     const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
-    const renderResponse = (title, answer) => {
-        responsePanel.innerHTML = `<h3>${title}</h3><p>${answer}</p>`;
+    const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    const renderFollowUps = (followUps) => {
+        if (!Array.isArray(followUps) || !followUps.length) return '';
+        return `
+            <div class="assistant-follow-row">
+                ${followUps.map((item) => `
+                    <button type="button" class="assistant-follow-chip" data-assistant-compare-followup="${escapeHtml(item)}">
+                        ${escapeHtml(item)}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    };
+    const resultToMarkup = (result) => {
+        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
+        return `<p>${result.answer}</p>${detail}`;
+    };
+    const renderResponse = (result) => {
+        if (!result) return;
+        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
+        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${renderFollowUps(result.follow_ups)}`;
+        responsePanel.querySelectorAll('[data-assistant-compare-followup]').forEach((button) => {
+            button.addEventListener('click', () => pushThreadExchange(button.dataset.assistantCompareFollowup, answerPrompt(button.dataset.assistantCompareFollowup)));
+        });
     };
 
     const threadKey = `silicore-compare-thread::${((compareData.copilot || {}).direction || 'mixed')}::${((compareData.copilot || {}).score_diff || 0)}`;
@@ -2807,6 +2845,7 @@
                     <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Atlas Intelligence'}</div>
                     <div class="assistant-message-copy">${item.copy}</div>
                     ${citations ? `<div class="assistant-citation-list">${citations}</div>` : ''}
+                    ${renderFollowUps(item.follow_ups)}
                 </div>
             `;
         }).join('');
@@ -2820,42 +2859,87 @@
                 }
             });
         });
+        thread.querySelectorAll('[data-assistant-compare-followup]').forEach((button) => {
+            button.addEventListener('click', () => {
+                pushThreadExchange(button.dataset.assistantCompareFollowup, answerPrompt(button.dataset.assistantCompareFollowup));
+            });
+        });
+    };
+    const routeResult = (route, citations) => ({
+        title: route.title || route.label || 'Atlas Intelligence',
+        answer: route.answer || 'No answer available yet.',
+        detail: route.detail || '',
+        follow_ups: route.follow_ups || [],
+        citations: citations || [],
+    });
+    const matchAssistantRoute = (prompt) => {
+        const lower = String(prompt || '').toLowerCase();
+        for (const route of assistantRoutes) {
+            const keywords = Array.isArray(route.keywords) ? route.keywords : [];
+            if (keywords.some((keyword) => lower.includes(String(keyword).toLowerCase()))) return route;
+            if (route.label && lower.includes(String(route.label).toLowerCase())) return route;
+            if (route.title && lower.includes(String(route.title).toLowerCase())) return route;
+        }
+        return null;
     };
 
     const firstTakeaway = document.querySelector('[data-copilot-compare-item]');
+    const defaultCitation = firstTakeaway ? [{
+        label: firstTakeaway.dataset.title || 'Top change',
+        target: firstTakeaway.id,
+        components: splitTokens(firstTakeaway.dataset.components),
+        nets: splitTokens(firstTakeaway.dataset.nets),
+    }] : [];
     const answerPrompt = (text) => {
         const lower = String(text || '').toLowerCase();
         const copilot = compareData.copilot || {};
-        const citation = firstTakeaway ? [{
-            label: firstTakeaway.dataset.title || 'Top change',
-            target: firstTakeaway.id,
-            components: splitTokens(firstTakeaway.dataset.components),
-            nets: splitTokens(firstTakeaway.dataset.nets),
-        }] : [];
+        const assistantRoute = matchAssistantRoute(text);
+        if (assistantRoute) {
+            return routeResult(assistantRoute, defaultCitation);
+        }
         if (lower.includes('approve') || lower.includes('signoff')) {
-            return {title: 'Approval Readiness', answer: copilot.signoff_note || 'No signoff note is available yet.', citations: citation};
+            return {
+                title: 'Approval Readiness',
+                answer: copilot.signoff_note || 'No signoff note is available yet.',
+                detail: 'Atlas is using the comparison as a gate, so approval depends on whether the changed findings are understandable, bounded, and worth the tradeoff.',
+                follow_ups: ['What got worse?', 'Show the top change cluster', 'What do I inspect next?'],
+                citations: defaultCitation,
+            };
         }
         if (lower.includes('worse') || lower.includes('regress')) {
-            return {title: 'What Got Worse', answer: copilot.root_cause || 'No dominant regression note is available yet.', citations: citation};
+            return {
+                title: 'What Got Worse',
+                answer: copilot.root_cause || 'No dominant regression note is available yet.',
+                detail: 'The next step is to confirm whether this is one concentrated subsystem regression or a broader quality shift.',
+                follow_ups: ['Show the top change cluster', 'Can I approve this revision?', 'What do I inspect next?'],
+                citations: defaultCitation,
+            };
         }
-        return {title: 'Top Change Cluster', answer: copilot.next_move || 'No next move is available yet.', citations: citation};
+        return {
+            title: 'Top Change Cluster',
+            answer: copilot.next_move || 'No next move is available yet.',
+            detail: 'Atlas wants to keep both revisions in view while you inspect the same subsystem, not jump between disconnected findings.',
+            follow_ups: ['What got worse?', 'Can I approve this revision?', 'Why did that subsystem move?'],
+            citations: defaultCitation,
+        };
     };
 
     const pushThreadExchange = (promptText, result) => {
         const current = loadThread();
         current.push({role: 'user', copy: promptText});
-        current.push({role: 'assistant', copy: `<p>${result.answer}</p>`, citations: result.citations || []});
+        current.push({role: 'assistant', copy: resultToMarkup(result), citations: result.citations || [], follow_ups: result.follow_ups || []});
         saveThread(current);
         renderThread(current);
-        renderResponse(result.title, result.answer);
+        renderResponse(result);
     };
 
     questionButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            renderResponse(button.dataset.title || 'Question', button.dataset.answer || 'No answer available.');
-            pushThreadExchange(button.dataset.title || 'Question', {
+            const route = routesByKey[button.dataset.routeKey || ''];
+            pushThreadExchange(button.dataset.title || 'Question', route ? routeResult(route, defaultCitation) : {
                 title: button.dataset.title || 'Question',
                 answer: button.dataset.answer || 'No answer available.',
+                follow_ups: [],
                 citations: [],
             });
         });
@@ -2863,7 +2947,6 @@
 
     lensButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            renderResponse(button.dataset.title || 'Review Lens', button.dataset.answer || 'No review-lens answer available.');
             const api = window.silicoreCompareInspector;
             if (!api) return;
             const nets = splitTokens(button.dataset.nets);
@@ -2873,9 +2956,11 @@
             } else {
                 api.clear();
             }
-            pushThreadExchange(button.dataset.title || 'Review Lens', {
+            const route = routesByKey[button.dataset.routeKey || ''];
+            pushThreadExchange(button.dataset.title || 'Review Lens', route ? routeResult(route, defaultCitation) : {
                 title: button.dataset.title || 'Review Lens',
                 answer: button.dataset.answer || 'No review-lens answer available.',
+                follow_ups: [],
                 citations: [],
             });
         });
@@ -2900,7 +2985,12 @@
     const saved = loadThread();
     if (saved.length) renderThread(saved);
     if (questionButtons[0]) {
-        renderResponse(questionButtons[0].dataset.title || 'Question', questionButtons[0].dataset.answer || 'No answer available.');
+        const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
+        renderResponse(route ? routeResult(route, []) : {
+            title: questionButtons[0].dataset.title || 'Question',
+            answer: questionButtons[0].dataset.answer || 'No answer available.',
+            follow_ups: [],
+        });
     }
 })();
 </script>

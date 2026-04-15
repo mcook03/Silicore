@@ -1,0 +1,40 @@
+{
+    "run_type": "project",
+    "title": "Project Review Export",
+    "generated_at": "2026-04-15T16:39:29.928631+00:00",
+    "artifacts": [
+        {
+            "name": "project_summary.json",
+            "kind": "json"
+        },
+        {
+            "name": "project_summary.md",
+            "kind": "markdown"
+        },
+        {
+            "name": "project_summary.html",
+            "kind": "html"
+        }
+    ],
+    "parser_capabilities": {
+        ".kicad_pcb": {
+            "label": "KiCad PCB",
+            "status": "supported"
+        },
+        ".txt": {
+            "label": "Structured Demo Text",
+            "status": "supported"
+        },
+        ".brd": {
+            "label": "Legacy Structured Board",
+            "status": "supported"
+        },
+        ".gbr": {
+            "label": "Gerber",
+            "status": "planned"
+        }
+    },
+    "notes": [
+        "Artifacts include project summary, ranked boards, and transparency-enriched review output."
+    ]
+}

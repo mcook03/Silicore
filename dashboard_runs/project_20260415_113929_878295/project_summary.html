@@ -1,0 +1,108 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Project Summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .board-card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 18px;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Project Summary</h1>
+                <p><strong>Total Boards:</strong> 5</p>
+                <p><strong>Average Score:</strong> 13.2 / 100</p>
+                <p><strong>Best Score:</strong> 42.0 / 100</p>
+                <p><strong>Worst Score:</strong> 0.0 / 100</p>
+            </div>
+
+            
+        <div class="hero">
+            <p><strong>Project comparison complete</strong></p>
+            <p>The strongest board is thermal_hotspot_board.kicad_pcb at 42.0 / 100, while the weakest board is high_speed_pair_bad.kicad_pcb at 0.0 / 100. The current score spread across the project is 42.0 points. The most recurring issue area across the project is power integrity.</p>
+        </div>
+        
+
+            <div class="hero">
+                <p><strong>Review Readiness</strong></p>
+                <p>Project packet includes ranked boards, project insight summary, and per-board finding traceability for revision reviews and signoff preparation.</p>
+            </div>
+
+            <div class="hero">
+                <p><strong>Parser Capability</strong></p>
+                <p>Current production-ready inputs: .kicad_pcb, .txt</p>
+                <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            
+            <div class="board-card">
+                <h3>#1 — thermal_hotspot_board.kicad_pcb</h3>
+                <p><strong>Score:</strong> 42.0 / 100</p>
+                <p><strong>Total Risks:</strong> 14</p>
+                <p><strong>Total Penalty:</strong> 58.0</p>
+                <p>This board shows elevated design risk. The main risk concentration is in power integrity. The highest-priority issue is Power net VIN uses a narrow trace width (0.20). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#2 — high_voltage_spacing_board.kicad_pcb</h3>
+                <p><strong>Score:</strong> 18.0 / 100</p>
+                <p><strong>Total Risks:</strong> 15</p>
+                <p><strong>Total Penalty:</strong> 82.0</p>
+                <p>This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is High-voltage pad on U1:HV+ is close to U1:CTRL. The current design snapshot includes 3 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#3 — mixed_signal_noise_board.kicad_pcb</h3>
+                <p><strong>Score:</strong> 4.0 / 100</p>
+                <p><strong>Total Risks:</strong> 22</p>
+                <p><strong>Total Penalty:</strong> 96.0</p>
+                <p>This board shows elevated design risk. The main risk concentration is in power integrity. The highest-priority issue is U2 may have poor power delivery because nearest regulator U1 is 24.08 units away. The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#4 — assembly_testability_board.kicad_pcb</h3>
+                <p><strong>Score:</strong> 2.0 / 100</p>
+                <p><strong>Total Risks:</strong> 24</p>
+                <p><strong>Total Penalty:</strong> 98.0</p>
+                <p>This board shows high design risk. The main risk concentration is in manufacturing. The highest-priority issue is Power net VCC uses a narrow trace width (0.16). The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#5 — high_speed_pair_bad.kicad_pcb</h3>
+                <p><strong>Score:</strong> 0.0 / 100</p>
+                <p><strong>Total Risks:</strong> 33</p>
+                <p><strong>Total Penalty:</strong> 152.0</p>
+                <p>This board shows high design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
+    
