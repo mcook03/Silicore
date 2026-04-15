@@ -2,8 +2,8 @@ import json
 import os
 import re
 from collections import defaultdict
-from engine.atlas_engine import answer_atlas_question
-from engine.copilot_engine import (
+from engine.atlas_intelligence import (
+    answer_atlas_with_agent,
     build_board_assistant_console,
     build_board_copilot_brief,
     build_compare_assistant_console,
@@ -4383,7 +4383,7 @@ def atlas_query_route():
     if page_type not in {"board", "project", "compare"}:
         return jsonify({"error": "Unsupported Atlas page type."}), 400
 
-    answer = answer_atlas_question(page_type, prompt, context=context, history=history)
+    answer = answer_atlas_with_agent(page_type, prompt, context=context, history=history)
     return jsonify(answer)
 
 

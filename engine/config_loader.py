@@ -464,6 +464,36 @@ EDITABLE_FIELD_MAP = {
             "form_keys": ["power_path_realism_max_high_current_vias"],
             "config_path": ["power_path_realism", "max_high_current_vias"],
         },
+        "current_density_min_high_current_width": {
+            "type": "float",
+            "form_keys": ["current_density_min_high_current_width"],
+            "config_path": ["current_density", "min_high_current_width"],
+        },
+        "current_density_max_bottleneck_length": {
+            "type": "float",
+            "form_keys": ["current_density_max_bottleneck_length"],
+            "config_path": ["current_density", "max_bottleneck_length"],
+        },
+        "current_density_neckdown_ratio_threshold": {
+            "type": "float",
+            "form_keys": ["current_density_neckdown_ratio_threshold"],
+            "config_path": ["current_density", "neckdown_ratio_threshold"],
+        },
+        "current_density_max_bottleneck_vias": {
+            "type": "int",
+            "form_keys": ["current_density_max_bottleneck_vias"],
+            "config_path": ["current_density", "max_bottleneck_vias"],
+        },
+        "analog_isolation_sensitive_component_keepout": {
+            "type": "float",
+            "form_keys": ["analog_isolation_sensitive_component_keepout"],
+            "config_path": ["analog_isolation", "sensitive_component_keepout"],
+        },
+        "analog_isolation_max_analog_route_length": {
+            "type": "float",
+            "form_keys": ["analog_isolation_max_analog_route_length"],
+            "config_path": ["analog_isolation", "max_analog_route_length"],
+        },
     },
 }
 
@@ -586,6 +616,12 @@ def get_editable_config_view(config):
             "power_path_realism_max_high_current_length": config.get("rules", {}).get("power_path_realism", {}).get("max_high_current_length"),
             "power_path_realism_converter_cap_radius": config.get("rules", {}).get("power_path_realism", {}).get("converter_cap_radius"),
             "power_path_realism_max_high_current_vias": config.get("rules", {}).get("power_path_realism", {}).get("max_high_current_vias"),
+            "current_density_min_high_current_width": config.get("rules", {}).get("current_density", {}).get("min_high_current_width"),
+            "current_density_max_bottleneck_length": config.get("rules", {}).get("current_density", {}).get("max_bottleneck_length"),
+            "current_density_neckdown_ratio_threshold": config.get("rules", {}).get("current_density", {}).get("neckdown_ratio_threshold"),
+            "current_density_max_bottleneck_vias": config.get("rules", {}).get("current_density", {}).get("max_bottleneck_vias"),
+            "analog_isolation_sensitive_component_keepout": config.get("rules", {}).get("analog_isolation", {}).get("sensitive_component_keepout"),
+            "analog_isolation_max_analog_route_length": config.get("rules", {}).get("analog_isolation", {}).get("max_analog_route_length"),
         },
     }
 
@@ -672,6 +708,8 @@ def _ensure_rule_sections(config):
     config["rules"].setdefault("assembly_testability", {})
     config["rules"].setdefault("safety_high_voltage", {})
     config["rules"].setdefault("power_path_realism", {})
+    config["rules"].setdefault("current_density", {})
+    config["rules"].setdefault("analog_isolation", {})
 
 
 def _apply_rule_mirrors(config):
@@ -985,6 +1023,27 @@ def build_sanitized_config(config):
     )
     merged["rules"]["power_path_realism"]["max_high_current_vias"] = int(
         merged["rules"]["power_path_realism"].get("max_high_current_vias", DEFAULT_CONFIG["rules"]["power_path_realism"]["max_high_current_vias"])
+    )
+    merged["rules"]["current_density"]["min_high_current_width"] = float(
+        merged["rules"]["current_density"].get("min_high_current_width", DEFAULT_CONFIG["rules"]["current_density"]["min_high_current_width"])
+    )
+    merged["rules"]["current_density"]["max_bottleneck_length"] = float(
+        merged["rules"]["current_density"].get("max_bottleneck_length", DEFAULT_CONFIG["rules"]["current_density"]["max_bottleneck_length"])
+    )
+    merged["rules"]["current_density"]["neckdown_ratio_threshold"] = float(
+        merged["rules"]["current_density"].get("neckdown_ratio_threshold", DEFAULT_CONFIG["rules"]["current_density"]["neckdown_ratio_threshold"])
+    )
+    merged["rules"]["current_density"]["max_bottleneck_vias"] = int(
+        merged["rules"]["current_density"].get("max_bottleneck_vias", DEFAULT_CONFIG["rules"]["current_density"]["max_bottleneck_vias"])
+    )
+    merged["rules"]["current_density"]["high_current_net_keywords"] = _sanitize_list(
+        merged["rules"]["current_density"].get("high_current_net_keywords", DEFAULT_CONFIG["rules"]["current_density"]["high_current_net_keywords"])
+    )
+    merged["rules"]["analog_isolation"]["sensitive_component_keepout"] = float(
+        merged["rules"]["analog_isolation"].get("sensitive_component_keepout", DEFAULT_CONFIG["rules"]["analog_isolation"]["sensitive_component_keepout"])
+    )
+    merged["rules"]["analog_isolation"]["max_analog_route_length"] = float(
+        merged["rules"]["analog_isolation"].get("max_analog_route_length", DEFAULT_CONFIG["rules"]["analog_isolation"]["max_analog_route_length"])
     )
 
     _apply_rule_mirrors(merged)

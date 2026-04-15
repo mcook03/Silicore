@@ -1339,6 +1339,24 @@
 
                         <div class="slider-card">
                             <div class="slider-card-top">
+                                <div><div class="slider-label">Analog Isolation Keepout</div><div class="slider-help">Minimum spacing between sensitive analog circuitry and nearby noisy digital or switching regions.</div></div>
+                                <div class="slider-value-pill"><span id="analog-isolation-keepout-value">{{ editable_config.rules.analog_isolation_sensitive_component_keepout if editable_config and editable_config.rules else 8 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="24" step="0.5" name="analog_isolation_sensitive_component_keepout" value="{{ editable_config.rules.analog_isolation_sensitive_component_keepout if editable_config and editable_config.rules else 8 }}" oninput="document.getElementById('analog-isolation-keepout-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>12</span><span>24</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Max Analog Route Length</div><div class="slider-help">Maximum routed length tolerated for sensitive analog, reference, and sense nets before exposure risk is raised.</div></div>
+                                <div class="slider-value-pill"><span id="analog-route-length-value">{{ editable_config.rules.analog_isolation_max_analog_route_length if editable_config and editable_config.rules else 20 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="2" max="60" step="1" name="analog_isolation_max_analog_route_length" value="{{ editable_config.rules.analog_isolation_max_analog_route_length if editable_config and editable_config.rules else 20 }}" oninput="document.getElementById('analog-route-length-value').textContent=this.value">
+                            <div class="range-scale"><span>2</span><span>30</span><span>60</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
                                 <div><div class="slider-label">Max Signal Layers</div><div class="slider-help">Maximum copper-layer span allowed for critical nets before stackup complexity is flagged.</div></div>
                                 <div class="slider-value-pill"><span id="stackup-max-layers-value">{{ editable_config.rules.stackup_return_path_max_signal_layers if editable_config and editable_config.rules else 2 }}</span></div>
                             </div>
@@ -1362,6 +1380,33 @@
                             </div>
                             <input class="styled-range" type="range" min="5" max="80" step="1" name="stackup_return_path_max_two_layer_critical_length" value="{{ editable_config.rules.stackup_return_path_max_two_layer_critical_length if editable_config and editable_config.rules else 28 }}" oninput="document.getElementById('stackup-two-layer-length-value').textContent=this.value">
                             <div class="range-scale"><span>5</span><span>40</span><span>80</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Minimum High-Current Width</div><div class="slider-help">Preferred copper width for high-current nets before Atlas raises current-density and bottleneck pressure.</div></div>
+                                <div class="slider-value-pill"><span id="current-density-width-value">{{ editable_config.rules.current_density_min_high_current_width if editable_config and editable_config.rules else 0.7 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="0.1" max="3" step="0.05" name="current_density_min_high_current_width" value="{{ editable_config.rules.current_density_min_high_current_width if editable_config and editable_config.rules else 0.7 }}" oninput="document.getElementById('current-density-width-value').textContent=this.value">
+                            <div class="range-scale"><span>0.1</span><span>1.5</span><span>3</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Max Bottleneck Length</div><div class="slider-help">Longest narrow high-current section tolerated before Atlas treats the route as a serious bottleneck.</div></div>
+                                <div class="slider-value-pill"><span id="current-density-length-value">{{ editable_config.rules.current_density_max_bottleneck_length if editable_config and editable_config.rules else 24 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="4" max="80" step="1" name="current_density_max_bottleneck_length" value="{{ editable_config.rules.current_density_max_bottleneck_length if editable_config and editable_config.rules else 24 }}" oninput="document.getElementById('current-density-length-value').textContent=this.value">
+                            <div class="range-scale"><span>4</span><span>40</span><span>80</span></div>
+                        </div>
+
+                        <div class="slider-card">
+                            <div class="slider-card-top">
+                                <div><div class="slider-label">Current Neckdown Ratio</div><div class="slider-help">Maximum width-change ratio allowed inside a high-current path before Atlas flags uneven current-density concentration.</div></div>
+                                <div class="slider-value-pill"><span id="current-density-neckdown-value">{{ editable_config.rules.current_density_neckdown_ratio_threshold if editable_config and editable_config.rules else 2.5 }}</span></div>
+                            </div>
+                            <input class="styled-range" type="range" min="1" max="6" step="0.1" name="current_density_neckdown_ratio_threshold" value="{{ editable_config.rules.current_density_neckdown_ratio_threshold if editable_config and editable_config.rules else 2.5 }}" oninput="document.getElementById('current-density-neckdown-value').textContent=this.value">
+                            <div class="range-scale"><span>1</span><span>3.5</span><span>6</span></div>
                         </div>
                     </div>
                 </section>
