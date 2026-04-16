@@ -382,10 +382,10 @@
                 "U1"
             ],
             "nets": [
-                "USB_DP",
+                "CLK",
                 "GND",
-                "USB_DN",
-                "CLK"
+                "USB_DP",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -690,9 +690,9 @@
                 "J1"
             ],
             "nets": [
+                "GND",
                 "USB_DP",
                 "USB_DN",
-                "GND",
                 "VBUS"
             ],
             "region": null,
@@ -711,9 +711,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
+                    "GND",
                     "USB_DP",
                     "USB_DN",
-                    "GND",
                     "VBUS"
                 ],
                 "has_power": false,
@@ -749,10 +749,10 @@
                 "U1"
             ],
             "nets": [
-                "USB_DP",
+                "CLK",
                 "GND",
-                "USB_DN",
-                "CLK"
+                "USB_DP",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -770,10 +770,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "USB_DP",
+                    "CLK",
                     "GND",
-                    "USB_DN",
-                    "CLK"
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -3206,7 +3206,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-15T20:34:32.698260+00:00",
+        "timestamp": "2026-04-16T04:21:07.233905+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4165,10 +4165,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "USB_DP",
+                    "CLK",
                     "GND",
-                    "USB_DN",
-                    "CLK"
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -4401,9 +4401,9 @@
                     "J1"
                 ],
                 "nets": [
+                    "GND",
                     "USB_DP",
                     "USB_DN",
-                    "GND",
                     "VBUS"
                 ],
                 "region": null,
@@ -4422,9 +4422,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
+                        "GND",
                         "USB_DP",
                         "USB_DN",
-                        "GND",
                         "VBUS"
                     ],
                     "has_power": false,
@@ -4451,10 +4451,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "USB_DP",
+                    "CLK",
                     "GND",
-                    "USB_DN",
-                    "CLK"
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -4472,10 +4472,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "USB_DP",
+                        "CLK",
                         "GND",
-                        "USB_DN",
-                        "CLK"
+                        "USB_DP",
+                        "USB_DN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4948,7 +4948,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-15T20:34:32.698267+00:00",
+    "generated_at": "2026-04-16T04:21:07.233914+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

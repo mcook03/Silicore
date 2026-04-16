@@ -152,8 +152,8 @@
             ],
             "nets": [
                 "GND",
-                "VOUT",
-                "VIN"
+                "VIN",
+                "VOUT"
             ],
             "region": null,
             "metrics": {
@@ -192,8 +192,8 @@
             ],
             "nets": [
                 "GND",
-                "VOUT",
-                "VIN"
+                "VIN",
+                "VOUT"
             ],
             "region": null,
             "metrics": {
@@ -1713,7 +1713,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-15T20:34:32.723283+00:00",
+        "timestamp": "2026-04-16T04:21:07.259086+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2344,8 +2344,8 @@
                 ],
                 "nets": [
                     "GND",
-                    "VOUT",
-                    "VIN"
+                    "VIN",
+                    "VOUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -2375,8 +2375,8 @@
                 ],
                 "nets": [
                     "GND",
-                    "VOUT",
-                    "VIN"
+                    "VIN",
+                    "VOUT"
                 ],
                 "region": null,
                 "metrics": {
@@ -2735,7 +2735,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-15T20:34:32.723291+00:00",
+    "generated_at": "2026-04-16T04:21:07.259098+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

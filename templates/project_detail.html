@@ -851,7 +851,7 @@
             <article class="workspace-review-card">
                 <div class="workspace-review-top">
                     <div>
-                        <div class="workspace-review-title">{{ item.title }}</div>
+                        <div class="workspace-review-title" title="{{ item.title }}">{{ item.title }}</div>
                         <div class="workspace-review-copy">{{ item.copy }}</div>
                     </div>
                     <div class="workspace-review-value">{{ item.value }}</div>
@@ -1337,7 +1337,7 @@
 
     .assistant-console-layout {
         display: grid;
-        grid-template-columns: minmax(0, 1.42fr) minmax(330px, 0.7fr);
+        grid-template-columns: minmax(0, 1.42fr) minmax(0, 0.7fr);
         gap: 22px;
         align-items: start;
     }
@@ -1345,6 +1345,8 @@
     .assistant-console-side {
         position: sticky;
         top: 104px;
+        z-index: 2;
+        min-width: 0;
     }
 
     .assistant-console-group {
@@ -1490,12 +1492,16 @@
         color: #eaf2ff;
         font-size: 15px;
         font-weight: 700;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     .timeline-copy {
         color: var(--muted);
         font-size: 13px;
         line-height: 1.6;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     .timeline-metrics {
@@ -1582,12 +1588,20 @@
 
     .mini-bar-row {
         display: grid;
-        grid-template-columns: 140px 1fr 42px;
+        grid-template-columns: minmax(0, 140px) 1fr 42px;
         gap: 12px;
         align-items: center;
     }
 
-    .mini-bar-label,
+    .mini-bar-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #dbe7ff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .mini-bar-value {
         font-size: 13px;
         font-weight: 700;
@@ -1640,6 +1654,7 @@
     .card textarea,
     .card select {
         width: 100%;
+        box-sizing: border-box;
         border-radius: 14px;
         border: 1px solid rgba(255,255,255,0.08);
         background: rgba(255,255,255,0.04);
@@ -1698,6 +1713,12 @@
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 14px;
+    }
+
+    @media (max-width: 1100px) {
+        .workspace-review-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
     }
 
     .workspace-review-card {

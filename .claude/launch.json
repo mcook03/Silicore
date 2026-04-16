@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Silicore Web",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["app.py"],
+      "port": 5001
+    },
+    {
+      "name": "Silicore Worker",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["worker_main.py", "--worker-id", "silicore-service-worker"],
+      "port": 0
+    }
+  ]
+}
