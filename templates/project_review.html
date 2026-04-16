@@ -678,11 +678,11 @@
                         <div class="context-mini-grid">
                             <div class="context-mini-card">
                                 <div class="context-mini-label">Board</div>
-                                <div class="context-mini-value">{{ board.analysis_context_view.board_name }}</div>
+                                <div class="context-mini-value context-mini-value-text">{{ board.analysis_context_view.board_name }}</div>
                             </div>
                             <div class="context-mini-card">
                                 <div class="context-mini-label">Run Time</div>
-                                <div class="context-mini-value">{{ board.analysis_context_view.performed_at }}</div>
+                                <div class="context-mini-value context-mini-value-text">{{ board.analysis_context_view.performed_at }}</div>
                             </div>
                             <div class="context-mini-card">
                                 <div class="context-mini-label">Final Score</div>
@@ -1097,6 +1097,14 @@
         word-break: break-word;
     }
 
+    .context-mini-value-text {
+        font-size: 18px;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
     .big-stat-label,
     .project-board-meta-label,
     .context-mini-label {
@@ -1474,13 +1482,15 @@
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
             rgba(255,255,255,0.018);
         border: 1px solid rgba(255,255,255,0.05);
+        overflow-x: auto;
+        overflow-y: hidden;
     }
 
     .heatmap-row {
-        display: grid;
-        grid-template-columns: minmax(120px, 1.2fr) repeat(auto-fit, minmax(74px, 1fr)) 64px;
+        display: flex;
         gap: 8px;
         align-items: center;
+        min-width: max-content;
     }
 
     .heatmap-header {
@@ -1496,16 +1506,24 @@
         color: #e5efff;
         font-size: 13px;
         font-weight: 700;
+        flex: 0 0 160px;
     }
 
     .heatmap-cell {
         min-height: 38px;
         display: grid;
         place-items: center;
+        min-width: 86px;
         border-radius: 12px;
         font-size: 13px;
         font-weight: 800;
         border: 1px solid rgba(255,255,255,0.06);
+        flex: 0 0 86px;
+    }
+
+    .heatmap-total {
+        flex-basis: 72px;
+        text-align: right;
     }
 
     .heatmap-none { background: rgba(255,255,255,0.03); color: rgba(226,232,240,0.5); }
@@ -1537,8 +1555,7 @@
         .big-stat-grid,
         .distribution-grid,
         .project-board-meta-grid,
-        .context-mini-grid,
-        .heatmap-row {
+        .context-mini-grid {
             grid-template-columns: 1fr;
         }
 

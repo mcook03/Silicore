@@ -722,11 +722,11 @@
             <div class="context-meta-grid">
                 <div class="context-meta-card">
                     <div class="context-meta-label">Board</div>
-                    <div class="context-meta-value">{{ context.board_name }}</div>
+                    <div class="context-meta-value context-meta-value-text">{{ context.board_name }}</div>
                 </div>
                 <div class="context-meta-card">
                     <div class="context-meta-label">Run Time</div>
-                    <div class="context-meta-value">{{ context.performed_at }}</div>
+                    <div class="context-meta-value context-meta-value-text">{{ context.performed_at }}</div>
                 </div>
                 <div class="context-meta-card">
                     <div class="context-meta-label">Score</div>
@@ -738,11 +738,11 @@
                 </div>
                 <div class="context-meta-card">
                     <div class="context-meta-label">Profile</div>
-                    <div class="context-meta-value">{{ context.profile.replace('_', ' ')|title if context.profile else "Balanced" }}</div>
+                    <div class="context-meta-value context-meta-value-text">{{ context.profile.replace('_', ' ')|title if context.profile else "Balanced" }}</div>
                 </div>
                 <div class="context-meta-card">
                     <div class="context-meta-label">Board Type</div>
-                    <div class="context-meta-value">{{ context.board_type.replace('_', ' ')|title if context.board_type else "General" }}</div>
+                    <div class="context-meta-value context-meta-value-text">{{ context.board_type.replace('_', ' ')|title if context.board_type else "General" }}</div>
                 </div>
             </div>
 
@@ -2808,6 +2808,14 @@
         letter-spacing: -0.04em;
         color: #f8fbff;
         margin-bottom: 8px;
+        word-break: break-word;
+    }
+
+    .context-meta-value-text {
+        font-size: 18px;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        overflow-wrap: anywhere;
         word-break: break-word;
     }
 

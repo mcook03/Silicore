@@ -1,0 +1,52 @@
+{
+    "run_type": "single",
+    "title": "assembly_testability_board.kicad_pcb",
+    "generated_at": "2026-04-16T04:27:04.732819+00:00",
+    "artifacts": [
+        {
+            "name": "single_analysis.json",
+            "kind": "json"
+        },
+        {
+            "name": "single_report.md",
+            "kind": "markdown"
+        },
+        {
+            "name": "single_report.html",
+            "kind": "html"
+        }
+    ],
+    "parser_capabilities": {
+        ".kicad_pcb": {
+            "label": "KiCad PCB",
+            "status": "supported"
+        },
+        ".txt": {
+            "label": "Structured Demo Text",
+            "status": "supported"
+        },
+        ".brd": {
+            "label": "Legacy Structured Board",
+            "status": "supported"
+        },
+        ".gbr": {
+            "label": "Gerber",
+            "status": "experimental"
+        },
+        ".gko": {
+            "label": "Gerber Outline",
+            "status": "experimental"
+        },
+        ".ger": {
+            "label": "Gerber Layer",
+            "status": "experimental"
+        },
+        ".pcbdocascii": {
+            "label": "Altium ASCII Export",
+            "status": "experimental"
+        }
+    },
+    "notes": [
+        "Artifacts include structured analysis, engineering summary, and print-friendly HTML."
+    ]
+}
