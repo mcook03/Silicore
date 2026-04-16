@@ -2789,7 +2789,7 @@
     }
 
     .context-meta-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
 
     .big-stat-card,
@@ -2802,8 +2802,8 @@
 
     .big-stat-value,
     .context-meta-value {
-        font-size: 30px;
-        line-height: 1.05;
+        font-size: 22px;
+        line-height: 1.08;
         font-weight: 800;
         letter-spacing: -0.04em;
         color: #f8fbff;
@@ -2811,12 +2811,13 @@
         word-break: break-word;
     }
 
-    .context-meta-value-text {
-        font-size: 18px;
+    .context-meta-card .context-meta-value.context-meta-value-text {
+        font-size: 15px;
         line-height: 1.2;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.01em;
         overflow-wrap: anywhere;
         word-break: break-word;
+        font-weight: 700;
     }
 
     .big-stat-label,

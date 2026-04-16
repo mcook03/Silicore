@@ -576,11 +576,11 @@
             {% if project_intelligence_review and project_intelligence_review.category_heatmap %}
             <div class="heatmap-table">
                 <div class="heatmap-row heatmap-header">
-                    <div>Category</div>
+                    <div class="heatmap-head-label">Category</div>
                     {% for board in project_result.boards %}
-                    <div>{{ board.filename }}</div>
+                    <div class="heatmap-head-cell" title="{{ board.filename }}">{{ board.filename }}</div>
                     {% endfor %}
-                    <div>Total</div>
+                    <div class="heatmap-head-total">Total</div>
                 </div>
                 {% for row in project_intelligence_review.category_heatmap %}
                 <div class="heatmap-row">
@@ -1088,8 +1088,8 @@
     .big-stat-value,
     .project-board-meta-value,
     .context-mini-value {
-        font-size: 30px;
-        line-height: 1.05;
+        font-size: 22px;
+        line-height: 1.08;
         font-weight: 800;
         letter-spacing: -0.04em;
         color: #f8fbff;
@@ -1097,12 +1097,13 @@
         word-break: break-word;
     }
 
-    .context-mini-value-text {
-        font-size: 18px;
+    .context-mini-card .context-mini-value.context-mini-value-text {
+        font-size: 15px;
         line-height: 1.2;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.01em;
         overflow-wrap: anywhere;
         word-break: break-word;
+        font-weight: 700;
     }
 
     .big-stat-label,
@@ -1502,11 +1503,28 @@
     }
 
     .heatmap-label,
-    .heatmap-total {
+    .heatmap-total,
+    .heatmap-head-label,
+    .heatmap-head-total {
         color: #e5efff;
         font-size: 13px;
         font-weight: 700;
         flex: 0 0 160px;
+    }
+
+    .heatmap-head-cell {
+        min-width: 86px;
+        max-width: 86px;
+        padding: 0 6px;
+        color: rgba(226, 239, 255, 0.82);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.2;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 0 0 86px;
     }
 
     .heatmap-cell {
@@ -1521,6 +1539,12 @@
         flex: 0 0 86px;
     }
 
+    .heatmap-total {
+        flex-basis: 72px;
+        text-align: right;
+    }
+
+    .heatmap-head-total,
     .heatmap-total {
         flex-basis: 72px;
         text-align: right;

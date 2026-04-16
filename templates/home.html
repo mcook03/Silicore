@@ -57,9 +57,9 @@
     }
 
     .home-redesign .tech-title {
-        max-width: 13ch;
-        font-size: clamp(2.2rem, 4vw, 4.2rem);
-        line-height: 0.94;
+        max-width: 14ch;
+        font-size: clamp(1.9rem, 3.2vw, 3.5rem);
+        line-height: 0.96;
         letter-spacing: -0.072em;
         overflow-wrap: normal;
         word-break: normal;
@@ -832,8 +832,8 @@
 
     .tech-title {
         margin: 0;
-        max-width: 13ch;
-        font-size: clamp(32px, 4vw, 56px);
+        max-width: 14ch;
+        font-size: clamp(28px, 3.4vw, 46px);
         line-height: 0.98;
         letter-spacing: -0.065em;
         font-weight: 800;
@@ -1339,7 +1339,7 @@
     .command-grid,
     .workflow-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 14px;
     }
 
@@ -1372,7 +1372,7 @@
     }
 
     .command-card {
-        min-height: 220px;
+        min-height: 0;
         display: grid;
         align-content: start;
         gap: 14px;
@@ -1411,9 +1411,9 @@
         background: transparent;
         border: 0;
         border-radius: 0;
-        max-width: 9ch;
-        font-size: clamp(22px, 2.6vw, 32px);
-        line-height: 1.02;
+        max-width: 100%;
+        font-size: clamp(18px, 2vw, 24px);
+        line-height: 1.08;
         letter-spacing: -0.05em;
         font-family: "SF Pro Display", "Sora", "Inter", sans-serif;
         font-weight: 800;
@@ -1715,11 +1715,13 @@
     .tech-chart-card .empty-state {
         display: grid;
         place-items: center;
-        min-height: 180px;
-        padding: 20px 18px;
+        min-height: 140px;
+        padding: 18px 16px;
         border-radius: 20px;
-        font-size: 14px;
-        line-height: 1.6;
+        font-size: 13px;
+        line-height: 1.55;
+        max-width: 32ch;
+        margin: 8px auto 0;
     }
 
     @keyframes scanDrift {
