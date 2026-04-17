@@ -193,8 +193,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: D1
-- Nets: SW_NODE, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["SW_NODE", "GND"], "has_power": false, "has_ground": true}
+- Nets: GND, SW_NODE
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "SW_NODE"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: R1 has ground but no visible power rail

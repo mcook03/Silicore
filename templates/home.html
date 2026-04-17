@@ -57,10 +57,10 @@
     }
 
     .home-redesign .tech-title {
-        max-width: 11ch;
-        font-size: clamp(2.6rem, 5.1vw, 5.8rem);
-        line-height: 0.92;
-        letter-spacing: -0.082em;
+        max-width: 9ch;
+        font-size: clamp(2.4rem, 4.4vw, 4.8rem);
+        line-height: 0.94;
+        letter-spacing: -0.07em;
         overflow-wrap: normal;
         word-break: normal;
         hyphens: none;
@@ -225,7 +225,7 @@
                 <div class="tech-kicker">Silicore Engineering Intelligence</div>
                 <div class="tech-brand-tag">Powered by Atlas Intelligence</div>
             </div>
-            <h1 class="tech-title">Engineering review, ranked in real time.</h1>
+            <h1 class="tech-title">Engineering review, ranked with clarity.</h1>
             <p class="tech-description">
                 Silicore Nexus surfaces board risk, trust, and fix priority across signal, power, thermal, manufacturability, safety, and return-path behavior without wasting the engineer’s attention.
             </p>
@@ -429,9 +429,13 @@
             <div class="command-grid">
                 {% for pillar in dashboard_story.pillars %}
                 <article class="command-card">
+                    {% set metric_parts = pillar.value_label.split(' ', 1) %}
                     <div class="command-top">
                         <div class="command-title">{{ pillar.title }}</div>
-                        <div class="command-value">{{ pillar.value_label }}</div>
+                        <div class="command-value">
+                            <span class="command-metric-number">{{ metric_parts[0] }}</span>
+                            <span class="command-metric-label-text">{{ metric_parts[1] if metric_parts|length > 1 else '' }}</span>
+                        </div>
                     </div>
                     <div class="command-copy">{{ pillar.description }}</div>
                 </article>
@@ -1476,18 +1480,35 @@
 
     .command-value {
         justify-self: start;
-        display: block;
+        display: grid;
+        gap: 6px;
         padding-top: 0;
         background: transparent;
         border: 0;
         border-radius: 0;
+        width: 100%;
         max-width: 100%;
-        font-size: clamp(28px, 3.3vw, 48px);
-        line-height: 0.92;
-        letter-spacing: -0.065em;
         font-family: "SF Pro Display", "Sora", "Inter", sans-serif;
-        font-weight: 800;
         text-wrap: balance;
+    }
+
+    .command-metric-number {
+        display: block;
+        color: #f8fbff;
+        font-size: clamp(38px, 4vw, 60px);
+        line-height: 0.9;
+        letter-spacing: -0.07em;
+        font-weight: 800;
+    }
+
+    .command-metric-label-text {
+        display: block;
+        max-width: 11ch;
+        color: rgba(232, 241, 255, 0.86);
+        font-size: 15px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        font-weight: 700;
         overflow-wrap: anywhere;
         word-break: break-word;
     }
@@ -1931,7 +1952,7 @@
 
         .tech-title {
             max-width: none;
-            font-size: clamp(2.9rem, 10vw, 4.5rem);
+            font-size: clamp(2.5rem, 9vw, 3.9rem);
         }
 
         .tech-stage-primary {
