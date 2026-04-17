@@ -2489,7 +2489,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-17T22:34:26.313724+00:00",
+        "timestamp": "2026-04-17T22:46:25.611905+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3701,7 +3701,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-17T22:34:26.313729+00:00",
+    "generated_at": "2026-04-17T22:46:25.611909+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

@@ -1,6 +1,6 @@
 import re
 
-from engine.pcb_model import PCB, Component, Pad, TraceSegment, Via
+from engine.pcb_model import PCB, Component, OutlineSegment, Pad, TraceSegment, Via, Zone
 
 
 def _safe_float(value, default=0.0):
@@ -15,12 +15,30 @@ def _layer_name(value):
     return text or "TopLayer"
 
 
+def _parse_fields(line):
+    fields = {}
+    for token in str(line).split("|"):
+        if "=" not in token:
+            continue
+        key, value = token.split("=", 1)
+        fields[key.strip().lower()] = value.strip()
+    return fields
+
+
+def _record_type(line):
+    match = re.search(r"RECORD=([^|]+)", line, flags=re.IGNORECASE)
+    if match:
+        return match.group(1).strip().lower()
+    return str(line).split("|", 1)[0].strip().lower()
+
+
 def parse_altium_ascii_file(filepath):
     pcb = PCB(filename=filepath.split("/")[-1])
     pcb.source_format = "altium_ascii"
 
     component_map = {}
     current_component = None
+    pending_region_points = []
     with open(filepath, "r", encoding="utf-8", errors="ignore") as handle:
         for raw_line in handle:
             line = raw_line.strip()
@@ -28,7 +46,9 @@ def parse_altium_ascii_file(filepath):
                 continue
 
             upper = line.upper()
-            if upper.startswith("RECORD=BOARD") or upper.startswith("BOARD"):
+            fields = _parse_fields(line)
+            record_type = _record_type(line)
+            if record_type == "board" or upper == "BOARD":
                 continue
 
             if "LAYER" in upper:
@@ -36,19 +56,14 @@ def parse_altium_ascii_file(filepath):
                     if match.strip():
                         pcb.add_layer(match.strip())
 
-            if upper.startswith("RECORD=COMPONENT") or upper.startswith("COMPONENT"):
-                ref = re.search(r"Designator=([^|]+)", line, flags=re.IGNORECASE)
-                value = re.search(r"Comment=([^|]+)", line, flags=re.IGNORECASE)
-                x = re.search(r"X=([^|]+)", line, flags=re.IGNORECASE)
-                y = re.search(r"Y=([^|]+)", line, flags=re.IGNORECASE)
-                layer = re.search(r"Layer(?:Name)?=([^|]+)", line, flags=re.IGNORECASE)
-                ref_text = ref.group(1).strip() if ref else f"U{len(component_map) + 1}"
+            if record_type == "component" or upper.startswith("COMPONENT"):
+                ref_text = fields.get("designator") or f"U{len(component_map) + 1}"
                 component = Component(
                     ref=ref_text,
-                    value=value.group(1).strip() if value else ref_text,
-                    x=_safe_float(x.group(1)) if x else 0.0,
-                    y=_safe_float(y.group(1)) if y else 0.0,
-                    layer=_layer_name(layer.group(1) if layer else "TopLayer"),
+                    value=fields.get("comment") or fields.get("value") or ref_text,
+                    x=_safe_float(fields.get("x")),
+                    y=_safe_float(fields.get("y")),
+                    layer=_layer_name(fields.get("layername") or fields.get("layer") or "TopLayer"),
                     comp_type="ic",
                 )
                 pcb.add_component(component)
@@ -56,66 +71,135 @@ def parse_altium_ascii_file(filepath):
                 current_component = component
                 continue
 
-            if upper.startswith("RECORD=PAD") or upper.startswith("PAD"):
-                net = re.search(r"Net=([^|]+)", line, flags=re.IGNORECASE)
-                name = re.search(r"Name=([^|]+)", line, flags=re.IGNORECASE)
-                x = re.search(r"X=([^|]+)", line, flags=re.IGNORECASE)
-                y = re.search(r"Y=([^|]+)", line, flags=re.IGNORECASE)
-                layer = re.search(r"Layer(?:Name)?=([^|]+)", line, flags=re.IGNORECASE)
+            if record_type == "pad" or upper.startswith("PAD"):
+                component_ref = fields.get("component") or fields.get("componentref") or (current_component.ref if current_component else "UNKNOWN")
+                component = component_map.get(component_ref)
+                if component is None:
+                    component = Component(
+                        ref=component_ref,
+                        value=component_ref,
+                        x=_safe_float(fields.get("x")),
+                        y=_safe_float(fields.get("y")),
+                        layer=_layer_name(fields.get("layername") or fields.get("layer") or "TopLayer"),
+                        comp_type="unknown",
+                    )
+                    pcb.add_component(component)
+                    component_map[component_ref] = component
                 pad = Pad(
-                    component_ref=current_component.ref if current_component else "UNKNOWN",
-                    pad_name=name.group(1).strip() if name else "1",
-                    net_name=(net.group(1).strip().upper() if net else ""),
-                    x=_safe_float(x.group(1)) if x else (current_component.x if current_component else 0.0),
-                    y=_safe_float(y.group(1)) if y else (current_component.y if current_component else 0.0),
-                    layer=_layer_name(layer.group(1) if layer else (current_component.layer if current_component else "TopLayer")),
+                    component_ref=component_ref,
+                    pad_name=fields.get("name") or fields.get("pad") or "1",
+                    net_name=((fields.get("net") or "").strip().upper()),
+                    x=_safe_float(fields.get("x")) if fields.get("x") is not None else component.x,
+                    y=_safe_float(fields.get("y")) if fields.get("y") is not None else component.y,
+                    layer=_layer_name(fields.get("layername") or fields.get("layer") or component.layer),
+                    size_x=_safe_float(fields.get("sizex") or fields.get("size") or fields.get("xsize")),
+                    size_y=_safe_float(fields.get("sizey") or fields.get("size") or fields.get("ysize")),
                 )
-                if current_component:
-                    current_component.add_pad(pad)
+                component.add_pad(pad)
                 if pad.net_name:
                     pcb.add_net_connection(pad.net_name, pad.component_ref, pad.pad_name)
                 continue
 
-            if upper.startswith("RECORD=TRACK") or upper.startswith("TRACK"):
-                net = re.search(r"Net=([^|]+)", line, flags=re.IGNORECASE)
-                x1 = re.search(r"X1=([^|]+)", line, flags=re.IGNORECASE)
-                y1 = re.search(r"Y1=([^|]+)", line, flags=re.IGNORECASE)
-                x2 = re.search(r"X2=([^|]+)", line, flags=re.IGNORECASE)
-                y2 = re.search(r"Y2=([^|]+)", line, flags=re.IGNORECASE)
-                width = re.search(r"Width=([^|]+)", line, flags=re.IGNORECASE)
-                layer = re.search(r"Layer(?:Name)?=([^|]+)", line, flags=re.IGNORECASE)
-                if not (net and x1 and y1 and x2 and y2):
+            if record_type == "track" or upper.startswith("TRACK"):
+                if not all(fields.get(key) is not None for key in ("net", "x1", "y1", "x2", "y2")):
                     continue
                 segment = TraceSegment(
-                    net_name=net.group(1).strip().upper(),
-                    x1=_safe_float(x1.group(1)),
-                    y1=_safe_float(y1.group(1)),
-                    x2=_safe_float(x2.group(1)),
-                    y2=_safe_float(y2.group(1)),
-                    width=_safe_float(width.group(1), 0.2) if width else 0.2,
-                    layer=_layer_name(layer.group(1) if layer else "TopLayer"),
+                    net_name=fields.get("net", "").strip().upper(),
+                    x1=_safe_float(fields.get("x1")),
+                    y1=_safe_float(fields.get("y1")),
+                    x2=_safe_float(fields.get("x2")),
+                    y2=_safe_float(fields.get("y2")),
+                    width=_safe_float(fields.get("width"), 0.2),
+                    layer=_layer_name(fields.get("layername") or fields.get("layer") or "TopLayer"),
                 )
                 pcb.add_trace_segment(segment.net_name, segment)
                 continue
 
-            if upper.startswith("RECORD=VIA") or upper.startswith("VIA"):
-                net = re.search(r"Net=([^|]+)", line, flags=re.IGNORECASE)
-                x = re.search(r"X=([^|]+)", line, flags=re.IGNORECASE)
-                y = re.search(r"Y=([^|]+)", line, flags=re.IGNORECASE)
-                hole = re.search(r"HoleSize=([^|]+)", line, flags=re.IGNORECASE)
-                diameter = re.search(r"Size=([^|]+)", line, flags=re.IGNORECASE)
+            if record_type == "via" or upper.startswith("VIA"):
                 via = Via(
-                    net_name=(net.group(1).strip().upper() if net else ""),
-                    x=_safe_float(x.group(1)) if x else 0.0,
-                    y=_safe_float(y.group(1)) if y else 0.0,
-                    drill=_safe_float(hole.group(1), 0.3) if hole else 0.3,
-                    diameter=_safe_float(diameter.group(1), 0.6) if diameter else 0.6,
+                    net_name=((fields.get("net") or "").strip().upper()),
+                    x=_safe_float(fields.get("x")),
+                    y=_safe_float(fields.get("y")),
+                    drill=_safe_float(fields.get("holesize"), 0.3),
+                    diameter=_safe_float(fields.get("size"), 0.6),
                     layers=[layer for layer in list(pcb.layers)[:2] or ["TopLayer", "BottomLayer"]],
                 )
                 if via.net_name:
                     pcb.add_via(via.net_name, via)
                 continue
 
+            if record_type == "arc":
+                net_name = (fields.get("net") or "").strip().upper() or _layer_name(fields.get("layername") or fields.get("layer")).upper()
+                x1 = _safe_float(fields.get("x1") or fields.get("xstart"))
+                y1 = _safe_float(fields.get("y1") or fields.get("ystart"))
+                x2 = _safe_float(fields.get("x2") or fields.get("xend"))
+                y2 = _safe_float(fields.get("y2") or fields.get("yend"))
+                if any(value is None for value in [fields.get("x1") or fields.get("xstart"), fields.get("y1") or fields.get("ystart"), fields.get("x2") or fields.get("xend"), fields.get("y2") or fields.get("yend")]):
+                    continue
+                segment = TraceSegment(
+                    net_name=net_name,
+                    x1=x1,
+                    y1=y1,
+                    x2=x2,
+                    y2=y2,
+                    width=_safe_float(fields.get("width"), 0.2),
+                    layer=_layer_name(fields.get("layername") or fields.get("layer") or "TopLayer"),
+                )
+                pcb.add_trace_segment(segment.net_name, segment)
+                continue
+
+            if record_type in {"fill", "region"}:
+                if fields.get("points"):
+                    points = []
+                    for token in fields.get("points", "").split(";"):
+                        try:
+                            x_text, y_text = token.split(",", 1)
+                        except ValueError:
+                            continue
+                        points.append((_safe_float(x_text), _safe_float(y_text)))
+                    if len(points) >= 3:
+                        pcb.add_zone(
+                            Zone(
+                                net_name=((fields.get("net") or _layer_name(fields.get("layername") or fields.get("layer"))).strip().upper()),
+                                layer=_layer_name(fields.get("layername") or fields.get("layer") or "TopLayer"),
+                                points=points,
+                            )
+                        )
+                        continue
+                pending_region_points = []
+                continue
+
+            if record_type == "vertex":
+                pending_region_points.append((_safe_float(fields.get("x")), _safe_float(fields.get("y"))))
+                continue
+
+            if record_type == "endregion":
+                if len(pending_region_points) >= 3:
+                    pcb.add_zone(
+                        Zone(
+                            net_name=((fields.get("net") or _layer_name(fields.get("layername") or fields.get("layer"))).strip().upper()),
+                            layer=_layer_name(fields.get("layername") or fields.get("layer") or "TopLayer"),
+                            points=list(pending_region_points),
+                        )
+                    )
+                pending_region_points = []
+                continue
+
+            if record_type in {"boardoutline", "outline", "edge"}:
+                if all(fields.get(key) is not None for key in ("x1", "y1", "x2", "y2")):
+                    pcb.add_outline_segment(
+                        OutlineSegment(
+                            x1=_safe_float(fields.get("x1")),
+                            y1=_safe_float(fields.get("y1")),
+                            x2=_safe_float(fields.get("x2")),
+                            y2=_safe_float(fields.get("y2")),
+                            layer="Edge.Cuts",
+                            kind="line",
+                        )
+                    )
+                continue
+
     if not pcb.layers:
         pcb.add_layers(["TopLayer", "BottomLayer"])
+    pcb.estimate_board_bounds()
     return pcb

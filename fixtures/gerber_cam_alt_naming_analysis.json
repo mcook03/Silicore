@@ -130,14 +130,14 @@
         "declared_layers": [
             "Drill",
             "Gerber",
-            "Profile NP",
+            "Edge.Cuts",
             "Copper L1 Top"
         ],
         "layers": [
             "Copper L1 Top",
             "Drill",
-            "Gerber",
-            "Profile NP"
+            "Edge.Cuts",
+            "Gerber"
         ],
         "board_bounds": {
             "min_x": 0.0,
@@ -710,7 +710,7 @@
                 "y1": 0.0,
                 "x2": 2.5,
                 "y2": 0.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 2.5
             },
@@ -719,7 +719,7 @@
                 "y1": 0.0,
                 "x2": 2.5,
                 "y2": 2.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 2.0
             },
@@ -728,7 +728,7 @@
                 "y1": 2.0,
                 "x2": 0.0,
                 "y2": 2.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 2.5
             },
@@ -737,7 +737,7 @@
                 "y1": 2.0,
                 "x2": 0.0,
                 "y2": 0.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 2.0
             }
@@ -1189,7 +1189,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_alt_naming",
-        "timestamp": "2026-04-17T22:34:26.228444+00:00",
+        "timestamp": "2026-04-17T22:46:25.530153+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1674,7 +1674,7 @@
         "declared_layers": [
             "Drill",
             "Gerber",
-            "Profile NP",
+            "Edge.Cuts",
             "Copper L1 Top"
         ],
         "copper_layers": [
@@ -1724,8 +1724,12 @@
     },
     "stackup_summary": {
         "layer_count": 4,
-        "copper_layers": [],
-        "signal_layers": [],
+        "copper_layers": [
+            "Edge.Cuts"
+        ],
+        "signal_layers": [
+            "Edge.Cuts"
+        ],
         "reference_layers": [],
         "style": "two_layer",
         "reference_coverage_pct": 0.0,
@@ -1789,7 +1793,7 @@
         "score": 9.2,
         "total_penalty": 0.8
     },
-    "generated_at": "2026-04-17T22:34:26.228450+00:00",
+    "generated_at": "2026-04-17T22:46:25.530156+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

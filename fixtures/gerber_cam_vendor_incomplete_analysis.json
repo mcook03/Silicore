@@ -996,7 +996,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_vendor_incomplete",
-        "timestamp": "2026-04-17T22:34:26.254788+00:00",
+        "timestamp": "2026-04-17T22:46:25.560025+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1720,7 +1720,7 @@
         "score": 7.0,
         "total_penalty": 3.0
     },
-    "generated_at": "2026-04-17T22:34:26.254796+00:00",
+    "generated_at": "2026-04-17T22:46:25.560027+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

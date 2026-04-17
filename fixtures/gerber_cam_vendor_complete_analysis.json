@@ -131,7 +131,6 @@
             "Gerber",
             "Copper L2 Bot",
             "Edge.Cuts",
-            "Profile NP",
             "Drill",
             "Copper L1 Top"
         ],
@@ -140,8 +139,7 @@
             "Copper L2 Bot",
             "Drill",
             "Edge.Cuts",
-            "Gerber",
-            "Profile NP"
+            "Gerber"
         ],
         "board_bounds": {
             "min_x": -0.19999999999999996,
@@ -199,7 +197,7 @@
                     {
                         "filename": "mech_profile.gm1",
                         "source_format": "gerber",
-                        "layer_count": 2
+                        "layer_count": 1
                     },
                     {
                         "filename": "nc_drill.drl",
@@ -1679,7 +1677,7 @@
                 "y1": 0.0,
                 "x2": 3.0,
                 "y2": 0.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 3.0
             },
@@ -1688,7 +1686,7 @@
                 "y1": 0.0,
                 "x2": 3.0,
                 "y2": 2.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 2.0
             },
@@ -1697,7 +1695,7 @@
                 "y1": 2.0,
                 "x2": 0.0,
                 "y2": 2.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 3.0
             },
@@ -1706,7 +1704,7 @@
                 "y1": 2.0,
                 "x2": 0.0,
                 "y2": 0.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 2.0
             }
@@ -2158,7 +2156,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_vendor_complete",
-        "timestamp": "2026-04-17T22:34:26.248812+00:00",
+        "timestamp": "2026-04-17T22:46:25.555028+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2615,7 +2613,7 @@
         "via_count": 2,
         "outline_count": 4,
         "zone_count": 3,
-        "layer_count": 6,
+        "layer_count": 5,
         "summary": "Parser confidence is 67.0 / 100 for this board (directory) with 4 CAM file(s) input."
     },
     "cam_summary": {
@@ -2632,7 +2630,7 @@
             {
                 "filename": "mech_profile.gm1",
                 "source_format": "gerber",
-                "layer_count": 2
+                "layer_count": 1
             },
             {
                 "filename": "nc_drill.drl",
@@ -2649,7 +2647,6 @@
             "Gerber",
             "Copper L2 Bot",
             "Edge.Cuts",
-            "Profile NP",
             "Drill",
             "Copper L1 Top"
         ],
@@ -2700,7 +2697,7 @@
         "risks": []
     },
     "stackup_summary": {
-        "layer_count": 6,
+        "layer_count": 5,
         "copper_layers": [
             "Edge.Cuts"
         ],
@@ -2770,7 +2767,7 @@
         "score": 9.2,
         "total_penalty": 0.8
     },
-    "generated_at": "2026-04-17T22:34:26.248818+00:00",
+    "generated_at": "2026-04-17T22:46:25.555032+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

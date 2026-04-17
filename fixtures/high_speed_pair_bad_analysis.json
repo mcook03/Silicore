@@ -774,9 +774,9 @@
                 "J1"
             ],
             "nets": [
+                "VBUS",
                 "GND",
                 "USB_DN",
-                "VBUS",
                 "USB_DP"
             ],
             "region": null,
@@ -795,9 +795,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
+                    "VBUS",
                     "GND",
                     "USB_DN",
-                    "VBUS",
                     "USB_DP"
                 ],
                 "has_power": false,
@@ -3350,7 +3350,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-17T22:34:26.275721+00:00",
+        "timestamp": "2026-04-17T22:46:25.579439+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4639,9 +4639,9 @@
                     "J1"
                 ],
                 "nets": [
+                    "VBUS",
                     "GND",
                     "USB_DN",
-                    "VBUS",
                     "USB_DP"
                 ],
                 "region": null,
@@ -4660,9 +4660,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
+                        "VBUS",
                         "GND",
                         "USB_DN",
-                        "VBUS",
                         "USB_DP"
                     ],
                     "has_power": false,
@@ -5186,7 +5186,7 @@
         "score": 0.0,
         "total_penalty": 18.8
     },
-    "generated_at": "2026-04-17T22:34:26.275727+00:00",
+    "generated_at": "2026-04-17T22:46:25.579444+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

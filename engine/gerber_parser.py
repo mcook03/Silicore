@@ -31,19 +31,34 @@ EXCELLON_COORD_RE = re.compile(r"^(?:X(-?\d+))?(?:Y(-?\d+))?$")
 GERBER_EXTENSIONS = {
     ".gbr",
     ".ger",
+    ".g1",
+    ".g2",
+    ".g3",
+    ".g4",
     ".gko",
     ".gtl",
     ".gbl",
     ".gto",
     ".gbo",
+    ".gtp",
+    ".gbp",
     ".gts",
     ".gbs",
     ".gm1",
+    ".gm2",
+    ".gp1",
+    ".gp2",
+    ".gd1",
+    ".gg1",
+    ".apr",
+    ".apt",
+    ".p01",
+    ".p02",
     ".pho",
     ".art",
     ".outline",
 }
-DRILL_EXTENSIONS = {".drl", ".xln", ".txt"}
+DRILL_EXTENSIONS = {".drl", ".xln", ".txt", ".tap", ".drd"}
 
 
 def parse_gerber_file(filepath):
@@ -474,19 +489,46 @@ def _pcb_has_geometry(pcb):
 def _guess_layer_name(filepath, raw_value):
     raw = str(raw_value or "").strip()
     if raw:
-        return raw.replace(",", " ").strip()
+        normalized = raw.replace(",", " ").strip()
+        lower = normalized.lower()
+        if "profile" in lower or "outline" in lower:
+            return "Edge.Cuts"
+        if "drillguide" in lower or "drill guide" in lower:
+            return "Drill Guide 1"
+        if "paste top" in lower or "paste,top" in lower or ("paste" in lower and "top" in lower):
+            return "Top Paste"
+        if "paste bot" in lower or "paste,bot" in lower or ("paste" in lower and "bot" in lower):
+            return "Bottom Paste"
+        return normalized
     suffix = Path(filepath).suffix.lower()
     mapping = {
         ".gko": "Edge.Cuts",
         ".gm1": "Edge.Cuts",
+        ".gm2": "Mechanical Layer 2",
         ".gtl": "Top Copper",
         ".gbl": "Bottom Copper",
+        ".g1": "Mid Layer 1",
+        ".g2": "Mid Layer 2",
+        ".g3": "Mid Layer 3",
+        ".g4": "Mid Layer 4",
         ".gto": "Top Silkscreen",
         ".gbo": "Bottom Silkscreen",
+        ".gtp": "Top Paste",
+        ".gbp": "Bottom Paste",
         ".gts": "Top Soldermask",
         ".gbs": "Bottom Soldermask",
+        ".gp1": "Internal Plane 1",
+        ".gp2": "Internal Plane 2",
+        ".gd1": "Drill Drawing 1",
+        ".gg1": "Drill Guide 1",
+        ".apr": "Aperture File",
+        ".apt": "Aperture Template",
+        ".p01": "Gerber Panel 1",
+        ".p02": "Gerber Panel 2",
         ".drl": "Drill",
         ".xln": "Drill",
+        ".tap": "Drill",
+        ".drd": "Drill",
     }
     return mapping.get(suffix, "Gerber")
 

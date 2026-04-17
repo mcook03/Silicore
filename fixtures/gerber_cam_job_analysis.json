@@ -130,7 +130,6 @@
         "declared_layers": [
             "Drill",
             "Edge.Cuts",
-            "Profile NP",
             "Top Copper",
             "Copper L1 Top"
         ],
@@ -138,7 +137,6 @@
             "Copper L1 Top",
             "Drill",
             "Edge.Cuts",
-            "Profile NP",
             "Top Copper"
         ],
         "board_bounds": {
@@ -191,7 +189,7 @@
                     {
                         "filename": "board.gko",
                         "source_format": "gerber",
-                        "layer_count": 2
+                        "layer_count": 1
                     },
                     {
                         "filename": "board.gtl",
@@ -752,7 +750,7 @@
                 "y1": 0.0,
                 "x2": 3.0,
                 "y2": 0.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 3.0
             },
@@ -761,7 +759,7 @@
                 "y1": 0.0,
                 "x2": 3.0,
                 "y2": 3.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 3.0
             },
@@ -770,7 +768,7 @@
                 "y1": 3.0,
                 "x2": 0.0,
                 "y2": 3.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 3.0
             },
@@ -779,7 +777,7 @@
                 "y1": 3.0,
                 "x2": 0.0,
                 "y2": 0.0,
-                "layer": "Profile NP",
+                "layer": "Edge.Cuts",
                 "kind": "line",
                 "length": 3.0
             }
@@ -1231,7 +1229,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_job",
-        "timestamp": "2026-04-17T22:34:26.233337+00:00",
+        "timestamp": "2026-04-17T22:46:25.541409+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1680,7 +1678,7 @@
         "board_type": "general"
     },
     "parser_confidence": {
-        "score": 63.0,
+        "score": 62.5,
         "status": "experimental",
         "component_count": 0,
         "net_count": 2,
@@ -1688,8 +1686,8 @@
         "via_count": 2,
         "outline_count": 4,
         "zone_count": 1,
-        "layer_count": 5,
-        "summary": "Parser confidence is 63.0 / 100 for this board (directory) with 3 CAM file(s) input."
+        "layer_count": 4,
+        "summary": "Parser confidence is 62.5 / 100 for this board (directory) with 3 CAM file(s) input."
     },
     "cam_summary": {
         "active": true,
@@ -1705,7 +1703,7 @@
             {
                 "filename": "board.gko",
                 "source_format": "gerber",
-                "layer_count": 2
+                "layer_count": 1
             },
             {
                 "filename": "board.gtl",
@@ -1716,7 +1714,6 @@
         "declared_layers": [
             "Drill",
             "Edge.Cuts",
-            "Profile NP",
             "Top Copper",
             "Copper L1 Top"
         ],
@@ -1728,7 +1725,7 @@
         "drill_count": 2,
         "trace_count": 4,
         "zone_count": 1,
-        "parser_confidence": 63.0,
+        "parser_confidence": 62.5,
         "readiness_score": 100,
         "complete": true,
         "summary": "CAM import recognized 3 file(s), 2 copper layer(s), 4 outline segment(s), and 2 drill hit(s). The bundle looks complete enough for geometry-backed review.",
@@ -1767,7 +1764,7 @@
         "risks": []
     },
     "stackup_summary": {
-        "layer_count": 5,
+        "layer_count": 4,
         "copper_layers": [
             "Edge.Cuts"
         ],
@@ -1837,7 +1834,7 @@
         "score": 9.2,
         "total_penalty": 0.8
     },
-    "generated_at": "2026-04-17T22:34:26.233341+00:00",
+    "generated_at": "2026-04-17T22:46:25.541412+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

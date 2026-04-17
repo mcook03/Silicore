@@ -48,6 +48,15 @@ class BackendSystemsTests(unittest.TestCase):
         finally:
             os.remove(path)
 
+    def test_external_style_altium_ascii_fixture_parses_regions_outline_and_vias(self):
+        pcb = parse_altium_ascii_file("fixtures/altium_ascii_external.pcbdocascii")
+        self.assertEqual(pcb.source_format, "altium_ascii")
+        self.assertGreaterEqual(len(pcb.components), 2)
+        self.assertGreaterEqual(len(pcb.traces), 2)
+        self.assertGreaterEqual(len(pcb.vias), 1)
+        self.assertGreaterEqual(len(pcb.zones), 1)
+        self.assertGreaterEqual(len(pcb.outline_segments), 4)
+
     def test_gerber_parser_extracts_geometry(self):
         with tempfile.NamedTemporaryFile("w", suffix=".gbr", delete=False) as handle:
             handle.write("%TF.FileFunction,Copper,L1,Top*%\n")
@@ -149,6 +158,13 @@ class BackendSystemsTests(unittest.TestCase):
         result = run_analysis(pcb, load_config("custom_config.json"))
         bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
         self.assertTrue(bundle_risks)
+
+    def test_altium_style_gerber_extensions_are_recognized(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_altium_style")
+        self.assertEqual(pcb.source_format, "gerber_cam")
+        self.assertGreater(len(pcb.outline_segments), 0)
+        self.assertIn("Edge.Cuts", pcb.layers)
+        self.assertIn("Top Paste", pcb.layers)
 
     def test_geometry_rule_uses_board_regions_for_clearance(self):
         pcb = parse_pcb_file("fixtures/high_voltage_spacing_board.kicad_pcb")
