@@ -115,6 +115,11 @@ def _pair_signature(left, right, granularity):
     return kinds, nets, region_keys
 
 
+def _native_creepage_signature(left, right):
+    nets = tuple(sorted([str(left.get("net_name", "") or ""), str(right.get("net_name", "") or "")]))
+    return ("native_creepage", nets)
+
+
 def _record_best_violation(best, key, entry):
     current = best.get(key)
     if current is None or entry["distance"] < current["distance"]:
@@ -168,7 +173,7 @@ def run_rule(pcb, config):
 
             if _matches_any(left_net, hv_keywords) or _matches_any(right_net, hv_keywords):
                 if distance < min_creepage:
-                    key = _pair_signature(left, right, cluster_granularity)
+                    key = _pair_signature(left, right, cluster_granularity) if is_cam_source else _native_creepage_signature(left, right)
                     _record_best_violation(
                         creepage_candidates,
                         key,
