@@ -374,22 +374,34 @@ def answer_board_question(prompt, context, history=None):
         missing_signals = _listify(cam_summary.get("missing_signals"))
         remediation_steps = _listify(cam_summary.get("remediation_steps"))
         strengths = _listify(cam_summary.get("strengths"))
+        fabrication_blockers = _listify(cam_summary.get("fabrication_blockers"))
+        geometry_warnings = _listify(cam_summary.get("geometry_warnings"))
+        parser_warnings = _listify(cam_summary.get("parser_warnings"))
+        source_family = str(cam_summary.get("source_family") or "generic_gerber").replace("_", " ")
         answer = cam_summary.get("summary") or "CAM package review data is available for this board."
         detail_parts = [
             (
-                f"{cam_summary.get('status_label', 'CAM review ready')} with "
+                f"{cam_summary.get('status_label', 'CAM review ready')} from {source_family} with "
                 f"{cam_summary.get('layer_file_count', 0)} file(s), "
                 f"{len(cam_summary.get('copper_layers') or [])} copper layer(s), "
                 f"{cam_summary.get('outline_count', 0)} outline segment(s), and "
                 f"{cam_summary.get('drill_count', 0)} drill hit(s)."
             )
         ]
-        if missing_signals:
+        if fabrication_blockers:
+            detail_parts.append(f"Main fabrication blocker: {fabrication_blockers[0]}.")
+        elif missing_signals:
             detail_parts.append(f"Main package gap: {missing_signals[0]}.")
+        if parser_warnings:
+            detail_parts.append(f"This looks more like parser trust pressure than a pure package miss: {parser_warnings[0]}.")
+        elif geometry_warnings:
+            detail_parts.append(f"Geometry review is partially limited: {geometry_warnings[0]}.")
         elif strengths:
             detail_parts.append(f"Strongest recognition signal: {strengths[0]}.")
         if remediation_steps:
             detail_parts.append(f"Next CAM fix: {remediation_steps[0]}")
+        if fabrication_blockers and remediation_steps:
+            answer += f" For fabrication handoff, ask for: {remediation_steps[0]}"
         return _make_response(
             "cam",
             "CAM Package Review",
@@ -399,6 +411,7 @@ def answer_board_question(prompt, context, history=None):
                 "Is this CAM package complete enough for fabrication review?",
                 "How much should I trust this Gerber import?",
                 "What should I ask the designer or fabricator to re-export?",
+                "Is this a parser issue or a package issue?",
                 "Show me the strongest evidence",
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
@@ -598,8 +611,9 @@ def answer_project_question(prompt, context, history=None):
         strongest_cam = ranked_cam[0]
         answer = (
             f"The workspace has {len(cam_boards)} CAM-backed run(s). "
-            f"The strongest CAM package is {strongest_cam.get('name', 'Unknown')} at {strongest_cam.get('readiness_score', 0)} / 100, "
-            f"while the weakest is {weakest_cam.get('name', 'Unknown')} at {weakest_cam.get('readiness_score', 0)} / 100."
+            f"The strongest CAM package is {strongest_cam.get('name', 'Unknown')} ({str(strongest_cam.get('source_family') or 'generic_gerber').replace('_', ' ')}) "
+            f"at {strongest_cam.get('readiness_score', 0)} / 100, while the weakest is {weakest_cam.get('name', 'Unknown')} "
+            f"({str(weakest_cam.get('source_family') or 'generic_gerber').replace('_', ' ')}) at {weakest_cam.get('readiness_score', 0)} / 100."
         )
         detail = (
             f"{context.get('cam_ready_count', 0)} CAM package(s) are review ready. "

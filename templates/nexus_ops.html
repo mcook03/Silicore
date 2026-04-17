@@ -118,6 +118,26 @@
             </div>
             {% endif %}
             {% endif %}
+            {% if evaluation_summary.cam_health and evaluation_summary.cam_health.source_families %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Source Family Trust</h3>
+                <p>
+                    {% for item in evaluation_summary.cam_health.source_families %}
+                    <span class="mini-chip mini-chip-medium">{{ item.label }} · {{ item.ready_count }}/{{ item.count }} · {{ item.readiness_ratio }}%</span>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
+            {% if evaluation_summary.parser_health and evaluation_summary.parser_health.weakest_boards %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Weakest Parser Cases</h3>
+                <p>
+                    {% for item in evaluation_summary.parser_health.weakest_boards[:4] %}
+                    <span class="mini-chip mini-chip-critical">{{ item.filename }} · {{ item.parser_confidence|round(1) }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
             {% else %}
             <div class="empty-state">Admin access is required to view evaluation and calibration summary data.</div>
             {% endif %}
@@ -178,6 +198,16 @@
                 <p>
                     {% for item in ext.cam_health.missing_signals[:4] %}
                     <span class="mini-chip mini-chip-critical">{{ item.label }} · {{ item.count }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
+            {% if ext.cam_health is defined and ext.cam_health.source_families %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>External Source Mix</h3>
+                <p>
+                    {% for item in ext.cam_health.source_families %}
+                    <span class="mini-chip mini-chip-medium">{{ item.label }} · {{ item.ready_count }}/{{ item.count }} · {{ item.readiness_ratio }}%</span>
                     {% endfor %}
                 </p>
             </div>

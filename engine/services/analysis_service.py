@@ -108,6 +108,22 @@ def _estimate_parser_confidence(pcb, extension):
     }
 
 
+def _guess_cam_source_family(layer_files, extension):
+    names = [str(item or "").lower() for item in (layer_files or [])]
+    ext = str(extension or "").lower()
+    if any(name.endswith(".pho") or name.endswith(".art") or ".pho" in name or ".art" in name for name in names):
+        return "altium_gerber"
+    if any(name.endswith(".gbrjob") or "altium" in name for name in names):
+        return "altium_gerber"
+    if any(name.endswith((".gtl", ".gbl", ".gto", ".gbo", ".gts", ".gbs")) for name in names):
+        return "kicad_gerber"
+    if any(name.endswith((".gbr", ".gm1", ".gko", ".drl", ".xln", ".zip")) for name in names):
+        return "generic_gerber"
+    if ext == ".pcbdocascii":
+        return "altium_ascii"
+    return "generic_gerber"
+
+
 def _build_cam_summary(pcb, extension):
     source_format = str(getattr(pcb, "source_format", "") or "").lower()
     if not source_format.startswith("gerber"):
@@ -126,10 +142,14 @@ def _build_cam_summary(pcb, extension):
     trace_count = len(getattr(pcb, "traces", []) or [])
     zone_count = len(getattr(pcb, "zones", []) or [])
     parser_confidence = _estimate_parser_confidence(pcb, extension)
+    source_family = _guess_cam_source_family(layer_files, extension)
     complete = bool(outline_count and (drill_count or not copper_layers) and (trace_count or zone_count))
     missing_signals = []
     strengths = []
     remediation_steps = []
+    fabrication_blockers = []
+    geometry_warnings = []
+    parser_warnings = []
 
     if layer_files:
         strengths.append(f"{len(layer_files)} CAM file(s) recognized")
@@ -143,18 +163,23 @@ def _build_cam_summary(pcb, extension):
     if not outline_count:
         missing_signals.append("No recognizable board outline was found")
         remediation_steps.append("Export a profile or mechanical outline layer in the Gerber package.")
+        fabrication_blockers.append("Missing board outline")
     if copper_layers and not drill_count:
         missing_signals.append("Copper layers were found without drill data")
         remediation_steps.append("Include Excellon or NC drill output with the fabrication package.")
+        fabrication_blockers.append("Missing drill data")
     if not copper_layers:
         missing_signals.append("No copper layers were recognized")
         remediation_steps.append("Export at least one copper Gerber layer and verify CAM file naming.")
+        fabrication_blockers.append("Missing copper layers")
     if not (trace_count or zone_count):
         missing_signals.append("Copper geometry coverage is too sparse for a full review")
         remediation_steps.append("Verify that routed copper and filled regions are included in the exported Gerbers.")
+        geometry_warnings.append("Sparse copper geometry")
     if len(layer_files) < 2:
         missing_signals.append("Very few CAM files were recognized")
         remediation_steps.append("Export the full fabrication bundle instead of a partial single-layer subset.")
+        parser_warnings.append("Very few recognized CAM files")
 
     deduped_steps = []
     for item in remediation_steps:
@@ -173,6 +198,16 @@ def _build_cam_summary(pcb, extension):
     if zone_count:
         readiness_score += 8
     readiness_score = min(100, readiness_score)
+    if parser_confidence.get("score", 0) < 70:
+        parser_warnings.append("Parser confidence is still below strong-review range")
+
+    package_state = "ready"
+    if fabrication_blockers:
+        package_state = "incomplete"
+    elif geometry_warnings:
+        package_state = "geometry_limited"
+
+    trust_call = "package_incomplete" if fabrication_blockers else "parser_watch" if parser_warnings else "trusted"
     summary = (
         f"CAM import recognized {len(layer_files) or 1} file(s), {len(copper_layers)} copper layer(s), "
         f"{outline_count} outline segment(s), and {drill_count} drill hit(s)."
@@ -185,6 +220,7 @@ def _build_cam_summary(pcb, extension):
     return {
         "active": True,
         "source_format": source_format,
+        "source_family": source_family,
         "bundle_type": cam_meta.get("bundle_type", "single_layer"),
         "layer_file_count": len(layer_files),
         "layer_files": layer_files[:8],
@@ -203,6 +239,21 @@ def _build_cam_summary(pcb, extension):
         "missing_signals": missing_signals[:5],
         "remediation_steps": remediation_steps,
         "readiness_level": "ready" if complete else "partial" if readiness_score >= 65 else "needs_work",
+        "package_state": package_state,
+        "trust_call": trust_call,
+        "fabrication_blockers": fabrication_blockers[:4],
+        "geometry_warnings": geometry_warnings[:4],
+        "parser_warnings": parser_warnings[:4],
+        "review_modes": {
+            "geometry_review": bool(outline_count and (trace_count or zone_count)),
+            "fabrication_review": bool(outline_count and copper_layers and (drill_count or not copper_layers)),
+        },
+        "diagnostic_flags": [
+            {"label": "Outline", "status": "ok" if outline_count else "missing"},
+            {"label": "Drill", "status": "ok" if drill_count else "missing" if copper_layers else "not_required"},
+            {"label": "Copper", "status": "ok" if copper_layers else "missing"},
+            {"label": "Geometry", "status": "ok" if (trace_count or zone_count) else "weak"},
+        ],
     }
 
 

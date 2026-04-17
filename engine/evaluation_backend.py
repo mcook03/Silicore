@@ -67,6 +67,8 @@ def _evaluate_directory(source_dir="fixtures", config="custom_config.json", scop
     category_counts = defaultdict(int)
     format_counts = defaultdict(int)
     parser_confidence_by_format = defaultdict(list)
+    source_family_counts = defaultdict(int)
+    source_family_ready = defaultdict(int)
     total_score = 0.0
     parser_confidence_total = 0.0
     parser_confidence_count = 0
@@ -85,6 +87,10 @@ def _evaluate_directory(source_dir="fixtures", config="custom_config.json", scop
                 cam_bundle_count += 1
                 if cam_summary.get("complete"):
                     cam_ready_count += 1
+                source_family = str(cam_summary.get("source_family") or "generic_gerber")
+                source_family_counts[source_family] += 1
+                if cam_summary.get("complete"):
+                    source_family_ready[source_family] += 1
                 for signal in cam_summary.get("missing_signals") or []:
                     cam_missing_signal_counts[str(signal)] += 1
                 cam_readiness_bands[str(cam_summary.get("readiness_level") or "unknown")] += 1
@@ -155,6 +161,18 @@ def _evaluate_directory(source_dir="fixtures", config="custom_config.json", scop
             "average_confidence": round(parser_confidence_total / parser_confidence_count, 1) if parser_confidence_count else 0.0,
             "supported_formats": len(format_counts),
             "failed_boards": failed_boards,
+            "weakest_boards": sorted(
+                [
+                    {
+                        "filename": board.get("filename"),
+                        "format": board.get("format"),
+                        "parser_confidence": board.get("parser_confidence", 0),
+                    }
+                    for board in boards
+                    if board.get("filename")
+                ],
+                key=lambda item: (item.get("parser_confidence", 0), str(item.get("filename") or "").lower()),
+            )[:5],
         },
         "cam_health": {
             "bundle_count": cam_bundle_count,
@@ -167,6 +185,15 @@ def _evaluate_directory(source_dir="fixtures", config="custom_config.json", scop
             "readiness_bands": [
                 {"label": key.replace("_", " ").title(), "count": value}
                 for key, value in sorted(cam_readiness_bands.items(), key=lambda item: item[0])
+            ],
+            "source_families": [
+                {
+                    "label": key.replace("_", " ").title(),
+                    "count": value,
+                    "ready_count": source_family_ready.get(key, 0),
+                    "readiness_ratio": round((source_family_ready.get(key, 0) / value) * 100, 1) if value else 0.0,
+                }
+                for key, value in sorted(source_family_counts.items(), key=lambda item: item[0])
             ],
         },
     }

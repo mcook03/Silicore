@@ -202,6 +202,31 @@ class BackendSystemsTests(unittest.TestCase):
             history = list_evaluation_runs(limit=10)
             self.assertTrue(any(item["scope"] == "external" for item in history))
 
+    def test_external_evaluation_summary_includes_source_family_and_weakest_cases(self):
+        result = evaluate_fixture_suite()
+        self.assertIn("source_families", result["cam_health"])
+        self.assertIn("weakest_boards", result["parser_health"])
+
+    def test_altium_parser_handles_alias_fields_and_units(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".pcbdocascii", delete=False) as handle:
+            handle.write("RECORD=COMPONENT|RefDes=U9|Footprint=ADC|LocationX=10.0mm|LocationY=11.0mm|Layer=TopLayer\n")
+            handle.write("RECORD=PADSTACK|ComponentRef=U9|Number=1|NetName=AIN|LocationX=10.0mm|LocationY=11.0mm|Diameter=0.8mm|HoleSize=0.3mm|Layer=TopLayer\n")
+            handle.write("RECORD=TRACKARC|NetName=AIN|XStart=10.0mm|YStart=11.0mm|XEnd=18.0mm|YEnd=11.0mm|LineWidth=0.18mm|Layer=TopLayer\n")
+            handle.write("RECORD=REGIONVERTEX|X=0mm|Y=0mm\n")
+            handle.write("RECORD=REGIONVERTEX|X=4mm|Y=0mm\n")
+            handle.write("RECORD=REGIONVERTEX|X=4mm|Y=4mm\n")
+            handle.write("RECORD=ENDREGION|Layer=TopLayer|Net=GND\n")
+            handle.write("RECORD=BOARDLINE|XStart=0mm|YStart=0mm|XEnd=10mm|YEnd=0mm\n")
+            path = handle.name
+        try:
+            pcb = parse_altium_ascii_file(path)
+            self.assertGreaterEqual(len(pcb.components), 1)
+            self.assertGreaterEqual(len(pcb.traces), 1)
+            self.assertGreaterEqual(len(pcb.zones), 1)
+            self.assertGreaterEqual(len(pcb.outline_segments), 1)
+        finally:
+            os.remove(path)
+
     def test_atlas_tools_summaries_work(self):
         compare = compare_latest_runs(
             {

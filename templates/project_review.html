@@ -337,6 +337,7 @@
                     <div>
                         <div class="timeline-title">{{ board.filename }}</div>
                         <div class="timeline-copy">{{ board.cam_summary.summary }}</div>
+                        <div class="timeline-copy">{{ board.cam_summary.source_family|replace('_', ' ')|title }} · {{ board.cam_summary.trust_call|replace('_', ' ')|title }}</div>
                         {% if board.cam_summary.missing_signals %}
                         <div class="timeline-copy">Missing: {{ board.cam_summary.missing_signals|join(' • ') }}</div>
                         {% endif %}

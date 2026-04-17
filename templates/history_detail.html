@@ -232,6 +232,11 @@
                 <div class="metric-value">{{ run_detail.cam_detail_view.readiness_score }}</div>
                 <div class="metric-sub">{{ run_detail.cam_detail_view.status_label }}</div>
             </div>
+            <div class="metric-card">
+                <div class="metric-label">Source Family</div>
+                <div class="metric-value">{{ run_detail.cam_detail_view.source_family }}</div>
+                <div class="metric-sub">{{ run_detail.cam_detail_view.trust_call|replace('_', ' ')|title }}</div>
+            </div>
         </div>
         <div class="summary-panel" style="margin-top:16px;">
             <h3>Bundle Summary</h3>
@@ -250,6 +255,12 @@
         <div class="summary-panel" style="margin-top:16px;">
             <h3>Recommended CAM Fixes</h3>
             <p>{{ run_detail.cam_detail_view.remediation_steps|join(' ') }}</p>
+        </div>
+        {% endif %}
+        {% if run_detail.cam_detail_view.parser_warnings %}
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Parser Trust Warnings</h3>
+            <p>{{ run_detail.cam_detail_view.parser_warnings|join(' • ') }}</p>
         </div>
         {% endif %}
     </div>

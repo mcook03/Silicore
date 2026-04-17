@@ -462,9 +462,22 @@
                 <div class="focus-chip-row" style="margin: 12px 0 0;">
                     <span class="mini-chip mini-chip-medium">{{ result.cam_summary.status_label }}</span>
                     <span class="mini-chip mini-chip-low">{{ result.cam_summary.readiness_score }} / 100 readiness</span>
+                    <span class="mini-chip mini-chip-low">{{ result.cam_summary.source_family|replace('_', ' ')|title }}</span>
                     <span class="mini-chip mini-chip-low">{{ result.cam_summary.layer_file_count }} file(s)</span>
                     <span class="mini-chip mini-chip-low">{{ result.cam_summary.drill_count }} drill hit(s)</span>
                 </div>
+                {% if result.cam_summary.fabrication_blockers %}
+                <div class="summary-panel compact-summary" style="margin-top:12px;">
+                    <h3>Fabrication Blockers</h3>
+                    <p>{{ result.cam_summary.fabrication_blockers|join(' • ') }}</p>
+                </div>
+                {% endif %}
+                {% if result.cam_summary.parser_warnings %}
+                <div class="summary-panel compact-summary" style="margin-top:12px;">
+                    <h3>Parser Trust Warnings</h3>
+                    <p>{{ result.cam_summary.parser_warnings|join(' • ') }}</p>
+                </div>
+                {% endif %}
                 {% if result.cam_summary.layer_files %}
                 <p class="small-muted" style="margin-top:10px;">Files: {{ result.cam_summary.layer_files|join(', ') }}</p>
                 {% endif %}
@@ -1208,6 +1221,12 @@
                     </filter>
                 </defs>
                 <rect x="6" y="6" width="{{ result.board_view.width - 12 }}" height="{{ result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
+                {% for diagnostic in result.board_view.cam_diagnostics %}
+                <g class="board-cam-diagnostic board-cam-diagnostic-{{ diagnostic.tone }}">
+                    <rect x="{{ diagnostic.x }}" y="{{ diagnostic.y }}" width="{{ diagnostic.width }}" height="{{ diagnostic.height }}" rx="12"></rect>
+                    <text x="{{ diagnostic.x + 10 }}" y="{{ diagnostic.y + 16 }}">{{ diagnostic.label }} · {{ diagnostic.status }}</text>
+                </g>
+                {% endfor %}
                 <g class="board-heat-layer board-heat-layer-blended">
                 {% for hotspot in result.board_view.hotspots %}
                     <circle cx="{{ hotspot.x }}" cy="{{ hotspot.y }}" r="{{ hotspot.radius * 1.75 }}" class="board-heat-halo board-heat-halo-{{ hotspot.tone }} board-entity" data-components="{{ hotspot.components|join('|') }}" data-nets="{{ hotspot.nets|join('|') }}" data-kind="heatmap" filter="url(#board-heat-blur)">
@@ -1287,6 +1306,22 @@
                         </div>
                         {% endfor %}
                     </div>
+                </div>
+                {% endif %}
+
+                {% if result.cam_summary and result.cam_summary.active %}
+                <div class="board-focus-item">
+                    <div class="board-focus-top"><strong>CAM Diagnostics</strong></div>
+                    <div class="small-muted">Trust call: {{ result.cam_summary.trust_call|replace('_', ' ')|title }}</div>
+                    {% if result.cam_summary.fabrication_blockers %}
+                    <div class="small-muted" style="margin-top:8px;">Blockers: {{ result.cam_summary.fabrication_blockers|join(' • ') }}</div>
+                    {% endif %}
+                    {% if result.cam_summary.geometry_warnings %}
+                    <div class="small-muted" style="margin-top:8px;">Geometry: {{ result.cam_summary.geometry_warnings|join(' • ') }}</div>
+                    {% endif %}
+                    {% if result.cam_summary.parser_warnings %}
+                    <div class="small-muted" style="margin-top:8px;">Parser: {{ result.cam_summary.parser_warnings|join(' • ') }}</div>
+                    {% endif %}
                 </div>
                 {% endif %}
 
@@ -3567,6 +3602,24 @@
         fill: #e5eefc;
         font-size: 11px;
         font-weight: 700;
+    }
+
+    .board-cam-diagnostic rect {
+        fill: rgba(15, 23, 42, 0.92);
+        stroke: rgba(148, 163, 184, 0.24);
+        stroke-width: 1;
+    }
+
+    .board-cam-diagnostic-safe rect { stroke: rgba(74, 222, 128, 0.34); }
+    .board-cam-diagnostic-medium rect { stroke: rgba(250, 204, 21, 0.34); }
+    .board-cam-diagnostic-high rect { stroke: rgba(251, 146, 60, 0.34); }
+    .board-cam-diagnostic-critical rect { stroke: rgba(248, 113, 113, 0.4); }
+
+    .board-cam-diagnostic text {
+        fill: #dbeafe;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
     }
 
     .board-entity {

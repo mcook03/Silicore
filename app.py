@@ -548,7 +548,12 @@ def _enrich_single_result(result):
     result["score"] = result["display_score"]
     result["health_summary"] = _build_health_summary(result.get("display_score", result.get("score", 0)), risks)
     result["analysis_context_view"] = _build_analysis_context(result)
-    result["board_view"] = _build_board_view_data(result.get("pcb_snapshot") or {}, risks)
+    result["board_view"] = _build_board_view_data(
+        result.get("pcb_snapshot") or {},
+        risks,
+        cam_summary=result.get("cam_summary") or {},
+        parser_confidence=result.get("parser_confidence") or {},
+    )
     result["signoff_gate"] = _build_signoff_gate_view(result)
     return result
 
@@ -1019,7 +1024,10 @@ def _build_cam_detail_view(cam_summary):
         "status_label": cam_summary.get("status_label") or "CAM review ready",
         "readiness_score": cam_summary.get("readiness_score", 0),
         "bundle_type": str(cam_summary.get("bundle_type") or "single_layer").replace("_", " ").title(),
+        "source_family": str(cam_summary.get("source_family") or "generic_gerber").replace("_", " ").title(),
         "readiness_level": cam_summary.get("readiness_level") or "partial",
+        "package_state": cam_summary.get("package_state") or "partial",
+        "trust_call": cam_summary.get("trust_call") or "trusted",
         "stats": [
             {"label": "CAM Files", "value": cam_summary.get("layer_file_count", 0)},
             {"label": "Copper Layers", "value": len(cam_summary.get("copper_layers") or [])},
@@ -1030,6 +1038,10 @@ def _build_cam_detail_view(cam_summary):
         "strengths": cam_summary.get("strengths") or [],
         "missing_signals": cam_summary.get("missing_signals") or [],
         "remediation_steps": cam_summary.get("remediation_steps") or [],
+        "fabrication_blockers": cam_summary.get("fabrication_blockers") or [],
+        "geometry_warnings": cam_summary.get("geometry_warnings") or [],
+        "parser_warnings": cam_summary.get("parser_warnings") or [],
+        "diagnostic_flags": cam_summary.get("diagnostic_flags") or [],
     }
 
 
@@ -2411,6 +2423,7 @@ def _build_project_atlas_context(project, workspace_intelligence, timeline_data,
                     "readiness_score": cam_summary.get("readiness_score", 0),
                     "complete": bool(cam_summary.get("complete")),
                     "missing_signals": cam_summary.get("missing_signals") or [],
+                    "source_family": cam_summary.get("source_family") or "generic_gerber",
                 }
             )
 
@@ -2617,8 +2630,10 @@ def _board_view_bounds(pcb_snapshot):
     return min_x, min_y, width, height
 
 
-def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
+def _build_board_view_data(pcb_snapshot, risks, width=820, height=440, cam_summary=None, parser_confidence=None):
     pcb_snapshot = pcb_snapshot or {}
+    cam_summary = cam_summary or {}
+    parser_confidence = parser_confidence or {}
     components = pcb_snapshot.get("components", []) or []
     traces = pcb_snapshot.get("traces", []) or []
     vias = pcb_snapshot.get("vias", []) or []
@@ -2831,6 +2846,37 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
         {"label": "Outline", "value": len(outline_segments)},
     ]
 
+    cam_diagnostics = []
+    if cam_summary.get("active"):
+        diagnostic_flags = cam_summary.get("diagnostic_flags") or []
+        for index, item in enumerate(diagnostic_flags[:4]):
+            status = str(item.get("status") or "ok")
+            tone = "safe" if status == "ok" else "medium" if status in {"weak", "not_required"} else "critical"
+            cam_diagnostics.append(
+                {
+                    "label": item.get("label") or "Signal",
+                    "status": status.replace("_", " ").title(),
+                    "tone": tone,
+                    "x": width - 188,
+                    "y": 36 + (index * 34),
+                    "width": 154,
+                    "height": 24,
+                }
+            )
+        parser_score = _safe_float(parser_confidence.get("score"), 0.0)
+        if parser_score < 75:
+            cam_diagnostics.append(
+                {
+                    "label": "Parser Trust",
+                    "status": f"{int(parser_score)} / 100",
+                    "tone": "high" if parser_score >= 60 else "critical",
+                    "x": width - 188,
+                    "y": 36 + (len(cam_diagnostics) * 34),
+                    "width": 154,
+                    "height": 24,
+                }
+            )
+
     return {
         "has_data": True,
         "width": width,
@@ -2844,6 +2890,7 @@ def _build_board_view_data(pcb_snapshot, risks, width=820, height=440):
         "focus_items": focus_items,
         "hotspots": hotspot_items[:12],
         "summary_stats": summary_stats,
+        "cam_diagnostics": cam_diagnostics,
         "layer_bars": _build_bar_chart(layer_counts[:6]),
         "net_bars": _build_bar_chart(top_nets[:6]),
         "component_type_bars": _build_bar_chart(

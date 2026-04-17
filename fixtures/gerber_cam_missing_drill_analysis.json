@@ -820,7 +820,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_missing_drill",
-        "timestamp": "2026-04-17T22:52:52.149976+00:00",
+        "timestamp": "2026-04-17T23:04:51.216796+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1283,6 +1283,7 @@
     "cam_summary": {
         "active": true,
         "source_format": "gerber_cam",
+        "source_family": "generic_gerber",
         "bundle_type": "directory",
         "layer_file_count": 2,
         "layer_files": [
@@ -1326,7 +1327,38 @@
         "remediation_steps": [
             "Include Excellon or NC drill output with the fabrication package."
         ],
-        "readiness_level": "partial"
+        "readiness_level": "partial",
+        "package_state": "incomplete",
+        "trust_call": "package_incomplete",
+        "fabrication_blockers": [
+            "Missing drill data"
+        ],
+        "geometry_warnings": [],
+        "parser_warnings": [
+            "Parser confidence is still below strong-review range"
+        ],
+        "review_modes": {
+            "geometry_review": true,
+            "fabrication_review": false
+        },
+        "diagnostic_flags": [
+            {
+                "label": "Outline",
+                "status": "ok"
+            },
+            {
+                "label": "Drill",
+                "status": "missing"
+            },
+            {
+                "label": "Copper",
+                "status": "ok"
+            },
+            {
+                "label": "Geometry",
+                "status": "ok"
+            }
+        ]
     },
     "physics_summary": {
         "enabled": true,
@@ -1469,7 +1501,7 @@
         "score": 8.4,
         "total_penalty": 1.6
     },
-    "generated_at": "2026-04-17T22:52:52.149978+00:00",
+    "generated_at": "2026-04-17T23:04:51.216798+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

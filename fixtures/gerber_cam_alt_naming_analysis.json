@@ -1189,7 +1189,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_alt_naming",
-        "timestamp": "2026-04-17T22:52:52.135691+00:00",
+        "timestamp": "2026-04-17T23:04:51.199205+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1652,6 +1652,7 @@
     "cam_summary": {
         "active": true,
         "source_format": "gerber_cam",
+        "source_family": "altium_gerber",
         "bundle_type": "directory",
         "layer_file_count": 3,
         "layer_files": [
@@ -1697,7 +1698,36 @@
         ],
         "missing_signals": [],
         "remediation_steps": [],
-        "readiness_level": "ready"
+        "readiness_level": "ready",
+        "package_state": "ready",
+        "trust_call": "parser_watch",
+        "fabrication_blockers": [],
+        "geometry_warnings": [],
+        "parser_warnings": [
+            "Parser confidence is still below strong-review range"
+        ],
+        "review_modes": {
+            "geometry_review": true,
+            "fabrication_review": true
+        },
+        "diagnostic_flags": [
+            {
+                "label": "Outline",
+                "status": "ok"
+            },
+            {
+                "label": "Drill",
+                "status": "ok"
+            },
+            {
+                "label": "Copper",
+                "status": "ok"
+            },
+            {
+                "label": "Geometry",
+                "status": "ok"
+            }
+        ]
     },
     "physics_summary": {
         "enabled": true,
@@ -1793,7 +1823,7 @@
         "score": 9.2,
         "total_penalty": 0.8
     },
-    "generated_at": "2026-04-17T22:52:52.135695+00:00",
+    "generated_at": "2026-04-17T23:04:51.199220+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
