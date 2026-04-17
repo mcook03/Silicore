@@ -157,7 +157,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: HV-, HV+, CTRL
+- Nets: HV+, HV-, CTRL
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -175,7 +175,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: HV-, HV+, CTRL
+- Nets: HV+, HV-, CTRL
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity
@@ -229,8 +229,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: J1
-- Nets: HV-, HV+
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV-", "HV+"], "has_power": false, "has_ground": false}
+- Nets: HV+, HV-
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV+", "HV-"], "has_power": false, "has_ground": false}
 
 ### HIGH — power_integrity
 - Message: U1 is not connected to a valid power rail
@@ -247,8 +247,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: U1
-- Nets: HV-, HV+, CTRL
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV-", "HV+", "CTRL"], "has_power": false, "has_ground": false}
+- Nets: HV+, HV-, CTRL
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["HV+", "HV-", "CTRL"], "has_power": false, "has_ground": false}
 
 ### MEDIUM — power_integrity
 - Message: U2 has ground but no visible power rail

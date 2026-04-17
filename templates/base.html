@@ -132,6 +132,22 @@
             z-index: 1;
         }
 
+        .app-shell::before {
+            content: "";
+            position: absolute;
+            top: 82px;
+            left: 50%;
+            width: min(1120px, 92%);
+            height: 140px;
+            transform: translateX(-50%) rotate(-6deg);
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(112,157,255,0), rgba(152,210,255,0.44) 16%, rgba(255,255,255,0.56) 48%, rgba(255,224,145,0.4) 74%, rgba(255,205,125,0));
+            filter: blur(42px);
+            opacity: 0.42;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         @media (max-width: 480px) {
             .app-shell {
                 width: calc(100% - 16px);
@@ -152,8 +168,8 @@
             border-radius: 28px;
             border: 1px solid var(--border);
             background:
-                linear-gradient(115deg, rgba(255,255,255,0.09), rgba(255,255,255,0.018)),
-                linear-gradient(180deg, rgba(12, 22, 34, 0.94), rgba(8, 16, 26, 0.78));
+                linear-gradient(115deg, rgba(255,255,255,0.06), rgba(255,255,255,0.012)),
+                linear-gradient(180deg, rgba(8, 10, 16, 0.95), rgba(9, 15, 24, 0.84));
             backdrop-filter: blur(22px);
             -webkit-backdrop-filter: blur(22px);
             box-shadow: var(--shadow-xl);
@@ -348,15 +364,14 @@
             overflow: hidden;
             padding: 18px 24px;
             margin-bottom: 10px;
-            border-radius: 26px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.07);
             background:
-                linear-gradient(90deg, rgba(67,212,200,0.05), transparent 18%, transparent 82%, rgba(47,137,255,0.06)),
-                linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
-                rgba(8, 15, 25, 0.54);
+                linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
+                linear-gradient(180deg, rgba(9, 11, 17, 0.9), rgba(10, 16, 26, 0.72));
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            box-shadow: var(--shadow-soft);
+            box-shadow: var(--shadow-lg);
         }
 
         .page-hero::after {
@@ -497,9 +512,9 @@
             border-radius: var(--radius-xl);
             border: 1px solid rgba(255,255,255,0.055);
             background:
-                radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent 28%),
-                linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.014)),
-                var(--surface);
+                radial-gradient(circle at top right, rgba(255,255,255,0.04), transparent 24%),
+                linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
+                linear-gradient(180deg, rgba(9, 11, 17, 0.86), rgba(10, 16, 26, 0.74));
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             box-shadow: var(--shadow-lg);
@@ -534,10 +549,48 @@
             transform: translateY(-1px);
             border-color: rgba(84,178,255,0.2);
             background:
-                radial-gradient(circle at top right, rgba(255,255,255,0.06), transparent 28%),
-                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+                radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent 28%),
+                linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
                 rgba(10, 18, 30, 0.82);
             box-shadow: 0 28px 62px rgba(0, 0, 0, 0.32);
+        }
+
+        :is(.review-hero-card, .settings-hero-card, .compare-summary-card, .projects-score-card, .projects-overview-card) {
+            position: relative;
+            overflow: hidden;
+            border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.012)),
+                linear-gradient(180deg, rgba(8, 10, 15, 0.94), rgba(10, 16, 24, 0.82));
+            box-shadow: 0 30px 80px rgba(0,0,0,0.34);
+        }
+
+        :is(.review-hero-card, .settings-hero-card, .compare-summary-card, .projects-score-card, .projects-overview-card)::before {
+            content: "";
+            position: absolute;
+            left: -12%;
+            right: -12%;
+            top: -4%;
+            height: 100px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(118,161,255,0), rgba(168,214,255,0.18) 22%, rgba(255,255,255,0.2) 50%, rgba(255,221,147,0.16) 76%, rgba(255,207,124,0));
+            filter: blur(28px);
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        :is(.assistant-console-main, .assistant-console-side, .panel-card, .project-board-card, .visual-chart-card, .distribution-chart-shell, .history-run-card, .metric-card) {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
+                linear-gradient(180deg, rgba(10, 12, 18, 0.84), rgba(11, 17, 27, 0.72));
+            border-color: rgba(255,255,255,0.065);
+            box-shadow: 0 22px 56px rgba(0,0,0,0.24);
+        }
+
+        :is(.page-header, .settings-hero-card, .review-hero-card, .projects-hero-grid, .compare-command-band) {
+            position: relative;
+            z-index: 1;
         }
 
         .card-header {
