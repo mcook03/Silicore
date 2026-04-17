@@ -174,7 +174,7 @@ def flash_to_polygon(x, y, diameter, shape="circle", size_x=None, size_y=None):
     shape = str(shape or "circle").lower()
     if _ShapelyPoint is not None and shape == "circle":
         try:
-            region = _ShapelyPoint(float(x), float(y)).buffer(radius, resolution=24)
+            region = _ShapelyPoint(float(x), float(y)).buffer(radius, quad_segs=24)
             return [(float(px), float(py)) for px, py in region.exterior.coords[:-1]]
         except Exception:
             pass

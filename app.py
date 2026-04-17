@@ -1,9 +1,8 @@
 import json
 import os
 import re
-from datetime import datetime
 from collections import defaultdict
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from engine.atlas_intelligence import (
     answer_atlas_with_agent,
     build_board_assistant_console,
@@ -4036,7 +4035,7 @@ def _save_external_validation_upload(files, label):
     if not files:
         raise ValueError("Upload at least one external board export or CAM package file.")
 
-    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S_%f")
     slug = _safe_slug(label, fallback="external-package")
     root_dir = os.path.join(VALIDATION_FOLDER, f"{timestamp}_{slug}")
     os.makedirs(root_dir, exist_ok=True)

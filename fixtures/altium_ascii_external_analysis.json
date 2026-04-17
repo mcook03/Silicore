@@ -1977,7 +1977,7 @@
     },
     "analysis_context": {
         "board_name": "altium_ascii_external.pcbdocascii",
-        "timestamp": "2026-04-17T23:04:51.177974+00:00",
+        "timestamp": "2026-04-17T23:09:02.096245+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3166,7 +3166,7 @@
         "score": 0.4,
         "total_penalty": 9.6
     },
-    "generated_at": "2026-04-17T23:04:51.177983+00:00",
+    "generated_at": "2026-04-17T23:09:02.096250+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
