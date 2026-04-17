@@ -118,7 +118,11 @@ DEFAULT_CONFIG = {
         },
         "cam_geometry": {
             "min_clearance": 0.18,
+            "native_min_clearance": 0.08,
             "min_creepage": 2.5,
+            "cluster_granularity": 1.0,
+            "max_clearance_findings": 12,
+            "max_creepage_findings": 6,
             "high_voltage_net_keywords": ["HV", "VAC", "VDC", "VBUS", "48V", "24V", "PACK", "BATT"],
         },
         "cam_bundle": {

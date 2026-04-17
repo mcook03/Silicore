@@ -1,9 +1,9 @@
 # SILICORE ENGINEERING REPORT
 
 - File: high_speed_pair_bad.kicad_pcb
-- Score: 5.6 / 100
-- Total Risks: 56
-- Total Penalty: 326.0
+- Score: 5.8 / 100
+- Total Risks: 48
+- Total Penalty: 272.0
 
 ## Executive Summary
 
@@ -35,26 +35,26 @@ This board shows elevated design risk. The main risk concentration is in signal 
 
 - Component Count: 3
 - Net Count: 5
-- Risk Count: 56
+- Risk Count: 48
 - Sample Components: J1, U1, Y1
 
 ## Severity Penalties
 
 - medium: 10.8
-- critical: 9.6
-- high: 12.0
+- critical: 8.4
+- high: 7.8
 - low: 0.2
 
 ## Category Penalties
 
 - assembly_testability: 2.0
-- safety_high_voltage: 9.6
-- manufacturing: 5.0
+- safety_high_voltage: 8.4
 - signal_integrity: 5.2
 - component_design: 0.8
 - power_integrity: 4.4
 - high_speed: 0.6
 - emi_emc: 1.6
+- manufacturing: 0.8
 - reliability: 0.8
 - stackup_return_path: 2.0
 - system_interaction: 0.6
@@ -152,13 +152,13 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Root Cause: General design issue
 - Impact: Unknown system impact
-- Confidence: 0.9
+- Confidence: 0.84
 - Trigger Condition: A rule-based design condition triggered this finding.
 - Observed vs Threshold: threshold=2.5
 - Traceability: 100 / 100
 - Evidence Count: 9
 - Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
+- Trust Confidence: 84.0 / 100
 - Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Fix Priority: critical
 - Components: J1, J1
@@ -166,35 +166,17 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Metrics: {"creepage": 0.7, "threshold": 2.5}
 
 ### CRITICAL — safety_high_voltage
-- Message: Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)
-- Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.9
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=2.5
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
-- Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Fix Priority: critical
-- Components: J1, J1
-- Nets: VBUS, USB_DN
-- Metrics: {"creepage": 2.5, "threshold": 2.5}
-
-### CRITICAL — safety_high_voltage
 - Message: Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.110)
 - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Root Cause: General design issue
 - Impact: Unknown system impact
-- Confidence: 0.9
+- Confidence: 0.84
 - Trigger Condition: A rule-based design condition triggered this finding.
 - Observed vs Threshold: threshold=2.5
 - Traceability: 100 / 100
 - Evidence Count: 8
 - Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
+- Trust Confidence: 84.0 / 100
 - Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Fix Priority: critical
 - Components: J1
@@ -206,13 +188,13 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Root Cause: General design issue
 - Impact: Unknown system impact
-- Confidence: 0.9
+- Confidence: 0.84
 - Trigger Condition: A rule-based design condition triggered this finding.
 - Observed vs Threshold: threshold=2.5
 - Traceability: 100 / 100
 - Evidence Count: 8
 - Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
+- Trust Confidence: 84.0 / 100
 - Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Fix Priority: critical
 - Components: J1
@@ -220,174 +202,55 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Metrics: {"creepage": 1.175, "threshold": 2.5}
 
 ### CRITICAL — safety_high_voltage
-- Message: Geometry-derived high-voltage spacing between via and trace is below creepage target (1.998)
-- Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.9
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=2.5
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
-- Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Fix Priority: critical
-- Nets: USB_DP, VBUS
-- Metrics: {"creepage": 1.9982, "threshold": 2.5}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between via and trace falls below target (0.052)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DP, GND
-- Metrics: {"clearance": 0.0524, "threshold": 0.18}
-
-### CRITICAL — safety_high_voltage
 - Message: Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.585)
 - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Root Cause: General design issue
 - Impact: Unknown system impact
-- Confidence: 0.9
+- Confidence: 0.84
 - Trigger Condition: A rule-based design condition triggered this finding.
 - Observed vs Threshold: threshold=2.5
 - Traceability: 94 / 100
 - Evidence Count: 7
 - Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
+- Trust Confidence: 84.0 / 100
 - Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Fix Priority: critical
 - Nets: USB_DP, VBUS
 - Metrics: {"creepage": 1.585, "threshold": 2.5}
 
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
+### CRITICAL — safety_high_voltage
+- Message: Geometry-derived high-voltage spacing between via and trace is below creepage target (1.998)
+- Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.84
 - Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
+- Observed vs Threshold: threshold=2.5
 - Traceability: 94 / 100
 - Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DP, GND
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 84.0 / 100
+- Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
+- Fix Priority: critical
+- Nets: USB_DP, VBUS
+- Metrics: {"creepage": 1.9982, "threshold": 2.5}
 
 ### CRITICAL — safety_high_voltage
 - Message: Geometry-derived high-voltage spacing between trace and trace is below creepage target (2.013)
 - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Root Cause: General design issue
 - Impact: Unknown system impact
-- Confidence: 0.9
+- Confidence: 0.84
 - Trigger Condition: A rule-based design condition triggered this finding.
 - Observed vs Threshold: threshold=2.5
 - Traceability: 94 / 100
 - Evidence Count: 7
 - Engineering Impact: Unknown system impact
-- Trust Confidence: 90.0 / 100
+- Trust Confidence: 84.0 / 100
 - Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
 - Fix Priority: critical
 - Nets: USB_DP, VBUS
 - Metrics: {"creepage": 2.0129, "threshold": 2.5}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DP, USB_DN
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DP, USB_DN
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DP, GND
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DN, GND
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: USB_DN, GND
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
 
 ### HIGH — signal_integrity
 - Message: Clock source Y1 is far from controller U1 (19.80 units)
@@ -493,7 +356,7 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: USB_DN, CLK, USB_DP, GND
+- Nets: CLK, USB_DN, GND, USB_DP
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — high_speed
@@ -635,8 +498,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: USB_DN, USB_DP, VBUS, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "USB_DP", "VBUS", "GND"], "has_power": false, "has_ground": true}
+- Nets: USB_DN, VBUS, GND, USB_DP
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "VBUS", "GND", "USB_DP"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U1 has ground but no visible power rail
@@ -653,8 +516,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U1
-- Nets: USB_DN, CLK, USB_DP, GND
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "CLK", "USB_DP", "GND"], "has_power": false, "has_ground": true}
+- Nets: CLK, USB_DN, GND, USB_DP
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "USB_DN", "GND", "USB_DP"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Y1 has ground but no visible power rail

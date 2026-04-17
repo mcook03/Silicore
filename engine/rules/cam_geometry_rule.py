@@ -6,6 +6,14 @@ from engine.geometry_backend import (
 from engine.risk import make_risk
 
 
+def _rounded_region_key(region, granularity=1.0):
+    if not region:
+        return None
+    x = float(region.get("x", 0.0) or 0.0)
+    y = float(region.get("y", 0.0) or 0.0)
+    return (round(x / granularity), round(y / granularity))
+
+
 def _layer_set(value):
     if not value:
         return set()
@@ -93,6 +101,26 @@ def _matches_any(net_name, keywords):
     return any(keyword in upper for keyword in keywords)
 
 
+def _pair_signature(left, right, granularity):
+    kinds = tuple(sorted([str(left.get("kind", "")), str(right.get("kind", ""))]))
+    nets = tuple(sorted([str(left.get("net_name", "") or ""), str(right.get("net_name", "") or "")]))
+    region_keys = tuple(
+        sorted(
+            [
+                str(_rounded_region_key(left.get("region"), granularity)),
+                str(_rounded_region_key(right.get("region"), granularity)),
+            ]
+        )
+    )
+    return kinds, nets, region_keys
+
+
+def _record_best_violation(best, key, entry):
+    current = best.get(key)
+    if current is None or entry["distance"] < current["distance"]:
+        best[key] = entry
+
+
 def run_rule(pcb, config):
     risks = []
     rule_config = config.get("rules", {}).get("cam_geometry", {})
@@ -100,9 +128,18 @@ def run_rule(pcb, config):
         return risks
 
     min_clearance = float(rule_config.get("min_clearance", 0.18))
+    native_min_clearance = float(rule_config.get("native_min_clearance", 0.08))
     min_creepage = float(rule_config.get("min_creepage", 2.5))
+    cluster_granularity = float(rule_config.get("cluster_granularity", 1.0))
+    max_clearance_findings = int(rule_config.get("max_clearance_findings", 12))
+    max_creepage_findings = int(rule_config.get("max_creepage_findings", 10))
     hv_keywords = [str(item).upper() for item in rule_config.get("high_voltage_net_keywords", ["HV", "VBUS", "PACK", "BATT", "VAC", "VDC"])]
     regions = _build_regions(pcb)
+    source_format = str(getattr(pcb, "source_format", "") or "").lower()
+    is_cam_source = source_format.startswith("gerber")
+    clearance_threshold = min_clearance if is_cam_source else native_min_clearance
+    clearance_candidates = {}
+    creepage_candidates = {}
 
     for index, left in enumerate(regions):
         for right in regions[index + 1 :]:
@@ -117,57 +154,87 @@ def run_rule(pcb, config):
             if distance is None:
                 continue
 
-            if distance < min_clearance:
-                components = [item for item in [left.get("component_ref"), right.get("component_ref")] if item]
-                nets = [item for item in [left_net, right_net] if item]
-                risks.append(
-                    make_risk(
-                        rule_id="cam_geometry",
-                        category="manufacturing",
-                        severity="high",
-                        message=f"Geometry-derived copper clearance between {left.get('kind')} and {right.get('kind')} falls below target ({distance:.3f})",
-                        recommendation="Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                        components=components,
-                        nets=nets,
-                        region=left.get("region") or right.get("region"),
-                        metrics={"clearance": round(distance, 4), "threshold": min_clearance},
-                        confidence=0.92,
-                        short_title="Geometry clearance below target",
-                        fix_priority="high",
-                        estimated_impact="high",
-                        design_domain="manufacturing",
-                        why_it_matters="True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                        trigger_condition="Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                        threshold_label=f"Minimum CAM clearance {min_clearance:.3f}",
-                        observed_label=f"Observed copper clearance {distance:.3f}",
-                    )
+            if is_cam_source and distance < clearance_threshold:
+                key = _pair_signature(left, right, cluster_granularity)
+                _record_best_violation(
+                    clearance_candidates,
+                    key,
+                    {
+                        "left": left,
+                        "right": right,
+                        "distance": distance,
+                    },
                 )
 
             if _matches_any(left_net, hv_keywords) or _matches_any(right_net, hv_keywords):
                 if distance < min_creepage:
-                    components = [item for item in [left.get("component_ref"), right.get("component_ref")] if item]
-                    nets = [item for item in [left_net, right_net] if item]
-                    risks.append(
-                        make_risk(
-                            rule_id="cam_geometry_creepage",
-                            category="safety_high_voltage",
-                            severity="critical",
-                            message=f"Geometry-derived high-voltage spacing between {left.get('kind')} and {right.get('kind')} is below creepage target ({distance:.3f})",
-                            recommendation="Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                            components=components,
-                            nets=nets,
-                            region=left.get("region") or right.get("region"),
-                            metrics={"creepage": round(distance, 4), "threshold": min_creepage},
-                            confidence=0.9,
-                            short_title="Geometry creepage below target",
-                            fix_priority="high",
-                            estimated_impact="high",
-                            design_domain="safety",
-                            why_it_matters="Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
-                            trigger_condition="High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
-                            threshold_label=f"Minimum geometry creepage {min_creepage:.3f}",
-                            observed_label=f"Observed geometry creepage {distance:.3f}",
-                        )
+                    key = _pair_signature(left, right, cluster_granularity)
+                    _record_best_violation(
+                        creepage_candidates,
+                        key,
+                        {
+                            "left": left,
+                            "right": right,
+                            "distance": distance,
+                        },
                     )
+
+    for entry in sorted(clearance_candidates.values(), key=lambda item: item["distance"])[:max_clearance_findings]:
+        left = entry["left"]
+        right = entry["right"]
+        distance = entry["distance"]
+        components = [item for item in [left.get("component_ref"), right.get("component_ref")] if item]
+        nets = [item for item in [left.get("net_name"), right.get("net_name")] if item]
+        risks.append(
+            make_risk(
+                rule_id="cam_geometry",
+                category="manufacturing",
+                severity="high",
+                message=f"Geometry-derived copper clearance between {left.get('kind')} and {right.get('kind')} falls below target ({distance:.3f})",
+                recommendation="Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                components=components,
+                nets=nets,
+                region=left.get("region") or right.get("region"),
+                metrics={"clearance": round(distance, 4), "threshold": clearance_threshold},
+                confidence=0.92,
+                short_title="Geometry clearance below target",
+                fix_priority="high",
+                estimated_impact="high",
+                design_domain="manufacturing",
+                why_it_matters="True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                trigger_condition="Buffered copper geometry distance fell below the configured geometry clearance threshold.",
+                threshold_label=f"Minimum geometry clearance {clearance_threshold:.3f}",
+                observed_label=f"Observed copper clearance {distance:.3f}",
+            )
+        )
+
+    for entry in sorted(creepage_candidates.values(), key=lambda item: item["distance"])[:max_creepage_findings]:
+        left = entry["left"]
+        right = entry["right"]
+        distance = entry["distance"]
+        components = [item for item in [left.get("component_ref"), right.get("component_ref")] if item]
+        nets = [item for item in [left.get("net_name"), right.get("net_name")] if item]
+        risks.append(
+            make_risk(
+                rule_id="cam_geometry_creepage",
+                category="safety_high_voltage",
+                severity="critical",
+                message=f"Geometry-derived high-voltage spacing between {left.get('kind')} and {right.get('kind')} is below creepage target ({distance:.3f})",
+                recommendation="Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                components=components,
+                nets=nets,
+                region=left.get("region") or right.get("region"),
+                metrics={"creepage": round(distance, 4), "threshold": min_creepage},
+                confidence=0.9 if is_cam_source else 0.84,
+                short_title="Geometry creepage below target",
+                fix_priority="high",
+                estimated_impact="high",
+                design_domain="safety",
+                why_it_matters="Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                trigger_condition="High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                threshold_label=f"Minimum geometry creepage {min_creepage:.3f}",
+                observed_label=f"Observed geometry creepage {distance:.3f}",
+            )
+        )
 
     return risks

@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: assembly_testability_board.kicad_pcb
-- Score: 6.8 / 100
-- Total Risks: 37
-- Total Penalty: 172.0
+- Score: 8.8 / 100
+- Total Risks: 30
+- Total Penalty: 130.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows elevated design risk. The main risk concentration is in manufacturing. The highest-priority issue is Geometry-derived copper clearance between trace and trace falls below target (0.000). The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows moderate design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms). The current design snapshot includes 4 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -24,32 +24,32 @@ This board shows elevated design risk. The main risk concentration is in manufac
 
 ## Top Issues
 
-1. **HIGH** — manufacturing — Geometry-derived copper clearance between trace and trace falls below target (0.000)
-   - Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-2. **HIGH** — manufacturing — Geometry-derived copper clearance between pad and trace falls below target (0.000)
-   - Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-3. **HIGH** — manufacturing — Geometry-derived copper clearance between pad and trace falls below target (0.000)
-   - Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
+1. **HIGH** — signal_integrity — Physics estimate suggests SWCLK is off target impedance (78.7 ohms vs 50.0 ohms)
+   - Recommendation: Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.
+2. **HIGH** — power_integrity — Physics estimate suggests VCC is running high current density (142.9 A/mm²)
+   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
+3. **HIGH** — power_integrity — High-current net SWDIO bottlenecks through a narrow copper section
+   - Recommendation: Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.
 
 ## Board Summary
 
 - Component Count: 4
 - Net Count: 5
-- Risk Count: 37
+- Risk Count: 30
 - Sample Components: U1, J1, C1, R1
 
 ## Severity Penalties
 
 - medium: 9.2
-- high: 7.8
+- high: 3.6
 - low: 0.2
 
 ## Category Penalties
 
 - assembly_testability: 2.0
-- manufacturing: 7.4
 - component_design: 0.4
 - power_integrity: 4.2
+- manufacturing: 3.2
 - signal_integrity: 2.6
 - stackup_return_path: 0.4
 - system_interaction: 0.2
@@ -142,131 +142,6 @@ This board shows elevated design risk. The main risk concentration is in manufac
 - Nets: UART_TX
 - Metrics: {"has_testpoint": false}
 
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 100 / 100
-- Evidence Count: 8
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Components: U1
-- Nets: GND, UART_TX
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 100 / 100
-- Evidence Count: 8
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Components: U1
-- Nets: SWCLK, SWDIO
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between pad and pad falls below target (0.100)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Components: C1, C1
-- Nets: VCC, GND
-- Metrics: {"clearance": 0.1, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 100 / 100
-- Evidence Count: 8
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Components: C1
-- Nets: VCC, GND
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 100 / 100
-- Evidence Count: 8
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Components: R1
-- Nets: GND, UART_TX
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 100 / 100
-- Evidence Count: 8
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Components: R1
-- Nets: GND, UART_TX
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
-### HIGH — manufacturing
-- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
-- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
-- Root Cause: Design rule below fabrication limits
-- Impact: Reduced yield or board failure risk
-- Confidence: 0.92
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=0.18
-- Traceability: 94 / 100
-- Evidence Count: 7
-- Engineering Impact: Reduced yield or board failure risk
-- Trust Confidence: 92.0 / 100
-- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
-- Fix Priority: high
-- Nets: VCC, GND
-- Metrics: {"clearance": 0.0, "threshold": 0.18}
-
 ### MEDIUM — component_design
 - Message: High-speed net SWCLK has a long route with no visible series or termination resistor
 - Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
@@ -353,7 +228,7 @@ This board shows elevated design risk. The main risk concentration is in manufac
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: UART_TX, SWCLK, VCC, SWDIO
+- Nets: SWCLK, SWDIO, UART_TX, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — manufacturing

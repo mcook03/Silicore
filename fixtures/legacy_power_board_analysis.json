@@ -1,7 +1,7 @@
 {
     "filename": "legacy_power_board.brd",
     "file_path": "fixtures/legacy_power_board.brd",
-    "score": 6.1,
+    "score": 12.5,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -104,769 +104,6 @@
             "fix_suggestion": {
                 "fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
                 "priority": "medium"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.039)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "U1"
-            ],
-            "nets": [
-                "GND",
-                "VCC"
-            ],
-            "region": {
-                "x": 20.5,
-                "y": 20.0
-            },
-            "metrics": {
-                "clearance": 0.0386,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.039",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "U2"
-            ],
-            "nets": [
-                "VIN",
-                "VCC"
-            ],
-            "region": {
-                "x": 32.0,
-                "y": 19.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.060)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "U2"
-            ],
-            "nets": [
-                "GND",
-                "VIN"
-            ],
-            "region": {
-                "x": 32.5,
-                "y": 19.0
-            },
-            "metrics": {
-                "clearance": 0.0603,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.060",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "U2"
-            ],
-            "nets": [
-                "GND",
-                "VCC"
-            ],
-            "region": {
-                "x": 32.5,
-                "y": 19.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "U2"
-            ],
-            "nets": [
-                "SW_NODE",
-                "VCC"
-            ],
-            "region": {
-                "x": 33.0,
-                "y": 19.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "C1"
-            ],
-            "nets": [
-                "GND",
-                "VCC"
-            ],
-            "region": {
-                "x": 22.5,
-                "y": 22.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and via falls below target (0.110)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "C2"
-            ],
-            "nets": [
-                "VIN",
-                "GND"
-            ],
-            "region": {
-                "x": 31.0,
-                "y": 22.0
-            },
-            "metrics": {
-                "clearance": 0.11,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.110",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.034)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "C2"
-            ],
-            "nets": [
-                "GND",
-                "VIN"
-            ],
-            "region": {
-                "x": 31.5,
-                "y": 22.0
-            },
-            "metrics": {
-                "clearance": 0.0343,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.034",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.060)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "C2"
-            ],
-            "nets": [
-                "GND",
-                "VIN"
-            ],
-            "region": {
-                "x": 31.5,
-                "y": 22.0
-            },
-            "metrics": {
-                "clearance": 0.06,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.060",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "L1"
-            ],
-            "nets": [
-                "SW_NODE",
-                "VCC"
-            ],
-            "region": {
-                "x": 36.0,
-                "y": 18.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.003)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [
-                "L1"
-            ],
-            "nets": [
-                "VCC",
-                "SW_NODE"
-            ],
-            "region": {
-                "x": 36.6,
-                "y": 18.0
-            },
-            "metrics": {
-                "clearance": 0.0033,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.003",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between via and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "GND",
-                "VIN"
-            ],
-            "region": {
-                "x": 31.5,
-                "y": 22.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between via and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "GND",
-                "VIN"
-            ],
-            "region": {
-                "x": 31.5,
-                "y": 22.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "VIN",
-                "VCC"
-            ],
-            "region": {
-                "x": 31.5,
-                "y": 20.5
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "VIN",
-                "CLK"
-            ],
-            "region": {
-                "x": 31.5,
-                "y": 20.5
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "VCC",
-                "CLK"
-            ],
-            "region": {
-                "x": 29.3,
-                "y": 20.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "VCC",
-                "SW_NODE"
-            ],
-            "region": {
-                "x": 29.3,
-                "y": 20.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "VCC",
-                "SW_NODE"
-            ],
-            "region": {
-                "x": 29.3,
-                "y": 20.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
-            }
-        },
-        {
-            "rule_id": "cam_geometry",
-            "category": "manufacturing",
-            "severity": "high",
-            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-            "components": [],
-            "nets": [
-                "VCC",
-                "SW_NODE"
-            ],
-            "region": {
-                "x": 43.3,
-                "y": 18.0
-            },
-            "metrics": {
-                "clearance": 0.0,
-                "threshold": 0.18
-            },
-            "confidence": 0.92,
-            "short_title": "Geometry clearance below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "manufacturing",
-            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-            "suggested_actions": [],
-            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-            "threshold_label": "Minimum CAM clearance 0.180",
-            "observed_label": "Observed copper clearance 0.000",
-            "explanation": {
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92
-            },
-            "fix_suggestion": {
-                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "priority": "high"
             }
         },
         {
@@ -992,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "VCC",
-                "SW_NODE"
+                "SW_NODE",
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -1011,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VCC",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "VCC"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -1693,29 +930,29 @@
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 224.0,
-        "total_penalty_raw_10": 22.4,
+        "total_penalty": 110.0,
+        "total_penalty_raw_10": 11.0,
         "severity_totals": {
             "medium": 6.0,
-            "high": 16.2,
+            "high": 4.8,
             "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 1.2,
-            "manufacturing": 12.6,
             "power_integrity": 3.8,
+            "manufacturing": 1.2,
             "reliability": 0.4,
             "layout": 1.2,
             "thermal": 2.0,
             "signal_integrity": 0.6,
             "system_interaction": 0.6
         },
-        "final_score": 6.1,
-        "final_score_raw_10": 0.61,
+        "final_score": 12.5,
+        "final_score_raw_10": 1.25,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 12.4,
-        "overflow_penalty": 124.0,
+        "overflow_penalty_raw_10": 1.0,
+        "overflow_penalty": 10.0,
         "details": [
             {
                 "severity": "medium",
@@ -1749,215 +986,6 @@
                 "confidence": 0.72,
                 "suggested_fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
                 "fix_priority": "medium"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.039)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.060)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and via falls below target (0.110)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.034)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.060)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.003)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between via and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between via and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
-            },
-            {
-                "severity": "high",
-                "category": "manufacturing",
-                "penalty": 0.6,
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "root_cause": "Design rule below fabrication limits",
-                "impact": "Reduced yield or board failure risk",
-                "confidence": 0.92,
-                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
-                "fix_priority": "high"
             },
             {
                 "severity": "high",
@@ -2206,16 +1234,16 @@
             "J1",
             "R1"
         ],
-        "risk_count": 43,
+        "risk_count": 24,
         "severity_counts": {
             "medium": 15,
-            "high": 27,
+            "high": 8,
             "low": 1
         },
         "category_counts": {
             "assembly_testability": 3,
-            "manufacturing": 22,
             "power_integrity": 7,
+            "manufacturing": 3,
             "reliability": 1,
             "layout": 2,
             "thermal": 5,
@@ -3239,7 +2267,11 @@
             },
             "cam_geometry": {
                 "min_clearance": 0.18,
+                "native_min_clearance": 0.08,
                 "min_creepage": 2.5,
+                "cluster_granularity": 1.0,
+                "max_clearance_findings": 12,
+                "max_creepage_findings": 6,
                 "high_voltage_net_keywords": [
                     "HV",
                     "VAC",
@@ -3457,7 +2489,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-17T22:03:44.970964+00:00",
+        "timestamp": "2026-04-17T22:09:29.874338+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3682,7 +2714,11 @@
                 },
                 "cam_geometry": {
                     "min_clearance": 0.18,
+                    "native_min_clearance": 0.08,
                     "min_creepage": 2.5,
+                    "cluster_granularity": 1.0,
+                    "max_clearance_findings": 12,
+                    "max_creepage_findings": 6,
                     "high_voltage_net_keywords": [
                         "HV",
                         "VAC",
@@ -4154,598 +3190,6 @@
                 "observed_label": "Observed visible access point: none"
             },
             {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.039)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "U1"
-                ],
-                "nets": [
-                    "GND",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 20.5,
-                    "y": 20.0
-                },
-                "metrics": {
-                    "clearance": 0.0386,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.039"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "U2"
-                ],
-                "nets": [
-                    "VIN",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 32.0,
-                    "y": 19.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.060)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "U2"
-                ],
-                "nets": [
-                    "GND",
-                    "VIN"
-                ],
-                "region": {
-                    "x": 32.5,
-                    "y": 19.0
-                },
-                "metrics": {
-                    "clearance": 0.0603,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.060"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "U2"
-                ],
-                "nets": [
-                    "GND",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 32.5,
-                    "y": 19.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "U2"
-                ],
-                "nets": [
-                    "SW_NODE",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 33.0,
-                    "y": 19.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "C1"
-                ],
-                "nets": [
-                    "GND",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 22.5,
-                    "y": 22.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and via falls below target (0.110)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "C2"
-                ],
-                "nets": [
-                    "VIN",
-                    "GND"
-                ],
-                "region": {
-                    "x": 31.0,
-                    "y": 22.0
-                },
-                "metrics": {
-                    "clearance": 0.11,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.110"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.034)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "C2"
-                ],
-                "nets": [
-                    "GND",
-                    "VIN"
-                ],
-                "region": {
-                    "x": 31.5,
-                    "y": 22.0
-                },
-                "metrics": {
-                    "clearance": 0.0343,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.034"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.060)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "C2"
-                ],
-                "nets": [
-                    "GND",
-                    "VIN"
-                ],
-                "region": {
-                    "x": 31.5,
-                    "y": 22.0
-                },
-                "metrics": {
-                    "clearance": 0.06,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.060"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "L1"
-                ],
-                "nets": [
-                    "SW_NODE",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 36.0,
-                    "y": 18.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.003)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [
-                    "L1"
-                ],
-                "nets": [
-                    "VCC",
-                    "SW_NODE"
-                ],
-                "region": {
-                    "x": 36.6,
-                    "y": 18.0
-                },
-                "metrics": {
-                    "clearance": 0.0033,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.003"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between via and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "GND",
-                    "VIN"
-                ],
-                "region": {
-                    "x": 31.5,
-                    "y": 22.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between via and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "GND",
-                    "VIN"
-                ],
-                "region": {
-                    "x": 31.5,
-                    "y": 22.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "VIN",
-                    "VCC"
-                ],
-                "region": {
-                    "x": 31.5,
-                    "y": 20.5
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "VIN",
-                    "CLK"
-                ],
-                "region": {
-                    "x": 31.5,
-                    "y": 20.5
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "VCC",
-                    "CLK"
-                ],
-                "region": {
-                    "x": 29.3,
-                    "y": 20.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "VCC",
-                    "SW_NODE"
-                ],
-                "region": {
-                    "x": 29.3,
-                    "y": 20.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "VCC",
-                    "SW_NODE"
-                ],
-                "region": {
-                    "x": 29.3,
-                    "y": 20.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
-                "rule_id": "cam_geometry",
-                "category": "manufacturing",
-                "severity": "high",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
-                "components": [],
-                "nets": [
-                    "VCC",
-                    "SW_NODE"
-                ],
-                "region": {
-                    "x": 43.3,
-                    "y": 18.0
-                },
-                "metrics": {
-                    "clearance": 0.0,
-                    "threshold": 0.18
-                },
-                "confidence": 0.92,
-                "short_title": "Geometry clearance below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "manufacturing",
-                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
-                "suggested_actions": [],
-                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
-                "threshold_label": "Minimum CAM clearance 0.180",
-                "observed_label": "Observed copper clearance 0.000"
-            },
-            {
                 "rule_id": "current_density",
                 "category": "power_integrity",
                 "severity": "high",
@@ -4841,8 +3285,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "VCC",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -4860,8 +3304,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VCC",
-                        "SW_NODE"
+                        "SW_NODE",
+                        "VCC"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -5250,10 +3694,10 @@
                 "observed_label": "Observed trace width 0.12"
             }
         ],
-        "score": 0.0,
-        "total_penalty": 20.0
+        "score": 1.4,
+        "total_penalty": 8.6
     },
-    "generated_at": "2026-04-17T22:03:44.970973+00:00",
+    "generated_at": "2026-04-17T22:09:29.874344+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -5353,25 +3797,25 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows elevated design risk. The main risk concentration is in manufacturing. The highest-priority issue is Geometry-derived copper clearance between trace and trace falls below target (0.000). The current design snapshot includes 8 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms). The current design snapshot includes 8 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "high",
-                "category": "manufacturing",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance."
+                "category": "signal_integrity",
+                "message": "Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)",
+                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target."
             },
             {
                 "severity": "high",
-                "category": "manufacturing",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance."
+                "category": "power_integrity",
+                "message": "Physics estimate suggests VIN is running high current density (61.2 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
             },
             {
                 "severity": "high",
-                "category": "manufacturing",
-                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
-                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance."
+                "category": "power_integrity",
+                "message": "Physics estimate suggests VCC is running high current density (50.8 A/mm\u00b2)",
+                "recommendation": "Increase copper cross-section or redistribute load current so the conductor stays in a safer density band."
             }
         ]
     }
