@@ -197,6 +197,47 @@ def flash_to_polygon(x, y, diameter, shape="circle", size_x=None, size_y=None):
     ]
 
 
+def polygon_distance(poly_a, poly_b):
+    if not poly_a or not poly_b:
+        return None
+    if _ShapelyPolygon is not None:
+        try:
+            return float(_ShapelyPolygon(poly_a).distance(_ShapelyPolygon(poly_b)))
+        except Exception:
+            pass
+    return _fallback_polygon_distance(poly_a, poly_b)
+
+
+def line_distance_to_polygon(line_points, polygon_points, width=0.0):
+    if not line_points or not polygon_points or len(line_points) < 2:
+        return None
+    if _ShapelyLineString is not None and _ShapelyPolygon is not None:
+        try:
+            line = _ShapelyLineString(line_points)
+            if width > 0:
+                line = line.buffer(width / 2.0)
+            region = _ShapelyPolygon(polygon_points)
+            return float(line.distance(region))
+        except Exception:
+            pass
+    return _fallback_polygon_distance(_buffer_line_to_polygon(line_points, width), polygon_points)
+
+
+def polygon_intersection_area(poly_a, poly_b):
+    if not poly_a or not poly_b:
+        return 0.0
+    if _ShapelyPolygon is not None:
+        try:
+            return float(_ShapelyPolygon(poly_a).intersection(_ShapelyPolygon(poly_b)).area)
+        except Exception:
+            pass
+    return 0.0
+
+
+def line_to_polygon(points, width=0.0):
+    return _buffer_line_to_polygon(points, width)
+
+
 def _rdp(points, epsilon):
     if len(points) < 3:
         return list(points)
@@ -248,3 +289,42 @@ def _monotonic_hull(points):
         upper.append(point)
 
     return lower[:-1] + upper[:-1]
+
+
+def _buffer_line_to_polygon(points, width):
+    if not points:
+        return []
+    width = max(float(width or 0.0), 0.001)
+    if _ShapelyLineString is not None:
+        try:
+            region = _ShapelyLineString(points).buffer(width / 2.0, cap_style=1, join_style=1)
+            if region.is_empty:
+                return []
+            if isinstance(region, _ShapelyMultiPolygon):
+                region = max(region.geoms, key=lambda item: item.area)
+            return [(float(x), float(y)) for x, y in region.exterior.coords[:-1]]
+        except Exception:
+            pass
+    start = points[0]
+    end = points[-1]
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length = math.hypot(dx, dy) or 1.0
+    nx = -(dy / length) * (width / 2.0)
+    ny = (dx / length) * (width / 2.0)
+    return [
+        (start[0] + nx, start[1] + ny),
+        (end[0] + nx, end[1] + ny),
+        (end[0] - nx, end[1] - ny),
+        (start[0] - nx, start[1] - ny),
+    ]
+
+
+def _fallback_polygon_distance(poly_a, poly_b):
+    min_distance = None
+    for point in poly_a:
+        for other in poly_b:
+            distance = math.dist(point, other)
+            if min_distance is None or distance < min_distance:
+                min_distance = distance
+    return min_distance

@@ -1,15 +1,15 @@
 # SILICORE ENGINEERING REPORT
 
 - File: thermal_hotspot_board.kicad_pcb
-- Score: 20.0 / 100
-- Total Risks: 18
-- Total Penalty: 80.0
+- Score: 2.0 / 100
+- Total Risks: 21
+- Total Penalty: 98.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests VIN is running high current density (214.3 A/mm²). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Geometry-derived copper clearance between trace and trace falls below target (0.000). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
@@ -24,28 +24,29 @@ This board shows high design risk. The main risk concentration is in power integ
 
 ## Top Issues
 
-1. **HIGH** — power_integrity — Physics estimate suggests VIN is running high current density (214.3 A/mm²)
-   - Recommendation: Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.
-2. **HIGH** — power_integrity — U1 appears to lack enough local decoupling support
-   - Recommendation: Add or reposition local bypass capacitors close to the device supply pins with short return paths.
-3. **HIGH** — power_integrity — U2 appears to lack enough local decoupling support
-   - Recommendation: Add or reposition local bypass capacitors close to the device supply pins with short return paths.
+1. **HIGH** — manufacturing — Geometry-derived copper clearance between trace and trace falls below target (0.000)
+   - Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
+2. **HIGH** — manufacturing — Geometry-derived copper clearance between pad and trace falls below target (0.000)
+   - Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
+3. **HIGH** — manufacturing — Geometry-derived copper clearance between pad and trace falls below target (0.000)
+   - Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
 
 ## Board Summary
 
 - Component Count: 3
 - Net Count: 3
-- Risk Count: 18
+- Risk Count: 21
 - Sample Components: U1, Q1, U2
 
 ## Severity Penalties
 
 - medium: 5.6
-- high: 2.4
+- high: 4.2
 
 ## Category Penalties
 
 - assembly_testability: 0.8
+- manufacturing: 1.8
 - power_integrity: 4.4
 - signal_integrity: 1.6
 - reliability: 0.4
@@ -84,6 +85,59 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.
 - Fix Priority: medium
 - Metrics: {"ground_test_points": 0, "threshold": 1}
+
+### HIGH — manufacturing
+- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
+- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
+- Root Cause: Design rule below fabrication limits
+- Impact: Reduced yield or board failure risk
+- Confidence: 0.92
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=0.18
+- Traceability: 100 / 100
+- Evidence Count: 8
+- Engineering Impact: Reduced yield or board failure risk
+- Trust Confidence: 92.0 / 100
+- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
+- Fix Priority: high
+- Components: U1
+- Nets: VOUT, VIN
+- Metrics: {"clearance": 0.0, "threshold": 0.18}
+
+### HIGH — manufacturing
+- Message: Geometry-derived copper clearance between pad and trace falls below target (0.000)
+- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
+- Root Cause: Design rule below fabrication limits
+- Impact: Reduced yield or board failure risk
+- Confidence: 0.92
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=0.18
+- Traceability: 100 / 100
+- Evidence Count: 8
+- Engineering Impact: Reduced yield or board failure risk
+- Trust Confidence: 92.0 / 100
+- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
+- Fix Priority: high
+- Components: Q1
+- Nets: VIN, VOUT
+- Metrics: {"clearance": 0.0, "threshold": 0.18}
+
+### HIGH — manufacturing
+- Message: Geometry-derived copper clearance between trace and trace falls below target (0.000)
+- Recommendation: Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.
+- Root Cause: Design rule below fabrication limits
+- Impact: Reduced yield or board failure risk
+- Confidence: 0.92
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=0.18
+- Traceability: 94 / 100
+- Evidence Count: 7
+- Engineering Impact: Reduced yield or board failure risk
+- Trust Confidence: 92.0 / 100
+- Suggested Fix: Review the board against fabrication limits and increase trace widths or spacing where necessary.
+- Fix Priority: high
+- Nets: VIN, VOUT
+- Metrics: {"clearance": 0.0, "threshold": 0.18}
 
 ### MEDIUM — power_integrity
 - Message: U1 (linear_reg) has no nearby decoupling capacitor
@@ -134,7 +188,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, VIN, VOUT
+- Nets: VOUT, VIN, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — power_integrity
@@ -152,7 +206,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: medium
 - Components: U1
-- Nets: GND, VIN, VOUT
+- Nets: VOUT, VIN, GND
 - Metrics: {"bulk_caps_found": 0, "bulk_distance_threshold": 12.0}
 
 ### HIGH — power_integrity
@@ -170,7 +224,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U2
-- Nets: GND, VOUT
+- Nets: VOUT, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### MEDIUM — signal_integrity
@@ -224,8 +278,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U2
-- Nets: GND, VOUT
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "VOUT"], "has_power": false, "has_ground": true}
+- Nets: VOUT, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VOUT", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Regulator or converter U1 lacks a nearby shared capacitor network

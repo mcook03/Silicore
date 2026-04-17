@@ -55,7 +55,16 @@ def parse_gerber_file(filepath):
     if path.suffix.lower() in DRILL_EXTENSIONS:
         return parse_excellon_file(filepath)
 
-    pcb = _parse_with_gerbonara(filepath) or _parse_with_pcb_tools(filepath) or _parse_with_text_fallback(filepath)
+    pcb = None
+    for candidate in (_parse_with_gerbonara, _parse_with_pcb_tools, _parse_with_text_fallback):
+        parsed = candidate(filepath)
+        if parsed is None:
+            continue
+        if _pcb_has_geometry(parsed) or candidate is _parse_with_text_fallback:
+            pcb = parsed
+            break
+    if pcb is None:
+        pcb = _parse_with_text_fallback(filepath)
     pcb.estimate_board_bounds()
     return pcb
 
@@ -453,6 +462,13 @@ def _merge_pcb(target, source):
             }
         )
     target.metadata["cam"] = target_cam
+
+
+def _pcb_has_geometry(pcb):
+    return any(
+        len(getattr(pcb, attr, []) or []) > 0
+        for attr in ("traces", "outline_segments", "zones", "vias")
+    )
 
 
 def _guess_layer_name(filepath, raw_value):

@@ -1,7 +1,7 @@
 {
     "filename": "high_voltage_spacing_board.kicad_pcb",
     "file_path": "fixtures/high_voltage_spacing_board.kicad_pcb",
-    "score": 14.4,
+    "score": 5.7,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -104,6 +104,740 @@
             "fix_suggestion": {
                 "fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
                 "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1",
+                "J1"
+            ],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 14.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 0.7,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 0.700",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.280)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 14.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.28,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.280",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "HV-",
+                "HV+"
+            ],
+            "region": {
+                "x": 16.1,
+                "y": 18.0
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "HV-",
+                "HV+"
+            ],
+            "region": {
+                "x": 16.1,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 0.0,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 0.000",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1",
+                "U1"
+            ],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 26.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 0.7,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 0.700",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1",
+                "U1"
+            ],
+            "nets": [
+                "HV+",
+                "CTRL"
+            ],
+            "region": {
+                "x": 26.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.0938,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.094",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 26.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 26.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 0.0,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 0.000",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.564)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "HV+",
+                "CTRL"
+            ],
+            "region": {
+                "x": 26.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.5635,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.564",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1",
+                "U1"
+            ],
+            "nets": [
+                "HV-",
+                "CTRL"
+            ],
+            "region": {
+                "x": 27.8,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.0938,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.094",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.130)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "HV-",
+                "HV+"
+            ],
+            "region": {
+                "x": 27.8,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.13,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.130",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.370)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "HV-",
+                "CTRL"
+            ],
+            "region": {
+                "x": 27.8,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.37,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.370",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.524)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "CTRL",
+                "HV+"
+            ],
+            "region": {
+                "x": 26.9,
+                "y": 20.0
+            },
+            "metrics": {
+                "creepage": 1.5235,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.524",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.330)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "U1"
+            ],
+            "nets": [
+                "CTRL",
+                "HV-"
+            ],
+            "region": {
+                "x": 26.9,
+                "y": 20.0
+            },
+            "metrics": {
+                "creepage": 1.33,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.330",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 20.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [],
+            "nets": [
+                "HV+",
+                "HV-"
+            ],
+            "region": {
+                "x": 20.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 0.0,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 0.000",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.993)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [],
+            "nets": [
+                "HV+",
+                "CTRL"
+            ],
+            "region": {
+                "x": 20.0,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.9933,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.993",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.800)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [],
+            "nets": [
+                "HV-",
+                "CTRL"
+            ],
+            "region": {
+                "x": 21.950000000000003,
+                "y": 18.0
+            },
+            "metrics": {
+                "creepage": 1.8,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.800",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
             }
         },
         {
@@ -265,8 +999,8 @@
                 "U2"
             ],
             "nets": [
-                "CTRL",
-                "GND"
+                "GND",
+                "CTRL"
             ],
             "region": null,
             "metrics": {
@@ -467,8 +1201,8 @@
                 "U2"
             ],
             "nets": [
-                "CTRL",
-                "GND"
+                "GND",
+                "CTRL"
             ],
             "region": null,
             "metrics": {
@@ -486,8 +1220,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CTRL",
-                    "GND"
+                    "GND",
+                    "CTRL"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -820,30 +1554,31 @@
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 106.0,
-        "total_penalty_raw_10": 10.6,
+        "total_penalty": 304.0,
+        "total_penalty_raw_10": 30.4,
         "severity_totals": {
             "medium": 4.4,
-            "high": 3.6,
-            "critical": 2.4,
+            "critical": 20.4,
+            "high": 5.4,
             "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 1.2,
+            "safety_high_voltage": 20.4,
+            "manufacturing": 1.8,
             "power_integrity": 4.0,
             "emi_return_path": 1.0,
             "reliability": 0.4,
-            "safety_high_voltage": 2.4,
             "thermal": 0.8,
             "signal_integrity": 0.6,
             "system_interaction": 0.2
         },
-        "final_score": 14.4,
-        "final_score_raw_10": 1.44,
+        "final_score": 5.7,
+        "final_score_raw_10": 0.57,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 0.6,
-        "overflow_penalty": 6.0,
+        "overflow_penalty_raw_10": 20.4,
+        "overflow_penalty": 204.0,
         "details": [
             {
                 "severity": "medium",
@@ -877,6 +1612,204 @@
                 "confidence": 0.72,
                 "suggested_fix": "Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.",
                 "fix_priority": "medium"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.280)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.564)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.130)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.370)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.524)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.330)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.993)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.800)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
             },
             {
                 "severity": "medium",
@@ -1076,19 +2009,20 @@
             "U1",
             "U2"
         ],
-        "risk_count": 20,
+        "risk_count": 38,
         "severity_counts": {
             "medium": 11,
-            "high": 6,
-            "critical": 2,
+            "critical": 17,
+            "high": 9,
             "low": 1
         },
         "category_counts": {
             "assembly_testability": 3,
+            "safety_high_voltage": 17,
+            "manufacturing": 3,
             "power_integrity": 8,
             "emi_return_path": 2,
             "reliability": 1,
-            "safety_high_voltage": 2,
             "thermal": 2,
             "signal_integrity": 1,
             "system_interaction": 1
@@ -1116,9 +2050,9 @@
         "metadata": {
             "geometry_capabilities": {
                 "numpy": true,
-                "scipy": false,
-                "shapely": false,
-                "pyclipper": false
+                "scipy": true,
+                "shapely": true,
+                "pyclipper": true
             },
             "parser": {},
             "cam": {}
@@ -1657,6 +2591,26 @@
                 "min_annular_ring": 0.1,
                 "via_in_pad_distance": 0.35
             },
+            "cam_geometry": {
+                "min_clearance": 0.18,
+                "min_creepage": 2.5,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "cam_bundle": {
+                "require_outline": true,
+                "require_drill": true,
+                "min_copper_area_ratio": 0.005,
+                "min_layer_files": 2
+            },
             "thermal_management": {
                 "thermal_via_radius": 4.0,
                 "min_thermal_vias": 1,
@@ -1857,7 +2811,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-17T21:49:50.042503+00:00",
+        "timestamp": "2026-04-17T22:03:44.946392+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2079,6 +3033,26 @@
                     "min_drill": 0.2,
                     "min_annular_ring": 0.1,
                     "via_in_pad_distance": 0.35
+                },
+                "cam_geometry": {
+                    "min_clearance": 0.18,
+                    "min_creepage": 2.5,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "cam_bundle": {
+                    "require_outline": true,
+                    "require_drill": true,
+                    "min_copper_area_ratio": 0.005,
+                    "min_layer_files": 2
                 },
                 "thermal_management": {
                     "thermal_via_radius": 4.0,
@@ -2454,6 +3428,578 @@
                 "observed_label": "Observed visible access point: none"
             },
             {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1",
+                    "J1"
+                ],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 14.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 0.7,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 0.700"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.280)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 14.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.28,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.280"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "HV-",
+                    "HV+"
+                ],
+                "region": {
+                    "x": 16.1,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "HV-",
+                    "HV+"
+                ],
+                "region": {
+                    "x": 16.1,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 0.0,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1",
+                    "U1"
+                ],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 26.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 0.7,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 0.700"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1",
+                    "U1"
+                ],
+                "nets": [
+                    "HV+",
+                    "CTRL"
+                ],
+                "region": {
+                    "x": 26.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.0938,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.094"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between pad and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 26.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 26.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 0.0,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.564)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "HV+",
+                    "CTRL"
+                ],
+                "region": {
+                    "x": 26.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.5635,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.564"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1",
+                    "U1"
+                ],
+                "nets": [
+                    "HV-",
+                    "CTRL"
+                ],
+                "region": {
+                    "x": 27.8,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.0938,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.094"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.130)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "HV-",
+                    "HV+"
+                ],
+                "region": {
+                    "x": 27.8,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.13,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.130"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.370)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "HV-",
+                    "CTRL"
+                ],
+                "region": {
+                    "x": 27.8,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.37,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.370"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.524)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "CTRL",
+                    "HV+"
+                ],
+                "region": {
+                    "x": 26.9,
+                    "y": 20.0
+                },
+                "metrics": {
+                    "creepage": 1.5235,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.524"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.330)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "U1"
+                ],
+                "nets": [
+                    "CTRL",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 26.9,
+                    "y": 20.0
+                },
+                "metrics": {
+                    "creepage": 1.33,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.330"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 20.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [],
+                "nets": [
+                    "HV+",
+                    "HV-"
+                ],
+                "region": {
+                    "x": 20.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 0.0,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.993)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [],
+                "nets": [
+                    "HV+",
+                    "CTRL"
+                ],
+                "region": {
+                    "x": 20.0,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.9933,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.993"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.800)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [],
+                "nets": [
+                    "HV-",
+                    "CTRL"
+                ],
+                "region": {
+                    "x": 21.950000000000003,
+                    "y": 18.0
+                },
+                "metrics": {
+                    "creepage": 1.8,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.800"
+            },
+            {
                 "rule_id": "decoupling",
                 "category": "power_integrity",
                 "severity": "medium",
@@ -2576,8 +4122,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "CTRL",
-                    "GND"
+                    "GND",
+                    "CTRL"
                 ],
                 "region": null,
                 "metrics": {
@@ -2742,8 +4288,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "CTRL",
-                    "GND"
+                    "GND",
+                    "CTRL"
                 ],
                 "region": null,
                 "metrics": {
@@ -2761,8 +4307,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CTRL",
-                        "GND"
+                        "GND",
+                        "CTRL"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2961,10 +4507,10 @@
                 "observed_label": "Observed heat-spread width 0.24"
             }
         ],
-        "score": 0.2,
-        "total_penalty": 9.8
+        "score": 0.0,
+        "total_penalty": 29.6
     },
-    "generated_at": "2026-04-17T21:49:50.042508+00:00",
+    "generated_at": "2026-04-17T22:03:44.946405+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -3025,25 +4571,25 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is High-voltage pad on U1:HV+ is close to U1:CTRL. The current design snapshot includes 3 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows elevated design risk. The main risk concentration is in safety high voltage. The highest-priority issue is Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000). The current design snapshot includes 3 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "critical",
                 "category": "safety_high_voltage",
-                "message": "High-voltage pad on U1:HV+ is close to U1:CTRL",
-                "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target."
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
             },
             {
                 "severity": "critical",
                 "category": "safety_high_voltage",
-                "message": "High-voltage pad on U1:HV- is close to U1:CTRL",
-                "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target."
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.993)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
             },
             {
-                "severity": "high",
-                "category": "signal_integrity",
-                "message": "Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)",
-                "recommendation": "Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target."
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.800)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
             }
         ]
     }

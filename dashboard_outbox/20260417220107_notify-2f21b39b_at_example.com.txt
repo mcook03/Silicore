@@ -1,0 +1,7 @@
+To: notify-2f21b39b@example.com
+Subject: Silicore email verification
+
+Silicore verification was requested for your account.
+
+Verification token: token-123
+Workspace: Silicore Nexus

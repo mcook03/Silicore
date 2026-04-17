@@ -116,6 +116,17 @@ DEFAULT_CONFIG = {
             "min_annular_ring": 0.1,
             "via_in_pad_distance": 0.35,
         },
+        "cam_geometry": {
+            "min_clearance": 0.18,
+            "min_creepage": 2.5,
+            "high_voltage_net_keywords": ["HV", "VAC", "VDC", "VBUS", "48V", "24V", "PACK", "BATT"],
+        },
+        "cam_bundle": {
+            "require_outline": True,
+            "require_drill": True,
+            "min_copper_area_ratio": 0.005,
+            "min_layer_files": 2,
+        },
         "thermal_management": {
             "thermal_via_radius": 4.0,
             "min_thermal_vias": 1,

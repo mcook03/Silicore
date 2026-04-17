@@ -54,15 +54,15 @@
             <div class="hero">
                 <h1>Silicore Engineering Report</h1>
                 <p><strong>File:</strong> high_voltage_spacing_board.kicad_pcb</p>
-                <p><strong>Score:</strong> 14.4 / 100</p>
-                <p><strong>Total Risks:</strong> 20</p>
-                <p><strong>Total Penalty:</strong> 106.0</p>
+                <p><strong>Score:</strong> 5.7 / 100</p>
+                <p><strong>Total Risks:</strong> 38</p>
+                <p><strong>Total Penalty:</strong> 304.0</p>
             </div>
 
             <div class="card">
                 <h2>Executive Summary</h2>
                 <p><strong>Board needs focused engineering review</strong></p>
-                <p class="muted">This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is High-voltage pad on U1:HV+ is close to U1:CTRL. The current design snapshot includes 3 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+                <p class="muted">This board shows elevated design risk. The main risk concentration is in safety high voltage. The highest-priority issue is Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000). The current design snapshot includes 3 components and 4 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
             </div>
 
             <div class="card">
@@ -83,20 +83,20 @@
                 
             <div class="issue-card">
                 <p><strong>CRITICAL</strong> — safety_high_voltage</p>
-                <p>High-voltage pad on U1:HV+ is close to U1:CTRL</p>
-                <p><strong>Recommendation:</strong> Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.</p>
+                <p>Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
             </div>
             
             <div class="issue-card">
                 <p><strong>CRITICAL</strong> — safety_high_voltage</p>
-                <p>High-voltage pad on U1:HV- is close to U1:CTRL</p>
-                <p><strong>Recommendation:</strong> Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.</p>
+                <p>Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.993)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
             </div>
             
             <div class="issue-card">
-                <p><strong>HIGH</strong> — signal_integrity</p>
-                <p>Physics estimate suggests CTRL is off target impedance (66.2 ohms vs 50.0 ohms)</p>
-                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>CRITICAL</strong> — safety_high_voltage</p>
+                <p>Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.800)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
             </div>
             
             </div>
@@ -105,18 +105,18 @@
                 <h2>Board Summary</h2>
                 <p><strong>Component Count:</strong> 3</p>
                 <p><strong>Net Count:</strong> 4</p>
-                <p><strong>Risk Count:</strong> 20</p>
+                <p><strong>Risk Count:</strong> 38</p>
                 <p><strong>Sample Components:</strong> J1, U1, U2</p>
             </div>
 
             <div class="card">
                 <h2>Severity Penalties</h2>
-                <ul><li>medium: 4.4</li><li>high: 3.6</li><li>critical: 2.4</li><li>low: 0.2</li></ul>
+                <ul><li>medium: 4.4</li><li>critical: 20.4</li><li>high: 5.4</li><li>low: 0.2</li></ul>
             </div>
 
             <div class="card">
                 <h2>Category Penalties</h2>
-                <ul><li>assembly_testability: 1.2</li><li>power_integrity: 4.0</li><li>emi_return_path: 1.0</li><li>reliability: 0.4</li><li>safety_high_voltage: 2.4</li><li>thermal: 0.8</li><li>signal_integrity: 0.6</li><li>system_interaction: 0.2</li></ul>
+                <ul><li>assembly_testability: 1.2</li><li>safety_high_voltage: 20.4</li><li>manufacturing: 1.8</li><li>power_integrity: 4.0</li><li>emi_return_path: 1.0</li><li>reliability: 0.4</li><li>thermal: 0.8</li><li>signal_integrity: 0.6</li><li>system_interaction: 0.2</li></ul>
             </div>
 
             <div class="card">
@@ -195,6 +195,456 @@
                 <p><strong>Components:</strong> U1, U2</p>
                 <p><strong>Nets:</strong> CTRL</p>
                 <p><strong>Metrics:</strong> {&quot;has_testpoint&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> J1, J1</p>
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 0.7, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.280)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.28, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Geometry-derived copper clearance between pad and trace falls below target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=0.18</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 92.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 92.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review the board against fabrication limits and increase trace widths or spacing where necessary.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> HV-, HV+</p>
+                <p><strong>Metrics:</strong> {&quot;clearance&quot;: 0.0, &quot;threshold&quot;: 0.18}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> HV-, HV+</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 0.0, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1, U1</p>
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 0.7, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1, U1</p>
+                <p><strong>Nets:</strong> HV+, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.0938, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Geometry-derived copper clearance between pad and trace falls below target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=0.18</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 92.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 92.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review the board against fabrication limits and increase trace widths or spacing where necessary.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;clearance&quot;: 0.0, &quot;threshold&quot;: 0.18}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 0.0, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.564)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> HV+, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.5635, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and pad is below creepage target (1.094)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1, U1</p>
+                <p><strong>Nets:</strong> HV-, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.0938, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.130)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> HV-, HV+</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.13, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.370)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> HV-, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.37, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.524)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> CTRL, HV+</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.5235, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.330)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> CTRL, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.33, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Geometry-derived copper clearance between trace and trace falls below target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=0.18</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 92.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 92.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review the board against fabrication limits and increase trace widths or spacing where necessary.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;clearance&quot;: 0.0, &quot;threshold&quot;: 0.18}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between trace and trace is below creepage target (0.000)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                
+                <p><strong>Nets:</strong> HV+, HV-</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 0.0, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.993)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                
+                <p><strong>Nets:</strong> HV+, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.9933, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.800)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                
+                <p><strong>Nets:</strong> HV-, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 1.8, &quot;threshold&quot;: 2.5}</p>
             </div>
             
             <div class="risk-card">
@@ -318,7 +768,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> CTRL, GND</p>
+                <p><strong>Nets:</strong> GND, CTRL</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -418,8 +868,8 @@
                 <p><strong>Fix Priority:</strong> medium</p>
                 
                 <p><strong>Components:</strong> U2</p>
-                <p><strong>Nets:</strong> CTRL, GND</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;CTRL&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+                <p><strong>Nets:</strong> GND, CTRL</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CTRL&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
             </div>
             
             <div class="risk-card">

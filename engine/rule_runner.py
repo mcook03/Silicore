@@ -5,6 +5,8 @@ RULE_CATEGORY_MAP = {
     "spacing_rule": "layout_manufacturing",
     "density_rule": "layout_manufacturing",
     "manufacturability_rule": "layout_manufacturing",
+    "cam_geometry_rule": "layout_manufacturing",
+    "cam_bundle_rule": "layout_manufacturing",
     "assembly_testability_rule": "layout_manufacturing",
     "power_connectivity_rule": "power",
     "power_distribution_rule": "power",

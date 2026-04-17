@@ -1,7 +1,7 @@
 {
     "filename": "high_speed_pair_bad.kicad_pcb",
     "file_path": "fixtures/high_speed_pair_bad.kicad_pcb",
-    "score": 6.4,
+    "score": 5.6,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -181,6 +181,562 @@
             }
         },
         {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1",
+                "J1"
+            ],
+            "nets": [
+                "VBUS",
+                "USB_DP"
+            ],
+            "region": {
+                "x": 8.0,
+                "y": 20.0
+            },
+            "metrics": {
+                "creepage": 0.7,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 0.700",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1",
+                "J1"
+            ],
+            "nets": [
+                "VBUS",
+                "USB_DN"
+            ],
+            "region": {
+                "x": 8.0,
+                "y": 20.0
+            },
+            "metrics": {
+                "creepage": 2.5,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 2.500",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.110)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "VBUS",
+                "USB_DP"
+            ],
+            "region": {
+                "x": 8.0,
+                "y": 20.0
+            },
+            "metrics": {
+                "creepage": 1.11,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.110",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.175)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [
+                "J1"
+            ],
+            "nets": [
+                "USB_DP",
+                "VBUS"
+            ],
+            "region": {
+                "x": 8.0,
+                "y": 21.8
+            },
+            "metrics": {
+                "creepage": 1.175,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.175",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between via and trace is below creepage target (1.998)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "VBUS"
+            ],
+            "region": {
+                "x": 30.0,
+                "y": 22.0
+            },
+            "metrics": {
+                "creepage": 1.9982,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.998",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between via and trace falls below target (0.052)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "GND"
+            ],
+            "region": {
+                "x": 54.0,
+                "y": 26.5
+            },
+            "metrics": {
+                "clearance": 0.0524,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.052",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.585)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "VBUS"
+            ],
+            "region": {
+                "x": 17.0,
+                "y": 21.8
+            },
+            "metrics": {
+                "creepage": 1.585,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 1.585",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "GND"
+            ],
+            "region": {
+                "x": 39.0,
+                "y": 24.15
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry_creepage",
+            "category": "safety_high_voltage",
+            "severity": "critical",
+            "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (2.013)",
+            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "VBUS"
+            ],
+            "region": {
+                "x": 39.0,
+                "y": 24.15
+            },
+            "metrics": {
+                "creepage": 2.0129,
+                "threshold": 2.5
+            },
+            "confidence": 0.9,
+            "short_title": "Geometry creepage below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "safety",
+            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+            "suggested_actions": [],
+            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+            "threshold_label": "Minimum geometry creepage 2.500",
+            "observed_label": "Observed geometry creepage 2.013",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9
+            },
+            "fix_suggestion": {
+                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "priority": "critical"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "USB_DN"
+            ],
+            "region": {
+                "x": 72.0,
+                "y": 24.25
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "USB_DN"
+            ],
+            "region": {
+                "x": 72.0,
+                "y": 24.25
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DP",
+                "GND"
+            ],
+            "region": {
+                "x": 72.0,
+                "y": 24.25
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DN",
+                "GND"
+            ],
+            "region": {
+                "x": 22.0,
+                "y": 32.3
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_geometry",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+            "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+            "components": [],
+            "nets": [
+                "USB_DN",
+                "GND"
+            ],
+            "region": {
+                "x": 64.0,
+                "y": 32.6
+            },
+            "metrics": {
+                "clearance": 0.0,
+                "threshold": 0.18
+            },
+            "confidence": 0.92,
+            "short_title": "Geometry clearance below target",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+            "suggested_actions": [],
+            "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+            "threshold_label": "Minimum CAM clearance 0.180",
+            "observed_label": "Observed copper clearance 0.000",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
             "rule_id": "clock_sensitive_placement",
             "category": "signal_integrity",
             "severity": "high",
@@ -224,45 +780,6 @@
             "rule_id": "component_analysis",
             "category": "component_design",
             "severity": "medium",
-            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
-            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-            "components": [
-                "J1",
-                "U1"
-            ],
-            "nets": [
-                "USB_DP"
-            ],
-            "region": null,
-            "metrics": {
-                "trace_length": 84.67,
-                "threshold": 18.0,
-                "has_resistor": false
-            },
-            "confidence": 0.7,
-            "short_title": "Possible missing signal termination",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "component",
-            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-            "suggested_actions": [],
-            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-            "threshold_label": "Termination review length 18.00 units",
-            "observed_label": "Observed route length 84.67 units",
-            "explanation": {
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.7
-            },
-            "fix_suggestion": {
-                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "priority": "medium"
-            }
-        },
-        {
-            "rule_id": "component_analysis",
-            "category": "component_design",
-            "severity": "medium",
             "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
             "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
             "components": [
@@ -288,6 +805,45 @@
             "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
             "threshold_label": "Termination review length 18.00 units",
             "observed_label": "Observed route length 118.20 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "component_analysis",
+            "category": "component_design",
+            "severity": "medium",
+            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.67,
+                "threshold": 18.0,
+                "has_resistor": false
+            },
+            "confidence": 0.7,
+            "short_title": "Possible missing signal termination",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "component",
+            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+            "threshold_label": "Termination review length 18.00 units",
+            "observed_label": "Observed route length 84.67 units",
             "explanation": {
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
@@ -382,10 +938,10 @@
                 "U1"
             ],
             "nets": [
+                "USB_DN",
                 "CLK",
-                "GND",
                 "USB_DP",
-                "USB_DN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -690,10 +1246,10 @@
                 "J1"
             ],
             "nets": [
-                "VBUS",
-                "GND",
+                "USB_DN",
                 "USB_DP",
-                "USB_DN"
+                "VBUS",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -711,10 +1267,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VBUS",
-                    "GND",
+                    "USB_DN",
                     "USB_DP",
-                    "USB_DN"
+                    "VBUS",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -749,10 +1305,10 @@
                 "U1"
             ],
             "nets": [
+                "USB_DN",
                 "CLK",
-                "GND",
                 "USB_DP",
-                "USB_DN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -770,10 +1326,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
+                    "USB_DN",
                     "CLK",
-                    "GND",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -808,8 +1364,8 @@
                 "Y1"
             ],
             "nets": [
-                "GND",
-                "CLK"
+                "CLK",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -827,8 +1383,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "CLK"
+                    "CLK",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1638,33 +2194,33 @@
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 200.0,
-        "total_penalty_raw_10": 20.0,
+        "total_penalty": 326.0,
+        "total_penalty_raw_10": 32.6,
         "severity_totals": {
             "medium": 10.8,
-            "high": 7.8,
-            "critical": 1.2,
+            "critical": 9.6,
+            "high": 12.0,
             "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 2.0,
+            "safety_high_voltage": 9.6,
+            "manufacturing": 5.0,
             "signal_integrity": 5.2,
             "component_design": 0.8,
             "power_integrity": 4.4,
             "high_speed": 0.6,
             "emi_emc": 1.6,
-            "manufacturing": 0.8,
             "reliability": 0.8,
-            "safety_high_voltage": 1.2,
             "stackup_return_path": 2.0,
             "system_interaction": 0.6
         },
-        "final_score": 6.4,
-        "final_score_raw_10": 0.64,
+        "final_score": 5.6,
+        "final_score_raw_10": 0.56,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 10.0,
-        "overflow_penalty": 100.0,
+        "overflow_penalty_raw_10": 22.6,
+        "overflow_penalty": 226.0,
         "details": [
             {
                 "severity": "medium",
@@ -1722,6 +2278,160 @@
                 "fix_priority": "medium"
             },
             {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.110)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.175)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between via and trace is below creepage target (1.998)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between via and trace falls below target (0.052)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.585)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "penalty": 1.2,
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (2.013)",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.9,
+                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "fix_priority": "critical"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.92,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
                 "severity": "high",
                 "category": "signal_integrity",
                 "penalty": 0.6,
@@ -1736,7 +2446,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -1747,7 +2457,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -2139,23 +2849,23 @@
             "U1",
             "Y1"
         ],
-        "risk_count": 42,
+        "risk_count": 56,
         "severity_counts": {
             "medium": 27,
-            "high": 13,
-            "critical": 1,
+            "critical": 8,
+            "high": 20,
             "low": 1
         },
         "category_counts": {
             "assembly_testability": 5,
+            "safety_high_voltage": 8,
+            "manufacturing": 9,
             "signal_integrity": 11,
             "component_design": 2,
             "power_integrity": 9,
             "high_speed": 1,
             "emi_emc": 3,
-            "manufacturing": 2,
             "reliability": 2,
-            "safety_high_voltage": 1,
             "stackup_return_path": 4,
             "system_interaction": 2
         }
@@ -2184,9 +2894,9 @@
         "metadata": {
             "geometry_capabilities": {
                 "numpy": true,
-                "scipy": false,
-                "shapely": false,
-                "pyclipper": false
+                "scipy": true,
+                "shapely": true,
+                "pyclipper": true
             },
             "parser": {},
             "cam": {}
@@ -3020,6 +3730,26 @@
                 "min_annular_ring": 0.1,
                 "via_in_pad_distance": 0.35
             },
+            "cam_geometry": {
+                "min_clearance": 0.18,
+                "min_creepage": 2.5,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "cam_bundle": {
+                "require_outline": true,
+                "require_drill": true,
+                "min_copper_area_ratio": 0.005,
+                "min_layer_files": 2
+            },
             "thermal_management": {
                 "thermal_via_radius": 4.0,
                 "min_thermal_vias": 1,
@@ -3220,7 +3950,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-17T21:49:50.036920+00:00",
+        "timestamp": "2026-04-17T22:03:44.935382+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3442,6 +4172,26 @@
                     "min_drill": 0.2,
                     "min_annular_ring": 0.1,
                     "via_in_pad_distance": 0.35
+                },
+                "cam_geometry": {
+                    "min_clearance": 0.18,
+                    "min_creepage": 2.5,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "cam_bundle": {
+                    "require_outline": true,
+                    "require_drill": true,
+                    "min_copper_area_ratio": 0.005,
+                    "min_layer_files": 2
                 },
                 "thermal_management": {
                     "thermal_via_radius": 4.0,
@@ -4023,6 +4773,436 @@
                 "observed_label": "Observed visible access point: none"
             },
             {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1",
+                    "J1"
+                ],
+                "nets": [
+                    "VBUS",
+                    "USB_DP"
+                ],
+                "region": {
+                    "x": 8.0,
+                    "y": 20.0
+                },
+                "metrics": {
+                    "creepage": 0.7,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 0.700"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1",
+                    "J1"
+                ],
+                "nets": [
+                    "VBUS",
+                    "USB_DN"
+                ],
+                "region": {
+                    "x": 8.0,
+                    "y": 20.0
+                },
+                "metrics": {
+                    "creepage": 2.5,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 2.500"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.110)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "VBUS",
+                    "USB_DP"
+                ],
+                "region": {
+                    "x": 8.0,
+                    "y": 20.0
+                },
+                "metrics": {
+                    "creepage": 1.11,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.110"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.175)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [
+                    "J1"
+                ],
+                "nets": [
+                    "USB_DP",
+                    "VBUS"
+                ],
+                "region": {
+                    "x": 8.0,
+                    "y": 21.8
+                },
+                "metrics": {
+                    "creepage": 1.175,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.175"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between via and trace is below creepage target (1.998)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "VBUS"
+                ],
+                "region": {
+                    "x": 30.0,
+                    "y": 22.0
+                },
+                "metrics": {
+                    "creepage": 1.9982,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.998"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between via and trace falls below target (0.052)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "GND"
+                ],
+                "region": {
+                    "x": 54.0,
+                    "y": 26.5
+                },
+                "metrics": {
+                    "clearance": 0.0524,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.052"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.585)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "VBUS"
+                ],
+                "region": {
+                    "x": 17.0,
+                    "y": 21.8
+                },
+                "metrics": {
+                    "creepage": 1.585,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 1.585"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "GND"
+                ],
+                "region": {
+                    "x": 39.0,
+                    "y": 24.15
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry_creepage",
+                "category": "safety_high_voltage",
+                "severity": "critical",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (2.013)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "VBUS"
+                ],
+                "region": {
+                    "x": 39.0,
+                    "y": 24.15
+                },
+                "metrics": {
+                    "creepage": 2.0129,
+                    "threshold": 2.5
+                },
+                "confidence": 0.9,
+                "short_title": "Geometry creepage below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "safety",
+                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
+                "suggested_actions": [],
+                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
+                "threshold_label": "Minimum geometry creepage 2.500",
+                "observed_label": "Observed geometry creepage 2.013"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "USB_DN"
+                ],
+                "region": {
+                    "x": 72.0,
+                    "y": 24.25
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "USB_DN"
+                ],
+                "region": {
+                    "x": 72.0,
+                    "y": 24.25
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DP",
+                    "GND"
+                ],
+                "region": {
+                    "x": 72.0,
+                    "y": 24.25
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DN",
+                    "GND"
+                ],
+                "region": {
+                    "x": 22.0,
+                    "y": 32.3
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
+                "rule_id": "cam_geometry",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Geometry-derived copper clearance between trace and trace falls below target (0.000)",
+                "recommendation": "Increase copper-to-copper spacing or reshape the nearby region to restore manufacturable and electrically safe clearance.",
+                "components": [],
+                "nets": [
+                    "USB_DN",
+                    "GND"
+                ],
+                "region": {
+                    "x": 64.0,
+                    "y": 32.6
+                },
+                "metrics": {
+                    "clearance": 0.0,
+                    "threshold": 0.18
+                },
+                "confidence": 0.92,
+                "short_title": "Geometry clearance below target",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "True copper-region spacing is more reliable than center-point spacing for manufacturability and safety review.",
+                "suggested_actions": [],
+                "trigger_condition": "Buffered copper geometry distance fell below the configured CAM clearance threshold.",
+                "threshold_label": "Minimum CAM clearance 0.180",
+                "observed_label": "Observed copper clearance 0.000"
+            },
+            {
                 "rule_id": "clock_sensitive_placement",
                 "category": "signal_integrity",
                 "severity": "high",
@@ -4057,36 +5237,6 @@
                 "rule_id": "component_analysis",
                 "category": "component_design",
                 "severity": "medium",
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
-                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "components": [
-                    "J1",
-                    "U1"
-                ],
-                "nets": [
-                    "USB_DP"
-                ],
-                "region": null,
-                "metrics": {
-                    "trace_length": 84.67,
-                    "threshold": 18.0,
-                    "has_resistor": false
-                },
-                "confidence": 0.7,
-                "short_title": "Possible missing signal termination",
-                "fix_priority": "medium",
-                "estimated_impact": "moderate",
-                "design_domain": "component",
-                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-                "suggested_actions": [],
-                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-                "threshold_label": "Termination review length 18.00 units",
-                "observed_label": "Observed route length 84.67 units"
-            },
-            {
-                "rule_id": "component_analysis",
-                "category": "component_design",
-                "severity": "medium",
                 "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
                 "components": [
@@ -4112,6 +5262,36 @@
                 "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
                 "threshold_label": "Termination review length 18.00 units",
                 "observed_label": "Observed route length 118.20 units"
+            },
+            {
+                "rule_id": "component_analysis",
+                "category": "component_design",
+                "severity": "medium",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.67,
+                    "threshold": 18.0,
+                    "has_resistor": false
+                },
+                "confidence": 0.7,
+                "short_title": "Possible missing signal termination",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "component",
+                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+                "threshold_label": "Termination review length 18.00 units",
+                "observed_label": "Observed route length 84.67 units"
             },
             {
                 "rule_id": "current_density",
@@ -4179,10 +5359,10 @@
                     "U1"
                 ],
                 "nets": [
+                    "USB_DN",
                     "CLK",
-                    "GND",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4415,10 +5595,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "VBUS",
-                    "GND",
+                    "USB_DN",
                     "USB_DP",
-                    "USB_DN"
+                    "VBUS",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4436,10 +5616,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VBUS",
-                        "GND",
+                        "USB_DN",
                         "USB_DP",
-                        "USB_DN"
+                        "VBUS",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4465,10 +5645,10 @@
                     "U1"
                 ],
                 "nets": [
+                    "USB_DN",
                     "CLK",
-                    "GND",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4486,10 +5666,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
+                        "USB_DN",
                         "CLK",
-                        "GND",
                         "USB_DP",
-                        "USB_DN"
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4515,8 +5695,8 @@
                     "Y1"
                 ],
                 "nets": [
-                    "GND",
-                    "CLK"
+                    "CLK",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4534,8 +5714,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "CLK"
+                        "CLK",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4960,9 +6140,9 @@
             }
         ],
         "score": 0.0,
-        "total_penalty": 16.4
+        "total_penalty": 29.0
     },
-    "generated_at": "2026-04-17T21:49:50.036925+00:00",
+    "generated_at": "2026-04-17T22:03:44.935392+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -5047,25 +6227,25 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.585). The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
             {
                 "severity": "critical",
                 "category": "safety_high_voltage",
-                "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
-                "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target."
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (1.585)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
             },
             {
-                "severity": "high",
-                "category": "emi_emc",
-                "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
-                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption."
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "message": "Geometry-derived high-voltage spacing between trace and trace is below creepage target (2.013)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
             },
             {
-                "severity": "high",
-                "category": "emi_emc",
-                "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
-                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption."
+                "severity": "critical",
+                "category": "safety_high_voltage",
+                "message": "Geometry-derived high-voltage spacing between pad and trace is below creepage target (1.110)",
+                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
             }
         ]
     }

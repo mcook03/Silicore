@@ -5,6 +5,7 @@ from uuid import uuid4
 import zipfile
 
 from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, open_high_confidence_findings
+from engine.config_loader import load_config
 from engine.db import get_connection, list_audit_events, list_evaluation_runs, list_integration_configs, list_review_decisions, upsert_integration_config
 from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_fixture_suite
@@ -13,9 +14,10 @@ from engine.job_store import claim_jobs, create_job, get_job
 from engine.job_runner import process_queued_jobs
 from engine.org_store import accept_organization_invitation, create_organization, create_organization_invitation
 from engine.altium_ascii_parser import parse_altium_ascii_file
+from engine.rule_runner import run_analysis
 from engine.stackup_model import derive_stackup_summary
 from engine.subsystem_classifier import classify_pcb_subsystems
-from engine.parser import parse_structured_board_file
+from engine.parser import parse_pcb_file, parse_structured_board_file
 from engine.project_store import create_project, update_project_review_status
 from engine.user_store import create_password_reset_token, create_user, reset_password_with_token
 
@@ -57,6 +59,7 @@ class BackendSystemsTests(unittest.TestCase):
             handle.write("X010000Y000000D01*\n")
             handle.write("X010000Y010000D01*\n")
             handle.write("X005000Y005000D03*\n")
+            handle.write("M02*\n")
             path = handle.name
         try:
             pcb = parse_gerber_file(path)
@@ -73,10 +76,10 @@ class BackendSystemsTests(unittest.TestCase):
             drill = os.path.join(temp_dir, "board.drl")
             with open(top, "w", encoding="utf-8") as handle:
                 handle.write("%TF.FileFunction,Copper,L1,Top*%\n%MOMM*%\n%FSLAX24Y24*%\n%ADD10C,0.2500*%\nD10*\n")
-                handle.write("X000000Y000000D02*\nX020000Y000000D01*\nX020000Y020000D01*\n")
+                handle.write("X000000Y000000D02*\nX020000Y000000D01*\nX020000Y020000D01*\nM02*\n")
             with open(outline, "w", encoding="utf-8") as handle:
                 handle.write("%TF.FileFunction,Profile,NP*%\n%MOMM*%\n%FSLAX24Y24*%\n%ADD10C,0.1000*%\nD10*\n")
-                handle.write("X000000Y000000D02*\nX020000Y000000D01*\nX020000Y020000D01*\nX000000Y020000D01*\nX000000Y000000D01*\n")
+                handle.write("X000000Y000000D02*\nX020000Y000000D01*\nX020000Y020000D01*\nX000000Y020000D01*\nX000000Y000000D01*\nM02*\n")
             with open(drill, "w", encoding="utf-8") as handle:
                 handle.write("M48\nMETRIC,TZ\nT01C0.300\n%\nT01\nX005000Y005000\nX015000Y015000\nM30\n")
 
@@ -95,6 +98,29 @@ class BackendSystemsTests(unittest.TestCase):
             archive_pcb = parse_gerber_file(archive_path)
             self.assertGreater(len(archive_pcb.traces), 0)
             self.assertEqual(archive_pcb.metadata["cam"]["bundle_type"], "archive")
+
+    def test_repo_gerber_cam_fixture_is_parsed_as_complete_bundle(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_job")
+        self.assertEqual(pcb.source_format, "gerber_cam")
+        self.assertGreater(len(pcb.traces), 0)
+        self.assertGreater(len(pcb.outline_segments), 0)
+        self.assertGreater(len(pcb.vias), 0)
+
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
+        self.assertFalse(bundle_risks, f"Expected no CAM bundle risks for complete fixture, got {bundle_risks}")
+
+    def test_sparse_gerber_fixture_triggers_cam_bundle_findings(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_sparse")
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
+        self.assertTrue(bundle_risks)
+
+    def test_geometry_rule_uses_board_regions_for_clearance(self):
+        pcb = parse_pcb_file("fixtures/high_voltage_spacing_board.kicad_pcb")
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        geometry_risks = [risk for risk in result["risks"] if risk.get("rule_id") in {"cam_geometry", "cam_geometry_creepage"}]
+        self.assertTrue(geometry_risks)
 
     def test_evaluation_backend_returns_summary(self):
         result = evaluate_fixture_suite()
