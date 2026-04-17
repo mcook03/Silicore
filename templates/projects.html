@@ -29,6 +29,23 @@
     {% endfor %}
 {% endif %}
 
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-copy">
+            <div class="page-eyebrow">Silicore Nexus Portfolio</div>
+            <h1 class="page-title">Manage every engineering workspace from a single system view.</h1>
+            <p class="page-copy">
+                Track active projects, portfolio spread, workspace maturity, and review readiness across the Silicore Nexus environment.
+            </p>
+        </div>
+
+        <div class="hero-side">
+            <div class="top-badge">{{ projects_summary.total_projects }} workspaces</div>
+            <div class="top-badge">{{ projects_summary.total_runs }} linked runs</div>
+        </div>
+    </div>
+</section>
+
 <section class="projects-hero-grid">
     <section class="card projects-score-card">
         <div class="card-header">

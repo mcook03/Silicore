@@ -9,19 +9,22 @@
 {% set archive_metrics = chart.get("archive_metrics", []) %}
 
 <section class="page-shell">
-    <div class="page-header">
-        <div>
-            <p class="eyebrow">Silicore Nexus Archive</p>
-            <h1>Nexus History</h1>
-            <p class="page-subtitle">
-                Review previous analyses, compare run quality, reopen engineering outputs, and inspect how each run was generated.
-            </p>
-        </div>
+    <section class="page-hero">
+        <div class="page-hero-inner">
+            <div class="page-hero-copy">
+                <div class="page-eyebrow">Silicore Nexus Archive</div>
+                <h1 class="page-title">Run history, exports, and engineering continuity in one archive.</h1>
+                <p class="page-copy">
+                    Reopen earlier analyses, inspect score movement over time, and use saved artifacts as a real engineering record instead of disposable outputs.
+                </p>
+            </div>
 
-        <div class="page-header-actions">
-            <a href="{{ url_for('single_board_page') }}" class="btn btn-primary">New Analysis</a>
+            <div class="hero-side">
+                <div class="top-badge">{{ history_summary.total_runs if history_summary is defined else run_list|length }} runs</div>
+                <a href="{{ url_for('single_board_page') }}" class="btn btn-primary">New Analysis</a>
+            </div>
         </div>
-    </div>
+    </section>
 
     <section class="stats-grid history-stats-grid">
         <article class="metric-card">

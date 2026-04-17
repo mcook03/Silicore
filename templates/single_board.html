@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-copy">
+            <div class="page-eyebrow">Single Board Review</div>
+            <h1 class="page-title">Deep board analysis with Atlas-guided engineering context.</h1>
+            <p class="page-copy">
+                Run one design through Silicore Nexus to inspect signal, power, EMC, thermal, manufacturability, safety, and trust in a single continuous review environment.
+            </p>
+        </div>
+
+        <div class="hero-side">
+            <div class="top-badge">Atlas Intelligence</div>
+            {% if result %}
+            <div class="top-badge">Score {{ result.display_score|round|int if result.display_score is not none else 0 }}</div>
+            {% else %}
+            <div class="top-badge">Awaiting analysis</div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <div class="board-redesign-shell">
 <div class="board-top-band">
 

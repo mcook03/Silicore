@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-copy">
+            <div class="page-eyebrow">Portfolio Review</div>
+            <h1 class="page-title">Compare whole board sets through one Nexus review system.</h1>
+            <p class="page-copy">
+                Upload multiple designs to rank quality, surface repeated engineering pressure, and understand project-wide health across electrical, production, and reliability domains.
+            </p>
+        </div>
+
+        <div class="hero-side">
+            <div class="top-badge">Atlas Intelligence</div>
+            {% if project_result and project_result.project_summary %}
+            <div class="top-badge">{{ project_result.project_summary.total_boards }} boards</div>
+            {% else %}
+            <div class="top-badge">Awaiting portfolio input</div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <div class="project-redesign-shell">
 
 <section class="review-hero-card">

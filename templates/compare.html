@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-copy">
+            <div class="page-eyebrow">Revision Intelligence</div>
+            <h1 class="page-title">Understand exactly what changed between revisions.</h1>
+            <p class="page-copy">
+                Use Atlas-guided compare review to isolate regressions, validate improvements, and decide whether the new revision is moving toward approval.
+            </p>
+        </div>
+
+        <div class="hero-side">
+            <div class="top-badge">Compare Workspace</div>
+            {% if comparison %}
+            <div class="top-badge">{{ comparison.score_change.new_score|round|int if comparison.score_change and comparison.score_change.new_score is not none else "Live" }}</div>
+            {% else %}
+            <div class="top-badge">Revision Pair</div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <style>
     .compare-redesign-shell {
         display: grid;
