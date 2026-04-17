@@ -6,6 +6,42 @@ from engine.job_store import update_job
 from engine.services.analysis_service import run_single_analysis_from_path
 
 
+SUPPORTED_FIXTURE_EXTENSIONS = [
+    ".kicad_pcb",
+    ".brd",
+    ".txt",
+    ".gbr",
+    ".gko",
+    ".ger",
+    ".gtl",
+    ".gbl",
+    ".gto",
+    ".gbo",
+    ".gts",
+    ".gbs",
+    ".gm1",
+    ".pho",
+    ".art",
+    ".outline",
+    ".drl",
+    ".xln",
+    ".zip",
+    ".pcbdocascii",
+]
+
+
+def _is_supported_fixture_file(name):
+    return any(name.lower().endswith(ext) for ext in SUPPORTED_FIXTURE_EXTENSIONS)
+
+
+def _looks_like_cam_directory(path):
+    try:
+        names = os.listdir(path)
+    except OSError:
+        return False
+    return any(_is_supported_fixture_file(name) for name in names)
+
+
 def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json"):
     if not os.path.isdir(fixtures_dir):
         return {
@@ -19,49 +55,62 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
     supported = []
     for name in sorted(os.listdir(fixtures_dir)):
         path = os.path.join(fixtures_dir, name)
-        if not os.path.isfile(path):
+        if os.path.isdir(path) and _looks_like_cam_directory(path):
+            supported.append(path)
             continue
-        if not any(name.lower().endswith(ext) for ext in [".kicad_pcb", ".brd", ".txt", ".gbr", ".gko", ".ger", ".pcbdocascii"]):
-            continue
-        supported.append(path)
+        if os.path.isfile(path) and _is_supported_fixture_file(name):
+            supported.append(path)
 
     boards = []
     category_counts = defaultdict(int)
     format_counts = defaultdict(int)
+    parser_confidence_by_format = defaultdict(list)
     total_score = 0.0
     parser_confidence_total = 0.0
     parser_confidence_count = 0
     failed_boards = 0
+    cam_bundle_count = 0
+    cam_ready_count = 0
 
     for path in supported:
         try:
             result = run_single_analysis_from_path(path, config=config)
             parser_confidence = float(((result.get("parser_confidence") or {}).get("score")) or 0)
+            cam_summary = result.get("cam_summary") or {}
+            if cam_summary.get("active"):
+                cam_bundle_count += 1
+                if cam_summary.get("complete"):
+                    cam_ready_count += 1
+            format_key = (result.get("cam_summary") or {}).get("source_format") or os.path.splitext(path)[1].lower() or "directory"
             boards.append(
                 {
                     "filename": result.get("filename"),
                     "score": result.get("score", 0),
                     "risk_count": len(result.get("risks", []) or []),
-                    "format": os.path.splitext(path)[1].lower(),
+                    "format": format_key,
                     "dominant_subsystem": ((result.get("subsystem_summary") or {}).get("dominant_subsystem") or "General"),
                     "parser_confidence": parser_confidence,
                     "stackup_style": ((result.get("stackup_summary") or {}).get("style") or "unknown"),
+                    "cam_ready": bool(cam_summary.get("complete")),
+                    "cam_readiness_score": cam_summary.get("readiness_score", 0),
+                    "cam_bundle_type": cam_summary.get("bundle_type"),
                 }
             )
             total_score += float(result.get("score", 0) or 0)
             parser_confidence_total += parser_confidence
             parser_confidence_count += 1
-            format_counts[os.path.splitext(path)[1].lower()] += 1
+            format_counts[format_key] += 1
+            parser_confidence_by_format[format_key].append(parser_confidence)
             for risk in result.get("risks", []) or []:
                 category_counts[str(risk.get("category") or "unknown")] += 1
         except Exception as exc:
             failed_boards += 1
             boards.append(
                 {
-                    "filename": os.path.basename(path),
+                    "filename": os.path.basename(path.rstrip(os.sep)),
                     "score": 0,
                     "risk_count": 0,
-                    "format": os.path.splitext(path)[1].lower(),
+                    "format": os.path.splitext(path)[1].lower() or "directory",
                     "dominant_subsystem": "Unknown",
                     "parser_confidence": 0,
                     "stackup_style": "unknown",
@@ -80,7 +129,13 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
             for key, value in sorted(category_counts.items(), key=lambda item: (-item[1], item[0]))
         ],
         "formats": [
-            {"label": key, "count": value}
+            {
+                "label": key,
+                "count": value,
+                "average_parser_confidence": round(sum(parser_confidence_by_format.get(key, [])) / len(parser_confidence_by_format.get(key, [1])), 1)
+                if parser_confidence_by_format.get(key)
+                else 0.0,
+            }
             for key, value in sorted(format_counts.items(), key=lambda item: item[0])
         ],
         "boards": boards,
@@ -88,6 +143,11 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
             "average_confidence": round(parser_confidence_total / parser_confidence_count, 1) if parser_confidence_count else 0.0,
             "supported_formats": len(format_counts),
             "failed_boards": failed_boards,
+        },
+        "cam_health": {
+            "bundle_count": cam_bundle_count,
+            "review_ready_bundles": cam_ready_count,
+            "readiness_ratio": round((cam_ready_count / cam_bundle_count) * 100, 1) if cam_bundle_count else 0.0,
         },
     }
     try:

@@ -565,6 +565,11 @@ def _enrich_project_result(project_result):
     return project_result
 
 
+def _extract_cam_boards(project_result):
+    boards = (project_result or {}).get("boards", []) or []
+    return [board for board in boards if ((board.get("cam_summary") or {}).get("active"))]
+
+
 def _chip_class(severity):
     s = str(severity or "low").lower()
     if s == "critical":
@@ -776,6 +781,7 @@ def _build_run_detail(run_name):
         **merged,
         "result": enriched_result,
         "analysis_context_view": enriched_result.get("analysis_context_view", _build_analysis_context(merged)),
+        "cam_detail_view": _build_cam_detail_view(enriched_result.get("cam_summary") or merged.get("cam_summary") or {}),
         "files": files,
         "preview": preview,
         "download_count": len(files),
@@ -961,6 +967,8 @@ def _build_export_summary(files, run_detail):
             review_ready_score += 4
         if (result.get("analysis_context_view") or {}).get("config_rows"):
             review_ready_score += 4
+        if (result.get("cam_summary") or {}).get("complete"):
+            review_ready_score += 8
     review_ready_score = min(review_ready_score, 100)
 
     if review_ready_score >= 85:
@@ -989,6 +997,32 @@ def _build_export_summary(files, run_detail):
         ] if files else [],
         "pdf_ready": bool(report_files),
         "print_label": "Printable review summary" if report_files else "Generate a run report first",
+    }
+
+
+def _build_cam_detail_view(cam_summary):
+    cam_summary = cam_summary or {}
+    if not cam_summary.get("active"):
+        return {
+            "active": False,
+            "summary": "No Gerber/CAM bundle summary is attached to this run.",
+            "stats": [],
+            "files": [],
+        }
+
+    return {
+        "active": True,
+        "summary": cam_summary.get("summary") or "Gerber/CAM review data is available for this run.",
+        "status_label": cam_summary.get("status_label") or "CAM review ready",
+        "readiness_score": cam_summary.get("readiness_score", 0),
+        "bundle_type": str(cam_summary.get("bundle_type") or "single_layer").replace("_", " ").title(),
+        "stats": [
+            {"label": "CAM Files", "value": cam_summary.get("layer_file_count", 0)},
+            {"label": "Copper Layers", "value": len(cam_summary.get("copper_layers") or [])},
+            {"label": "Outline Segments", "value": cam_summary.get("outline_count", 0)},
+            {"label": "Drill Hits", "value": cam_summary.get("drill_count", 0)},
+        ],
+        "files": cam_summary.get("layer_files") or [],
     }
 
 
@@ -2334,6 +2368,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "physics_summary": result.get("physics_summary") or {},
         "stackup_summary": result.get("stackup_summary") or {},
         "parser_confidence": result.get("parser_confidence") or {},
+        "cam_summary": result.get("cam_summary") or {},
         "signoff_gate": result.get("signoff_gate") or {},
         "value_metrics": board_value_metrics or [],
         "subsystem_summary": result.get("subsystem_summary") or {},
@@ -3146,6 +3181,7 @@ def _build_board_review_layers(result):
     risks = (result or {}).get("risks", []) or []
     analysis_context = (result or {}).get("analysis_context_view") or {}
     physics_summary = (result or {}).get("physics_summary") or {}
+    cam_summary = (result or {}).get("cam_summary") or {}
     if not risks:
         return {
             "domain_cards": [],
@@ -3159,6 +3195,11 @@ def _build_board_review_layers(result):
                 "title": "Physics integrity estimate",
                 "summary": "Physics-informed SI/PI estimates appear after analysis.",
                 "detail": "Silicore will estimate impedance, delay, IR drop, and current density from board geometry and configured material assumptions.",
+            },
+            "cam_lane": {
+                "title": "CAM bundle readiness",
+                "summary": "Gerber/CAM recognition appears after analysis.",
+                "detail": "Silicore will report bundle completeness, copper/outline/drill recognition, and geometry-backed review readiness for CAM inputs.",
             },
         }
 
@@ -3276,6 +3317,25 @@ def _build_board_review_layers(result):
             "detail": "Silicore needs routable critical signal or power nets with usable geometry to generate impedance and IR-drop estimates.",
         }
 
+    if cam_summary.get("active"):
+        cam_lane = {
+            "title": "CAM bundle readiness",
+            "summary": cam_summary.get("summary") or "Gerber/CAM review information is available for this run.",
+            "detail": (
+                f"{cam_summary.get('status_label', 'CAM review ready')} at {cam_summary.get('readiness_score', 0)} / 100 with "
+                f"{cam_summary.get('layer_file_count', 0)} recognized file(s), "
+                f"{len(cam_summary.get('copper_layers') or [])} copper layer(s), "
+                f"{cam_summary.get('outline_count', 0)} outline segment(s), and "
+                f"{cam_summary.get('drill_count', 0)} drill hit(s)."
+            ),
+        }
+    else:
+        cam_lane = {
+            "title": "CAM bundle readiness",
+            "summary": "This run is not a Gerber/CAM import, so CAM bundle readiness is not active.",
+            "detail": "Use a Gerber directory, archive, or layer file set to activate bundle-completeness and fabrication-package trust analysis.",
+        }
+
     return {
         "domain_cards": domain_cards[:4],
         "traceability_stats": [
@@ -3303,6 +3363,7 @@ def _build_board_review_layers(result):
             "detail": signal_detail,
         },
         "physics_lane": physics_lane,
+        "cam_lane": cam_lane,
         "physics_summary": physics_summary,
         "parser_lane": {
             "title": "Parser confidence",
@@ -3311,6 +3372,11 @@ def _build_board_review_layers(result):
                 f"Confidence score {((result or {}).get('parser_confidence') or {}).get('score', 0)} / 100 with "
                 f"{((result or {}).get('parser_confidence') or {}).get('trace_count', 0)} traces and "
                 f"{((result or {}).get('parser_confidence') or {}).get('component_count', 0)} components recognized."
+                + (
+                    f" CAM bundle type: {str(cam_summary.get('bundle_type') or 'single_layer').replace('_', ' ')}."
+                    if cam_summary.get("active")
+                    else ""
+                )
             ),
         },
     }
@@ -3323,7 +3389,7 @@ def _build_board_value_metrics(result):
     critical_count = sum(1 for risk in risks if str(risk.get("severity", "")).lower() == "critical")
     high_count = sum(1 for risk in risks if str(risk.get("severity", "")).lower() == "high")
     actionable_count = sum(1 for risk in risks if risk.get("recommendation"))
-    return [
+    metrics = [
         {
             "label": "Critical pressure",
             "value": critical_count,
@@ -3345,6 +3411,13 @@ def _build_board_value_metrics(result):
             "subtext": "Live 0-100 engineering position",
         },
     ]
+    if (result.get("cam_summary") or {}).get("active"):
+        metrics.append({
+            "label": "CAM readiness",
+            "value": (result.get("cam_summary") or {}).get("readiness_score", 0),
+            "subtext": "Gerber/CAM package completeness score",
+        })
+    return metrics
 
 
 def _build_signoff_gate_view(result):
@@ -4250,6 +4323,7 @@ def project_page():
     comparison = None
     project_chart = None
     project_intelligence_review = None
+    cam_boards = []
     _, editable_config = get_dashboard_config(CONFIG_PATH)
     default_analysis = editable_config.get("analysis", {}) if isinstance(editable_config, dict) else {}
     analysis_modes = _analysis_mode_options(default_analysis.get("custom_profile_name", "Custom Project Profile"))
@@ -4275,6 +4349,7 @@ def project_page():
             project_result = response.get("project_result", {})
             project_result["project_summary"] = project_result.get("summary", {})
             project_result = _enrich_project_result(project_result)
+            cam_boards = _extract_cam_boards(project_result)
             comparison = _build_project_comparison(project_result)
             project_chart = _build_project_chart_data(project_result, comparison)
             project_intelligence_review = _build_project_review_intelligence(project_result)
@@ -4300,6 +4375,7 @@ def project_page():
             "project_options": _project_options(),
             "project_chart": project_chart,
             "project_intelligence_review": project_intelligence_review,
+            "cam_boards": cam_boards,
             "analysis_modes": analysis_modes,
             "selected_profile": selected_profile,
             "selected_board_type": selected_board_type,

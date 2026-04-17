@@ -110,10 +110,27 @@ class BackendSystemsTests(unittest.TestCase):
         bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
         self.assertFalse(bundle_risks, f"Expected no CAM bundle risks for complete fixture, got {bundle_risks}")
 
+    def test_alt_named_gerber_cam_fixture_is_parsed_as_complete_bundle(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_alt_naming")
+        self.assertEqual(pcb.source_format, "gerber_cam")
+        self.assertGreater(len(pcb.traces), 0)
+        self.assertGreater(len(pcb.outline_segments), 0)
+        self.assertGreater(len(pcb.vias), 0)
+
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
+        self.assertFalse(bundle_risks, f"Expected no CAM bundle risks for alt-named fixture, got {bundle_risks}")
+
     def test_sparse_gerber_fixture_triggers_cam_bundle_findings(self):
         pcb = parse_pcb_file("fixtures/gerber_cam_sparse")
         result = run_analysis(pcb, load_config("custom_config.json"))
         bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
+        self.assertTrue(bundle_risks)
+
+    def test_missing_drill_gerber_fixture_triggers_drill_bundle_finding(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_missing_drill")
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle_drill")]
         self.assertTrue(bundle_risks)
 
     def test_geometry_rule_uses_board_regions_for_clearance(self):
@@ -128,6 +145,9 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertIn("boards", result)
         self.assertIn("average_parser_confidence", result)
         self.assertIn("parser_health", result)
+        self.assertIn("cam_health", result)
+        self.assertIn("review_ready_bundles", result["cam_health"])
+        self.assertTrue(any((board.get("format") or "").startswith("gerber") or board.get("cam_bundle_type") for board in result["boards"]))
         history = list_evaluation_runs(limit=5)
         self.assertTrue(any(item["evaluation_id"] == result["evaluation_id"] for item in history if result.get("evaluation_id")))
 

@@ -145,6 +145,7 @@
                 <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="Why is the score low?">Why is the score low?</button>
                 <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="Am I signoff ready?">Am I signoff ready?</button>
                 <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="What should I validate next?">What should I validate next?</button>
+                <button type="button" class="assistant-prompt-chip" data-assistant-board-prompt="Is this CAM package complete enough for review?">Review CAM package</button>
             </div>
 
             <form class="assistant-composer" data-assistant-board-form>
@@ -453,6 +454,22 @@
                 </p>
                 {% endif %}
             </div>
+
+            {% if result.cam_summary and result.cam_summary.active %}
+            <div class="summary-panel compact-summary" style="margin-top:16px;">
+                <h3>Gerber / CAM Review</h3>
+                <p>{{ result.cam_summary.summary }}</p>
+                <div class="focus-chip-row" style="margin: 12px 0 0;">
+                    <span class="mini-chip mini-chip-medium">{{ result.cam_summary.status_label }}</span>
+                    <span class="mini-chip mini-chip-low">{{ result.cam_summary.readiness_score }} / 100 readiness</span>
+                    <span class="mini-chip mini-chip-low">{{ result.cam_summary.layer_file_count }} file(s)</span>
+                    <span class="mini-chip mini-chip-low">{{ result.cam_summary.drill_count }} drill hit(s)</span>
+                </div>
+                {% if result.cam_summary.layer_files %}
+                <p class="small-muted" style="margin-top:10px;">Files: {{ result.cam_summary.layer_files|join(', ') }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
     </section>
 </section>
@@ -685,6 +702,13 @@
                 <p>{{ board_review_layers.signal_lane.summary }}</p>
                 <p class="small-muted" style="margin-top:10px;">{{ board_review_layers.signal_lane.detail }}</p>
             </div>
+            {% if board_review_layers.cam_lane %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>{{ board_review_layers.cam_lane.title }}</h3>
+                <p>{{ board_review_layers.cam_lane.summary }}</p>
+                <p class="small-muted" style="margin-top:10px;">{{ board_review_layers.cam_lane.detail }}</p>
+            </div>
+            {% endif %}
             {% if board_review_layers.physics_lane %}
             <div class="summary-panel" style="margin-top:16px;">
                 <h3>{{ board_review_layers.physics_lane.title }}</h3>

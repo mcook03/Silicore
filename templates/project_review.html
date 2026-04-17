@@ -311,6 +311,62 @@
     </section>
 </section>
 
+{% if cam_boards %}
+<section class="grid grid-2">
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">CAM Portfolio Coverage</h2>
+            <p class="section-copy">Gerber/CAM package readiness across the uploaded review set.</p>
+        </div>
+        <div class="card-body">
+            <div class="big-stat-grid compact-stat-grid">
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ cam_boards|length }}</div>
+                    <div class="big-stat-label">CAM Boards</div>
+                    <div class="big-stat-sub">Gerber/CAM inputs in this review</div>
+                </div>
+                <div class="big-stat-card">
+                    <div class="big-stat-value">{{ (cam_boards|selectattr('cam_summary.complete')|list)|length }}</div>
+                    <div class="big-stat-label">Review Ready</div>
+                    <div class="big-stat-sub">Bundles complete enough for CAM review</div>
+                </div>
+            </div>
+            <div class="timeline-list" style="margin-top:16px;">
+                {% for board in cam_boards[:4] %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="timeline-title">{{ board.filename }}</div>
+                        <div class="timeline-copy">{{ board.cam_summary.summary }}</div>
+                    </div>
+                    <div class="timeline-copy">{{ board.cam_summary.readiness_score }} / 100</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="card spotlight-shell-card">
+        <div class="card-header">
+            <h2 class="section-title">CAM Import Trust</h2>
+            <p class="section-copy">How strongly Silicore recognized copper, outline, drill, and file structure in the CAM inputs.</p>
+        </div>
+        <div class="card-body">
+            <div class="distribution-bars">
+                {% for board in cam_boards[:4] %}
+                <div class="distribution-bar-row">
+                    <div class="distribution-bar-label">{{ board.filename }}</div>
+                    <div class="distribution-bar-track">
+                        <div class="distribution-bar-fill tone-blue" style="width: {{ board.cam_summary.readiness_score }}%;"></div>
+                    </div>
+                    <div class="distribution-bar-value">{{ board.cam_summary.readiness_score|int }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</section>
+{% endif %}
+
 <section class="grid grid-2">
     <section class="card spotlight-shell-card">
         <div class="card-header">

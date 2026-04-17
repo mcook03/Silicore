@@ -212,6 +212,38 @@
     </section>
 </section>
 
+{% if run_detail.cam_detail_view and run_detail.cam_detail_view.active %}
+<section class="card">
+    <div class="card-header">
+        <h2 class="section-title">Gerber / CAM Import Review</h2>
+        <p class="section-copy">Saved fabrication-package completeness and geometry-recognition summary for this run.</p>
+    </div>
+    <div class="card-body">
+        <div class="metric-grid">
+            {% for item in run_detail.cam_detail_view.stats %}
+            <div class="metric-card">
+                <div class="metric-label">{{ item.label }}</div>
+                <div class="metric-value">{{ item.value }}</div>
+                <div class="metric-sub">{{ run_detail.cam_detail_view.bundle_type }}</div>
+            </div>
+            {% endfor %}
+            <div class="metric-card">
+                <div class="metric-label">CAM Readiness</div>
+                <div class="metric-value">{{ run_detail.cam_detail_view.readiness_score }}</div>
+                <div class="metric-sub">{{ run_detail.cam_detail_view.status_label }}</div>
+            </div>
+        </div>
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Bundle Summary</h3>
+            <p>{{ run_detail.cam_detail_view.summary }}</p>
+            {% if run_detail.cam_detail_view.files %}
+            <p class="small-muted" style="margin-top:10px;">Recognized files: {{ run_detail.cam_detail_view.files|join(', ') }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
         {% if score_data.severity_rows %}
         <div class="breakdown-table">
             <div class="breakdown-table-header">

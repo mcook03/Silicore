@@ -72,15 +72,30 @@
                     <div class="metric-value">{{ evaluation_summary.formats|length }}</div>
                     <div class="metric-sub">File types represented</div>
                 </div>
+                <div class="metric-card">
+                    <div class="metric-label">CAM Ready</div>
+                    <div class="metric-value">{{ evaluation_summary.cam_health.review_ready_bundles if evaluation_summary.cam_health else 0 }}</div>
+                    <div class="metric-sub">Gerber/CAM bundles ready for review</div>
+                </div>
             </div>
             <div class="summary-panel" style="margin-top:16px;">
                 <h3>Coverage</h3>
                 <p>
                     {% for item in evaluation_summary.formats %}
-                    <span class="mini-chip mini-chip-medium">{{ item.label }} · {{ item.count }}</span>
+                    <span class="mini-chip mini-chip-medium">{{ item.label }} · {{ item.count }} · parser {{ item.average_parser_confidence|round(1) }}</span>
                     {% endfor %}
                 </p>
             </div>
+            {% if evaluation_summary.cam_health %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>CAM Calibration</h3>
+                <p>
+                    {{ evaluation_summary.cam_health.bundle_count }} CAM bundle(s) are in the current benchmark set and
+                    {{ evaluation_summary.cam_health.review_ready_bundles }} are recognized as review ready.
+                    CAM readiness ratio: {{ evaluation_summary.cam_health.readiness_ratio }}%.
+                </p>
+            </div>
+            {% endif %}
             {% else %}
             <div class="empty-state">Admin access is required to view evaluation and calibration summary data.</div>
             {% endif %}

@@ -170,6 +170,7 @@ def _resolve_board_intent(prompt, context, history):
         ("signoff", _keywords(["signoff", "release", "ship", "ready", "approve"])),
         ("validation", _keywords(["validate", "validation", "rerun", "recheck", "test", "measure"])),
         ("traceability", _keywords(["traceability", "evidence", "proof", "defensible"])),
+        ("cam", _keywords(["gerber", "cam", "bundle", "drill file", "outline layer", "copper layer", "fabrication package"])),
         ("parser", _keywords(["parser", "import", "parse confidence", "geometry confidence", "recognition"])),
         ("physics", _keywords(["physics", "impedance", "ir drop", "current density", "voltage drop", "delay", "modeled"])),
         ("stackup", _keywords(["stackup", "reference plane", "layer stack", "return path layer"])),
@@ -327,23 +328,67 @@ def answer_board_question(prompt, context, history=None):
 
     if intent == "parser":
         parser_confidence = context.get("parser_confidence") or {}
+        cam_summary = context.get("cam_summary") or {}
+        detail = (
+            f"Confidence is {parser_confidence.get('score', 0)} / 100 with "
+            f"{parser_confidence.get('component_count', 0)} components, "
+            f"{parser_confidence.get('trace_count', 0)} traces, and "
+            f"{parser_confidence.get('outline_count', 0)} outline feature(s) recognized."
+        )
+        if cam_summary.get("active"):
+            detail += (
+                f" CAM bundle readiness is {cam_summary.get('readiness_score', 0)} / 100 with "
+                f"{cam_summary.get('layer_file_count', 0)} file(s), "
+                f"{cam_summary.get('outline_count', 0)} outline segment(s), and "
+                f"{cam_summary.get('drill_count', 0)} drill hit(s)."
+            )
         return _make_response(
             "parser",
             "Parser and Geometry Trust",
             parser_confidence.get("summary") or "Parser confidence is not available for this board yet.",
-            detail=(
-                f"Confidence is {parser_confidence.get('score', 0)} / 100 with "
-                f"{parser_confidence.get('component_count', 0)} components, "
-                f"{parser_confidence.get('trace_count', 0)} traces, and "
-                f"{parser_confidence.get('outline_count', 0)} outline feature(s) recognized."
-            ),
+            detail=detail,
             follow_ups=[
                 "How does parser confidence affect signoff?",
+                "Is this CAM package complete enough for review?",
                 "What assumptions were used in the model?",
                 "Show me the strongest evidence",
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             confidence=0.79,
+        )
+
+    if intent == "cam":
+        cam_summary = context.get("cam_summary") or {}
+        if not cam_summary.get("active"):
+            return _make_response(
+                "cam",
+                "CAM Package Review",
+                "This run is not a Gerber/CAM bundle review.",
+                detail="Atlas only activates CAM bundle reasoning when the input is a Gerber directory, archive, or CAM layer set.",
+                follow_ups=[
+                    "How trustworthy is the parser and model coverage?",
+                    "Am I signoff ready?",
+                ],
+                confidence=0.77,
+            )
+        return _make_response(
+            "cam",
+            "CAM Package Review",
+            cam_summary.get("summary") or "CAM package review data is available for this board.",
+            detail=(
+                f"{cam_summary.get('status_label', 'CAM review ready')} with "
+                f"{cam_summary.get('layer_file_count', 0)} file(s), "
+                f"{len(cam_summary.get('copper_layers') or [])} copper layer(s), "
+                f"{cam_summary.get('outline_count', 0)} outline segment(s), and "
+                f"{cam_summary.get('drill_count', 0)} drill hit(s)."
+            ),
+            follow_ups=[
+                "Is this CAM package complete enough for fabrication review?",
+                "How much should I trust this Gerber import?",
+                "Show me the strongest evidence",
+            ],
+            citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
+            confidence=0.83,
         )
 
     if intent in {"physics", "confidence"}:

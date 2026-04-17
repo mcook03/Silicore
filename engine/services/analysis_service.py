@@ -85,6 +85,15 @@ def _estimate_parser_confidence(pcb, extension):
         missing_penalty += 8.0
 
     score = round(max(20.0, min(100.0, base + geometry_bonus + richness_bonus - missing_penalty)), 1)
+    cam_meta = getattr(pcb, "metadata", {}).get("cam", {}) if hasattr(pcb, "metadata") else {}
+    source_format = str(getattr(pcb, "source_format", "") or "").lower()
+    label = FORMAT_READINESS.get(extension, {}).get("label", extension or "board")
+    if source_format.startswith("gerber"):
+        bundle_type = cam_meta.get("bundle_type", "single_layer")
+        layer_file_count = int(cam_meta.get("layer_file_count", 0) or 0)
+        label = f"{label} ({bundle_type.replace('_', ' ')})"
+        if layer_file_count:
+            label += f" with {layer_file_count} CAM file(s)"
     return {
         "score": score,
         "status": readiness,
@@ -95,7 +104,67 @@ def _estimate_parser_confidence(pcb, extension):
         "outline_count": outline_count,
         "zone_count": zone_count,
         "layer_count": layer_count,
-        "summary": f"Parser confidence is {score} / 100 for this {FORMAT_READINESS.get(extension, {}).get('label', extension or 'board')} input.",
+        "summary": f"Parser confidence is {score} / 100 for this {label} input.",
+    }
+
+
+def _build_cam_summary(pcb, extension):
+    source_format = str(getattr(pcb, "source_format", "") or "").lower()
+    if not source_format.startswith("gerber"):
+        return {
+            "active": False,
+            "source_format": source_format or extension or "board",
+        }
+
+    metadata = getattr(pcb, "metadata", {}) if hasattr(pcb, "metadata") else {}
+    cam_meta = metadata.get("cam", {}) if isinstance(metadata, dict) else {}
+    declared_layers = list(getattr(pcb, "declared_layers", []) or [])
+    layer_files = list(cam_meta.get("layer_files") or cam_meta.get("merged_sources") or [])
+    copper_layers = [layer for layer in declared_layers if "copper" in str(layer).lower()]
+    outline_count = len(getattr(pcb, "outline_segments", []) or [])
+    drill_count = len(getattr(pcb, "vias", []) or [])
+    trace_count = len(getattr(pcb, "traces", []) or [])
+    zone_count = len(getattr(pcb, "zones", []) or [])
+    parser_confidence = _estimate_parser_confidence(pcb, extension)
+    complete = bool(outline_count and (drill_count or not copper_layers) and (trace_count or zone_count))
+    readiness_score = 35
+    if layer_files:
+        readiness_score += min(len(layer_files) * 8, 24)
+    if outline_count:
+        readiness_score += 18
+    if drill_count:
+        readiness_score += 12
+    if copper_layers:
+        readiness_score += 8
+    if zone_count:
+        readiness_score += 8
+    readiness_score = min(100, readiness_score)
+    summary = (
+        f"CAM import recognized {len(layer_files) or 1} file(s), {len(copper_layers)} copper layer(s), "
+        f"{outline_count} outline segment(s), and {drill_count} drill hit(s)."
+    )
+    if complete:
+        summary += " The bundle looks complete enough for geometry-backed review."
+    else:
+        summary += " The bundle still looks incomplete for full fabrication review."
+
+    return {
+        "active": True,
+        "source_format": source_format,
+        "bundle_type": cam_meta.get("bundle_type", "single_layer"),
+        "layer_file_count": len(layer_files),
+        "layer_files": layer_files[:8],
+        "declared_layers": declared_layers,
+        "copper_layers": copper_layers,
+        "outline_count": outline_count,
+        "drill_count": drill_count,
+        "trace_count": trace_count,
+        "zone_count": zone_count,
+        "parser_confidence": parser_confidence.get("score", 0),
+        "readiness_score": readiness_score,
+        "complete": complete,
+        "summary": summary,
+        "status_label": "CAM review ready" if complete else "CAM package incomplete",
     }
 
 
@@ -1401,6 +1470,8 @@ def _analyze_board_file(file_path, config):
     risks.extend(subsystem_risks)
     score, score_explanation = _compute_score_and_explanation(risks, config)
     board_summary = _build_board_summary(pcb, risks, os.path.basename(file_path))
+    parser_confidence = _estimate_parser_confidence(pcb, extension)
+    cam_summary = _build_cam_summary(pcb, extension)
 
     result = {
         "filename": os.path.basename(file_path),
@@ -1418,7 +1489,8 @@ def _analyze_board_file(file_path, config):
             "profile": (config.get("analysis", {}) or {}).get("profile", "balanced"),
             "board_type": board_type,
         },
-        "parser_confidence": _estimate_parser_confidence(pcb, extension),
+        "parser_confidence": parser_confidence,
+        "cam_summary": cam_summary,
         "physics_summary": physics_summary,
         "stackup_summary": stackup_summary,
         "raw_rule_result": raw_rule_result,
@@ -1434,8 +1506,9 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None, profi
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Board file not found: {file_path}")
 
+    is_directory_input = os.path.isdir(file_path)
     extension = os.path.splitext(file_path)[1].lower()
-    if extension not in SUPPORTED_EXTENSIONS:
+    if not is_directory_input and extension not in SUPPORTED_EXTENSIONS:
         raise ValueError(f"Unsupported file type: {extension}")
 
     config = apply_analysis_profile(_resolve_config(config), profile_name=profile_name, board_type=board_type)
@@ -1449,7 +1522,7 @@ def run_single_analysis_from_path(file_path, config=None, output_dir=None, profi
         html_path = os.path.join(output_dir, "single_report.html")
     else:
         base_dir = os.path.dirname(file_path) or "."
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        base_name = os.path.basename(os.path.normpath(file_path)) if is_directory_input else os.path.splitext(os.path.basename(file_path))[0]
         json_path = os.path.join(base_dir, f"{base_name}_analysis.json")
         md_path = os.path.join(base_dir, f"{base_name}_report.md")
         html_path = os.path.join(base_dir, f"{base_name}_report.html")

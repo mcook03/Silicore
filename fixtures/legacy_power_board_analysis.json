@@ -229,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "SW_NODE",
-                "VCC"
+                "VCC",
+                "SW_NODE"
             ],
             "region": null,
             "metrics": {
@@ -248,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -284,8 +284,8 @@
                 "D1"
             ],
             "nets": [
-                "GND",
-                "SW_NODE"
+                "SW_NODE",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -303,8 +303,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -2489,7 +2489,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-17T22:11:40.775648+00:00",
+        "timestamp": "2026-04-17T22:24:52.363554+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2949,6 +2949,10 @@
         "layer_count": 2,
         "summary": "Parser confidence is 96.2 / 100 for this Legacy Structured Board input."
     },
+    "cam_summary": {
+        "active": false,
+        "source_format": "legacy_brd"
+    },
     "physics_summary": {
         "enabled": true,
         "assumptions": {
@@ -3285,8 +3289,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW_NODE",
-                    "VCC"
+                    "VCC",
+                    "SW_NODE"
                 ],
                 "region": null,
                 "metrics": {
@@ -3304,8 +3308,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW_NODE",
-                        "VCC"
+                        "VCC",
+                        "SW_NODE"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3331,8 +3335,8 @@
                     "D1"
                 ],
                 "nets": [
-                    "GND",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3350,8 +3354,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "SW_NODE"
+                        "SW_NODE",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3697,7 +3701,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-17T22:11:40.775656+00:00",
+    "generated_at": "2026-04-17T22:24:52.363559+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

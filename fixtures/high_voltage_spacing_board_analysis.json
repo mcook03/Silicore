@@ -311,9 +311,9 @@
                 "U1"
             ],
             "nets": [
-                "HV+",
                 "CTRL",
-                "HV-"
+                "HV-",
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -351,9 +351,9 @@
                 "U1"
             ],
             "nets": [
-                "HV+",
                 "CTRL",
-                "HV-"
+                "HV-",
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -480,8 +480,8 @@
                 "J1"
             ],
             "nets": [
-                "HV+",
-                "HV-"
+                "HV-",
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -499,8 +499,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV+",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -535,9 +535,9 @@
                 "U1"
             ],
             "nets": [
-                "HV+",
                 "CTRL",
-                "HV-"
+                "HV-",
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -555,9 +555,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV+",
                     "CTRL",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -2039,7 +2039,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-17T22:11:40.752409+00:00",
+        "timestamp": "2026-04-17T22:24:52.340543+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2499,6 +2499,10 @@
         "layer_count": 1,
         "summary": "Parser confidence is 90.4 / 100 for this KiCad PCB input."
     },
+    "cam_summary": {
+        "active": false,
+        "source_format": "kicad_pcb"
+    },
     "physics_summary": {
         "enabled": true,
         "assumptions": {
@@ -2819,9 +2823,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV+",
                     "CTRL",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2850,9 +2854,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV+",
                     "CTRL",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2952,8 +2956,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "HV+",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2971,8 +2975,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV+",
-                        "HV-"
+                        "HV-",
+                        "HV+"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -2998,9 +3002,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV+",
                     "CTRL",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -3018,9 +3022,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV+",
                         "CTRL",
-                        "HV-"
+                        "HV-",
+                        "HV+"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -3268,7 +3272,7 @@
         "score": 0.0,
         "total_penalty": 13.4
     },
-    "generated_at": "2026-04-17T22:11:40.752417+00:00",
+    "generated_at": "2026-04-17T22:24:52.340546+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

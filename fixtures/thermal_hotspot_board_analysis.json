@@ -151,9 +151,9 @@
                 "U1"
             ],
             "nets": [
-                "GND",
+                "VIN",
                 "VOUT",
-                "VIN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -191,9 +191,9 @@
                 "U1"
             ],
             "nets": [
-                "GND",
+                "VIN",
                 "VOUT",
-                "VIN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -230,8 +230,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "VOUT"
+                "VOUT",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -347,8 +347,8 @@
                 "U2"
             ],
             "nets": [
-                "GND",
-                "VOUT"
+                "VOUT",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -366,8 +366,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "VOUT"
+                    "VOUT",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1750,7 +1750,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-17T22:11:40.797356+00:00",
+        "timestamp": "2026-04-17T22:24:52.383697+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2210,6 +2210,10 @@
         "layer_count": 1,
         "summary": "Parser confidence is 90.5 / 100 for this KiCad PCB input."
     },
+    "cam_summary": {
+        "active": false,
+        "source_format": "kicad_pcb"
+    },
     "physics_summary": {
         "enabled": true,
         "assumptions": {
@@ -2404,9 +2408,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
+                    "VIN",
                     "VOUT",
-                    "VIN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2435,9 +2439,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
+                    "VIN",
                     "VOUT",
-                    "VIN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2465,8 +2469,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "VOUT"
+                    "VOUT",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2555,8 +2559,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "GND",
-                    "VOUT"
+                    "VOUT",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -2574,8 +2578,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "VOUT"
+                        "VOUT",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -2796,7 +2800,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-17T22:11:40.797363+00:00",
+    "generated_at": "2026-04-17T22:24:52.383699+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
