@@ -2451,7 +2451,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-17T01:53:38.898724+00:00",
+        "timestamp": "2026-04-17T02:08:43.942309+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3032,15 +3032,15 @@
     "stackup_summary": {
         "layer_count": 2,
         "copper_layers": [
-            "B.Cu",
-            "F.Cu"
+            "F.Cu",
+            "B.Cu"
         ],
         "signal_layers": [
-            "B.Cu",
-            "F.Cu"
+            "F.Cu",
+            "B.Cu"
         ],
         "reference_layers": [
-            "F.Cu"
+            "B.Cu"
         ],
         "style": "two_layer",
         "reference_coverage_pct": 50.0,
@@ -3635,7 +3635,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-17T01:53:38.898731+00:00",
+    "generated_at": "2026-04-17T02:08:43.942319+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

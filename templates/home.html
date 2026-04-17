@@ -2020,6 +2020,236 @@
             transform: none;
         }
     }
+
+    /* Final override layer: replaces the old dashboard rhythm with a cinematic launch surface. */
+    .home-redesign {
+        gap: 42px;
+    }
+
+    .signal-ribbon {
+        margin: -2px 0 8px;
+        opacity: 0.82;
+    }
+
+    .home-redesign .tech-hero {
+        min-height: 0;
+        padding: 44px;
+        border-radius: 48px;
+        background:
+            radial-gradient(circle at 12% 18%, rgba(85, 142, 255, 0.22), transparent 28%),
+            linear-gradient(180deg, rgba(6, 10, 19, 0.98), rgba(3, 6, 12, 0.98));
+        box-shadow: 0 36px 110px rgba(0, 0, 0, 0.48);
+    }
+
+    .home-redesign .tech-hero::before {
+        top: 22%;
+        left: -12%;
+        right: -12%;
+        height: 180px;
+        opacity: 0.95;
+        filter: blur(20px);
+        transform: rotate(-8deg);
+    }
+
+    .home-redesign .tech-hero::after {
+        display: none;
+    }
+
+    .home-redesign .tech-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 34px;
+    }
+
+    .home-redesign .tech-copy {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 16px;
+        max-width: none;
+        margin: 0 auto;
+    }
+
+    .home-redesign .tech-brand-row {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .home-redesign .tech-title {
+        max-width: 10ch;
+        margin: 0 auto;
+        font-size: clamp(3.7rem, 8.8vw, 7.6rem);
+        line-height: 0.88;
+        letter-spacing: -0.085em;
+        text-wrap: balance;
+    }
+
+    .home-redesign .tech-description {
+        max-width: 52rem;
+        margin: 0 auto;
+        font-size: 1.04rem;
+        line-height: 1.75;
+    }
+
+    .home-redesign .tech-stage-primary {
+        width: 100%;
+    }
+
+    .home-redesign .tech-stage-shell {
+        padding: 20px;
+        border-radius: 36px;
+        background:
+            linear-gradient(180deg, rgba(9, 14, 25, 0.96), rgba(5, 9, 18, 0.98));
+        border: 1px solid rgba(255,255,255,0.07);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 28px 80px rgba(0,0,0,0.44);
+    }
+
+    .home-redesign .tech-stage-topline {
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 16px;
+    }
+
+    .home-redesign .tech-stage-metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .home-redesign .tech-metric-card {
+        min-height: 96px;
+        border-radius: 18px;
+    }
+
+    .home-redesign .tech-stage-main {
+        grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+        gap: 18px;
+    }
+
+    .home-redesign .tech-blueprint {
+        min-height: 560px;
+        border-radius: 34px;
+    }
+
+    .home-redesign .home-story-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    .home-redesign .home-command-span,
+    .home-redesign .home-telemetry-span,
+    .home-redesign .home-capability-span,
+    .home-redesign .home-portfolio-span,
+    .home-redesign .home-workflow-span,
+    .home-redesign .home-reporting-span {
+        grid-column: span 6;
+    }
+
+    .home-redesign .home-activity-span {
+        grid-column: 1 / -1;
+    }
+
+    .home-redesign .command-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .home-redesign .command-card {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 22px;
+        padding: 22px;
+        min-height: 280px;
+        border-radius: 24px;
+        background:
+            linear-gradient(180deg, rgba(13, 20, 34, 0.94), rgba(7, 12, 22, 0.98));
+        border: 1px solid rgba(255,255,255,0.055);
+    }
+
+    .home-redesign .command-top {
+        display: grid;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .home-redesign .command-title {
+        font-size: 1.1rem;
+        letter-spacing: -0.04em;
+    }
+
+    .home-redesign .command-value {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        min-width: 0;
+    }
+
+    .home-redesign .command-metric-number {
+        font-size: clamp(2.9rem, 5vw, 4.6rem);
+        line-height: 0.92;
+        letter-spacing: -0.08em;
+    }
+
+    .home-redesign .command-metric-label-text {
+        font-size: 0.96rem;
+        line-height: 1.2;
+        color: var(--text-soft);
+        max-width: 14ch;
+    }
+
+    .home-redesign .command-copy {
+        font-size: 0.98rem;
+        line-height: 1.75;
+        max-width: 28ch;
+    }
+
+    .home-redesign .story-panel {
+        margin-top: 18px;
+        padding: 18px 20px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.03);
+    }
+
+    @media (max-width: 1320px) {
+        .home-redesign .home-story-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .home-redesign .home-command-span,
+        .home-redesign .home-telemetry-span,
+        .home-redesign .home-capability-span,
+        .home-redesign .home-portfolio-span,
+        .home-redesign .home-workflow-span,
+        .home-redesign .home-reporting-span,
+        .home-redesign .home-activity-span {
+            grid-column: auto;
+        }
+
+        .home-redesign .command-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1080px) {
+        .home-redesign .tech-hero {
+            padding: 28px 22px;
+            border-radius: 34px;
+        }
+
+        .home-redesign .tech-stage-main,
+        .home-redesign .tech-stage-metrics,
+        .home-redesign .home-story-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .home-redesign .tech-title {
+            font-size: clamp(2.8rem, 11vw, 4.8rem);
+        }
+    }
 </style>
 
 {% endblock %}
