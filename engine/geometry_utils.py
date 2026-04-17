@@ -1,24 +1,12 @@
+from engine.geometry_backend import bounds, line_length, polygon_area
+
+
 def segment_length(x1, y1, x2, y2):
-    dx = float(x2) - float(x1)
-    dy = float(y2) - float(y1)
-    return (dx ** 2 + dy ** 2) ** 0.5
+    return line_length([(float(x1), float(y1)), (float(x2), float(y2))])
 
 
 def bounding_box(points):
-    if not points:
-        return None
-
-    xs = [point[0] for point in points]
-    ys = [point[1] for point in points]
-
-    return {
-        "min_x": min(xs),
-        "max_x": max(xs),
-        "min_y": min(ys),
-        "max_y": max(ys),
-        "width": max(xs) - min(xs),
-        "height": max(ys) - min(ys),
-    }
+    return bounds(points)
 
 
 def net_bounding_box(net):
@@ -48,3 +36,7 @@ def average_trace_width(net):
 
 def total_via_transitions(net):
     return len(getattr(net, "vias", []))
+
+
+def zone_area(zone):
+    return polygon_area(getattr(zone, "points", []))

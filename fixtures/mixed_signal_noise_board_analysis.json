@@ -228,9 +228,9 @@
                 "U1"
             ],
             "nets": [
-                "GND",
+                "SW",
                 "VIN",
-                "SW"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -268,9 +268,9 @@
                 "U1"
             ],
             "nets": [
-                "GND",
+                "SW",
                 "VIN",
-                "SW"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -308,8 +308,8 @@
             ],
             "nets": [
                 "SENSOR_OUT",
-                "GND",
-                "ADC_IN"
+                "ADC_IN",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -456,8 +456,8 @@
                 "L1"
             ],
             "nets": [
-                "VIN",
-                "SW"
+                "SW",
+                "VIN"
             ],
             "region": null,
             "metrics": {
@@ -475,8 +475,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VIN",
-                    "SW"
+                    "SW",
+                    "VIN"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -512,8 +512,8 @@
             ],
             "nets": [
                 "SENSOR_OUT",
-                "GND",
-                "ADC_IN"
+                "ADC_IN",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -532,8 +532,8 @@
                 ],
                 "observed_component_nets": [
                     "SENSOR_OUT",
-                    "GND",
-                    "ADC_IN"
+                    "ADC_IN",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1555,6 +1555,9 @@
     },
     "pcb_snapshot": {
         "filename": "mixed_signal_noise_board.kicad_pcb",
+        "declared_layers": [
+            "F.Cu"
+        ],
         "layers": [
             "F.Cu"
         ],
@@ -1569,6 +1572,16 @@
         "board_width": 42.0,
         "board_height": 8.0,
         "source_format": "kicad_pcb",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": false,
+                "shapely": false,
+                "pyclipper": false
+            },
+            "parser": {},
+            "cam": {}
+        },
         "components": [
             {
                 "ref": "U1",
@@ -2404,7 +2417,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-17T02:08:43.948292+00:00",
+        "timestamp": "2026-04-17T21:49:50.052270+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3121,9 +3134,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
+                    "SW",
                     "VIN",
-                    "SW"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3152,9 +3165,9 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
+                    "SW",
                     "VIN",
-                    "SW"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3183,8 +3196,8 @@
                 ],
                 "nets": [
                     "SENSOR_OUT",
-                    "GND",
-                    "ADC_IN"
+                    "ADC_IN",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3295,8 +3308,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "VIN",
-                    "SW"
+                    "SW",
+                    "VIN"
                 ],
                 "region": null,
                 "metrics": {
@@ -3314,8 +3327,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VIN",
-                        "SW"
+                        "SW",
+                        "VIN"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3342,8 +3355,8 @@
                 ],
                 "nets": [
                     "SENSOR_OUT",
-                    "GND",
-                    "ADC_IN"
+                    "ADC_IN",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -3362,8 +3375,8 @@
                     ],
                     "observed_component_nets": [
                         "SENSOR_OUT",
-                        "GND",
-                        "ADC_IN"
+                        "ADC_IN",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -3774,7 +3787,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-17T02:08:43.948301+00:00",
+    "generated_at": "2026-04-17T21:49:50.052277+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

@@ -941,6 +941,9 @@
     },
     "pcb_snapshot": {
         "filename": "thermal_hotspot_board.kicad_pcb",
+        "declared_layers": [
+            "F.Cu"
+        ],
         "layers": [
             "F.Cu"
         ],
@@ -955,6 +958,16 @@
         "board_width": 42.0,
         "board_height": 2.0,
         "source_format": "kicad_pcb",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": false,
+                "shapely": false,
+                "pyclipper": false
+            },
+            "parser": {},
+            "cam": {}
+        },
         "components": [
             {
                 "ref": "U1",
@@ -1713,7 +1726,7 @@
     },
     "analysis_context": {
         "board_name": "thermal_hotspot_board.kicad_pcb",
-        "timestamp": "2026-04-17T02:08:43.954075+00:00",
+        "timestamp": "2026-04-17T21:49:50.057901+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2735,7 +2748,7 @@
         "score": 2.6,
         "total_penalty": 7.4
     },
-    "generated_at": "2026-04-17T02:08:43.954085+00:00",
+    "generated_at": "2026-04-17T21:49:50.057908+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

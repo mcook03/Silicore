@@ -1,3 +1,6 @@
+from engine.geometry_backend import get_geometry_capabilities, polygon_area
+
+
 class Pad:
     def __init__(
         self,
@@ -95,13 +98,7 @@ class Zone:
 
     @property
     def area_estimate(self):
-        if len(self.points) < 3:
-            return 0.0
-        area = 0.0
-        for index, point in enumerate(self.points):
-            next_point = self.points[(index + 1) % len(self.points)]
-            area += (point[0] * next_point[1]) - (next_point[0] * point[1])
-        return abs(area) / 2.0
+        return polygon_area(self.points)
 
     def to_dict(self):
         return {
@@ -291,10 +288,16 @@ class PCB:
         self.components = []
         self.nets = {}
         self.layers = set()
+        self.declared_layers = []
         self.board_bounds = None
         self.board_width = 0.0
         self.board_height = 0.0
         self.source_format = "unknown"
+        self.metadata = {
+            "geometry_capabilities": get_geometry_capabilities(),
+            "parser": {},
+            "cam": {},
+        }
 
         # legacy compatibility collections
         self.traces = []
@@ -305,6 +308,8 @@ class PCB:
     def add_layer(self, layer_name):
         if layer_name:
             self.layers.add(layer_name)
+            if layer_name not in self.declared_layers:
+                self.declared_layers.append(layer_name)
 
     def add_layers(self, layer_names):
         for layer_name in layer_names:
@@ -466,14 +471,29 @@ class PCB:
         self.board_height = self.board_bounds["height"]
         return self.board_bounds
 
+    def set_metadata(self, key, value):
+        self.metadata[key] = value
+
+    def merge_metadata(self, key, value):
+        current = self.metadata.get(key)
+        if isinstance(current, dict) and isinstance(value, dict):
+            current.update(value)
+            self.metadata[key] = current
+        elif isinstance(current, list) and isinstance(value, list):
+            self.metadata[key] = current + value
+        else:
+            self.metadata[key] = value
+
     def to_dict(self):
         return {
             "filename": self.filename,
+            "declared_layers": list(self.declared_layers),
             "layers": sorted(list(self.layers)),
             "board_bounds": self.board_bounds,
             "board_width": self.board_width,
             "board_height": self.board_height,
             "source_format": self.source_format,
+            "metadata": self.metadata,
             "components": [component.to_dict() for component in self.components],
             "nets": {name: net.to_dict() for name, net in self.nets.items()},
             "traces": [trace.to_dict() for trace in self.traces],

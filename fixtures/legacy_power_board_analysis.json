@@ -229,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "VCC",
-                "SW_NODE"
+                "SW_NODE",
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -248,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VCC",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "VCC"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -1253,6 +1253,10 @@
     },
     "pcb_snapshot": {
         "filename": "legacy_power_board",
+        "declared_layers": [
+            "F.Cu",
+            "B.Cu"
+        ],
         "layers": [
             "B.Cu",
             "F.Cu"
@@ -1268,6 +1272,16 @@
         "board_width": 30.5,
         "board_height": 4.0,
         "source_format": "legacy_brd",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": false,
+                "shapely": false,
+                "pyclipper": false
+            },
+            "parser": {},
+            "cam": {}
+        },
         "components": [
             {
                 "ref": "U1",
@@ -2451,7 +2465,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-17T02:08:43.942309+00:00",
+        "timestamp": "2026-04-17T21:49:50.047151+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3223,8 +3237,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "VCC",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -3242,8 +3256,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VCC",
-                        "SW_NODE"
+                        "SW_NODE",
+                        "VCC"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3635,7 +3649,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-17T02:08:43.942319+00:00",
+    "generated_at": "2026-04-17T21:49:50.047155+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

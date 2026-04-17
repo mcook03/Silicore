@@ -2,12 +2,13 @@ import os
 import tempfile
 import unittest
 from uuid import uuid4
+import zipfile
 
 from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, open_high_confidence_findings
 from engine.db import get_connection, list_audit_events, list_evaluation_runs, list_integration_configs, list_review_decisions, upsert_integration_config
 from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_fixture_suite
-from engine.gerber_parser import parse_gerber_file
+from engine.gerber_parser import parse_gerber_directory, parse_gerber_file
 from engine.job_store import claim_jobs, create_job, get_job
 from engine.job_runner import process_queued_jobs
 from engine.org_store import accept_organization_invitation, create_organization, create_organization_invitation
@@ -48,15 +49,52 @@ class BackendSystemsTests(unittest.TestCase):
     def test_gerber_parser_extracts_geometry(self):
         with tempfile.NamedTemporaryFile("w", suffix=".gbr", delete=False) as handle:
             handle.write("%TF.FileFunction,Copper,L1,Top*%\n")
+            handle.write("%MOMM*%\n")
+            handle.write("%FSLAX24Y24*%\n")
+            handle.write("%ADD10C,0.2000*%\n")
+            handle.write("D10*\n")
             handle.write("X000000Y000000D02*\n")
             handle.write("X010000Y000000D01*\n")
             handle.write("X010000Y010000D01*\n")
+            handle.write("X005000Y005000D03*\n")
             path = handle.name
         try:
             pcb = parse_gerber_file(path)
             self.assertGreater(len(pcb.traces), 0)
+            self.assertGreater(len(pcb.zones), 0)
+            self.assertIn("geometry_capabilities", pcb.metadata)
         finally:
             os.remove(path)
+
+    def test_gerber_directory_and_archive_parser_extracts_cam_bundle(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            top = os.path.join(temp_dir, "board.gtl")
+            outline = os.path.join(temp_dir, "board.gko")
+            drill = os.path.join(temp_dir, "board.drl")
+            with open(top, "w", encoding="utf-8") as handle:
+                handle.write("%TF.FileFunction,Copper,L1,Top*%\n%MOMM*%\n%FSLAX24Y24*%\n%ADD10C,0.2500*%\nD10*\n")
+                handle.write("X000000Y000000D02*\nX020000Y000000D01*\nX020000Y020000D01*\n")
+            with open(outline, "w", encoding="utf-8") as handle:
+                handle.write("%TF.FileFunction,Profile,NP*%\n%MOMM*%\n%FSLAX24Y24*%\n%ADD10C,0.1000*%\nD10*\n")
+                handle.write("X000000Y000000D02*\nX020000Y000000D01*\nX020000Y020000D01*\nX000000Y020000D01*\nX000000Y000000D01*\n")
+            with open(drill, "w", encoding="utf-8") as handle:
+                handle.write("M48\nMETRIC,TZ\nT01C0.300\n%\nT01\nX005000Y005000\nX015000Y015000\nM30\n")
+
+            pcb = parse_gerber_directory(temp_dir)
+            self.assertGreater(len(pcb.traces), 0)
+            self.assertGreater(len(pcb.outline_segments), 0)
+            self.assertGreater(len(pcb.vias), 0)
+            self.assertEqual(pcb.source_format, "gerber_cam")
+            self.assertEqual(pcb.metadata["cam"]["layer_file_count"], 3)
+
+            archive_path = os.path.join(temp_dir, "bundle.zip")
+            with zipfile.ZipFile(archive_path, "w") as archive:
+                archive.write(top, arcname="board.gtl")
+                archive.write(outline, arcname="board.gko")
+                archive.write(drill, arcname="board.drl")
+            archive_pcb = parse_gerber_file(archive_path)
+            self.assertGreater(len(archive_pcb.traces), 0)
+            self.assertEqual(archive_pcb.metadata["cam"]["bundle_type"], "archive")
 
     def test_evaluation_backend_returns_summary(self):
         result = evaluate_fixture_suite()

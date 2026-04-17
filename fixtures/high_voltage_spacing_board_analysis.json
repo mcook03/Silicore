@@ -186,9 +186,9 @@
                 "U1"
             ],
             "nets": [
+                "HV-",
                 "CTRL",
-                "HV+",
-                "HV-"
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -226,9 +226,9 @@
                 "U1"
             ],
             "nets": [
+                "HV-",
                 "CTRL",
-                "HV+",
-                "HV-"
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -355,8 +355,8 @@
                 "J1"
             ],
             "nets": [
-                "HV+",
-                "HV-"
+                "HV-",
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -374,8 +374,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV+",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -410,9 +410,9 @@
                 "U1"
             ],
             "nets": [
+                "HV-",
                 "CTRL",
-                "HV+",
-                "HV-"
+                "HV+"
             ],
             "region": null,
             "metrics": {
@@ -430,9 +430,9 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
+                    "HV-",
                     "CTRL",
-                    "HV+",
-                    "HV-"
+                    "HV+"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -1096,6 +1096,9 @@
     },
     "pcb_snapshot": {
         "filename": "high_voltage_spacing_board.kicad_pcb",
+        "declared_layers": [
+            "F.Cu"
+        ],
         "layers": [
             "F.Cu"
         ],
@@ -1110,6 +1113,16 @@
         "board_width": 48.0,
         "board_height": 2.0,
         "source_format": "kicad_pcb",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": false,
+                "shapely": false,
+                "pyclipper": false
+            },
+            "parser": {},
+            "cam": {}
+        },
         "components": [
             {
                 "ref": "J1",
@@ -1844,7 +1857,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-17T02:08:43.936276+00:00",
+        "timestamp": "2026-04-17T21:49:50.042503+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2502,9 +2515,9 @@
                     "U1"
                 ],
                 "nets": [
+                    "HV-",
                     "CTRL",
-                    "HV+",
-                    "HV-"
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2533,9 +2546,9 @@
                     "U1"
                 ],
                 "nets": [
+                    "HV-",
                     "CTRL",
-                    "HV+",
-                    "HV-"
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2635,8 +2648,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "HV+",
-                    "HV-"
+                    "HV-",
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2654,8 +2667,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV+",
-                        "HV-"
+                        "HV-",
+                        "HV+"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -2681,9 +2694,9 @@
                     "U1"
                 ],
                 "nets": [
+                    "HV-",
                     "CTRL",
-                    "HV+",
-                    "HV-"
+                    "HV+"
                 ],
                 "region": null,
                 "metrics": {
@@ -2701,9 +2714,9 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
+                        "HV-",
                         "CTRL",
-                        "HV+",
-                        "HV-"
+                        "HV+"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -2951,7 +2964,7 @@
         "score": 0.2,
         "total_penalty": 9.8
     },
-    "generated_at": "2026-04-17T02:08:43.936287+00:00",
+    "generated_at": "2026-04-17T21:49:50.042508+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

@@ -15,14 +15,48 @@ from engine.dashboard_storage import (
 from engine.stackup_model import derive_stackup_summary
 from engine.subsystem_classifier import classify_pcb_subsystems
 
-SUPPORTED_EXTENSIONS = {".txt", ".brd", ".kicad_pcb", ".gbr", ".gko", ".ger", ".pcbdocascii"}
+SUPPORTED_EXTENSIONS = {
+    ".txt",
+    ".brd",
+    ".kicad_pcb",
+    ".gbr",
+    ".gko",
+    ".ger",
+    ".gtl",
+    ".gbl",
+    ".gto",
+    ".gbo",
+    ".gts",
+    ".gbs",
+    ".gm1",
+    ".pho",
+    ".art",
+    ".outline",
+    ".drl",
+    ".xln",
+    ".zip",
+    ".pcbdocascii",
+}
 FORMAT_READINESS = {
     ".kicad_pcb": {"label": "KiCad PCB", "status": "supported"},
     ".txt": {"label": "Structured Demo Text", "status": "supported"},
     ".brd": {"label": "Legacy Structured Board", "status": "supported"},
-    ".gbr": {"label": "Gerber", "status": "experimental"},
-    ".gko": {"label": "Gerber Outline", "status": "experimental"},
-    ".ger": {"label": "Gerber Layer", "status": "experimental"},
+    ".gbr": {"label": "Gerber CAM Layer", "status": "supported"},
+    ".gko": {"label": "Gerber Outline", "status": "supported"},
+    ".ger": {"label": "Gerber CAM Layer", "status": "supported"},
+    ".gtl": {"label": "Gerber Top Copper", "status": "supported"},
+    ".gbl": {"label": "Gerber Bottom Copper", "status": "supported"},
+    ".gto": {"label": "Gerber Top Silkscreen", "status": "supported"},
+    ".gbo": {"label": "Gerber Bottom Silkscreen", "status": "supported"},
+    ".gts": {"label": "Gerber Top Soldermask", "status": "supported"},
+    ".gbs": {"label": "Gerber Bottom Soldermask", "status": "supported"},
+    ".gm1": {"label": "Gerber Mechanical", "status": "supported"},
+    ".pho": {"label": "Gerber Photoplot", "status": "supported"},
+    ".art": {"label": "Gerber Artwork", "status": "supported"},
+    ".outline": {"label": "Gerber Outline", "status": "supported"},
+    ".drl": {"label": "Excellon Drill", "status": "supported"},
+    ".xln": {"label": "Excellon Drill", "status": "supported"},
+    ".zip": {"label": "Gerber CAM Archive", "status": "supported"},
     ".pcbdocascii": {"label": "Altium ASCII Export", "status": "experimental"},
 }
 
