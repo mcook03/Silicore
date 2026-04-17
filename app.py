@@ -1016,6 +1016,7 @@ def _build_cam_detail_view(cam_summary):
         "status_label": cam_summary.get("status_label") or "CAM review ready",
         "readiness_score": cam_summary.get("readiness_score", 0),
         "bundle_type": str(cam_summary.get("bundle_type") or "single_layer").replace("_", " ").title(),
+        "readiness_level": cam_summary.get("readiness_level") or "partial",
         "stats": [
             {"label": "CAM Files", "value": cam_summary.get("layer_file_count", 0)},
             {"label": "Copper Layers", "value": len(cam_summary.get("copper_layers") or [])},
@@ -1023,6 +1024,9 @@ def _build_cam_detail_view(cam_summary):
             {"label": "Drill Hits", "value": cam_summary.get("drill_count", 0)},
         ],
         "files": cam_summary.get("layer_files") or [],
+        "strengths": cam_summary.get("strengths") or [],
+        "missing_signals": cam_summary.get("missing_signals") or [],
+        "remediation_steps": cam_summary.get("remediation_steps") or [],
     }
 
 
@@ -2385,7 +2389,10 @@ def _build_project_atlas_context(project, workspace_intelligence, timeline_data,
     project_copilot = project_copilot or {}
 
     run_summaries = []
+    cam_boards = []
     for run in _sort_project_runs(project.get("runs", [])):
+        run_payload = _load_run_payload(run)
+        cam_summary = (run_payload or {}).get("cam_summary") or {}
         run_summaries.append(
             {
                 "name": run.get("name", "Run"),
@@ -2394,6 +2401,17 @@ def _build_project_atlas_context(project, workspace_intelligence, timeline_data,
                 "critical_count": _safe_int(run.get("critical_count"), 0),
             }
         )
+        if cam_summary.get("active"):
+            cam_boards.append(
+                {
+                    "name": run.get("name", "Run"),
+                    "readiness_score": cam_summary.get("readiness_score", 0),
+                    "complete": bool(cam_summary.get("complete")),
+                    "missing_signals": cam_summary.get("missing_signals") or [],
+                }
+            )
+
+    review_ready_cam = sum(1 for item in cam_boards if item.get("complete"))
 
     return {
         "project_id": project.get("project_id"),
@@ -2410,6 +2428,9 @@ def _build_project_atlas_context(project, workspace_intelligence, timeline_data,
         "trusted_focus_items": workspace_intelligence.get("trusted_focus_items") or [],
         "next_actions": workspace_intelligence.get("next_actions") or [],
         "run_summaries": run_summaries,
+        "cam_boards": cam_boards,
+        "cam_bundle_count": len(cam_boards),
+        "cam_ready_count": review_ready_cam,
     }
 
 

@@ -1189,7 +1189,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_alt_naming",
-        "timestamp": "2026-04-17T22:24:52.299978+00:00",
+        "timestamp": "2026-04-17T22:34:26.228444+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1688,7 +1688,16 @@
         "readiness_score": 100,
         "complete": true,
         "summary": "CAM import recognized 3 file(s), 1 copper layer(s), 4 outline segment(s), and 2 drill hit(s). The bundle looks complete enough for geometry-backed review.",
-        "status_label": "CAM review ready"
+        "status_label": "CAM review ready",
+        "strengths": [
+            "3 CAM file(s) recognized",
+            "1 copper layer(s) recognized",
+            "board outline recognized",
+            "drill data recognized"
+        ],
+        "missing_signals": [],
+        "remediation_steps": [],
+        "readiness_level": "ready"
     },
     "physics_summary": {
         "enabled": true,
@@ -1780,7 +1789,7 @@
         "score": 9.2,
         "total_penalty": 0.8
     },
-    "generated_at": "2026-04-17T22:24:52.299982+00:00",
+    "generated_at": "2026-04-17T22:34:26.228450+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

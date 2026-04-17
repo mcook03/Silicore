@@ -1,0 +1,2812 @@
+{
+    "filename": "gerber_cam_vendor_complete",
+    "file_path": "fixtures/gerber_cam_vendor_complete",
+    "score": 92.0,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 100.0,
+        "start_score_raw_10": 10.0,
+        "total_penalty": 8.0,
+        "total_penalty_raw_10": 0.8,
+        "severity_totals": {
+            "medium": 0.8
+        },
+        "category_totals": {
+            "assembly_testability": 0.8
+        },
+        "final_score": 92.0,
+        "final_score_raw_10": 9.2,
+        "floor_mode": "linear",
+        "soft_floor_score": 5.0,
+        "overflow_penalty_raw_10": 0.0,
+        "overflow_penalty": 0.0,
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "gerber_cam_vendor_complete",
+        "component_count": 0,
+        "net_count": 3,
+        "sample_components": [],
+        "risk_count": 2,
+        "severity_counts": {
+            "medium": 2
+        },
+        "category_counts": {
+            "assembly_testability": 2
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "gerber_cam_vendor_complete",
+        "declared_layers": [
+            "Gerber",
+            "Copper L2 Bot",
+            "Edge.Cuts",
+            "Profile NP",
+            "Drill",
+            "Copper L1 Top"
+        ],
+        "layers": [
+            "Copper L1 Top",
+            "Copper L2 Bot",
+            "Drill",
+            "Edge.Cuts",
+            "Gerber",
+            "Profile NP"
+        ],
+        "board_bounds": {
+            "min_x": -0.19999999999999996,
+            "max_x": 3.2,
+            "min_y": -0.19999999999999996,
+            "max_y": 2.2,
+            "width": 3.4000000000000004,
+            "height": 2.4000000000000004
+        },
+        "board_width": 3.4000000000000004,
+        "board_height": 2.4000000000000004,
+        "source_format": "gerber_cam",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": true,
+                "shapely": true,
+                "pyclipper": true
+            },
+            "parser": {},
+            "cam": {
+                "merged_sources": [
+                    {
+                        "filename": "bot_cu.ger",
+                        "source_format": "gerber",
+                        "trace_count": 5,
+                        "zone_count": 1
+                    },
+                    {
+                        "filename": "mech_profile.gm1",
+                        "source_format": "gerber",
+                        "trace_count": 0,
+                        "zone_count": 0
+                    },
+                    {
+                        "filename": "nc_drill.drl",
+                        "source_format": "excellon_drill",
+                        "trace_count": 0,
+                        "zone_count": 0
+                    },
+                    {
+                        "filename": "top_cu.ger",
+                        "source_format": "gerber",
+                        "trace_count": 5,
+                        "zone_count": 2
+                    }
+                ],
+                "bundle_type": "directory",
+                "layer_files": [
+                    {
+                        "filename": "bot_cu.ger",
+                        "source_format": "gerber",
+                        "layer_count": 2
+                    },
+                    {
+                        "filename": "mech_profile.gm1",
+                        "source_format": "gerber",
+                        "layer_count": 2
+                    },
+                    {
+                        "filename": "nc_drill.drl",
+                        "source_format": "excellon_drill",
+                        "layer_count": 1
+                    },
+                    {
+                        "filename": "top_cu.ger",
+                        "source_format": "gerber",
+                        "layer_count": 2
+                    }
+                ],
+                "layer_file_count": 4
+            }
+        },
+        "components": [],
+        "nets": {
+            "COPPER L2 BOT": {
+                "name": "COPPER L2 BOT",
+                "connections": [],
+                "trace_segments": [
+                    {
+                        "net_name": "COPPER L2 BOT",
+                        "x1": 0.0,
+                        "y1": 0.0,
+                        "x2": 3.0,
+                        "y2": 0.0,
+                        "width": 0.18,
+                        "layer": "Copper L2 Bot",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L2 BOT",
+                        "x1": 3.0,
+                        "y1": 0.0,
+                        "x2": 3.0,
+                        "y2": 2.0,
+                        "width": 0.18,
+                        "layer": "Copper L2 Bot",
+                        "length": 2.0
+                    },
+                    {
+                        "net_name": "COPPER L2 BOT",
+                        "x1": 3.0,
+                        "y1": 2.0,
+                        "x2": 0.0,
+                        "y2": 2.0,
+                        "width": 0.18,
+                        "layer": "Copper L2 Bot",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L2 BOT",
+                        "x1": 0.0,
+                        "y1": 2.0,
+                        "x2": 0.0,
+                        "y2": 0.0,
+                        "width": 0.18,
+                        "layer": "Copper L2 Bot",
+                        "length": 2.0
+                    },
+                    {
+                        "net_name": "COPPER L2 BOT",
+                        "x1": 0.4,
+                        "y1": 1.6,
+                        "x2": 2.6,
+                        "y2": 1.6,
+                        "width": 0.18,
+                        "layer": "Copper L2 Bot",
+                        "length": 2.2
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 12.2,
+                "min_trace_width": 0.18,
+                "max_trace_width": 0.18,
+                "via_count": 0,
+                "layer_count": 1
+            },
+            "DRILL": {
+                "name": "DRILL",
+                "connections": [],
+                "trace_segments": [],
+                "vias": [
+                    {
+                        "net_name": "DRILL",
+                        "x": 0.6,
+                        "y": 0.6,
+                        "drill": 0.3,
+                        "diameter": 0.525,
+                        "layers": [
+                            "Drill"
+                        ]
+                    },
+                    {
+                        "net_name": "DRILL",
+                        "x": 2.4,
+                        "y": 1.4,
+                        "drill": 0.3,
+                        "diameter": 0.525,
+                        "layers": [
+                            "Drill"
+                        ]
+                    }
+                ],
+                "total_trace_length": 0,
+                "min_trace_width": null,
+                "max_trace_width": null,
+                "via_count": 2,
+                "layer_count": 1
+            },
+            "COPPER L1 TOP": {
+                "name": "COPPER L1 TOP",
+                "connections": [],
+                "trace_segments": [
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 0.0,
+                        "y1": 0.0,
+                        "x2": 3.0,
+                        "y2": 0.0,
+                        "width": 0.18,
+                        "layer": "Copper L1 Top",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 3.0,
+                        "y1": 0.0,
+                        "x2": 3.0,
+                        "y2": 2.0,
+                        "width": 0.18,
+                        "layer": "Copper L1 Top",
+                        "length": 2.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 3.0,
+                        "y1": 2.0,
+                        "x2": 0.0,
+                        "y2": 2.0,
+                        "width": 0.18,
+                        "layer": "Copper L1 Top",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 0.0,
+                        "y1": 2.0,
+                        "x2": 0.0,
+                        "y2": 0.0,
+                        "width": 0.18,
+                        "layer": "Copper L1 Top",
+                        "length": 2.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 0.4,
+                        "y1": 0.4,
+                        "x2": 2.6,
+                        "y2": 0.4,
+                        "width": 0.18,
+                        "layer": "Copper L1 Top",
+                        "length": 2.2
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 12.2,
+                "min_trace_width": 0.18,
+                "max_trace_width": 0.18,
+                "via_count": 0,
+                "layer_count": 1
+            }
+        },
+        "traces": [
+            {
+                "net_name": "COPPER L2 BOT",
+                "x1": 0.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 0.0,
+                "width": 0.18,
+                "layer": "Copper L2 Bot",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L2 BOT",
+                "x1": 3.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 2.0,
+                "width": 0.18,
+                "layer": "Copper L2 Bot",
+                "length": 2.0
+            },
+            {
+                "net_name": "COPPER L2 BOT",
+                "x1": 3.0,
+                "y1": 2.0,
+                "x2": 0.0,
+                "y2": 2.0,
+                "width": 0.18,
+                "layer": "Copper L2 Bot",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L2 BOT",
+                "x1": 0.0,
+                "y1": 2.0,
+                "x2": 0.0,
+                "y2": 0.0,
+                "width": 0.18,
+                "layer": "Copper L2 Bot",
+                "length": 2.0
+            },
+            {
+                "net_name": "COPPER L2 BOT",
+                "x1": 0.4,
+                "y1": 1.6,
+                "x2": 2.6,
+                "y2": 1.6,
+                "width": 0.18,
+                "layer": "Copper L2 Bot",
+                "length": 2.2
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 0.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 0.0,
+                "width": 0.18,
+                "layer": "Copper L1 Top",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 3.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 2.0,
+                "width": 0.18,
+                "layer": "Copper L1 Top",
+                "length": 2.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 3.0,
+                "y1": 2.0,
+                "x2": 0.0,
+                "y2": 2.0,
+                "width": 0.18,
+                "layer": "Copper L1 Top",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 0.0,
+                "y1": 2.0,
+                "x2": 0.0,
+                "y2": 0.0,
+                "width": 0.18,
+                "layer": "Copper L1 Top",
+                "length": 2.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 0.4,
+                "y1": 0.4,
+                "x2": 2.6,
+                "y2": 0.4,
+                "width": 0.18,
+                "layer": "Copper L1 Top",
+                "length": 2.2
+            }
+        ],
+        "vias": [
+            {
+                "net_name": "DRILL",
+                "x": 0.6,
+                "y": 0.6,
+                "drill": 0.3,
+                "diameter": 0.525,
+                "layers": [
+                    "Drill"
+                ]
+            },
+            {
+                "net_name": "DRILL",
+                "x": 2.4,
+                "y": 1.4,
+                "drill": 0.3,
+                "diameter": 0.525,
+                "layers": [
+                    "Drill"
+                ]
+            }
+        ],
+        "zones": [
+            {
+                "net_name": "COPPER L2 BOT",
+                "layer": "Copper L2 Bot",
+                "points": [
+                    {
+                        "x": 2.5,
+                        "y": 1.0
+                    },
+                    {
+                        "x": 2.4978589232386037,
+                        "y": 0.934596870769857
+                    },
+                    {
+                        "x": 2.4914448613738105,
+                        "y": 0.8694738077799484
+                    },
+                    {
+                        "x": 2.4807852804032304,
+                        "y": 0.8049096779838718
+                    },
+                    {
+                        "x": 2.465925826289068,
+                        "y": 0.7411809548974793
+                    },
+                    {
+                        "x": 2.446930129495106,
+                        "y": 0.6785605346968384
+                    },
+                    {
+                        "x": 2.423879532511287,
+                        "y": 0.6173165676349102
+                    },
+                    {
+                        "x": 2.3968727415326883,
+                        "y": 0.5577113097809987
+                    },
+                    {
+                        "x": 2.366025403784439,
+                        "y": 0.5
+                    },
+                    {
+                        "x": 2.3314696123025453,
+                        "y": 0.4444297669803978
+                    },
+                    {
+                        "x": 2.2933533402912354,
+                        "y": 0.39123857099127946
+                    },
+                    {
+                        "x": 2.2518398074789774,
+                        "y": 0.34065418489993116
+                    },
+                    {
+                        "x": 2.2071067811865475,
+                        "y": 0.29289321881345254
+                    },
+                    {
+                        "x": 2.159345815100069,
+                        "y": 0.24816019252102262
+                    },
+                    {
+                        "x": 2.1087614290087204,
+                        "y": 0.20664665970876483
+                    },
+                    {
+                        "x": 2.055570233019602,
+                        "y": 0.16853038769745488
+                    },
+                    {
+                        "x": 2.0,
+                        "y": 0.1339745962155614
+                    },
+                    {
+                        "x": 1.9422886902190015,
+                        "y": 0.10312725846731174
+                    },
+                    {
+                        "x": 1.8826834323650898,
+                        "y": 0.07612046748871326
+                    },
+                    {
+                        "x": 1.8214394653031616,
+                        "y": 0.05306987050489442
+                    },
+                    {
+                        "x": 1.758819045102521,
+                        "y": 0.0340741737109318
+                    },
+                    {
+                        "x": 1.6950903220161284,
+                        "y": 0.01921471959676957
+                    },
+                    {
+                        "x": 1.6305261922200518,
+                        "y": 0.008555138626189618
+                    },
+                    {
+                        "x": 1.5654031292301434,
+                        "y": 0.002141076761396521
+                    },
+                    {
+                        "x": 1.5,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 1.434596870769857,
+                        "y": 0.002141076761396521
+                    },
+                    {
+                        "x": 1.3694738077799486,
+                        "y": 0.008555138626189507
+                    },
+                    {
+                        "x": 1.304909677983872,
+                        "y": 0.01921471959676946
+                    },
+                    {
+                        "x": 1.2411809548974793,
+                        "y": 0.03407417371093169
+                    },
+                    {
+                        "x": 1.1785605346968386,
+                        "y": 0.05306987050489431
+                    },
+                    {
+                        "x": 1.1173165676349104,
+                        "y": 0.07612046748871315
+                    },
+                    {
+                        "x": 1.057711309780999,
+                        "y": 0.10312725846731163
+                    },
+                    {
+                        "x": 1.0000000000000002,
+                        "y": 0.1339745962155613
+                    },
+                    {
+                        "x": 0.944429766980398,
+                        "y": 0.16853038769745465
+                    },
+                    {
+                        "x": 0.8912385709912797,
+                        "y": 0.2066466597087646
+                    },
+                    {
+                        "x": 0.8406541848999315,
+                        "y": 0.24816019252102228
+                    },
+                    {
+                        "x": 0.7928932188134525,
+                        "y": 0.2928932188134524
+                    },
+                    {
+                        "x": 0.7481601925210227,
+                        "y": 0.34065418489993105
+                    },
+                    {
+                        "x": 0.706646659708765,
+                        "y": 0.3912385709912791
+                    },
+                    {
+                        "x": 0.668530387697455,
+                        "y": 0.4444297669803975
+                    },
+                    {
+                        "x": 0.6339745962155615,
+                        "y": 0.49999999999999967
+                    },
+                    {
+                        "x": 0.6031272584673119,
+                        "y": 0.5577113097809983
+                    },
+                    {
+                        "x": 0.5761204674887133,
+                        "y": 0.6173165676349102
+                    },
+                    {
+                        "x": 0.5530698705048944,
+                        "y": 0.6785605346968382
+                    },
+                    {
+                        "x": 0.5340741737109318,
+                        "y": 0.741180954897479
+                    },
+                    {
+                        "x": 0.5192147195967696,
+                        "y": 0.8049096779838714
+                    },
+                    {
+                        "x": 0.5085551386261896,
+                        "y": 0.869473807779948
+                    },
+                    {
+                        "x": 0.5021410767613965,
+                        "y": 0.9345968707698564
+                    },
+                    {
+                        "x": 0.5,
+                        "y": 1.0
+                    },
+                    {
+                        "x": 0.5021410767613965,
+                        "y": 1.065403129230143
+                    },
+                    {
+                        "x": 0.5085551386261895,
+                        "y": 1.1305261922200514
+                    },
+                    {
+                        "x": 0.5192147195967695,
+                        "y": 1.195090322016128
+                    },
+                    {
+                        "x": 0.5340741737109316,
+                        "y": 1.2588190451025203
+                    },
+                    {
+                        "x": 0.5530698705048942,
+                        "y": 1.3214394653031611
+                    },
+                    {
+                        "x": 0.576120467488713,
+                        "y": 1.3826834323650892
+                    },
+                    {
+                        "x": 0.6031272584673116,
+                        "y": 1.442288690219001
+                    },
+                    {
+                        "x": 0.6339745962155612,
+                        "y": 1.4999999999999998
+                    },
+                    {
+                        "x": 0.6685303876974545,
+                        "y": 1.555570233019602
+                    },
+                    {
+                        "x": 0.7066466597087646,
+                        "y": 1.6087614290087204
+                    },
+                    {
+                        "x": 0.7481601925210223,
+                        "y": 1.6593458151000684
+                    },
+                    {
+                        "x": 0.7928932188134521,
+                        "y": 1.707106781186547
+                    },
+                    {
+                        "x": 0.8406541848999309,
+                        "y": 1.7518398074789774
+                    },
+                    {
+                        "x": 0.8912385709912791,
+                        "y": 1.793353340291235
+                    },
+                    {
+                        "x": 0.944429766980397,
+                        "y": 1.831469612302545
+                    },
+                    {
+                        "x": 0.9999999999999996,
+                        "y": 1.8660254037844384
+                    },
+                    {
+                        "x": 1.0577113097809987,
+                        "y": 1.8968727415326883
+                    },
+                    {
+                        "x": 1.1173165676349097,
+                        "y": 1.9238795325112865
+                    },
+                    {
+                        "x": 1.1785605346968382,
+                        "y": 1.9469301294951056
+                    },
+                    {
+                        "x": 1.2411809548974784,
+                        "y": 1.9659258262890682
+                    },
+                    {
+                        "x": 1.3049096779838714,
+                        "y": 1.9807852804032304
+                    },
+                    {
+                        "x": 1.3694738077799475,
+                        "y": 1.9914448613738103
+                    },
+                    {
+                        "x": 1.4345968707698564,
+                        "y": 1.9978589232386035
+                    },
+                    {
+                        "x": 1.5,
+                        "y": 2.0
+                    },
+                    {
+                        "x": 1.5654031292301425,
+                        "y": 1.9978589232386037
+                    },
+                    {
+                        "x": 1.6305261922200514,
+                        "y": 1.9914448613738105
+                    },
+                    {
+                        "x": 1.6950903220161275,
+                        "y": 1.9807852804032307
+                    },
+                    {
+                        "x": 1.7588190451025203,
+                        "y": 1.9659258262890684
+                    },
+                    {
+                        "x": 1.8214394653031616,
+                        "y": 1.9469301294951058
+                    },
+                    {
+                        "x": 1.8826834323650892,
+                        "y": 1.923879532511287
+                    },
+                    {
+                        "x": 1.942288690219001,
+                        "y": 1.8968727415326885
+                    },
+                    {
+                        "x": 1.9999999999999993,
+                        "y": 1.866025403784439
+                    },
+                    {
+                        "x": 2.0555702330196017,
+                        "y": 1.8314696123025453
+                    },
+                    {
+                        "x": 2.10876142900872,
+                        "y": 1.7933533402912358
+                    },
+                    {
+                        "x": 2.1593458151000684,
+                        "y": 1.7518398074789778
+                    },
+                    {
+                        "x": 2.2071067811865475,
+                        "y": 1.7071067811865477
+                    },
+                    {
+                        "x": 2.251839807478977,
+                        "y": 1.6593458151000693
+                    },
+                    {
+                        "x": 2.293353340291235,
+                        "y": 1.6087614290087209
+                    },
+                    {
+                        "x": 2.331469612302545,
+                        "y": 1.555570233019603
+                    },
+                    {
+                        "x": 2.3660254037844384,
+                        "y": 1.5000000000000004
+                    },
+                    {
+                        "x": 2.396872741532688,
+                        "y": 1.4422886902190022
+                    },
+                    {
+                        "x": 2.4238795325112865,
+                        "y": 1.3826834323650905
+                    },
+                    {
+                        "x": 2.4469301294951054,
+                        "y": 1.3214394653031618
+                    },
+                    {
+                        "x": 2.465925826289068,
+                        "y": 1.2588190451025216
+                    },
+                    {
+                        "x": 2.4807852804032304,
+                        "y": 1.1950903220161286
+                    },
+                    {
+                        "x": 2.49144486137381,
+                        "y": 1.1305261922200525
+                    },
+                    {
+                        "x": 2.4978589232386037,
+                        "y": 1.0654031292301436
+                    }
+                ],
+                "area_estimate": 3.1394
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "layer": "Copper L1 Top",
+                "points": [
+                    {
+                        "x": 2.2,
+                        "y": 1.0
+                    },
+                    {
+                        "x": 2.1974307078863244,
+                        "y": 0.9215162449238283
+                    },
+                    {
+                        "x": 2.1897338336485723,
+                        "y": 0.8433685693359381
+                    },
+                    {
+                        "x": 2.1769423364838767,
+                        "y": 0.7658916135806462
+                    },
+                    {
+                        "x": 2.159110991546882,
+                        "y": 0.6894171458769751
+                    },
+                    {
+                        "x": 2.136316155394127,
+                        "y": 0.6142726416362061
+                    },
+                    {
+                        "x": 2.1086554390135444,
+                        "y": 0.5407798811618922
+                    },
+                    {
+                        "x": 2.076247289839226,
+                        "y": 0.4692535717371985
+                    },
+                    {
+                        "x": 2.0392304845413265,
+                        "y": 0.40000000000000013
+                    },
+                    {
+                        "x": 1.9977635347630542,
+                        "y": 0.3333157203764774
+                    },
+                    {
+                        "x": 1.9520240083494822,
+                        "y": 0.2694862851895353
+                    },
+                    {
+                        "x": 1.902207768974773,
+                        "y": 0.20878502187991743
+                    },
+                    {
+                        "x": 1.8485281374238571,
+                        "y": 0.1514718625761431
+                    },
+                    {
+                        "x": 1.7912149781200828,
+                        "y": 0.09779223102522716
+                    },
+                    {
+                        "x": 1.7305137148104648,
+                        "y": 0.0479759916505178
+                    },
+                    {
+                        "x": 1.6666842796235228,
+                        "y": 0.0022364652369458726
+                    },
+                    {
+                        "x": 1.6,
+                        "y": -0.03923048454132627
+                    },
+                    {
+                        "x": 1.5307464282628018,
+                        "y": -0.0762472898392259
+                    },
+                    {
+                        "x": 1.4592201188381078,
+                        "y": -0.10865543901354413
+                    },
+                    {
+                        "x": 1.385727358363794,
+                        "y": -0.13631615539412656
+                    },
+                    {
+                        "x": 1.310582854123025,
+                        "y": -0.1591109915468818
+                    },
+                    {
+                        "x": 1.234108386419354,
+                        "y": -0.17694233648387647
+                    },
+                    {
+                        "x": 1.1566314306640622,
+                        "y": -0.18973383364857233
+                    },
+                    {
+                        "x": 1.078483755076172,
+                        "y": -0.19743070788632422
+                    },
+                    {
+                        "x": 1.0,
+                        "y": -0.19999999999999996
+                    },
+                    {
+                        "x": 0.9215162449238286,
+                        "y": -0.19743070788632422
+                    },
+                    {
+                        "x": 0.8433685693359383,
+                        "y": -0.18973383364857255
+                    },
+                    {
+                        "x": 0.7658916135806464,
+                        "y": -0.1769423364838767
+                    },
+                    {
+                        "x": 0.6894171458769753,
+                        "y": -0.15911099154688202
+                    },
+                    {
+                        "x": 0.6142726416362063,
+                        "y": -0.13631615539412678
+                    },
+                    {
+                        "x": 0.5407798811618927,
+                        "y": -0.10865543901354413
+                    },
+                    {
+                        "x": 0.4692535717371986,
+                        "y": -0.0762472898392259
+                    },
+                    {
+                        "x": 0.40000000000000024,
+                        "y": -0.039230484541326494
+                    },
+                    {
+                        "x": 0.3333157203764777,
+                        "y": 0.0022364652369456506
+                    },
+                    {
+                        "x": 0.26948628518953566,
+                        "y": 0.04797599165051758
+                    },
+                    {
+                        "x": 0.20878502187991776,
+                        "y": 0.09779223102522683
+                    },
+                    {
+                        "x": 0.1514718625761431,
+                        "y": 0.15147186257614298
+                    },
+                    {
+                        "x": 0.09779223102522727,
+                        "y": 0.20878502187991732
+                    },
+                    {
+                        "x": 0.047975991650518024,
+                        "y": 0.269486285189535
+                    },
+                    {
+                        "x": 0.0022364652369459836,
+                        "y": 0.33331572037647705
+                    },
+                    {
+                        "x": -0.03923048454132605,
+                        "y": 0.3999999999999996
+                    },
+                    {
+                        "x": -0.07624728983922568,
+                        "y": 0.46925357173719795
+                    },
+                    {
+                        "x": -0.10865543901354413,
+                        "y": 0.5407798811618921
+                    },
+                    {
+                        "x": -0.13631615539412656,
+                        "y": 0.6142726416362059
+                    },
+                    {
+                        "x": -0.1591109915468818,
+                        "y": 0.6894171458769748
+                    },
+                    {
+                        "x": -0.17694233648387647,
+                        "y": 0.7658916135806457
+                    },
+                    {
+                        "x": -0.18973383364857233,
+                        "y": 0.8433685693359376
+                    },
+                    {
+                        "x": -0.19743070788632422,
+                        "y": 0.9215162449238278
+                    },
+                    {
+                        "x": -0.19999999999999996,
+                        "y": 1.0
+                    },
+                    {
+                        "x": -0.19743070788632422,
+                        "y": 1.0784837550761714
+                    },
+                    {
+                        "x": -0.18973383364857255,
+                        "y": 1.1566314306640615
+                    },
+                    {
+                        "x": -0.1769423364838767,
+                        "y": 1.2341083864193534
+                    },
+                    {
+                        "x": -0.15911099154688202,
+                        "y": 1.3105828541230244
+                    },
+                    {
+                        "x": -0.136316155394127,
+                        "y": 1.3857273583637932
+                    },
+                    {
+                        "x": -0.10865543901354435,
+                        "y": 1.459220118838107
+                    },
+                    {
+                        "x": -0.0762472898392259,
+                        "y": 1.5307464282628014
+                    },
+                    {
+                        "x": -0.039230484541326494,
+                        "y": 1.5999999999999996
+                    },
+                    {
+                        "x": 0.0022364652369455396,
+                        "y": 1.6666842796235222
+                    },
+                    {
+                        "x": 0.04797599165051758,
+                        "y": 1.7305137148104643
+                    },
+                    {
+                        "x": 0.09779223102522683,
+                        "y": 1.7912149781200823
+                    },
+                    {
+                        "x": 0.15147186257614254,
+                        "y": 1.8485281374238567
+                    },
+                    {
+                        "x": 0.2087850218799171,
+                        "y": 1.9022077689747727
+                    },
+                    {
+                        "x": 0.269486285189535,
+                        "y": 1.9520240083494818
+                    },
+                    {
+                        "x": 0.3333157203764765,
+                        "y": 1.9977635347630538
+                    },
+                    {
+                        "x": 0.39999999999999947,
+                        "y": 2.039230484541326
+                    },
+                    {
+                        "x": 0.4692535717371984,
+                        "y": 2.076247289839226
+                    },
+                    {
+                        "x": 0.5407798811618916,
+                        "y": 2.1086554390135435
+                    },
+                    {
+                        "x": 0.6142726416362059,
+                        "y": 2.136316155394127
+                    },
+                    {
+                        "x": 0.6894171458769742,
+                        "y": 2.1591109915468816
+                    },
+                    {
+                        "x": 0.7658916135806456,
+                        "y": 2.1769423364838763
+                    },
+                    {
+                        "x": 0.843368569335937,
+                        "y": 2.1897338336485723
+                    },
+                    {
+                        "x": 0.9215162449238277,
+                        "y": 2.1974307078863244
+                    },
+                    {
+                        "x": 1.0,
+                        "y": 2.2
+                    },
+                    {
+                        "x": 1.0784837550761708,
+                        "y": 2.1974307078863244
+                    },
+                    {
+                        "x": 1.1566314306640615,
+                        "y": 2.1897338336485728
+                    },
+                    {
+                        "x": 1.234108386419353,
+                        "y": 2.1769423364838767
+                    },
+                    {
+                        "x": 1.3105828541230244,
+                        "y": 2.159110991546882
+                    },
+                    {
+                        "x": 1.3857273583637937,
+                        "y": 2.136316155394127
+                    },
+                    {
+                        "x": 1.459220118838107,
+                        "y": 2.1086554390135444
+                    },
+                    {
+                        "x": 1.5307464282628012,
+                        "y": 2.076247289839226
+                    },
+                    {
+                        "x": 1.5999999999999992,
+                        "y": 2.039230484541327
+                    },
+                    {
+                        "x": 1.6666842796235222,
+                        "y": 1.9977635347630545
+                    },
+                    {
+                        "x": 1.730513714810464,
+                        "y": 1.9520240083494829
+                    },
+                    {
+                        "x": 1.791214978120082,
+                        "y": 1.9022077689747734
+                    },
+                    {
+                        "x": 1.8485281374238567,
+                        "y": 1.8485281374238571
+                    },
+                    {
+                        "x": 1.9022077689747723,
+                        "y": 1.7912149781200832
+                    },
+                    {
+                        "x": 1.9520240083494818,
+                        "y": 1.730513714810465
+                    },
+                    {
+                        "x": 1.9977635347630538,
+                        "y": 1.6666842796235235
+                    },
+                    {
+                        "x": 2.039230484541326,
+                        "y": 1.6000000000000005
+                    },
+                    {
+                        "x": 2.076247289839225,
+                        "y": 1.5307464282628027
+                    },
+                    {
+                        "x": 2.1086554390135435,
+                        "y": 1.4592201188381084
+                    },
+                    {
+                        "x": 2.136316155394127,
+                        "y": 1.3857273583637943
+                    },
+                    {
+                        "x": 2.1591109915468816,
+                        "y": 1.3105828541230258
+                    },
+                    {
+                        "x": 2.1769423364838763,
+                        "y": 1.2341083864193545
+                    },
+                    {
+                        "x": 2.1897338336485723,
+                        "y": 1.156631430664063
+                    },
+                    {
+                        "x": 2.1974307078863244,
+                        "y": 1.0784837550761723
+                    }
+                ],
+                "area_estimate": 4.5207
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "layer": "Copper L1 Top",
+                "points": [
+                    {
+                        "x": 3.2,
+                        "y": 1.0
+                    },
+                    {
+                        "x": 3.1974307078863244,
+                        "y": 0.9215162449238283
+                    },
+                    {
+                        "x": 3.1897338336485723,
+                        "y": 0.8433685693359381
+                    },
+                    {
+                        "x": 3.1769423364838767,
+                        "y": 0.7658916135806462
+                    },
+                    {
+                        "x": 3.159110991546882,
+                        "y": 0.6894171458769751
+                    },
+                    {
+                        "x": 3.136316155394127,
+                        "y": 0.6142726416362061
+                    },
+                    {
+                        "x": 3.1086554390135444,
+                        "y": 0.5407798811618922
+                    },
+                    {
+                        "x": 3.076247289839226,
+                        "y": 0.4692535717371985
+                    },
+                    {
+                        "x": 3.0392304845413265,
+                        "y": 0.40000000000000013
+                    },
+                    {
+                        "x": 2.9977635347630542,
+                        "y": 0.3333157203764774
+                    },
+                    {
+                        "x": 2.952024008349482,
+                        "y": 0.2694862851895353
+                    },
+                    {
+                        "x": 2.902207768974773,
+                        "y": 0.20878502187991743
+                    },
+                    {
+                        "x": 2.848528137423857,
+                        "y": 0.1514718625761431
+                    },
+                    {
+                        "x": 2.791214978120083,
+                        "y": 0.09779223102522716
+                    },
+                    {
+                        "x": 2.730513714810465,
+                        "y": 0.0479759916505178
+                    },
+                    {
+                        "x": 2.6666842796235226,
+                        "y": 0.0022364652369458726
+                    },
+                    {
+                        "x": 2.6,
+                        "y": -0.03923048454132627
+                    },
+                    {
+                        "x": 2.530746428262802,
+                        "y": -0.0762472898392259
+                    },
+                    {
+                        "x": 2.4592201188381075,
+                        "y": -0.10865543901354413
+                    },
+                    {
+                        "x": 2.385727358363794,
+                        "y": -0.13631615539412656
+                    },
+                    {
+                        "x": 2.3105828541230253,
+                        "y": -0.1591109915468818
+                    },
+                    {
+                        "x": 2.234108386419354,
+                        "y": -0.17694233648387647
+                    },
+                    {
+                        "x": 2.156631430664062,
+                        "y": -0.18973383364857233
+                    },
+                    {
+                        "x": 2.078483755076172,
+                        "y": -0.19743070788632422
+                    },
+                    {
+                        "x": 2.0,
+                        "y": -0.19999999999999996
+                    },
+                    {
+                        "x": 1.9215162449238286,
+                        "y": -0.19743070788632422
+                    },
+                    {
+                        "x": 1.8433685693359383,
+                        "y": -0.18973383364857255
+                    },
+                    {
+                        "x": 1.7658916135806464,
+                        "y": -0.1769423364838767
+                    },
+                    {
+                        "x": 1.6894171458769753,
+                        "y": -0.15911099154688202
+                    },
+                    {
+                        "x": 1.6142726416362063,
+                        "y": -0.13631615539412678
+                    },
+                    {
+                        "x": 1.5407798811618927,
+                        "y": -0.10865543901354413
+                    },
+                    {
+                        "x": 1.4692535717371986,
+                        "y": -0.0762472898392259
+                    },
+                    {
+                        "x": 1.4000000000000004,
+                        "y": -0.039230484541326494
+                    },
+                    {
+                        "x": 1.3333157203764778,
+                        "y": 0.0022364652369456506
+                    },
+                    {
+                        "x": 1.2694862851895357,
+                        "y": 0.04797599165051758
+                    },
+                    {
+                        "x": 1.2087850218799177,
+                        "y": 0.09779223102522683
+                    },
+                    {
+                        "x": 1.151471862576143,
+                        "y": 0.15147186257614298
+                    },
+                    {
+                        "x": 1.0977922310252273,
+                        "y": 0.20878502187991732
+                    },
+                    {
+                        "x": 1.047975991650518,
+                        "y": 0.269486285189535
+                    },
+                    {
+                        "x": 1.002236465236946,
+                        "y": 0.33331572037647705
+                    },
+                    {
+                        "x": 0.960769515458674,
+                        "y": 0.3999999999999996
+                    },
+                    {
+                        "x": 0.9237527101607743,
+                        "y": 0.46925357173719795
+                    },
+                    {
+                        "x": 0.8913445609864559,
+                        "y": 0.5407798811618921
+                    },
+                    {
+                        "x": 0.8636838446058734,
+                        "y": 0.6142726416362059
+                    },
+                    {
+                        "x": 0.8408890084531182,
+                        "y": 0.6894171458769748
+                    },
+                    {
+                        "x": 0.8230576635161235,
+                        "y": 0.7658916135806457
+                    },
+                    {
+                        "x": 0.8102661663514277,
+                        "y": 0.8433685693359376
+                    },
+                    {
+                        "x": 0.8025692921136758,
+                        "y": 0.9215162449238278
+                    },
+                    {
+                        "x": 0.8,
+                        "y": 1.0
+                    },
+                    {
+                        "x": 0.8025692921136758,
+                        "y": 1.0784837550761714
+                    },
+                    {
+                        "x": 0.8102661663514275,
+                        "y": 1.1566314306640615
+                    },
+                    {
+                        "x": 0.8230576635161233,
+                        "y": 1.2341083864193534
+                    },
+                    {
+                        "x": 0.840889008453118,
+                        "y": 1.3105828541230244
+                    },
+                    {
+                        "x": 0.863683844605873,
+                        "y": 1.3857273583637932
+                    },
+                    {
+                        "x": 0.8913445609864556,
+                        "y": 1.459220118838107
+                    },
+                    {
+                        "x": 0.9237527101607741,
+                        "y": 1.5307464282628014
+                    },
+                    {
+                        "x": 0.9607695154586735,
+                        "y": 1.5999999999999996
+                    },
+                    {
+                        "x": 1.0022364652369455,
+                        "y": 1.6666842796235222
+                    },
+                    {
+                        "x": 1.0479759916505176,
+                        "y": 1.7305137148104643
+                    },
+                    {
+                        "x": 1.0977922310252268,
+                        "y": 1.7912149781200823
+                    },
+                    {
+                        "x": 1.1514718625761424,
+                        "y": 1.8485281374238567
+                    },
+                    {
+                        "x": 1.2087850218799172,
+                        "y": 1.9022077689747727
+                    },
+                    {
+                        "x": 1.269486285189535,
+                        "y": 1.9520240083494818
+                    },
+                    {
+                        "x": 1.3333157203764765,
+                        "y": 1.9977635347630538
+                    },
+                    {
+                        "x": 1.3999999999999995,
+                        "y": 2.039230484541326
+                    },
+                    {
+                        "x": 1.4692535717371984,
+                        "y": 2.076247289839226
+                    },
+                    {
+                        "x": 1.5407798811618916,
+                        "y": 2.1086554390135435
+                    },
+                    {
+                        "x": 1.6142726416362059,
+                        "y": 2.136316155394127
+                    },
+                    {
+                        "x": 1.6894171458769742,
+                        "y": 2.1591109915468816
+                    },
+                    {
+                        "x": 1.7658916135806457,
+                        "y": 2.1769423364838763
+                    },
+                    {
+                        "x": 1.843368569335937,
+                        "y": 2.1897338336485723
+                    },
+                    {
+                        "x": 1.9215162449238277,
+                        "y": 2.1974307078863244
+                    },
+                    {
+                        "x": 2.0,
+                        "y": 2.2
+                    },
+                    {
+                        "x": 2.078483755076171,
+                        "y": 2.1974307078863244
+                    },
+                    {
+                        "x": 2.1566314306640617,
+                        "y": 2.1897338336485728
+                    },
+                    {
+                        "x": 2.234108386419353,
+                        "y": 2.1769423364838767
+                    },
+                    {
+                        "x": 2.3105828541230244,
+                        "y": 2.159110991546882
+                    },
+                    {
+                        "x": 2.385727358363794,
+                        "y": 2.136316155394127
+                    },
+                    {
+                        "x": 2.459220118838107,
+                        "y": 2.1086554390135444
+                    },
+                    {
+                        "x": 2.530746428262801,
+                        "y": 2.076247289839226
+                    },
+                    {
+                        "x": 2.599999999999999,
+                        "y": 2.039230484541327
+                    },
+                    {
+                        "x": 2.666684279623522,
+                        "y": 1.9977635347630545
+                    },
+                    {
+                        "x": 2.730513714810464,
+                        "y": 1.9520240083494829
+                    },
+                    {
+                        "x": 2.791214978120082,
+                        "y": 1.9022077689747734
+                    },
+                    {
+                        "x": 2.8485281374238567,
+                        "y": 1.8485281374238571
+                    },
+                    {
+                        "x": 2.9022077689747725,
+                        "y": 1.7912149781200832
+                    },
+                    {
+                        "x": 2.9520240083494818,
+                        "y": 1.730513714810465
+                    },
+                    {
+                        "x": 2.997763534763054,
+                        "y": 1.6666842796235235
+                    },
+                    {
+                        "x": 3.039230484541326,
+                        "y": 1.6000000000000005
+                    },
+                    {
+                        "x": 3.076247289839225,
+                        "y": 1.5307464282628027
+                    },
+                    {
+                        "x": 3.1086554390135435,
+                        "y": 1.4592201188381084
+                    },
+                    {
+                        "x": 3.136316155394127,
+                        "y": 1.3857273583637943
+                    },
+                    {
+                        "x": 3.1591109915468816,
+                        "y": 1.3105828541230258
+                    },
+                    {
+                        "x": 3.1769423364838763,
+                        "y": 1.2341083864193545
+                    },
+                    {
+                        "x": 3.1897338336485723,
+                        "y": 1.156631430664063
+                    },
+                    {
+                        "x": 3.1974307078863244,
+                        "y": 1.0784837550761723
+                    }
+                ],
+                "area_estimate": 4.5207
+            }
+        ],
+        "outline_segments": [
+            {
+                "x1": 0.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 0.0,
+                "layer": "Profile NP",
+                "kind": "line",
+                "length": 3.0
+            },
+            {
+                "x1": 3.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 2.0,
+                "layer": "Profile NP",
+                "kind": "line",
+                "length": 2.0
+            },
+            {
+                "x1": 3.0,
+                "y1": 2.0,
+                "x2": 0.0,
+                "y2": 2.0,
+                "layer": "Profile NP",
+                "kind": "line",
+                "length": 3.0
+            },
+            {
+                "x1": 0.0,
+                "y1": 2.0,
+                "x2": 0.0,
+                "y2": 0.0,
+                "layer": "Profile NP",
+                "kind": "line",
+                "length": 2.0
+            }
+        ]
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "soft_floor_score": 0.5,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "decoupling_strategy": {
+                "local_distance_threshold": 4.0,
+                "bulk_distance_threshold": 12.0,
+                "min_local_caps": 1,
+                "target_keywords": [
+                    "mcu",
+                    "cpu",
+                    "fpga",
+                    "soc",
+                    "adc",
+                    "dac",
+                    "sensor",
+                    "driver",
+                    "ic",
+                    "controller",
+                    "regulator",
+                    "pmic"
+                ],
+                "capacitor_keywords": [
+                    "cap",
+                    "capacitor"
+                ],
+                "bulk_keywords": [
+                    "10u",
+                    "22u",
+                    "47u",
+                    "100u",
+                    "bulk",
+                    "electrolytic",
+                    "tantalum"
+                ]
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "cam_geometry": {
+                "min_clearance": 0.18,
+                "native_min_clearance": 0.08,
+                "min_creepage": 2.5,
+                "cluster_granularity": 1.0,
+                "max_clearance_findings": 12,
+                "max_creepage_findings": 6,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "cam_bundle": {
+                "require_outline": true,
+                "require_drill": true,
+                "min_copper_area_ratio": 0.005,
+                "min_layer_files": 2
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "clock_sensitive_placement": {
+                "max_clock_source_distance": 12.0,
+                "sensitive_aggressor_keepout": 8.0,
+                "clock_source_keywords": [
+                    "XTAL",
+                    "OSC",
+                    "CRYSTAL",
+                    "CLOCK",
+                    "Y"
+                ],
+                "controller_keywords": [
+                    "MCU",
+                    "CPU",
+                    "SOC",
+                    "FPGA",
+                    "DSP",
+                    "STM",
+                    "ESP",
+                    "PIC",
+                    "AVR",
+                    "NRF",
+                    "IMX",
+                    "ATSAM"
+                ],
+                "sensitive_component_keywords": [
+                    "ADC",
+                    "DAC",
+                    "REF",
+                    "SENSOR",
+                    "OPAMP",
+                    "AMP",
+                    "LNA",
+                    "AFE",
+                    "ANALOG"
+                ],
+                "aggressor_component_keywords": [
+                    "REG",
+                    "BUCK",
+                    "BOOST",
+                    "PMIC",
+                    "INDUCTOR",
+                    "L",
+                    "MOSFET",
+                    "DRIVER",
+                    "SW",
+                    "CLOCK"
+                ]
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "current_density": {
+                "min_high_current_width": 0.7,
+                "max_bottleneck_length": 24.0,
+                "neckdown_ratio_threshold": 2.5,
+                "max_bottleneck_vias": 3,
+                "high_current_net_keywords": [
+                    "VIN",
+                    "VBUS",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "12V",
+                    "PACK",
+                    "BATT",
+                    "SW",
+                    "PHASE"
+                ]
+            },
+            "analog_isolation": {
+                "sensitive_component_keepout": 8.0,
+                "max_analog_route_length": 20.0,
+                "sensitive_component_keywords": [
+                    "ADC",
+                    "DAC",
+                    "REF",
+                    "SENSOR",
+                    "OPAMP",
+                    "AFE",
+                    "AMP",
+                    "LNA",
+                    "ANALOG"
+                ],
+                "aggressor_component_keywords": [
+                    "REG",
+                    "BUCK",
+                    "BOOST",
+                    "PMIC",
+                    "INDUCTOR",
+                    "MOSFET",
+                    "SW",
+                    "USB",
+                    "ETH",
+                    "DDR",
+                    "MCU",
+                    "CPU"
+                ],
+                "analog_net_keywords": [
+                    "ADC",
+                    "REF",
+                    "SENSE",
+                    "ANALOG",
+                    "VREF",
+                    "THERM",
+                    "CURRENT",
+                    "SHUNT"
+                ]
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "gerber_cam_vendor_complete",
+        "timestamp": "2026-04-17T22:34:26.248812+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "soft_floor_score": 0.5,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "decoupling_strategy": {
+                    "local_distance_threshold": 4.0,
+                    "bulk_distance_threshold": 12.0,
+                    "min_local_caps": 1,
+                    "target_keywords": [
+                        "mcu",
+                        "cpu",
+                        "fpga",
+                        "soc",
+                        "adc",
+                        "dac",
+                        "sensor",
+                        "driver",
+                        "ic",
+                        "controller",
+                        "regulator",
+                        "pmic"
+                    ],
+                    "capacitor_keywords": [
+                        "cap",
+                        "capacitor"
+                    ],
+                    "bulk_keywords": [
+                        "10u",
+                        "22u",
+                        "47u",
+                        "100u",
+                        "bulk",
+                        "electrolytic",
+                        "tantalum"
+                    ]
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "cam_geometry": {
+                    "min_clearance": 0.18,
+                    "native_min_clearance": 0.08,
+                    "min_creepage": 2.5,
+                    "cluster_granularity": 1.0,
+                    "max_clearance_findings": 12,
+                    "max_creepage_findings": 6,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "cam_bundle": {
+                    "require_outline": true,
+                    "require_drill": true,
+                    "min_copper_area_ratio": 0.005,
+                    "min_layer_files": 2
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "clock_sensitive_placement": {
+                    "max_clock_source_distance": 12.0,
+                    "sensitive_aggressor_keepout": 8.0,
+                    "clock_source_keywords": [
+                        "XTAL",
+                        "OSC",
+                        "CRYSTAL",
+                        "CLOCK",
+                        "Y"
+                    ],
+                    "controller_keywords": [
+                        "MCU",
+                        "CPU",
+                        "SOC",
+                        "FPGA",
+                        "DSP",
+                        "STM",
+                        "ESP",
+                        "PIC",
+                        "AVR",
+                        "NRF",
+                        "IMX",
+                        "ATSAM"
+                    ],
+                    "sensitive_component_keywords": [
+                        "ADC",
+                        "DAC",
+                        "REF",
+                        "SENSOR",
+                        "OPAMP",
+                        "AMP",
+                        "LNA",
+                        "AFE",
+                        "ANALOG"
+                    ],
+                    "aggressor_component_keywords": [
+                        "REG",
+                        "BUCK",
+                        "BOOST",
+                        "PMIC",
+                        "INDUCTOR",
+                        "L",
+                        "MOSFET",
+                        "DRIVER",
+                        "SW",
+                        "CLOCK"
+                    ]
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "current_density": {
+                    "min_high_current_width": 0.7,
+                    "max_bottleneck_length": 24.0,
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_bottleneck_vias": 3,
+                    "high_current_net_keywords": [
+                        "VIN",
+                        "VBUS",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "12V",
+                        "PACK",
+                        "BATT",
+                        "SW",
+                        "PHASE"
+                    ]
+                },
+                "analog_isolation": {
+                    "sensitive_component_keepout": 8.0,
+                    "max_analog_route_length": 20.0,
+                    "sensitive_component_keywords": [
+                        "ADC",
+                        "DAC",
+                        "REF",
+                        "SENSOR",
+                        "OPAMP",
+                        "AFE",
+                        "AMP",
+                        "LNA",
+                        "ANALOG"
+                    ],
+                    "aggressor_component_keywords": [
+                        "REG",
+                        "BUCK",
+                        "BOOST",
+                        "PMIC",
+                        "INDUCTOR",
+                        "MOSFET",
+                        "SW",
+                        "USB",
+                        "ETH",
+                        "DDR",
+                        "MCU",
+                        "CPU"
+                    ],
+                    "analog_net_keywords": [
+                        "ADC",
+                        "REF",
+                        "SENSE",
+                        "ANALOG",
+                        "VREF",
+                        "THERM",
+                        "CURRENT",
+                        "SHUNT"
+                    ]
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "parser_confidence": {
+        "score": 67.0,
+        "status": "experimental",
+        "component_count": 0,
+        "net_count": 3,
+        "trace_count": 10,
+        "via_count": 2,
+        "outline_count": 4,
+        "zone_count": 3,
+        "layer_count": 6,
+        "summary": "Parser confidence is 67.0 / 100 for this board (directory) with 4 CAM file(s) input."
+    },
+    "cam_summary": {
+        "active": true,
+        "source_format": "gerber_cam",
+        "bundle_type": "directory",
+        "layer_file_count": 4,
+        "layer_files": [
+            {
+                "filename": "bot_cu.ger",
+                "source_format": "gerber",
+                "layer_count": 2
+            },
+            {
+                "filename": "mech_profile.gm1",
+                "source_format": "gerber",
+                "layer_count": 2
+            },
+            {
+                "filename": "nc_drill.drl",
+                "source_format": "excellon_drill",
+                "layer_count": 1
+            },
+            {
+                "filename": "top_cu.ger",
+                "source_format": "gerber",
+                "layer_count": 2
+            }
+        ],
+        "declared_layers": [
+            "Gerber",
+            "Copper L2 Bot",
+            "Edge.Cuts",
+            "Profile NP",
+            "Drill",
+            "Copper L1 Top"
+        ],
+        "copper_layers": [
+            "Copper L2 Bot",
+            "Copper L1 Top"
+        ],
+        "outline_count": 4,
+        "drill_count": 2,
+        "trace_count": 10,
+        "zone_count": 3,
+        "parser_confidence": 67.0,
+        "readiness_score": 100,
+        "complete": true,
+        "summary": "CAM import recognized 4 file(s), 2 copper layer(s), 4 outline segment(s), and 2 drill hit(s). The bundle looks complete enough for geometry-backed review.",
+        "status_label": "CAM review ready",
+        "strengths": [
+            "4 CAM file(s) recognized",
+            "2 copper layer(s) recognized",
+            "board outline recognized",
+            "drill data recognized"
+        ],
+        "missing_signals": [],
+        "remediation_steps": [],
+        "readiness_level": "ready"
+    },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [],
+        "power_models": [],
+        "summary": {
+            "signal_nets_modeled": 0,
+            "power_nets_modeled": 0,
+            "worst_impedance_mismatch_pct": 0.0,
+            "worst_voltage_drop_mv": 0.0
+        },
+        "risks": []
+    },
+    "stackup_summary": {
+        "layer_count": 6,
+        "copper_layers": [
+            "Edge.Cuts"
+        ],
+        "signal_layers": [
+            "Edge.Cuts"
+        ],
+        "reference_layers": [],
+        "style": "two_layer",
+        "reference_coverage_pct": 0.0,
+        "dominant_signal_layer": "Copper L2 Bot",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets.",
+            "No dedicated reference layer was inferred from the current board data."
+        ]
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            }
+        ],
+        "score": 9.2,
+        "total_penalty": 0.8
+    },
+    "generated_at": "2026-04-17T22:34:26.248818+00:00",
+    "subsystem_summary": {
+        "subsystems": [
+            {
+                "name": "general",
+                "label": "General",
+                "component_count": 0,
+                "net_count": 3,
+                "components": [],
+                "nets": [
+                    "COPPER L2 BOT",
+                    "DRILL",
+                    "COPPER L1 TOP"
+                ],
+                "weight": 3.0
+            }
+        ],
+        "dominant_subsystem": "General",
+        "interaction_risks": [],
+        "summary": "Dominant subsystem pressure is General."
+    },
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows very low design risk. The main risk concentration is in assembly testability. The highest-priority issue is Ground test-point coverage appears limited for bring-up and probing. The current design snapshot includes 0 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency."
+            }
+        ]
+    }
+}

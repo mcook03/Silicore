@@ -371,20 +371,34 @@ def answer_board_question(prompt, context, history=None):
                 ],
                 confidence=0.77,
             )
-        return _make_response(
-            "cam",
-            "CAM Package Review",
-            cam_summary.get("summary") or "CAM package review data is available for this board.",
-            detail=(
+        missing_signals = _listify(cam_summary.get("missing_signals"))
+        remediation_steps = _listify(cam_summary.get("remediation_steps"))
+        strengths = _listify(cam_summary.get("strengths"))
+        answer = cam_summary.get("summary") or "CAM package review data is available for this board."
+        detail_parts = [
+            (
                 f"{cam_summary.get('status_label', 'CAM review ready')} with "
                 f"{cam_summary.get('layer_file_count', 0)} file(s), "
                 f"{len(cam_summary.get('copper_layers') or [])} copper layer(s), "
                 f"{cam_summary.get('outline_count', 0)} outline segment(s), and "
                 f"{cam_summary.get('drill_count', 0)} drill hit(s)."
-            ),
+            )
+        ]
+        if missing_signals:
+            detail_parts.append(f"Main package gap: {missing_signals[0]}.")
+        elif strengths:
+            detail_parts.append(f"Strongest recognition signal: {strengths[0]}.")
+        if remediation_steps:
+            detail_parts.append(f"Next CAM fix: {remediation_steps[0]}")
+        return _make_response(
+            "cam",
+            "CAM Package Review",
+            answer,
+            detail=" ".join(detail_parts),
             follow_ups=[
                 "Is this CAM package complete enough for fabrication review?",
                 "How much should I trust this Gerber import?",
+                "What should I ask the designer or fabricator to re-export?",
                 "Show me the strongest evidence",
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
@@ -541,6 +555,7 @@ def _resolve_project_intent(prompt, history):
     if _prompt_is_follow_up(prompt):
         return _history_last_intent(history) or "overview"
     mapping = [
+        ("cam_portfolio", _keywords(["gerber", "cam", "fabrication package", "drill", "outline", "cam readiness"])),
         ("recurring_pattern", _keywords(["repeat", "recurring", "systemic", "pattern", "family"])),
         ("workspace_momentum", _keywords(["improv", "trend", "momentum", "better", "timeline"])),
         ("team_action", _keywords(["team", "next", "owner", "what should", "action"])),
@@ -563,6 +578,49 @@ def answer_project_question(prompt, context, history=None):
     run_summaries = _listify(context.get("run_summaries"))
     top_focus = trusted_focus[0] if trusted_focus else {}
     top_action = next_actions[0] if next_actions else {}
+    cam_boards = _listify(context.get("cam_boards"))
+
+    if intent == "cam_portfolio":
+        if not cam_boards:
+            return _make_response(
+                "cam_portfolio",
+                "CAM Portfolio",
+                "This workspace does not currently include Gerber/CAM-backed review runs.",
+                detail="Atlas only surfaces CAM portfolio guidance when at least one linked run includes a fabrication package import.",
+                follow_ups=[
+                    "Are we improving enough?",
+                    "What should the team do next?",
+                ],
+                confidence=0.76,
+            )
+        ranked_cam = sorted(cam_boards, key=lambda item: _safe_float(item.get("readiness_score"), 0), reverse=True)
+        weakest_cam = ranked_cam[-1]
+        strongest_cam = ranked_cam[0]
+        answer = (
+            f"The workspace has {len(cam_boards)} CAM-backed run(s). "
+            f"The strongest CAM package is {strongest_cam.get('name', 'Unknown')} at {strongest_cam.get('readiness_score', 0)} / 100, "
+            f"while the weakest is {weakest_cam.get('name', 'Unknown')} at {weakest_cam.get('readiness_score', 0)} / 100."
+        )
+        detail = (
+            f"{context.get('cam_ready_count', 0)} CAM package(s) are review ready. "
+            + (
+                f"The most urgent portfolio CAM gap is {weakest_cam.get('missing_signals', ['not yet classified'])[0]}."
+                if weakest_cam.get("missing_signals") else
+                "Atlas does not currently see a dominant CAM completeness gap."
+            )
+        )
+        return _make_response(
+            "cam_portfolio",
+            "CAM Portfolio",
+            answer,
+            detail=detail,
+            follow_ups=[
+                "Which workspace issue is repeating most?",
+                "What should the team do next?",
+                "Are we improving enough for the next review gate?",
+            ],
+            confidence=0.8,
+        )
 
     if intent == "recurring_pattern":
         return _make_response(

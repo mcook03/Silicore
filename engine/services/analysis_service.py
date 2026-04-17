@@ -127,6 +127,40 @@ def _build_cam_summary(pcb, extension):
     zone_count = len(getattr(pcb, "zones", []) or [])
     parser_confidence = _estimate_parser_confidence(pcb, extension)
     complete = bool(outline_count and (drill_count or not copper_layers) and (trace_count or zone_count))
+    missing_signals = []
+    strengths = []
+    remediation_steps = []
+
+    if layer_files:
+        strengths.append(f"{len(layer_files)} CAM file(s) recognized")
+    if copper_layers:
+        strengths.append(f"{len(copper_layers)} copper layer(s) recognized")
+    if outline_count:
+        strengths.append("board outline recognized")
+    if drill_count:
+        strengths.append("drill data recognized")
+
+    if not outline_count:
+        missing_signals.append("No recognizable board outline was found")
+        remediation_steps.append("Export a profile or mechanical outline layer in the Gerber package.")
+    if copper_layers and not drill_count:
+        missing_signals.append("Copper layers were found without drill data")
+        remediation_steps.append("Include Excellon or NC drill output with the fabrication package.")
+    if not copper_layers:
+        missing_signals.append("No copper layers were recognized")
+        remediation_steps.append("Export at least one copper Gerber layer and verify CAM file naming.")
+    if not (trace_count or zone_count):
+        missing_signals.append("Copper geometry coverage is too sparse for a full review")
+        remediation_steps.append("Verify that routed copper and filled regions are included in the exported Gerbers.")
+    if len(layer_files) < 2:
+        missing_signals.append("Very few CAM files were recognized")
+        remediation_steps.append("Export the full fabrication bundle instead of a partial single-layer subset.")
+
+    deduped_steps = []
+    for item in remediation_steps:
+        if item not in deduped_steps:
+            deduped_steps.append(item)
+    remediation_steps = deduped_steps[:4]
     readiness_score = 35
     if layer_files:
         readiness_score += min(len(layer_files) * 8, 24)
@@ -165,6 +199,10 @@ def _build_cam_summary(pcb, extension):
         "complete": complete,
         "summary": summary,
         "status_label": "CAM review ready" if complete else "CAM package incomplete",
+        "strengths": strengths[:4],
+        "missing_signals": missing_signals[:5],
+        "remediation_steps": remediation_steps,
+        "readiness_level": "ready" if complete else "partial" if readiness_score >= 65 else "needs_work",
     }
 
 

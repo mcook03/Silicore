@@ -95,6 +95,26 @@
                     CAM readiness ratio: {{ evaluation_summary.cam_health.readiness_ratio }}%.
                 </p>
             </div>
+            {% if evaluation_summary.cam_health.readiness_bands %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Readiness Bands</h3>
+                <p>
+                    {% for item in evaluation_summary.cam_health.readiness_bands %}
+                    <span class="mini-chip mini-chip-medium">{{ item.label }} · {{ item.count }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
+            {% if evaluation_summary.cam_health.missing_signals %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Common CAM Gaps</h3>
+                <p>
+                    {% for item in evaluation_summary.cam_health.missing_signals[:4] %}
+                    <span class="mini-chip mini-chip-critical">{{ item.label }} · {{ item.count }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
             {% endif %}
             {% else %}
             <div class="empty-state">Admin access is required to view evaluation and calibration summary data.</div>

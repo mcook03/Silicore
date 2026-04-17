@@ -337,6 +337,9 @@
                     <div>
                         <div class="timeline-title">{{ board.filename }}</div>
                         <div class="timeline-copy">{{ board.cam_summary.summary }}</div>
+                        {% if board.cam_summary.missing_signals %}
+                        <div class="timeline-copy">Missing: {{ board.cam_summary.missing_signals|join(' • ') }}</div>
+                        {% endif %}
                     </div>
                     <div class="timeline-copy">{{ board.cam_summary.readiness_score }} / 100</div>
                 </div>
@@ -362,6 +365,17 @@
                 </div>
                 {% endfor %}
             </div>
+            {% set incomplete_cam = cam_boards|rejectattr('cam_summary.complete')|list %}
+            {% if incomplete_cam %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Most Common CAM Gaps</h3>
+                <p>
+                    {% for board in incomplete_cam[:3] %}
+                    {{ board.filename }}: {{ (board.cam_summary.missing_signals or ['No classified gap'])|join(' • ') }}{% if not loop.last %}<br>{% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
         </div>
     </section>
 </section>

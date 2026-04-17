@@ -468,6 +468,18 @@
                 {% if result.cam_summary.layer_files %}
                 <p class="small-muted" style="margin-top:10px;">Files: {{ result.cam_summary.layer_files|join(', ') }}</p>
                 {% endif %}
+                {% if result.cam_summary.missing_signals %}
+                <div class="summary-panel compact-summary" style="margin-top:12px;">
+                    <h3>Missing Signals</h3>
+                    <p>{{ result.cam_summary.missing_signals|join(' • ') }}</p>
+                </div>
+                {% endif %}
+                {% if result.cam_summary.remediation_steps %}
+                <div class="summary-panel compact-summary" style="margin-top:12px;">
+                    <h3>Recommended CAM Fixes</h3>
+                    <p>{{ result.cam_summary.remediation_steps|join(' ') }}</p>
+                </div>
+                {% endif %}
             </div>
             {% endif %}
         </div>

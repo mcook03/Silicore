@@ -822,7 +822,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_missing_drill",
-        "timestamp": "2026-04-17T22:24:52.308816+00:00",
+        "timestamp": "2026-04-17T22:34:26.238035+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1317,7 +1317,19 @@
         "readiness_score": 77,
         "complete": false,
         "summary": "CAM import recognized 2 file(s), 2 copper layer(s), 4 outline segment(s), and 0 drill hit(s). The bundle still looks incomplete for full fabrication review.",
-        "status_label": "CAM package incomplete"
+        "status_label": "CAM package incomplete",
+        "strengths": [
+            "2 CAM file(s) recognized",
+            "2 copper layer(s) recognized",
+            "board outline recognized"
+        ],
+        "missing_signals": [
+            "Copper layers were found without drill data"
+        ],
+        "remediation_steps": [
+            "Include Excellon or NC drill output with the fabrication package."
+        ],
+        "readiness_level": "partial"
     },
     "physics_summary": {
         "enabled": true,
@@ -1460,7 +1472,7 @@
         "score": 8.4,
         "total_penalty": 1.6
     },
-    "generated_at": "2026-04-17T22:24:52.308818+00:00",
+    "generated_at": "2026-04-17T22:34:26.238041+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

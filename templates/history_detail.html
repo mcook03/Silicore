@@ -240,6 +240,18 @@
             <p class="small-muted" style="margin-top:10px;">Recognized files: {{ run_detail.cam_detail_view.files|join(', ') }}</p>
             {% endif %}
         </div>
+        {% if run_detail.cam_detail_view.missing_signals %}
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Missing Signals</h3>
+            <p>{{ run_detail.cam_detail_view.missing_signals|join(' • ') }}</p>
+        </div>
+        {% endif %}
+        {% if run_detail.cam_detail_view.remediation_steps %}
+        <div class="summary-panel" style="margin-top:16px;">
+            <h3>Recommended CAM Fixes</h3>
+            <p>{{ run_detail.cam_detail_view.remediation_steps|join(' ') }}</p>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endif %}

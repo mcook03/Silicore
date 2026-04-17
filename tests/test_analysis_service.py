@@ -132,6 +132,18 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertGreaterEqual(len(physics_summary.get("signal_models") or []), 1)
         self.assertGreaterEqual(len(physics_summary.get("risks") or []), 1)
 
+    def test_single_analysis_includes_cam_summary_for_directory_bundle(self):
+        result = run_single_analysis_from_path(
+            "fixtures/gerber_cam_vendor_incomplete",
+            config=self.config,
+        )
+
+        cam_summary = result.get("cam_summary") or {}
+        self.assertTrue(cam_summary.get("active"))
+        self.assertEqual(cam_summary.get("source_format"), "gerber_cam")
+        self.assertTrue(cam_summary.get("missing_signals"))
+        self.assertTrue(cam_summary.get("remediation_steps"))
+
 
 if __name__ == "__main__":
     unittest.main()

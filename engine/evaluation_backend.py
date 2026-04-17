@@ -71,6 +71,8 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
     failed_boards = 0
     cam_bundle_count = 0
     cam_ready_count = 0
+    cam_missing_signal_counts = defaultdict(int)
+    cam_readiness_bands = defaultdict(int)
 
     for path in supported:
         try:
@@ -81,6 +83,9 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
                 cam_bundle_count += 1
                 if cam_summary.get("complete"):
                     cam_ready_count += 1
+                for signal in cam_summary.get("missing_signals") or []:
+                    cam_missing_signal_counts[str(signal)] += 1
+                cam_readiness_bands[str(cam_summary.get("readiness_level") or "unknown")] += 1
             format_key = (result.get("cam_summary") or {}).get("source_format") or os.path.splitext(path)[1].lower() or "directory"
             boards.append(
                 {
@@ -94,6 +99,9 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
                     "cam_ready": bool(cam_summary.get("complete")),
                     "cam_readiness_score": cam_summary.get("readiness_score", 0),
                     "cam_bundle_type": cam_summary.get("bundle_type"),
+                    "cam_missing_signals": cam_summary.get("missing_signals") or [],
+                    "cam_remediation_steps": cam_summary.get("remediation_steps") or [],
+                    "cam_readiness_level": cam_summary.get("readiness_level") or "unknown",
                 }
             )
             total_score += float(result.get("score", 0) or 0)
@@ -148,6 +156,14 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
             "bundle_count": cam_bundle_count,
             "review_ready_bundles": cam_ready_count,
             "readiness_ratio": round((cam_ready_count / cam_bundle_count) * 100, 1) if cam_bundle_count else 0.0,
+            "missing_signals": [
+                {"label": key, "count": value}
+                for key, value in sorted(cam_missing_signal_counts.items(), key=lambda item: (-item[1], item[0]))
+            ],
+            "readiness_bands": [
+                {"label": key.replace("_", " ").title(), "count": value}
+                for key, value in sorted(cam_readiness_bands.items(), key=lambda item: item[0])
+            ],
         },
     }
     try:

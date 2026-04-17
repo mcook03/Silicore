@@ -133,6 +133,23 @@ class BackendSystemsTests(unittest.TestCase):
         bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle_drill")]
         self.assertTrue(bundle_risks)
 
+    def test_vendor_style_gerber_fixture_is_parsed_as_complete_bundle(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_vendor_complete")
+        self.assertEqual(pcb.source_format, "gerber_cam")
+        self.assertGreater(len(pcb.traces), 0)
+        self.assertGreater(len(pcb.outline_segments), 0)
+        self.assertGreater(len(pcb.vias), 0)
+
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
+        self.assertFalse(bundle_risks, f"Expected no CAM bundle risks for vendor-style complete fixture, got {bundle_risks}")
+
+    def test_vendor_style_incomplete_gerber_fixture_triggers_bundle_findings(self):
+        pcb = parse_pcb_file("fixtures/gerber_cam_vendor_incomplete")
+        result = run_analysis(pcb, load_config("custom_config.json"))
+        bundle_risks = [risk for risk in result["risks"] if risk.get("rule_id", "").startswith("cam_bundle")]
+        self.assertTrue(bundle_risks)
+
     def test_geometry_rule_uses_board_regions_for_clearance(self):
         pcb = parse_pcb_file("fixtures/high_voltage_spacing_board.kicad_pcb")
         result = run_analysis(pcb, load_config("custom_config.json"))
@@ -147,6 +164,7 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertIn("parser_health", result)
         self.assertIn("cam_health", result)
         self.assertIn("review_ready_bundles", result["cam_health"])
+        self.assertIn("missing_signals", result["cam_health"])
         self.assertTrue(any((board.get("format") or "").startswith("gerber") or board.get("cam_bundle_type") for board in result["boards"]))
         history = list_evaluation_runs(limit=5)
         self.assertTrue(any(item["evaluation_id"] == result["evaluation_id"] for item in history if result.get("evaluation_id")))

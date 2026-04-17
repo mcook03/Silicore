@@ -143,6 +143,31 @@ class AtlasEngineTests(unittest.TestCase):
         self.assertEqual(subsystem_response["intent"], "subsystem")
         self.assertIn("dominant subsystem pressure", subsystem_response["answer"].lower())
 
+    def test_board_question_can_explain_cam_remediation(self):
+        response = answer_atlas_question(
+            "board",
+            "Is this CAM package complete enough for fabrication review?",
+            context={
+                "cam_summary": {
+                    "active": True,
+                    "summary": "CAM import recognized 2 file(s), 1 copper layer(s), 0 outline segment(s), and 0 drill hit(s). The bundle still looks incomplete for full fabrication review.",
+                    "status_label": "CAM package incomplete",
+                    "layer_file_count": 2,
+                    "copper_layers": ["Copper,L1,Top"],
+                    "outline_count": 0,
+                    "drill_count": 0,
+                    "missing_signals": ["No recognizable board outline was found", "Copper layers were found without drill data"],
+                    "remediation_steps": ["Export a profile or mechanical outline layer in the Gerber package.", "Include Excellon or NC drill output with the fabrication package."],
+                },
+                "risk_sources": [{"message": "Outline missing", "severity": "medium", "domain": "manufacturability"}],
+            },
+            history=[],
+        )
+
+        self.assertEqual(response["intent"], "cam")
+        self.assertIn("next cam fix", response["detail"].lower())
+        self.assertIn("outline", response["detail"].lower())
+
 
 if __name__ == "__main__":
     unittest.main()
