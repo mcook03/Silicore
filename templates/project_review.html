@@ -595,7 +595,7 @@
 
         <div class="card-body">
             {% if project_intelligence_review and project_intelligence_review.category_heatmap %}
-            <div class="heatmap-table">
+            <div class="heatmap-table" style="--heatmap-board-count: {{ project_result.boards|length }};">
                 <div class="heatmap-row heatmap-header">
                     <div class="heatmap-head-label">Category</div>
                     {% for board in project_result.boards %}
@@ -1118,10 +1118,16 @@
         word-break: break-word;
     }
 
+    .context-mini-card .context-mini-value {
+        font-size: 18px;
+        line-height: 1.18;
+        letter-spacing: -0.025em;
+    }
+
     .context-mini-card .context-mini-value.context-mini-value-text {
-        font-size: 15px;
-        line-height: 1.2;
-        letter-spacing: -0.01em;
+        font-size: 14px;
+        line-height: 1.45;
+        letter-spacing: -0.005em;
         overflow-wrap: anywhere;
         word-break: break-word;
         font-weight: 700;
@@ -1497,7 +1503,7 @@
 
     .heatmap-table {
         display: grid;
-        gap: 8px;
+        gap: 10px;
         padding: 12px;
         border-radius: 18px;
         background:
@@ -1509,7 +1515,8 @@
     }
 
     .heatmap-row {
-        display: flex;
+        display: grid;
+        grid-template-columns: 180px repeat(var(--heatmap-board-count, 1), minmax(92px, 1fr)) 72px;
         gap: 8px;
         align-items: center;
         min-width: max-content;
@@ -1530,44 +1537,39 @@
         color: #e5efff;
         font-size: 13px;
         font-weight: 700;
-        flex: 0 0 160px;
+        min-width: 0;
     }
 
     .heatmap-head-cell {
-        min-width: 86px;
-        max-width: 86px;
-        padding: 0 6px;
+        min-width: 0;
+        padding: 8px 6px;
         color: rgba(226, 239, 255, 0.82);
         font-size: 11px;
         font-weight: 800;
-        line-height: 1.2;
+        line-height: 1.35;
         text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 0 0 86px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        white-space: normal;
     }
 
     .heatmap-cell {
         min-height: 38px;
         display: grid;
         place-items: center;
-        min-width: 86px;
+        min-width: 92px;
         border-radius: 12px;
         font-size: 13px;
         font-weight: 800;
         border: 1px solid rgba(255,255,255,0.06);
-        flex: 0 0 86px;
     }
 
     .heatmap-total {
-        flex-basis: 72px;
         text-align: right;
     }
 
     .heatmap-head-total,
     .heatmap-total {
-        flex-basis: 72px;
         text-align: right;
     }
 

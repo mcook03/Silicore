@@ -382,10 +382,10 @@
                 "U1"
             ],
             "nets": [
-                "CLK",
                 "USB_DP",
-                "USB_DN",
-                "GND"
+                "CLK",
+                "GND",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -691,9 +691,9 @@
             ],
             "nets": [
                 "USB_DP",
-                "USB_DN",
+                "GND",
                 "VBUS",
-                "GND"
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -712,9 +712,9 @@
                 ],
                 "observed_component_nets": [
                     "USB_DP",
-                    "USB_DN",
+                    "GND",
                     "VBUS",
-                    "GND"
+                    "USB_DN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -749,10 +749,10 @@
                 "U1"
             ],
             "nets": [
-                "CLK",
                 "USB_DP",
-                "USB_DN",
-                "GND"
+                "CLK",
+                "GND",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -770,10 +770,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "CLK",
                     "USB_DP",
-                    "USB_DN",
-                    "GND"
+                    "CLK",
+                    "GND",
+                    "USB_DN"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -3206,7 +3206,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-17T01:28:44.173874+00:00",
+        "timestamp": "2026-04-17T01:36:54.145912+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4165,10 +4165,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "CLK",
                     "USB_DP",
-                    "USB_DN",
-                    "GND"
+                    "CLK",
+                    "GND",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -4402,9 +4402,9 @@
                 ],
                 "nets": [
                     "USB_DP",
-                    "USB_DN",
+                    "GND",
                     "VBUS",
-                    "GND"
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -4423,9 +4423,9 @@
                     ],
                     "observed_component_nets": [
                         "USB_DP",
-                        "USB_DN",
+                        "GND",
                         "VBUS",
-                        "GND"
+                        "USB_DN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4451,10 +4451,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "CLK",
                     "USB_DP",
-                    "USB_DN",
-                    "GND"
+                    "CLK",
+                    "GND",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -4472,10 +4472,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "CLK",
                         "USB_DP",
-                        "USB_DN",
-                        "GND"
+                        "CLK",
+                        "GND",
+                        "USB_DN"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4948,7 +4948,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-17T01:28:44.173885+00:00",
+    "generated_at": "2026-04-17T01:36:54.145925+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

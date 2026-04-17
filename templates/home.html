@@ -51,19 +51,20 @@
         align-self: start;
         justify-content: start;
         min-height: 0;
-        gap: 10px;
+        gap: 12px;
         padding: 8px 0 4px;
-        max-width: 32rem;
+        max-width: 38rem;
     }
 
     .home-redesign .tech-title {
-        max-width: 14ch;
-        font-size: clamp(1.9rem, 3.2vw, 3.5rem);
-        line-height: 0.96;
-        letter-spacing: -0.072em;
+        max-width: 11ch;
+        font-size: clamp(2.6rem, 5.1vw, 5.8rem);
+        line-height: 0.92;
+        letter-spacing: -0.082em;
         overflow-wrap: normal;
         word-break: normal;
         hyphens: none;
+        text-wrap: balance;
     }
 
     .home-redesign .tech-description {
@@ -119,7 +120,7 @@
     }
 
     .home-redesign .command-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 
     .home-redesign .telemetry-chart-stack {
@@ -866,10 +867,10 @@
 
     .tech-title {
         margin: 0;
-        max-width: 12.5ch;
-        margin-inline: auto;
-        font-size: clamp(46px, 6vw, 84px);
-        line-height: 0.93;
+        max-width: 11ch;
+        margin-inline: 0;
+        font-size: clamp(52px, 6.4vw, 96px);
+        line-height: 0.9;
         letter-spacing: -0.075em;
         font-weight: 800;
         color: #f8fbff;
@@ -1406,7 +1407,7 @@
     .command-grid,
     .workflow-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 14px;
     }
 
@@ -1439,10 +1440,12 @@
     }
 
     .command-card {
-        min-height: 0;
+        min-height: 290px;
         display: grid;
+        grid-template-rows: auto 1fr;
         align-content: start;
         gap: 14px;
+        padding: 24px;
     }
 
     .workflow-tile {
@@ -1474,19 +1477,19 @@
     .command-value {
         justify-self: start;
         display: block;
-        padding-top: 6px;
+        padding-top: 0;
         background: transparent;
         border: 0;
         border-radius: 0;
         max-width: 100%;
-        font-size: clamp(18px, 2vw, 24px);
-        line-height: 1.08;
-        letter-spacing: -0.05em;
+        font-size: clamp(28px, 3.3vw, 48px);
+        line-height: 0.92;
+        letter-spacing: -0.065em;
         font-family: "SF Pro Display", "Sora", "Inter", sans-serif;
         font-weight: 800;
         text-wrap: balance;
-        overflow-wrap: normal;
-        word-break: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .workspace-score {
