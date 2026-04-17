@@ -11,6 +11,26 @@
 {% set timeline = timeline_data if timeline_data is defined else {} %}
 {% set workspace_intel = workspace_intelligence if workspace_intelligence is defined else {} %}
 
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-copy">
+            <div class="page-eyebrow">Silicore Nexus Workspace</div>
+            <h1 class="page-title">{{ project.name }}</h1>
+            <p class="page-copy">
+                {{ project.description if project.description else "Track workspace health, recurring engineering pressure, release posture, and Atlas-guided execution from one continuous review surface." }}
+            </p>
+        </div>
+
+        <div class="hero-side">
+            <div class="top-badge">Runs {{ project.runs|length }}</div>
+            <div class="top-badge">Health {{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</div>
+            {% if latest_compare_ids and latest_compare_ids|length == 2 %}
+            <a class="btn btn-secondary" href="{{ url_for('compare_runs', project_id=project.project_id, run_a=latest_compare_ids[0], run_b=latest_compare_ids[1]) }}">Open Compare</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <section class="assistant-console-layout">
     <section class="card assistant-console-main">
         <div class="card-header">
