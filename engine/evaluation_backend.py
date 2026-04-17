@@ -42,9 +42,11 @@ def _looks_like_cam_directory(path):
     return any(_is_supported_fixture_file(name) for name in names)
 
 
-def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json"):
-    if not os.path.isdir(fixtures_dir):
+def _evaluate_directory(source_dir="fixtures", config="custom_config.json", scope="fixtures", label=None):
+    if not os.path.isdir(source_dir):
         return {
+            "scope": scope,
+            "label": label or scope.replace("_", " ").title(),
             "fixture_count": 0,
             "average_score": 0.0,
             "categories": [],
@@ -53,8 +55,8 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
         }
 
     supported = []
-    for name in sorted(os.listdir(fixtures_dir)):
-        path = os.path.join(fixtures_dir, name)
+    for name in sorted(os.listdir(source_dir)):
+        path = os.path.join(source_dir, name)
         if os.path.isdir(path) and _looks_like_cam_directory(path):
             supported.append(path)
             continue
@@ -128,6 +130,8 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
 
     fixture_count = len(boards)
     summary = {
+        "scope": scope,
+        "label": label or scope.replace("_", " ").title(),
         "fixture_count": fixture_count,
         "average_score": round(total_score / fixture_count, 1) if fixture_count else 0.0,
         "average_parser_confidence": round(parser_confidence_total / parser_confidence_count, 1) if parser_confidence_count else 0.0,
@@ -167,17 +171,35 @@ def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json")
         },
     }
     try:
-        record = record_evaluation_run(summary, scope="fixtures")
+        record = record_evaluation_run(summary, scope=scope)
         summary["evaluation_id"] = record.get("evaluation_id")
     except Exception:
         summary["evaluation_id"] = None
     return summary
 
 
+def evaluate_fixture_suite(fixtures_dir="fixtures", config="custom_config.json"):
+    return _evaluate_directory(
+        source_dir=fixtures_dir,
+        config=config,
+        scope="fixtures",
+        label="Fixture Benchmark",
+    )
+
+
+def evaluate_external_suite(samples_dir, config="custom_config.json", label=None):
+    return _evaluate_directory(
+        source_dir=samples_dir,
+        config=config,
+        scope="external",
+        label=label or "External Validation",
+    )
+
+
 def run_evaluation_job(job_id, fixtures_dir="fixtures", config="custom_config.json"):
     update_job(job_id, status="running")
     try:
-        result = evaluate_fixture_suite(fixtures_dir=fixtures_dir, config=config)
+        result = _evaluate_directory(source_dir=fixtures_dir, config=config, scope="fixtures", label="Fixture Benchmark")
         update_job(job_id, status="completed", result=result)
         return result
     except Exception as exc:

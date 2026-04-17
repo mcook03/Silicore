@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from datetime import datetime
 from collections import defaultdict
 from datetime import timedelta
 from engine.atlas_intelligence import (
@@ -28,7 +29,7 @@ from engine.db import (
     upsert_integration_config,
 )
 from engine.email_service import send_identity_email
-from engine.evaluation_backend import evaluate_fixture_suite
+from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite
 from engine.insight_engine import generate_comparison_insights
 from engine.job_store import get_job, list_jobs
 from engine.job_runner import process_queued_jobs
@@ -135,12 +136,14 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=RUNTIME_CONFIG["sessio
 UPLOAD_FOLDER = "dashboard_uploads"
 RUNS_FOLDER = "dashboard_runs"
 PROJECTS_FOLDER = "dashboard_projects"
+VALIDATION_FOLDER = "dashboard_validation_samples"
 CONFIG_PATH = "custom_config.json"
 
 initialize_database()
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RUNS_FOLDER, exist_ok=True)
 os.makedirs(PROJECTS_FOLDER, exist_ok=True)
+os.makedirs(VALIDATION_FOLDER, exist_ok=True)
 
 
 def _current_user():
@@ -3944,6 +3947,8 @@ def _build_operations_snapshot(current_user=None):
     latest_job = jobs[0] if jobs else None
     latest_review = reviews[0] if reviews else None
     latest_evaluation = evaluations[0] if evaluations else None
+    fixture_evaluations = [item for item in evaluations if item.get("scope") == "fixtures"]
+    external_evaluations = [item for item in evaluations if item.get("scope") == "external"]
 
     return {
         "worker": worker,
@@ -3958,6 +3963,8 @@ def _build_operations_snapshot(current_user=None):
         "reviews": reviews,
         "audit_events": audits,
         "evaluations": evaluations,
+        "fixture_evaluations": fixture_evaluations,
+        "external_evaluations": external_evaluations,
         "integrations": integrations,
         "summary": {
             "queued_jobs": queued,
@@ -3966,9 +3973,39 @@ def _build_operations_snapshot(current_user=None):
             "latest_job_label": latest_job.get("job_type") if latest_job else "No jobs yet",
             "latest_review_status": latest_review.get("status") if latest_review else "No review decisions yet",
             "latest_evaluation_label": latest_evaluation.get("evaluation_id") if latest_evaluation else "No calibration run yet",
+            "external_validation_label": external_evaluations[0].get("evaluation_id") if external_evaluations else "No external validation run yet",
             "worker_label": "Worker active" if worker.get("running") else "Worker idle",
         },
     }
+
+
+def _safe_slug(value, fallback="external-package"):
+    normalized = re.sub(r"[^a-z0-9]+", "-", str(value or "").strip().lower()).strip("-")
+    return normalized or fallback
+
+
+def _save_external_validation_upload(files, label):
+    files = [item for item in files if item and getattr(item, "filename", "").strip()]
+    if not files:
+        raise ValueError("Upload at least one external board export or CAM package file.")
+
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+    slug = _safe_slug(label, fallback="external-package")
+    root_dir = os.path.join(VALIDATION_FOLDER, f"{timestamp}_{slug}")
+    os.makedirs(root_dir, exist_ok=True)
+
+    if len(files) == 1:
+        uploaded_file = files[0]
+        destination = os.path.join(root_dir, os.path.basename(uploaded_file.filename))
+        uploaded_file.save(destination)
+    else:
+        package_dir = os.path.join(root_dir, "package")
+        os.makedirs(package_dir, exist_ok=True)
+        for uploaded_file in files:
+            destination = os.path.join(package_dir, os.path.basename(uploaded_file.filename))
+            uploaded_file.save(destination)
+
+    return root_dir
 
 
 def _build_project_review_feed(project):
@@ -4737,6 +4774,32 @@ def nexus_ops_integrations_route():
     return redirect(url_for("nexus_ops_page"))
 
 
+@app.route("/nexus-ops/external-validation", methods=["POST"])
+def nexus_ops_external_validation_route():
+    current_user = _current_user()
+    if not current_user or not has_role(current_user, "lead"):
+        flash("Lead or admin access is required to validate external packages.")
+        return redirect(url_for("login_page"))
+
+    label = (request.form.get("label") or "").strip() or "External Validation"
+    files = request.files.getlist("validation_files")
+    try:
+        samples_dir = _save_external_validation_upload(files, label)
+        summary = evaluate_external_suite(samples_dir, config=CONFIG_PATH, label=label)
+    except ValueError as exc:
+        flash(str(exc))
+        return redirect(url_for("nexus_ops_page"))
+    except Exception as exc:
+        flash(f"External validation failed: {exc}")
+        return redirect(url_for("nexus_ops_page"))
+
+    flash(
+        f"External validation completed for '{label}' with {summary.get('fixture_count', 0)} package(s) "
+        f"and average parser confidence {summary.get('average_parser_confidence', 0):.1f}."
+    )
+    return redirect(url_for("nexus_ops_page"))
+
+
 @app.route("/projects/<project_id>/compare", methods=["GET"])
 def compare_runs(project_id):
     run_a_id = (request.args.get("run_a") or "").strip()
@@ -5140,6 +5203,12 @@ def job_detail_route(job_id):
 def evaluation_route():
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
+    scope = (request.args.get("scope") or "fixtures").strip().lower()
+    if scope == "external":
+        evaluations = list_evaluation_runs(limit=50)
+        external = [item for item in evaluations if item.get("scope") == "external"]
+        latest = (external[0].get("summary") if external else {"scope": "external", "fixture_count": 0, "boards": []})
+        return jsonify(latest)
     return jsonify(evaluate_fixture_suite())
 
 

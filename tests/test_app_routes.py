@@ -1,4 +1,5 @@
 import json
+import io
 import unittest
 from uuid import uuid4
 
@@ -280,7 +281,41 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertEqual(ops_response.status_code, 200)
         self.assertIn("Nexus Runtime", ops_response.get_data(as_text=True))
         self.assertIn("Calibration History", ops_response.get_data(as_text=True))
+        self.assertIn("External Validation Lane", ops_response.get_data(as_text=True))
         self.assertIn("Integration Registry", ops_response.get_data(as_text=True))
+
+    def test_nexus_ops_external_validation_route_records_external_run(self):
+        suffix = str(uuid4())[:8]
+        user = create_user("Ops Lead", f"ops-lead-{suffix}@example.com", "password123")
+        connection = get_connection()
+        try:
+            connection.execute("UPDATE users SET role = ? WHERE user_id = ?", ("admin", user["user_id"]))
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.client.session_transaction() as session:
+            session["user_id"] = user["user_id"]
+
+        with open("fixtures/altium_ascii_external.pcbdocascii", "rb") as handle:
+            file_bytes = handle.read()
+        payload = {
+            "label": "Outside Altium Export",
+            "validation_files": (
+                io.BytesIO(file_bytes),
+                "altium_ascii_external.pcbdocascii",
+            ),
+        }
+        response = self.client.post(
+            "/nexus-ops/external-validation",
+            data=payload,
+            content_type="multipart/form-data",
+            follow_redirects=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("External validation completed", page)
+        self.assertIn("External Validation History", page)
 
     def test_project_review_decision_route_records_summary(self):
         suffix = str(uuid4())[:8]

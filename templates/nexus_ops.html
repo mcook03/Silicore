@@ -4,6 +4,8 @@
 {% set ops = operations_snapshot if operations_snapshot is defined else {} %}
 {% set worker = ops.worker if ops.worker is defined else {} %}
 {% set summary = ops.summary if ops.summary is defined else {} %}
+{% set external_evaluations = ops.external_evaluations if ops.external_evaluations is defined else [] %}
+{% set latest_external = external_evaluations[0] if external_evaluations else None %}
 
 <section class="grid grid-2">
     <section class="card loud-card">
@@ -124,15 +126,77 @@
 </section>
 
 <section class="grid grid-2">
+    <section class="card loud-card">
+        <div class="card-header">
+            <h2 class="section-title">External Validation Lane</h2>
+            <p class="section-copy">Run outside-the-repo CAM and board exports through Silicore’s parser trust lane and persist them separately from the internal fixture benchmark.</p>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('nexus_ops_external_validation_route') }}" enctype="multipart/form-data">
+                <div class="project-detail-compare-grid">
+                    <label>
+                        Validation Label
+                        <input type="text" name="label" placeholder="Vendor CAM Drop · Rev A">
+                    </label>
+                    <label>
+                        External Package
+                        <input type="file" name="validation_files" multiple required>
+                    </label>
+                </div>
+                <div class="btn-link-row" style="margin-top:14px;">
+                    <button type="submit" class="btn btn-primary">Run External Validation</button>
+                </div>
+            </form>
+
+            {% if latest_external %}
+            {% set ext = latest_external.summary if latest_external.summary is defined else {} %}
+            <div class="metric-grid" style="margin-top:16px;">
+                <div class="metric-card">
+                    <div class="metric-label">Latest Scope</div>
+                    <div class="metric-value">{{ ext.label if ext.label is defined else "External Validation" }}</div>
+                    <div class="metric-sub">{{ latest_external.created_at }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Packages</div>
+                    <div class="metric-value">{{ ext.fixture_count or 0 }}</div>
+                    <div class="metric-sub">Imported package(s) in the last run</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Parser Trust</div>
+                    <div class="metric-value">{{ ext.average_parser_confidence|round(1) if ext.average_parser_confidence is defined else 0 }}</div>
+                    <div class="metric-sub">Average confidence across external imports</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">CAM Ready</div>
+                    <div class="metric-value">{{ ext.cam_health.review_ready_bundles if ext.cam_health is defined else 0 }}</div>
+                    <div class="metric-sub">Review-ready CAM bundles</div>
+                </div>
+            </div>
+            {% if ext.cam_health is defined and ext.cam_health.missing_signals %}
+            <div class="summary-panel" style="margin-top:16px;">
+                <h3>Most Common External Gaps</h3>
+                <p>
+                    {% for item in ext.cam_health.missing_signals[:4] %}
+                    <span class="mini-chip mini-chip-critical">{{ item.label }} · {{ item.count }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="empty-state" style="margin-top:16px;">No outside packages have been validated yet. Upload one CAM bundle, zip archive, Altium ASCII export, or board file set to start building external parser trust.</div>
+            {% endif %}
+        </div>
+    </section>
+
     <section class="card">
         <div class="card-header">
             <h2 class="section-title">Calibration History</h2>
             <p class="section-copy">Persisted benchmark summaries that show whether parser trust and score quality are holding over time.</p>
         </div>
         <div class="card-body">
-            {% if ops.evaluations %}
+            {% if ops.fixture_evaluations %}
             <div class="timeline-list">
-                {% for item in ops.evaluations %}
+                {% for item in ops.fixture_evaluations %}
                 <div class="timeline-row">
                     <div>
                         <div class="timeline-title">{{ item.fixture_count }} fixtures · {{ item.average_score|round(1) }} avg score</div>
@@ -148,6 +212,33 @@
         </div>
     </section>
 
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">External Validation History</h2>
+            <p class="section-copy">Real imported package evaluations kept separate from the internal benchmark so parser trust can be judged on outside exports.</p>
+        </div>
+        <div class="card-body">
+            {% if external_evaluations %}
+            <div class="timeline-list">
+                {% for item in external_evaluations %}
+                {% set ext = item.summary if item.summary is defined else {} %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="timeline-title">{{ ext.label if ext.label is defined else "External Validation" }}</div>
+                        <div class="timeline-copy">{{ item.created_at }}</div>
+                    </div>
+                    <div class="timeline-copy">Parser {{ item.average_parser_confidence|round(1) }} · packages {{ item.fixture_count }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No external validation history has been recorded yet.</div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+
+<section class="grid grid-2">
     <section class="card">
         <div class="card-header">
             <h2 class="section-title">Integration Registry</h2>

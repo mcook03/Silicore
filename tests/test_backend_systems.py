@@ -8,7 +8,7 @@ from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, 
 from engine.config_loader import load_config
 from engine.db import get_connection, list_audit_events, list_evaluation_runs, list_integration_configs, list_review_decisions, upsert_integration_config
 from engine.email_service import send_identity_email
-from engine.evaluation_backend import evaluate_fixture_suite
+from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite
 from engine.gerber_parser import parse_gerber_directory, parse_gerber_file
 from engine.job_store import claim_jobs, create_job, get_job
 from engine.job_runner import process_queued_jobs
@@ -184,6 +184,23 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertTrue(any((board.get("format") or "").startswith("gerber") or board.get("cam_bundle_type") for board in result["boards"]))
         history = list_evaluation_runs(limit=5)
         self.assertTrue(any(item["evaluation_id"] == result["evaluation_id"] for item in history if result.get("evaluation_id")))
+
+    def test_external_evaluation_suite_records_external_scope(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            package_dir = os.path.join(temp_dir, "vendor_drop")
+            os.makedirs(package_dir, exist_ok=True)
+            for filename in ["top_cu.ger", "bot_cu.ger", "mech_profile.gm1", "nc_drill.drl"]:
+                source = os.path.join("fixtures", "gerber_cam_vendor_complete", filename)
+                with open(source, "rb") as src, open(os.path.join(package_dir, filename), "wb") as dst:
+                    dst.write(src.read())
+
+            result = evaluate_external_suite(temp_dir, label="Vendor Drop")
+            self.assertEqual(result["scope"], "external")
+            self.assertEqual(result["label"], "Vendor Drop")
+            self.assertGreaterEqual(result["fixture_count"], 1)
+
+            history = list_evaluation_runs(limit=10)
+            self.assertTrue(any(item["scope"] == "external" for item in history))
 
     def test_atlas_tools_summaries_work(self):
         compare = compare_latest_runs(
