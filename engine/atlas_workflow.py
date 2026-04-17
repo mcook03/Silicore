@@ -65,6 +65,42 @@ def build_workflow_plan(page_type, prompt, context=None):
             }
         )
 
+    if _contains_any(lowered, ["external validation", "validate this package", "validate this export", "outside package", "vendor drop"]):
+        steps.append(
+            {
+                "action_name": "run_external_validation",
+                "reason": "User asked Atlas to validate an external fabrication package instead of the internal fixture suite.",
+                "params": {"async": True},
+            }
+        )
+
+    if _contains_any(lowered, ["parser trust", "parser confidence", "fabrication trust", "cam readiness", "can i trust this import"]):
+        steps.append(
+            {
+                "action_name": "inspect_parser_trust",
+                "reason": "User asked whether the imported board/package is trustworthy enough for engineering or fabrication review.",
+                "params": {},
+            }
+        )
+
+    if _contains_any(lowered, ["benchmark trend", "validation trend", "history of validation", "calibration trend"]):
+        steps.append(
+            {
+                "action_name": "review_validation_history",
+                "reason": "User asked for parser and benchmark performance over time instead of one current summary.",
+                "params": {"limit": 20},
+            }
+        )
+
+    if _contains_any(lowered, ["retry failed jobs", "re-run failed jobs", "clear failed jobs"]):
+        steps.append(
+            {
+                "action_name": "retry_failed_jobs",
+                "reason": "User asked Atlas to retry failed operational jobs from the runtime queue.",
+                "params": {"limit": 5},
+            }
+        )
+
     if page_type == "project" and _contains_any(lowered, ["release plan", "signoff plan", "approval plan"]):
         steps.extend(
             [

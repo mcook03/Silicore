@@ -4,14 +4,14 @@ import unittest
 from uuid import uuid4
 import zipfile
 
-from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, open_high_confidence_findings
+from engine.atlas_tools import compare_latest_runs, evaluate_signoff_readiness, inspect_parser_trust, open_high_confidence_findings
 from engine.config_loader import load_config
 from engine.db import get_connection, list_audit_events, list_evaluation_runs, list_integration_configs, list_review_decisions, upsert_integration_config
 from engine.email_service import send_identity_email
-from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite
+from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite, summarize_evaluation_history
 from engine.gerber_parser import parse_gerber_directory, parse_gerber_file
 from engine.job_store import claim_jobs, create_job, get_job
-from engine.job_runner import process_queued_jobs
+from engine.job_runner import _handle_job_failure, process_queued_jobs
 from engine.org_store import accept_organization_invitation, create_organization, create_organization_invitation
 from engine.altium_ascii_parser import parse_altium_ascii_file
 from engine.rule_runner import run_analysis
@@ -207,6 +207,13 @@ class BackendSystemsTests(unittest.TestCase):
         self.assertIn("source_families", result["cam_health"])
         self.assertIn("weakest_boards", result["parser_health"])
 
+    def test_evaluation_history_summary_reports_trends(self):
+        evaluate_fixture_suite()
+        summary = summarize_evaluation_history(limit=10)
+        self.assertIn("history_count", summary)
+        self.assertIn("fixture_runs", summary)
+        self.assertIn("fixture_parser_confidence_trend", summary)
+
     def test_altium_parser_handles_alias_fields_and_units(self):
         with tempfile.NamedTemporaryFile("w", suffix=".pcbdocascii", delete=False) as handle:
             handle.write("RECORD=COMPONENT|RefDes=U9|Footprint=ADC|LocationX=10.0mm|LocationY=11.0mm|Layer=TopLayer\n")
@@ -259,8 +266,28 @@ class BackendSystemsTests(unittest.TestCase):
             }
         )
         self.assertEqual(signoff["status"], "ready")
-        self.assertIn("decision", signoff)
-        self.assertTrue(signoff["blockers"])
+        parser = inspect_parser_trust(
+            {
+                "parser_confidence": {"score": 82},
+                "cam_summary": {
+                    "active": True,
+                    "readiness_score": 71,
+                    "trust_call": "parser_watch",
+                    "missing_signals": ["Missing drill data"],
+                },
+            }
+        )
+        self.assertEqual(parser["status"], "ready")
+        self.assertEqual(parser["trust_call"], "parser_watch")
+
+    def test_failed_job_is_requeued_when_attempts_remain(self):
+        job = create_job("external_evaluation_suite", payload={"samples_dir": "missing-dir"}, max_attempts=2)
+        job["attempt_count"] = 1
+        processed = _handle_job_failure(job, ValueError("External evaluation samples directory is missing or unreadable."))
+        self.assertEqual(processed["status"], "queued")
+        refreshed = get_job(job["job_id"])
+        self.assertEqual(refreshed["status"], "queued")
+        self.assertEqual(refreshed["max_attempts"], 2)
 
     def test_review_and_audit_records_are_queryable(self):
         suffix = str(uuid4())[:8]

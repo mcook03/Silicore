@@ -28,9 +28,9 @@ from engine.db import (
     upsert_integration_config,
 )
 from engine.email_service import send_identity_email
-from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite
+from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite, summarize_evaluation_history
 from engine.insight_engine import generate_comparison_insights
-from engine.job_store import get_job, list_jobs
+from engine.job_store import get_job, list_jobs, summarize_jobs
 from engine.job_runner import process_queued_jobs
 from engine.org_store import (
     accept_organization_invitation,
@@ -143,6 +143,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RUNS_FOLDER, exist_ok=True)
 os.makedirs(PROJECTS_FOLDER, exist_ok=True)
 os.makedirs(VALIDATION_FOLDER, exist_ok=True)
+if RUNTIME_CONFIG.get("worker_autostart"):
+    start_worker(
+        interval_seconds=RUNTIME_CONFIG["worker_poll_seconds"],
+        batch_size=RUNTIME_CONFIG["worker_batch_size"],
+        lease_seconds=RUNTIME_CONFIG["job_lease_seconds"],
+    )
 
 
 def _current_user():
@@ -5079,9 +5085,9 @@ def atlas_query_route():
         owner_user_id=(g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None,
     )
     tool_suggestions = {
-        "board": ["evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
-        "project": ["compare_latest_runs", "generate_signoff_packet", "run_fixture_evaluation"],
-        "compare": ["generate_signoff_packet", "open_high_confidence_findings"],
+        "board": ["inspect_parser_trust", "evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
+        "project": ["compare_latest_runs", "review_validation_history", "generate_signoff_packet", "run_fixture_evaluation"],
+        "compare": ["inspect_parser_trust", "generate_signoff_packet", "open_high_confidence_findings"],
     }
     return jsonify(
         {
@@ -5137,9 +5143,9 @@ def atlas_query_stream_route():
             owner_user_id=actor_user_id,
         )
         tool_suggestions = {
-            "board": ["evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
-            "project": ["compare_latest_runs", "generate_signoff_packet", "run_fixture_evaluation"],
-            "compare": ["generate_signoff_packet", "open_high_confidence_findings"],
+            "board": ["inspect_parser_trust", "evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"],
+            "project": ["compare_latest_runs", "review_validation_history", "generate_signoff_packet", "run_fixture_evaluation"],
+            "compare": ["inspect_parser_trust", "generate_signoff_packet", "open_high_confidence_findings"],
         }
         final_payload = {
             **answer,
@@ -5200,15 +5206,19 @@ def health_live_route():
 def health_ready_route():
     db_health = _database_health()
     worker = worker_status()
+    jobs = summarize_jobs(limit=100)
+    degraded = (not db_health["ok"]) or bool(worker.get("stale"))
     payload = {
-        "status": "ready" if db_health["ok"] else "degraded",
+        "status": "degraded" if degraded else "ready",
         "service": "silicore-web",
         "environment": RUNTIME_CONFIG["environment"],
         "database": db_health,
         "database_runtime": database_runtime_info(),
         "worker": worker,
+        "jobs": {key: value for key, value in jobs.items() if key != "jobs"},
+        "warnings": ["Historical failed jobs remain in the queue ledger."] if jobs.get("exhausted_failures", 0) > 0 else [],
     }
-    return jsonify(payload), (200 if db_health["ok"] else 503)
+    return jsonify(payload), (200 if not degraded else 503)
 
 
 @app.route("/runtime/meta", methods=["GET"])
@@ -5220,10 +5230,7 @@ def runtime_meta_route():
             "runtime": RUNTIME_CONFIG,
             "database_runtime": database_runtime_info(),
             "worker": worker_status(),
-            "jobs": {
-                "queued": len([job for job in list_jobs(limit=50) if job.get("status") == "queued"]),
-                "running": len([job for job in list_jobs(limit=50) if job.get("status") == "running"]),
-            },
+            "jobs": {key: value for key, value in summarize_jobs(limit=100).items() if key != "jobs"},
         }
     )
 
@@ -5254,8 +5261,11 @@ def evaluation_route():
         evaluations = list_evaluation_runs(limit=50)
         external = [item for item in evaluations if item.get("scope") == "external"]
         latest = (external[0].get("summary") if external else {"scope": "external", "fixture_count": 0, "boards": []})
+        latest["history_summary"] = summarize_evaluation_history(limit=20)
         return jsonify(latest)
-    return jsonify(evaluate_fixture_suite())
+    payload = evaluate_fixture_suite()
+    payload["history_summary"] = summarize_evaluation_history(limit=20)
+    return jsonify(payload)
 
 
 @app.route("/jobs/process", methods=["POST"])

@@ -1,6 +1,16 @@
 from engine.atlas_tools import create_signoff_packet
-from engine.evaluation_backend import run_evaluation_job
-from engine.job_store import claim_jobs, list_jobs, update_job
+from engine.evaluation_backend import run_evaluation_job, run_external_evaluation_job
+from engine.job_store import claim_jobs, list_jobs, reschedule_job, update_job
+
+
+def _handle_job_failure(job, error_text):
+    attempts = int(job.get("attempt_count") or 0)
+    max_attempts = int(job.get("max_attempts") or 0)
+    if attempts < max_attempts:
+        reschedule_job(job["job_id"], error_text=str(error_text))
+        return {"job_id": job["job_id"], "status": "queued", "error": str(error_text), "retry_scheduled": True}
+    update_job(job["job_id"], status="failed", error_text=str(error_text))
+    return {"job_id": job["job_id"], "status": "failed", "error": str(error_text), "retry_scheduled": False}
 
 
 def process_queued_jobs(limit=10, worker_id="silicore-inline", lease_seconds=90):
@@ -20,8 +30,18 @@ def process_queued_jobs(limit=10, worker_id="silicore-inline", lease_seconds=90)
                 )
                 processed.append({"job_id": job["job_id"], "status": "completed", "result": result})
             except Exception as exc:
-                update_job(job["job_id"], status="failed", error_text=str(exc))
-                processed.append({"job_id": job["job_id"], "status": "failed", "error": str(exc)})
+                processed.append(_handle_job_failure(job, exc))
+        elif job_type == "external_evaluation_suite":
+            try:
+                result = run_external_evaluation_job(
+                    job["job_id"],
+                    samples_dir=payload.get("samples_dir"),
+                    config=payload.get("config", "custom_config.json"),
+                    label=payload.get("label"),
+                )
+                processed.append({"job_id": job["job_id"], "status": "completed", "result": result})
+            except Exception as exc:
+                processed.append(_handle_job_failure(job, exc))
         elif job_type == "signoff_packet":
             try:
                 payload = job.get("payload") or {}
@@ -29,8 +49,7 @@ def process_queued_jobs(limit=10, worker_id="silicore-inline", lease_seconds=90)
                 update_job(job["job_id"], status="completed", result=result)
                 processed.append({"job_id": job["job_id"], "status": "completed", "result": result})
             except Exception as exc:
-                update_job(job["job_id"], status="failed", error_text=str(exc))
-                processed.append({"job_id": job["job_id"], "status": "failed", "error": str(exc)})
+                processed.append(_handle_job_failure(job, exc))
         else:
             update_job(job["job_id"], status="failed", error_text=f"No runner for job type: {job_type}")
             processed.append({"job_id": job["job_id"], "status": "failed", "error": f"No runner for job type: {job_type}"})

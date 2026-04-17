@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from engine.db import get_connection, initialize_database, log_audit_event, utc_now_text
+from engine.runtime_config import get_runtime_config
 
 
 def _now():
@@ -20,20 +21,21 @@ def _loads(value, default=None):
         return default
 
 
-def create_job(job_type, payload=None, actor_user_id=None, status="queued"):
+def create_job(job_type, payload=None, actor_user_id=None, status="queued", max_attempts=None):
     initialize_database()
     connection = get_connection()
     try:
         job_id = str(uuid4())[:12]
         now = _now()
+        attempts = int(max_attempts or get_runtime_config()["job_max_attempts"] or 3)
         connection.execute(
             """
             INSERT INTO analysis_jobs (
                 job_id, job_type, status, payload_json, result_json, error_text, claimed_by,
-                claimed_at, started_at, completed_at, attempt_count, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                claimed_at, started_at, completed_at, attempt_count, max_attempts, last_error_at, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (job_id, job_type, status, json.dumps(payload or {}), "{}", None, None, None, None, None, 0, now, now),
+            (job_id, job_type, status, json.dumps(payload or {}), "{}", None, None, None, None, None, 0, attempts, None, now, now),
         )
         connection.commit()
     finally:
@@ -49,7 +51,7 @@ def update_job(job_id, status=None, result=None, error_text=None):
     try:
         now = _now()
         current = connection.execute(
-            "SELECT result_json, error_text, status FROM analysis_jobs WHERE job_id = ?",
+            "SELECT result_json, error_text, status, claimed_by, claimed_at FROM analysis_jobs WHERE job_id = ?",
             (job_id,),
         ).fetchone()
         if not current:
@@ -58,13 +60,17 @@ def update_job(job_id, status=None, result=None, error_text=None):
         next_result = json.dumps(result if result is not None else _loads(current["result_json"], {}))
         next_error = error_text if error_text is not None else current["error_text"]
         completed_at = now if next_status in {"completed", "failed"} else None
+        last_error_at = now if error_text is not None else None
+        claimed_by = None if next_status in {"queued", "completed", "failed"} else current["claimed_by"]
+        claimed_at = None if next_status in {"queued", "completed", "failed"} else current["claimed_at"]
         connection.execute(
             """
             UPDATE analysis_jobs
-            SET status = ?, result_json = ?, error_text = ?, completed_at = COALESCE(?, completed_at), updated_at = ?
+            SET status = ?, result_json = ?, error_text = ?, completed_at = COALESCE(?, completed_at),
+                last_error_at = COALESCE(?, last_error_at), claimed_by = ?, claimed_at = ?, updated_at = ?
             WHERE job_id = ?
             """,
-            (next_status, next_result, next_error, completed_at, now, job_id),
+            (next_status, next_result, next_error, completed_at, last_error_at, claimed_by, claimed_at, now, job_id),
         )
         connection.commit()
     finally:
@@ -79,7 +85,7 @@ def get_job(job_id):
         row = connection.execute(
             """
             SELECT job_id, job_type, status, payload_json, result_json, error_text, created_at, updated_at
-                   , claimed_by, claimed_at, started_at, completed_at, attempt_count
+                   , claimed_by, claimed_at, started_at, completed_at, attempt_count, max_attempts, last_error_at
             FROM analysis_jobs
             WHERE job_id = ?
             """,
@@ -99,6 +105,8 @@ def get_job(job_id):
             "started_at": row["started_at"],
             "completed_at": row["completed_at"],
             "attempt_count": row["attempt_count"] or 0,
+            "max_attempts": row["max_attempts"] or 0,
+            "last_error_at": row["last_error_at"],
             "created_at": row["created_at"],
             "updated_at": row["updated_at"],
         }
@@ -113,7 +121,7 @@ def list_jobs(limit=20):
         rows = connection.execute(
             """
             SELECT job_id, job_type, status, payload_json, result_json, error_text, created_at, updated_at
-                   , claimed_by, claimed_at, started_at, completed_at, attempt_count
+                   , claimed_by, claimed_at, started_at, completed_at, attempt_count, max_attempts, last_error_at
             FROM analysis_jobs
             ORDER BY created_at DESC
             LIMIT ?
@@ -133,6 +141,8 @@ def list_jobs(limit=20):
                 "started_at": row["started_at"],
                 "completed_at": row["completed_at"],
                 "attempt_count": row["attempt_count"] or 0,
+                "max_attempts": row["max_attempts"] or 0,
+                "last_error_at": row["last_error_at"],
                 "created_at": row["created_at"],
                 "updated_at": row["updated_at"],
             }
@@ -153,8 +163,11 @@ def claim_jobs(worker_id, limit=10, lease_seconds=90):
             """
             SELECT job_id
             FROM analysis_jobs
-            WHERE status = 'queued'
-               OR (status = 'running' AND claimed_at IS NOT NULL AND claimed_at < ?)
+            WHERE (
+                status = 'queued'
+                OR (status = 'running' AND claimed_at IS NOT NULL AND claimed_at < ?)
+            )
+              AND COALESCE(attempt_count, 0) < COALESCE(max_attempts, 3)
             ORDER BY created_at ASC
             LIMIT ?
             """,
@@ -180,3 +193,53 @@ def claim_jobs(worker_id, limit=10, lease_seconds=90):
     finally:
         connection.close()
     return [get_job(job_id) for job_id in claimed]
+
+
+def reschedule_job(job_id, error_text=None):
+    initialize_database()
+    connection = get_connection()
+    try:
+        now = _now()
+        connection.execute(
+            """
+            UPDATE analysis_jobs
+            SET status = 'queued',
+                error_text = ?,
+                last_error_at = ?,
+                claimed_by = NULL,
+                claimed_at = NULL,
+                completed_at = NULL,
+                updated_at = ?
+            WHERE job_id = ?
+            """,
+            (error_text, now, now, job_id),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+    return get_job(job_id)
+
+
+def summarize_jobs(limit=100):
+    jobs = list_jobs(limit=limit)
+    summary = {
+        "queued": 0,
+        "running": 0,
+        "completed": 0,
+        "failed": 0,
+        "retryable_failures": 0,
+        "exhausted_failures": 0,
+    }
+    for job in jobs:
+        status = str(job.get("status") or "").lower()
+        if status in summary:
+            summary[status] += 1
+        if status == "failed":
+            attempts = int(job.get("attempt_count") or 0)
+            max_attempts = int(job.get("max_attempts") or 0)
+            if attempts < max_attempts:
+                summary["retryable_failures"] += 1
+            else:
+                summary["exhausted_failures"] += 1
+    summary["jobs"] = jobs
+    return summary

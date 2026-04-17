@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 
-from engine.db import record_evaluation_run
+from engine.db import list_evaluation_runs, record_evaluation_run
 from engine.job_store import update_job
 from engine.services.analysis_service import run_single_analysis_from_path
 
@@ -223,10 +223,50 @@ def evaluate_external_suite(samples_dir, config="custom_config.json", label=None
     )
 
 
+def summarize_evaluation_history(limit=20):
+    runs = list_evaluation_runs(limit=limit)
+    fixture_runs = [item for item in runs if item.get("scope") == "fixtures"]
+    external_runs = [item for item in runs if item.get("scope") == "external"]
+
+    def _trend(items, key):
+        if len(items) < 2:
+            return 0.0
+        return round(float(items[0].get(key) or 0.0) - float(items[1].get(key) or 0.0), 1)
+
+    latest_fixture = fixture_runs[0].get("summary") if fixture_runs else {}
+    latest_external = external_runs[0].get("summary") if external_runs else {}
+    return {
+        "history_count": len(runs),
+        "fixture_runs": len(fixture_runs),
+        "external_runs": len(external_runs),
+        "fixture_score_trend": _trend(fixture_runs, "average_score"),
+        "fixture_parser_confidence_trend": _trend(fixture_runs, "average_parser_confidence"),
+        "external_parser_confidence_trend": _trend(external_runs, "average_parser_confidence"),
+        "external_failure_trend": _trend(external_runs, "failed_board_count"),
+        "fixture_cam_readiness_ratio": ((latest_fixture.get("cam_health") or {}).get("readiness_ratio", 0.0) if latest_fixture else 0.0),
+        "external_cam_readiness_ratio": ((latest_external.get("cam_health") or {}).get("readiness_ratio", 0.0) if latest_external else 0.0),
+        "latest_fixture_weakest_cases": ((latest_fixture.get("parser_health") or {}).get("weakest_boards") or [])[:5] if latest_fixture else [],
+        "latest_external_weakest_cases": ((latest_external.get("parser_health") or {}).get("weakest_boards") or [])[:5] if latest_external else [],
+    }
+
+
 def run_evaluation_job(job_id, fixtures_dir="fixtures", config="custom_config.json"):
     update_job(job_id, status="running")
     try:
         result = _evaluate_directory(source_dir=fixtures_dir, config=config, scope="fixtures", label="Fixture Benchmark")
+        update_job(job_id, status="completed", result=result)
+        return result
+    except Exception as exc:
+        update_job(job_id, status="failed", error_text=str(exc))
+        raise
+
+
+def run_external_evaluation_job(job_id, samples_dir, config="custom_config.json", label=None):
+    update_job(job_id, status="running")
+    try:
+        if not samples_dir or not os.path.isdir(samples_dir):
+            raise ValueError("External evaluation samples directory is missing or unreadable.")
+        result = evaluate_external_suite(samples_dir, config=config, label=label)
         update_job(job_id, status="completed", result=result)
         return result
     except Exception as exc:

@@ -1,5 +1,6 @@
 import threading
 import time
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from engine.job_runner import process_queued_jobs
@@ -78,6 +79,15 @@ def stop_worker():
 
 def worker_status():
     thread = _worker_thread
+    runtime = get_runtime_config()
+    last_tick = _worker_state["last_tick_at"]
+    stale = False
+    if last_tick:
+        try:
+            last_tick_dt = datetime.strptime(last_tick, "%Y-%m-%d %H:%M:%S UTC").replace(tzinfo=timezone.utc)
+            stale = (datetime.now(timezone.utc) - last_tick_dt).total_seconds() > float(runtime["worker_stale_seconds"])
+        except ValueError:
+            stale = False
     return {
         "running": bool(thread and thread.is_alive()),
         "thread_name": getattr(thread, "name", None),
@@ -86,4 +96,6 @@ def worker_status():
         "started_at": _worker_state["started_at"],
         "last_tick_at": _worker_state["last_tick_at"],
         "last_processed_count": _worker_state["last_processed_count"],
+        "stale": stale,
+        "healthy": bool(thread and thread.is_alive()) and not stale,
     }

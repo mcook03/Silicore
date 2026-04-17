@@ -202,24 +202,6 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Metrics: {"distance": 19.8, "threshold": 12.0, "shares_clock_net": true}
 
 ### MEDIUM — component_design
-- Message: High-speed net USB_DN has a long route with no visible series or termination resistor
-- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.7
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=18.0
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 70.0 / 100
-- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Fix Priority: medium
-- Components: J1, U1
-- Nets: USB_DN
-- Metrics: {"trace_length": 118.2, "threshold": 18.0, "has_resistor": false}
-
-### MEDIUM — component_design
 - Message: High-speed net USB_DP has a long route with no visible series or termination resistor
 - Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
 - Root Cause: General design issue
@@ -236,6 +218,24 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Components: J1, U1
 - Nets: USB_DP
 - Metrics: {"trace_length": 84.67, "threshold": 18.0, "has_resistor": false}
+
+### MEDIUM — component_design
+- Message: High-speed net USB_DN has a long route with no visible series or termination resistor
+- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.7
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=18.0
+- Traceability: 100 / 100
+- Evidence Count: 9
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 70.0 / 100
+- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Fix Priority: medium
+- Components: J1, U1
+- Nets: USB_DN
+- Metrics: {"trace_length": 118.2, "threshold": 18.0, "has_resistor": false}
 
 ### HIGH — power_integrity
 - Message: High-current net VBUS bottlenecks through a narrow copper section
@@ -287,7 +287,7 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: CLK, GND, USB_DN, USB_DP
+- Nets: USB_DP, GND, USB_DN, CLK
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — high_speed
@@ -429,8 +429,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: GND, VBUS, USB_DN, USB_DP
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "VBUS", "USB_DN", "USB_DP"], "has_power": false, "has_ground": true}
+- Nets: USB_DP, VBUS, USB_DN, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DP", "VBUS", "USB_DN", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U1 has ground but no visible power rail
@@ -447,8 +447,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U1
-- Nets: CLK, GND, USB_DN, USB_DP
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "GND", "USB_DN", "USB_DP"], "has_power": false, "has_ground": true}
+- Nets: USB_DP, GND, USB_DN, CLK
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DP", "GND", "USB_DN", "CLK"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Y1 has ground but no visible power rail

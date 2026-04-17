@@ -1,4 +1,5 @@
-from engine.job_store import create_job, get_job, update_job
+from engine.evaluation_backend import evaluate_external_suite, summarize_evaluation_history
+from engine.job_store import create_job, get_job, summarize_jobs, update_job
 from engine.signoff_engine import evaluate_signoff_gate
 
 
@@ -72,6 +73,15 @@ def queue_evaluation(fixtures_dir="fixtures", config="custom_config.json", actor
     return {"job": get_job(job["job_id"]), "result": {"status": "queued"}}
 
 
+def queue_external_validation(samples_dir, config="custom_config.json", label=None, actor_user_id=None):
+    job = create_job(
+        "external_evaluation_suite",
+        payload={"samples_dir": samples_dir, "config": config, "label": label or "External Validation"},
+        actor_user_id=actor_user_id,
+    )
+    return {"job": get_job(job["job_id"]), "result": {"status": "queued"}}
+
+
 def queue_signoff_packet(context, actor_user_id=None):
     job = create_job(
         "signoff_packet",
@@ -103,6 +113,46 @@ def evaluate_signoff_readiness(context):
         "blockers": gate.get("blockers") or [],
         "next_checks": gate.get("next_checks") or [],
     }
+
+
+def inspect_parser_trust(context):
+    cam_summary = context.get("cam_summary") or {}
+    parser_confidence = (context.get("parser_confidence") or {}).get("score", 0)
+    signoff_gate = context.get("signoff_gate") or {}
+    return {
+        "status": "ready",
+        "summary": (
+            f"Parser confidence is {parser_confidence} / 100 and CAM readiness is {cam_summary.get('readiness_score', 0)} / 100."
+            if cam_summary.get("active")
+            else f"Parser confidence is {parser_confidence} / 100."
+        ),
+        "parser_confidence": parser_confidence,
+        "trust_call": cam_summary.get("trust_call") or ("trusted" if parser_confidence >= 80 else "parser_watch"),
+        "missing_signals": cam_summary.get("missing_signals") or [],
+        "fabrication_blockers": cam_summary.get("fabrication_blockers") or [],
+        "parser_warnings": cam_summary.get("parser_warnings") or [],
+        "release_score": signoff_gate.get("release_score"),
+    }
+
+
+def retry_failed_jobs(limit=5):
+    from engine.job_runner import process_queued_jobs
+
+    summary = summarize_jobs(limit=100)
+    retried = []
+    for job in summary.get("jobs", []):
+        if len(retried) >= int(limit or 5):
+            break
+        if str(job.get("status") or "").lower() != "failed":
+            continue
+        attempts = int(job.get("attempt_count") or 0)
+        max_attempts = int(job.get("max_attempts") or 0)
+        if attempts >= max_attempts:
+            continue
+        update_job(job["job_id"], status="queued", error_text=job.get("error_text"))
+        retried.append(get_job(job["job_id"]))
+    processed = process_queued_jobs(limit=len(retried), worker_id="atlas-retry") if retried else []
+    return {"status": "ready", "retried_count": len(retried), "processed": processed}
 
 
 def run_tool_action(action_name, context=None, actor_user_id=None, params=None):
@@ -140,9 +190,47 @@ def run_tool_action(action_name, context=None, actor_user_id=None, params=None):
             actor_user_id=actor_user_id,
         )
 
+    if action_name == "run_external_validation":
+        samples_dir = params.get("samples_dir") or context.get("samples_dir")
+        if not samples_dir:
+            return {"error": "samples_dir is required for external validation."}
+        if params.get("async", True):
+            return queue_external_validation(
+                samples_dir=samples_dir,
+                config=params.get("config", "custom_config.json"),
+                label=params.get("label") or context.get("label"),
+                actor_user_id=actor_user_id,
+            )
+        result = evaluate_external_suite(
+            samples_dir,
+            config=params.get("config", "custom_config.json"),
+            label=params.get("label") or context.get("label"),
+        )
+        job = create_job("external_evaluation_suite", payload={"samples_dir": samples_dir}, actor_user_id=actor_user_id, status="completed")
+        update_job(job["job_id"], status="completed", result=result)
+        return {"job": get_job(job["job_id"]), "result": result}
+
     if action_name == "evaluate_signoff_gate":
         result = evaluate_signoff_readiness(context)
         job = create_job("evaluate_signoff_gate", payload={"context_type": context.get("board_name") or context.get("project_name")}, actor_user_id=actor_user_id)
+        update_job(job["job_id"], status="completed", result=result)
+        return {"job": get_job(job["job_id"]), "result": result}
+
+    if action_name == "inspect_parser_trust":
+        result = inspect_parser_trust(context)
+        job = create_job("inspect_parser_trust", payload={"context_type": context.get("board_name") or context.get("project_name")}, actor_user_id=actor_user_id)
+        update_job(job["job_id"], status="completed", result=result)
+        return {"job": get_job(job["job_id"]), "result": result}
+
+    if action_name == "review_validation_history":
+        result = summarize_evaluation_history(limit=_safe_int(params.get("limit"), 20))
+        job = create_job("review_validation_history", payload={"limit": _safe_int(params.get("limit"), 20)}, actor_user_id=actor_user_id)
+        update_job(job["job_id"], status="completed", result=result)
+        return {"job": get_job(job["job_id"]), "result": result}
+
+    if action_name == "retry_failed_jobs":
+        result = retry_failed_jobs(limit=_safe_int(params.get("limit"), 5))
+        job = create_job("retry_failed_jobs", payload={"limit": _safe_int(params.get("limit"), 5)}, actor_user_id=actor_user_id, status="completed")
         update_job(job["job_id"], status="completed", result=result)
         return {"job": get_job(job["job_id"]), "result": result}
 

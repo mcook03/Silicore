@@ -40,7 +40,10 @@ def _build_agent_plan(page_type, prompt, context, history, deterministic_answer)
     plan = build_workflow_plan(page_type, prompt, context=context) or []
     lowered = str(prompt or "").lower()
     if page_type == "board" and any(token in lowered for token in ["physics", "model", "impedance", "ir drop", "parser", "trust"]):
-        plan = [{"action_name": "evaluate_signoff_gate", "reason": "Atlas should refresh the release gate when the user asks about parser trust or physical readiness.", "params": {}}] + plan
+        plan = [
+            {"action_name": "inspect_parser_trust", "reason": "Atlas should ground trust questions in parser and CAM readiness before answering.", "params": {}},
+            {"action_name": "evaluate_signoff_gate", "reason": "Atlas should refresh the release gate when the user asks about parser trust or physical readiness.", "params": {}},
+        ] + plan
 
     seen = set()
     deduped = []

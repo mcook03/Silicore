@@ -38,6 +38,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertEqual(ready.status_code, 200)
         self.assertIn("database", ready.get_json())
         self.assertIn("database_runtime", ready.get_json())
+        self.assertIn("jobs", ready.get_json())
 
     def test_compare_route_renders_for_existing_project_runs(self):
         run_a = self.project["runs"][-2]["run_id"]
@@ -239,6 +240,28 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("result", payload)
         self.assertIn("decision", payload["result"])
 
+    def test_atlas_parser_trust_action_route_returns_payload(self):
+        response = self.client.post(
+            "/atlas/action",
+            json={
+                "action_name": "inspect_parser_trust",
+                "context": {
+                    "parser_confidence": {"score": 78},
+                    "cam_summary": {
+                        "active": True,
+                        "readiness_score": 64,
+                        "trust_call": "package_incomplete",
+                        "missing_signals": ["Missing drill data"],
+                    },
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertIn("job", payload)
+        self.assertIn("result", payload)
+        self.assertIn("trust_call", payload["result"])
+
     def test_evaluation_route_returns_fixture_summary(self):
         with self.client.session_transaction() as session:
             session.clear()
@@ -263,6 +286,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         payload = evaluation_response.get_json()
         self.assertIn("fixture_count", payload)
         self.assertIn("boards", payload)
+        self.assertIn("history_summary", payload)
 
         audit_response = self.client.get("/admin/audit")
         self.assertEqual(audit_response.status_code, 200)
@@ -276,6 +300,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         runtime_response = self.client.get("/runtime/meta")
         self.assertEqual(runtime_response.status_code, 200)
         self.assertIn("runtime", runtime_response.get_json())
+        self.assertIn("jobs", runtime_response.get_json())
 
         ops_response = self.client.get("/nexus-ops")
         self.assertEqual(ops_response.status_code, 200)

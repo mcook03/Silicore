@@ -415,6 +415,8 @@ def initialize_database():
                 payload_json TEXT NOT NULL DEFAULT '{}',
                 result_json TEXT NOT NULL DEFAULT '{}',
                 error_text TEXT,
+                max_attempts INTEGER NOT NULL DEFAULT 3,
+                last_error_at TEXT,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             );
@@ -550,6 +552,8 @@ def _ensure_schema_migrations(connection):
     _ensure_column(connection, "analysis_jobs", "started_at", "TEXT")
     _ensure_column(connection, "analysis_jobs", "completed_at", "TEXT")
     _ensure_column(connection, "analysis_jobs", "attempt_count", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "analysis_jobs", "max_attempts", "INTEGER NOT NULL DEFAULT 3")
+    _ensure_column(connection, "analysis_jobs", "last_error_at", "TEXT")
 
 
 def _get_state(connection, key):
