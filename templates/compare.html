@@ -1,6 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 
+<style>
+    .compare-experience-shell {
+        display: grid;
+        gap: 24px;
+    }
+
+    .compare-launch-band {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: 22px;
+        align-items: stretch;
+    }
+
+    .compare-launch-panel {
+        padding: 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.14), transparent 34%),
+            linear-gradient(180deg, rgba(8,14,25,0.96), rgba(4,8,15,0.98));
+        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+    }
+
+    .compare-launch-kicker {
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+
+    .compare-launch-title {
+        margin: 0;
+        font-size: clamp(34px, 4.8vw, 56px);
+        line-height: 0.94;
+        letter-spacing: -0.07em;
+        font-weight: 800;
+        color: #f8fbff;
+        text-wrap: balance;
+    }
+
+    .compare-launch-copy {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.82;
+        max-width: 58ch;
+    }
+
+    @media (max-width: 1080px) {
+        .compare-launch-band {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="compare-experience-shell">
+
 <section class="page-hero">
     <div class="page-hero-inner">
         <div class="page-hero-copy">
@@ -21,6 +80,15 @@
         </div>
     </div>
 </section>
+
+<section class="compare-launch-band">
+    <section class="compare-launch-panel">
+        <div class="compare-launch-kicker">Revision Decision Layer</div>
+        <h2 class="compare-launch-title">Make revision approval feel like a controlled engineering decision.</h2>
+        <p class="compare-launch-copy">
+            Track regressions, isolate improvements, and use Atlas-guided revision reasoning to decide if the new board is truly moving toward release.
+        </p>
+    </section>
 
 <style>
     .compare-redesign-shell {
@@ -1562,6 +1630,7 @@
     </section>
 </section>
 {% endif %}
+</div>
 
 <section class="card">
     <div class="card-header">

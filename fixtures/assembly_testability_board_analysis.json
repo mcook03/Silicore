@@ -339,10 +339,10 @@
                 "U1"
             ],
             "nets": [
+                "GND",
+                "SWCLK",
                 "SWDIO",
-                "VCC",
-                "UART_TX",
-                "GND"
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -2413,7 +2413,7 @@
     },
     "analysis_context": {
         "board_name": "assembly_testability_board.kicad_pcb",
-        "timestamp": "2026-04-17T01:45:00.358450+00:00",
+        "timestamp": "2026-04-17T01:53:38.881795+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3227,10 +3227,10 @@
                     "U1"
                 ],
                 "nets": [
+                    "GND",
+                    "SWCLK",
                     "SWDIO",
-                    "VCC",
-                    "UART_TX",
-                    "GND"
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -3765,7 +3765,7 @@
         "score": 0.0,
         "total_penalty": 11.6
     },
-    "generated_at": "2026-04-17T01:45:00.358461+00:00",
+    "generated_at": "2026-04-17T01:53:38.881806+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

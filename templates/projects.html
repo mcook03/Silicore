@@ -11,6 +11,63 @@
 ) %}
 {% set chart = projects_chart if projects_chart is defined else {} %}
 
+<style>
+    .projects-experience {
+        display: grid;
+        gap: 24px;
+    }
+
+    .projects-launch-band {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: 22px;
+        align-items: stretch;
+    }
+
+    .projects-launch-panel {
+        padding: 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.14), transparent 34%),
+            linear-gradient(180deg, rgba(7,13,24,0.96), rgba(4,8,15,0.98));
+        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+    }
+
+    .projects-launch-kicker {
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+
+    .projects-launch-title {
+        margin: 0;
+        font-size: clamp(34px, 4.8vw, 56px);
+        line-height: 0.94;
+        letter-spacing: -0.07em;
+        font-weight: 800;
+        color: #f8fbff;
+        text-wrap: balance;
+    }
+
+    .projects-launch-copy {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.82;
+        max-width: 58ch;
+    }
+
+    @media (max-width: 1080px) {
+        .projects-launch-band {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 {% if projects %}
     {% set ns.least_active_runs = projects[0].run_count %}
     {% for project in projects %}
@@ -29,6 +86,8 @@
     {% endfor %}
 {% endif %}
 
+<div class="projects-experience">
+
 <section class="page-hero">
     <div class="page-hero-inner">
         <div class="page-hero-copy">
@@ -45,6 +104,15 @@
         </div>
     </div>
 </section>
+
+<section class="projects-launch-band">
+    <section class="projects-launch-panel">
+        <div class="projects-launch-kicker">Workspace Operating Layer</div>
+        <h2 class="projects-launch-title">Run the portfolio like an engineering command system.</h2>
+        <p class="projects-launch-copy">
+            Track workspace spread, review readiness, active execution surfaces, and project maturity across the full Silicore Nexus environment.
+        </p>
+    </section>
 
 <section class="projects-hero-grid">
     <section class="card projects-score-card">
@@ -145,6 +213,7 @@
         </div>
     </section>
 </section>
+</section>
 
 <section class="card" id="create-project">
     <div class="card-header">
@@ -184,6 +253,7 @@
         </form>
     </div>
 </section>
+</div>
 
 <section class="grid grid-2">
     <section class="card">

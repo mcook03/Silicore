@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page_title or "Silicore Nexus" }}</title>
     <style>
+        @import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap");
+
         :root {
             --bg-0: #010206;
             --bg-1: #03060f;
@@ -67,7 +69,7 @@
             margin: 0;
             min-height: 100vh;
             color: var(--text);
-            font-family: "Inter", "Avenir Next", "SF Pro Display", "Segoe UI Variable Text", "Helvetica Neue", sans-serif;
+            font-family: "Sora", "Avenir Next", "SF Pro Display", "Helvetica Neue", sans-serif;
             background: var(--bg-0);
             letter-spacing: -0.008em;
             text-rendering: optimizeLegibility;
@@ -130,16 +132,17 @@
         }
 
         .app-shell {
-            width: min(1600px, calc(100% - 32px));
+            width: 100%;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 18px 0 48px;
+            padding: 18px 20px 56px;
             position: relative;
             z-index: 1;
         }
 
         @media (max-width: 480px) {
             .app-shell {
-                width: calc(100% - 16px);
+                padding: 12px 12px 40px;
             }
         }
 
@@ -347,14 +350,17 @@
         .page-hero {
             position: relative;
             overflow: hidden;
-            padding: 22px 26px;
+            padding: 30px 32px;
             margin-bottom: 0;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: rgba(6, 11, 20, 0.88);
-            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background:
+                radial-gradient(circle at 15% 0%, rgba(59,130,246,0.14), transparent 34%),
+                radial-gradient(circle at 100% 0%, rgba(6,182,212,0.12), transparent 30%),
+                linear-gradient(180deg, rgba(7, 12, 22, 0.94), rgba(5, 9, 17, 0.96));
+            backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 32px 90px rgba(0,0,0,0.46);
         }
 
         .page-hero::before {
@@ -408,19 +414,19 @@
 
         .page-title {
             margin: 0;
-            font-size: clamp(22px, 2.6vw, 34px);
-            line-height: 1.06;
-            letter-spacing: -0.05em;
+            font-size: clamp(28px, 4vw, 54px);
+            line-height: 0.95;
+            letter-spacing: -0.07em;
             font-weight: 800;
             color: var(--text);
         }
 
         .page-copy {
-            margin: 8px 0 0;
+            margin: 14px 0 0;
             color: var(--muted);
-            font-size: 14px;
-            line-height: 1.72;
-            max-width: 680px;
+            font-size: 15px;
+            line-height: 1.8;
+            max-width: 760px;
         }
 
         .hero-side {
@@ -1374,53 +1380,51 @@
 
         .app-frame {
             display: grid;
-            grid-template-columns: 268px minmax(0, 1fr);
+            grid-template-columns: 1fr;
             gap: 18px;
             align-items: start;
         }
 
-        /* ─── NAV RAIL (left sidebar) ─── */
+        /* ─── TOP PRODUCT SHELL ─── */
         .nav-rail {
             position: sticky;
-            top: 18px;
+            top: 14px;
             margin-bottom: 0;
-            z-index: 20;
+            z-index: 40;
         }
 
         .nav-rail .site-header-inner {
-            padding: 22px 18px;
-            border-radius: 22px;
-            min-height: calc(100vh - 52px);
-            display: flex;
-            flex-direction: column;
-            background: rgba(4, 8, 16, 0.97);
-            border-color: rgba(255,255,255,0.06);
-            /* Right-side accent line */
+            padding: 18px 22px;
+            border-radius: 28px;
+            min-height: auto;
+            display: block;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(59,130,246,0.14), transparent 22%),
+                linear-gradient(180deg, rgba(5, 8, 16, 0.98), rgba(4, 7, 14, 0.98));
+            border-color: rgba(255,255,255,0.07);
             box-shadow:
-                var(--shadow-xl),
+                0 26px 80px rgba(0,0,0,0.48),
                 inset 0 1px 0 rgba(255,255,255,0.04),
-                1px 0 0 rgba(59,130,246,0.06);
+                0 0 0 1px rgba(59,130,246,0.05);
         }
 
-        /* Aurora accent at top of nav */
         .nav-rail .site-header-inner::before {
-            background: linear-gradient(90deg, rgba(6,182,212,0.4), rgba(59,130,246,0.32), transparent);
+            background: linear-gradient(90deg, transparent, rgba(6,182,212,0.45), rgba(59,130,246,0.38), transparent);
         }
 
         .nav-rail .top-nav {
-            grid-template-columns: 1fr;
-            align-items: stretch;
-            gap: 0;
-            height: 100%;
+            grid-template-columns: minmax(220px, auto) 1fr auto;
+            align-items: center;
+            gap: 18px;
+            height: auto;
         }
 
-        /* Brand section */
         .nav-rail .brand {
             align-items: center;
             gap: 12px;
-            padding: 4px 4px 22px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 16px;
+            padding: 0;
+            border-bottom: none;
+            margin-bottom: 0;
         }
 
         .nav-rail .brand-mark {
@@ -1439,27 +1443,27 @@
             font-weight: 800;
         }
 
-        /* Nav section */
         .nav-rail .nav-center {
-            display: block;
-            flex: 1;
+            display: flex;
+            justify-content: center;
+            min-width: 0;
         }
 
         .nav-rail .nav-pills {
-            width: 100%;
-            display: grid;
-            gap: 3px;
-            padding: 0;
-            border-radius: 0;
-            background: transparent;
-            border: none;
+            width: auto;
+            display: inline-flex;
+            gap: 6px;
+            padding: 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.028);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .nav-rail .nav-pill {
-            width: 100%;
-            justify-content: flex-start;
-            padding: 12px 14px;
-            border-radius: 12px;
+            width: auto;
+            justify-content: center;
+            padding: 11px 15px;
+            border-radius: 999px;
             font-size: 13.5px;
             gap: 10px;
             color: var(--muted);
@@ -1488,30 +1492,30 @@
             color: var(--blue-2);
         }
 
-        /* Actions section at bottom */
         .nav-rail .header-actions {
-            display: grid;
+            display: inline-flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
             justify-self: stretch;
             gap: 8px;
-            align-self: end;
-            padding-top: 18px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            margin-top: 18px;
+            align-self: auto;
+            padding-top: 0;
+            border-top: none;
+            margin-top: 0;
         }
 
         .nav-rail .status-pill {
-            width: 100%;
+            width: auto;
             border-radius: 12px;
             padding: 10px 12px;
         }
 
         .nav-rail .btn,
         .nav-rail button.btn {
-            width: 100%;
+            width: auto;
             justify-content: center;
         }
 
-        /* ─── MAIN STAGE ─── */
         .main-stage {
             position: relative;
             min-width: 0;
@@ -1522,22 +1526,11 @@
             z-index: 1;
             padding: 0;
             display: grid;
-            gap: 16px;
+            gap: 22px;
         }
 
-        /* Topline breadcrumb bar */
         .main-topline {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 14px;
-            align-items: center;
-            padding: 14px 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.052);
-            background: rgba(6, 10, 18, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            display: none;
         }
 
         .main-topline-copy {
@@ -1583,83 +1576,32 @@
         }
 
         /* Page hero — in main stage context */
-        .page-hero {
-            padding: 22px 24px;
-            margin-bottom: 0;
-            border-radius: 20px;
-        }
-
-        .page-title {
-            font-size: clamp(28px, 4vw, 46px);
-            font-weight: 800;
-        }
-
-        .page-copy {
-            max-width: 62ch;
-            font-size: 14.5px;
-        }
-
         .content {
-            gap: 20px;
+            gap: 24px;
         }
 
         .content-flow {
-            gap: 22px;
+            gap: 26px;
         }
 
-        /* ─── RESPONSIVE SIDEBAR ─── */
         @media (max-width: 1180px) {
-            .app-frame {
-                grid-template-columns: 1fr;
-            }
-            .nav-rail {
-                position: relative;
-                top: 0;
-            }
-            .nav-rail .site-header-inner {
-                min-height: auto;
-            }
-            .nav-rail .top-nav {
-                grid-template-columns: 1fr;
-            }
+            .nav-rail { position: relative; top: 0; }
+            .nav-rail .top-nav { grid-template-columns: 1fr; gap: 14px; }
             .nav-rail .nav-pills {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 4px;
+                justify-content: flex-start;
             }
-            .nav-rail .nav-pill {
-                width: auto;
-            }
-            .nav-rail .header-actions {
-                display: flex;
-                flex-wrap: wrap;
-                align-self: auto;
-                border-top: none;
-                padding-top: 0;
-                margin-top: 0;
-            }
-            .nav-rail .status-pill,
-            .nav-rail .btn,
-            .nav-rail button.btn {
-                width: auto;
-            }
-            .main-topline {
-                flex-direction: row;
-            }
-            .main-topline-badges {
-                justify-content: flex-end;
-            }
+            .nav-rail .header-actions { justify-content: flex-start; }
         }
 
         @media (max-width: 900px) {
-            .main-stage-inner {
-                padding: 0;
-            }
             .page-hero {
-                padding: 18px 16px;
-                border-radius: 18px;
+                padding: 24px 20px;
+                border-radius: 24px;
             }
-            .page-title { font-size: 28px; }
+            .page-title { font-size: clamp(30px, 8vw, 44px); }
             .hero-side {
                 flex-direction: row;
                 align-items: center;
@@ -1668,12 +1610,20 @@
         }
 
         @media (max-width: 640px) {
-            .main-topline {
-                flex-direction: column;
-                align-items: flex-start;
+            .nav-rail .site-header-inner { padding: 14px 16px; border-radius: 22px; }
+            .nav-rail .nav-pills {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                width: 100%;
+                border-radius: 18px;
             }
-            .main-topline-badges {
+            .nav-rail .nav-pill {
+                width: 100%;
                 justify-content: flex-start;
+                border-radius: 14px;
+            }
+            .nav-rail .header-actions {
+                display: grid;
             }
         }
     </style>
