@@ -201,6 +201,19 @@
             linear-gradient(180deg, rgba(7, 12, 22, 0.98), rgba(4, 7, 14, 0.98));
     }
 
+    .home-canvas::after {
+        content: "";
+        position: absolute;
+        inset: -30% -10% auto;
+        height: 160px;
+        background: linear-gradient(108deg, transparent 28%, rgba(199, 226, 255, 0.06) 45%, rgba(255, 255, 255, 0.42) 50%, rgba(199, 226, 255, 0.06) 55%, transparent 72%);
+        filter: blur(16px);
+        opacity: 0.5;
+        transform: rotate(-9deg);
+        animation: scanSweep 9s ease-in-out infinite;
+        pointer-events: none;
+    }
+
     .home-canvas::before {
         content: "";
         position: absolute;
@@ -211,6 +224,35 @@
         background-size: 40px 40px;
         opacity: 0.55;
         mask-image: radial-gradient(circle at center, rgba(0,0,0,0.95), transparent 94%);
+    }
+
+    .canvas-ambient-glow {
+        position: absolute;
+        inset: 12% 16%;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(108, 168, 255, 0.13), transparent 62%);
+        filter: blur(26px);
+        animation: spotlightBreathe 7.5s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    .canvas-orbit {
+        position: absolute;
+        border-radius: 999px;
+        border: 1px solid rgba(150, 206, 255, 0.12);
+        transform: perspective(1200px) rotateX(68deg) rotateZ(-18deg);
+        opacity: 0.42;
+        pointer-events: none;
+    }
+
+    .canvas-orbit.o1 {
+        inset: 19% 18% 24% 20%;
+        animation: orbitShift 12s linear infinite;
+    }
+
+    .canvas-orbit.o2 {
+        inset: 26% 26% 32% 28%;
+        animation: orbitShift 16s linear infinite reverse;
     }
 
     .board-silhouette {
@@ -225,6 +267,7 @@
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 30px 60px rgba(0,0,0,0.24);
         transform: perspective(1200px) rotateX(62deg) rotateZ(-19deg);
         transform-style: preserve-3d;
+        animation: boardFloat 8.5s ease-in-out infinite;
     }
 
     .trace-line {
@@ -253,6 +296,28 @@
         50% { opacity: 1; filter: brightness(1.18); }
     }
 
+    @keyframes boardFloat {
+        0%, 100% { transform: perspective(1200px) rotateX(62deg) rotateZ(-19deg) translate3d(0, 0, 0); }
+        50% { transform: perspective(1200px) rotateX(60deg) rotateZ(-17deg) translate3d(0, -6px, 0); }
+    }
+
+    @keyframes scanSweep {
+        0%, 100% { transform: translateY(-36px) rotate(-9deg); opacity: 0.2; }
+        48% { opacity: 0.82; }
+        50% { transform: translateY(260px) rotate(-9deg); opacity: 0.9; }
+        85% { opacity: 0.18; }
+    }
+
+    @keyframes orbitShift {
+        from { transform: perspective(1200px) rotateX(68deg) rotateZ(-18deg) rotate(0deg); }
+        to { transform: perspective(1200px) rotateX(68deg) rotateZ(-18deg) rotate(360deg); }
+    }
+
+    @keyframes spotlightBreathe {
+        0%, 100% { opacity: 0.45; transform: scale(0.96); }
+        50% { opacity: 0.92; transform: scale(1.08); }
+    }
+
     .node-dot {
         position: absolute;
         width: 14px;
@@ -260,11 +325,17 @@
         border-radius: 999px;
         background: #eef5ff;
         box-shadow: 0 0 0 6px rgba(108, 168, 255, 0.16), 0 0 22px rgba(108, 168, 255, 0.4);
+        animation: nodePulse 3.6s ease-in-out infinite;
     }
 
     .node-dot.n1 { top: 22%; left: 22%; }
-    .node-dot.n2 { top: 39%; left: 64%; }
-    .node-dot.n3 { top: 68%; left: 46%; }
+    .node-dot.n2 { top: 39%; left: 64%; animation-delay: 0.9s; }
+    .node-dot.n3 { top: 68%; left: 46%; animation-delay: 1.8s; }
+
+    @keyframes nodePulse {
+        0%, 100% { transform: scale(0.92); box-shadow: 0 0 0 6px rgba(108, 168, 255, 0.12), 0 0 16px rgba(108, 168, 255, 0.26); }
+        50% { transform: scale(1.18); box-shadow: 0 0 0 12px rgba(108, 168, 255, 0.08), 0 0 28px rgba(108, 168, 255, 0.48); }
+    }
 
     .risk-tag {
         position: absolute;
@@ -276,6 +347,7 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255,255,255,0.08);
+        animation: chipDrift 6.4s ease-in-out infinite;
     }
 
     .risk-tag.red {
@@ -290,6 +362,20 @@
         left: 18%;
         background: rgba(244, 185, 66, 0.14);
         color: #ffe2a0;
+        animation-delay: 1.9s;
+    }
+
+    .risk-tag.blue {
+        top: 16%;
+        left: 14%;
+        background: rgba(108, 168, 255, 0.14);
+        color: #dbeaff;
+        animation-delay: 0.8s;
+    }
+
+    @keyframes chipDrift {
+        0%, 100% { transform: translateY(0); opacity: 0.76; }
+        50% { transform: translateY(-8px); opacity: 1; }
     }
 
     .home-stage-side {
@@ -585,6 +671,9 @@
 
             <div class="home-stage-grid">
                 <div class="home-canvas">
+                    <div class="canvas-ambient-glow"></div>
+                    <div class="canvas-orbit o1"></div>
+                    <div class="canvas-orbit o2"></div>
                     <div class="board-silhouette">
                         <div class="trace-line"></div>
                         <div class="trace-line"></div>
@@ -595,6 +684,7 @@
                         <div class="node-dot n2"></div>
                         <div class="node-dot n3"></div>
                     </div>
+                    <div class="risk-tag blue">Parser trust stable</div>
                     <div class="risk-tag red">Routing issue detected</div>
                     <div class="risk-tag yellow">Thermal pressure +2.3</div>
                 </div>

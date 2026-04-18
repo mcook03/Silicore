@@ -2,6 +2,146 @@
 {% block content %}
 
 <style>
+    .review-launch-shell {
+        display: grid;
+        gap: 22px;
+    }
+
+    .review-launch-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+        gap: 20px;
+        align-items: stretch;
+    }
+
+    .review-command-deck {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        border-radius: 32px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            radial-gradient(circle at top left, rgba(51, 209, 255, 0.14), transparent 30%),
+            linear-gradient(180deg, rgba(10, 17, 29, 0.92), rgba(6, 11, 20, 0.88));
+        box-shadow: var(--shadow);
+    }
+
+    .review-command-kicker {
+        color: var(--muted-2);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .review-command-title {
+        margin: 10px 0 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2.6rem, 5vw, 4.8rem);
+        line-height: 0.9;
+        letter-spacing: -0.08em;
+        max-width: 10ch;
+    }
+
+    .review-command-copy {
+        margin: 14px 0 0;
+        color: var(--muted);
+        line-height: 1.8;
+        max-width: 58ch;
+    }
+
+    .review-command-stats {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .review-command-stat {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .review-command-stat strong {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.4rem, 3vw, 2.5rem);
+        letter-spacing: -0.06em;
+    }
+
+    .review-command-stat span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .review-upload-surface {
+        position: relative;
+        overflow: hidden;
+        border-radius: 32px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            linear-gradient(180deg, rgba(12, 18, 31, 0.92), rgba(7, 11, 20, 0.88)),
+            rgba(6, 10, 18, 0.72);
+        box-shadow: var(--shadow);
+    }
+
+    .review-upload-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        padding: 22px 22px 0;
+    }
+
+    .review-upload-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(240px, 0.98fr);
+        gap: 16px;
+        padding: 18px 22px 22px;
+    }
+
+    .review-upload-preview {
+        position: relative;
+        overflow: hidden;
+        min-height: 300px;
+        border-radius: 26px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            radial-gradient(circle at center, rgba(51, 209, 255, 0.12), transparent 26%),
+            linear-gradient(180deg, rgba(9, 14, 25, 0.98), rgba(4, 7, 14, 0.98));
+    }
+
+    .review-upload-preview::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 34px 34px;
+        opacity: 0.55;
+    }
+
+    .review-upload-preview-grid {
+        position: absolute;
+        inset: 14% 12%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .review-upload-preview-card {
+        border-radius: 18px;
+        border: 1px solid rgba(108,168,255,0.12);
+        background:
+            linear-gradient(180deg, rgba(12, 22, 38, 0.82), rgba(7, 14, 24, 0.92));
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
     .portfolio-experience {
         display: grid;
         gap: 24px;
@@ -52,34 +192,111 @@
     }
 
     @media (max-width: 1080px) {
+        .review-launch-grid,
+        .review-upload-grid,
         .portfolio-launch-band {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .review-command-stats {
             grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="portfolio-experience">
-
-<section class="page-hero">
-    <div class="page-hero-inner">
-        <div class="page-hero-copy">
-            <div class="page-eyebrow">Portfolio Review</div>
-            <h1 class="page-title">Compare whole board sets through one Nexus review system.</h1>
-            <p class="page-copy">
-                Upload multiple designs to rank quality, surface repeated engineering pressure, and understand project-wide health across electrical, production, and reliability domains.
-            </p>
+<div class="review-launch-shell">
+<section class="review-launch-grid">
+    <section class="review-command-deck">
+        <div class="review-command-kicker">Portfolio Review</div>
+        <h1 class="review-command-title">Compare whole board sets through one Nexus review system.</h1>
+        <p class="review-command-copy">
+            Upload multiple designs to rank quality, surface repeated engineering pressure, identify CAM readiness gaps, and understand project-wide health across electrical, production, and reliability domains.
+        </p>
+        <div class="review-command-stats">
+            <div class="review-command-stat">
+                <strong>{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</strong>
+                <span>Boards in current review set</span>
+            </div>
+            <div class="review-command-stat">
+                <strong>{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</strong>
+                <span>Average portfolio score</span>
+            </div>
+            <div class="review-command-stat">
+                <strong>{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</strong>
+                <span>CAM-aware boards detected</span>
+            </div>
         </div>
+    </section>
 
-        <div class="hero-side">
-            <div class="top-badge">Atlas Intelligence</div>
-            {% if project_result and project_result.project_summary %}
-            <div class="top-badge">{{ project_result.project_summary.total_boards }} boards</div>
-            {% else %}
-            <div class="top-badge">Awaiting portfolio input</div>
-            {% endif %}
+    <section class="review-upload-surface">
+        <div class="review-upload-top">
+            <div>
+                <div class="review-command-kicker">Launch Review</div>
+                <div class="home-stage-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }} boards loaded{% else %}Awaiting portfolio input{% endif %}</div>
+            </div>
+            <div class="chip">Atlas + Nexus Review</div>
         </div>
-    </div>
+        <div class="review-upload-grid">
+            <div>
+                <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="project-upload">
+                    <label>
+                        Project Files
+                        <input type="file" name="project_files" multiple required>
+                    </label>
+
+                    {% if project_options is defined %}
+                    <label>
+                        Attach to Project
+                        <select name="project_id">
+                            <option value="">No project</option>
+                            {% for project in project_options %}
+                                <option value="{{ project.project_id }}">{{ project.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    {% endif %}
+
+                    {% if analysis_modes is defined %}
+                    <label>
+                        Analysis Profile
+                        <select name="analysis_profile">
+                            {% for option in analysis_modes.profiles %}
+                                <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+
+                    <label>
+                        Board Type
+                        <select name="analysis_board_type">
+                            {% for option in analysis_modes.board_types %}
+                                <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    {% endif %}
+
+                    <div class="btn-link-row">
+                        <button class="btn btn-primary" type="submit">Analyze Project</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="review-upload-preview">
+                <div class="review-upload-preview-grid">
+                    <div class="review-upload-preview-card"></div>
+                    <div class="review-upload-preview-card"></div>
+                    <div class="review-upload-preview-card"></div>
+                    <div class="review-upload-preview-card"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 </section>
+
+<div class="portfolio-experience">
 
 <section class="portfolio-launch-band">
     <section class="portfolio-launch-panel">
@@ -93,57 +310,6 @@
 <div class="project-redesign-shell">
 
 <section class="review-hero-card">
-    <div class="review-hero-left">
-        <div class="review-kicker">Powered by Atlas Intelligence</div>
-        <h1 class="review-title">Silicore Nexus Review</h1>
-        <p class="review-copy">
-            Upload multiple boards to compare design quality, rank the strongest and weakest designs, and review project-wide health across signal, power, EMC, stackup, manufacturability, testability, and safety.
-        </p>
-
-        <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="project-upload">
-            <label>
-                Project Files
-                <input type="file" name="project_files" multiple required>
-            </label>
-
-            {% if project_options is defined %}
-            <label>
-                Attach to Project
-                <select name="project_id">
-                    <option value="">No project</option>
-                    {% for project in project_options %}
-                        <option value="{{ project.project_id }}">{{ project.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            {% endif %}
-
-            {% if analysis_modes is defined %}
-            <label>
-                Analysis Profile
-                <select name="analysis_profile">
-                    {% for option in analysis_modes.profiles %}
-                        <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-
-            <label>
-                Board Type
-                <select name="analysis_board_type">
-                    {% for option in analysis_modes.board_types %}
-                        <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            {% endif %}
-
-            <div class="btn-link-row">
-                <button class="btn btn-primary" type="submit">Analyze Project</button>
-            </div>
-        </form>
-    </div>
-
     <div class="review-hero-right">
         <div class="hero-orb hero-orb-a"></div>
         <div class="hero-orb hero-orb-b"></div>
