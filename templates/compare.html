@@ -9,7 +9,7 @@
 
     .compare-launch-band {
         display: grid;
-        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
         gap: 22px;
         align-items: stretch;
     }
@@ -51,8 +51,71 @@
         max-width: 58ch;
     }
 
+    .compare-telemetry-panel {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            radial-gradient(circle at top right, rgba(6,182,212,0.12), transparent 30%),
+            linear-gradient(180deg, rgba(10,17,29,0.96), rgba(5,9,17,0.98));
+        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+        display: grid;
+        gap: 18px;
+    }
+
+    .compare-telemetry-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .compare-telemetry-card {
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+        display: grid;
+        gap: 8px;
+    }
+
+    .compare-telemetry-card span {
+        color: var(--muted-2);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .compare-telemetry-card strong {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+    }
+
+    .compare-telemetry-note {
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
     @media (max-width: 1080px) {
         .compare-launch-band {
+            grid-template-columns: 1fr;
+        }
+
+        .compare-telemetry-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .compare-telemetry-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -89,6 +152,33 @@
             Track regressions, isolate improvements, and use Atlas-guided revision reasoning to decide if the new board is truly moving toward release.
         </p>
     </section>
+
+    <aside class="compare-telemetry-panel">
+        <div class="compare-launch-kicker">Compare telemetry</div>
+        <div class="compare-telemetry-grid">
+            <div class="compare-telemetry-card">
+                <span>Score delta</span>
+                <strong>{% if compare_copilot and compare_copilot.score_diff > 0 %}+{% endif %}{{ compare_copilot.score_diff|round|int if compare_copilot else "N/A" }}</strong>
+            </div>
+            <div class="compare-telemetry-card">
+                <span>Risk delta</span>
+                <strong>{% if compare_copilot and compare_copilot.risk_diff > 0 %}+{% endif %}{{ compare_copilot.risk_diff if compare_copilot else "N/A" }}</strong>
+            </div>
+            <div class="compare-telemetry-card">
+                <span>Critical delta</span>
+                <strong>{% if compare_copilot and compare_copilot.critical_diff > 0 %}+{% endif %}{{ compare_copilot.critical_diff if compare_copilot else "N/A" }}</strong>
+            </div>
+            <div class="compare-telemetry-card">
+                <span>Revision call</span>
+                <strong style="font-size:1.1rem; line-height:1.08;">{{ compare_copilot.posture if compare_copilot else "Awaiting compare signal" }}</strong>
+            </div>
+        </div>
+        <div class="compare-telemetry-note">
+            {{ compare_copilot.signoff_note if compare_copilot else "Use this comparison surface to decide whether the new revision improved real engineering posture or only moved the problem." }}
+        </div>
+    </aside>
+    
+</section>
 
 <style>
     .compare-redesign-shell {
@@ -264,8 +354,6 @@
             </div>
         </div>
     </aside>
-</section>
-
 </div>
 
 <script id="compare-assistant-data" type="application/json">

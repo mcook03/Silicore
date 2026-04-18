@@ -19,7 +19,7 @@
 
     .workspace-launch-band {
         display: grid;
-        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
         gap: 22px;
         align-items: stretch;
     }
@@ -61,8 +61,95 @@
         max-width: 58ch;
     }
 
+    .workspace-command-panel {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            radial-gradient(circle at top right, rgba(6,182,212,0.14), transparent 28%),
+            linear-gradient(180deg, rgba(10,17,29,0.96), rgba(5,9,17,0.98));
+        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+        display: grid;
+        gap: 18px;
+    }
+
+    .workspace-command-panel::after {
+        content: "";
+        position: absolute;
+        inset: auto -12% -22% auto;
+        width: 220px;
+        height: 220px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(96,165,250,0.18), transparent 64%);
+        filter: blur(8px);
+        pointer-events: none;
+    }
+
+    .workspace-command-label {
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .workspace-command-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .workspace-command-metric {
+        position: relative;
+        z-index: 1;
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+        display: grid;
+        gap: 8px;
+    }
+
+    .workspace-command-metric strong {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.6rem, 3vw, 2.7rem);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+    }
+
+    .workspace-command-metric span {
+        color: var(--muted-2);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .workspace-command-note {
+        position: relative;
+        z-index: 1;
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
     @media (max-width: 1080px) {
         .workspace-launch-band {
+            grid-template-columns: 1fr;
+        }
+
+        .workspace-command-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .workspace-command-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -98,6 +185,33 @@
             Track recurring risk families, readiness posture, compare movement, team review flow, and Atlas-guided execution through one Nexus workspace surface.
         </p>
     </section>
+
+    <aside class="workspace-command-panel">
+        <div class="workspace-command-label">Workspace Telemetry</div>
+        <div class="workspace-command-grid">
+            <div class="workspace-command-metric">
+                <span>Health score</span>
+                <strong>{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</strong>
+            </div>
+            <div class="workspace-command-metric">
+                <span>Linked runs</span>
+                <strong>{{ project.runs|length }}</strong>
+            </div>
+            <div class="workspace-command-metric">
+                <span>Top pattern</span>
+                <strong style="font-size:1.15rem; line-height:1.08;">{{ project.top_category if project.top_category else "Building" }}</strong>
+            </div>
+            <div class="workspace-command-metric">
+                <span>Confidence</span>
+                <strong>{{ workspace_intel.average_confidence|round|int if workspace_intel else "N/A" }}</strong>
+            </div>
+        </div>
+        <div class="workspace-command-note">
+            {{ workspace_intel.trend_summary if workspace_intel else "This workspace becomes more useful as Atlas builds score, recurrence, and confidence history across linked runs." }}
+        </div>
+    </aside>
+    
+</section>
 
 <section class="assistant-console-layout">
     <section class="card assistant-console-main">
@@ -179,7 +293,6 @@
             </div>
         </div>
     </aside>
-</section>
 </section>
 
 <script id="project-assistant-data" type="application/json">

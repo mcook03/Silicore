@@ -7,6 +7,38 @@
 {% set external_evaluations = ops.external_evaluations if ops.external_evaluations is defined else [] %}
 {% set latest_external = external_evaluations[0] if external_evaluations else None %}
 
+<style>
+    .nexus-ops-experience {
+        display: grid;
+        gap: 22px;
+    }
+</style>
+
+<div class="nexus-ops-experience">
+
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div>
+            <div class="page-eyebrow">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/></svg>
+                Nexus Operations
+            </div>
+            <h1 class="page-title">Ops &amp; Control</h1>
+            <p class="page-copy">Manage the Silicore runtime: worker loop, job queue, external validation lanes, calibration health, integration registry, and audit stream.</p>
+        </div>
+        <div class="hero-side">
+            <div class="chip">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Admin Zone
+            </div>
+            <div class="chip">Worker {{ "Online" if worker.running else "Idle" }}</div>
+            {% if summary.queued_jobs %}
+            <div class="chip chip-pending">{{ summary.queued_jobs }} queued</div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <section class="grid grid-2">
     <section class="card loud-card">
         <div class="card-header">
@@ -452,5 +484,7 @@
     });
 })();
 </script>
+
+</div><!-- /.nexus-ops-experience -->
 
 {% endblock %}

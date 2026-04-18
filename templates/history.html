@@ -16,7 +16,7 @@
 
     .history-launch-band {
         display: grid;
-        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
         gap: 22px;
         align-items: stretch;
     }
@@ -58,8 +58,71 @@
         max-width: 58ch;
     }
 
+    .history-command-panel {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            radial-gradient(circle at top right, rgba(59,130,246,0.14), transparent 30%),
+            linear-gradient(180deg, rgba(10,17,29,0.96), rgba(5,9,17,0.98));
+        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+        display: grid;
+        gap: 18px;
+    }
+
+    .history-command-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .history-command-metric {
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03);
+        display: grid;
+        gap: 8px;
+    }
+
+    .history-command-metric span {
+        color: var(--muted-2);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .history-command-metric strong {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.5rem, 3vw, 2.6rem);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+    }
+
+    .history-command-note {
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
     @media (max-width: 1080px) {
         .history-launch-band {
+            grid-template-columns: 1fr;
+        }
+
+        .history-command-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .history-command-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -92,6 +155,33 @@
             </p>
         </section>
 
+        <aside class="history-command-panel">
+            <div class="history-launch-kicker">Archive telemetry</div>
+            <div class="history-command-grid">
+                <div class="history-command-metric">
+                    <span>Total runs</span>
+                    <strong>{{ history_summary.total_runs if history_summary is defined else run_list|length }}</strong>
+                </div>
+                <div class="history-command-metric">
+                    <span>Export files</span>
+                    <strong>{{ history_summary.total_files if history_summary is defined else 0 }}</strong>
+                </div>
+                <div class="history-command-metric">
+                    <span>HTML reports</span>
+                    <strong>{{ history_summary.total_html if history_summary is defined else 0 }}</strong>
+                </div>
+                <div class="history-command-metric">
+                    <span>JSON outputs</span>
+                    <strong>{{ history_summary.total_json if history_summary is defined else 0 }}</strong>
+                </div>
+            </div>
+            <div class="history-command-note">
+                Use the archive as an engineering record: reopen prior analyses, compare posture over time, and pull artifacts back into active review when decisions need evidence.
+            </div>
+        </aside>
+
+    </section>
+
     <section class="stats-grid history-stats-grid">
         <article class="metric-card">
             <p class="metric-label">Total Runs</p>
@@ -116,7 +206,6 @@
             <h3 class="metric-value">{{ history_summary.total_json if history_summary is defined else 0 }}</h3>
             <p class="metric-subtext">Structured result artifacts</p>
         </article>
-    </section>
     </section>
 
     <section class="panel-grid panel-grid-two">

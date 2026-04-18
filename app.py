@@ -4079,6 +4079,7 @@ def _render_page(*, active_page, page_title, page_eyebrow, page_copy, template_n
     body_context = body_context or {}
     return render_template(
         template_name,
+        active_page=active_page,
         page_title=page_title,
         page_eyebrow=page_eyebrow,
         page_copy=page_copy,
