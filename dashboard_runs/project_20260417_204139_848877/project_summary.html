@@ -1,0 +1,100 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Project Summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .board-card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 18px;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Project Summary</h1>
+                <p><strong>Total Boards:</strong> 4</p>
+                <p><strong>Average Score:</strong> 87.0 / 100</p>
+                <p><strong>Best Score:</strong> 92.0 / 100</p>
+                <p><strong>Worst Score:</strong> 82.0 / 100</p>
+            </div>
+
+            
+        <div class="hero">
+            <p><strong>Project comparison complete</strong></p>
+            <p>The strongest board is nc_drill.drl at 92.0 / 100, while the weakest board is bot_cu.ger at 82.0 / 100. The current score spread across the project is 10.0 points. The most recurring issue area across the project is assembly testability.</p>
+        </div>
+        
+
+            <div class="hero">
+                <p><strong>Review Readiness</strong></p>
+                <p>Project packet includes ranked boards, project insight summary, and per-board finding traceability for revision reviews and signoff preparation.</p>
+            </div>
+
+            <div class="hero">
+                <p><strong>Parser Capability</strong></p>
+                <p>Current production-ready inputs: .kicad_pcb, .txt</p>
+                <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            
+            <div class="board-card">
+                <h3>#1 — nc_drill.drl</h3>
+                <p><strong>Score:</strong> 92.0 / 100</p>
+                <p><strong>Total Risks:</strong> 2</p>
+                <p><strong>Total Penalty:</strong> 8.0</p>
+                <p>This board shows very low design risk. The main risk concentration is in assembly testability. The highest-priority issue is Ground test-point coverage appears limited for bring-up and probing. The current design snapshot includes 0 components and 1 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#2 — mech_profile.gm1</h3>
+                <p><strong>Score:</strong> 92.0 / 100</p>
+                <p><strong>Total Risks:</strong> 2</p>
+                <p><strong>Total Penalty:</strong> 8.0</p>
+                <p>This board shows very low design risk. The main risk concentration is in assembly testability. The highest-priority issue is Ground test-point coverage appears limited for bring-up and probing. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#3 — top_cu.ger</h3>
+                <p><strong>Score:</strong> 82.0 / 100</p>
+                <p><strong>Total Risks:</strong> 4</p>
+                <p><strong>Total Penalty:</strong> 18.0</p>
+                <p>This board shows moderate design risk. The main risk concentration is in assembly testability. The highest-priority issue is Gerber/CAM bundle does not include a recognizable board outline.. The current design snapshot includes 0 components and 1 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#4 — bot_cu.ger</h3>
+                <p><strong>Score:</strong> 82.0 / 100</p>
+                <p><strong>Total Risks:</strong> 4</p>
+                <p><strong>Total Penalty:</strong> 18.0</p>
+                <p>This board shows moderate design risk. The main risk concentration is in assembly testability. The highest-priority issue is Gerber/CAM bundle does not include a recognizable board outline.. The current design snapshot includes 0 components and 1 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
+    

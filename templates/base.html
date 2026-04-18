@@ -1416,6 +1416,17 @@
             justify-content: flex-end;
         }
 
+        @media (max-width: 1180px) {
+            .product-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .app-sidebar {
+                position: relative;
+                min-height: auto;
+            }
+        }
+
         @media (max-width: 720px) {
             .site-footer {
                 grid-template-columns: 1fr;
@@ -1428,15 +1439,6 @@
             .two-col-grid,
             .project-detail-compare-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .product-shell {
-                grid-template-columns: 1fr;
-            }
-
-            .app-sidebar {
-                position: relative;
-                min-height: auto;
             }
         }
     </style>

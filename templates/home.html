@@ -436,6 +436,10 @@
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 
+    .recent-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .command-card,
     .portfolio-card,
     .workflow-card,
@@ -474,6 +478,9 @@
         font-family: "Space Grotesk", sans-serif;
         font-size: 1.1rem;
         letter-spacing: -0.04em;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .command-metric {
@@ -511,12 +518,18 @@
     .story-split {
         display: grid;
         gap: 20px;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .story-card {
         display: grid;
         gap: 16px;
+    }
+
+    .story-plain {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
     }
 
     .story-list {
@@ -570,6 +583,11 @@
         margin-bottom: 12px;
     }
 
+    .portfolio-card-top > div,
+    .recent-top > div {
+        min-width: 0;
+    }
+
     .portfolio-card strong {
         font-family: "Space Grotesk", sans-serif;
         font-size: 2rem;
@@ -581,6 +599,16 @@
         font-size: 12px;
         line-height: 1.6;
         overflow-wrap: anywhere;
+    }
+
+    .recent-card {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+    }
+
+    .recent-top .chip-soft {
+        flex-shrink: 0;
     }
 
     .recent-action {
@@ -601,6 +629,10 @@
         .home-stage-grid {
             grid-template-columns: 1fr;
         }
+
+        .recent-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
     }
 
     @media (max-width: 780px) {
@@ -610,6 +642,10 @@
         }
 
         .home-proof-row {
+            grid-template-columns: 1fr;
+        }
+
+        .recent-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -808,7 +844,7 @@
                 </div>
                 <div class="card-body">
                     <div class="story-split">
-                        <section class="story-card" style="padding:0; box-shadow:none; background:none; border:0;">
+                        <section class="story-plain">
                             <div class="story-list">
                                 {% for pillar in dashboard_story.pillars %}
                                 <div class="story-row">
@@ -820,7 +856,7 @@
                                 {% endfor %}
                             </div>
                         </section>
-                        <section class="story-card" style="padding:0; box-shadow:none; background:none; border:0;">
+                        <section class="story-plain">
                             <div class="story-list">
                                 {% for row in dashboard_story.maturity_rows %}
                                 <div class="story-row">
