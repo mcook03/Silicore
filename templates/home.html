@@ -2,2254 +2,863 @@
 {% block content %}
 
 <style>
-    .home-redesign {
-        display: grid;
-        gap: 28px;
-    }
-
-    .home-story-grid {
+    .home-rebuild {
         display: grid;
         gap: 24px;
-        grid-template-columns: 1.1fr 0.9fr 0.95fr 1.05fr;
-        grid-auto-flow: dense;
-        align-items: start;
     }
 
-    .home-story-grid > .card {
-        min-height: 100%;
+    .signal-ticker {
+        position: relative;
+        overflow: hidden;
+        padding: 10px 0;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
     }
 
-    .home-command-span {
-        grid-column: span 2;
+    .signal-ticker-track {
+        display: flex;
+        gap: 34px;
+        min-width: max-content;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        animation: signalScroll 24s linear infinite;
     }
 
-    .home-telemetry-span,
-    .home-capability-span,
-    .home-portfolio-span,
-    .home-workflow-span,
-    .home-reporting-span {
-        grid-column: span 2;
+    @keyframes signalScroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
     }
 
-    .home-activity-span {
-        grid-column: 1 / -1;
+    .home-hero {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 24px;
+        padding: 30px;
+        min-height: 720px;
+        border-radius: 36px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(95, 164, 255, 0.22), transparent 26%),
+            radial-gradient(circle at 80% 0%, rgba(51, 209, 255, 0.14), transparent 28%),
+            linear-gradient(180deg, rgba(8, 13, 24, 0.94), rgba(5, 9, 18, 0.88));
+        box-shadow: var(--shadow);
     }
 
-    .home-redesign .tech-hero {
-        min-height: clamp(620px, 70vh, 820px);
-        border-radius: 38px;
-        padding: 28px;
+    .home-hero::before {
+        content: "";
+        position: absolute;
+        left: -10%;
+        right: -10%;
+        top: 18%;
+        height: 220px;
+        background: linear-gradient(112deg, transparent 22%, rgba(255,255,255,0.05) 43%, rgba(168, 207, 255, 0.26) 50%, rgba(255,255,255,0.05) 57%, transparent 80%);
+        filter: blur(14px);
+        opacity: 0.72;
+        pointer-events: none;
+        transform: rotate(-8deg);
     }
 
-    .home-redesign .tech-hero-grid {
-        grid-template-columns: minmax(320px, 0.78fr) minmax(0, 1.22fr);
-        align-items: stretch;
-        gap: 18px;
+    .home-hero-copy {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        align-content: center;
+        gap: 16px;
+        max-width: 40rem;
     }
 
-    .home-redesign .tech-copy {
-        align-self: start;
-        justify-content: start;
-        min-height: 0;
-        gap: 12px;
-        padding: 8px 0 4px;
-        max-width: 38rem;
+    .home-kicker-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
     }
 
-    .home-redesign .tech-title {
-        max-width: 9ch;
-        font-size: clamp(2.4rem, 4.4vw, 4.8rem);
-        line-height: 0.94;
-        letter-spacing: -0.07em;
-        overflow-wrap: normal;
-        word-break: normal;
-        hyphens: none;
+    .home-kicker,
+    .home-powered {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.035);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #d9e8ff;
+    }
+
+    .home-title {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(3.6rem, 8vw, 7rem);
+        line-height: 0.88;
+        letter-spacing: -0.09em;
+        max-width: 8ch;
         text-wrap: balance;
     }
 
-    .home-redesign .tech-description {
-        max-width: 28rem;
-        font-size: 0.95rem;
-        line-height: 1.55;
+    .home-copy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.85;
+        max-width: 58ch;
     }
 
-    .home-redesign .tech-stage-shell {
-        min-height: 100%;
-        border-radius: 34px;
+    .home-action-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-top: 6px;
     }
 
-    .home-redesign .tech-stage-main {
-        grid-template-columns: minmax(0, 1.42fr) minmax(240px, 0.58fr);
-        gap: 18px;
+    .home-proof-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        padding-top: 16px;
     }
 
-    .home-redesign .tech-blueprint {
-        min-height: 480px;
-        border-radius: 30px;
+    .home-proof {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
     }
 
-    .home-redesign .tech-stage-side {
+    .home-proof strong {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.4rem, 3vw, 2.6rem);
+        letter-spacing: -0.06em;
+    }
+
+    .home-proof span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .home-stage {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .home-stage-top {
+        display: flex;
         justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
     }
 
-    .home-redesign .tech-surface-card {
-        border-radius: 30px;
+    .home-stage-heading {
+        display: grid;
+        gap: 6px;
+    }
+
+    .home-stage-label {
+        color: var(--muted-2);
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+    }
+
+    .home-stage-value {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.15rem;
+        letter-spacing: -0.04em;
+    }
+
+    .home-stage-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.18fr) minmax(260px, 0.82fr);
+        gap: 16px;
+        min-height: 100%;
+    }
+
+    .home-canvas {
+        position: relative;
+        overflow: hidden;
+        min-height: 500px;
+        border-radius: 28px;
+        border: 1px solid rgba(255,255,255,0.07);
         background:
-            linear-gradient(180deg, rgba(15, 25, 42, 0.9), rgba(7, 15, 28, 0.9)),
-            rgba(5, 10, 20, 0.82);
+            radial-gradient(circle at 50% 18%, rgba(108, 168, 255, 0.12), transparent 24%),
+            linear-gradient(180deg, rgba(7, 12, 22, 0.98), rgba(4, 7, 14, 0.98));
     }
 
-    .home-redesign .tech-surface-card:nth-child(odd) {
+    .home-canvas::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.55;
+        mask-image: radial-gradient(circle at center, rgba(0,0,0,0.95), transparent 94%);
+    }
+
+    .board-silhouette {
+        position: absolute;
+        inset: 10% 9% 16% 9%;
+        border-radius: 26px;
+        border: 1px solid rgba(108,168,255,0.14);
         background:
-            radial-gradient(circle at top left, rgba(61, 206, 196, 0.11), transparent 45%),
-            linear-gradient(180deg, rgba(13, 23, 40, 0.9), rgba(6, 13, 24, 0.92));
+            radial-gradient(circle at 25% 28%, rgba(51, 209, 255, 0.12), transparent 10%),
+            radial-gradient(circle at 72% 58%, rgba(108, 168, 255, 0.12), transparent 12%),
+            linear-gradient(180deg, rgba(12, 24, 43, 0.72), rgba(6, 13, 24, 0.88));
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 30px 60px rgba(0,0,0,0.24);
+        transform: perspective(1200px) rotateX(62deg) rotateZ(-19deg);
+        transform-style: preserve-3d;
     }
 
-    .home-redesign .tech-surface-card:nth-child(even) {
+    .trace-line {
+        position: absolute;
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(80, 187, 255, 0.05), rgba(170, 217, 255, 0.8), rgba(80, 187, 255, 0.05));
+        box-shadow: 0 0 18px rgba(108, 168, 255, 0.34);
+        animation: tracePulse 4.2s ease-in-out infinite;
+    }
+
+    .trace-line:nth-child(1) { top: 24%; left: 12%; width: 42%; animation-delay: 0s; }
+    .trace-line:nth-child(2) { top: 43%; left: 28%; width: 46%; animation-delay: 1.2s; }
+    .trace-line:nth-child(3) { top: 64%; left: 16%; width: 36%; animation-delay: 2.3s; }
+
+    .trace-line.vertical {
+        width: 3px;
+        height: 34%;
+    }
+
+    .trace-line.vertical.v1 { top: 18%; left: 34%; animation-delay: 0.8s; }
+    .trace-line.vertical.v2 { top: 38%; left: 70%; animation-delay: 2.1s; }
+
+    @keyframes tracePulse {
+        0%, 100% { opacity: 0.25; filter: brightness(0.92); }
+        50% { opacity: 1; filter: brightness(1.18); }
+    }
+
+    .node-dot {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #eef5ff;
+        box-shadow: 0 0 0 6px rgba(108, 168, 255, 0.16), 0 0 22px rgba(108, 168, 255, 0.4);
+    }
+
+    .node-dot.n1 { top: 22%; left: 22%; }
+    .node-dot.n2 { top: 39%; left: 64%; }
+    .node-dot.n3 { top: 68%; left: 46%; }
+
+    .risk-tag {
+        position: absolute;
+        padding: 8px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .risk-tag.red {
+        top: 26%;
+        right: 14%;
+        background: rgba(255, 95, 109, 0.14);
+        color: #ffc0c7;
+    }
+
+    .risk-tag.yellow {
+        bottom: 18%;
+        left: 18%;
+        background: rgba(244, 185, 66, 0.14);
+        color: #ffe2a0;
+    }
+
+    .home-stage-side {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+    }
+
+    .home-metric-panel {
+        padding: 18px;
+        display: grid;
+        gap: 14px;
+    }
+
+    .home-metric-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .home-metric-row {
+        display: grid;
+        gap: 7px;
+    }
+
+    .home-metric-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .home-metric-top strong {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.2rem;
+        letter-spacing: -0.04em;
+    }
+
+    .home-grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .home-stack {
+        display: grid;
+        gap: 20px;
+    }
+
+    .command-grid,
+    .portfolio-grid,
+    .workflow-grid,
+    .recent-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .command-card,
+    .portfolio-card,
+    .workflow-card,
+    .recent-card,
+    .story-card,
+    .parser-card {
+        position: relative;
+        overflow: hidden;
+        padding: 20px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.07);
         background:
-            radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 42%),
-            linear-gradient(180deg, rgba(15, 24, 42, 0.92), rgba(7, 14, 26, 0.94));
+            linear-gradient(180deg, rgba(11, 18, 31, 0.9), rgba(7, 12, 22, 0.86)),
+            rgba(6, 10, 18, 0.72);
+        box-shadow: var(--shadow-soft);
     }
 
-    .home-redesign .card-header.tech-header {
-        padding-bottom: 20px;
+    .command-card::before,
+    .portfolio-card::before,
+    .workflow-card::before,
+    .recent-card::before,
+    .story-card::before,
+    .parser-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(108, 168, 255, 0.1), transparent 36%);
+        pointer-events: none;
     }
 
-    .home-redesign .section-title {
-        font-size: clamp(1.2rem, 2vw, 1.7rem);
+    .command-card h3,
+    .portfolio-card h3,
+    .workflow-card h3,
+    .recent-title {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.1rem;
+        letter-spacing: -0.04em;
     }
 
-    .home-redesign .command-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    .command-metric {
+        margin: 14px 0 12px;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .home-redesign .telemetry-chart-stack {
-        grid-template-columns: 1.1fr 0.9fr;
+    .command-metric strong {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2rem, 4vw, 3.8rem);
+        line-height: 0.92;
+        letter-spacing: -0.08em;
     }
 
-    .home-redesign .workspace-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .command-metric span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
     }
 
-    .home-redesign .workflow-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .command-card p,
+    .portfolio-card p,
+    .workflow-card p,
+    .story-card p,
+    .parser-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.72;
+        font-size: 13px;
     }
 
-    .home-redesign .report-grid {
-        grid-template-columns: 1fr;
+    .story-split {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1fr 1fr;
     }
 
-    .home-redesign .recent-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .story-card {
+        display: grid;
+        gap: 16px;
     }
 
-    @media (max-width: 1380px) {
-        .home-story-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .home-command-span,
-        .home-telemetry-span,
-        .home-capability-span,
-        .home-portfolio-span,
-        .home-workflow-span,
-        .home-reporting-span,
-        .home-activity-span {
-            grid-column: span 2;
-        }
-
-        .home-redesign .recent-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
+    .story-list {
+        display: grid;
+        gap: 12px;
     }
 
-    @media (max-width: 1080px) {
-        .home-redesign .tech-hero-grid,
-        .home-redesign .tech-stage-main,
-        .home-redesign .telemetry-chart-stack,
-        .home-redesign .workflow-grid,
-        .home-redesign .report-grid {
+    .story-row {
+        display: grid;
+        gap: 6px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .story-row:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .story-row-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .story-row strong {
+        font-size: 14px;
+    }
+
+    .tone-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.05);
+        color: var(--text-soft);
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+    }
+
+    .portfolio-card-top,
+    .recent-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: start;
+        margin-bottom: 12px;
+    }
+
+    .portfolio-card strong {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 2rem;
+        letter-spacing: -0.06em;
+    }
+
+    .recent-date {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .recent-action {
+        margin-top: 16px;
+    }
+
+    .recent-action .btn {
+        width: 100%;
+    }
+
+    @media (max-width: 1200px) {
+        .home-hero,
+        .home-grid,
+        .story-split {
             grid-template-columns: 1fr;
         }
 
-        .home-story-grid {
+        .home-stage-grid {
             grid-template-columns: 1fr;
         }
+    }
 
-        .home-command-span,
-        .home-telemetry-span,
-        .home-capability-span,
-        .home-portfolio-span,
-        .home-workflow-span,
-        .home-reporting-span,
-        .home-activity-span {
-            grid-column: auto;
+    @media (max-width: 780px) {
+        .home-hero {
+            min-height: auto;
+            padding: 22px;
+        }
+
+        .home-proof-row {
+            grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="home-redesign">
+<div class="home-rebuild">
+    <section class="signal-ticker">
+        <div class="signal-ticker-track">
+            <span>Signal Integrity</span><span>Power Integrity</span><span>EMI / EMC</span><span>Return Path</span><span>Stackup</span><span>Thermal</span><span>Manufacturability</span><span>Assembly</span><span>Testability</span><span>Safety Spacing</span><span>Parser Trust</span><span>Atlas Reasoning</span>
+            <span>Signal Integrity</span><span>Power Integrity</span><span>EMI / EMC</span><span>Return Path</span><span>Stackup</span><span>Thermal</span><span>Manufacturability</span><span>Assembly</span><span>Testability</span><span>Safety Spacing</span><span>Parser Trust</span><span>Atlas Reasoning</span>
+        </div>
+    </section>
 
-<section class="signal-ribbon">
-    <div class="signal-ribbon-track">
-        <span>Signal integrity</span>
-        <span>Power integrity</span>
-        <span>EMI / EMC</span>
-        <span>Return path</span>
-        <span>Stackup</span>
-        <span>Thermal</span>
-        <span>Manufacturability</span>
-        <span>Assembly</span>
-        <span>Testability</span>
-        <span>Safety spacing</span>
-        <span>Confidence</span>
-        <span>Traceability</span>
-        <span>Signal integrity</span>
-        <span>Power integrity</span>
-        <span>EMI / EMC</span>
-        <span>Return path</span>
-        <span>Stackup</span>
-        <span>Thermal</span>
-    </div>
-</section>
-
-<section class="tech-hero">
-    <div class="tech-noise"></div>
-    <div class="tech-scan"></div>
-    <div class="tech-glow tech-glow-a"></div>
-    <div class="tech-glow tech-glow-b"></div>
-
-    <div class="tech-hero-grid">
-        <div class="tech-copy">
-            <div class="tech-brand-row">
-                <div class="tech-kicker">Silicore Engineering Intelligence</div>
-                <div class="tech-brand-tag">Powered by Atlas Intelligence</div>
+    <section class="home-hero">
+        <div class="home-hero-copy">
+            <div class="home-kicker-row">
+                <div class="home-kicker">Silicore Nexus</div>
+                <div class="home-powered">Powered by Atlas Intelligence</div>
             </div>
-            <h1 class="tech-title">Engineering review, ranked with clarity.</h1>
-            <p class="tech-description">
-                Silicore Nexus surfaces board risk, trust, and fix priority across signal, power, thermal, manufacturability, safety, and return-path behavior without wasting the engineer’s attention.
+            <h1 class="home-title">Engineering review, built like a real system.</h1>
+            <p class="home-copy">
+                Silicore turns board analysis into an engineering operating surface: parser trust, fabrication readiness, prioritized fixes, review context, and Atlas-guided reasoning across the full design workflow.
             </p>
+            <div class="home-action-row">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
+                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Review a Project</a>
+                <a class="btn btn-secondary" href="{{ url_for('history_page') }}">Open Nexus History</a>
+            </div>
+            <div class="home-proof-row">
+                <div class="home-proof">
+                    <strong>{{ stats.total_runs }}</strong>
+                    <span>Total engineering runs tracked in Nexus.</span>
+                </div>
+                <div class="home-proof">
+                    <strong>{{ stats.project_runs }}</strong>
+                    <span>Project-level review passes with portfolio context.</span>
+                </div>
+                <div class="home-proof">
+                    <strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong>
+                    <span>Latest live score posture from the active dataset.</span>
+                </div>
+            </div>
         </div>
 
-        <aside class="tech-stage tech-stage-primary">
-            <div class="tech-stage-shell">
-                <div class="tech-stage-topline">
-                    <div class="tech-stage-topline-left">
-                        <span class="tech-badge">Live Engineering Posture</span>
-                        <span class="tech-source">
-                            {% if home_chart.latest_source %}
-                                {{ home_chart.latest_source }}
-                            {% else %}
-                                Waiting for scored input
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="tech-stage-actions">
-                        <a class="btn btn-primary btn-compact" href="{{ url_for('single_board_page') }}">Analyze</a>
-                        <a class="btn btn-secondary btn-compact" href="{{ url_for('project_page') }}">Review</a>
-                    </div>
-                </div>
-
-                <div class="tech-stage-metrics">
-                    <article class="tech-metric-card">
-                        <span class="tech-metric-label">Runs</span>
-                        <strong>{{ stats.total_runs }}</strong>
-                    </article>
-                    <article class="tech-metric-card">
-                        <span class="tech-metric-label">Workspaces</span>
-                        <strong>{{ projects|length }}</strong>
-                    </article>
-                    <article class="tech-metric-card">
-                        <span class="tech-metric-label">Latest</span>
-                        <strong>{{ home_chart.latest_score }}</strong>
-                    </article>
-                </div>
-
-                <div class="tech-stage-main">
-                    <div class="tech-blueprint">
-                        <svg viewBox="0 0 540 390" class="tech-board-svg" aria-label="Silicore platform visual">
-                            <defs>
-                                <linearGradient id="traceGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="rgba(67,212,200,0.15)"></stop>
-                                    <stop offset="50%" stop-color="rgba(125,211,252,0.95)"></stop>
-                                    <stop offset="100%" stop-color="rgba(59,130,246,0.12)"></stop>
-                                </linearGradient>
-                                <linearGradient id="traceGlowAlt" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stop-color="#60a5fa"></stop>
-                                    <stop offset="100%" stop-color="#43d4c8"></stop>
-                                </linearGradient>
-                                <filter id="softGlow">
-                                    <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
-                                    <feMerge>
-                                        <feMergeNode in="blur"></feMergeNode>
-                                        <feMergeNode in="SourceGraphic"></feMergeNode>
-                                    </feMerge>
-                                </filter>
-                            </defs>
-
-                            <rect x="26" y="26" width="488" height="338" rx="28" class="board-shell"></rect>
-                            <rect x="54" y="54" width="432" height="282" rx="18" class="board-inner"></rect>
-
-                            <g class="board-grid">
-                                {% for x in [90, 150, 210, 270, 330, 390, 450] %}
-                                <line x1="{{ x }}" y1="60" x2="{{ x }}" y2="330"></line>
-                                {% endfor %}
-                                {% for y in [90, 140, 190, 240, 290] %}
-                                <line x1="60" y1="{{ y }}" x2="480" y2="{{ y }}"></line>
-                                {% endfor %}
-                            </g>
-
-                            <path d="M94 116 H188 V166 H278 V112 H386 V150 H454" class="board-trace board-trace-a"></path>
-                            <path d="M92 244 H162 V198 H242 V258 H324 V214 H404 V274 H452" class="board-trace board-trace-b"></path>
-                            <path d="M120 312 V254 H194 V304 H296 V244 H356 V298 H420" class="board-trace board-trace-c"></path>
-                            <path d="M138 84 V144 H118 V196 H162" class="board-trace-thin"></path>
-                            <path d="M344 82 V132 H304 V178 H262" class="board-trace-thin"></path>
-                            <path d="M430 168 V228 H458 V284" class="board-trace-thin"></path>
-
-                            <g class="flow-pulses" filter="url(#softGlow)">
-                                <circle r="5" class="flow-dot flow-a"><animateMotion dur="4.8s" repeatCount="indefinite" path="M94 116 H188 V166 H278 V112 H386 V150 H454"></animateMotion></circle>
-                                <circle r="4" class="flow-dot flow-b"><animateMotion dur="5.6s" repeatCount="indefinite" path="M92 244 H162 V198 H242 V258 H324 V214 H404 V274 H452"></animateMotion></circle>
-                                <circle r="4" class="flow-dot flow-c"><animateMotion dur="5.1s" repeatCount="indefinite" path="M120 312 V254 H194 V304 H296 V244 H356 V298 H420"></animateMotion></circle>
-                            </g>
-
-                            <g class="board-nodes">
-                                <circle cx="94" cy="116" r="8"></circle>
-                                <circle cx="188" cy="166" r="7"></circle>
-                                <circle cx="278" cy="112" r="8"></circle>
-                                <circle cx="386" cy="150" r="7"></circle>
-                                <circle cx="162" cy="198" r="7"></circle>
-                                <circle cx="242" cy="258" r="8"></circle>
-                                <circle cx="324" cy="214" r="8"></circle>
-                                <circle cx="404" cy="274" r="7"></circle>
-                                <circle cx="194" cy="304" r="8"></circle>
-                                <circle cx="296" cy="244" r="7"></circle>
-                                <circle cx="356" cy="298" r="8"></circle>
-                            </g>
-
-                            <g class="board-modules">
-                                <rect x="98" y="84" width="76" height="44" rx="10"></rect>
-                                <rect x="222" y="92" width="84" height="50" rx="12"></rect>
-                                <rect x="352" y="112" width="90" height="56" rx="12"></rect>
-                                <rect x="142" y="214" width="76" height="52" rx="12"></rect>
-                                <rect x="280" y="192" width="86" height="58" rx="12"></rect>
-                            </g>
-
-                            <g class="board-risk-zones">
-                                <circle cx="392" cy="142" r="40" class="risk-zone risk-zone-critical"></circle>
-                                <circle cx="318" cy="220" r="32" class="risk-zone risk-zone-warning"></circle>
-                                <circle cx="182" cy="236" r="28" class="risk-zone risk-zone-warning"></circle>
-                            </g>
-
-                            <g class="board-pulse-group">
-                                <circle cx="392" cy="142" r="11" class="board-pulse board-pulse-critical"></circle>
-                                <circle cx="318" cy="220" r="10" class="board-pulse board-pulse-warning"></circle>
-                                <circle cx="182" cy="236" r="10" class="board-pulse board-pulse-warning"></circle>
-                            </g>
-
-                            <g class="board-labels">
-                                <text x="112" y="110">SIGNAL</text>
-                                <text x="240" y="118">POWER</text>
-                                <text x="372" y="142">EMI / EMC</text>
-                                <text x="154" y="244">THERMAL</text>
-                                <text x="296" y="226">DFM / DFA</text>
-                            </g>
-                        </svg>
-
-                        <div class="tech-stage-overlay tech-stage-overlay-a">
-                            <span>Score</span>
-                            <strong>{{ home_chart.latest_score }}</strong>
-                        </div>
-                        <div class="tech-stage-overlay tech-stage-overlay-b">
-                            <span>Driver</span>
-                            <strong>{{ dashboard_story.top_category if dashboard_story else "General" }}</strong>
-                        </div>
-
-                        <div class="insight-flash insight-flash-a">
-                            <span>Thermal Risk</span>
-                            <strong>+2.3</strong>
-                        </div>
-                        <div class="insight-flash insight-flash-b">
-                            <span>Routing Issue Detected</span>
-                            <strong>USB_DP</strong>
-                        </div>
-                        <div class="insight-flash insight-flash-c">
-                            <span>Critical Region</span>
-                            <strong>EMI / EMC</strong>
-                        </div>
-                    </div>
-
-                    <div class="tech-stage-side">
-                        <div class="tech-dock-card">
-                            <div class="tech-dock-label">Decision state</div>
-                            <div class="tech-dock-value">Live</div>
-                            <div class="tech-dock-copy">Real run history, project context, and next-action ranking feed the current posture.</div>
-                        </div>
-
-                        <div class="tech-dock-card">
-                            <div class="tech-dock-label">Coverage</div>
-                            <div class="tech-dock-value">Multi-domain</div>
-                            <div class="tech-dock-copy">Signal, power, stackup, safety, thermal, manufacturability, and reliability are all part of the same review plane.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tech-lower-band">
-                    <div class="tech-mini-panel">
-                        <div class="tech-mini-label">Recent score signal</div>
-                        {% if home_chart.trend.has_data %}
-                        <svg class="tech-inline-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
-                            <polygon points="{{ home_chart.trend.area_points }}" class="chart-area"></polygon>
-                            <polyline points="{{ home_chart.trend.points }}" class="chart-line"></polyline>
-                        </svg>
+        <section class="home-stage">
+            <div class="home-stage-top">
+                <div class="home-stage-heading">
+                    <div class="home-stage-label">Live Engineering Posture</div>
+                    <div class="home-stage-value">
+                        {% if home_chart.latest_source %}
+                            {{ home_chart.latest_source }}
                         {% else %}
-                        <div class="compact-empty">Run more analyses to activate the score trace.</div>
+                            Awaiting scored input
                         {% endif %}
                     </div>
+                </div>
+                <div class="chip">{{ dashboard_story.top_category if dashboard_story else "General" }}</div>
+            </div>
 
-                    <div class="tech-mini-panel">
-                        <div class="tech-mini-label">Platform summary</div>
-                        <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
+            <div class="home-stage-grid">
+                <div class="home-canvas">
+                    <div class="board-silhouette">
+                        <div class="trace-line"></div>
+                        <div class="trace-line"></div>
+                        <div class="trace-line"></div>
+                        <div class="trace-line vertical v1"></div>
+                        <div class="trace-line vertical v2"></div>
+                        <div class="node-dot n1"></div>
+                        <div class="node-dot n2"></div>
+                        <div class="node-dot n3"></div>
                     </div>
-                </div>
-            </div>
-        </aside>
-    </div>
-</section>
-
-<div class="home-story-grid">
-    <section class="card tech-surface-card home-command-span">
-        <div class="card-header tech-header">
-            <div>
-                <h2 class="section-title">Product Command Layer</h2>
-                <p class="section-copy">Core Silicore functions surfaced as product modules with stronger technical hierarchy.</p>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="command-grid">
-                {% for pillar in dashboard_story.pillars %}
-                <article class="command-card">
-                    {% set metric_parts = pillar.value_label.split(' ', 1) %}
-                    <div class="command-top">
-                        <div class="command-title">{{ pillar.title }}</div>
-                        <div class="command-value">
-                            <span class="command-metric-number">{{ metric_parts[0] }}</span>
-                            <span class="command-metric-label-text">{{ metric_parts[1] if metric_parts|length > 1 else '' }}</span>
-                        </div>
-                    </div>
-                    <div class="command-copy">{{ pillar.description }}</div>
-                </article>
-                {% endfor %}
-            </div>
-
-            <div class="story-panel">
-                <div class="story-kicker">System Summary</div>
-                <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="card tech-surface-card home-telemetry-span">
-        <div class="card-header tech-header">
-            <div>
-                <h2 class="section-title">Telemetry Stack</h2>
-                <p class="section-copy">Live platform data with richer “systems UI” treatment instead of a basic dashboard presentation.</p>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="telemetry-grid">
-                <div class="telemetry-block">
-                    <span class="telemetry-block-label">Latest score</span>
-                    <strong>{{ home_chart.latest_score }}</strong>
-                </div>
-                <div class="telemetry-block">
-                    <span class="telemetry-block-label">Project runs</span>
-                    <strong>{{ stats.project_runs }}</strong>
-                </div>
-                <div class="telemetry-block">
-                    <span class="telemetry-block-label">Exports</span>
-                    <strong>{{ stats.exported_runs }}</strong>
-                </div>
-            </div>
-
-            <div class="telemetry-meter">
-                <div class="telemetry-meter-top">
-                    <span>Risk score position</span>
-                    <strong>{{ home_chart.latest_score }} / 100</strong>
-                </div>
-                <div class="telemetry-meter-track">
-                    <div class="telemetry-meter-fill" style="width: {{ home_chart.latest_score }}%;"></div>
-                </div>
-                <div class="telemetry-meter-scale">
-                    <span>0</span>
-                    <span>25</span>
-                    <span>50</span>
-                    <span>75</span>
-                    <span>100</span>
-                </div>
-            </div>
-
-            <div class="telemetry-chart-stack">
-                <div class="tech-chart-card">
-                    <div class="tech-chart-label">Recent score trend</div>
-                    {% if home_chart.trend.has_data %}
-                    <svg class="tech-large-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none" aria-label="Recent score trend">
-                        <polygon points="{{ home_chart.trend.area_points }}" class="chart-area"></polygon>
-                        <polyline points="{{ home_chart.trend.points }}" class="chart-line"></polyline>
-                    </svg>
-                    {% else %}
-                    <div class="empty-state">No recent scored runs available for a live trend yet.</div>
-                    {% endif %}
+                    <div class="risk-tag red">Routing issue detected</div>
+                    <div class="risk-tag yellow">Thermal pressure +2.3</div>
                 </div>
 
-                <div class="tech-chart-card">
-                    <div class="tech-chart-label">Domain mix</div>
-                    {% if home_chart.domain_distribution and home_chart.domain_distribution.has_data %}
-                    <div class="distribution-bars">
-                        {% for item in home_chart.domain_distribution["items"] %}
-                        <div class="distribution-bar-row">
-                            <div class="distribution-bar-label distribution-bar-label-wrap">{{ item.label }}</div>
-                            <div class="distribution-bar-track">
-                                <div class="distribution-bar-fill tone-blue" style="width: {{ item.width_pct }}%;"></div>
+                <div class="home-stage-side">
+                    <div class="home-metric-panel">
+                        <div class="home-stage-label">Telemetry</div>
+                        <div class="home-metric-list">
+                            <div class="home-metric-row">
+                                <div class="home-metric-top">
+                                    <span>Current score</span>
+                                    <strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong>
+                                </div>
+                                <div class="bar-track"><div class="bar-fill" style="width: {{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}%;"></div></div>
                             </div>
-                            <div class="distribution-bar-value">{{ item.value|int }}</div>
+                            <div class="home-metric-row">
+                                <div class="home-metric-top">
+                                    <span>Single-board runs</span>
+                                    <strong>{{ stats.single_runs }}</strong>
+                                </div>
+                                <div class="bar-track"><div class="bar-fill" style="width: {{ ((stats.single_runs / stats.total_runs) * 100) if stats.total_runs else 0 }}%;"></div></div>
+                            </div>
+                            <div class="home-metric-row">
+                                <div class="home-metric-top">
+                                    <span>Exported reports</span>
+                                    <strong>{{ stats.exported_runs }}</strong>
+                                </div>
+                                <div class="bar-track"><div class="bar-fill" style="width: {{ ((stats.exported_runs / stats.total_runs) * 100) if stats.total_runs else 0 }}%;"></div></div>
+                            </div>
                         </div>
-                        {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="empty-state">Recent runs have not produced enough domain data yet to render a live coverage mix.</div>
-                    {% endif %}
+
+                    <div class="home-metric-panel">
+                        <div class="home-stage-label">Atlas context</div>
+                        <p class="home-copy" style="font-size:13px; line-height:1.8; max-width:none;">
+                            {{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </section>
 
-    <section class="card tech-surface-card home-capability-span">
-        <div class="card-header tech-header">
-            <div>
-                <h2 class="section-title">Capability Progression</h2>
-                <p class="section-copy">A more technical maturity surface with cleaner spacing and stronger emphasis.</p>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="capability-stack">
-                {% for row in dashboard_story.maturity_rows %}
-                <article class="capability-tile">
-                    <div class="capability-tile-top">
-                        <div>
-                            <div class="capability-title">{{ row.title }}</div>
-                            <div class="capability-evidence">{{ row.evidence }}</div>
-                        </div>
-                        <span class="chip chip-{{ row.status_tone }}">{{ row.status }}</span>
+    <section class="home-grid">
+        <div class="home-stack">
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Product Command Layer</h2>
+                    <p class="section-copy">Core Silicore functions presented as product modules instead of generic dashboard tiles.</p>
+                </div>
+                <div class="card-body">
+                    <div class="command-grid">
+                        <article class="command-card">
+                            <h3>Analyze</h3>
+                            <div class="command-metric"><strong>{{ stats.total_runs }}</strong><span>runs tracked</span></div>
+                            <p>Review uploaded boards against Atlas-backed engineering logic with persistent history and deeper parser trust context.</p>
+                        </article>
+                        <article class="command-card">
+                            <h3>Explain</h3>
+                            <div class="command-metric"><strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong><span>latest score</span></div>
+                            <p>Understand why the score moved, which domains are applying pressure, and how much confidence to place in the result.</p>
+                        </article>
+                        <article class="command-card">
+                            <h3>Prioritize</h3>
+                            <div class="command-metric"><strong>{{ projects|length }}</strong><span>active workspaces</span></div>
+                            <p>Rank the next engineering action by severity, confidence, recurrence, and expected impact instead of reading a flat issue list.</p>
+                        </article>
                     </div>
-                    <div class="capability-copy">{{ row.meaning }}</div>
-                </article>
-                {% endfor %}
-            </div>
+                </div>
+            </section>
+
+            <section class="story-split">
+                <section class="story-card">
+                    <div class="card-header" style="padding:0;">
+                        <h2 class="section-title">Recent Score Trend</h2>
+                        <p class="section-copy">How the current run stream is moving as Silicore accumulates engineering evidence.</p>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="chart-frame {% if not (home_chart.trend and home_chart.trend.has_data) %}chart-frame-empty{% endif %}">
+                            {% if home_chart.trend and home_chart.trend.has_data %}
+                            <svg class="chart-svg" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none">
+                                <polygon points="{{ home_chart.trend.area_points }}" fill="rgba(108,168,255,0.16)"></polygon>
+                                <polyline points="{{ home_chart.trend.points }}" fill="none" stroke="#8fc5ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                            </svg>
+                            {% else %}
+                            <div class="empty-state"><h3>Inspection pending</h3><p>No recent scored runs are available for a live trend yet.</p></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="story-card">
+                    <div class="card-header" style="padding:0;">
+                        <h2 class="section-title">Domain Mix</h2>
+                        <p class="section-copy">How board pressure is currently distributed across the engineering review stack.</p>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        {% if home_chart.domain_distribution and home_chart.domain_distribution.has_data %}
+                        <div class="story-list">
+                            {% for item in home_chart.domain_distribution["items"] %}
+                            <div class="story-row">
+                                <div class="story-row-top">
+                                    <strong>{{ item.label }}</strong>
+                                    <span class="tone-chip">{{ item.value }}</span>
+                                </div>
+                                <div class="bar-track"><div class="bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state"><h3>Inspection pending</h3><p>Recent runs have not produced enough domain data yet to render a live coverage mix.</p></div>
+                        {% endif %}
+                    </div>
+                </section>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Engineering Narrative</h2>
+                    <p class="section-copy">System-level readout of what the current run corpus is teaching the product.</p>
+                </div>
+                <div class="card-body">
+                    <div class="story-split">
+                        <section class="story-card" style="padding:0; box-shadow:none; background:none; border:0;">
+                            <div class="story-list">
+                                {% for pillar in dashboard_story.pillars %}
+                                <div class="story-row">
+                                    <div class="story-row-top">
+                                        <strong>{{ pillar.title }}</strong>
+                                    </div>
+                                    <p>{{ pillar.description }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                        <section class="story-card" style="padding:0; box-shadow:none; background:none; border:0;">
+                            <div class="story-list">
+                                {% for row in dashboard_story.maturity_rows %}
+                                <div class="story-row">
+                                    <div class="story-row-top">
+                                        <strong>{{ row.title }}</strong>
+                                        <span class="tone-chip">{{ row.status }}</span>
+                                    </div>
+                                    <p>{{ row.meaning }}</p>
+                                    {% if row.evidence %}
+                                    <p style="font-size:12px;">{{ row.evidence }}</p>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="home-stack">
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Parser & Format Readiness</h2>
+                    <p class="section-copy">Current state of supported board and fabrication package formats.</p>
+                </div>
+                <div class="card-body">
+                    <div class="story-list">
+                        {% if dashboard_story and dashboard_story.parser_readiness %}
+                            {% for item in dashboard_story.parser_readiness %}
+                            <article class="parser-card">
+                                <div class="story-row-top">
+                                    <strong>{{ item.label }}</strong>
+                                    <span class="tone-chip">{{ item.status }}</span>
+                                </div>
+                                <p>{{ item.value }}</p>
+                            </article>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state"><h3>No parser snapshot yet</h3><p>Run the evaluation suite to populate format readiness.</p></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="section-title">Workflow Throughput</h2>
+                    <p class="section-copy">How the main product motions are being used across the workspace.</p>
+                </div>
+                <div class="card-body">
+                    <div class="workflow-grid">
+                        <article class="workflow-card">
+                            <h3>Single Board Analysis</h3>
+                            <div class="command-metric"><strong>{{ stats.single_runs }}</strong><span>runs</span></div>
+                            <p>Focused engineering review for individual board files.</p>
+                        </article>
+                        <article class="workflow-card">
+                            <h3>Nexus Review</h3>
+                            <div class="command-metric"><strong>{{ stats.project_runs }}</strong><span>runs</span></div>
+                            <p>Multi-board ranking, pattern detection, and project-level review.</p>
+                        </article>
+                        <article class="workflow-card">
+                            <h3>Nexus History</h3>
+                            <div class="command-metric"><strong>{{ stats.exported_runs }}</strong><span>exports</span></div>
+                            <p>Retention, archive posture, and report continuity across saved runs.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
         </div>
     </section>
 
-    <section class="card tech-surface-card home-portfolio-span">
-        <div class="card-header tech-header">
-            <div>
-                <h2 class="section-title">Nexus Portfolio</h2>
-                <p class="section-copy">Live engineering workspaces presented in a more product-grade review surface.</p>
-            </div>
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Nexus Portfolio</h2>
+            <p class="section-copy">Live engineering workspaces surfaced as part of the product operating layer.</p>
         </div>
-
         <div class="card-body">
             {% if projects %}
-            <div class="workspace-grid">
+            <div class="portfolio-grid">
                 {% for project in projects[:4] %}
-                <article class="workspace-card">
-                    <div class="workspace-card-top">
-                        <div class="workspace-title">{{ project.name }}</div>
-                        <div class="workspace-score">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
+                <article class="portfolio-card">
+                    <div class="portfolio-card-top">
+                        <div>
+                            <h3>{{ project.name }}</h3>
+                            <p>{{ project.top_category if project.top_category else "No recurring category yet" }}</p>
+                        </div>
+                        <span class="tone-chip">{{ project.health_label }}</span>
                     </div>
-                    <div class="workspace-copy">{{ project.top_category }}</div>
-                    <div class="workspace-meta">
-                        <span>{{ project.health_label }}</span>
-                        <span>{{ project.run_count }} run(s)</span>
+                    <div class="command-metric"><strong>{{ project.latest_score if project.latest_score is not none else "N/A" }}</strong><span>{{ project.run_count }} run(s)</span></div>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state"><h3>No workspaces yet</h3><p>Create a Nexus workspace to start building cross-run engineering context.</p></div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2 class="section-title">Recent Activity</h2>
+            <p class="section-copy">Latest board and project runs on the current Nexus timeline.</p>
+        </div>
+        <div class="card-body">
+            {% if recent_runs %}
+            <div class="recent-grid">
+                {% for run in recent_runs %}
+                <article class="recent-card">
+                    <div class="recent-top">
+                        <div>
+                            <div class="recent-title">{{ run.name }}</div>
+                            <div class="recent-date">{{ run.created_at }}</div>
+                        </div>
+                        <span class="chip-soft">{{ run.run_type }}</span>
+                    </div>
+                    <div class="recent-action">
+                        <a class="btn btn-secondary" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
                     </div>
                 </article>
                 {% endfor %}
             </div>
             {% else %}
-            <div class="empty-state">Create and populate workspaces to build a portfolio-level product story.</div>
-            {% endif %}
-
-            {% if dashboard_story and dashboard_story.parser_readiness %}
-            <div class="parser-grid">
-                {% for item in dashboard_story.parser_readiness %}
-                <div class="parser-chip">
-                    <span>{{ item.label }}</span>
-                    <strong>{{ item.status }}</strong>
-                </div>
-                {% endfor %}
-            </div>
+            <div class="empty-state"><h3>No recent runs yet</h3><p>Run an analysis to populate the live archive timeline.</p></div>
             {% endif %}
         </div>
     </section>
-
-    <section class="card tech-surface-card home-workflow-span">
-        <div class="card-header tech-header">
-            <div>
-                <h2 class="section-title">Workflow Throughput</h2>
-                <p class="section-copy">Main product workflows presented as active modules instead of flat dashboard cards.</p>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="workflow-grid">
-                <article class="workflow-tile">
-                    <div class="workflow-top">
-                        <div>
-                            <div class="workflow-title">Single Board Analysis</div>
-                            <div class="workflow-copy">Focused engineering review for one board file.</div>
-                        </div>
-                        <span class="chip chip-soft">{{ stats.single_runs }}</span>
-                    </div>
-                    {% for item in home_chart.workflow_chart["items"] if item.label == "Single" %}
-                    <div class="workflow-bar"><div class="workflow-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                    {% endfor %}
-                </article>
-
-                <article class="workflow-tile">
-                    <div class="workflow-top">
-                        <div>
-                            <div class="workflow-title">Nexus Review</div>
-                            <div class="workflow-copy">Multi-board ranking and comparison workflow.</div>
-                        </div>
-                        <span class="chip chip-soft">{{ stats.project_runs }}</span>
-                    </div>
-                    {% for item in home_chart.workflow_chart["items"] if item.label == "Project" %}
-                    <div class="workflow-bar"><div class="workflow-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                    {% endfor %}
-                </article>
-
-                <article class="workflow-tile">
-                    <div class="workflow-top">
-                        <div>
-                            <div class="workflow-title">Nexus History & Exports</div>
-                            <div class="workflow-copy">Retention, export packaging, and review continuity.</div>
-                        </div>
-                        <span class="chip chip-soft">{{ stats.exported_runs }}</span>
-                    </div>
-                    {% for item in home_chart.workflow_chart["items"] if item.label == "Exported" %}
-                    <div class="workflow-bar"><div class="workflow-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                    {% endfor %}
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="card tech-surface-card home-reporting-span">
-        <div class="card-header tech-header">
-            <div>
-                <h2 class="section-title">Reporting Surface</h2>
-                <p class="section-copy">Exports and review artifacts presented more like part of a premium engineering platform.</p>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="report-grid">
-                <article class="report-tile">
-                    <div class="report-code">JSON</div>
-                    <div>
-                        <div class="workflow-title">Structured Output</div>
-                        <div class="workflow-copy">Machine-readable results for downstream tooling, audit trails, and automation.</div>
-                    </div>
-                </article>
-                <article class="report-tile">
-                    <div class="report-code">HTML / MD</div>
-                    <div>
-                        <div class="workflow-title">Review Summaries</div>
-                        <div class="workflow-copy">Engineering reports now carry score, transparency, and review-readiness context.</div>
-                    </div>
-                </article>
-                <article class="report-tile">
-                    <div class="report-code">MANIFEST</div>
-                    <div>
-                        <div class="workflow-title">Artifact Registry</div>
-                        <div class="workflow-copy">Each saved run keeps a manifest describing generated artifacts and format readiness.</div>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="card tech-surface-card home-activity-span">
-    <div class="card-header tech-header">
-        <div>
-            <h2 class="section-title">Recent Activity</h2>
-            <p class="section-copy">Latest board and project runs in a cleaner, more technical timeline surface.</p>
-        </div>
-    </div>
-
-    <div class="card-body">
-        {% if recent_runs %}
-        <div class="recent-grid">
-            {% for run in recent_runs %}
-            <article class="recent-card">
-                <div class="recent-top">
-                    <div>
-                        <div class="recent-title">{{ run.name }}</div>
-                        <div class="recent-date">{{ run.created_at }}</div>
-                    </div>
-                    <span class="chip chip-soft">{{ run.run_type|upper }}</span>
-                </div>
-                <div class="recent-action">
-                    <a class="btn-link" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <strong>No recent runs yet.</strong><br><br>
-            Start with a single-board analysis or project review to populate the dashboard.
-        </div>
-        {% endif %}
-    </div>
-</section>
-
 </div>
-
-</div>
-
-<style>
-    .tech-hero {
-        position: relative;
-        overflow: hidden;
-        padding: 40px 36px 44px;
-        margin-bottom: 18px;
-        border-radius: 28px;
-        border: 1px solid rgba(255, 255, 255, 0.062);
-        background:
-            radial-gradient(ellipse 90% 60% at 15% -5%, rgba(6,182,212,0.10), transparent 55%),
-            radial-gradient(ellipse 70% 50% at 88% -8%, rgba(59,130,246,0.13), transparent 52%),
-            radial-gradient(ellipse 50% 40% at 50% 110%, rgba(59,130,246,0.05), transparent 60%),
-            linear-gradient(180deg, rgba(3, 5, 10, 0.98), rgba(5, 9, 18, 0.97) 52%, rgba(6, 11, 22, 0.98));
-        box-shadow: 0 48px 120px rgba(0,0,0,0.6);
-        isolation: isolate;
-    }
-
-    .tech-hero::before {
-        content: "";
-        position: absolute;
-        left: -10%;
-        right: -10%;
-        top: 22%;
-        height: 80px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(6,182,212,0), rgba(59,130,246,0.7) 18%, rgba(147,197,253,0.92) 42%, rgba(59,130,246,0.66) 68%, rgba(6,182,212,0));
-        filter: blur(22px);
-        opacity: 0.6;
-        transform: rotate(16deg) scaleX(1.06);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .tech-hero::after {
-        content: "";
-        position: absolute;
-        left: -6%;
-        right: -6%;
-        top: 25%;
-        height: 36px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(6,182,212,0), rgba(96,165,250,0.72) 20%, rgba(191,219,254,0.88) 46%, rgba(96,165,250,0.68) 74%, rgba(6,182,212,0));
-        filter: blur(18px);
-        transform: rotate(16deg);
-        opacity: 0.48;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .tech-noise,
-    .tech-scan,
-    .tech-glow {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-    }
-
-    .tech-noise {
-        opacity: 0.08;
-        background-image:
-            radial-gradient(rgba(255,255,255,0.7) 0.45px, transparent 0.45px);
-        background-size: 16px 16px;
-        mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
-    }
-
-    .tech-scan {
-        background: linear-gradient(180deg, transparent 0%, rgba(125,211,252,0.05) 48%, transparent 100%);
-        background-size: 100% 160px;
-        animation: scanDrift 11s linear infinite;
-        opacity: 0.8;
-    }
-
-    .tech-glow {
-        border-radius: 999px;
-        filter: blur(16px);
-        opacity: 0.42;
-        animation: heroBreath 8s ease-in-out infinite;
-    }
-
-    .tech-glow-a {
-        inset: auto auto -80px -60px;
-        width: 220px;
-        height: 220px;
-        background: radial-gradient(circle, rgba(6,182,212,0.2), transparent 70%);
-    }
-
-    .tech-glow-b {
-        inset: -50px -30px auto auto;
-        width: 240px;
-        height: 240px;
-        background: radial-gradient(circle, rgba(59,130,246,0.18), transparent 68%);
-        animation-delay: -3s;
-    }
-
-    .tech-hero-grid {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 30px;
-        align-items: start;
-    }
-
-    .tech-copy {
-        display: grid;
-        align-content: start;
-        gap: 14px;
-        padding-top: 18px;
-        min-width: 0;
-        max-width: 64rem;
-        margin: 0 auto;
-        text-align: center;
-    }
-
-    .tech-brand-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .tech-brand-tag {
-        display: inline-flex;
-        align-items: center;
-        padding: 7px 11px;
-        border-radius: 999px;
-        border: 1px solid rgba(125, 211, 252, 0.14);
-        background: rgba(255, 255, 255, 0.04);
-        color: rgba(224, 235, 255, 0.82);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-
-    .tech-kicker,
-    .story-kicker,
-    .tech-mini-label,
-    .tech-chart-label,
-    .tech-metric-label,
-    .telemetry-block-label,
-    .tech-dock-label {
-        color: #bcd8ff;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-    }
-
-    .tech-title {
-        margin: 0;
-        max-width: 11ch;
-        margin-inline: 0;
-        font-size: clamp(52px, 6.4vw, 96px);
-        line-height: 0.9;
-        letter-spacing: -0.075em;
-        font-weight: 800;
-        color: #f8fbff;
-        text-wrap: balance;
-        overflow-wrap: normal;
-        word-break: normal;
-        hyphens: none;
-    }
-
-    .tech-description {
-        margin: 0;
-        max-width: 42rem;
-        margin-inline: auto;
-        color: rgba(224, 235, 255, 0.72);
-        font-size: 16px;
-        line-height: 1.68;
-        overflow-wrap: anywhere;
-    }
-
-    .tech-metric-card,
-    .tech-dock-card,
-    .tech-mini-panel,
-    .command-card,
-    .capability-tile,
-    .workspace-card,
-    .workflow-tile,
-    .report-tile,
-    .recent-card,
-    .tech-chart-card {
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.058);
-        background: rgba(8, 13, 22, 0.88);
-        transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
-    }
-
-    .tech-metric-card:hover,
-    .tech-dock-card:hover,
-    .tech-mini-panel:hover,
-    .command-card:hover,
-    .capability-tile:hover,
-    .workspace-card:hover,
-    .workflow-tile:hover,
-    .report-tile:hover,
-    .recent-card:hover,
-    .tech-chart-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(59,130,246,0.2);
-        box-shadow: 0 12px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(59,130,246,0.08);
-    }
-
-    .tech-metric-card {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 0;
-        padding: 10px 14px;
-    }
-
-    .tech-metric-card strong,
-    .telemetry-block strong {
-        display: block;
-        margin-top: 0;
-        color: #f8fbff;
-        font-size: 22px;
-        line-height: 1;
-        letter-spacing: -0.05em;
-        font-weight: 800;
-        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
-    }
-
-    .tech-stage-shell {
-        position: relative;
-        overflow: hidden;
-        height: 100%;
-        padding: 16px 16px 22px;
-        border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.062);
-        background: rgba(5, 9, 17, 0.96);
-        box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-    }
-
-    .tech-stage-shell::before {
-        content: "";
-        position: absolute;
-        inset: 0 0 auto 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(59,130,246,0.3) 30%, rgba(6,182,212,0.24) 70%, transparent);
-        pointer-events: none;
-    }
-
-    .tech-stage-primary {
-        transform: none;
-        transform-origin: center;
-    }
-
-    .tech-stage-topline {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
-        padding: 2px 6px 12px;
-    }
-
-    .tech-stage-topline-left,
-    .tech-stage-actions,
-    .tech-stage-metrics {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .tech-badge,
-    .tech-source {
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .tech-badge {
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(96,165,250,0.18);
-        background: rgba(59,130,246,0.1);
-        color: #dbeafe;
-    }
-
-    .tech-source {
-        color: rgba(214, 226, 255, 0.7);
-    }
-
-    .btn-compact {
-        padding: 9px 14px;
-        min-height: auto;
-        font-size: 12px;
-    }
-
-    .tech-stage-metrics {
-        margin-top: 12px;
-    }
-
-    .tech-stage-main {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 16px;
-        margin: 10px 0 16px;
-        align-items: stretch;
-    }
-
-    .tech-blueprint {
-        position: relative;
-        min-height: 620px;
-        padding: 18px 18px 22px;
-        border-radius: 28px;
-        border: 1px solid rgba(255,255,255,0.06);
-        background:
-            radial-gradient(circle at 50% 38%, rgba(59,130,246,0.08), transparent 42%),
-            linear-gradient(180deg, rgba(7,10,16,0.96), rgba(5,8,14,0.96));
-        perspective: 1200px;
-    }
-
-    .tech-blueprint::before {
-        content: "";
-        position: absolute;
-        top: 16px;
-        left: 18px;
-        width: 54px;
-        height: 12px;
-        border-radius: 999px;
-        background:
-            radial-gradient(circle at 6px 6px, rgba(255,95,86,0.95) 0 4px, transparent 5px),
-            radial-gradient(circle at 27px 6px, rgba(255,189,46,0.92) 0 4px, transparent 5px),
-            radial-gradient(circle at 48px 6px, rgba(39,201,63,0.9) 0 4px, transparent 5px);
-        opacity: 0.82;
-        z-index: 2;
-    }
-
-    .tech-blueprint::after {
-        content: "silicore.nexus";
-        position: absolute;
-        top: 13px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: rgba(226,236,255,0.58);
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        z-index: 2;
-    }
-
-    .tech-board-svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-        transform-origin: 50% 50%;
-        animation: boardCinematic 12s ease-in-out infinite;
-    }
-
-    .board-shell {
-        fill: rgba(5, 12, 20, 0.9);
-        stroke: rgba(125,211,252,0.18);
-        stroke-width: 1.6;
-        animation: boardReveal 12s ease-in-out infinite;
-    }
-
-    .board-inner {
-        fill: rgba(9, 22, 34, 0.72);
-        stroke: rgba(67,212,200,0.14);
-        stroke-width: 1.2;
-        animation: boardReveal 12s ease-in-out infinite;
-    }
-
-    .board-grid line {
-        stroke: rgba(191,219,254,0.07);
-        stroke-width: 1;
-        animation: gridReveal 12s ease-in-out infinite;
-    }
-
-    .board-trace,
-    .board-trace-thin {
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .board-trace {
-        stroke: url(#traceGlowAlt);
-        stroke-width: 4.4;
-        filter: drop-shadow(0 0 7px rgba(96,165,250,0.26));
-        stroke-dasharray: 12 8;
-        animation: traceFlow 18s linear infinite, traceSequence 12s ease-in-out infinite;
-    }
-
-    .board-trace-thin {
-        stroke: rgba(125,211,252,0.62);
-        stroke-width: 2;
-        stroke-dasharray: 6 8;
-        animation: traceFlow 14s linear infinite reverse, traceSequence 12s ease-in-out infinite;
-    }
-
-    .board-modules rect {
-        fill: rgba(15, 28, 42, 0.88);
-        stroke: rgba(125,211,252,0.24);
-        stroke-width: 1.4;
-        animation: moduleGlow 12s ease-in-out infinite;
-    }
-
-    .board-labels text {
-        fill: rgba(214, 226, 255, 0.82);
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
-    }
-
-    .board-nodes circle {
-        fill: #7dd3fc;
-        stroke: rgba(255,255,255,0.58);
-        stroke-width: 1.4;
-        filter: drop-shadow(0 0 8px rgba(125,211,252,0.38));
-        animation: nodeBlink 3.2s ease-in-out infinite, moduleGlow 12s ease-in-out infinite;
-    }
-
-    .flow-dot {
-        fill: #43d4c8;
-        animation: flowSequence 12s linear infinite;
-    }
-
-    .risk-zone {
-        opacity: 0;
-        animation: riskOverlaySequence 12s ease-in-out infinite;
-    }
-
-    .risk-zone-critical {
-        fill: rgba(248, 113, 113, 0.18);
-        stroke: rgba(248, 113, 113, 0.62);
-        stroke-width: 2;
-    }
-
-    .risk-zone-warning {
-        fill: rgba(245, 184, 79, 0.14);
-        stroke: rgba(245, 184, 79, 0.62);
-        stroke-width: 2;
-    }
-
-    .board-pulse {
-        fill: transparent;
-        opacity: 0;
-        transform-origin: center;
-        animation: boardPulseSequence 12s ease-in-out infinite;
-    }
-
-    .board-pulse-critical {
-        stroke: rgba(248,113,113,0.9);
-        stroke-width: 3;
-    }
-
-    .board-pulse-warning {
-        stroke: rgba(245,184,79,0.86);
-        stroke-width: 2.5;
-    }
-
-    .tech-stage-overlay {
-        position: absolute;
-        padding: 12px 14px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.08);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)),
-            rgba(6, 14, 23, 0.78);
-        box-shadow: var(--shadow-md);
-        backdrop-filter: blur(10px);
-        animation: overlayDimCycle 12s ease-in-out infinite;
-    }
-
-    .tech-stage-overlay span {
-        display: block;
-        color: var(--muted);
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-    }
-
-    .tech-stage-overlay strong {
-        display: block;
-        margin-top: 6px;
-        color: #f8fbff;
-        font-size: 28px;
-        line-height: 1;
-        letter-spacing: -0.05em;
-        font-weight: 800;
-        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
-    }
-
-    .tech-stage-overlay-a {
-        top: 20px;
-        right: 20px;
-    }
-
-    .tech-stage-overlay-b {
-        left: 20px;
-        bottom: 20px;
-    }
-
-    .insight-flash {
-        position: absolute;
-        padding: 12px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
-            rgba(7, 16, 26, 0.84);
-        color: #eef6ff;
-        box-shadow: 0 14px 36px rgba(0,0,0,0.28);
-        opacity: 0;
-        transform: translateY(10px) scale(0.96);
-        animation: insightFlashSequence 12s ease-in-out infinite;
-        pointer-events: none;
-    }
-
-    .insight-flash span {
-        display: block;
-        color: rgba(191,219,254,0.78);
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-    }
-
-    .insight-flash strong {
-        display: block;
-        margin-top: 6px;
-        color: #f8fbff;
-        font-size: 18px;
-        line-height: 1;
-        font-weight: 800;
-        letter-spacing: -0.03em;
-    }
-
-    .insight-flash-a {
-        top: 34px;
-        left: 28px;
-        z-index: 3;
-    }
-
-    .insight-flash-b {
-        top: 104px;
-        right: 26px;
-        animation-delay: 0.35s;
-        z-index: 2;
-    }
-
-    .insight-flash-c {
-        bottom: 36px;
-        right: 42px;
-        animation-delay: 0.7s;
-        z-index: 1;
-    }
-
-    .tech-stage-side {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-    }
-
-    .tech-dock-card,
-    .tech-mini-panel,
-    .command-card,
-    .capability-tile,
-    .workspace-card,
-    .workflow-tile,
-    .report-tile,
-    .recent-card,
-    .tech-chart-card {
-        padding: 18px;
-    }
-
-    .tech-chart-card,
-    .tech-mini-panel,
-    .workflow-tile,
-    .report-tile,
-    .recent-card,
-    .workspace-card,
-    .capability-tile,
-    .command-card {
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.058);
-        background: rgba(8, 13, 22, 0.88);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
-
-    .tech-chart-card {
-        display: grid;
-        align-content: start;
-        min-height: 0;
-    }
-
-    .tech-dock-value,
-    .command-value,
-    .workspace-score {
-        color: #f8fbff;
-        font-size: 24px;
-        line-height: 1.08;
-        letter-spacing: -0.04em;
-        font-weight: 800;
-    }
-
-    .tech-dock-copy,
-    .command-copy,
-    .capability-copy,
-    .workspace-copy,
-    .workflow-copy,
-    .recent-date,
-    .tech-mini-panel p {
-        margin: 10px 0 0;
-        color: rgba(214, 226, 255, 0.74);
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    .tech-lower-band {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-
-    .tech-inline-chart,
-    .tech-large-chart {
-        width: 100%;
-        display: block;
-        margin-top: 10px;
-        padding: 10px;
-        border-radius: 18px;
-        background:
-            linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px),
-            linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
-        background-size: 20px 20px, 20px 20px, auto;
-        border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .tech-inline-chart {
-        height: 92px;
-    }
-
-    .tech-large-chart {
-        height: 108px;
-    }
-
-    .compact-empty {
-        margin-top: 10px;
-        color: rgba(214, 226, 255, 0.62);
-        font-size: 13px;
-        line-height: 1.6;
-    }
-
-    .signal-ribbon {
-        overflow: hidden;
-        margin: 16px 0 18px;
-        padding: 11px 0;
-        border-top: 1px solid rgba(255,255,255,0.05);
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        mask-image: linear-gradient(90deg, transparent, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, transparent);
-    }
-
-    .signal-ribbon-track {
-        display: inline-flex;
-        gap: 10px;
-        white-space: nowrap;
-        animation: ribbonSlide 28s linear infinite;
-    }
-
-    .signal-ribbon-track span {
-        padding: 6px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.055);
-        background: rgba(8,13,22,0.8);
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-
-    .tech-surface-card {
-        background: rgba(8, 13, 22, 0.88);
-    }
-
-    .tech-header {
-        padding-bottom: 8px;
-    }
-
-    .command-grid,
-    .workflow-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 14px;
-    }
-
-    .command-top,
-    .capability-tile-top,
-    .workspace-card-top,
-    .workflow-top,
-    .recent-top {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 12px;
-        align-items: start;
-    }
-
-    .command-title,
-    .capability-title,
-    .workspace-title,
-    .workflow-title,
-    .recent-title {
-        color: #f3f8ff;
-        font-size: 16px;
-        line-height: 1.32;
-        font-weight: 700;
-    }
-
-    .command-card,
-    .workflow-tile,
-    .report-tile {
-        padding: 20px;
-    }
-
-    .command-card {
-        min-height: 290px;
-        display: grid;
-        grid-template-rows: auto 1fr;
-        align-content: start;
-        gap: 14px;
-        padding: 24px;
-    }
-
-    .workflow-tile {
-        min-height: 0;
-    }
-
-    .command-value,
-    .workspace-score {
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-start;
-        min-width: 0;
-        min-height: 0;
-        max-width: 100%;
-        text-align: left;
-    }
-
-    .command-copy,
-    .workflow-copy {
-        margin-top: 0;
-    }
-
-    .command-top {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        align-items: start;
-    }
-
-    .command-value {
-        justify-self: start;
-        display: grid;
-        gap: 6px;
-        padding-top: 0;
-        background: transparent;
-        border: 0;
-        border-radius: 0;
-        width: 100%;
-        max-width: 100%;
-        font-family: "SF Pro Display", "Sora", "Inter", sans-serif;
-        text-wrap: balance;
-    }
-
-    .command-metric-number {
-        display: block;
-        color: #f8fbff;
-        font-size: clamp(38px, 4vw, 60px);
-        line-height: 0.9;
-        letter-spacing: -0.07em;
-        font-weight: 800;
-    }
-
-    .command-metric-label-text {
-        display: block;
-        max-width: 11ch;
-        color: rgba(232, 241, 255, 0.86);
-        font-size: 15px;
-        line-height: 1.15;
-        letter-spacing: -0.02em;
-        font-weight: 700;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-
-    .workspace-score {
-        padding: 8px 10px;
-        border-radius: 16px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.07);
-    }
-
-    .command-title {
-        font-size: 18px;
-    }
-
-    .story-panel {
-        margin-top: 16px;
-        padding: 20px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.058);
-        background: rgba(6, 10, 18, 0.9);
-    }
-
-    .story-panel p {
-        margin: 10px 0 0;
-        color: var(--text-soft);
-        font-size: 14px;
-        line-height: 1.75;
-        max-width: 66ch;
-    }
-
-    .telemetry-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .telemetry-block {
-        padding: 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.055);
-        background: rgba(8, 13, 22, 0.88);
-    }
-
-    .telemetry-meter {
-        padding: 16px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.055);
-        background: rgba(8, 13, 22, 0.88);
-    }
-
-    .telemetry-meter-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        color: rgba(223, 233, 255, 0.76);
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 12px;
-    }
-
-    .telemetry-meter-track {
-        position: relative;
-        height: 16px;
-        border-radius: 999px;
-        overflow: hidden;
-        background:
-            linear-gradient(90deg, rgba(16,185,129,0.34) 0%, rgba(132,204,22,0.34) 22%, rgba(250,204,21,0.34) 48%, rgba(251,146,60,0.34) 74%, rgba(239,68,68,0.34) 100%);
-    }
-
-    .telemetry-meter-fill {
-        position: absolute;
-        inset: 0 auto 0 0;
-        border-radius: 999px;
-        background: linear-gradient(90deg, #3b82f6, #7dd3fc);
-        box-shadow: 0 0 24px rgba(59,130,246,0.34);
-    }
-
-    .telemetry-meter-scale {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        margin-top: 10px;
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 700;
-    }
-
-    .telemetry-meter-scale span:nth-child(2),
-    .telemetry-meter-scale span:nth-child(3),
-    .telemetry-meter-scale span:nth-child(4) {
-        text-align: center;
-    }
-
-    .telemetry-meter-scale span:last-child {
-        text-align: right;
-    }
-
-    .telemetry-chart-stack,
-    .capability-stack,
-    .report-grid {
-        display: grid;
-        gap: 14px;
-        margin-top: 16px;
-    }
-
-    .workspace-grid,
-    .recent-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    .workspace-card,
-    .workflow-tile,
-    .report-tile,
-    .recent-card {
-        min-width: 0;
-        align-content: start;
-    }
-
-    .workspace-meta {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 12px;
-        color: rgba(214, 226, 255, 0.7);
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .workspace-card-top,
-    .workflow-top,
-    .recent-top,
-    .report-tile {
-        min-width: 0;
-    }
-
-    .workspace-card-top > div,
-    .workflow-top > div,
-    .recent-top > div {
-        min-width: 0;
-    }
-
-    .parser-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 16px;
-    }
-
-    .parser-chip {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-        align-items: start;
-        padding: 12px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.025);
-        color: rgba(228, 237, 255, 0.82);
-        font-size: 12px;
-        font-weight: 700;
-        overflow: hidden;
-        overflow-wrap: anywhere;
-    }
-
-    .parser-chip strong {
-        justify-self: start;
-        color: #dbeafe;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .workflow-bar {
-        margin-top: 14px;
-        height: 12px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.06);
-        overflow: hidden;
-    }
-
-    .workflow-fill {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, #3b82f6, #43d4c8);
-    }
-
-    .report-tile {
-        display: grid;
-        grid-template-columns: 140px minmax(0, 1fr);
-        gap: 18px;
-        align-items: center;
-    }
-
-    .report-code {
-        display: grid;
-        place-items: center;
-        min-height: 96px;
-        border-radius: 16px;
-        border: 1px solid rgba(96,165,250,0.18);
-        background:
-            linear-gradient(145deg, rgba(59,130,246,0.14), rgba(67,212,200,0.1)),
-            rgba(255,255,255,0.03);
-        color: #f8fbff;
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        font-family: "SF Mono", "IBM Plex Mono", "Menlo", monospace;
-    }
-
-    .recent-action {
-        margin-top: 14px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .workspace-title,
-    .workspace-copy,
-    .workflow-title,
-    .workflow-copy,
-    .recent-title,
-    .recent-date,
-    .report-tile .workflow-title,
-    .report-tile .workflow-copy,
-    .parser-chip,
-    .workspace-meta {
-        overflow-wrap: anywhere;
-    }
-
-    .workspace-score {
-        flex-shrink: 0;
-        padding-left: 10px;
-    }
-
-    .recent-date {
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .recent-title {
-        line-height: 1.45;
-    }
-
-    .tech-stage-metrics {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 12px;
-    }
-
-    .tech-metric-card {
-        display: grid;
-        gap: 8px;
-        align-items: start;
-        justify-items: start;
-        min-width: 0;
-        padding: 12px 14px;
-    }
-
-    .tech-metric-card strong,
-    .telemetry-block strong {
-        font-size: 20px;
-        line-height: 1.1;
-    }
-
-    .workflow-top .chip,
-    .recent-top .chip,
-    .workspace-meta span,
-    .command-value {
-        justify-self: start;
-    }
-
-    .chart-area {
-        fill: rgba(59,130,246,0.14);
-    }
-
-    .chart-line {
-        fill: none;
-        stroke: #7dd3fc;
-        stroke-width: 4;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .tech-chart-card .empty-state {
-        display: grid;
-        place-items: center;
-        min-height: 140px;
-        padding: 18px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        line-height: 1.55;
-        max-width: 32ch;
-        margin: 8px auto 0;
-    }
-
-    @keyframes scanDrift {
-        from { transform: translateY(-160px); }
-        to { transform: translateY(160px); }
-    }
-
-    @keyframes boardCinematic {
-        0%, 16% {
-            transform: rotateX(66deg) rotateZ(-22deg) scale(0.9);
-            opacity: 0.12;
-        }
-        24%, 40% {
-            transform: rotateX(60deg) rotateZ(-14deg) scale(1);
-            opacity: 1;
-        }
-        52%, 68% {
-            transform: rotateX(56deg) rotateZ(-6deg) scale(1.05);
-            opacity: 1;
-        }
-        82% {
-            transform: rotateX(58deg) rotateZ(-10deg) scale(1.02);
-            opacity: 1;
-        }
-        100% {
-            transform: rotateX(66deg) rotateZ(-22deg) scale(0.92);
-            opacity: 0.18;
-        }
-    }
-
-    @keyframes boardReveal {
-        0%, 14% { opacity: 0.08; filter: brightness(0.4); }
-        24%, 78% { opacity: 1; filter: brightness(1); }
-        100% { opacity: 0.12; filter: brightness(0.45); }
-    }
-
-    @keyframes gridReveal {
-        0%, 16% { opacity: 0.08; }
-        28%, 76% { opacity: 1; }
-        100% { opacity: 0.1; }
-    }
-
-    @keyframes traceSequence {
-        0%, 18% { opacity: 0.06; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
-        28%, 46% { opacity: 1; filter: drop-shadow(0 0 12px rgba(96,165,250,0.34)); }
-        58%, 76% { opacity: 1; filter: drop-shadow(0 0 16px rgba(67,212,200,0.36)); }
-        100% { opacity: 0.12; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
-    }
-
-    @keyframes moduleGlow {
-        0%, 18% { opacity: 0.16; filter: brightness(0.6); }
-        28%, 46% { opacity: 1; filter: brightness(1.08); }
-        58%, 74% { opacity: 1; filter: brightness(1.16); }
-        100% { opacity: 0.22; filter: brightness(0.62); }
-    }
-
-    @keyframes flowSequence {
-        0%, 18% { opacity: 0; }
-        24%, 48% { opacity: 1; }
-        52%, 78% { opacity: 0.85; }
-        100% { opacity: 0; }
-    }
-
-    @keyframes riskOverlaySequence {
-        0%, 40% { opacity: 0; transform: scale(0.86); }
-        48%, 70% { opacity: 1; transform: scale(1); }
-        80% { opacity: 0.45; transform: scale(1.03); }
-        100% { opacity: 0; transform: scale(0.9); }
-    }
-
-    @keyframes boardPulseSequence {
-        0%, 44% { opacity: 0; transform: scale(0.6); }
-        50% { opacity: 0.95; transform: scale(1); }
-        58% { opacity: 0; transform: scale(2.8); }
-        66% { opacity: 0.82; transform: scale(1); }
-        74% { opacity: 0; transform: scale(2.7); }
-        100% { opacity: 0; transform: scale(0.8); }
-    }
-
-    @keyframes overlayDimCycle {
-        0%, 18% { opacity: 0.22; }
-        28%, 76% { opacity: 1; }
-        100% { opacity: 0.35; }
-    }
-
-    @keyframes insightFlashSequence {
-        0%, 63% { opacity: 0; transform: translateY(12px) scale(0.96); }
-        68%, 76% { opacity: 1; transform: translateY(0) scale(1); }
-        82% { opacity: 0; transform: translateY(-6px) scale(1.02); }
-        100% { opacity: 0; transform: translateY(10px) scale(0.96); }
-    }
-
-    @keyframes heroBreath {
-        0%, 100% { transform: scale(1); opacity: 0.35; }
-        50% { transform: scale(1.08); opacity: 0.58; }
-    }
-
-    @keyframes traceFlow {
-        from { stroke-dashoffset: 0; }
-        to { stroke-dashoffset: -160; }
-    }
-
-    @keyframes nodeBlink {
-        0%, 100% { opacity: 0.75; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.08); }
-    }
-
-    @keyframes ribbonSlide {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
-    }
-
-    @media (max-width: 1180px) {
-        .tech-hero-grid,
-        .tech-stage-main,
-        .command-grid,
-        .workflow-grid,
-        .tech-stage-side {
-            grid-template-columns: 1fr;
-        }
-
-        .tech-lower-band,
-        .workspace-grid,
-        .recent-grid,
-        .parser-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .tech-stage-metrics {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 920px) {
-        .tech-hero {
-            padding: 24px 20px;
-        }
-
-        .tech-copy {
-            padding-top: 0;
-        }
-
-        .tech-title {
-            max-width: none;
-            font-size: clamp(2.5rem, 9vw, 3.9rem);
-        }
-
-        .tech-stage-primary {
-            transform: none;
-        }
-
-        .tech-stage-topline-left,
-        .tech-stage-actions,
-        .tech-stage-metrics,
-        .telemetry-grid {
-            width: 100%;
-        }
-
-        .report-tile {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-card-top,
-        .workflow-top,
-        .recent-top {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-score {
-            padding-left: 0;
-        }
-
-        .tech-hero::before,
-        .tech-hero::after {
-            top: 23%;
-            transform: rotate(15deg);
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .tech-scan,
-        .tech-glow,
-        .tech-board-svg,
-        .board-trace,
-        .board-trace-thin,
-        .board-nodes circle,
-        .board-shell,
-        .board-inner,
-        .board-grid line,
-        .board-modules rect,
-        .flow-dot,
-        .risk-zone,
-        .board-pulse,
-        .tech-stage-overlay,
-        .insight-flash,
-        .signal-ribbon-track {
-            animation: none;
-        }
-
-        .tech-metric-card:hover,
-        .tech-dock-card:hover,
-        .tech-mini-panel:hover,
-        .command-card:hover,
-        .capability-tile:hover,
-        .workspace-card:hover,
-        .workflow-tile:hover,
-        .report-tile:hover,
-        .recent-card:hover,
-        .tech-chart-card:hover {
-            transform: none;
-        }
-    }
-
-    /* Final override layer: replaces the old dashboard rhythm with a cinematic launch surface. */
-    .home-redesign {
-        gap: 42px;
-    }
-
-    .signal-ribbon {
-        margin: -2px 0 8px;
-        opacity: 0.82;
-    }
-
-    .home-redesign .tech-hero {
-        min-height: 0;
-        padding: 44px;
-        border-radius: 48px;
-        background:
-            radial-gradient(circle at 12% 18%, rgba(85, 142, 255, 0.22), transparent 28%),
-            linear-gradient(180deg, rgba(6, 10, 19, 0.98), rgba(3, 6, 12, 0.98));
-        box-shadow: 0 36px 110px rgba(0, 0, 0, 0.48);
-    }
-
-    .home-redesign .tech-hero::before {
-        top: 22%;
-        left: -12%;
-        right: -12%;
-        height: 180px;
-        opacity: 0.95;
-        filter: blur(20px);
-        transform: rotate(-8deg);
-    }
-
-    .home-redesign .tech-hero::after {
-        display: none;
-    }
-
-    .home-redesign .tech-hero-grid {
-        grid-template-columns: 1fr;
-        gap: 34px;
-    }
-
-    .home-redesign .tech-copy {
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        gap: 16px;
-        max-width: none;
-        margin: 0 auto;
-    }
-
-    .home-redesign .tech-brand-row {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .home-redesign .tech-title {
-        max-width: 10ch;
-        margin: 0 auto;
-        font-size: clamp(3.7rem, 8.8vw, 7.6rem);
-        line-height: 0.88;
-        letter-spacing: -0.085em;
-        text-wrap: balance;
-    }
-
-    .home-redesign .tech-description {
-        max-width: 52rem;
-        margin: 0 auto;
-        font-size: 1.04rem;
-        line-height: 1.75;
-    }
-
-    .home-redesign .tech-stage-primary {
-        width: 100%;
-    }
-
-    .home-redesign .tech-stage-shell {
-        padding: 20px;
-        border-radius: 36px;
-        background:
-            linear-gradient(180deg, rgba(9, 14, 25, 0.96), rgba(5, 9, 18, 0.98));
-        border: 1px solid rgba(255,255,255,0.07);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 28px 80px rgba(0,0,0,0.44);
-    }
-
-    .home-redesign .tech-stage-topline {
-        padding-bottom: 14px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        margin-bottom: 16px;
-    }
-
-    .home-redesign .tech-stage-metrics {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    .home-redesign .tech-metric-card {
-        min-height: 96px;
-        border-radius: 18px;
-    }
-
-    .home-redesign .tech-stage-main {
-        grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
-        gap: 18px;
-    }
-
-    .home-redesign .tech-blueprint {
-        min-height: 560px;
-        border-radius: 34px;
-    }
-
-    .home-redesign .home-story-grid {
-        grid-template-columns: repeat(12, minmax(0, 1fr));
-        gap: 24px;
-        align-items: stretch;
-    }
-
-    .home-redesign .home-command-span,
-    .home-redesign .home-telemetry-span,
-    .home-redesign .home-capability-span,
-    .home-redesign .home-portfolio-span,
-    .home-redesign .home-workflow-span,
-    .home-redesign .home-reporting-span {
-        grid-column: span 6;
-    }
-
-    .home-redesign .home-activity-span {
-        grid-column: 1 / -1;
-    }
-
-    .home-redesign .command-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-    }
-
-    .home-redesign .command-card {
-        display: grid;
-        grid-template-rows: auto 1fr;
-        gap: 22px;
-        padding: 22px;
-        min-height: 280px;
-        border-radius: 24px;
-        background:
-            linear-gradient(180deg, rgba(13, 20, 34, 0.94), rgba(7, 12, 22, 0.98));
-        border: 1px solid rgba(255,255,255,0.055);
-    }
-
-    .home-redesign .command-top {
-        display: grid;
-        gap: 18px;
-        align-items: start;
-    }
-
-    .home-redesign .command-title {
-        font-size: 1.1rem;
-        letter-spacing: -0.04em;
-    }
-
-    .home-redesign .command-value {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        padding: 0;
-        background: transparent;
-        border: 0;
-        min-width: 0;
-    }
-
-    .home-redesign .command-metric-number {
-        font-size: clamp(2.9rem, 5vw, 4.6rem);
-        line-height: 0.92;
-        letter-spacing: -0.08em;
-    }
-
-    .home-redesign .command-metric-label-text {
-        font-size: 0.96rem;
-        line-height: 1.2;
-        color: var(--text-soft);
-        max-width: 14ch;
-    }
-
-    .home-redesign .command-copy {
-        font-size: 0.98rem;
-        line-height: 1.75;
-        max-width: 28ch;
-    }
-
-    .home-redesign .story-panel {
-        margin-top: 18px;
-        padding: 18px 20px;
-        border-radius: 20px;
-        background: rgba(255,255,255,0.03);
-    }
-
-    @media (max-width: 1320px) {
-        .home-redesign .home-story-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .home-redesign .home-command-span,
-        .home-redesign .home-telemetry-span,
-        .home-redesign .home-capability-span,
-        .home-redesign .home-portfolio-span,
-        .home-redesign .home-workflow-span,
-        .home-redesign .home-reporting-span,
-        .home-redesign .home-activity-span {
-            grid-column: auto;
-        }
-
-        .home-redesign .command-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 1080px) {
-        .home-redesign .tech-hero {
-            padding: 28px 22px;
-            border-radius: 34px;
-        }
-
-        .home-redesign .tech-stage-main,
-        .home-redesign .tech-stage-metrics,
-        .home-redesign .home-story-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .home-redesign .tech-title {
-            font-size: clamp(2.8rem, 11vw, 4.8rem);
-        }
-    }
-</style>
 
 {% endblock %}
