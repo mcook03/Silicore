@@ -1189,7 +1189,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_alt_naming",
-        "timestamp": "2026-04-19T02:50:26.638451+00:00",
+        "timestamp": "2026-04-19T03:01:26.741441+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1823,7 +1823,7 @@
         "score": 9.2,
         "total_penalty": 0.8
     },
-    "generated_at": "2026-04-19T02:50:26.638457+00:00",
+    "generated_at": "2026-04-19T03:01:26.741445+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

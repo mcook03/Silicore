@@ -17,6 +17,52 @@
         gap: 24px;
     }
 
+    .workspace-metric-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .workspace-metric-card {
+        padding: 18px 18px 16px;
+        display: grid;
+        align-content: start;
+        gap: 8px;
+        min-height: 148px;
+    }
+
+    .workspace-metric-card .metric-label {
+        overflow-wrap: anywhere;
+    }
+
+    .workspace-metric-value-text,
+    .workspace-metric-value-meta,
+    .workspace-metric-value-number {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        line-height: 0.98;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .workspace-metric-value-text {
+        font-size: clamp(1.55rem, 2.3vw, 2.4rem);
+    }
+
+    .workspace-metric-value-number {
+        font-size: clamp(2rem, 3vw, 3.2rem);
+    }
+
+    .workspace-metric-value-meta {
+        font-size: clamp(1.3rem, 1.95vw, 1.95rem);
+        line-height: 1.02;
+    }
+
+    .workspace-metric-sub {
+        font-size: 12px;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
     .workspace-launch-band {
         display: grid;
         grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
@@ -170,6 +216,14 @@
     @media (max-width: 720px) {
         .workspace-command-grid {
             grid-template-columns: 1fr;
+        }
+
+        .workspace-metric-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .workspace-metric-card {
+            min-height: 132px;
         }
     }
 </style>
@@ -332,41 +386,41 @@
     </div>
 
     <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
+        <div class="metric-grid workspace-metric-grid">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Project ID</div>
-                <div class="metric-value" style="font-size:22px;">{{ project.project_id }}</div>
-                <div class="metric-sub">Nexus workspace identifier</div>
+                <div class="metric-value workspace-metric-value-text">{{ project.project_id }}</div>
+                <div class="metric-sub workspace-metric-sub">Nexus workspace identifier</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Linked Runs</div>
-                <div class="metric-value">{{ project.runs|length }}</div>
-                <div class="metric-sub">Attached analyses</div>
+                <div class="metric-value workspace-metric-value-number">{{ project.runs|length }}</div>
+                <div class="metric-sub workspace-metric-sub">Attached analyses</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Latest Score</div>
-                <div class="metric-value" style="font-size:22px;">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
-                <div class="metric-sub">{{ project.health_label }}</div>
+                <div class="metric-value workspace-metric-value-text">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
+                <div class="metric-sub workspace-metric-sub">{{ project.health_label }}</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Created</div>
-                <div class="metric-value" style="font-size:22px;">{{ project.created_at }}</div>
-                <div class="metric-sub">Project creation time</div>
+                <div class="metric-value workspace-metric-value-meta">{{ project.created_at }}</div>
+                <div class="metric-sub workspace-metric-sub">Project creation time</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Updated</div>
-                <div class="metric-value" style="font-size:22px;">{{ project.updated_at }}</div>
-                <div class="metric-sub">Latest change time</div>
+                <div class="metric-value workspace-metric-value-meta">{{ project.updated_at }}</div>
+                <div class="metric-sub workspace-metric-sub">Latest change time</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Project Health</div>
-                <div class="metric-value" style="font-size:22px;">{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</div>
-                <div class="metric-sub">Confidence + recurrence adjusted</div>
+                <div class="metric-value workspace-metric-value-text">{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</div>
+                <div class="metric-sub workspace-metric-sub">Confidence + recurrence adjusted</div>
             </div>
         </div>
     </div>
@@ -525,21 +579,21 @@
     </div>
 
     <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
+        <div class="metric-grid workspace-metric-grid">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Owner</div>
-                <div class="metric-value" style="font-size:22px;">{{ project.owner_name }}</div>
-                <div class="metric-sub">{{ project.owner_email if project.owner_email else "No owner assigned" }}</div>
+                <div class="metric-value workspace-metric-value-text">{{ project.owner_name }}</div>
+                <div class="metric-sub workspace-metric-sub">{{ project.owner_email if project.owner_email else "No owner assigned" }}</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Team Size</div>
-                <div class="metric-value">{{ project.team_size }}</div>
-                <div class="metric-sub">Users with project access</div>
+                <div class="metric-value workspace-metric-value-number">{{ project.team_size }}</div>
+                <div class="metric-sub workspace-metric-sub">Users with project access</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Notes</div>
-                <div class="metric-value">{{ project.note_count }}</div>
-                <div class="metric-sub">Review comments captured</div>
+                <div class="metric-value workspace-metric-value-number">{{ project.note_count }}</div>
+                <div class="metric-sub workspace-metric-sub">Review comments captured</div>
             </div>
         </div>
 
@@ -733,21 +787,21 @@
     </div>
 
     <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
+        <div class="metric-grid workspace-metric-grid">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Project Trend</div>
-                <div class="metric-value">{{ project_value_metrics.improvement_label }}</div>
-                <div class="metric-sub">Current improvement posture</div>
+                <div class="metric-value workspace-metric-value-text">{{ project_value_metrics.improvement_label }}</div>
+                <div class="metric-sub workspace-metric-sub">Current improvement posture</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Score Delta</div>
-                <div class="metric-value">{{ project_value_metrics.score_delta|round(1) }}</div>
-                <div class="metric-sub">Change across linked runs</div>
+                <div class="metric-value workspace-metric-value-number">{{ project_value_metrics.score_delta|round(1) }}</div>
+                <div class="metric-sub workspace-metric-sub">Change across linked runs</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card workspace-metric-card">
                 <div class="metric-label">Risk Delta</div>
-                <div class="metric-value">{{ project_value_metrics.risk_delta }}</div>
-                <div class="metric-sub">Finding count movement</div>
+                <div class="metric-value workspace-metric-value-number">{{ project_value_metrics.risk_delta }}</div>
+                <div class="metric-sub workspace-metric-sub">Finding count movement</div>
             </div>
         </div>
         <div class="summary-panel" style="margin-top:16px;">
