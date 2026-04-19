@@ -26,12 +26,30 @@
 
     .projects-launch-panel {
         padding: 28px;
-        border-radius: 30px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 34px;
+        border: 1px solid rgba(255,255,255,0.08);
         background:
-            radial-gradient(circle at top left, rgba(59,130,246,0.14), transparent 34%),
-            linear-gradient(180deg, rgba(7,13,24,0.96), rgba(4,8,15,0.98));
-        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+            radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
+            radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 26%),
+            linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
+        box-shadow: 0 34px 86px rgba(0,0,0,0.44);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .projects-launch-panel::after {
+        content: "";
+        position: absolute;
+        left: -12%;
+        right: -12%;
+        bottom: 16%;
+        height: 96px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.9), rgba(77,141,255,0.55), rgba(255,255,255,0));
+        filter: blur(16px);
+        opacity: 0.76;
+        transform: rotate(-6deg);
+        pointer-events: none;
     }
 
     .projects-launch-kicker {

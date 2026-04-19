@@ -23,12 +23,30 @@
 
     .history-launch-panel {
         padding: 28px;
-        border-radius: 30px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 34px;
+        border: 1px solid rgba(255,255,255,0.08);
         background:
-            radial-gradient(circle at top left, rgba(6,182,212,0.12), transparent 34%),
-            linear-gradient(180deg, rgba(8,14,25,0.96), rgba(4,8,15,0.98));
-        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+            radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
+            radial-gradient(circle at top left, rgba(6,182,212,0.1), transparent 26%),
+            linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
+        box-shadow: 0 34px 86px rgba(0,0,0,0.44);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .history-launch-panel::after {
+        content: "";
+        position: absolute;
+        left: -10%;
+        right: -10%;
+        bottom: 18%;
+        height: 96px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.88), rgba(77,141,255,0.5), rgba(255,255,255,0));
+        filter: blur(16px);
+        opacity: 0.74;
+        transform: rotate(-6deg);
+        pointer-events: none;
     }
 
     .history-launch-kicker {
@@ -62,12 +80,13 @@
         position: relative;
         overflow: hidden;
         padding: 28px;
-        border-radius: 30px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 34px;
+        border: 1px solid rgba(255,255,255,0.08);
         background:
-            radial-gradient(circle at top right, rgba(59,130,246,0.14), transparent 30%),
-            linear-gradient(180deg, rgba(10,17,29,0.96), rgba(5,9,17,0.98));
-        box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+            radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 22%),
+            radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent 24%),
+            linear-gradient(180deg, rgba(10,13,20,0.98), rgba(6,8,13,0.98));
+        box-shadow: 0 34px 86px rgba(0,0,0,0.44);
         display: grid;
         gap: 18px;
     }

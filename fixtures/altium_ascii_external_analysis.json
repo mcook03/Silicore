@@ -1393,8 +1393,8 @@
                         "drill": 0.3,
                         "diameter": 0.6,
                         "layers": [
-                            "BottomLayer",
-                            "TopLayer"
+                            "TopLayer",
+                            "BottomLayer"
                         ]
                     }
                 ],
@@ -1462,8 +1462,8 @@
                 "drill": 0.3,
                 "diameter": 0.6,
                 "layers": [
-                    "BottomLayer",
-                    "TopLayer"
+                    "TopLayer",
+                    "BottomLayer"
                 ]
             }
         ],
@@ -1977,7 +1977,7 @@
     },
     "analysis_context": {
         "board_name": "altium_ascii_external.pcbdocascii",
-        "timestamp": "2026-04-19T02:31:24.435485+00:00",
+        "timestamp": "2026-04-19T02:42:51.506834+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3166,7 +3166,7 @@
         "score": 0.4,
         "total_penalty": 9.6
     },
-    "generated_at": "2026-04-19T02:31:24.435488+00:00",
+    "generated_at": "2026-04-19T02:42:51.506840+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

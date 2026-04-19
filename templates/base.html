@@ -369,13 +369,29 @@
         .page-hero {
             position: relative;
             overflow: hidden;
-            padding: 34px;
-            border-radius: 34px;
-            border: 1px solid var(--line);
+            padding: 38px;
+            border-radius: 38px;
+            border: 1px solid rgba(255,255,255,0.08);
             background:
-                radial-gradient(circle at top left, rgba(108, 168, 255, 0.18), transparent 28%),
-                linear-gradient(180deg, rgba(9, 16, 28, 0.9), rgba(6, 11, 20, 0.86));
-            box-shadow: var(--shadow);
+                radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
+                radial-gradient(circle at top left, rgba(108, 168, 255, 0.12), transparent 24%),
+                linear-gradient(180deg, rgba(9, 12, 18, 0.98), rgba(5, 7, 12, 0.98));
+            box-shadow: 0 36px 90px rgba(0, 0, 0, 0.4);
+        }
+
+        .page-hero::before {
+            content: "";
+            position: absolute;
+            left: -12%;
+            right: -12%;
+            top: 34%;
+            height: 110px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.92), rgba(108,168,255,0.6), rgba(255,255,255,0));
+            filter: blur(15px);
+            opacity: 0.74;
+            transform: rotate(-6deg);
+            pointer-events: none;
         }
 
         .page-hero::after {
@@ -447,10 +463,10 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 11px;
+            padding: 9px 12px;
             border-radius: 999px;
-            border: 1px solid var(--line-soft);
-            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.04);
             color: var(--text-soft);
             font-size: 11px;
             font-weight: 700;
@@ -1330,8 +1346,8 @@
 
         .product-shell {
             display: grid;
-            grid-template-columns: 280px minmax(0, 1fr);
-            gap: 22px;
+            grid-template-columns: 248px minmax(0, 1fr);
+            gap: 20px;
             align-items: start;
         }
 
@@ -1341,12 +1357,13 @@
             display: grid;
             gap: 18px;
             padding: 18px;
-            border-radius: 28px;
-            border: 1px solid var(--line);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.08);
             background:
-                linear-gradient(180deg, rgba(8, 13, 23, 0.92), rgba(6, 11, 20, 0.84)),
+                radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 26%),
+                linear-gradient(180deg, rgba(10, 13, 20, 0.98), rgba(6, 8, 13, 0.98)),
                 rgba(5, 8, 14, 0.72);
-            box-shadow: var(--shadow);
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
             min-height: calc(100vh - 32px);
         }
 
@@ -1382,9 +1399,9 @@
         .sidebar-link:hover,
         .sidebar-link.active {
             background:
-                linear-gradient(180deg, rgba(108, 168, 255, 0.18), rgba(108, 168, 255, 0.05)),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(77, 141, 255, 0.08)),
                 rgba(255,255,255,0.04);
-            border-color: rgba(108,168,255,0.18);
+            border-color: rgba(108,168,255,0.22);
         }
 
         .sidebar-link-top {
@@ -1471,14 +1488,14 @@
             align-items: center;
             flex-wrap: wrap;
             padding: 14px 18px;
-            border-radius: 24px;
-            border: 1px solid var(--line);
+            border-radius: 26px;
+            border: 1px solid rgba(255,255,255,0.08);
             background:
-                linear-gradient(180deg, rgba(8, 13, 23, 0.82), rgba(6, 11, 20, 0.7)),
+                linear-gradient(180deg, rgba(11, 14, 21, 0.96), rgba(8, 10, 16, 0.92)),
                 rgba(5, 8, 14, 0.68);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            box-shadow: var(--shadow-soft);
+            box-shadow: 0 24px 54px rgba(0,0,0,0.28);
         }
 
         .product-topbar-left {
