@@ -1515,6 +1515,9 @@
 
 <div class="btn-link-row">
     <a class="btn-link" href="{{ url_for('projects_page') }}">Back to Projects</a>
+    <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" onsubmit="return confirm('Delete this project and its linked workspace data?');">
+        <button type="submit" class="btn btn-danger">Delete Project</button>
+    </form>
 </div>
 
 <style>

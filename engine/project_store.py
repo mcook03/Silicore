@@ -319,9 +319,11 @@ def get_project(project_id):
 def delete_project(project_id):
     initialize_database()
     connection = get_connection()
+    row = None
+    deleted = False
     try:
         row = connection.execute(
-            "SELECT owner_user_id FROM projects WHERE project_id = ?",
+            "SELECT owner_user_id, name FROM projects WHERE project_id = ?",
             (project_id,),
         ).fetchone()
         deleted = connection.execute(
@@ -336,7 +338,10 @@ def delete_project(project_id):
         log_audit_event(
             "project.deleted",
             actor_user_id=row["owner_user_id"] if row else None,
-            project_id=project_id,
+            payload={
+                "project_id": project_id,
+                "project_name": row["name"] if row else None,
+            },
         )
     return deleted
 

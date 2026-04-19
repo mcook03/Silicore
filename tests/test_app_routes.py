@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from app import app
 from engine.db import get_connection
+from engine.project_store import create_project, get_project
 from engine.user_store import create_user
 
 
@@ -108,6 +109,20 @@ class AppRouteSmokeTests(unittest.TestCase):
         self.assertIn("Nexus Runtime Snapshot", page)
         self.assertIn("Value Metrics", page)
         self.assertIn("Nexus Access", page)
+        self.assertIn("Delete Project", page)
+
+    def test_project_delete_route_removes_project(self):
+        project = create_project(f"Delete Me {uuid4().hex[:6]}", "Temporary delete test")
+
+        response = self.client.post(
+            f"/projects/{project['project_id']}/delete",
+            follow_redirects=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(get_project(project["project_id"]))
+        page = response.get_data(as_text=True)
+        self.assertIn("deleted successfully", page)
 
     def test_single_board_page_includes_advanced_review_surfaces(self):
         response = self.client.get("/single-board")
