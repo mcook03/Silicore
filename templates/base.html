@@ -1257,7 +1257,12 @@
         }
 
         .marketing-shell .site-header-inner {
-            grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.4fr) auto;
+            grid-template-columns: minmax(220px, 1fr) auto;
+            align-items: center;
+        }
+
+        .marketing-shell .nav-center {
+            grid-column: 1 / -1;
         }
 
         .product-shell {
@@ -1388,6 +1393,14 @@
             gap: 18px;
         }
 
+        .product-shell.page-single {
+            grid-template-columns: 1fr;
+        }
+
+        .product-shell.page-single .app-sidebar {
+            display: none;
+        }
+
         .product-topbar {
             display: flex;
             justify-content: space-between;
@@ -1473,7 +1486,7 @@
         {% endwith %}
         {% block content %}{% endblock %}
     {% endset %}
-    <div class="app-shell {% if is_marketing_shell %}marketing-shell{% else %}product-shell{% endif %}">
+    <div class="app-shell page-{{ (active_page or 'unknown')|replace('_', '-') }} {% if is_marketing_shell %}marketing-shell{% else %}product-shell{% endif %}">
         {% if is_marketing_shell %}
             <header class="site-header">
                 <div class="site-header-inner">

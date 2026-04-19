@@ -533,6 +533,42 @@
         min-width: 0;
     }
 
+    .narrative-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .narrative-row {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: minmax(150px, 0.8fr) minmax(0, 1.2fr) auto;
+        align-items: start;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .narrative-row:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .narrative-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1rem;
+        letter-spacing: -0.04em;
+    }
+
+    .narrative-detail {
+        display: grid;
+        gap: 6px;
+    }
+
+    .narrative-evidence {
+        color: var(--muted-2);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
     .story-list {
         display: grid;
         gap: 12px;
@@ -616,6 +652,44 @@
         min-height: 100%;
     }
 
+    .recent-timeline {
+        display: grid;
+        gap: 12px;
+    }
+
+    .recent-row {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: minmax(0, 1.4fr) auto auto;
+        align-items: center;
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background:
+            linear-gradient(180deg, rgba(11, 18, 31, 0.88), rgba(7, 12, 22, 0.82)),
+            rgba(6, 10, 18, 0.7);
+    }
+
+    .recent-row-main {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    .recent-row-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1rem;
+        letter-spacing: -0.04em;
+        overflow-wrap: anywhere;
+    }
+
+    .recent-row-meta {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
     .recent-top .chip-soft {
         flex-shrink: 0;
         align-self: start;
@@ -643,6 +717,11 @@
 
         .recent-top .chip-soft {
             justify-self: start;
+        }
+
+        .narrative-row,
+        .recent-row {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -866,35 +945,29 @@
                     <p class="section-copy">System-level readout of what the current run corpus is teaching the product.</p>
                 </div>
                 <div class="card-body">
-                    <div class="story-split">
-                        <section class="story-plain">
-                            <div class="story-list">
-                                {% for pillar in dashboard_story.pillars %}
-                                <div class="story-row">
-                                    <div class="story-row-top">
-                                        <strong>{{ pillar.title }}</strong>
-                                    </div>
-                                    <p>{{ pillar.description }}</p>
-                                </div>
-                                {% endfor %}
+                    <div class="narrative-grid">
+                        {% for row in dashboard_story.maturity_rows %}
+                        <article class="narrative-row">
+                            <div class="narrative-title">{{ row.title }}</div>
+                            <div class="narrative-detail">
+                                <p>{{ row.meaning }}</p>
+                                {% if row.evidence %}
+                                <div class="narrative-evidence">{{ row.evidence }}</div>
+                                {% endif %}
                             </div>
-                        </section>
-                        <section class="story-plain">
-                            <div class="story-list">
-                                {% for row in dashboard_story.maturity_rows %}
-                                <div class="story-row">
-                                    <div class="story-row-top">
-                                        <strong>{{ row.title }}</strong>
-                                        <span class="tone-chip">{{ row.status }}</span>
-                                    </div>
-                                    <p>{{ row.meaning }}</p>
-                                    {% if row.evidence %}
-                                    <p style="font-size:12px;">{{ row.evidence }}</p>
-                                    {% endif %}
-                                </div>
-                                {% endfor %}
+                            <span class="tone-chip">{{ row.status }}</span>
+                        </article>
+                        {% endfor %}
+
+                        {% for pillar in dashboard_story.pillars %}
+                        <article class="narrative-row">
+                            <div class="narrative-title">{{ pillar.title }}</div>
+                            <div class="narrative-detail">
+                                <p>{{ pillar.description }}</p>
                             </div>
-                        </section>
+                            <span class="tone-chip">Signal</span>
+                        </article>
+                        {% endfor %}
                     </div>
                 </div>
             </section>
@@ -987,19 +1060,15 @@
         </div>
         <div class="card-body">
             {% if recent_runs %}
-            <div class="recent-grid">
+            <div class="recent-timeline">
                 {% for run in recent_runs %}
-                <article class="recent-card">
-                    <div class="recent-top">
-                        <div class="recent-main">
-                            <div class="recent-title">{{ run.name }}</div>
-                            <div class="recent-date">{{ run.created_at }}</div>
-                        </div>
-                        <span class="chip-soft">{{ run.run_type }}</span>
+                <article class="recent-row">
+                    <div class="recent-row-main">
+                        <div class="recent-row-title">{{ run.name }}</div>
+                        <div class="recent-row-meta">{{ run.created_at }}</div>
                     </div>
-                    <div class="recent-action">
-                        <a class="btn btn-secondary" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
-                    </div>
+                    <span class="chip-soft">{{ run.run_type }}</span>
+                    <a class="btn btn-secondary btn-compact" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
                 </article>
                 {% endfor %}
             </div>
