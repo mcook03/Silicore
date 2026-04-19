@@ -519,6 +519,7 @@
         display: grid;
         gap: 20px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
     }
 
     .story-card {
@@ -588,6 +589,13 @@
         min-width: 0;
     }
 
+    .recent-main {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
     .portfolio-card strong {
         font-family: "Space Grotesk", sans-serif;
         font-size: 2rem;
@@ -605,10 +613,12 @@
         display: grid;
         gap: 12px;
         align-content: start;
+        min-height: 100%;
     }
 
     .recent-top .chip-soft {
         flex-shrink: 0;
+        align-self: start;
     }
 
     .recent-action {
@@ -617,6 +627,23 @@
 
     .recent-action .btn {
         width: 100%;
+    }
+
+    @media (max-width: 1440px) {
+        .story-split,
+        .recent-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .recent-top {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .recent-top .chip-soft {
+            justify-self: start;
+        }
     }
 
     @media (max-width: 1200px) {
@@ -628,10 +655,6 @@
 
         .home-stage-grid {
             grid-template-columns: 1fr;
-        }
-
-        .recent-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
 
@@ -968,7 +991,7 @@
                 {% for run in recent_runs %}
                 <article class="recent-card">
                     <div class="recent-top">
-                        <div>
+                        <div class="recent-main">
                             <div class="recent-title">{{ run.name }}</div>
                             <div class="recent-date">{{ run.created_at }}</div>
                         </div>

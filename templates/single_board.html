@@ -4275,6 +4275,28 @@
         grid-column: span 5;
     }
 
+    @media (max-width: 1600px) {
+        .board-content-ribbon > .grid.grid-2 {
+            grid-template-columns: 1fr !important;
+        }
+
+        .board-content-ribbon > .grid.grid-2 > .card:first-child,
+        .board-content-ribbon > .grid.grid-2 > .card:last-child {
+            grid-column: auto;
+        }
+
+        .review-lens-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1480px) {
+        .board-top-band .review-hero-card,
+        .board-top-band .assistant-console-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
     @media (max-width: 1200px) {
         .board-top-band .review-hero-card,
         .board-top-band .assistant-console-layout,

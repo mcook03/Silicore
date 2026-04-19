@@ -145,13 +145,13 @@
             "rule_id": "component_analysis",
             "category": "component_design",
             "severity": "medium",
-            "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
             "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
             "components": [
                 "J1"
             ],
             "nets": [
-                "USB_DN"
+                "USB_DP"
             ],
             "region": null,
             "metrics": {
@@ -183,13 +183,13 @@
             "rule_id": "component_analysis",
             "category": "component_design",
             "severity": "medium",
-            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+            "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
             "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
             "components": [
                 "J1"
             ],
             "nets": [
-                "USB_DP"
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -336,8 +336,8 @@
                 "J1"
             ],
             "nets": [
-                "USB_DN",
-                "USB_DP"
+                "USB_DP",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -413,8 +413,8 @@
                 "J1"
             ],
             "nets": [
-                "USB_DN",
-                "USB_DP"
+                "USB_DP",
+                "USB_DN"
             ],
             "region": null,
             "metrics": {
@@ -432,8 +432,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "USB_DN",
-                    "USB_DP"
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "has_power": false,
                 "has_ground": false
@@ -968,7 +968,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -979,7 +979,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -1977,7 +1977,7 @@
     },
     "analysis_context": {
         "board_name": "altium_ascii_external.pcbdocascii",
-        "timestamp": "2026-04-18T02:14:12.953456+00:00",
+        "timestamp": "2026-04-19T02:10:47.204114+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2674,13 +2674,13 @@
                 "rule_id": "component_analysis",
                 "category": "component_design",
                 "severity": "medium",
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
                 "components": [
                     "J1"
                 ],
                 "nets": [
-                    "USB_DN"
+                    "USB_DP"
                 ],
                 "region": null,
                 "metrics": {
@@ -2703,13 +2703,13 @@
                 "rule_id": "component_analysis",
                 "category": "component_design",
                 "severity": "medium",
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
                 "components": [
                     "J1"
                 ],
                 "nets": [
-                    "USB_DP"
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2820,8 +2820,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "USB_DN",
-                    "USB_DP"
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2879,8 +2879,8 @@
                     "J1"
                 ],
                 "nets": [
-                    "USB_DN",
-                    "USB_DP"
+                    "USB_DP",
+                    "USB_DN"
                 ],
                 "region": null,
                 "metrics": {
@@ -2898,8 +2898,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "USB_DN",
-                        "USB_DP"
+                        "USB_DP",
+                        "USB_DN"
                     ],
                     "has_power": false,
                     "has_ground": false
@@ -3166,7 +3166,7 @@
         "score": 0.4,
         "total_penalty": 9.6
     },
-    "generated_at": "2026-04-18T02:14:12.953460+00:00",
+    "generated_at": "2026-04-19T02:10:47.204120+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

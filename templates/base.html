@@ -992,6 +992,22 @@
             font-family: "JetBrains Mono", monospace;
         }
 
+        @media (max-width: 1440px) {
+            .marketing-shell .site-header-inner {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .marketing-shell .nav-center,
+            .marketing-shell .header-actions {
+                width: 100%;
+            }
+
+            .marketing-shell .header-actions {
+                justify-content: flex-start;
+            }
+        }
+
         @media (max-width: 1280px) {
             .site-header-inner {
                 grid-template-columns: 1fr;
@@ -1416,7 +1432,7 @@
             justify-content: flex-end;
         }
 
-        @media (max-width: 1180px) {
+        @media (max-width: 1480px) {
             .product-shell {
                 grid-template-columns: 1fr;
             }
