@@ -1003,6 +1003,10 @@
                 width: 100%;
             }
 
+            .marketing-shell .nav-center {
+                grid-column: 1 / -1;
+            }
+
             .marketing-shell .header-actions {
                 justify-content: flex-start;
             }
@@ -1257,12 +1261,71 @@
         }
 
         .marketing-shell .site-header-inner {
-            grid-template-columns: minmax(220px, 1fr) auto;
+            grid-template-columns: minmax(220px, auto) minmax(0, 1fr) auto;
             align-items: center;
+            padding: 16px 20px;
+            border-radius: 24px;
+            background:
+                linear-gradient(180deg, rgba(12, 14, 19, 0.96), rgba(8, 10, 15, 0.94)),
+                rgba(5, 7, 10, 0.92);
+            border-color: rgba(255,255,255,0.08);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
         }
 
         .marketing-shell .nav-center {
-            grid-column: 1 / -1;
+            grid-column: auto;
+        }
+
+        .marketing-shell .site-header-inner::before {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+        }
+
+        .marketing-shell .site-header-inner::after {
+            display: none;
+        }
+
+        .marketing-shell .brand-subtitle {
+            color: rgba(255,255,255,0.42);
+        }
+
+        .marketing-shell .nav-pills {
+            justify-content: center;
+            gap: 6px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            overflow: visible;
+        }
+
+        .marketing-shell .nav-pill {
+            padding: 10px 14px;
+            border-radius: 14px;
+            color: rgba(255,255,255,0.68);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .marketing-shell .nav-pill:hover,
+        .marketing-shell .nav-pill.active {
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+        }
+
+        .marketing-shell .nav-pill-icon {
+            background: rgba(255,255,255,0.04);
+            color: #9cc2ff;
+        }
+
+        .marketing-shell .header-actions .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.07);
+        }
+
+        .marketing-shell .header-actions .btn-primary {
+            min-height: 42px;
+            padding: 0 20px;
+            border-radius: 999px;
+            box-shadow: 0 16px 34px rgba(77, 141, 255, 0.24);
         }
 
         .product-shell {

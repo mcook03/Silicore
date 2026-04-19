@@ -126,24 +126,6 @@ This board shows high design risk. The main risk concentration is in power integ
 - Metrics: {"has_testpoint": false}
 
 ### MEDIUM — component_design
-- Message: High-speed net USB_DP has a long route with no visible series or termination resistor
-- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.7
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=18.0
-- Traceability: 100 / 100
-- Evidence Count: 8
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 70.0 / 100
-- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Fix Priority: medium
-- Components: J1
-- Nets: USB_DP
-- Metrics: {"trace_length": 31.62, "threshold": 18.0, "has_resistor": false}
-
-### MEDIUM — component_design
 - Message: High-speed net USB_DN has a long route with no visible series or termination resistor
 - Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
 - Root Cause: General design issue
@@ -159,6 +141,24 @@ This board shows high design risk. The main risk concentration is in power integ
 - Fix Priority: medium
 - Components: J1
 - Nets: USB_DN
+- Metrics: {"trace_length": 31.62, "threshold": 18.0, "has_resistor": false}
+
+### MEDIUM — component_design
+- Message: High-speed net USB_DP has a long route with no visible series or termination resistor
+- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.7
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=18.0
+- Traceability: 100 / 100
+- Evidence Count: 8
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 70.0 / 100
+- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Fix Priority: medium
+- Components: J1
+- Nets: USB_DP
 - Metrics: {"trace_length": 31.62, "threshold": 18.0, "has_resistor": false}
 
 ### MEDIUM — power_integrity
@@ -210,7 +210,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, VCC
+- Nets: VCC, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — power_integrity
@@ -228,7 +228,7 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: J1
-- Nets: USB_DP, USB_DN
+- Nets: USB_DN, USB_DP
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — emi_emc
@@ -264,8 +264,8 @@ This board shows high design risk. The main risk concentration is in power integ
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: high
 - Components: J1
-- Nets: USB_DP, USB_DN
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DP", "USB_DN"], "has_power": false, "has_ground": false}
+- Nets: USB_DN, USB_DP
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "USB_DP"], "has_power": false, "has_ground": false}
 
 ### MEDIUM — power_integrity
 - Message: Power net VCC has too few connections (1)

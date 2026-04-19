@@ -2,1079 +2,1340 @@
 {% block content %}
 
 <style>
-    .home-rebuild {
+    .marketing-home {
         display: grid;
-        gap: 24px;
+        gap: 28px;
     }
 
-    .signal-ticker {
+    .hero-stage {
         position: relative;
         overflow: hidden;
-        padding: 10px 0;
-        border-top: 1px solid rgba(255,255,255,0.06);
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
-    }
-
-    .signal-ticker-track {
-        display: flex;
+        display: grid;
         gap: 34px;
-        min-width: max-content;
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        animation: signalScroll 24s linear infinite;
-    }
-
-    @keyframes signalScroll {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
-    }
-
-    .home-hero {
-        position: relative;
-        overflow: hidden;
-        display: grid;
-        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-        gap: 24px;
-        padding: 30px;
-        min-height: 720px;
-        border-radius: 36px;
+        justify-items: center;
+        padding: 72px 48px 48px;
+        border-radius: 40px;
         border: 1px solid rgba(255,255,255,0.08);
         background:
-            radial-gradient(circle at 16% 18%, rgba(95, 164, 255, 0.22), transparent 26%),
-            radial-gradient(circle at 80% 0%, rgba(51, 209, 255, 0.14), transparent 28%),
-            linear-gradient(180deg, rgba(8, 13, 24, 0.94), rgba(5, 9, 18, 0.88));
-        box-shadow: var(--shadow);
+            radial-gradient(circle at 50% 0%, rgba(255,255,255,0.06), transparent 28%),
+            radial-gradient(circle at 0% 100%, rgba(64, 126, 255, 0.12), transparent 26%),
+            radial-gradient(circle at 100% 35%, rgba(38, 210, 255, 0.1), transparent 24%),
+            linear-gradient(180deg, rgba(6, 8, 13, 0.98), rgba(4, 6, 10, 0.98));
+        box-shadow: 0 42px 110px rgba(0, 0, 0, 0.42);
     }
 
-    .home-hero::before {
+    .hero-stage::before,
+    .hero-stage::after {
         content: "";
         position: absolute;
-        left: -10%;
-        right: -10%;
-        top: 18%;
-        height: 220px;
-        background: linear-gradient(112deg, transparent 22%, rgba(255,255,255,0.05) 43%, rgba(168, 207, 255, 0.26) 50%, rgba(255,255,255,0.05) 57%, transparent 80%);
-        filter: blur(14px);
-        opacity: 0.72;
+        width: 72vw;
+        max-width: 980px;
+        height: 140px;
+        border-radius: 999px;
         pointer-events: none;
-        transform: rotate(-8deg);
+        filter: blur(14px);
+        opacity: 0.92;
     }
 
-    .home-hero-copy {
+    .hero-stage::before {
+        left: -18%;
+        bottom: 24%;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.95), rgba(122, 184, 255, 0.75), rgba(62, 113, 255, 0.35), rgba(255,255,255,0));
+        transform: rotate(-14deg);
+        animation: beamDriftLeft 12s ease-in-out infinite;
+    }
+
+    .hero-stage::after {
+        right: -16%;
+        top: 28%;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.92), rgba(77, 141, 255, 0.72), rgba(32, 214, 255, 0.32), rgba(255,255,255,0));
+        transform: rotate(-10deg);
+        animation: beamDriftRight 14s ease-in-out infinite;
+    }
+
+    @keyframes beamDriftLeft {
+        0%, 100% { transform: rotate(-14deg) translateX(0); opacity: 0.78; }
+        50% { transform: rotate(-11deg) translateX(28px); opacity: 1; }
+    }
+
+    @keyframes beamDriftRight {
+        0%, 100% { transform: rotate(-10deg) translateX(0); opacity: 0.78; }
+        50% { transform: rotate(-13deg) translateX(-34px); opacity: 1; }
+    }
+
+    .hero-copy {
         position: relative;
         z-index: 1;
         display: grid;
-        align-content: center;
-        gap: 16px;
-        max-width: 40rem;
+        gap: 18px;
+        justify-items: center;
+        text-align: center;
+        max-width: 920px;
     }
 
-    .home-kicker-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .home-kicker,
-    .home-powered {
-        display: inline-flex;
-        align-items: center;
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.08);
-        background: rgba(255,255,255,0.035);
+    .hero-label {
+        color: rgba(255,255,255,0.56);
         font-size: 11px;
         font-weight: 800;
+        letter-spacing: 0.34em;
         text-transform: uppercase;
-        letter-spacing: 0.16em;
-        color: #d9e8ff;
     }
 
-    .home-title {
+    .hero-title {
         margin: 0;
         font-family: "Space Grotesk", sans-serif;
-        font-size: clamp(3.6rem, 8vw, 7rem);
-        line-height: 0.88;
-        letter-spacing: -0.09em;
-        max-width: 8ch;
+        font-size: clamp(3.8rem, 8vw, 6.8rem);
+        line-height: 0.92;
+        letter-spacing: -0.085em;
+        max-width: 11ch;
         text-wrap: balance;
     }
 
-    .home-copy {
-        margin: 0;
-        color: var(--muted);
-        font-size: 16px;
-        line-height: 1.85;
-        max-width: 58ch;
+    .hero-title span {
+        color: rgba(255,255,255,0.7);
     }
 
-    .home-action-row {
+    .hero-body {
+        margin: 0;
+        max-width: 64ch;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.8;
+    }
+
+    .hero-actions {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
-        padding-top: 6px;
+        justify-content: center;
     }
 
-    .home-proof-row {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        padding-top: 16px;
+    .hero-credibility {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
-    .home-proof {
-        padding: 14px 16px;
-        border-radius: 18px;
+    .hero-credibility .chip-soft {
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.76);
+    }
+
+    .product-window {
+        position: relative;
+        z-index: 1;
+        width: min(1080px, 100%);
+        overflow: hidden;
+        border-radius: 30px;
         border: 1px solid rgba(255,255,255,0.08);
+        background: linear-gradient(180deg, rgba(18, 22, 31, 0.98), rgba(10, 13, 21, 0.98));
+        box-shadow: 0 42px 96px rgba(0, 0, 0, 0.45);
+    }
+
+    .window-topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
         background: rgba(255,255,255,0.03);
     }
 
-    .home-proof strong {
-        display: block;
-        font-family: "Space Grotesk", sans-serif;
-        font-size: clamp(1.4rem, 3vw, 2.6rem);
-        letter-spacing: -0.06em;
-    }
-
-    .home-proof span {
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .home-stage {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        grid-template-rows: auto 1fr;
-        gap: 16px;
-        padding: 20px;
-    }
-
-    .home-stage-top {
+    .window-dots {
         display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        align-items: center;
-        flex-wrap: wrap;
+        gap: 8px;
     }
 
-    .home-stage-heading {
+    .window-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.2);
+    }
+
+    .window-dot.red { background: #ff7b6e; }
+    .window-dot.yellow { background: #f8c95f; }
+    .window-dot.green { background: #56d37d; }
+
+    .window-url {
+        padding: 8px 18px;
+        border-radius: 999px;
+        background: rgba(0,0,0,0.3);
+        color: rgba(255,255,255,0.64);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .window-body {
         display: grid;
-        gap: 6px;
+        grid-template-columns: minmax(0, 1.22fr) minmax(280px, 0.78fr);
+        gap: 18px;
+        padding: 22px;
     }
 
-    .home-stage-label {
-        color: var(--muted-2);
-        font-size: 10px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-    }
-
-    .home-stage-value {
-        font-family: "Space Grotesk", sans-serif;
-        font-size: 1.15rem;
-        letter-spacing: -0.04em;
-    }
-
-    .home-stage-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.18fr) minmax(260px, 0.82fr);
-        gap: 16px;
-        min-height: 100%;
-    }
-
-    .home-canvas {
+    .window-canvas {
         position: relative;
         overflow: hidden;
-        min-height: 500px;
-        border-radius: 28px;
-        border: 1px solid rgba(255,255,255,0.07);
+        min-height: 520px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.05);
         background:
-            radial-gradient(circle at 50% 18%, rgba(108, 168, 255, 0.12), transparent 24%),
-            linear-gradient(180deg, rgba(7, 12, 22, 0.98), rgba(4, 7, 14, 0.98));
+            radial-gradient(circle at 50% 18%, rgba(75, 141, 255, 0.12), transparent 24%),
+            linear-gradient(180deg, rgba(7, 10, 17, 0.98), rgba(5, 7, 11, 0.98));
     }
 
-    .home-canvas::after {
-        content: "";
-        position: absolute;
-        inset: -30% -10% auto;
-        height: 160px;
-        background: linear-gradient(108deg, transparent 28%, rgba(199, 226, 255, 0.06) 45%, rgba(255, 255, 255, 0.42) 50%, rgba(199, 226, 255, 0.06) 55%, transparent 72%);
-        filter: blur(16px);
-        opacity: 0.5;
-        transform: rotate(-9deg);
-        animation: scanSweep 9s ease-in-out infinite;
-        pointer-events: none;
-    }
-
-    .home-canvas::before {
+    .window-canvas::before {
         content: "";
         position: absolute;
         inset: 0;
         background-image:
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-        opacity: 0.55;
-        mask-image: radial-gradient(circle at center, rgba(0,0,0,0.95), transparent 94%);
+            linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+        background-size: 34px 34px;
+        opacity: 0.46;
+        mask-image: radial-gradient(circle at center, rgba(0,0,0,1), transparent 95%);
     }
 
-    .canvas-ambient-glow {
-        position: absolute;
-        inset: 12% 16%;
-        border-radius: 999px;
-        background: radial-gradient(circle, rgba(108, 168, 255, 0.13), transparent 62%);
-        filter: blur(26px);
-        animation: spotlightBreathe 7.5s ease-in-out infinite;
-        pointer-events: none;
-    }
-
-    .canvas-orbit {
+    .window-orbit {
         position: absolute;
         border-radius: 999px;
-        border: 1px solid rgba(150, 206, 255, 0.12);
-        transform: perspective(1200px) rotateX(68deg) rotateZ(-18deg);
-        opacity: 0.42;
-        pointer-events: none;
+        border: 1px solid rgba(255,255,255,0.12);
+        transform: perspective(1200px) rotateX(70deg);
+        opacity: 0.4;
+        animation: orbitSpin 18s linear infinite;
     }
 
-    .canvas-orbit.o1 {
-        inset: 19% 18% 24% 20%;
-        animation: orbitShift 12s linear infinite;
+    .window-orbit.one { inset: 18% 18% 28% 18%; }
+    .window-orbit.two { inset: 28% 26% 36% 26%; animation-direction: reverse; }
+
+    @keyframes orbitSpin {
+        from { transform: perspective(1200px) rotateX(70deg) rotateZ(0deg); }
+        to { transform: perspective(1200px) rotateX(70deg) rotateZ(360deg); }
     }
 
-    .canvas-orbit.o2 {
-        inset: 26% 26% 32% 28%;
-        animation: orbitShift 16s linear infinite reverse;
-    }
-
-    .board-silhouette {
+    .window-board {
         position: absolute;
-        inset: 10% 9% 16% 9%;
+        inset: 14% 10% 14% 10%;
         border-radius: 26px;
-        border: 1px solid rgba(108,168,255,0.14);
+        border: 1px solid rgba(122, 184, 255, 0.14);
         background:
-            radial-gradient(circle at 25% 28%, rgba(51, 209, 255, 0.12), transparent 10%),
-            radial-gradient(circle at 72% 58%, rgba(108, 168, 255, 0.12), transparent 12%),
-            linear-gradient(180deg, rgba(12, 24, 43, 0.72), rgba(6, 13, 24, 0.88));
-        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 30px 60px rgba(0,0,0,0.24);
-        transform: perspective(1200px) rotateX(62deg) rotateZ(-19deg);
-        transform-style: preserve-3d;
-        animation: boardFloat 8.5s ease-in-out infinite;
+            radial-gradient(circle at 28% 30%, rgba(255,255,255,0.1), transparent 8%),
+            radial-gradient(circle at 70% 32%, rgba(255,255,255,0.1), transparent 8%),
+            radial-gradient(circle at 44% 72%, rgba(255,255,255,0.1), transparent 7%),
+            linear-gradient(180deg, rgba(10, 18, 31, 0.94), rgba(7, 12, 21, 0.96));
+        transform: perspective(1200px) rotateX(62deg) rotateZ(-16deg);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 30px 60px rgba(0,0,0,0.34);
+        animation: boardLift 9s ease-in-out infinite;
     }
 
-    .trace-line {
+    .window-trace {
         position: absolute;
         height: 3px;
         border-radius: 999px;
-        background: linear-gradient(90deg, rgba(80, 187, 255, 0.05), rgba(170, 217, 255, 0.8), rgba(80, 187, 255, 0.05));
-        box-shadow: 0 0 18px rgba(108, 168, 255, 0.34);
-        animation: tracePulse 4.2s ease-in-out infinite;
+        background: linear-gradient(90deg, transparent, rgba(221,236,255,0.9), transparent);
+        box-shadow: 0 0 18px rgba(122, 184, 255, 0.28);
     }
 
-    .trace-line:nth-child(1) { top: 24%; left: 12%; width: 42%; animation-delay: 0s; }
-    .trace-line:nth-child(2) { top: 43%; left: 28%; width: 46%; animation-delay: 1.2s; }
-    .trace-line:nth-child(3) { top: 64%; left: 16%; width: 36%; animation-delay: 2.3s; }
-
-    .trace-line.vertical {
+    .window-trace.t1 { top: 28%; left: 16%; width: 46%; }
+    .window-trace.t2 { top: 46%; left: 36%; width: 38%; }
+    .window-trace.t3 { top: 66%; left: 22%; width: 28%; }
+    .window-trace.v1,
+    .window-trace.v2 {
         width: 3px;
         height: 34%;
     }
+    .window-trace.v1 { top: 18%; left: 36%; }
+    .window-trace.v2 { top: 34%; left: 68%; }
 
-    .trace-line.vertical.v1 { top: 18%; left: 34%; animation-delay: 0.8s; }
-    .trace-line.vertical.v2 { top: 38%; left: 70%; animation-delay: 2.1s; }
-
-    @keyframes tracePulse {
-        0%, 100% { opacity: 0.25; filter: brightness(0.92); }
-        50% { opacity: 1; filter: brightness(1.18); }
-    }
-
-    @keyframes boardFloat {
-        0%, 100% { transform: perspective(1200px) rotateX(62deg) rotateZ(-19deg) translate3d(0, 0, 0); }
-        50% { transform: perspective(1200px) rotateX(60deg) rotateZ(-17deg) translate3d(0, -6px, 0); }
-    }
-
-    @keyframes scanSweep {
-        0%, 100% { transform: translateY(-36px) rotate(-9deg); opacity: 0.2; }
-        48% { opacity: 0.82; }
-        50% { transform: translateY(260px) rotate(-9deg); opacity: 0.9; }
-        85% { opacity: 0.18; }
-    }
-
-    @keyframes orbitShift {
-        from { transform: perspective(1200px) rotateX(68deg) rotateZ(-18deg) rotate(0deg); }
-        to { transform: perspective(1200px) rotateX(68deg) rotateZ(-18deg) rotate(360deg); }
-    }
-
-    @keyframes spotlightBreathe {
-        0%, 100% { opacity: 0.45; transform: scale(0.96); }
-        50% { opacity: 0.92; transform: scale(1.08); }
-    }
-
-    .node-dot {
+    .window-node {
         position: absolute;
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
         border-radius: 999px;
         background: #eef5ff;
-        box-shadow: 0 0 0 6px rgba(108, 168, 255, 0.16), 0 0 22px rgba(108, 168, 255, 0.4);
-        animation: nodePulse 3.6s ease-in-out infinite;
+        box-shadow: 0 0 0 8px rgba(122, 184, 255, 0.08), 0 0 24px rgba(122, 184, 255, 0.32);
+        animation: nodeBreathe 4s ease-in-out infinite;
     }
 
-    .node-dot.n1 { top: 22%; left: 22%; }
-    .node-dot.n2 { top: 39%; left: 64%; animation-delay: 0.9s; }
-    .node-dot.n3 { top: 68%; left: 46%; animation-delay: 1.8s; }
+    .window-node.n1 { top: 24%; left: 22%; }
+    .window-node.n2 { top: 38%; left: 64%; animation-delay: 1s; }
+    .window-node.n3 { top: 69%; left: 46%; animation-delay: 2s; }
 
-    @keyframes nodePulse {
-        0%, 100% { transform: scale(0.92); box-shadow: 0 0 0 6px rgba(108, 168, 255, 0.12), 0 0 16px rgba(108, 168, 255, 0.26); }
-        50% { transform: scale(1.18); box-shadow: 0 0 0 12px rgba(108, 168, 255, 0.08), 0 0 28px rgba(108, 168, 255, 0.48); }
+    @keyframes nodeBreathe {
+        0%, 100% { transform: scale(0.92); }
+        50% { transform: scale(1.18); }
     }
 
-    .risk-tag {
+    @keyframes boardLift {
+        0%, 100% { transform: perspective(1200px) rotateX(62deg) rotateZ(-16deg) translateY(0); }
+        50% { transform: perspective(1200px) rotateX(60deg) rotateZ(-14deg) translateY(-8px); }
+    }
+
+    .window-tag {
         position: absolute;
-        padding: 8px 10px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.04em;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        padding: 10px 14px;
+        border-radius: 14px;
         border: 1px solid rgba(255,255,255,0.08);
-        animation: chipDrift 6.4s ease-in-out infinite;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        animation: chipFloat 6s ease-in-out infinite;
     }
 
-    .risk-tag.red {
-        top: 26%;
-        right: 14%;
-        background: rgba(255, 95, 109, 0.14);
-        color: #ffc0c7;
+    .window-tag.warning {
+        top: 22%;
+        right: 9%;
+        color: #ffd6ae;
+        background: rgba(251, 146, 60, 0.16);
     }
 
-    .risk-tag.yellow {
-        bottom: 18%;
-        left: 18%;
-        background: rgba(244, 185, 66, 0.14);
-        color: #ffe2a0;
-        animation-delay: 1.9s;
+    .window-tag.blue {
+        bottom: 14%;
+        left: 12%;
+        color: #d9e8ff;
+        background: rgba(77, 141, 255, 0.16);
+        animation-delay: 1.6s;
     }
 
-    .risk-tag.blue {
-        top: 16%;
-        left: 14%;
-        background: rgba(108, 168, 255, 0.14);
-        color: #dbeaff;
+    .window-tag.good {
+        top: 14%;
+        left: 12%;
+        color: #d8fff5;
+        background: rgba(45, 212, 164, 0.14);
         animation-delay: 0.8s;
     }
 
-    @keyframes chipDrift {
-        0%, 100% { transform: translateY(0); opacity: 0.76; }
+    @keyframes chipFloat {
+        0%, 100% { transform: translateY(0); opacity: 0.78; }
         50% { transform: translateY(-8px); opacity: 1; }
     }
 
-    .home-stage-side {
+    .window-side {
         display: grid;
         gap: 14px;
         align-content: start;
     }
 
-    .home-metric-panel {
+    .window-panel {
         padding: 18px;
-        display: grid;
-        gap: 14px;
-    }
-
-    .home-metric-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .home-metric-row {
-        display: grid;
-        gap: 7px;
-    }
-
-    .home-metric-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        color: var(--text-soft);
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .home-metric-top strong {
-        font-family: "Space Grotesk", sans-serif;
-        font-size: 1.2rem;
-        letter-spacing: -0.04em;
-    }
-
-    .home-grid {
-        display: grid;
-        gap: 20px;
-        grid-template-columns: 1.15fr 0.85fr;
-    }
-
-    .home-stack {
-        display: grid;
-        gap: 20px;
-    }
-
-    .command-grid,
-    .portfolio-grid,
-    .workflow-grid,
-    .recent-grid {
-        display: grid;
-        gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .recent-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .command-card,
-    .portfolio-card,
-    .workflow-card,
-    .recent-card,
-    .story-card,
-    .parser-card {
-        position: relative;
-        overflow: hidden;
-        padding: 20px;
-        border-radius: 24px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.06);
         background:
-            linear-gradient(180deg, rgba(11, 18, 31, 0.9), rgba(7, 12, 22, 0.86)),
-            rgba(6, 10, 18, 0.72);
-        box-shadow: var(--shadow-soft);
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+            rgba(7, 10, 17, 0.88);
     }
 
-    .command-card::before,
-    .portfolio-card::before,
-    .workflow-card::before,
-    .recent-card::before,
-    .story-card::before,
-    .parser-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at top left, rgba(108, 168, 255, 0.1), transparent 36%);
-        pointer-events: none;
-    }
-
-    .command-card h3,
-    .portfolio-card h3,
-    .workflow-card h3,
-    .recent-title {
-        margin: 0;
-        font-family: "Space Grotesk", sans-serif;
-        font-size: 1.1rem;
-        letter-spacing: -0.04em;
-        line-height: 1.15;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-
-    .command-metric {
-        margin: 14px 0 12px;
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .command-metric strong {
-        font-family: "Space Grotesk", sans-serif;
-        font-size: clamp(2rem, 4vw, 3.8rem);
-        line-height: 0.92;
-        letter-spacing: -0.08em;
-    }
-
-    .command-metric span {
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .command-card p,
-    .portfolio-card p,
-    .workflow-card p,
-    .story-card p,
-    .parser-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.72;
-        font-size: 13px;
-    }
-
-    .story-split {
-        display: grid;
-        gap: 20px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        align-items: start;
-    }
-
-    .story-card {
-        display: grid;
-        gap: 16px;
-    }
-
-    .story-plain {
-        display: grid;
-        gap: 12px;
-        min-width: 0;
-    }
-
-    .narrative-grid {
-        display: grid;
-        gap: 12px;
-    }
-
-    .narrative-row {
-        display: grid;
-        gap: 10px;
-        grid-template-columns: minmax(150px, 0.8fr) minmax(0, 1.2fr) auto;
-        align-items: start;
-        padding: 16px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .narrative-row:last-child {
-        border-bottom: 0;
-        padding-bottom: 0;
-    }
-
-    .narrative-title {
-        font-family: "Space Grotesk", sans-serif;
-        font-size: 1rem;
-        letter-spacing: -0.04em;
-    }
-
-    .narrative-detail {
-        display: grid;
-        gap: 6px;
-    }
-
-    .narrative-evidence {
-        color: var(--muted-2);
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .story-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .story-row {
-        display: grid;
-        gap: 6px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .story-row:last-child {
-        padding-bottom: 0;
-        border-bottom: 0;
-    }
-
-    .story-row-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .story-row strong {
-        font-size: 14px;
-    }
-
-    .tone-chip {
-        display: inline-flex;
-        align-items: center;
-        padding: 5px 8px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.05);
-        color: var(--text-soft);
+    .window-panel-label {
+        color: rgba(255,255,255,0.54);
         font-size: 10px;
         font-weight: 800;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
     }
 
-    .portfolio-card-top,
-    .recent-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: start;
-        margin-bottom: 12px;
+    .window-panel-title {
+        margin: 10px 0 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.05rem;
+        letter-spacing: -0.04em;
     }
 
-    .portfolio-card-top > div,
-    .recent-top > div {
-        min-width: 0;
-    }
-
-    .recent-main {
+    .window-score {
         display: grid;
-        gap: 6px;
-        min-width: 0;
-        flex: 1 1 auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
     }
 
-    .portfolio-card strong {
+    .window-score-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .window-score-card strong {
+        display: block;
         font-family: "Space Grotesk", sans-serif;
         font-size: 2rem;
         letter-spacing: -0.06em;
     }
 
-    .recent-date {
+    .window-score-card span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .window-feed {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .window-feed-item {
+        display: grid;
+        gap: 4px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .window-feed-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .window-feed-item strong {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .window-feed-item p {
+        margin: 0;
         color: var(--muted);
         font-size: 12px;
         line-height: 1.6;
-        overflow-wrap: anywhere;
     }
 
-    .recent-card {
+    .credibility-strip {
         display: grid;
-        gap: 12px;
-        align-content: start;
-        min-height: 100%;
-    }
-
-    .recent-timeline {
-        display: grid;
-        gap: 12px;
-    }
-
-    .recent-row {
-        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 10px;
-        grid-template-columns: minmax(0, 1.4fr) auto auto;
-        align-items: center;
+    }
+
+    .credibility-item {
         padding: 16px 18px;
         border-radius: 18px;
         border: 1px solid rgba(255,255,255,0.07);
+        background: rgba(255,255,255,0.03);
+        color: rgba(255,255,255,0.82);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+    }
+
+    .section-shell {
+        padding: 30px;
+        border-radius: 32px;
+        border: 1px solid rgba(255,255,255,0.07);
         background:
-            linear-gradient(180deg, rgba(11, 18, 31, 0.88), rgba(7, 12, 22, 0.82)),
-            rgba(6, 10, 18, 0.7);
+            linear-gradient(180deg, rgba(11, 16, 26, 0.9), rgba(7, 10, 18, 0.86)),
+            rgba(6, 9, 15, 0.74);
+        box-shadow: var(--shadow-soft);
     }
 
-    .recent-row-main {
+    .section-head {
         display: grid;
-        gap: 6px;
-        min-width: 0;
+        gap: 10px;
+        max-width: 760px;
+        margin-bottom: 22px;
     }
 
-    .recent-row-title {
+    .section-eyebrow {
+        color: rgba(255,255,255,0.5);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+    }
+
+    .section-title-large {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2rem, 4vw, 3.6rem);
+        line-height: 0.95;
+        letter-spacing: -0.07em;
+        max-width: 12ch;
+    }
+
+    .section-summary {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 64ch;
+    }
+
+    .problem-solution {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .problem-list,
+    .solution-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .problem-item,
+    .solution-item,
+    .feature-card,
+    .automation-tile,
+    .solution-card,
+    .pricing-card {
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
+    }
+
+    .problem-item strong,
+    .solution-item strong,
+    .feature-card strong,
+    .automation-tile strong,
+    .solution-card strong,
+    .pricing-card strong {
+        display: block;
+        margin-bottom: 8px;
         font-family: "Space Grotesk", sans-serif;
         font-size: 1rem;
         letter-spacing: -0.04em;
-        overflow-wrap: anywhere;
     }
 
-    .recent-row-meta {
+    .problem-item p,
+    .solution-item p,
+    .feature-card p,
+    .automation-tile p,
+    .solution-card p,
+    .pricing-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.75;
+    }
+
+    .feature-grid,
+    .solutions-grid,
+    .pricing-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .workflow-steps {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .workflow-step {
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.025);
+    }
+
+    .workflow-step span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        margin-bottom: 14px;
+        border-radius: 999px;
+        background: rgba(77, 141, 255, 0.14);
+        color: #dce8ff;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .workflow-step strong {
+        display: block;
+        margin-bottom: 8px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.98rem;
+        letter-spacing: -0.04em;
+    }
+
+    .workflow-step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .automation-shell {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .automation-shell::before {
+        content: "";
+        position: absolute;
+        left: -10%;
+        right: -10%;
+        top: 44%;
+        height: 120px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.96), rgba(107, 161, 255, 0.62), rgba(255,255,255,0));
+        filter: blur(14px);
+        opacity: 0.84;
+        transform: rotate(6deg);
+        pointer-events: none;
+    }
+
+    .automation-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+        gap: 18px;
+    }
+
+    .automation-builder,
+    .automation-feed {
+        padding: 22px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background: rgba(0,0,0,0.28);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .builder-row {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        align-items: center;
+    }
+
+    .builder-block {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .builder-block em {
+        display: block;
+        color: rgba(255,255,255,0.48);
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .builder-arrow {
+        color: rgba(255,255,255,0.52);
+        font-size: 22px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .feed-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .feed-row {
+        display: grid;
+        gap: 6px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .feed-row-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .feed-row-top strong {
+        margin: 0;
+        font-size: 13px;
+    }
+
+    .feed-row p {
+        margin: 0;
         color: var(--muted);
         font-size: 12px;
         line-height: 1.6;
-        overflow-wrap: anywhere;
     }
 
-    .recent-top .chip-soft {
-        flex-shrink: 0;
-        align-self: start;
+    .product-preview-grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
     }
 
-    .recent-action {
-        margin-top: 16px;
+    .preview-surface,
+    .preview-side {
+        padding: 22px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background: rgba(255,255,255,0.02);
     }
 
-    .recent-action .btn {
-        width: 100%;
+    .preview-layout {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr) 240px;
+        gap: 16px;
+        min-height: 460px;
     }
 
-    @media (max-width: 1440px) {
-        .story-split,
-        .recent-grid {
+    .preview-rail,
+    .preview-main,
+    .preview-stack {
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.05);
+        background: rgba(255,255,255,0.02);
+        padding: 16px;
+    }
+
+    .preview-rail {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+    }
+
+    .preview-main {
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(circle at top, rgba(77, 141, 255, 0.14), transparent 20%),
+            linear-gradient(180deg, rgba(10, 14, 22, 0.98), rgba(6, 8, 12, 0.98));
+    }
+
+    .preview-main::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+        background-size: 26px 26px;
+        opacity: 0.44;
+    }
+
+    .preview-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.78);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .preview-issue {
+        position: absolute;
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 800;
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .preview-issue.i1 {
+        top: 16%;
+        right: 12%;
+        color: #ffe1bf;
+        background: rgba(251, 146, 60, 0.14);
+    }
+
+    .preview-issue.i2 {
+        bottom: 14%;
+        left: 10%;
+        color: #dce8ff;
+        background: rgba(77, 141, 255, 0.14);
+    }
+
+    .preview-stack {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+    }
+
+    .mini-panel {
+        padding: 14px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .mini-panel strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    .mini-panel p,
+    .mini-panel li {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .mini-panel ul {
+        margin: 0;
+        padding-left: 18px;
+        display: grid;
+        gap: 6px;
+    }
+
+    .outcomes-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .outcome-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.024);
+        text-align: center;
+    }
+
+    .outcome-card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.6rem;
+        letter-spacing: -0.06em;
+    }
+
+    .outcome-card span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .pricing-card.featured {
+        background:
+            linear-gradient(180deg, rgba(77, 141, 255, 0.12), rgba(255,255,255,0.03)),
+            rgba(255,255,255,0.03);
+        border-color: rgba(122, 184, 255, 0.22);
+    }
+
+    .pricing-price {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .pricing-price strong {
+        margin: 0;
+        font-size: 2.4rem;
+    }
+
+    .pricing-price span {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .pricing-list {
+        display: grid;
+        gap: 8px;
+        padding-left: 18px;
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .final-cta {
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        padding: 60px 32px;
+    }
+
+    .final-cta::before {
+        content: "";
+        position: absolute;
+        left: -12%;
+        right: -12%;
+        bottom: 16%;
+        height: 140px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.95), rgba(77, 141, 255, 0.72), rgba(255,255,255,0));
+        filter: blur(16px);
+        opacity: 0.9;
+        pointer-events: none;
+    }
+
+    .final-cta-inner {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 16px;
+        justify-items: center;
+        max-width: 760px;
+        margin: 0 auto;
+    }
+
+    .final-cta-title {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2.6rem, 5vw, 4.8rem);
+        line-height: 0.94;
+        letter-spacing: -0.08em;
+        max-width: 12ch;
+    }
+
+    .final-cta-copy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 54ch;
+    }
+
+    .final-cta-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    @media (max-width: 1320px) {
+        .window-body,
+        .automation-grid,
+        .product-preview-grid,
+        .problem-solution {
             grid-template-columns: 1fr;
         }
 
-        .recent-top {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+        .feature-grid,
+        .pricing-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .recent-top .chip-soft {
-            justify-self: start;
+        .workflow-steps {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .narrative-row,
-        .recent-row {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 1200px) {
-        .home-hero,
-        .home-grid,
-        .story-split {
-            grid-template-columns: 1fr;
-        }
-
-        .home-stage-grid {
-            grid-template-columns: 1fr;
+        .outcomes-grid,
+        .credibility-strip {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 780px) {
-        .home-hero {
-            min-height: auto;
-            padding: 22px;
+    @media (max-width: 920px) {
+        .hero-stage {
+            padding: 54px 22px 28px;
         }
 
-        .home-proof-row {
+        .window-score {
             grid-template-columns: 1fr;
         }
 
-        .recent-grid {
+        .preview-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .builder-row {
+            grid-template-columns: 1fr;
+        }
+
+        .builder-arrow {
+            transform: rotate(90deg);
+        }
+
+        .feature-grid,
+        .pricing-grid,
+        .workflow-steps,
+        .outcomes-grid,
+        .credibility-strip {
             grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="home-rebuild">
-    <section class="signal-ticker">
-        <div class="signal-ticker-track">
-            <span>Signal Integrity</span><span>Power Integrity</span><span>EMI / EMC</span><span>Return Path</span><span>Stackup</span><span>Thermal</span><span>Manufacturability</span><span>Assembly</span><span>Testability</span><span>Safety Spacing</span><span>Parser Trust</span><span>Atlas Reasoning</span>
-            <span>Signal Integrity</span><span>Power Integrity</span><span>EMI / EMC</span><span>Return Path</span><span>Stackup</span><span>Thermal</span><span>Manufacturability</span><span>Assembly</span><span>Testability</span><span>Safety Spacing</span><span>Parser Trust</span><span>Atlas Reasoning</span>
-        </div>
-    </section>
-
-    <section class="home-hero">
-        <div class="home-hero-copy">
-            <div class="home-kicker-row">
-                <div class="home-kicker">Silicore Nexus</div>
-                <div class="home-powered">Powered by Atlas Intelligence</div>
-            </div>
-            <h1 class="home-title">Engineering review, built like a real system.</h1>
-            <p class="home-copy">
-                Silicore turns board analysis into an engineering operating surface: parser trust, fabrication readiness, prioritized fixes, review context, and Atlas-guided reasoning across the full design workflow.
+<div class="marketing-home">
+    <section class="hero-stage">
+        <div class="hero-copy">
+            <div class="hero-label">Hardware design intelligence and automation platform</div>
+            <h1 class="hero-title">Detect PCB risk earlier. <span>Automate what happens next.</span></h1>
+            <p class="hero-body">
+                Silicore analyzes PCB designs, scores engineering risk, compares revisions, surfaces fabrication trust, and helps teams automate review workflows before manufacturing problems become expensive failures.
             </p>
-            <div class="home-action-row">
-                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
-                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Review a Project</a>
-                <a class="btn btn-secondary" href="{{ url_for('history_page') }}">Open Nexus History</a>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Start Analysis</a>
+                <a class="btn btn-secondary" href="#platform">View Platform</a>
             </div>
-            <div class="home-proof-row">
-                <div class="home-proof">
-                    <strong>{{ stats.total_runs }}</strong>
-                    <span>Total engineering runs tracked in Nexus.</span>
-                </div>
-                <div class="home-proof">
-                    <strong>{{ stats.project_runs }}</strong>
-                    <span>Project-level review passes with portfolio context.</span>
-                </div>
-                <div class="home-proof">
-                    <strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong>
-                    <span>Latest live score posture from the active dataset.</span>
-                </div>
+            <div class="hero-credibility">
+                <span class="chip-soft">Built for hardware teams</span>
+                <span class="chip-soft">Revision-aware analysis</span>
+                <span class="chip-soft">Workflow automation</span>
+                <span class="chip-soft">Atlas Intelligence</span>
             </div>
         </div>
 
-        <section class="home-stage">
-            <div class="home-stage-top">
-                <div class="home-stage-heading">
-                    <div class="home-stage-label">Live Engineering Posture</div>
-                    <div class="home-stage-value">
-                        {% if home_chart.latest_source %}
-                            {{ home_chart.latest_source }}
-                        {% else %}
-                            Awaiting scored input
-                        {% endif %}
-                    </div>
+        <div class="product-window">
+            <div class="window-topbar">
+                <div class="window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
                 </div>
-                <div class="chip">{{ dashboard_story.top_category if dashboard_story else "General" }}</div>
+                <div class="window-url">silicore.nexus / engineering review workspace</div>
+                <a class="btn btn-primary btn-compact" href="{{ url_for('login_page') }}">Get Access</a>
             </div>
-
-            <div class="home-stage-grid">
-                <div class="home-canvas">
-                    <div class="canvas-ambient-glow"></div>
-                    <div class="canvas-orbit o1"></div>
-                    <div class="canvas-orbit o2"></div>
-                    <div class="board-silhouette">
-                        <div class="trace-line"></div>
-                        <div class="trace-line"></div>
-                        <div class="trace-line"></div>
-                        <div class="trace-line vertical v1"></div>
-                        <div class="trace-line vertical v2"></div>
-                        <div class="node-dot n1"></div>
-                        <div class="node-dot n2"></div>
-                        <div class="node-dot n3"></div>
+            <div class="window-body">
+                <div class="window-canvas">
+                    <div class="window-orbit one"></div>
+                    <div class="window-orbit two"></div>
+                    <div class="window-board">
+                        <div class="window-trace t1"></div>
+                        <div class="window-trace t2"></div>
+                        <div class="window-trace t3"></div>
+                        <div class="window-trace v1"></div>
+                        <div class="window-trace v2"></div>
+                        <div class="window-node n1"></div>
+                        <div class="window-node n2"></div>
+                        <div class="window-node n3"></div>
                     </div>
-                    <div class="risk-tag blue">Parser trust stable</div>
-                    <div class="risk-tag red">Routing issue detected</div>
-                    <div class="risk-tag yellow">Thermal pressure +2.3</div>
+                    <div class="window-tag good">Parser trust stable</div>
+                    <div class="window-tag warning">3 critical power risks introduced</div>
+                    <div class="window-tag blue">Scheduled review summary generated</div>
                 </div>
 
-                <div class="home-stage-side">
-                    <div class="home-metric-panel">
-                        <div class="home-stage-label">Telemetry</div>
-                        <div class="home-metric-list">
-                            <div class="home-metric-row">
-                                <div class="home-metric-top">
-                                    <span>Current score</span>
-                                    <strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong>
-                                </div>
-                                <div class="bar-track"><div class="bar-fill" style="width: {{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}%;"></div></div>
+                <div class="window-side">
+                    <section class="window-panel">
+                        <div class="window-panel-label">Live engineering posture</div>
+                        <h2 class="window-panel-title">Current score and review context</h2>
+                        <div class="window-score">
+                            <div class="window-score-card">
+                                <strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong>
+                                <span>Latest score</span>
                             </div>
-                            <div class="home-metric-row">
-                                <div class="home-metric-top">
-                                    <span>Single-board runs</span>
-                                    <strong>{{ stats.single_runs }}</strong>
-                                </div>
-                                <div class="bar-track"><div class="bar-fill" style="width: {{ ((stats.single_runs / stats.total_runs) * 100) if stats.total_runs else 0 }}%;"></div></div>
+                            <div class="window-score-card">
+                                <strong>{{ stats.total_runs }}</strong>
+                                <span>Runs tracked</span>
                             </div>
-                            <div class="home-metric-row">
-                                <div class="home-metric-top">
-                                    <span>Exported reports</span>
-                                    <strong>{{ stats.exported_runs }}</strong>
-                                </div>
-                                <div class="bar-track"><div class="bar-fill" style="width: {{ ((stats.exported_runs / stats.total_runs) * 100) if stats.total_runs else 0 }}%;"></div></div>
+                            <div class="window-score-card">
+                                <strong>{{ projects|length }}</strong>
+                                <span>Projects monitored</span>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="home-metric-panel">
-                        <div class="home-stage-label">Atlas context</div>
-                        <p class="home-copy" style="font-size:13px; line-height:1.8; max-width:none;">
-                            {{ dashboard_story.summary if dashboard_story is defined else "Silicore dashboard story will appear as run history grows." }}
-                        </p>
-                    </div>
+                    <section class="window-panel">
+                        <div class="window-panel-label">Automation activity</div>
+                        <h2 class="window-panel-title">Recent Atlas and Nexus events</h2>
+                        <div class="window-feed">
+                            <div class="window-feed-item">
+                                <div class="window-feed-top">
+                                    <strong>Revision comparison flagged</strong>
+                                    <span class="tone-chip">Critical</span>
+                                </div>
+                                <p>New revision introduced power-path risk and reduced signoff posture.</p>
+                            </div>
+                            <div class="window-feed-item">
+                                <div class="window-feed-top">
+                                    <strong>Weekly review digest</strong>
+                                    <span class="tone-chip">Generated</span>
+                                </div>
+                                <p>Project-level summary prepared for design review and manufacturing readiness.</p>
+                            </div>
+                            <div class="window-feed-item">
+                                <div class="window-feed-top">
+                                    <strong>CAM package check</strong>
+                                    <span class="tone-chip">Ready</span>
+                                </div>
+                                <p>Bundle completeness and fabrication blockers were evaluated automatically.</p>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
-        </section>
-    </section>
-
-    <section class="home-grid">
-        <div class="home-stack">
-            <section class="card">
-                <div class="card-header">
-                    <h2 class="section-title">Product Command Layer</h2>
-                    <p class="section-copy">Core Silicore functions presented as product modules instead of generic dashboard tiles.</p>
-                </div>
-                <div class="card-body">
-                    <div class="command-grid">
-                        <article class="command-card">
-                            <h3>Analyze</h3>
-                            <div class="command-metric"><strong>{{ stats.total_runs }}</strong><span>runs tracked</span></div>
-                            <p>Review uploaded boards against Atlas-backed engineering logic with persistent history and deeper parser trust context.</p>
-                        </article>
-                        <article class="command-card">
-                            <h3>Explain</h3>
-                            <div class="command-metric"><strong>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }}</strong><span>latest score</span></div>
-                            <p>Understand why the score moved, which domains are applying pressure, and how much confidence to place in the result.</p>
-                        </article>
-                        <article class="command-card">
-                            <h3>Prioritize</h3>
-                            <div class="command-metric"><strong>{{ projects|length }}</strong><span>active workspaces</span></div>
-                            <p>Rank the next engineering action by severity, confidence, recurrence, and expected impact instead of reading a flat issue list.</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="story-split">
-                <section class="story-card">
-                    <div class="card-header" style="padding:0;">
-                        <h2 class="section-title">Recent Score Trend</h2>
-                        <p class="section-copy">How the current run stream is moving as Silicore accumulates engineering evidence.</p>
-                    </div>
-                    <div class="card-body" style="padding:0;">
-                        <div class="chart-frame {% if not (home_chart.trend and home_chart.trend.has_data) %}chart-frame-empty{% endif %}">
-                            {% if home_chart.trend and home_chart.trend.has_data %}
-                            <svg class="chart-svg" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" preserveAspectRatio="none">
-                                <polygon points="{{ home_chart.trend.area_points }}" fill="rgba(108,168,255,0.16)"></polygon>
-                                <polyline points="{{ home_chart.trend.points }}" fill="none" stroke="#8fc5ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-                            </svg>
-                            {% else %}
-                            <div class="empty-state"><h3>Inspection pending</h3><p>No recent scored runs are available for a live trend yet.</p></div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </section>
-
-                <section class="story-card">
-                    <div class="card-header" style="padding:0;">
-                        <h2 class="section-title">Domain Mix</h2>
-                        <p class="section-copy">How board pressure is currently distributed across the engineering review stack.</p>
-                    </div>
-                    <div class="card-body" style="padding:0;">
-                        {% if home_chart.domain_distribution and home_chart.domain_distribution.has_data %}
-                        <div class="story-list">
-                            {% for item in home_chart.domain_distribution["items"] %}
-                            <div class="story-row">
-                                <div class="story-row-top">
-                                    <strong>{{ item.label }}</strong>
-                                    <span class="tone-chip">{{ item.value }}</span>
-                                </div>
-                                <div class="bar-track"><div class="bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        <div class="empty-state"><h3>Inspection pending</h3><p>Recent runs have not produced enough domain data yet to render a live coverage mix.</p></div>
-                        {% endif %}
-                    </div>
-                </section>
-            </section>
-
-            <section class="card">
-                <div class="card-header">
-                    <h2 class="section-title">Engineering Narrative</h2>
-                    <p class="section-copy">System-level readout of what the current run corpus is teaching the product.</p>
-                </div>
-                <div class="card-body">
-                    <div class="narrative-grid">
-                        {% for row in dashboard_story.maturity_rows %}
-                        <article class="narrative-row">
-                            <div class="narrative-title">{{ row.title }}</div>
-                            <div class="narrative-detail">
-                                <p>{{ row.meaning }}</p>
-                                {% if row.evidence %}
-                                <div class="narrative-evidence">{{ row.evidence }}</div>
-                                {% endif %}
-                            </div>
-                            <span class="tone-chip">{{ row.status }}</span>
-                        </article>
-                        {% endfor %}
-
-                        {% for pillar in dashboard_story.pillars %}
-                        <article class="narrative-row">
-                            <div class="narrative-title">{{ pillar.title }}</div>
-                            <div class="narrative-detail">
-                                <p>{{ pillar.description }}</p>
-                            </div>
-                            <span class="tone-chip">Signal</span>
-                        </article>
-                        {% endfor %}
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="home-stack">
-            <section class="card">
-                <div class="card-header">
-                    <h2 class="section-title">Parser & Format Readiness</h2>
-                    <p class="section-copy">Current state of supported board and fabrication package formats.</p>
-                </div>
-                <div class="card-body">
-                    <div class="story-list">
-                        {% if dashboard_story and dashboard_story.parser_readiness %}
-                            {% for item in dashboard_story.parser_readiness %}
-                            <article class="parser-card">
-                                <div class="story-row-top">
-                                    <strong>{{ item.label }}</strong>
-                                    <span class="tone-chip">{{ item.status }}</span>
-                                </div>
-                                <p>{{ item.value }}</p>
-                            </article>
-                            {% endfor %}
-                        {% else %}
-                            <div class="empty-state"><h3>No parser snapshot yet</h3><p>Run the evaluation suite to populate format readiness.</p></div>
-                        {% endif %}
-                    </div>
-                </div>
-            </section>
-
-            <section class="card">
-                <div class="card-header">
-                    <h2 class="section-title">Workflow Throughput</h2>
-                    <p class="section-copy">How the main product motions are being used across the workspace.</p>
-                </div>
-                <div class="card-body">
-                    <div class="workflow-grid">
-                        <article class="workflow-card">
-                            <h3>Single Board Analysis</h3>
-                            <div class="command-metric"><strong>{{ stats.single_runs }}</strong><span>runs</span></div>
-                            <p>Focused engineering review for individual board files.</p>
-                        </article>
-                        <article class="workflow-card">
-                            <h3>Nexus Review</h3>
-                            <div class="command-metric"><strong>{{ stats.project_runs }}</strong><span>runs</span></div>
-                            <p>Multi-board ranking, pattern detection, and project-level review.</p>
-                        </article>
-                        <article class="workflow-card">
-                            <h3>Nexus History</h3>
-                            <div class="command-metric"><strong>{{ stats.exported_runs }}</strong><span>exports</span></div>
-                            <p>Retention, archive posture, and report continuity across saved runs.</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
         </div>
     </section>
 
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Nexus Portfolio</h2>
-            <p class="section-copy">Live engineering workspaces surfaced as part of the product operating layer.</p>
+    <section class="credibility-strip">
+        <div class="credibility-item">PCB risk scoring</div>
+        <div class="credibility-item">Revision comparison intelligence</div>
+        <div class="credibility-item">Fabrication package trust</div>
+        <div class="credibility-item">Project dashboards</div>
+        <div class="credibility-item">Workflow automation</div>
+        <div class="credibility-item">Audit and review continuity</div>
+    </section>
+
+    <section class="section-shell">
+        <div class="section-head">
+            <div class="section-eyebrow">Problem to system</div>
+            <h2 class="section-title-large">Move from manual board review to an active engineering system.</h2>
+            <p class="section-summary">Silicore is built for teams that need faster review cycles, clearer design-risk visibility, and a more reliable path from detection to response.</p>
         </div>
-        <div class="card-body">
-            {% if projects %}
-            <div class="portfolio-grid">
-                {% for project in projects[:4] %}
-                <article class="portfolio-card">
-                    <div class="portfolio-card-top">
-                        <div>
-                            <h3>{{ project.name }}</h3>
-                            <p>{{ project.top_category if project.top_category else "No recurring category yet" }}</p>
-                        </div>
-                        <span class="tone-chip">{{ project.health_label }}</span>
-                    </div>
-                    <div class="command-metric"><strong>{{ project.latest_score if project.latest_score is not none else "N/A" }}</strong><span>{{ project.run_count }} run(s)</span></div>
+        <div class="problem-solution">
+            <div class="problem-list">
+                <article class="problem-item">
+                    <strong>Design risks get buried in inconsistent review</strong>
+                    <p>Critical issues are easy to miss when every board review depends on individual vigilance and scattered exports.</p>
                 </article>
-                {% endfor %}
+                <article class="problem-item">
+                    <strong>Revision changes introduce new risk quietly</strong>
+                    <p>Teams lose time and confidence when score movement and new issues are not tracked cleanly across runs.</p>
+                </article>
+                <article class="problem-item">
+                    <strong>Analysis often stops before action</strong>
+                    <p>Even when issues are detected, the workflow from finding to alert, report, and follow-up is usually still manual.</p>
+                </article>
             </div>
-            {% else %}
-            <div class="empty-state"><h3>No workspaces yet</h3><p>Create a Nexus workspace to start building cross-run engineering context.</p></div>
-            {% endif %}
+            <div class="solution-list">
+                <article class="solution-item">
+                    <strong>Automated design analysis</strong>
+                    <p>Silicore parses PCB design files, evaluates engineering domains, and exposes risk posture with consistent scoring.</p>
+                </article>
+                <article class="solution-item">
+                    <strong>Revision and project intelligence</strong>
+                    <p>Atlas highlights what changed, where pressure is rising, and what the engineering team should focus on first.</p>
+                </article>
+                <article class="solution-item">
+                    <strong>Workflow and automation execution</strong>
+                    <p>Silicore can trigger analyses, notify teams, generate reports, and keep review operations moving without manual handoffs.</p>
+                </article>
+            </div>
         </div>
     </section>
 
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Recent Activity</h2>
-            <p class="section-copy">Latest board and project runs on the current Nexus timeline.</p>
+    <section class="section-shell" id="platform">
+        <div class="section-head">
+            <div class="section-eyebrow">Core platform</div>
+            <h2 class="section-title-large">One platform for PCB intelligence, comparison, reporting, and operational workflow.</h2>
+            <p class="section-summary">Silicore is designed to feel useful to engineers and credible to technical leaders, with analysis surfaces, project context, and automation built into one system.</p>
         </div>
-        <div class="card-body">
-            {% if recent_runs %}
-            <div class="recent-timeline">
-                {% for run in recent_runs %}
-                <article class="recent-row">
-                    <div class="recent-row-main">
-                        <div class="recent-row-title">{{ run.name }}</div>
-                        <div class="recent-row-meta">{{ run.created_at }}</div>
-                    </div>
-                    <span class="chip-soft">{{ run.run_type }}</span>
-                    <a class="btn btn-secondary btn-compact" href="{{ url_for('history_detail_page', run_dir=run.name) }}">Open Run</a>
-                </article>
-                {% endfor %}
+        <div class="feature-grid">
+            <article class="feature-card"><strong>PCB Risk Analysis</strong><p>Analyze signal, power, thermal, EMI, manufacturability, safety, and parser trust in one pass.</p></article>
+            <article class="feature-card"><strong>Revision Comparison</strong><p>Track deltas across revisions and identify what worsened, what improved, and what needs review now.</p></article>
+            <article class="feature-card"><strong>Engineering Recommendations</strong><p>Atlas explains likely failure paths, ranked fixes, and what to validate after the next revision.</p></article>
+            <article class="feature-card"><strong>Project Dashboards</strong><p>Watch score movement, recurring issue pressure, and design readiness across active workspaces.</p></article>
+            <article class="feature-card"><strong>Reports and Exports</strong><p>Create single-board reports, portfolio summaries, change reports, and review-ready artifacts quickly.</p></article>
+            <article class="feature-card"><strong>Fabrication Trust</strong><p>Evaluate Gerber and CAM readiness, parser confidence, bundle completeness, and fabrication blockers.</p></article>
+            <article class="feature-card"><strong>Activity and Audit</strong><p>Retain run history, decisions, validation results, and engineering review continuity over time.</p></article>
+            <article class="feature-card"><strong>Automations and Alerts</strong><p>Trigger analyses, notify teams, assign follow-up, and keep hardware review workflows moving.</p></article>
+        </div>
+    </section>
+
+    <section class="section-shell">
+        <div class="section-head">
+            <div class="section-eyebrow">How it works</div>
+            <h2 class="section-title-large">A clean path from upload to engineering action.</h2>
+        </div>
+        <div class="workflow-steps">
+            <article class="workflow-step"><span>1</span><strong>Upload design files</strong><p>Bring in KiCad, Gerber/CAM, and supported design exports into one workspace.</p></article>
+            <article class="workflow-step"><span>2</span><strong>Evaluate board risk</strong><p>Silicore parses geometry, scoring signals, and engineering conditions across the stack.</p></article>
+            <article class="workflow-step"><span>3</span><strong>Atlas explains concerns</strong><p>Atlas Intelligence translates findings into system-level reasoning and ranked engineering focus.</p></article>
+            <article class="workflow-step"><span>4</span><strong>Compare and prioritize</strong><p>Use revision intelligence and project context to understand what matters most right now.</p></article>
+            <article class="workflow-step"><span>5</span><strong>Trigger action automatically</strong><p>Notify owners, create reports, and schedule the next review step through built-in automation.</p></article>
+        </div>
+    </section>
+
+    <section class="section-shell">
+        <div class="section-head">
+            <div class="section-eyebrow">Product preview</div>
+            <h2 class="section-title-large">Silicore should feel like mission control for engineering review.</h2>
+            <p class="section-summary">The product combines board-level inspection, revision context, operational activity, and automation execution in one premium command surface.</p>
+        </div>
+        <div class="product-preview-grid">
+            <div class="preview-surface">
+                <div class="preview-layout">
+                    <aside class="preview-rail">
+                        <span class="preview-chip">Dashboard</span>
+                        <span class="preview-chip">Analysis</span>
+                        <span class="preview-chip">Projects</span>
+                        <span class="preview-chip">Comparisons</span>
+                        <span class="preview-chip">Automations</span>
+                        <span class="preview-chip">Reports</span>
+                    </aside>
+                    <main class="preview-main">
+                        <div class="preview-issue i1">Power risk increased</div>
+                        <div class="preview-issue i2">Return-path review active</div>
+                    </main>
+                    <aside class="preview-stack">
+                        <div class="mini-panel">
+                            <strong>Risk score</strong>
+                            <p>{{ home_chart.latest_score if home_chart.latest_score is not none else 0 }} / 100 latest review posture with Atlas explanation.</p>
+                        </div>
+                        <div class="mini-panel">
+                            <strong>Comparison insight</strong>
+                            <ul>
+                                <li>3 new power integrity risks</li>
+                                <li>1 resolved manufacturability issue</li>
+                                <li>Review readiness reduced</li>
+                            </ul>
+                        </div>
+                        <div class="mini-panel">
+                            <strong>Automation center</strong>
+                            <ul>
+                                <li>Scheduled scan completed</li>
+                                <li>Weekly digest generated</li>
+                                <li>Alert queued for design lead</li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
             </div>
-            {% else %}
-            <div class="empty-state"><h3>No recent runs yet</h3><p>Run an analysis to populate the live archive timeline.</p></div>
-            {% endif %}
+            <div class="preview-side">
+                <div class="feed-list">
+                    <div class="feed-row">
+                        <div class="feed-row-top"><strong>New revision introduced 3 critical power risks</strong><span class="tone-chip">Alert</span></div>
+                        <p>Risk score dropped and Atlas elevated power-path review as the top engineering action.</p>
+                    </div>
+                    <div class="feed-row">
+                        <div class="feed-row-top"><strong>Weekly project summary generated</strong><span class="tone-chip">Report</span></div>
+                        <p>Nexus created a review digest across active projects and recent comparisons.</p>
+                    </div>
+                    <div class="feed-row">
+                        <div class="feed-row-top"><strong>CAM package incomplete</strong><span class="tone-chip">Trust</span></div>
+                        <p>Fabrication review was blocked because drill data was missing from the uploaded bundle.</p>
+                    </div>
+                    <div class="feed-row">
+                        <div class="feed-row-top"><strong>Review task assigned to design lead</strong><span class="tone-chip">Workflow</span></div>
+                        <p>Silicore translated a critical finding set into a concrete review handoff.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-shell automation-shell" id="automations">
+        <div class="section-head">
+            <div class="section-eyebrow">From analysis to action</div>
+            <h2 class="section-title-large">Automate engineering review workflows.</h2>
+            <p class="section-summary">Silicore should not stop at identifying issues. It should monitor change, trigger alerts, generate reports, and support continuous engineering review operations.</p>
+        </div>
+        <div class="automation-grid">
+            <div class="automation-builder">
+                <div class="builder-row">
+                    <div class="builder-block">
+                        <em>Trigger</em>
+                        New file upload
+                    </div>
+                    <div class="builder-arrow">→</div>
+                    <div class="builder-block">
+                        <em>Condition</em>
+                        Score below threshold or critical power risk appears
+                    </div>
+                    <div class="builder-arrow">→</div>
+                    <div class="builder-block">
+                        <em>Action</em>
+                        Notify team, generate report, assign review
+                    </div>
+                </div>
+            </div>
+            <div class="automation-feed">
+                <strong style="display:block; margin-bottom:12px; font-family:'Space Grotesk',sans-serif; letter-spacing:-0.04em;">Automation examples</strong>
+                <div class="feed-list">
+                    <div class="feed-row"><div class="feed-row-top"><strong>After every new revision</strong><span class="tone-chip">Compare</span></div><p>Run comparison, summarize deltas, and attach a change report automatically.</p></div>
+                    <div class="feed-row"><div class="feed-row-top"><strong>Every Friday</strong><span class="tone-chip">Digest</span></div><p>Generate a weekly workspace review summary for design leads.</p></div>
+                    <div class="feed-row"><div class="feed-row-top"><strong>When thermal risk rises</strong><span class="tone-chip">Alert</span></div><p>Notify the team when the thermal domain crosses the configured threshold.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-shell" id="solutions">
+        <div class="section-head">
+            <div class="section-eyebrow">Solutions</div>
+            <h2 class="section-title-large">Built for hardware teams that need technical credibility and operational speed.</h2>
+        </div>
+        <div class="solutions-grid">
+            <article class="solution-card"><strong>PCB Engineers</strong><p>Catch design risks earlier and understand which fixes matter first.</p></article>
+            <article class="solution-card"><strong>Design Review Leads</strong><p>Standardize review quality, compare revisions, and keep decision context intact.</p></article>
+            <article class="solution-card"><strong>Reliability Teams</strong><p>Surface safety, thermal, and physics-informed pressure before release decisions.</p></article>
+            <article class="solution-card"><strong>Manufacturing Readiness</strong><p>Evaluate fabrication trust, CAM completeness, and pre-release risk posture faster.</p></article>
+        </div>
+    </section>
+
+    <section class="section-shell">
+        <div class="section-head">
+            <div class="section-eyebrow">Outcomes</div>
+            <h2 class="section-title-large">Why this matters in real engineering teams.</h2>
+        </div>
+        <div class="outcomes-grid">
+            <div class="outcome-card"><strong>Faster</strong><span>Review cycles with less manual overhead</span></div>
+            <div class="outcome-card"><strong>Earlier</strong><span>Risk detection before costly downstream failure</span></div>
+            <div class="outcome-card"><strong>Clearer</strong><span>Revision and project context across runs</span></div>
+            <div class="outcome-card"><strong>Stronger</strong><span>Fabrication and parser trust visibility</span></div>
+            <div class="outcome-card"><strong>Repeatable</strong><span>Review workflows that do not depend on heroics</span></div>
+            <div class="outcome-card"><strong>Scalable</strong><span>Operations support for growing hardware organizations</span></div>
+        </div>
+    </section>
+
+    <section class="section-shell" id="pricing">
+        <div class="section-head">
+            <div class="section-eyebrow">Pricing</div>
+            <h2 class="section-title-large">Simple premium tiers that map to product depth.</h2>
+        </div>
+        <div class="pricing-grid">
+            <article class="pricing-card">
+                <strong>Starter</strong>
+                <p>For early teams running focused single-board analysis.</p>
+                <div class="pricing-price"><strong>$99</strong><span>/ month</span></div>
+                <ul class="pricing-list">
+                    <li>Manual analysis</li>
+                    <li>Single-board reports</li>
+                    <li>Core Atlas guidance</li>
+                </ul>
+            </article>
+            <article class="pricing-card">
+                <strong>Professional</strong>
+                <p>For deeper engineering review with project and export continuity.</p>
+                <div class="pricing-price"><strong>$299</strong><span>/ month</span></div>
+                <ul class="pricing-list">
+                    <li>Projects and saved runs</li>
+                    <li>Revision comparison</li>
+                    <li>Reports and exports</li>
+                </ul>
+            </article>
+            <article class="pricing-card featured">
+                <strong>Team</strong>
+                <p>For organizations that need workflow, alerts, and active monitoring.</p>
+                <div class="pricing-price"><strong>$799</strong><span>/ month</span></div>
+                <ul class="pricing-list">
+                    <li>Scheduled runs and notifications</li>
+                    <li>Automation templates</li>
+                    <li>Activity and review continuity</li>
+                </ul>
+            </article>
+            <article class="pricing-card">
+                <strong>Enterprise</strong>
+                <p>For advanced governance, integrations, and engineering operations at scale.</p>
+                <div class="pricing-price"><strong>Custom</strong><span>contact us</span></div>
+                <ul class="pricing-list">
+                    <li>Audit history and governance</li>
+                    <li>Advanced automation</li>
+                    <li>Enterprise integration readiness</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section class="section-shell final-cta">
+        <div class="final-cta-inner">
+            <div class="section-eyebrow">Final call</div>
+            <h2 class="final-cta-title">Turn PCB review into a smarter engineering system.</h2>
+            <p class="final-cta-copy">Detect risk earlier, compare revisions with more confidence, and automate what happens next across your hardware review workflow.</p>
+            <div class="final-cta-actions">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Request Demo</a>
+                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Open Platform</a>
+            </div>
         </div>
     </section>
 </div>
