@@ -39,6 +39,41 @@
     </div>
 </section>
 
+<section class="platform-band">
+    <section class="platform-intro-card">
+        <div class="platform-kicker">Operational Intelligence Layer</div>
+        <h2 class="platform-title">Run the runtime, validation lanes, and governance surfaces from one control plane.</h2>
+        <p class="platform-copy">
+            Nexus Ops keeps worker posture, parser trust, external validation volume, and calibration momentum in the same operational readout so engineering teams can act quickly.
+        </p>
+    </section>
+
+    <aside class="platform-panel">
+        <div class="platform-panel-label">Ops Telemetry</div>
+        <div class="platform-stat-grid">
+            <div class="platform-stat">
+                <span>Worker</span>
+                <strong>{{ "Online" if worker.running else "Idle" }}</strong>
+            </div>
+            <div class="platform-stat">
+                <span>Queued jobs</span>
+                <strong>{{ summary.queued_jobs or 0 }}</strong>
+            </div>
+            <div class="platform-stat">
+                <span>External runs</span>
+                <strong>{{ external_evaluations|length }}</strong>
+            </div>
+            <div class="platform-stat">
+                <span>Fixture scope</span>
+                <strong>{{ evaluation_summary.fixture_count if evaluation_summary else 0 }}</strong>
+            </div>
+        </div>
+        <div class="platform-note">
+            Use this surface to monitor backend execution health, parser trust drift, and external package readiness without leaving the Silicore workspace.
+        </div>
+    </aside>
+</section>
+
 <section class="grid grid-2">
     <section class="card loud-card">
         <div class="card-header">
@@ -304,7 +339,7 @@
     <section class="card">
         <div class="card-header">
             <h2 class="section-title">Integration Registry</h2>
-            <p class="section-copy">Track the external workflow hooks Silicore Nexus should be ready to hand work into.</p>
+            <p class="section-copy">Track the external workflow hooks Silicore should be ready to hand work into.</p>
         </div>
         <div class="card-body">
             <form method="post" action="{{ url_for('nexus_ops_integrations_route') }}">

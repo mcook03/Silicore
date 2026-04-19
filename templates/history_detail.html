@@ -1,6 +1,110 @@
 {% extends "base.html" %}
 {% block content %}
 
+<style>
+    .run-detail-shell {
+        display: grid;
+        gap: 22px;
+    }
+
+    .run-detail-metric-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .run-detail-metric-card {
+        padding: 18px 18px 16px;
+        display: grid;
+        gap: 8px;
+        align-content: start;
+        min-height: 144px;
+    }
+
+    .run-detail-value-meta,
+    .run-detail-value-text,
+    .run-detail-value-number {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .run-detail-value-number {
+        font-size: clamp(1.9rem, 3vw, 3rem);
+        line-height: 0.94;
+    }
+
+    .run-detail-value-text {
+        font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+        line-height: 0.98;
+    }
+
+    .run-detail-value-meta {
+        font-size: clamp(1.2rem, 1.9vw, 1.75rem);
+        line-height: 1.04;
+    }
+
+    .run-detail-sub {
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+</style>
+
+{% set run_score = run_detail.get("score", none) %}
+{% set run_score_display = (run_score|round|int if run_score > 10 else (run_score * 10)|round|int) if run_score is not none else "N/A" %}
+
+<div class="run-detail-shell">
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-copy">
+            <div class="page-eyebrow">Saved Analysis Run</div>
+            <h1 class="page-title">Run history with full engineering traceability.</h1>
+            <p class="page-copy">
+                Reopen a saved run, inspect its score and findings, and carry forward the exact context, exports, and CAM trust posture behind the review.
+            </p>
+        </div>
+        <div class="hero-side">
+            <div class="top-badge">{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</div>
+            <div class="top-badge">Score {{ run_score_display }}</div>
+        </div>
+    </div>
+</section>
+
+<section class="platform-band">
+    <section class="platform-intro-card">
+        <div class="platform-kicker">Run Playback Surface</div>
+        <h2 class="platform-title">Treat each saved analysis as reusable engineering memory.</h2>
+        <p class="platform-copy">
+            Review score posture, export history, saved artifacts, CAM package trust, and the exact assumptions used when the run was executed.
+        </p>
+    </section>
+
+    <aside class="platform-panel">
+        <div class="platform-panel-label">Run Telemetry</div>
+        <div class="platform-stat-grid">
+            <div class="platform-stat">
+                <span>Run type</span>
+                <strong>{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</strong>
+            </div>
+            <div class="platform-stat">
+                <span>Score</span>
+                <strong>{{ run_score_display }}</strong>
+            </div>
+            <div class="platform-stat">
+                <span>Artifacts</span>
+                <strong>{{ run_detail.files|length if run_detail.files else 0 }}</strong>
+            </div>
+            <div class="platform-stat">
+                <span>Findings</span>
+                <strong>{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</strong>
+            </div>
+        </div>
+        <div class="platform-note">
+            Saved runs keep the evidence trail intact so Atlas explanations, export posture, and design decisions can be revisited instead of recreated.
+        </div>
+    </aside>
+</section>
+
 <section class="card">
     <div class="card-header">
         <h2 class="section-title">Saved Run Overview</h2>
@@ -10,35 +114,29 @@
     </div>
 
     <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
+        <div class="metric-grid run-detail-metric-grid">
+            <div class="metric-card run-detail-metric-card">
                 <div class="metric-label">Run Name</div>
-                <div class="metric-value" style="font-size:22px;">{{ run_detail.name }}</div>
-                <div class="metric-sub">Saved analysis identifier</div>
+                <div class="metric-value run-detail-value-text">{{ run_detail.name }}</div>
+                <div class="metric-sub run-detail-sub">Saved analysis identifier</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card run-detail-metric-card">
                 <div class="metric-label">Run Type</div>
-                <div class="metric-value">{{ run_detail.run_type if run_detail.run_type else "unknown" }}</div>
-                <div class="metric-sub">Analysis mode</div>
+                <div class="metric-value run-detail-value-text">{{ run_detail.run_type if run_detail.run_type else "unknown" }}</div>
+                <div class="metric-sub run-detail-sub">Analysis mode</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card run-detail-metric-card">
                 <div class="metric-label">Score</div>
-                <div class="metric-value">
-                    {% if run_detail.get("score") is not none %}
-                        {{ run_detail.get("score", 0)|round|int if run_detail.get("score", 0) > 10 else (run_detail.get("score", 0) * 10)|round|int }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </div>
-                <div class="metric-sub">0–100 risk scale</div>
+                <div class="metric-value run-detail-value-number">{{ run_score_display }}</div>
+                <div class="metric-sub run-detail-sub">0–100 risk scale</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card run-detail-metric-card">
                 <div class="metric-label">Created</div>
-                <div class="metric-value" style="font-size:22px;">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div>
-                <div class="metric-sub">Execution timestamp</div>
+                <div class="metric-value run-detail-value-meta">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div>
+                <div class="metric-sub run-detail-sub">Execution timestamp</div>
             </div>
         </div>
     </div>
@@ -266,6 +364,8 @@
     </div>
 </section>
 {% endif %}
+
+</div>
 
         {% if score_data.severity_rows %}
         <div class="breakdown-table">
@@ -635,8 +735,8 @@
     .finding,
     .context-card {
         padding: 16px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
     }
 
@@ -650,7 +750,7 @@
 
     .artifact-name,
     .context-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 15px;
         font-weight: 700;
     }
@@ -669,7 +769,7 @@
 
     .config-pill-value,
     .metric-pill-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 12px;
         font-weight: 700;
         text-align: right;
@@ -684,8 +784,8 @@
 
     .preview-box {
         padding: 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
         color: #dbeafe;
         line-height: 1.7;
@@ -699,10 +799,10 @@
 
     .board-canvas-stage {
         padding: 18px;
-        border-radius: 26px;
-        border: 1px solid rgba(255,255,255,0.055);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
-            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 24%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 24%),
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
             rgba(9,18,30,0.48);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 16px 32px rgba(0,0,0,0.12);
@@ -739,8 +839,8 @@
         align-items: end;
         margin-bottom: 16px;
         padding: 14px 16px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.024), rgba(255,255,255,0.01)),
             rgba(255,255,255,0.015);
@@ -771,14 +871,14 @@
     .board-view-svg {
         width: 100%;
         min-height: 420px;
-        border-radius: 26px;
+        border-radius: var(--radius-lg);
         background:
-            radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 30%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.08), transparent 30%),
             linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px),
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.016));
         background-size: auto, 22px 22px, 22px 22px, auto;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
@@ -800,8 +900,8 @@
     }
 
     .board-zone-safe, .board-zone-low {
-        fill: rgba(59,130,246,0.22);
-        stroke: rgba(96,165,250,0.46);
+        fill: rgba(124,180,255,0.22);
+        stroke: rgba(124,180,255,0.46);
     }
 
     .board-zone-medium {
@@ -856,9 +956,9 @@
 
     .board-focus-item {
         padding: 14px;
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
     }
 
     .board-focus-top {
@@ -878,7 +978,7 @@
 
     .board-focus-button.is-active {
         border-color: rgba(125,211,252,0.36);
-        background: rgba(59,130,246,0.08);
+        background: rgba(124,180,255,0.08);
     }
 
     .board-stat-grid {
@@ -892,7 +992,7 @@
         padding: 10px;
         border-radius: 12px;
         background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
     }
 
     .board-stat-label {
@@ -903,7 +1003,7 @@
     }
 
     .board-stat-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 18px;
         font-weight: 700;
         margin-top: 4px;
@@ -920,7 +1020,7 @@
 
     .finding-top h4 {
         margin: 10px 0 0;
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 16px;
     }
 
@@ -943,7 +1043,7 @@
         gap: 12px;
         align-items: center;
         padding: 14px 16px;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.012)),
             rgba(255,255,255,0.02);
@@ -959,7 +1059,7 @@
     }
 
     .breakdown-table-row {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-weight: 700;
     }
 
@@ -970,7 +1070,7 @@
         padding: 8px 10px;
         border-radius: 999px;
         background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
         margin-right: 8px;
         margin-top: 8px;
     }

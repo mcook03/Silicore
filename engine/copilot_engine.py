@@ -285,7 +285,7 @@ def build_project_copilot_brief(project, workspace_intelligence, timeline_data, 
     posture = (
         f"Project trend is currently centered around {systemic}, and the workspace should be managed as an iterative review loop rather than isolated runs."
         if project.get("runs")
-        else "Link multiple runs into Silicore Nexus to activate Atlas Intelligence at the workspace level."
+        else "Link multiple runs into Silicore to activate Atlas Intelligence at the workspace level."
     )
 
     if score_delta > 5 and confidence_delta >= 0:
@@ -658,8 +658,8 @@ def build_project_assistant_console(project_copilot):
 
     return {
         "title": "Atlas Intelligence Console",
-        "eyebrow": "Silicore Nexus",
-        "summary": project_copilot.get("posture") or "Link runs into Silicore Nexus to activate the Atlas Intelligence console.",
+        "eyebrow": "Silicore",
+        "summary": project_copilot.get("posture") or "Link runs into Silicore to activate the Atlas Intelligence console.",
         "questions": questions,
         "review_lenses": review_lenses,
         "routes": routes,

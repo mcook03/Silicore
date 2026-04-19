@@ -18,8 +18,8 @@
         position: relative;
         overflow: hidden;
         padding: 28px;
-        border-radius: 32px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top left, rgba(51, 209, 255, 0.14), transparent 30%),
             linear-gradient(180deg, rgba(10, 17, 29, 0.92), rgba(6, 11, 20, 0.88));
@@ -36,7 +36,7 @@
 
     .review-command-title {
         margin: 10px 0 0;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: clamp(2.6rem, 5vw, 4.8rem);
         line-height: 0.9;
         letter-spacing: -0.08em;
@@ -59,14 +59,14 @@
 
     .review-command-stat {
         padding: 14px 16px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
     }
 
     .review-command-stat strong {
         display: block;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: clamp(1.4rem, 3vw, 2.5rem);
         letter-spacing: -0.06em;
     }
@@ -80,8 +80,8 @@
     .review-upload-surface {
         position: relative;
         overflow: hidden;
-        border-radius: 32px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(12, 18, 31, 0.92), rgba(7, 11, 20, 0.88)),
             rgba(6, 10, 18, 0.72);
@@ -108,8 +108,8 @@
         position: relative;
         overflow: hidden;
         min-height: 300px;
-        border-radius: 26px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at center, rgba(51, 209, 255, 0.12), transparent 26%),
             linear-gradient(180deg, rgba(9, 14, 25, 0.98), rgba(4, 7, 14, 0.98));
@@ -135,8 +135,8 @@
     }
 
     .review-upload-preview-card {
-        border-radius: 18px;
-        border: 1px solid rgba(108,168,255,0.12);
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(124,180,255,0.12);
         background:
             linear-gradient(180deg, rgba(12, 22, 38, 0.82), rgba(7, 14, 24, 0.92));
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
@@ -156,8 +156,8 @@
 
     .portfolio-launch-panel {
         padding: 28px;
-        border-radius: 30px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top left, rgba(6,182,212,0.12), transparent 34%),
             linear-gradient(180deg, rgba(8,14,25,0.96), rgba(4,8,15,0.98));
@@ -165,7 +165,7 @@
     }
 
     .portfolio-launch-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -179,7 +179,7 @@
         line-height: 0.94;
         letter-spacing: -0.07em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
         text-wrap: balance;
     }
 
@@ -207,38 +207,38 @@
 </style>
 
 <div class="review-launch-shell">
-<section class="review-launch-grid">
-    <section class="review-command-deck">
-        <div class="review-command-kicker">Portfolio Review</div>
-        <h1 class="review-command-title">Compare whole board sets through one Nexus review system.</h1>
-        <p class="review-command-copy">
+<section class="platform-band">
+    <section class="platform-intro-card">
+        <div class="platform-kicker">Portfolio Review</div>
+        <h1 class="platform-title">Compare whole board sets through one Nexus review system.</h1>
+        <p class="platform-copy">
             Upload multiple designs to rank quality, surface repeated engineering pressure, identify CAM readiness gaps, and understand project-wide health across electrical, production, and reliability domains.
         </p>
-        <div class="review-command-stats">
-            <div class="review-command-stat">
-                <strong>{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</strong>
+        <div class="platform-stat-grid" style="margin-top:20px;">
+            <div class="platform-stat">
                 <span>Boards in current review set</span>
+                <strong>{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</strong>
             </div>
-            <div class="review-command-stat">
-                <strong>{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</strong>
+            <div class="platform-stat">
                 <span>Average portfolio score</span>
+                <strong>{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</strong>
             </div>
-            <div class="review-command-stat">
-                <strong>{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</strong>
+            <div class="platform-stat">
                 <span>CAM-aware boards detected</span>
+                <strong>{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</strong>
             </div>
         </div>
     </section>
 
-    <section class="review-upload-surface">
-        <div class="review-upload-top">
+    <section class="platform-panel">
+        <div class="review-upload-top" style="padding:0;">
             <div>
-                <div class="review-command-kicker">Launch Review</div>
+                <div class="platform-panel-label">Launch Review</div>
                 <div class="home-stage-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }} boards loaded{% else %}Awaiting portfolio input{% endif %}</div>
             </div>
             <div class="chip">Atlas + Nexus Review</div>
         </div>
-        <div class="review-upload-grid">
+        <div class="review-upload-grid" style="padding:0;">
             <div>
                 <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="review-upload-form" id="project-upload">
                     <label>
@@ -292,6 +292,9 @@
                     <div class="review-upload-preview-card"></div>
                 </div>
             </div>
+        </div>
+        <div class="platform-note">
+            Launch a full portfolio review to rank boards, inspect repeated issue families, and compare fabrication trust across the uploaded set.
         </div>
     </section>
 </section>
@@ -1108,7 +1111,7 @@
     .project-command-matrix > .grid.grid-2 > .card,
     .project-redesign-shell > .card,
     .project-redesign-shell > .grid.grid-2 > .card {
-        border-radius: 30px;
+        border-radius: var(--radius-xl);
     }
 
     .project-command-matrix > .grid.grid-2:nth-child(odd) > .card,
@@ -1121,7 +1124,7 @@
     .project-command-matrix > .grid.grid-2:nth-child(even) > .card,
     .project-redesign-shell > .grid.grid-2:nth-of-type(even) > .card {
         background:
-            radial-gradient(circle at top right, rgba(96, 165, 250, 0.11), transparent 42%),
+            radial-gradient(circle at top right, rgba(124, 180, 255, 0.11), transparent 42%),
             linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.95));
     }
 
@@ -1146,10 +1149,10 @@
         grid-template-columns: minmax(0, 1.16fr) minmax(340px, 0.84fr);
         gap: 28px;
         padding: 34px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
-            radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.18), transparent 28%),
             radial-gradient(circle at 92% 18%, rgba(67,212,200,0.12), transparent 24%),
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
             rgba(8,16,29,0.82);
@@ -1169,7 +1172,7 @@
     }
 
     .review-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -1183,7 +1186,7 @@
         line-height: 0.96;
         letter-spacing: -0.06em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
     }
 
     .review-copy {
@@ -1216,7 +1219,7 @@
         height: 180px;
         top: 8%;
         right: 10%;
-        background: rgba(59,130,246,0.20);
+        background: rgba(124,180,255,0.20);
         animation: softFloat 8s ease-in-out infinite;
     }
 
@@ -1235,8 +1238,8 @@
         bottom: 16px;
         left: 16px;
         padding: 24px;
-        border-radius: 26px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.016)),
             rgba(19,29,44,0.6);
@@ -1254,7 +1257,7 @@
     }
 
     .hero-panel-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: clamp(24px, 2.4vw, 28px);
         font-weight: 800;
         letter-spacing: -0.03em;
@@ -1294,9 +1297,9 @@
     .chart-fallback {
         position: relative;
         height: 120px;
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
         background:
             linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
@@ -1339,7 +1342,7 @@
         line-height: 0.96;
         font-weight: 800;
         letter-spacing: -0.05em;
-        color: #f8fbff;
+        color: var(--text-soft);
     }
 
     .score-number-sub {
@@ -1355,7 +1358,7 @@
         border-radius: 999px;
         overflow: hidden;
         background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
     }
 
     .score-bar-fill {
@@ -1386,7 +1389,7 @@
     .score-tags span {
         padding: 6px 0;
         border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.025);
     }
 
@@ -1408,8 +1411,8 @@
     .project-board-meta-card,
     .context-mini-card {
         padding: 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
     }
 
@@ -1420,7 +1423,7 @@
         line-height: 1.08;
         font-weight: 800;
         letter-spacing: -0.04em;
-        color: #f8fbff;
+        color: var(--text-soft);
         margin-bottom: 8px;
         word-break: break-word;
     }
@@ -1454,10 +1457,10 @@
     .category-section-card,
     .board-issue-item {
         padding: 20px;
-        border-radius: 24px;
-        border: 1px solid rgba(255,255,255,0.055);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
-            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 28%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 28%),
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.014)),
             rgba(255,255,255,0.018);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 16px 32px rgba(0,0,0,0.1);
@@ -1492,7 +1495,7 @@
         gap: 14px;
         align-items: center;
         padding: 10px 12px;
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         background: rgba(255,255,255,0.02);
         border: 1px solid rgba(255,255,255,0.04);
     }
@@ -1508,7 +1511,7 @@
         border-radius: 999px;
         overflow: hidden;
         background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
         box-shadow: inset 0 1px 2px rgba(0,0,0,0.18);
     }
 
@@ -1535,7 +1538,7 @@
 
     .distribution-bar-value {
         text-align: right;
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 13px;
         font-weight: 700;
     }
@@ -1546,8 +1549,8 @@
 
     .summary-panel {
         padding: 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
             rgba(255,255,255,0.022);
@@ -1574,8 +1577,8 @@
 
     .spotlight-card {
         padding: 18px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
             rgba(255,255,255,0.022);
@@ -1591,7 +1594,7 @@
     }
 
     .spotlight-name {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 22px;
         font-weight: 800;
         letter-spacing: -0.03em;
@@ -1602,7 +1605,7 @@
     }
 
     .spotlight-score {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 40px;
         font-weight: 800;
         letter-spacing: -0.04em;
@@ -1619,7 +1622,7 @@
         display: grid;
         gap: 16px;
         background:
-            radial-gradient(circle at top right, rgba(59,130,246,0.08), transparent 24%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 24%),
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
             rgba(10, 20, 34, 0.82);
         transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
@@ -1640,7 +1643,7 @@
 
     .project-board-title,
     .category-section-title {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 24px;
         font-weight: 800;
         letter-spacing: -0.04em;
@@ -1655,17 +1658,17 @@
     .project-board-score-shell {
         min-width: 110px;
         padding: 16px;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         text-align: center;
-        border: 1px solid rgba(96,165,250,0.20);
+        border: 1px solid rgba(124,180,255,0.20);
         background:
-            radial-gradient(circle at top left, rgba(96,165,250,0.14), transparent 36%),
-            rgba(59,130,246,0.12);
+            radial-gradient(circle at top left, rgba(124,180,255,0.14), transparent 36%),
+            rgba(124,180,255,0.12);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .project-board-score {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 40px;
         line-height: 1;
         font-weight: 800;
@@ -1687,11 +1690,11 @@
 
     .project-board-section {
         padding: 16px;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015)),
             rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
     }
 
     .issue-top-row {
@@ -1710,7 +1713,7 @@
     }
 
     .board-issue-text {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 15px;
         line-height: 1.7;
         font-weight: 700;
@@ -1736,9 +1739,9 @@
         gap: 12px;
         align-items: center;
         padding: 10px 12px;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
     }
 
     .config-mini-label {
@@ -1750,7 +1753,7 @@
     }
 
     .config-mini-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 12px;
         font-weight: 700;
         text-align: right;
@@ -1774,11 +1777,11 @@
         border-radius: 12px;
         display: grid;
         place-items: center;
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 16px;
         font-weight: 800;
-        background: rgba(59,130,246,0.18);
-        border: 1px solid rgba(96,165,250,0.24);
+        background: rgba(124,180,255,0.18);
+        border: 1px solid rgba(124,180,255,0.24);
     }
 
     .category-severity-row {
@@ -1801,7 +1804,7 @@
     .mini-chip-critical { background: rgba(239,68,68,0.14); color: #fca5a5; }
     .mini-chip-high { background: rgba(251,146,60,0.14); color: #fdba74; }
     .mini-chip-medium { background: rgba(245,158,11,0.14); color: #fde68a; }
-    .mini-chip-low { background: rgba(96,165,250,0.14); color: #bfdbfe; }
+    .mini-chip-low { background: rgba(124,180,255,0.14); color: var(--muted); }
 
     .compact-empty {
         padding: 14px;
@@ -1812,11 +1815,11 @@
         display: grid;
         gap: 10px;
         padding: 12px;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
             rgba(255,255,255,0.018);
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
         overflow-x: auto;
         overflow-y: hidden;
     }
@@ -1868,7 +1871,7 @@
         border-radius: 12px;
         font-size: 13px;
         font-weight: 800;
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
     }
 
     .heatmap-total {
@@ -1881,13 +1884,13 @@
     }
 
     .heatmap-none { background: rgba(255,255,255,0.03); color: rgba(226,232,240,0.5); }
-    .heatmap-light { background: rgba(96,165,250,0.18); color: #dbeafe; }
+    .heatmap-light { background: rgba(124,180,255,0.18); color: #dbeafe; }
     .heatmap-medium { background: rgba(245,158,11,0.2); color: #fde68a; }
     .heatmap-strong { background: rgba(239,68,68,0.24); color: #fecaca; }
 
     .empty-state {
         padding: 22px;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         border: 1px dashed rgba(255,255,255,0.08);
         background: rgba(255,255,255,0.025);
         color: var(--muted);

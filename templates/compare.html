@@ -16,11 +16,11 @@
 
     .compare-launch-panel {
         padding: 28px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
-            radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 26%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.12), transparent 26%),
             linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
         box-shadow: 0 34px 86px rgba(0,0,0,0.44);
         position: relative;
@@ -43,7 +43,7 @@
     }
 
     .compare-launch-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -57,7 +57,7 @@
         line-height: 0.94;
         letter-spacing: -0.07em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
         text-wrap: balance;
     }
 
@@ -73,8 +73,8 @@
         position: relative;
         overflow: hidden;
         padding: 28px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 22%),
             radial-gradient(circle at top right, rgba(6,182,212,0.1), transparent 24%),
@@ -92,8 +92,8 @@
 
     .compare-telemetry-card {
         padding: 16px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
         display: grid;
         gap: 8px;
@@ -108,7 +108,7 @@
     }
 
     .compare-telemetry-card strong {
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: clamp(1.5rem, 3vw, 2.5rem);
         line-height: 0.92;
         letter-spacing: -0.06em;
@@ -116,8 +116,8 @@
 
     .compare-telemetry-note {
         padding: 16px 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.025);
         color: var(--muted);
         line-height: 1.7;
@@ -220,13 +220,13 @@
     .compare-summary-card,
     .compare-redesign-shell > .card,
     .compare-redesign-shell > .grid.grid-2 > .card {
-        border-radius: 30px;
+        border-radius: var(--radius-xl);
     }
 
     .compare-summary-card {
         min-height: 100%;
         background:
-            radial-gradient(circle at top left, rgba(96, 165, 250, 0.14), transparent 36%),
+            radial-gradient(circle at top left, rgba(124, 180, 255, 0.14), transparent 36%),
             linear-gradient(180deg, rgba(14, 25, 43, 0.94), rgba(7, 14, 27, 0.96));
     }
 
@@ -249,7 +249,7 @@
 
     .compare-decision-band > .card:last-child {
         background:
-            radial-gradient(circle at top right, rgba(96, 165, 250, 0.13), transparent 42%),
+            radial-gradient(circle at top right, rgba(124, 180, 255, 0.13), transparent 42%),
             linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.96));
     }
 
@@ -269,7 +269,7 @@
     .compare-redesign-shell > .card:nth-of-type(even),
     .compare-redesign-shell > .grid.grid-2:nth-of-type(even) > .card {
         background:
-            radial-gradient(circle at top right, rgba(96, 165, 250, 0.11), transparent 42%),
+            radial-gradient(circle at top right, rgba(124, 180, 255, 0.11), transparent 42%),
             linear-gradient(180deg, rgba(14, 24, 40, 0.92), rgba(8, 15, 26, 0.95));
     }
 
@@ -2386,7 +2386,7 @@
     }
 
     .takeaway-banner {
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         padding: 16px 18px;
         border: 1px solid rgba(148, 163, 184, 0.14);
         background: rgba(15, 23, 42, 0.28);
@@ -2473,7 +2473,7 @@
 
     .refined-empty-state {
         padding: 20px;
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         border: 1px dashed rgba(148, 163, 184, 0.18);
         background: rgba(15, 23, 42, 0.16);
     }
@@ -2510,10 +2510,10 @@
 
     .compare-chart-shell {
         padding: 16px;
-        border-radius: 22px;
+        border-radius: var(--radius-lg);
         border: 1px solid rgba(148, 163, 184, 0.1);
         background:
-            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 30%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 30%),
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
             rgba(15, 23, 42, 0.22);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
@@ -2524,7 +2524,7 @@
         height: 100px;
         display: block;
         padding: 8px;
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         background:
             linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px),
@@ -2547,7 +2547,7 @@
     }
 
     .compare-score-line {
-        stroke: rgba(96,165,250,0.96);
+        stroke: rgba(124,180,255,0.96);
     }
 
     .compare-risk-line {
@@ -2565,7 +2565,7 @@
         gap: 14px;
         align-items: center;
         padding: 10px 12px;
-        border-radius: 16px;
+        border-radius: var(--radius-md);
         background: rgba(255,255,255,0.02);
         border: 1px solid rgba(255,255,255,0.04);
     }
@@ -2595,7 +2595,7 @@
     }
 
     .compare-bar-better {
-        background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(96,165,250,0.7));
+        background: linear-gradient(90deg, rgba(62, 232, 160,0.95), rgba(124,180,255,0.7));
     }
 
     .compare-bar-flat {
@@ -2609,8 +2609,8 @@
         align-items: end;
         margin-bottom: 16px;
         padding: 14px 16px;
-        border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.024), rgba(255,255,255,0.01)),
             rgba(255,255,255,0.015);
@@ -2673,12 +2673,12 @@
     .assistant-console-chip,
     .assistant-console-lens {
         width: 100%;
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)),
             rgba(255,255,255,0.02);
         color: #ecf3ff;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         padding: 12px 14px;
         text-align: left;
         cursor: pointer;
@@ -2710,14 +2710,14 @@
 
     .assistant-message {
         padding: 12px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
     }
 
     .assistant-message-user {
-        background: rgba(59,130,246,0.12);
-        border-color: rgba(96,165,250,0.18);
+        background: rgba(124,180,255,0.12);
+        border-color: rgba(124,180,255,0.18);
     }
 
     .assistant-message-role {
@@ -2747,8 +2747,8 @@
     .assistant-citation,
     .assistant-follow-chip,
     .assistant-prompt-chip {
-        border: 1px solid rgba(96,165,250,0.18);
-        background: rgba(96,165,250,0.1);
+        border: 1px solid rgba(124,180,255,0.18);
+        background: rgba(124,180,255,0.1);
         color: #dbeafe;
         border-radius: 999px;
         padding: 8px 10px;
@@ -2772,8 +2772,8 @@
     .assistant-composer-input {
         width: 100%;
         min-height: 46px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
         color: #eff6ff;
         padding: 0 14px;
@@ -2816,7 +2816,7 @@
         padding: 10px 12px;
         border-radius: 999px;
         background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid var(--line);
         color: #eaf2ff;
         font-size: 12px;
         font-weight: 700;
@@ -2825,12 +2825,12 @@
 
     .compare-focus-chip.is-active {
         border-color: rgba(125,211,252,0.36);
-        background: rgba(59,130,246,0.08);
+        background: rgba(124,180,255,0.08);
     }
 
     .focus-card.is-selected {
-        border-color: rgba(96, 165, 250, 0.34);
-        box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
+        border-color: rgba(124, 180, 255, 0.34);
+        box-shadow: 0 0 0 1px rgba(124, 180, 255, 0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.024)),
             rgba(18, 30, 49, 0.8);
@@ -2850,10 +2850,10 @@
 
     .compare-board-panel {
         padding: 18px;
-        border-radius: 24px;
-        border: 1px solid rgba(255,255,255,0.055);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
-            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 24%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 24%),
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
             rgba(255,255,255,0.02);
     }
@@ -2864,20 +2864,20 @@
         gap: 12px;
         align-items: center;
         margin-bottom: 12px;
-        color: #f8fbff;
+        color: var(--text-soft);
     }
 
     .compare-board-svg {
         width: 100%;
         min-height: 420px;
-        border-radius: 26px;
+        border-radius: var(--radius-lg);
         background:
-            radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 30%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.08), transparent 30%),
             linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px),
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
         background-size: auto, 22px 22px, 22px 22px, auto;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
@@ -2899,8 +2899,8 @@
     }
 
     .board-zone-safe, .board-zone-low {
-        fill: rgba(59,130,246,0.22);
-        stroke: rgba(96,165,250,0.46);
+        fill: rgba(124,180,255,0.22);
+        stroke: rgba(124,180,255,0.46);
     }
 
     .board-zone-medium {

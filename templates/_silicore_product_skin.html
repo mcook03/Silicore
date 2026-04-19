@@ -1,0 +1,317 @@
+{# Appends after page-local <style> blocks — unifies product pages with Silicore v2 tokens #}
+<style id="silicore-v2-product-skin">
+    /* ── Shared panel surfaces (single board, compare, workspace, history, projects, settings, review) ── */
+    .product-shell .board-command-deck,
+    .product-shell .board-upload-surface,
+    .product-shell .board-upload-preview,
+    .product-shell .board-quick-stat,
+    .product-shell .compare-launch-panel,
+    .product-shell .compare-telemetry-panel,
+    .product-shell .compare-telemetry-card,
+    .product-shell .compare-telemetry-note,
+    .product-shell .workspace-launch-panel,
+    .product-shell .workspace-command-panel,
+    .product-shell .workspace-command-metric,
+    .product-shell .workspace-command-note,
+    .product-shell .history-launch-panel,
+    .product-shell .history-command-panel,
+    .product-shell .history-command-metric,
+    .product-shell .projects-launch-panel,
+    .product-shell .settings-launch-panel,
+    .product-shell .portfolio-launch-panel,
+    .product-shell .review-command-deck,
+    .product-shell .review-upload-surface,
+    .product-shell .review-upload-preview,
+    .product-shell .review-command-stat,
+    .product-shell .review-upload-preview-card {
+        border-radius: var(--radius-xl) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.72) !important;
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .product-shell .review-upload-preview {
+        border-radius: var(--radius-lg) !important;
+    }
+
+    .product-shell .review-upload-preview-card {
+        border-radius: var(--radius-md) !important;
+        border-color: rgba(124, 180, 255, 0.16) !important;
+    }
+
+    .product-shell .board-command-deck::after,
+    .product-shell .compare-launch-panel::after,
+    .product-shell .workspace-launch-panel::after,
+    .product-shell .workspace-command-panel::after,
+    .product-shell .history-launch-panel::after,
+    .product-shell .projects-launch-panel::after,
+    .product-shell .settings-launch-panel::after,
+    .product-shell .portfolio-launch-panel::after,
+    .product-shell .history-run-preview::after {
+        display: none !important;
+    }
+
+    .product-shell .board-upload-preview {
+        border-radius: var(--radius-lg) !important;
+    }
+
+    .product-shell .board-upload-preview-grid {
+        border-color: rgba(124, 180, 255, 0.18) !important;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 18px 36px rgba(0, 0, 0, 0.28) !important;
+    }
+
+    .product-shell .board-upload-preview-grid::before,
+    .product-shell .board-upload-preview-grid::after {
+        box-shadow: 0 0 12px rgba(124, 180, 255, 0.22) !important;
+    }
+
+    /* Launch typography */
+    .product-shell .compare-launch-title,
+    .product-shell .projects-launch-title,
+    .product-shell .history-launch-title,
+    .product-shell .settings-launch-title,
+    .product-shell .workspace-launch-title,
+    .product-shell .portfolio-launch-title,
+    .product-shell .board-command-title,
+    .product-shell .review-command-title {
+        color: var(--text) !important;
+        font-family: var(--font-display) !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.045em !important;
+    }
+
+    .product-shell .compare-launch-kicker,
+    .product-shell .projects-launch-kicker,
+    .product-shell .history-launch-kicker,
+    .product-shell .settings-launch-kicker,
+    .product-shell .workspace-launch-kicker,
+    .product-shell .portfolio-launch-kicker,
+    .product-shell .review-command-kicker {
+        color: var(--muted) !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.16em !important;
+    }
+
+    .product-shell .workspace-command-label {
+        color: var(--muted) !important;
+    }
+
+    /* Single-board & workspace analysis cards */
+    .product-shell .spotlight-shell-card,
+    .product-shell .insight-card,
+    .product-shell .boards-card {
+        border-radius: var(--radius-xl) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.65) !important;
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .product-shell .loud-card {
+        border-radius: var(--radius-xl) !important;
+        border: 1px solid var(--line) !important;
+        background:
+            radial-gradient(circle at 0% 0%, rgba(124, 180, 255, 0.08), transparent 42%),
+            rgba(10, 14, 22, 0.88) !important;
+        box-shadow: var(--shadow-soft) !important;
+    }
+
+    .product-shell .assistant-console-chip,
+    .product-shell .assistant-console-lens {
+        border-radius: var(--radius-md) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: var(--text-soft) !important;
+    }
+
+    .product-shell .assistant-console-label {
+        color: var(--muted) !important;
+    }
+
+    .product-shell .assistant-message-user {
+        background: rgba(124, 180, 255, 0.1) !important;
+        border-color: rgba(124, 180, 255, 0.22) !important;
+    }
+
+    .product-shell .config-row-value,
+    .product-shell .risk-metric-value {
+        color: var(--text-soft) !important;
+    }
+
+    /* History run detail */
+    .product-shell .artifact-name,
+    .product-shell .context-value,
+    .product-shell .config-pill-value,
+    .product-shell .metric-pill-value {
+        color: var(--text-soft) !important;
+    }
+
+    .product-shell .preview-box {
+        color: var(--text-soft) !important;
+        border-color: var(--line) !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    .product-shell .artifact-row,
+    .product-shell .config-pill,
+    .product-shell .finding,
+    .product-shell .context-card {
+        border-color: var(--line) !important;
+        border-radius: var(--radius-md) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    /* Board inspector shell */
+    .product-shell .board-view-shell {
+        border-radius: var(--radius-xl) !important;
+        border-color: var(--line) !important;
+    }
+
+    /* Login (when rendered under product shell) */
+    .product-shell .auth-hero {
+        border-radius: var(--radius-xl) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.78) !important;
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .product-shell .auth-hero::before {
+        opacity: 0.22 !important;
+    }
+
+    .product-shell .auth-brand-mark {
+        border-color: rgba(124, 180, 255, 0.22) !important;
+        background: linear-gradient(145deg, rgba(124, 180, 255, 0.16), rgba(94, 224, 240, 0.06)), rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .product-shell .auth-kicker {
+        border-color: rgba(124, 180, 255, 0.2) !important;
+        background: rgba(124, 180, 255, 0.08) !important;
+        color: var(--text-soft) !important;
+        font-weight: 600 !important;
+    }
+
+    .product-shell .auth-proof {
+        border-color: var(--line) !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    /* Marketing shell: sign-in page still uses auth layout */
+    .marketing-shell .auth-hero {
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.78) !important;
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .marketing-shell .auth-hero::before {
+        opacity: 0.2 !important;
+    }
+
+    .marketing-shell .auth-brand-mark {
+        border-color: rgba(124, 180, 255, 0.22) !important;
+    }
+
+    .marketing-shell .auth-kicker {
+        border-color: rgba(124, 180, 255, 0.2) !important;
+        color: var(--text-soft) !important;
+    }
+
+    /* Large section cards across compare / workspace / detail shells */
+    .product-shell .board-redesign-shell > section.card,
+    .product-shell .project-redesign-shell > section.card,
+    .product-shell .compare-experience-shell > section.card,
+    .product-shell .workspace-experience > section.card,
+    .product-shell .history-experience > section.card,
+    .product-shell .settings-experience > section.card,
+    .product-shell .nexus-ops-experience > section.card,
+    .product-shell .review-launch-shell > section.card,
+    .product-shell .portfolio-experience > section.card {
+        border-radius: var(--radius-xl) !important;
+        border-color: var(--line) !important;
+    }
+
+    /* Nested metric tiles & chart shells (all product pages) */
+    .product-shell .card .metric-card,
+    .product-shell .metric-grid .metric-card {
+        border-radius: var(--radius-md) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .product-shell .card .metric-value,
+    .product-shell .metric-grid .metric-value {
+        font-family: var(--font-display) !important;
+        color: var(--text) !important;
+    }
+
+    .product-shell .timeline-row {
+        border-radius: var(--radius-md) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.55) !important;
+    }
+
+    .product-shell .chart-frame {
+        border-radius: var(--radius-lg) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+    }
+
+    .product-shell .score-shell,
+    .product-shell .board-redesign-shell .score-shell {
+        border-radius: var(--radius-xl) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.55) !important;
+    }
+
+    .product-shell .bar-track,
+    .product-shell .score-bar-track,
+    .product-shell .hero-mini-track {
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .product-shell .summary-panel,
+    .product-shell .empty-state,
+    .product-shell .chart-empty-card {
+        border-color: var(--line) !important;
+        border-radius: var(--radius-md) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: var(--muted) !important;
+    }
+
+    .product-shell .chip,
+    .product-shell .chip-soft,
+    .product-shell .top-badge {
+        border-color: var(--line) !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: var(--text-soft) !important;
+    }
+
+    .product-shell .mini-chip-low {
+        color: var(--text-soft) !important;
+        border-color: rgba(124, 180, 255, 0.22) !important;
+    }
+
+    .product-shell .settings-hero-card,
+    .product-shell .review-hero-card {
+        border-radius: var(--radius-xl) !important;
+        border-color: var(--line) !important;
+    }
+
+    .product-shell .projects-score-card,
+    .product-shell .projects-overview-card {
+        border-radius: var(--radius-xl) !important;
+        border-color: var(--line) !important;
+    }
+
+    /* Compare board inspector */
+    .product-shell .compare-board-panel {
+        border-radius: var(--radius-lg) !important;
+        border: 1px solid var(--line) !important;
+        background: rgba(10, 12, 18, 0.65) !important;
+    }
+
+    .product-shell .compare-summary-card {
+        border-radius: var(--radius-xl) !important;
+        border-color: var(--line) !important;
+        background: rgba(10, 12, 18, 0.62) !important;
+    }
+</style>

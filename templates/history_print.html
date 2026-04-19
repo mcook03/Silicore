@@ -5,31 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ run_detail.name }} Review Summary</title>
     <style>
+        @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Instrument+Sans:ital,wght@0,400;0,600;0,700&display=swap");
+
         body {
             margin: 0;
             padding: 32px;
-            font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+            font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
             color: #0f172a;
-            background: #ffffff;
+            background: #fafbfc;
         }
         .print-shell {
             max-width: 980px;
             margin: 0 auto;
         }
         .print-header {
-            border-bottom: 2px solid #dbe4f0;
+            border-bottom: 2px solid #c5d4f0;
             padding-bottom: 18px;
             margin-bottom: 22px;
         }
         .print-kicker {
+            font-family: "IBM Plex Mono", ui-monospace, monospace;
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 800;
-            color: #475569;
+            letter-spacing: 0.14em;
+            font-weight: 600;
+            color: #4d6b8f;
         }
         h1, h2, h3, p { margin: 0; }
-        h1 { margin-top: 8px; font-size: 32px; line-height: 1.05; }
+        h1 { margin-top: 8px; font-size: 32px; line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
         .print-subtitle { margin-top: 10px; color: #475569; line-height: 1.7; }
         .metric-grid {
             display: grid;
@@ -38,10 +41,10 @@
             margin: 22px 0;
         }
         .metric-card {
-            border: 1px solid #dbe4f0;
-            border-radius: 14px;
+            border: 1px solid #d3deef;
+            border-radius: 12px;
             padding: 14px;
-            background: #f8fbff;
+            background: linear-gradient(180deg, #f4f7fc 0%, #eef3fa 100%);
         }
         .metric-label {
             font-size: 11px;
@@ -130,7 +133,7 @@
 <body>
     <div class="print-shell">
         <header class="print-header">
-            <div class="print-kicker">Silicore Nexus Printable Review</div>
+            <div class="print-kicker">Silicore · printable review</div>
             <h1>{{ run_detail.name }}</h1>
             <p class="print-subtitle">Created {{ run_detail.created_at }} · {{ run_detail.run_type|upper }} · {{ run_detail.export_summary.review_ready_label }}</p>
         </header>

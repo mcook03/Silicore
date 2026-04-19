@@ -12,8 +12,8 @@
         overflow: hidden;
         display: grid;
         grid-template-columns: minmax(320px, 0.95fr) minmax(320px, 1.05fr);
-        border-radius: 38px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
             radial-gradient(circle at 16% 18%, rgba(95,164,255,0.12), transparent 24%),
@@ -53,13 +53,13 @@
     .auth-brand-mark {
         width: 42px;
         height: 42px;
-        border-radius: 13px;
+        border-radius: 11px;
         display: grid;
         place-items: center;
         background:
-            linear-gradient(135deg, rgba(108,168,255,0.22), rgba(51,209,255,0.12)),
+            linear-gradient(135deg, rgba(124,180,255,0.22), rgba(94,224,240,0.12)),
             rgba(255,255,255,0.05);
-        border: 1px solid rgba(108,168,255,0.26);
+        border: 1px solid rgba(124,180,255,0.26);
         flex-shrink: 0;
     }
 
@@ -69,9 +69,9 @@
         gap: 8px;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(108,168,255,0.16);
-        background: rgba(108,168,255,0.08);
-        color: #d8e8ff;
+        border: 1px solid rgba(124,180,255,0.16);
+        background: rgba(124,180,255,0.08);
+        color: var(--text-soft);
         font-size: 10px;
         font-weight: 800;
         text-transform: uppercase;
@@ -80,7 +80,7 @@
 
     .auth-title {
         margin: 0;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: clamp(2.2rem, 4vw, 3.8rem);
         line-height: 0.92;
         letter-spacing: -0.07em;
@@ -104,15 +104,15 @@
 
     .auth-proof {
         padding: 10px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
         display: grid;
         gap: 3px;
     }
 
     .auth-proof strong {
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: 1.35rem;
         letter-spacing: -0.05em;
         line-height: 1;
@@ -138,8 +138,8 @@
         position: absolute;
         inset: 0;
         background-image:
-            linear-gradient(rgba(108,168,255,0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(108,168,255,0.3) 1px, transparent 1px);
+            linear-gradient(rgba(124,180,255,0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(124,180,255,0.3) 1px, transparent 1px);
         background-size: 36px 36px;
         mask-image: radial-gradient(circle at 60% 50%, rgba(0,0,0,0.8), transparent 72%);
     }
@@ -161,7 +161,7 @@
 
     .auth-form-title {
         margin: 0;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: 1.55rem;
         letter-spacing: -0.05em;
     }
@@ -188,10 +188,10 @@
 
     .auth-form input {
         width: 100%;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         border: 1px solid rgba(255,255,255,0.09);
         background: rgba(255,255,255,0.04);
-        color: #f8fbff;
+        color: var(--text-soft);
         padding: 13px 15px;
         font-size: 14px;
         font-family: inherit;
@@ -200,8 +200,8 @@
     }
 
     .auth-form input:focus {
-        border-color: rgba(108,168,255,0.44);
-        box-shadow: 0 0 0 3px rgba(108,168,255,0.1);
+        border-color: rgba(124,180,255,0.44);
+        box-shadow: 0 0 0 3px rgba(124,180,255,0.1);
     }
 
     .auth-divider {
@@ -220,8 +220,8 @@
         position: relative;
         overflow: hidden;
         padding: 22px 24px;
-        border-radius: 24px;
-        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(11,18,31,0.9), rgba(7,12,22,0.86)),
             rgba(6,10,18,0.72);
@@ -235,13 +235,13 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at top left, rgba(108,168,255,0.08), transparent 36%);
+        background: radial-gradient(circle at top left, rgba(124,180,255,0.08), transparent 36%);
         pointer-events: none;
     }
 
     .auth-secondary-card h3 {
         margin: 0;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: 1.05rem;
         letter-spacing: -0.04em;
     }
@@ -263,7 +263,7 @@
         width: 220px; height: 220px;
         top: -30px; right: 10%;
         border-radius: 999px;
-        background: rgba(108,168,255,0.13);
+        background: rgba(124,180,255,0.13);
         filter: blur(48px);
         pointer-events: none;
     }
@@ -273,7 +273,7 @@
         width: 160px; height: 160px;
         bottom: -20px; left: 5%;
         border-radius: 999px;
-        background: rgba(51,209,255,0.09);
+        background: rgba(94,224,240,0.09);
         filter: blur(38px);
         pointer-events: none;
     }
@@ -310,7 +310,7 @@
         <div class="auth-hero-left">
             <div class="auth-pcb-deco" aria-hidden="true"></div>
 
-            <div class="auth-kicker">Silicore Nexus</div>
+            <div class="auth-kicker">Silicore</div>
 
             <h1 class="auth-title">Engineering review platform.</h1>
 

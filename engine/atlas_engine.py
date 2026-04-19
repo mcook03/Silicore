@@ -899,7 +899,7 @@ def answer_atlas_question(page_type, prompt, context=None, history=None):
         "overview",
         "Atlas Intelligence",
         "Atlas could not determine the current review surface for this question.",
-        detail="Try asking from a board, compare, or Silicore Nexus workspace page with active context.",
+        detail="Try asking from a board, compare, or Silicore workspace page with active context.",
         follow_ups=[],
         confidence=0.5,
     )

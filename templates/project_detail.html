@@ -36,7 +36,7 @@
     .workspace-metric-value-text,
     .workspace-metric-value-meta,
     .workspace-metric-value-number {
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-weight: 700;
         letter-spacing: -0.05em;
         line-height: 0.98;
@@ -72,11 +72,11 @@
 
     .workspace-launch-panel {
         padding: 28px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
-            radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 26%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.12), transparent 26%),
             linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
         box-shadow: 0 34px 86px rgba(0,0,0,0.44);
         position: relative;
@@ -99,7 +99,7 @@
     }
 
     .workspace-launch-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -113,7 +113,7 @@
         line-height: 0.94;
         letter-spacing: -0.07em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
         text-wrap: balance;
     }
 
@@ -129,8 +129,8 @@
         position: relative;
         overflow: hidden;
         padding: 28px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 22%),
             radial-gradient(circle at top right, rgba(6,182,212,0.1), transparent 24%),
@@ -147,13 +147,13 @@
         width: 220px;
         height: 220px;
         border-radius: 999px;
-        background: radial-gradient(circle, rgba(96,165,250,0.18), transparent 64%);
+        background: radial-gradient(circle, rgba(124,180,255,0.18), transparent 64%);
         filter: blur(8px);
         pointer-events: none;
     }
 
     .workspace-command-label {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -170,15 +170,15 @@
         position: relative;
         z-index: 1;
         padding: 16px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
         display: grid;
         gap: 8px;
     }
 
     .workspace-command-metric strong {
-        font-family: "Space Grotesk", sans-serif;
+        font-family: var(--font-display);
         font-size: clamp(1.6rem, 3vw, 2.7rem);
         line-height: 0.92;
         letter-spacing: -0.06em;
@@ -196,8 +196,8 @@
         position: relative;
         z-index: 1;
         padding: 16px 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.025);
         color: var(--muted);
         line-height: 1.7;
@@ -233,7 +233,7 @@
 <section class="page-hero">
     <div class="page-hero-inner">
         <div class="page-hero-copy">
-            <div class="page-eyebrow">Silicore Nexus Workspace</div>
+            <div class="page-eyebrow">Silicore Workspace</div>
             <h1 class="page-title">{{ project.name }}</h1>
             <p class="page-copy">
                 {{ project.description if project.description else "Track workspace health, recurring engineering pressure, release posture, and Atlas-guided execution from one continuous review surface." }}
@@ -250,36 +250,36 @@
     </div>
 </section>
 
-<section class="workspace-launch-band">
-    <section class="workspace-launch-panel">
-        <div class="workspace-launch-kicker">Workspace Review Architecture</div>
-        <h2 class="workspace-launch-title">Operate the project like a living engineering system.</h2>
-        <p class="workspace-launch-copy">
+<section class="platform-band">
+    <section class="platform-intro-card">
+        <div class="platform-kicker">Workspace Review Architecture</div>
+        <h2 class="platform-title">Operate the project like a living engineering system.</h2>
+        <p class="platform-copy">
             Track recurring risk families, readiness posture, compare movement, team review flow, and Atlas-guided execution through one Nexus workspace surface.
         </p>
     </section>
 
-    <aside class="workspace-command-panel">
-        <div class="workspace-command-label">Workspace Telemetry</div>
-        <div class="workspace-command-grid">
-            <div class="workspace-command-metric">
+    <aside class="platform-panel">
+        <div class="platform-panel-label">Workspace Telemetry</div>
+        <div class="platform-stat-grid">
+            <div class="platform-stat">
                 <span>Health score</span>
                 <strong>{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</strong>
             </div>
-            <div class="workspace-command-metric">
+            <div class="platform-stat">
                 <span>Linked runs</span>
                 <strong>{{ project.runs|length }}</strong>
             </div>
-            <div class="workspace-command-metric">
+            <div class="platform-stat">
                 <span>Top pattern</span>
                 <strong style="font-size:1.15rem; line-height:1.08;">{{ project.top_category if project.top_category else "Building" }}</strong>
             </div>
-            <div class="workspace-command-metric">
+            <div class="platform-stat">
                 <span>Confidence</span>
                 <strong>{{ workspace_intel.average_confidence|round|int if workspace_intel else "N/A" }}</strong>
             </div>
         </div>
-        <div class="workspace-command-note">
+        <div class="platform-note">
             {{ workspace_intel.trend_summary if workspace_intel else "This workspace becomes more useful as Atlas builds score, recurrence, and confidence history across linked runs." }}
         </div>
     </aside>
@@ -322,7 +322,7 @@
 
     <aside class="card assistant-console-side">
         <div class="card-header">
-            <h2 class="section-title">Silicore Nexus</h2>
+            <h2 class="section-title">Silicore</h2>
             <p class="section-copy">Use workspace prompts and review lenses to understand the project like an engineering lead.</p>
         </div>
         <div class="card-body">
@@ -844,7 +844,7 @@
             <div class="project-detail-compare-grid">
                 <label>
                     Reviewer
-                    <input type="text" name="author" placeholder="Silicore Nexus Review">
+                    <input type="text" name="author" placeholder="Silicore Review">
                 </label>
             </div>
             <label style="display:block; margin-top:12px;">
@@ -1108,7 +1108,7 @@
             </section>
         </section>
         {% else %}
-        <div class="empty-state">Atlas Intelligence guidance appears once Silicore Nexus has enough run history.</div>
+        <div class="empty-state">Atlas Intelligence guidance appears once Silicore has enough run history.</div>
         {% endif %}
     </div>
 </section>
@@ -1526,10 +1526,10 @@
 
     .trend-panel {
         padding: 20px;
-        border: 1px solid rgba(255,255,255,0.055);
-        border-radius: 22px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
         background:
-            radial-gradient(circle at top right, rgba(96,165,250,0.08), transparent 30%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 30%),
             linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
             rgba(255,255,255,0.02);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 14px 30px rgba(0,0,0,0.1);
@@ -1551,7 +1551,7 @@
         height: 90px;
         display: block;
         padding: 10px;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         background:
             linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
@@ -1576,7 +1576,7 @@
     }
 
     .trend-score-line {
-        stroke: rgba(96,165,250,0.96);
+        stroke: rgba(124,180,255,0.96);
     }
 
     .trend-risk-line {
@@ -1596,7 +1596,7 @@
         display: grid;
         place-items: center;
         color: rgba(191,219,254,0.8);
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         background: rgba(15,23,42,0.24);
         border: 1px solid rgba(255,255,255,0.04);
     }
@@ -1647,12 +1647,12 @@
     .assistant-console-chip,
     .assistant-console-lens {
         width: 100%;
-        border: 1px solid rgba(255,255,255,0.07);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.016)),
             rgba(255,255,255,0.018);
         color: #ecf3ff;
-        border-radius: 18px;
+        border-radius: var(--radius-md);
         padding: 14px 16px;
         text-align: left;
         cursor: pointer;
@@ -1684,14 +1684,14 @@
 
     .assistant-message {
         padding: 14px 16px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.025);
     }
 
     .assistant-message-user {
-        background: rgba(59,130,246,0.12);
-        border-color: rgba(96,165,250,0.18);
+        background: rgba(124,180,255,0.12);
+        border-color: rgba(124,180,255,0.18);
     }
 
     .assistant-message-role {
@@ -1721,8 +1721,8 @@
     .assistant-citation,
     .assistant-follow-chip,
     .assistant-prompt-chip {
-        border: 1px solid rgba(96,165,250,0.18);
-        background: rgba(96,165,250,0.1);
+        border: 1px solid rgba(124,180,255,0.18);
+        background: rgba(124,180,255,0.1);
         color: #dbeafe;
         border-radius: 999px;
         padding: 8px 10px;
@@ -1746,8 +1746,8 @@
     .assistant-composer-input {
         width: 100%;
         min-height: 46px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
         color: #eff6ff;
         padding: 0 14px;
@@ -1758,8 +1758,8 @@
         display: grid;
         gap: 10px;
         padding: 18px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.055);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
             rgba(255,255,255,0.02);
@@ -1805,14 +1805,14 @@
 
     .focus-card {
         padding: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 20px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
         background: rgba(255,255,255,0.025);
     }
 
     .focus-card.is-selected {
-        border-color: rgba(96,165,250,0.34);
-        box-shadow: 0 0 0 1px rgba(96,165,250,0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
+        border-color: rgba(124,180,255,0.34);
+        box-shadow: 0 0 0 1px rgba(124,180,255,0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.024)),
             rgba(17, 30, 48, 0.82);
@@ -1842,7 +1842,7 @@
         min-width: 44px;
         padding: 6px 10px;
         border-radius: 999px;
-        background: rgba(96,165,250,0.14);
+        background: rgba(124,180,255,0.14);
         color: #dbeafe;
         font-size: 13px;
         font-weight: 700;
@@ -1895,11 +1895,11 @@
     .mini-bar-fill {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, rgba(59,130,246,0.95), rgba(34,197,94,0.72));
+        background: linear-gradient(90deg, rgba(124,180,255,0.95), rgba(62, 232, 160,0.72));
     }
 
     .category-bar-fill {
-        background: linear-gradient(90deg, rgba(168,85,247,0.92), rgba(96,165,250,0.72));
+        background: linear-gradient(90deg, rgba(168,85,247,0.92), rgba(124,180,255,0.72));
     }
 
     .project-detail-compare-grid {
@@ -1915,15 +1915,15 @@
 
     .project-detail-run-card {
         padding: 18px;
-        border: 1px solid rgba(255,255,255,0.05);
-        border-radius: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
         background: rgba(255,255,255,0.03);
         transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .project-detail-run-card:hover {
         background: rgba(255,255,255,0.05);
-        border-color: rgba(59,130,246,0.14);
+        border-color: rgba(124,180,255,0.14);
         transform: translateY(-1px);
     }
 
@@ -1932,10 +1932,10 @@
     .card select {
         width: 100%;
         box-sizing: border-box;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.04);
-        color: #f8fbff;
+        color: var(--text-soft);
         padding: 12px 14px;
         font-size: 14px;
         outline: none;
@@ -1981,9 +1981,9 @@
     }
 
     .chip-soft {
-        background: rgba(59,130,246,0.10);
+        background: rgba(124,180,255,0.10);
         color: #BFDBFE;
-        border: 1px solid rgba(59,130,246,0.16);
+        border: 1px solid rgba(124,180,255,0.16);
     }
 
     .workspace-review-grid {
@@ -2000,10 +2000,10 @@
 
     .workspace-review-card {
         padding: 20px;
-        border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.055);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
-            radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 44%),
+            radial-gradient(circle at top right, rgba(124,180,255,0.12), transparent 44%),
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
             rgba(255,255,255,0.02);
     }
@@ -2033,7 +2033,7 @@
         min-width: 40px;
         padding: 8px 10px;
         border-radius: 999px;
-        background: rgba(96,165,250,0.14);
+        background: rgba(124,180,255,0.14);
         color: #dbeafe;
         text-align: center;
         font-size: 14px;

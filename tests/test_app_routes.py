@@ -78,7 +78,7 @@ class AppRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         page = response.get_data(as_text=True)
-        self.assertIn("Silicore Nexus Printable Review", page)
+        self.assertIn("Silicore · printable review", page)
         self.assertIn("Save As PDF", page)
 
     def test_settings_page_includes_custom_profile_controls(self):
@@ -98,7 +98,7 @@ class AppRouteSmokeTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("Confidence Timeline", page)
         self.assertIn("Recurring Failure Pattern", page)
-        self.assertIn("Silicore Nexus", page)
+        self.assertIn("Silicore", page)
         self.assertIn("Atlas Intelligence", page)
         self.assertIn("Nexus Review Architecture", page)
         self.assertIn("Nexus Review Workflow", page)

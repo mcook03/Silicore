@@ -64,7 +64,7 @@ def send_identity_email(recipient, email_type, token, context=None):
         "verification": (
             "Silicore verification was requested for your account.\n\n"
             f"Verification token: {token}\n"
-            f"Workspace: {context.get('organization_name', 'Silicore Nexus')}\n"
+            f"Workspace: {context.get('organization_name', 'Silicore')}\n"
         ),
         "password_reset": (
             "Silicore password reset was requested.\n\n"
@@ -76,7 +76,7 @@ def send_identity_email(recipient, email_type, token, context=None):
             f"Verification code: {token}\n"
         ),
         "organization_invite": (
-            f"You were invited to join {context.get('organization_name', 'Silicore Nexus')}.\n\n"
+            f"You were invited to join {context.get('organization_name', 'Silicore')}.\n\n"
             f"Invitation token: {token}\n"
             f"Invited role: {context.get('invited_role', 'engineer')}\n"
         ),

@@ -315,7 +315,7 @@ class BackendSystemsTests(unittest.TestCase):
             f"notify-{uuid4().hex[:8]}@example.com",
             "verification",
             "token-123",
-            context={"organization_name": "Silicore Nexus"},
+            context={"organization_name": "Silicore"},
         )
         self.assertIn(delivery["status"], {"queued", "sent"})
 

@@ -23,16 +23,16 @@
     .settings-experience > .card,
     .settings-experience > .grid.grid-2 > .card,
     .settings-launch-band > * {
-        border-radius: 30px;
+        border-radius: var(--radius-xl);
     }
 
     .settings-launch-panel {
         padding: 28px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
-            radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 26%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.12), transparent 26%),
             radial-gradient(circle at top right, rgba(6,182,212,0.08), transparent 22%),
             linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
         box-shadow: 0 34px 86px rgba(0,0,0,0.44);
@@ -56,7 +56,7 @@
     }
 
     .settings-launch-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -70,7 +70,7 @@
         line-height: 0.94;
         letter-spacing: -0.07em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
         text-wrap: balance;
     }
 
@@ -1546,17 +1546,17 @@
         grid-template-columns: 1.2fr 0.8fr;
         gap: 24px;
         padding: 28px;
-        border-radius: 28px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
-            radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 28%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.16), transparent 28%),
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
             rgba(10,16,32,0.78);
         box-shadow: 0 24px 60px rgba(0,0,0,0.28);
     }
 
     .settings-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -1570,7 +1570,7 @@
         line-height: 0.96;
         letter-spacing: -0.06em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
     }
 
     .settings-copy {
@@ -1603,7 +1603,7 @@
         height: 180px;
         top: 10%;
         right: 10%;
-        background: rgba(59,130,246,0.20);
+        background: rgba(124,180,255,0.20);
     }
 
     .settings-glow-b {
@@ -1620,8 +1620,8 @@
         bottom: 20px;
         left: 20px;
         padding: 22px;
-        border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
         background:
             linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
             rgba(255,255,255,0.03);
@@ -1638,7 +1638,7 @@
     }
 
     .settings-panel-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 26px;
         font-weight: 800;
         letter-spacing: -0.04em;
@@ -1647,13 +1647,13 @@
 
     .settings-panel-chart {
         height: 72px;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         background:
             linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59,130,246,0.18), rgba(96,165,250,0.08));
+            linear-gradient(90deg, rgba(124,180,255,0.18), rgba(124,180,255,0.08));
         background-size: 18px 18px, 18px 18px, auto;
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
     }
 
     .settings-panel-bars {
@@ -1716,8 +1716,8 @@
     .impact-pill,
     .settings-toggle-card {
         padding: 18px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
     }
 
@@ -1730,13 +1730,13 @@
     .settings-area-icon {
         width: 42px;
         height: 42px;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         display: grid;
         place-items: center;
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 18px;
-        background: rgba(59,130,246,0.14);
-        border: 1px solid rgba(96,165,250,0.18);
+        background: rgba(124,180,255,0.14);
+        border: 1px solid rgba(124,180,255,0.18);
         flex-shrink: 0;
     }
 
@@ -1744,7 +1744,7 @@
     .settings-section-heading h3,
     .summary-panel h3,
     .settings-toggle-title {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 18px;
         font-weight: 800;
         margin: 0 0 8px;
@@ -1765,7 +1765,7 @@
     }
 
     .settings-summary-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 34px;
         font-weight: 800;
         line-height: 1;
@@ -1800,7 +1800,7 @@
     }
 
     .impact-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 13px;
         font-weight: 700;
         text-align: right;
@@ -1852,8 +1852,8 @@
         min-width: 72px;
         padding: 8px 10px;
         border-radius: 999px;
-        background: rgba(59,130,246,0.14);
-        border: 1px solid rgba(96,165,250,0.18);
+        background: rgba(124,180,255,0.14);
+        border: 1px solid rgba(124,180,255,0.18);
         color: #dbeafe;
         text-align: center;
         font-size: 12px;
@@ -1882,10 +1882,10 @@
     .settings-input-card textarea,
     #settings-form input[type="text"] {
         width: 100%;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.04);
-        color: #f8fbff;
+        color: var(--text-soft);
         padding: 12px 14px;
         font-size: 14px;
         outline: none;
@@ -1923,10 +1923,10 @@
     .settings-architecture-card,
     .settings-pillar-card {
         padding: 18px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background:
-            linear-gradient(180deg, rgba(59,130,246,0.08), rgba(255,255,255,0.02)),
+            linear-gradient(180deg, rgba(124,180,255,0.08), rgba(255,255,255,0.02)),
             rgba(255,255,255,0.03);
     }
 
@@ -1939,7 +1939,7 @@
     }
 
     .settings-architecture-value {
-        color: #f8fbff;
+        color: var(--text-soft);
         font-size: 24px;
         font-weight: 800;
         line-height: 1.1;

@@ -1193,7 +1193,7 @@ def _build_dashboard_story(recent_runs, projects):
     workspace_label = "engineering workspace" if workspace_count == 1 else "engineering workspaces"
 
     summary = (
-        f"Silicore Nexus is currently tracking {run_count} {run_label} across {workspace_count} {workspace_label}. "
+        f"Silicore is currently tracking {run_count} {run_label} across {workspace_count} {workspace_label}. "
         f"The latest scored run is {latest_score} / 100, while active workspaces average {average_project_score} / 100."
     )
     if top_category:
@@ -4339,9 +4339,9 @@ def index():
     projects = [_enrich_project_for_display(project) for project in list_projects()]
     return _render_page(
         active_page="home",
-        page_title="Silicore Nexus",
+        page_title="Silicore — PCB design intelligence",
         page_eyebrow="Powered by Atlas Intelligence",
-        page_copy="Silicore Engineering Intelligence for PCB analysis, design review, revision comparison, and system-level workspace management.",
+        page_copy="AI-powered hardware design intelligence for PCB analysis, design review, and revision-aware engineering workflows.",
         template_name="home.html",
         show_page_hero=False,
         body_context={
@@ -4475,9 +4475,9 @@ def project_page():
 
     return _render_page(
         active_page="project",
-        page_title="Silicore Nexus Review",
+        page_title="Silicore Review",
         page_eyebrow="Powered by Atlas Intelligence",
-        page_copy="Compare multiple boards inside Silicore Nexus to evaluate design quality, rank revisions, and review overall project health.",
+        page_copy="Compare multiple boards inside Silicore to evaluate design quality, rank revisions, and review overall project health.",
         template_name="project_review.html",
         show_page_hero=False,
         body_context={
@@ -4506,9 +4506,9 @@ def projects_page():
         projects = visible_projects
     return _render_page(
         active_page="projects_workspace",
-        page_title="Silicore Nexus",
+        page_title="Silicore",
         page_eyebrow="Workspace System Layer",
-        page_copy="Organize boards and saved runs into Silicore Nexus workspaces for cleaner project-level visibility, review flow, and team coordination.",
+        page_copy="Organize boards and saved runs into Silicore workspaces for cleaner project-level visibility, review flow, and team coordination.",
         template_name="projects.html",
         body_context={
             "projects": projects,
@@ -4531,7 +4531,7 @@ def nexus_ops_page():
         active_page="ops",
         page_title="Nexus Ops",
         page_eyebrow="Runtime, Reviews, and Audit",
-        page_copy="Monitor Atlas workflows, worker activity, review decisions, queued jobs, and evaluation health from one Silicore Nexus control surface.",
+        page_copy="Monitor Atlas workflows, worker activity, review decisions, queued jobs, and evaluation health from one Silicore control surface.",
         template_name="nexus_ops.html",
         body_context={
             "operations_snapshot": operations_snapshot,
@@ -4603,8 +4603,8 @@ def project_detail_page(project_id):
     return _render_page(
         active_page="projects_workspace",
         page_title=project.get("name", "Project"),
-        page_eyebrow="Silicore Nexus Workspace",
-        page_copy="Review linked analysis runs, compare revisions, and monitor design progress inside this Silicore Nexus workspace.",
+        page_eyebrow="Silicore Workspace",
+        page_copy="Review linked analysis runs, compare revisions, and monitor design progress inside this Silicore workspace.",
         template_name="project_detail.html",
         body_context={
             "project": project,
@@ -4874,11 +4874,11 @@ def compare_runs(project_id):
     if not run_a_id or not run_b_id:
         run_a = fallback_run_a
         run_b = fallback_run_b
-        flash("No compare pair was selected, so Silicore Nexus opened the latest two linked runs.")
+        flash("No compare pair was selected, so Silicore opened the latest two linked runs.")
     elif run_a_id == run_b_id:
         run_a = fallback_run_a
         run_b = fallback_run_b
-        flash("The same run was selected twice, so Silicore Nexus switched to the latest two different linked runs.")
+        flash("The same run was selected twice, so Silicore switched to the latest two different linked runs.")
     else:
         run_a = next((run for run in runs if str(run.get("run_id")) == run_a_id), None)
         run_b = next((run for run in runs if str(run.get("run_id")) == run_b_id), None)
@@ -4886,7 +4886,7 @@ def compare_runs(project_id):
         if not run_a or not run_b:
             run_a = fallback_run_a
             run_b = fallback_run_b
-            flash("One or both requested runs could not be found, so Silicore Nexus opened the latest valid comparison pair.")
+            flash("One or both requested runs could not be found, so Silicore opened the latest valid comparison pair.")
 
     score_a = _safe_float(run_a.get("score"), 0.0)
     score_b = _safe_float(run_b.get("score"), 0.0)
@@ -5035,7 +5035,7 @@ def compare_runs(project_id):
         active_page="projects_workspace",
         page_title="Nexus Comparison",
         page_eyebrow="Powered by Atlas Intelligence",
-        page_copy="Compare two linked runs inside Silicore Nexus to measure engineering progress, regression, and overall risk movement.",
+        page_copy="Compare two linked runs inside Silicore to measure engineering progress, regression, and overall risk movement.",
         template_name="compare.html",
         body_context={
             "project": project,
@@ -5327,8 +5327,8 @@ def history_page():
     return _render_page(
         active_page="history",
         page_title="Nexus History",
-        page_eyebrow="Silicore Nexus Archive",
-        page_copy="Browse previous analyses, inspect saved outputs, and revisit engineering findings across earlier work inside Silicore Nexus.",
+        page_eyebrow="Silicore Archive",
+        page_copy="Browse previous analyses, inspect saved outputs, and revisit engineering findings across earlier work inside Silicore.",
         template_name="history.html",
         body_context={
             "history_runs": history_runs,
@@ -5349,7 +5349,7 @@ def history_detail_page(run_dir):
     return _render_page(
         active_page="history",
         page_title="Nexus Run Detail",
-        page_eyebrow="Silicore Nexus Archive",
+        page_eyebrow="Silicore Archive",
         page_copy="Review a saved analysis run in more detail and access every artifact generated for it.",
         template_name="history_detail.html",
         body_context={"run_detail": run_detail},
@@ -5397,7 +5397,7 @@ def login_page():
                         user["email"],
                         "verification",
                         verification["token"],
-                        context={"organization_name": (organization or {}).get("name") or "Silicore Nexus"},
+                        context={"organization_name": (organization or {}).get("name") or "Silicore"},
                     )
                     flash(
                         "Verification email queued."
@@ -5513,10 +5513,10 @@ def login_page():
         return redirect(url_for("index"))
 
     return _render_page(
-        active_page="home",
+        active_page="login",
         page_title="Silicore Access",
-        page_eyebrow="Silicore Nexus Identity",
-        page_copy="Sign in to access Silicore Nexus workspaces, review workflow features, and saved team context.",
+        page_eyebrow="Silicore Identity",
+        page_copy="Sign in to access Silicore workspaces, review workflow features, and saved team context.",
         template_name="login.html",
         show_page_hero=False,
         body_context={"organizations": list_organizations()},

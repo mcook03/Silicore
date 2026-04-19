@@ -26,11 +26,11 @@
 
     .projects-launch-panel {
         padding: 28px;
-        border-radius: 34px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--line);
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
-            radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 26%),
+            radial-gradient(circle at top left, rgba(124,180,255,0.12), transparent 26%),
             linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
         box-shadow: 0 34px 86px rgba(0,0,0,0.44);
         position: relative;
@@ -53,7 +53,7 @@
     }
 
     .projects-launch-kicker {
-        color: #bfdbfe;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.14em;
@@ -67,7 +67,7 @@
         line-height: 0.94;
         letter-spacing: -0.07em;
         font-weight: 800;
-        color: #f8fbff;
+        color: var(--text-soft);
         text-wrap: balance;
     }
 
@@ -109,10 +109,10 @@
 <section class="page-hero">
     <div class="page-hero-inner">
         <div class="page-hero-copy">
-            <div class="page-eyebrow">Silicore Nexus Portfolio</div>
+            <div class="page-eyebrow">Silicore Portfolio</div>
             <h1 class="page-title">Manage every engineering workspace from a single system view.</h1>
             <p class="page-copy">
-                Track active projects, portfolio spread, workspace maturity, and review readiness across the Silicore Nexus environment.
+                Track active projects, portfolio spread, workspace maturity, and review readiness across the Silicore environment.
             </p>
         </div>
 
@@ -128,14 +128,14 @@
         <div class="projects-launch-kicker">Workspace Operating Layer</div>
         <h2 class="projects-launch-title">Run the portfolio like an engineering command system.</h2>
         <p class="projects-launch-copy">
-            Track workspace spread, review readiness, active execution surfaces, and project maturity across the full Silicore Nexus environment.
+            Track workspace spread, review readiness, active execution surfaces, and project maturity across the full Silicore environment.
         </p>
     </section>
 
 <section class="projects-hero-grid">
     <section class="card projects-score-card">
         <div class="card-header">
-            <h2 class="section-title">Silicore Nexus Control</h2>
+            <h2 class="section-title">Silicore Control</h2>
             <p class="section-copy">
                 Portfolio-style view of Nexus workspaces, activity, and system-level workspace spread.
             </p>
@@ -175,7 +175,7 @@
         <div class="card-header">
             <h2 class="section-title">Nexus Overview</h2>
             <p class="section-copy">
-                Current management-level metrics across all saved Silicore Nexus workspaces.
+                Current management-level metrics across all saved Silicore workspaces.
             </p>
         </div>
 
@@ -239,7 +239,7 @@
             <div>
                 <h2 class="section-title">Create Project</h2>
                 <p class="section-copy">
-                    Start a new Silicore Nexus workspace for boards, runs, later comparisons, and team review flow.
+                    Start a new Silicore workspace for boards, runs, later comparisons, and team review flow.
                 </p>
             </div>
 
@@ -316,7 +316,7 @@
                 <div class="metric-card">
                     <div class="metric-label">Total Nexus Workspaces</div>
                     <div class="metric-value">{{ projects_summary.total_projects }}</div>
-                    <div class="metric-sub">All saved Silicore Nexus shells</div>
+                    <div class="metric-sub">All saved Silicore shells</div>
                 </div>
 
                 <div class="metric-card">
@@ -429,7 +429,7 @@
     <div class="card-header">
         <h2 class="section-title">Nexus Gallery</h2>
         <p class="section-copy">
-            Card-based Silicore Nexus view with stronger visual hierarchy and direct actions.
+            Card-based Silicore view with stronger visual hierarchy and direct actions.
         </p>
     </div>
 
@@ -499,7 +499,7 @@
             </div>
         {% else %}
             <div class="empty-state">
-                No projects yet. Create your first Silicore Nexus workspace above.
+                No projects yet. Create your first Silicore workspace above.
             </div>
         {% endif %}
     </div>
@@ -541,9 +541,9 @@
         margin-top: 12px;
         padding: 8px 12px;
         border-radius: 999px;
-        color: #bfdbfe;
-        background: rgba(59,130,246,0.12);
-        border: 1px solid rgba(59,130,246,0.16);
+        color: var(--muted);
+        background: rgba(124,180,255,0.12);
+        border: 1px solid rgba(124,180,255,0.16);
         font-size: 12px;
         font-weight: 800;
         text-transform: uppercase;
@@ -618,7 +618,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
     }
 
     .projects-scale-pill.low {
@@ -633,7 +633,7 @@
 
     .projects-scale-pill.high {
         color: #86efac;
-        background: rgba(34,197,94,0.12);
+        background: rgba(62, 232, 160,0.12);
     }
 
     .projects-foot-note {
@@ -652,8 +652,8 @@
     .workspace-card,
     .workspace-stat-box {
         padding: 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.03);
     }
 
@@ -680,8 +680,8 @@
     .workspace-mini-chart {
         margin-top: 16px;
         padding: 16px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.02);
     }
 
@@ -717,18 +717,18 @@
     .workspace-trend-stroke,
     .workspace-mini-stroke {
         fill: none;
-        stroke: rgba(96,165,250,0.95);
+        stroke: rgba(124,180,255,0.95);
         stroke-width: 1.6;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
 
     .workspace-mini-area {
-        fill: rgba(59,130,246,0.16);
+        fill: rgba(124,180,255,0.16);
     }
 
     .workspace-trend-point {
-        fill: #bfdbfe;
+        fill: var(--muted);
     }
 
     .workspace-chart-empty {
@@ -737,7 +737,7 @@
         place-items: center;
         color: var(--muted);
         font-size: 12px;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         background:
             linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
@@ -747,8 +747,8 @@
     .workspace-bars-panel {
         margin-top: 18px;
         padding: 16px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
         background: rgba(255,255,255,0.02);
     }
 
@@ -789,11 +789,11 @@
     .workspace-bar-fill {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, rgba(59,130,246,0.95), rgba(96,165,250,0.68));
+        background: linear-gradient(90deg, rgba(124,180,255,0.95), rgba(124,180,255,0.68));
     }
 
     .score-bar-fill {
-        background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(96,165,250,0.78));
+        background: linear-gradient(90deg, rgba(62, 232, 160,0.95), rgba(124,180,255,0.78));
     }
 
     .projects-top-row {
