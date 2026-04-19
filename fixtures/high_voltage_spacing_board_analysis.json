@@ -311,8 +311,8 @@
                 "U1"
             ],
             "nets": [
-                "HV-",
                 "CTRL",
+                "HV-",
                 "HV+"
             ],
             "region": null,
@@ -351,8 +351,8 @@
                 "U1"
             ],
             "nets": [
-                "HV-",
                 "CTRL",
+                "HV-",
                 "HV+"
             ],
             "region": null,
@@ -535,8 +535,8 @@
                 "U1"
             ],
             "nets": [
-                "HV-",
                 "CTRL",
+                "HV-",
                 "HV+"
             ],
             "region": null,
@@ -555,8 +555,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "HV-",
                     "CTRL",
+                    "HV-",
                     "HV+"
                 ],
                 "has_power": false,
@@ -2039,7 +2039,7 @@
     },
     "analysis_context": {
         "board_name": "high_voltage_spacing_board.kicad_pcb",
-        "timestamp": "2026-04-19T04:05:12.628469+00:00",
+        "timestamp": "2026-04-19T04:09:38.373747+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2823,8 +2823,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV-",
                     "CTRL",
+                    "HV-",
                     "HV+"
                 ],
                 "region": null,
@@ -2854,8 +2854,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV-",
                     "CTRL",
+                    "HV-",
                     "HV+"
                 ],
                 "region": null,
@@ -3002,8 +3002,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "HV-",
                     "CTRL",
+                    "HV-",
                     "HV+"
                 ],
                 "region": null,
@@ -3022,8 +3022,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "HV-",
                         "CTRL",
+                        "HV-",
                         "HV+"
                     ],
                     "has_power": false,
@@ -3272,7 +3272,7 @@
         "score": 0.0,
         "total_penalty": 13.4
     },
-    "generated_at": "2026-04-19T04:05:12.628475+00:00",
+    "generated_at": "2026-04-19T04:09:38.373753+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
