@@ -225,31 +225,6 @@
             <div class="risk-card">
                 <p><strong>Severity:</strong> medium</p>
                 <p><strong>Category:</strong> component_design</p>
-                <p><strong>Message:</strong> High-speed net USB_DP has a long route with no visible series or termination resistor</p>
-                <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
-                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
-                <p><strong>Observed vs Threshold:</strong> threshold=18.0</p>
-                <p><strong>Traceability:</strong> 100 / 100</p>
-                <p><strong>Evidence Count:</strong> 8</p>
-                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
-                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
-                
-                <p><strong>Root Cause:</strong> General design issue</p>
-                <p><strong>Impact:</strong> Unknown system impact</p>
-                <p><strong>Confidence:</strong> 70.0 / 100</p>
-                
-                
-                <p><strong>Suggested Fix:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
-                <p><strong>Fix Priority:</strong> medium</p>
-                
-                <p><strong>Components:</strong> J1</p>
-                <p><strong>Nets:</strong> USB_DP</p>
-                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 31.62, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
-            </div>
-            
-            <div class="risk-card">
-                <p><strong>Severity:</strong> medium</p>
-                <p><strong>Category:</strong> component_design</p>
                 <p><strong>Message:</strong> High-speed net USB_DN has a long route with no visible series or termination resistor</p>
                 <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
                 <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
@@ -269,6 +244,31 @@
                 
                 <p><strong>Components:</strong> J1</p>
                 <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 31.62, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> component_design</p>
+                <p><strong>Message:</strong> High-speed net USB_DP has a long route with no visible series or termination resistor</p>
+                <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=18.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
                 <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 31.62, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
             </div>
             
@@ -368,7 +368,7 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> J1</p>
-                <p><strong>Nets:</strong> USB_DP, USB_DN</p>
+                <p><strong>Nets:</strong> USB_DN, USB_DP</p>
                 <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
             </div>
             
@@ -418,8 +418,8 @@
                 <p><strong>Fix Priority:</strong> high</p>
                 
                 <p><strong>Components:</strong> J1</p>
-                <p><strong>Nets:</strong> USB_DP, USB_DN</p>
-                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;USB_DP&quot;, &quot;USB_DN&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: false}</p>
+                <p><strong>Nets:</strong> USB_DN, USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;USB_DN&quot;, &quot;USB_DP&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: false}</p>
             </div>
             
             <div class="risk-card">

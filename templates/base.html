@@ -467,15 +467,13 @@
             padding: 28px;
             border-radius: var(--radius-xl);
             border: 1px solid var(--line);
-            background:
-                radial-gradient(circle at top left, rgba(124, 180, 255, 0.08), transparent 30%),
-                linear-gradient(180deg, rgba(12, 14, 20, 0.96), rgba(8, 9, 14, 0.94));
+            background: rgba(10, 12, 18, 0.78);
             box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
         .platform-intro-card::after,
         .platform-panel::after {
-            content: "";
+            content: none;
             position: absolute;
             left: -12%;
             right: -12%;
@@ -686,7 +684,7 @@
         .panel-card::before,
         .metric-card::before,
         .overview-mini-card::before {
-            content: "";
+            content: none;
             position: absolute;
             inset: 0;
             pointer-events: none;
@@ -850,7 +848,7 @@
         }
 
         .summary-panel::before {
-            content: "";
+            content: none;
             position: absolute;
             inset: 0;
             pointer-events: none;
@@ -889,9 +887,7 @@
             overflow: hidden;
             border-radius: var(--radius-xl);
             border: 1px solid var(--line);
-            background:
-                linear-gradient(180deg, rgba(14, 16, 22, 0.95), rgba(9, 10, 15, 0.92)),
-                rgba(7, 8, 12, 0.88);
+            background: rgba(10, 12, 18, 0.78);
             box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
@@ -988,9 +984,7 @@
             padding: 22px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--line-soft);
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
-                rgba(255, 255, 255, 0.018);
+            background: rgba(255, 255, 255, 0.025);
             display: grid;
             gap: 12px;
         }
@@ -1353,18 +1347,14 @@
             padding: 16px 18px;
             border-radius: var(--radius-md);
             border: 1px solid var(--line);
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.032), rgba(255,255,255,0.012)),
-                rgba(255,255,255,0.018);
+            background: rgba(255,255,255,0.02);
             transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
         }
 
         .timeline-row:hover {
             transform: translateY(-1px);
             border-color: rgba(124, 180, 255, 0.16);
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.018)),
-                rgba(255,255,255,0.024);
+            background: rgba(255,255,255,0.03);
         }
 
         .timeline-row-split {
@@ -1422,11 +1412,7 @@
 
         /* Loud card (teal/blue gradient accent) */
         .loud-card {
-            background:
-                radial-gradient(circle at top left,  rgba(67,212,200,0.12), transparent 26%),
-                radial-gradient(circle at bottom right, rgba(47,137,255,0.10), transparent 30%),
-                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-                rgba(8, 18, 32, 0.84);
+            background: rgba(10, 14, 22, 0.84);
         }
 
         /* Two-column form grid */
