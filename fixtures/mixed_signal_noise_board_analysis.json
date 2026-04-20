@@ -2441,7 +2441,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-20T03:17:11.989943+00:00",
+        "timestamp": "2026-04-20T03:28:53.112133+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3839,7 +3839,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-20T03:17:11.989952+00:00",
+    "generated_at": "2026-04-20T03:28:53.112139+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

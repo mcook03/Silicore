@@ -229,8 +229,8 @@
                 "L1"
             ],
             "nets": [
-                "VCC",
-                "SW_NODE"
+                "SW_NODE",
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -248,8 +248,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VCC",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "VCC"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -2489,7 +2489,7 @@
     },
     "analysis_context": {
         "board_name": "legacy_power_board.brd",
-        "timestamp": "2026-04-20T03:17:11.975220+00:00",
+        "timestamp": "2026-04-20T03:28:53.099104+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3289,8 +3289,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "VCC",
-                    "SW_NODE"
+                    "SW_NODE",
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -3308,8 +3308,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VCC",
-                        "SW_NODE"
+                        "SW_NODE",
+                        "VCC"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3701,7 +3701,7 @@
         "score": 1.4,
         "total_penalty": 8.6
     },
-    "generated_at": "2026-04-20T03:17:11.975228+00:00",
+    "generated_at": "2026-04-20T03:28:53.099111+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
