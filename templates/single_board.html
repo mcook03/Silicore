@@ -110,8 +110,8 @@
                 </div>
             </div>
             <div class="bar-list">
-                {% if single_chart and single_chart.severity_bars and single_chart.severity_bars.items %}
-                    {% for item in single_chart.severity_bars.items %}
+                {% if single_chart and single_chart.severity_bars and single_chart.severity_bars["items"] %}
+                    {% for item in single_chart.severity_bars["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>
@@ -136,8 +136,8 @@
                 </div>
             </div>
             <div class="bar-list">
-                {% if single_chart and single_chart.category_bars and single_chart.category_bars.items %}
-                    {% for item in single_chart.category_bars.items %}
+                {% if single_chart and single_chart.category_bars and single_chart.category_bars["items"] %}
+                    {% for item in single_chart.category_bars["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>
@@ -197,8 +197,8 @@
                 </div>
             </div>
             <div class="bar-list" style="margin-top:18px;">
-                {% if single_chart and single_chart.penalty_bars and single_chart.penalty_bars.items %}
-                    {% for item in single_chart.penalty_bars.items %}
+                {% if single_chart and single_chart.penalty_bars and single_chart.penalty_bars["items"] %}
+                    {% for item in single_chart.penalty_bars["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>

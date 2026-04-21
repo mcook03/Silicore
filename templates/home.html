@@ -106,8 +106,8 @@
                 <div class="chart-stat">{{ home_chart.latest_score if home_chart is defined else 0 }}/100</div>
             </div>
             <div class="bar-list">
-                {% if home_chart and home_chart.workflow_chart and home_chart.workflow_chart.items %}
-                    {% for item in home_chart.workflow_chart.items %}
+                {% if home_chart and home_chart.workflow_chart and home_chart.workflow_chart["items"] %}
+                    {% for item in home_chart.workflow_chart["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>
@@ -134,8 +134,8 @@
                 </div>
             </div>
             <div class="bar-list">
-                {% if home_chart and home_chart.domain_distribution and home_chart.domain_distribution.items %}
-                    {% for item in home_chart.domain_distribution.items %}
+                {% if home_chart and home_chart.domain_distribution and home_chart.domain_distribution["items"] %}
+                    {% for item in home_chart.domain_distribution["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>
@@ -160,8 +160,8 @@
                 </div>
             </div>
             <div class="bar-list">
-                {% if home_chart and home_chart.score_distribution and home_chart.score_distribution.items %}
-                    {% for item in home_chart.score_distribution.items %}
+                {% if home_chart and home_chart.score_distribution and home_chart.score_distribution["items"] %}
+                    {% for item in home_chart.score_distribution["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>

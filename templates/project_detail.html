@@ -76,8 +76,8 @@
             </div>
         </div>
         <div class="bar-list">
-            {% if workspace_chart and workspace_chart.quality_mix and workspace_chart.quality_mix.items %}
-                {% for item in workspace_chart.quality_mix.items %}
+            {% if workspace_chart and workspace_chart.quality_mix and workspace_chart.quality_mix["items"] %}
+                {% for item in workspace_chart.quality_mix["items"] %}
                 <div class="bar-row">
                     <div class="bar-label">
                         <span>{{ item.label }}</span>

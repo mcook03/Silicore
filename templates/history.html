@@ -49,8 +49,8 @@
                 </div>
             </div>
             <div class="bar-list">
-                {% if history_chart and history_chart.artifact_bars and history_chart.artifact_bars.items %}
-                    {% for item in history_chart.artifact_bars.items %}
+                {% if history_chart and history_chart.artifact_bars and history_chart.artifact_bars["items"] %}
+                    {% for item in history_chart.artifact_bars["items"] %}
                     <div class="bar-row">
                         <div class="bar-label">
                             <span>{{ item.label }}</span>
