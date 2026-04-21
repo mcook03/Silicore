@@ -130,11 +130,14 @@
                 linear-gradient(135deg, rgba(92, 146, 255, 0.22), rgba(87, 211, 232, 0.1)),
                 rgba(255, 255, 255, 0.03);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            overflow: hidden;
         }
 
-        .brand-mark svg {
-            width: 24px;
-            height: 24px;
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
         }
 
         .brand-title {
@@ -797,15 +800,7 @@
             <div class="site-header-inner">
                 <a href="{{ url_for('index') }}" class="brand" aria-label="Silicore home">
                     <span class="brand-mark">
-                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                            <path d="M18 18h28l-7 9H25l14 10-14 9h21" stroke="url(#silicoreBrand)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                            <defs>
-                                <linearGradient id="silicoreBrand" x1="14" y1="10" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#82B5FF"/>
-                                    <stop offset="1" stop-color="#56D5E8"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
+                        <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore logo">
                     </span>
                     <span>
                         <div class="brand-title">Silicore</div>
