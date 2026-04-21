@@ -1,36 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 {% set run_list = history_runs if history_runs is defined else [] %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Silicore archive</div>
-            <h1 class="hero-title">Run history, exports, and engineering continuity in one archive.</h1>
-            <p class="hero-copy">
-                Reopen past analyses, inspect saved outputs, and keep engineering decisions tied to the exact evidence that created them.
-            </p>
+<section class="card">
+    <div class="section-kicker">Silicore archive</div>
+    <h2 class="section-title">Run history and saved outputs</h2>
+    <p class="section-copy">Reopen past analyses and keep engineering decisions tied to the evidence that created them, without the oversized hero block.</p>
+    <div class="stats-grid" style="margin-top:18px;">
+        <div class="metric-card">
+            <div class="metric-label">Total runs</div>
+            <div class="metric-value">{{ history_summary.total_runs if history_summary is defined else run_list|length }}</div>
         </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Archive telemetry</div>
-            <div class="metric-grid" style="margin-top:18px;">
-                <div class="metric-card">
-                    <div class="metric-label">Total runs</div>
-                    <div class="metric-value">{{ history_summary.total_runs if history_summary is defined else run_list|length }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Export files</div>
-                    <div class="metric-value">{{ history_summary.total_files if history_summary is defined else 0 }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">HTML reports</div>
-                    <div class="metric-value">{{ history_summary.total_html if history_summary is defined else 0 }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">JSON outputs</div>
-                    <div class="metric-value">{{ history_summary.total_json if history_summary is defined else 0 }}</div>
-                </div>
-            </div>
-        </aside>
+        <div class="metric-card">
+            <div class="metric-label">Export files</div>
+            <div class="metric-value">{{ history_summary.total_files if history_summary is defined else 0 }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">HTML reports</div>
+            <div class="metric-value">{{ history_summary.total_html if history_summary is defined else 0 }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">JSON outputs</div>
+            <div class="metric-value">{{ history_summary.total_json if history_summary is defined else 0 }}</div>
+        </div>
     </div>
 </section>
 

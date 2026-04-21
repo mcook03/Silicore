@@ -1,66 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Nexus Review</div>
-            <h1 class="hero-title">Compare whole board sets through one review system.</h1>
-            <p class="hero-copy">
-                Upload multiple designs to rank quality, surface repeated engineering pressure, detect CAM readiness gaps, and understand project-wide health across electrical, production, and reliability domains.
-            </p>
-            <div class="stats-grid" style="margin-top:22px;">
-                <div class="metric-card">
-                    <div class="metric-label">Boards in current review set</div>
-                    <div class="metric-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Average portfolio score</div>
-                    <div class="metric-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">CAM-aware boards</div>
-                    <div class="metric-value">{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</div>
-                </div>
+<section class="grid grid-2">
+    <article class="card">
+        <div class="section-kicker">Nexus review</div>
+        <h2 class="section-title">Compare a board set</h2>
+        <p class="section-copy">Upload multiple designs and run a grouped review without the large launch hero.</p>
+        <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
+            <label>
+                Project Files
+                <input type="file" name="project_files" multiple required>
+            </label>
+            <label>
+                Attach to Project
+                <select name="project_id">
+                    <option value="">No project</option>
+                    {% for project in project_options %}
+                    <option value="{{ project.project_id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Analysis Profile
+                <select name="analysis_profile">
+                    {% for option in analysis_modes.profiles %}
+                    <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Board Type
+                <select name="analysis_board_type">
+                    {% for option in analysis_modes.board_types %}
+                    <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button class="btn btn-primary" type="submit">Run Nexus Review</button>
+        </form>
+    </article>
+
+    <article class="card">
+        <div class="section-kicker">Current review set</div>
+        <h2 class="section-title">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }} boards loaded{% else %}Awaiting portfolio input{% endif %}</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card">
+                <div class="metric-label">Boards in current review set</div>
+                <div class="metric-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Average portfolio score</div>
+                <div class="metric-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">CAM-aware boards</div>
+                <div class="metric-value">{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</div>
             </div>
         </div>
-
-        <aside class="hero-card">
-            <div class="hero-card-label">Launch review</div>
-            <div class="hero-card-title">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }} boards loaded{% else %}Awaiting portfolio input{% endif %}</div>
-            <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
-                <label>
-                    Project Files
-                    <input type="file" name="project_files" multiple required>
-                </label>
-                <label>
-                    Attach to Project
-                    <select name="project_id">
-                        <option value="">No project</option>
-                        {% for project in project_options %}
-                        <option value="{{ project.project_id }}">{{ project.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    Analysis Profile
-                    <select name="analysis_profile">
-                        {% for option in analysis_modes.profiles %}
-                        <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    Board Type
-                    <select name="analysis_board_type">
-                        {% for option in analysis_modes.board_types %}
-                        <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <button class="btn btn-primary" type="submit">Run Nexus Review</button>
-            </form>
-        </aside>
-    </div>
+    </article>
 </section>
 
 <section class="grid grid-2">

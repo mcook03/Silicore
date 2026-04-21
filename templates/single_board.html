@@ -1,66 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Single board review</div>
-            <h1 class="hero-title">Board analysis with Atlas-guided engineering context.</h1>
-            <p class="hero-copy">
-                Run one design through Silicore to inspect signal, power, EMI, thermal, manufacturability, safety, fabrication trust, and fix priority in one continuous review surface.
-            </p>
-            <div class="stats-grid" style="margin-top:22px;">
-                <div class="metric-card">
-                    <div class="metric-label">Current board score</div>
-                    <div class="metric-value">{% if result %}{{ result.score|round|int if result.score > 10 else (result.score * 10)|round|int }}{% else %}--{% endif %}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Engineering findings</div>
-                    <div class="metric-value">{% if result and result.risks %}{{ result.risks|length }}{% else %}0{% endif %}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Review posture</div>
-                    <div class="metric-value-text">{{ selected_board_type.replace('_', ' ')|title if selected_board_type else "General" }}</div>
-                </div>
+<section class="grid grid-2">
+    <article class="card">
+        <div class="section-kicker">Single board review</div>
+        <h2 class="section-title">Analyze one board</h2>
+        <p class="section-copy">Upload a design, choose the review context, and run analysis without the oversized launch hero.</p>
+        <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
+            <label>
+                Board File
+                <input type="file" name="board_file" required>
+            </label>
+            <label>
+                Attach to Project
+                <select name="project_id">
+                    <option value="">No project</option>
+                    {% for project in project_options %}
+                    <option value="{{ project.project_id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Analysis Profile
+                <select name="analysis_profile">
+                    {% for option in analysis_modes.profiles %}
+                    <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Board Type
+                <select name="analysis_board_type">
+                    {% for option in analysis_modes.board_types %}
+                    <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button class="btn btn-primary" type="submit">Analyze Board</button>
+        </form>
+    </article>
+
+    <article class="card">
+        <div class="section-kicker">Current posture</div>
+        <h2 class="section-title">{% if result %}Board context is loaded{% else %}Awaiting board input{% endif %}</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card">
+                <div class="metric-label">Current board score</div>
+                <div class="metric-value">{% if result %}{{ result.score|round|int if result.score > 10 else (result.score * 10)|round|int }}{% else %}--{% endif %}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Engineering findings</div>
+                <div class="metric-value">{% if result and result.risks %}{{ result.risks|length }}{% else %}0{% endif %}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Review posture</div>
+                <div class="metric-value-text">{{ selected_board_type.replace('_', ' ')|title if selected_board_type else "General" }}</div>
             </div>
         </div>
-
-        <aside class="hero-card">
-            <div class="hero-card-label">Launch analysis</div>
-            <div class="hero-card-title">{% if result %}Active board context{% else %}Awaiting board input{% endif %}</div>
-            <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
-                <label>
-                    Board File
-                    <input type="file" name="board_file" required>
-                </label>
-                <label>
-                    Attach to Project
-                    <select name="project_id">
-                        <option value="">No project</option>
-                        {% for project in project_options %}
-                        <option value="{{ project.project_id }}">{{ project.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    Analysis Profile
-                    <select name="analysis_profile">
-                        {% for option in analysis_modes.profiles %}
-                        <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    Board Type
-                    <select name="analysis_board_type">
-                        {% for option in analysis_modes.board_types %}
-                        <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <button class="btn btn-primary" type="submit">Analyze Board</button>
-            </form>
-        </aside>
-    </div>
+    </article>
 </section>
 
 <section class="grid grid-2">

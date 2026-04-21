@@ -1,47 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Nexus portfolio</div>
-            <h1 class="hero-title">Operate every engineering workspace from one command view.</h1>
-            <p class="hero-copy">
-                Manage active projects, review spread, linked runs, and portfolio health across the full Silicore environment.
-            </p>
-            <div class="hero-actions">
-                <a class="btn btn-primary" href="#create-project">Create Project</a>
-                <a class="btn btn-secondary" href="#workspace-gallery">View Workspaces</a>
-            </div>
-        </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Portfolio telemetry</div>
-            <div class="metric-grid" style="margin-top:18px;">
-                <div class="metric-card">
-                    <div class="metric-label">Total projects</div>
-                    <div class="metric-value">{{ projects_summary.total_projects if projects_summary else projects|length }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Linked runs</div>
-                    <div class="metric-value">{{ projects_summary.total_runs if projects_summary else 0 }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Active</div>
-                    <div class="metric-value">{{ projects_summary.populated_projects if projects_summary else 0 }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Empty</div>
-                    <div class="metric-value">{{ projects_summary.empty_projects if projects_summary else 0 }}</div>
-                </div>
-            </div>
-        </aside>
-    </div>
-</section>
-
 <section class="grid grid-2">
     <article class="card" id="create-project">
-        <div class="section-kicker">Create workspace</div>
-        <h2 class="section-title">Start a new Silicore project.</h2>
-        <p class="section-copy">Organize linked runs, reviews, release gates, assignments, and notes in one place.</p>
+        <div class="section-kicker">Nexus portfolio</div>
+        <h2 class="section-title">Create a workspace</h2>
+        <p class="section-copy">Start a project and keep linked runs, release gates, assignments, and notes in one place.</p>
         <form method="post" action="{{ url_for('create_project_route') }}" class="page-stack" style="margin-top:18px;">
             <label>
                 Project Name
@@ -55,6 +18,34 @@
         </form>
     </article>
 
+    <article class="card">
+        <div class="section-kicker">Portfolio telemetry</div>
+        <h2 class="section-title">Workspace overview</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card">
+                <div class="metric-label">Total projects</div>
+                <div class="metric-value">{{ projects_summary.total_projects if projects_summary else projects|length }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Linked runs</div>
+                <div class="metric-value">{{ projects_summary.total_runs if projects_summary else 0 }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Active</div>
+                <div class="metric-value">{{ projects_summary.populated_projects if projects_summary else 0 }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Empty</div>
+                <div class="metric-value">{{ projects_summary.empty_projects if projects_summary else 0 }}</div>
+            </div>
+        </div>
+        <div class="btn-row">
+            <a class="btn btn-secondary" href="#workspace-gallery">View Workspaces</a>
+        </div>
+    </article>
+</section>
+
+<section class="grid grid-2">
     <article class="card">
         <div class="section-kicker">Portfolio pulse</div>
         <h2 class="section-title">Nexus portfolio status.</h2>

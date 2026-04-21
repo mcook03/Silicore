@@ -739,34 +739,22 @@
                         <span>Live operating surface</span>
                         <span class="system-health">Atlas online</span>
                     </div>
-                    <div class="system-grid">
-                        <div class="board-canvas" aria-hidden="true">
-                            <div class="board-slab">
-                                <span class="board-trace trace-a"></span>
-                                <span class="board-trace trace-b"></span>
-                                <span class="board-via"></span>
+                    <div class="system-sidebar">
+                        {% if dashboard_story and dashboard_story.pillars %}
+                            {% for pillar in dashboard_story.pillars %}
+                            <div class="mini-console">
+                                <div class="panel-overline">{{ pillar.title }}</div>
+                                <strong>{{ pillar.value_label }}</strong>
+                                <p>{{ pillar.description }}</p>
                             </div>
-                            <span class="board-tag tag-risk">Risk <strong>{{ dashboard_story.top_category if dashboard_story is defined else "Monitoring" }}</strong></span>
-                            <span class="board-tag tag-atlas">Atlas <strong>Prioritizing</strong></span>
-                            <span class="board-tag tag-revision">Revision <strong>{{ stats.project_runs if stats is defined else 0 }} projects</strong></span>
-                        </div>
-                        <div class="system-sidebar">
-                            {% if dashboard_story and dashboard_story.pillars %}
-                                {% for pillar in dashboard_story.pillars %}
-                                <div class="mini-console">
-                                    <div class="panel-overline">{{ pillar.title }}</div>
-                                    <strong>{{ pillar.value_label }}</strong>
-                                    <p>{{ pillar.description }}</p>
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="mini-console">
-                                    <div class="panel-overline">Analyze</div>
-                                    <strong>Board-level intelligence</strong>
-                                    <p>Score design risk, understand why the score moved, and decide what gets fixed next.</p>
-                                </div>
-                            {% endif %}
-                        </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="mini-console">
+                                <div class="panel-overline">Analyze</div>
+                                <strong>Board-level intelligence</strong>
+                                <p>Score design risk, understand why the score moved, and decide what gets fixed next.</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </aside>

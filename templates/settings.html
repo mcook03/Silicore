@@ -1,26 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Atlas configuration</div>
-            <h1 class="hero-title">Tune the engineering intelligence layer behind every review.</h1>
-            <p class="hero-copy">
-                Configure analysis profile, board context, review pillars, and scoring behavior so Silicore behaves like a real engineering system, not a fixed demo.
-            </p>
+<section class="card">
+    <div class="section-kicker">Atlas configuration</div>
+    <h2 class="section-title">Review settings and profile controls</h2>
+    <p class="section-copy">Configure analysis profile, board context, review pillars, and scoring behavior without the oversized hero section.</p>
+    <div class="metric-grid" style="margin-top:18px;">
+        {% for item in settings_architecture.profile_cards %}
+        <div class="metric-card">
+            <div class="metric-label">{{ item.title }}</div>
+            <div class="metric-value-text">{{ item.value }}</div>
+            <div class="metric-sub">{{ item.copy }}</div>
         </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Configuration posture</div>
-            <div class="metric-grid" style="margin-top:18px;">
-                {% for item in settings_architecture.profile_cards %}
-                <div class="metric-card">
-                    <div class="metric-label">{{ item.title }}</div>
-                    <div class="metric-value-text">{{ item.value }}</div>
-                    <div class="metric-sub">{{ item.copy }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        </aside>
+        {% endfor %}
     </div>
 </section>
 
