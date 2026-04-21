@@ -820,7 +820,7 @@
     },
     "analysis_context": {
         "board_name": "gerber_cam_missing_drill",
-        "timestamp": "2026-04-21T02:45:44.788328+00:00",
+        "timestamp": "2026-04-21T15:09:12.953389+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -1501,7 +1501,7 @@
         "score": 8.4,
         "total_penalty": 1.6
     },
-    "generated_at": "2026-04-21T02:45:44.788332+00:00",
+    "generated_at": "2026-04-21T15:09:12.953392+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

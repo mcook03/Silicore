@@ -297,8 +297,8 @@
                 "U1"
             ],
             "nets": [
-                "VCC",
-                "GND"
+                "GND",
+                "VCC"
             ],
             "region": null,
             "metrics": {
@@ -1977,7 +1977,7 @@
     },
     "analysis_context": {
         "board_name": "altium_ascii_external.pcbdocascii",
-        "timestamp": "2026-04-21T02:45:44.750010+00:00",
+        "timestamp": "2026-04-21T15:09:12.886366+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -2790,8 +2790,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "VCC",
-                    "GND"
+                    "GND",
+                    "VCC"
                 ],
                 "region": null,
                 "metrics": {
@@ -3166,7 +3166,7 @@
         "score": 0.4,
         "total_penalty": 9.6
     },
-    "generated_at": "2026-04-21T02:45:44.750017+00:00",
+    "generated_at": "2026-04-21T15:09:12.886371+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

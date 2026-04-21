@@ -13,10 +13,10 @@
             --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
             --bg: #06080d;
             --bg-deep: #080b12;
-            --surface: rgba(12, 16, 24, 0.9);
-            --surface-2: rgba(15, 20, 31, 0.92);
-            --surface-3: rgba(19, 25, 39, 0.95);
-            --surface-soft: rgba(255, 255, 255, 0.03);
+            --surface: #0c1119;
+            --surface-2: #0f1621;
+            --surface-3: #131b28;
+            --surface-soft: rgba(255, 255, 255, 0.02);
             --line: rgba(153, 176, 219, 0.14);
             --line-strong: rgba(120, 164, 255, 0.28);
             --text: #f5f7fb;
@@ -407,6 +407,14 @@
             background: var(--surface-2);
         }
 
+        .metric-card,
+        .timeline-row,
+        .artifact-row,
+        .context-card,
+        .preview-box {
+            background: var(--surface-3);
+        }
+
         .hero-card-label,
         .panel-kicker,
         .metric-label,
@@ -549,7 +557,7 @@
             padding: 13px 14px;
             border-radius: 14px;
             border: 1px solid rgba(153, 176, 219, 0.12);
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--surface-3);
             color: var(--text);
             outline: none;
         }
