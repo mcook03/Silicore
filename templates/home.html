@@ -1,213 +1,1005 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero" id="product">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Hardware design intelligence and automation</div>
-            <h1 class="hero-title">Detect PCB risk earlier. Automate what happens next.</h1>
-            <p class="hero-copy">
-                Silicore analyzes PCB designs, explains engineering issues, compares revisions, tracks workspace health, and helps hardware teams operate design review like a system instead of a manual checklist.
-            </p>
-            <div class="hero-actions">
-                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Start Analysis</a>
-                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">View Platform</a>
-            </div>
-            <div class="hero-meta">
-                <span class="chip">PCB Risk Analysis</span>
-                <span class="chip">Revision Intelligence</span>
-                <span class="chip">Workflow Automation</span>
-                <span class="chip">Atlas-guided review</span>
-            </div>
-        </div>
+<style>
+    .home-reset-shell {
+        --home-panel: rgba(8, 12, 18, 0.88);
+        --home-panel-strong: rgba(11, 16, 24, 0.96);
+        --home-line: rgba(146, 168, 201, 0.16);
+        --home-line-strong: rgba(110, 199, 255, 0.3);
+        --home-cyan: #7de7ff;
+        --home-mint: #77f0bf;
+        --home-amber: #ffbf6d;
+        --home-ink: #d7e2f2;
+        display: grid;
+        gap: 24px;
+    }
 
-        <aside class="hero-card">
-            <div class="hero-card-label">Live product preview</div>
-            <div class="hero-card-title">Engineering command window</div>
-            <p class="section-copy">
-                A single operating surface for board review, revision changes, automation triggers, and team response.
-            </p>
-            <div class="canvas-frame" style="margin-top:18px;">
-                <div class="canvas-center"></div>
-            </div>
-            <div class="metric-grid" style="margin-top:18px;">
-                <div class="metric-card">
-                    <div class="metric-label">Runs tracked</div>
-                    <div class="metric-value">{{ stats.total_runs if stats is defined else 0 }}</div>
-                    <div class="metric-sub">Across the current Silicore environment</div>
+    .home-reset-shell .hero {
+        padding: clamp(28px, 4vw, 42px);
+        background:
+            radial-gradient(circle at top left, rgba(125, 231, 255, 0.12), transparent 26%),
+            radial-gradient(circle at right center, rgba(119, 240, 191, 0.08), transparent 24%),
+            linear-gradient(140deg, rgba(8, 13, 20, 0.98), rgba(5, 8, 13, 0.98));
+    }
+
+    .home-reset-shell .hero::after {
+        display: none;
+    }
+
+    .launch-hero {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .launch-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(147, 175, 215, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(147, 175, 215, 0.05) 1px, transparent 1px);
+        background-size: 52px 52px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), transparent 92%);
+        pointer-events: none;
+    }
+
+    .launch-copy,
+    .launch-side {
+        position: relative;
+        z-index: 1;
+    }
+
+    .launch-copy {
+        display: grid;
+        gap: 18px;
+    }
+
+    .launch-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border: 1px solid rgba(125, 231, 255, 0.16);
+        border-radius: 999px;
+        background: rgba(125, 231, 255, 0.08);
+        color: var(--home-ink);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .launch-kicker::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--home-cyan);
+        box-shadow: 0 0 0 5px rgba(125, 231, 255, 0.12);
+    }
+
+    .launch-title {
+        margin: 0;
+        max-width: 10ch;
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 7vw, 6.2rem);
+        line-height: 0.9;
+        letter-spacing: -0.08em;
+    }
+
+    .launch-copy p {
+        margin: 0;
+        max-width: 60ch;
+        color: var(--text-soft);
+        font-size: 16px;
+        line-height: 1.75;
+    }
+
+    .launch-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .launch-metric {
+        padding: 16px;
+        border: 1px solid var(--home-line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .launch-metric-value {
+        font-family: var(--font-display);
+        font-size: clamp(1.8rem, 2vw, 2.8rem);
+        line-height: 0.9;
+        letter-spacing: -0.06em;
+    }
+
+    .launch-metric-label {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .launch-metric-note {
+        margin-top: 6px;
+        color: var(--text-soft);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .launch-side {
+        display: grid;
+        gap: 16px;
+    }
+
+    .system-panel,
+    .signal-card,
+    .workflow-card,
+    .deployment-card {
+        border: 1px solid var(--home-line);
+        border-radius: 26px;
+        background: var(--home-panel);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .system-panel {
+        padding: 20px;
+        display: grid;
+        gap: 18px;
+    }
+
+    .system-topline,
+    .panel-overline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .system-health {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--home-ink);
+    }
+
+    .system-health::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--home-mint);
+        box-shadow: 0 0 0 4px rgba(119, 240, 191, 0.12);
+    }
+
+    .system-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
+    }
+
+    .board-canvas {
+        position: relative;
+        min-height: 290px;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(125, 231, 255, 0.12);
+        background:
+            radial-gradient(circle at 20% 22%, rgba(125, 231, 255, 0.16), transparent 14%),
+            linear-gradient(180deg, rgba(11, 18, 28, 0.98), rgba(5, 9, 15, 0.98));
+    }
+
+    .board-canvas::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(147, 175, 215, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(147, 175, 215, 0.06) 1px, transparent 1px);
+        background-size: 34px 34px;
+    }
+
+    .board-slab {
+        position: absolute;
+        inset: 22% 10%;
+        border-radius: 28px;
+        transform: perspective(1200px) rotateX(62deg) rotateZ(-9deg);
+        border: 1px solid rgba(125, 231, 255, 0.18);
+        background:
+            radial-gradient(circle at 20% 34%, rgba(125, 231, 255, 0.18), transparent 12%),
+            linear-gradient(180deg, rgba(9, 15, 24, 0.98), rgba(4, 9, 16, 0.98));
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 28px 50px rgba(0, 0, 0, 0.32);
+    }
+
+    .board-trace,
+    .board-via {
+        position: absolute;
+        background: linear-gradient(90deg, transparent, rgba(231, 244, 255, 0.92), transparent);
+        box-shadow: 0 0 14px rgba(125, 231, 255, 0.28);
+        border-radius: 999px;
+    }
+
+    .board-trace.trace-a {
+        top: 32%;
+        left: 14%;
+        width: 54%;
+        height: 3px;
+    }
+
+    .board-trace.trace-b {
+        top: 50%;
+        left: 38%;
+        width: 36%;
+        height: 3px;
+        transform: rotate(-24deg);
+    }
+
+    .board-via {
+        width: 3px;
+        height: 45%;
+        top: 22%;
+        left: 48%;
+    }
+
+    .board-tag {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(4, 7, 12, 0.76);
+        color: var(--text-soft);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .board-tag strong {
+        color: var(--text);
+        font-weight: 700;
+    }
+
+    .board-tag.tag-risk {
+        top: 16px;
+        left: 16px;
+    }
+
+    .board-tag.tag-revision {
+        right: 16px;
+        bottom: 18px;
+    }
+
+    .board-tag.tag-atlas {
+        left: 24%;
+        bottom: 26px;
+    }
+
+    .system-sidebar {
+        display: grid;
+        gap: 12px;
+    }
+
+    .mini-console {
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid var(--home-line);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .mini-console strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 15px;
+        color: var(--text);
+    }
+
+    .mini-console p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .signal-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .signal-card {
+        padding: 22px;
+        display: grid;
+        gap: 16px;
+    }
+
+    .signal-card h2,
+    .workflow-card h2,
+    .deployment-card h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 2vw, 2rem);
+        line-height: 1;
+        letter-spacing: -0.05em;
+    }
+
+    .signal-card p,
+    .workflow-card p,
+    .deployment-card p,
+    .control-summary {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .signal-list,
+    .workflow-list,
+    .parser-grid,
+    .deployment-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .signal-list div,
+    .workflow-list div,
+    .deployment-list div {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-soft);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .control-room {
+        display: grid;
+        gap: 20px;
+        padding: 24px;
+        border: 1px solid var(--home-line);
+        border-radius: 30px;
+        background:
+            radial-gradient(circle at top right, rgba(125, 231, 255, 0.08), transparent 22%),
+            linear-gradient(180deg, rgba(9, 13, 21, 0.98), rgba(7, 10, 16, 0.98));
+    }
+
+    .control-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: end;
+    }
+
+    .control-head h2 {
+        margin: 10px 0 0;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 3vw, 3.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+    }
+
+    .control-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 16px;
+    }
+
+    .workflow-card,
+    .deployment-card {
+        padding: 22px;
+        display: grid;
+        gap: 18px;
+    }
+
+    .workflow-stage {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 14px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .workflow-stage:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .workflow-index {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: rgba(125, 231, 255, 0.08);
+        color: var(--home-cyan);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .workflow-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .workflow-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .scoreboard {
+        display: grid;
+        gap: 16px;
+    }
+
+    .score-panel,
+    .maturity-panel {
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid var(--home-line);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .score-value {
+        font-family: var(--font-display);
+        font-size: clamp(2.8rem, 4vw, 4rem);
+        line-height: 0.9;
+        letter-spacing: -0.06em;
+    }
+
+    .score-note {
+        margin-top: 8px;
+        color: var(--text-soft);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .sparkline {
+        width: 100%;
+        height: 90px;
+        margin-top: 14px;
+        display: block;
+    }
+
+    .sparkline .guide {
+        stroke: rgba(255, 255, 255, 0.09);
+        stroke-width: 1;
+    }
+
+    .sparkline .path {
+        fill: none;
+        stroke: var(--home-cyan);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .sparkline .dot {
+        fill: var(--home-cyan);
+    }
+
+    .bar-stack {
+        display: grid;
+        gap: 12px;
+    }
+
+    .bar-row {
+        display: grid;
+        gap: 6px;
+    }
+
+    .bar-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--text-soft);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .bar-track {
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(125, 231, 255, 0.35), rgba(119, 240, 191, 0.9));
+    }
+
+    .maturity-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .maturity-row {
+        padding: 14px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .maturity-row:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .maturity-headline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .maturity-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .tone-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .tone-pill.low {
+        color: #c5fae3;
+        background: rgba(119, 240, 191, 0.12);
+    }
+
+    .tone-pill.medium {
+        color: #ffe0b1;
+        background: rgba(255, 191, 109, 0.14);
+    }
+
+    .parser-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .parser-card {
+        padding: 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .parser-card strong {
+        display: block;
+        font-size: 14px;
+        color: var(--text);
+    }
+
+    .parser-card span {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .activity-grid {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: 16px;
+    }
+
+    .activity-card {
+        padding: 22px;
+        border: 1px solid var(--home-line);
+        border-radius: 24px;
+        background: var(--home-panel-strong);
+    }
+
+    .activity-card h3 {
+        margin: 10px 0 0;
+        font-family: var(--font-display);
+        font-size: 1.55rem;
+        line-height: 1;
+        letter-spacing: -0.05em;
+    }
+
+    .run-feed {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .run-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .run-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .run-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .capsule-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(125, 231, 255, 0.16);
+        background: rgba(125, 231, 255, 0.08);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .empty-callout {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px dashed rgba(255, 255, 255, 0.12);
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    @media (max-width: 1180px) {
+        .launch-metrics,
+        .signal-grid,
+        .control-grid,
+        .activity-grid,
+        .system-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .launch-title {
+            font-size: clamp(2.5rem, 14vw, 4rem);
+        }
+
+        .control-head {
+            grid-template-columns: 1fr;
+            align-items: start;
+        }
+
+        .run-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="home-reset-shell">
+    <section class="hero launch-hero" id="product">
+        <div class="hero-inner">
+            <div class="launch-copy">
+                <span class="launch-kicker">Hardware design intelligence system</span>
+                <h1 class="launch-title">Run board review like a control room.</h1>
+                <p>{{ dashboard_story.summary if dashboard_story is defined else "Silicore turns board analysis, revision awareness, and engineering follow-through into one operating surface for hardware teams." }}</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
+                    <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">Open Workspaces</a>
+                    <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Run Nexus Review</a>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-label">Projects</div>
-                    <div class="metric-value">{{ projects|length if projects is defined else 0 }}</div>
-                    <div class="metric-sub">Active engineering workspaces</div>
+                <div class="launch-metrics">
+                    <div class="launch-metric">
+                        <div class="launch-metric-value">{{ stats.total_runs if stats is defined else 0 }}</div>
+                        <div class="launch-metric-label">Runs tracked</div>
+                        <div class="launch-metric-note">Saved analysis history that can be compared, audited, and reused.</div>
+                    </div>
+                    <div class="launch-metric">
+                        <div class="launch-metric-value">{{ projects|length if projects is defined else 0 }}</div>
+                        <div class="launch-metric-label">Workspaces online</div>
+                        <div class="launch-metric-note">Persistent project context instead of isolated review uploads.</div>
+                    </div>
+                    <div class="launch-metric">
+                        <div class="launch-metric-value">{{ home_chart.latest_score if home_chart is defined else 0 }}</div>
+                        <div class="launch-metric-label">Latest scored run</div>
+                        <div class="launch-metric-note">The current engineering posture from the most recent completed analysis.</div>
+                    </div>
                 </div>
             </div>
-        </aside>
-    </div>
-</section>
 
-<section class="card">
-    <div class="btn-row" style="margin-top:0;">
-        <span class="top-badge">Built for hardware teams</span>
-        <span class="top-badge">Revision-aware analysis</span>
-        <span class="top-badge">Reports and exports</span>
-        <span class="top-badge">Workflow automation</span>
-        <span class="top-badge">Operations visibility</span>
-    </div>
-</section>
-
-<section class="grid grid-2" id="how-it-works">
-    <article class="card">
-        <div class="section-kicker">Why teams struggle</div>
-        <h2 class="section-title">Design risk gets buried in slow review systems.</h2>
-        <div class="data-list" style="margin-top:18px;">
-            <div class="panel-muted">Critical issues are hard to catch early enough to prevent downstream waste.</div>
-            <div class="panel-muted">Revision changes can introduce new failure pressure without clear visibility.</div>
-            <div class="panel-muted">Manual review handoffs make engineering decisions inconsistent and hard to repeat.</div>
-            <div class="panel-muted">Teams lose time moving from detection to action, reporting, and follow-up.</div>
-        </div>
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">What Silicore changes</div>
-        <h2 class="section-title">Silicore turns analysis into an operating workflow.</h2>
-        <div class="data-list" style="margin-top:18px;">
-            <div class="panel-muted">Automated design analysis and engineering risk scoring.</div>
-            <div class="panel-muted">Revision comparison with Atlas-guided prioritization.</div>
-            <div class="panel-muted">Persistent projects, release gates, review history, and auditability.</div>
-            <div class="panel-muted">Alerts, scheduled runs, validation lanes, and external package trust reporting.</div>
-        </div>
-    </article>
-</section>
-
-<section class="page-stack" id="capabilities">
-    <div>
-        <div class="eyebrow">Platform capabilities</div>
-        <h2 class="section-title">A PCB intelligence platform, not a file viewer.</h2>
-        <p class="page-copy">The product is organized around engineering decisions, not isolated outputs.</p>
-    </div>
-
-    <div class="stats-grid">
-        <article class="card">
-            <div class="section-kicker">PCB Risk Analysis</div>
-            <h3 class="card-title">Electrical, production, thermal, safety, and fabrication trust in one review surface.</h3>
-        </article>
-        <article class="card">
-            <div class="section-kicker">Revision Comparison</div>
-            <h3 class="card-title">Track score delta, recurring domains, and what actually changed between runs.</h3>
-        </article>
-        <article class="card">
-            <div class="section-kicker">Engineering Recommendations</div>
-            <h3 class="card-title">Move from findings to fix order with Atlas-guided next actions.</h3>
-        </article>
-        <article class="card">
-            <div class="section-kicker">Automations & Alerts</div>
-            <h3 class="card-title">Trigger scans, reports, and escalation when project risk crosses thresholds.</h3>
-        </article>
-    </div>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">How it works</div>
-        <h2 class="section-title">Five steps from design file to engineering action.</h2>
-        <div class="timeline" style="margin-top:18px;">
-            <div class="timeline-row"><div><div class="list-title">1. Upload board design files</div><div class="list-meta">Single-board review, project reviews, CAM packages, and saved workspaces.</div></div></div>
-            <div class="timeline-row"><div><div class="list-title">2. Silicore parses and evaluates design risk</div><div class="list-meta">Format-aware parsing across KiCad, Gerber/CAM, and expanding import paths.</div></div></div>
-            <div class="timeline-row"><div><div class="list-title">3. Atlas Intelligence identifies concerns</div><div class="list-meta">Findings are clustered, prioritized, and framed as engineering decisions.</div></div></div>
-            <div class="timeline-row"><div><div class="list-title">4. Risk scoring and comparisons surface priorities</div><div class="list-meta">Use board-level and workspace-level posture to guide the next review loop.</div></div></div>
-            <div class="timeline-row"><div><div class="list-title">5. Automations notify teams and trigger follow-up</div><div class="list-meta">Reports, validation, alerts, and release workflow can all move from the same platform.</div></div></div>
-        </div>
-    </article>
-
-    <article class="card" id="automations">
-        <div class="section-kicker">From analysis to action</div>
-        <h2 class="section-title">Automate engineering review workflows.</h2>
-        <p class="section-copy">
-            Silicore should not stop at identifying issues. It should monitor change, trigger alerts, generate reports, support design reviews, and help teams respond automatically.
-        </p>
-        <div class="timeline" style="margin-top:18px;">
-            <div class="timeline-row"><div><div class="list-title">Trigger</div><div class="list-meta">New file upload, revision change, score threshold crossed, scheduled interval.</div></div></div>
-            <div class="timeline-row"><div><div class="list-title">Condition</div><div class="list-meta">If thermal risk increases, if project score falls, if critical issues appear, if CAM trust drops.</div></div></div>
-            <div class="timeline-row"><div><div class="list-title">Action</div><div class="list-meta">Notify the team, create a report, assign a review, or open the next engineering task.</div></div></div>
-        </div>
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Recent platform activity</div>
-        <h2 class="section-title">What the current Silicore environment is doing.</h2>
-        {% if recent_runs %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for run in recent_runs %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ run.label or run.name }}</div>
-                    <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+            <aside class="launch-side">
+                <div class="system-panel">
+                    <div class="system-topline">
+                        <span>Live operating surface</span>
+                        <span class="system-health">Atlas online</span>
+                    </div>
+                    <div class="system-grid">
+                        <div class="board-canvas" aria-hidden="true">
+                            <div class="board-slab">
+                                <span class="board-trace trace-a"></span>
+                                <span class="board-trace trace-b"></span>
+                                <span class="board-via"></span>
+                            </div>
+                            <span class="board-tag tag-risk">Risk <strong>{{ dashboard_story.top_category if dashboard_story is defined else "Monitoring" }}</strong></span>
+                            <span class="board-tag tag-atlas">Atlas <strong>Prioritizing</strong></span>
+                            <span class="board-tag tag-revision">Revision <strong>{{ stats.project_runs if stats is defined else 0 }} projects</strong></span>
+                        </div>
+                        <div class="system-sidebar">
+                            {% if dashboard_story and dashboard_story.pillars %}
+                                {% for pillar in dashboard_story.pillars %}
+                                <div class="mini-console">
+                                    <div class="panel-overline">{{ pillar.title }}</div>
+                                    <strong>{{ pillar.value_label }}</strong>
+                                    <p>{{ pillar.description }}</p>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="mini-console">
+                                    <div class="panel-overline">Analyze</div>
+                                    <strong>Board-level intelligence</strong>
+                                    <p>Score design risk, understand why the score moved, and decide what gets fixed next.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <a class="btn btn-secondary" href="{{ run.path }}">Open</a>
+            </aside>
+        </div>
+    </section>
+
+    <section class="signal-grid">
+        <article class="signal-card">
+            <div class="panel-overline">Single-board review</div>
+            <h2>Move from upload to engineering judgment faster.</h2>
+            <p>Silicore is built to catch physical, electrical, and fabrication risk without forcing the team through manual checklists.</p>
+            <div class="signal-list">
+                <div>Evaluate board files against design rules, domain risk pressure, and scoring logic.</div>
+                <div>Surface findings with engineering framing instead of raw issue dumps.</div>
+                <div>Export reports when the review needs to move outside the tool.</div>
             </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">No recent activity is available yet.</div>
-        {% endif %}
-    </article>
+        </article>
 
-    <article class="card">
-        <div class="section-kicker">Solutions</div>
-        <h2 class="section-title">Built for serious engineering organizations.</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">PCB Engineers</div><div class="metric-sub">Catch design risk earlier and shorten the next review cycle.</div></div>
-            <div class="metric-card"><div class="metric-label">Review Leads</div><div class="metric-sub">Standardize scoring, comparison, and signoff preparation.</div></div>
-            <div class="metric-card"><div class="metric-label">Reliability Teams</div><div class="metric-sub">Track recurring problem families and emerging fabrication risk.</div></div>
-            <div class="metric-card"><div class="metric-label">Manufacturing Readiness</div><div class="metric-sub">Validate package completeness, CAM trust, and project posture before handoff.</div></div>
-        </div>
-    </article>
-</section>
+        <article class="signal-card">
+            <div class="panel-overline">Workspace intelligence</div>
+            <h2>Keep revision context attached to the project.</h2>
+            <p>Real teams need continuity: what changed, what recurred, and what is quietly getting worse across the workspace.</p>
+            <div class="signal-list">
+                <div>Track score movement and recurring risk categories across saved runs.</div>
+                <div>Compare revisions inside a project instead of stitching history together manually.</div>
+                <div>Give review leads a stable system for signoff prep and auditability.</div>
+            </div>
+        </article>
 
-<section class="card">
-    <div class="section-kicker">Outcomes</div>
-    <h2 class="section-title">What Silicore should improve across the hardware organization.</h2>
-    <div class="stats-grid" style="margin-top:18px;">
-        <div class="metric-card"><div class="metric-value">{{ stats.single_runs if stats is defined else 0 }}</div><div class="metric-label">single-board runs</div><div class="metric-sub">Fast inspection cycles on focused designs.</div></div>
-        <div class="metric-card"><div class="metric-value">{{ stats.project_runs if stats is defined else 0 }}</div><div class="metric-label">project reviews</div><div class="metric-sub">Cross-board review and revision monitoring.</div></div>
-        <div class="metric-card"><div class="metric-value">{{ stats.exported_runs if stats is defined else 0 }}</div><div class="metric-label">export packages</div><div class="metric-sub">Reports, outputs, and engineering continuity artifacts.</div></div>
-        <div class="metric-card"><div class="metric-value">{{ projects|length if projects is defined else 0 }}</div><div class="metric-label">active workspaces</div><div class="metric-sub">Scalable project oversight in the product.</div></div>
-    </div>
-</section>
+        <article class="signal-card" id="automations">
+            <div class="panel-overline">Automation layer</div>
+            <h2>Turn analysis into the next action automatically.</h2>
+            <p>The product should not stop at detection. It should help the team trigger follow-up, route attention, and standardize the response.</p>
+            <div class="signal-list">
+                <div>Alert when score bands, thermal pressure, or package trust change materially.</div>
+                <div>Generate outputs and review artifacts on schedule instead of on request.</div>
+                <div>Push teams from discovery into triage, ownership, and release readiness.</div>
+            </div>
+        </article>
+    </section>
 
-<section class="card" id="pricing">
-    <div class="section-kicker">Pricing</div>
-    <h2 class="section-title">Simple, premium tiers that match platform maturity.</h2>
-    <div class="stats-grid" style="margin-top:18px;">
-        <div class="metric-card"><div class="metric-label">Starter</div><div class="metric-value-text">Manual analysis</div><div class="metric-sub">Single board review and baseline exports.</div></div>
-        <div class="metric-card"><div class="metric-label">Professional</div><div class="metric-value-text">Projects + history</div><div class="metric-sub">Saved workspaces, exports, and review continuity.</div></div>
-        <div class="metric-card"><div class="metric-label">Team</div><div class="metric-value-text">Monitoring</div><div class="metric-sub">Scheduled runs, alerts, comparisons, and shared review.</div></div>
-        <div class="metric-card"><div class="metric-label">Enterprise</div><div class="metric-value-text">Governance</div><div class="metric-sub">Automation, audit history, validation lanes, and integration readiness.</div></div>
-    </div>
-</section>
-
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Build with more confidence</div>
-            <h2 class="hero-title">Turn PCB review into a smarter operating system.</h2>
-            <p class="hero-copy">
-                Silicore is evolving from a risk analysis tool into a hardware design intelligence and automation platform for real engineering teams.
-            </p>
-            <div class="hero-actions">
-                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
-                <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">Open Projects</a>
+    <section class="control-room" id="workflows">
+        <div class="control-head">
+            <div>
+                <div class="panel-overline">Operating model</div>
+                <h2>One workflow from board file to release decision.</h2>
+                <p class="control-summary">This page is now organized around the real sequence of work inside Silicore: analyze, explain, compare, prioritize, and operationalize.</p>
+            </div>
+            <div class="btn-row" style="margin-top:0;">
+                <a class="btn btn-secondary" href="{{ url_for('history_page') }}">Open Run History</a>
+                <a class="btn btn-secondary" href="{{ url_for('settings_page') }}">Configure Platform</a>
             </div>
         </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Platform posture</div>
-            <div class="hero-card-title">Engineering-first. Operationally powerful.</div>
-            <p class="section-copy">
-                This should feel like software serious hardware organizations trust for high-value design decisions.
-            </p>
-        </aside>
-    </div>
-</section>
+
+        <div class="control-grid">
+            <article class="workflow-card">
+                <div class="panel-overline">Workflow stages</div>
+                <h2>Built for how hardware teams actually review.</h2>
+                <div class="workflow-list">
+                    <div class="workflow-stage">
+                        <div class="workflow-index">01</div>
+                        <div>
+                            <div class="workflow-title">Ingest board data</div>
+                            <div class="workflow-meta">Bring in single-board files, linked projects, and revision checkpoints without losing context.</div>
+                        </div>
+                    </div>
+                    <div class="workflow-stage">
+                        <div class="workflow-index">02</div>
+                        <div>
+                            <div class="workflow-title">Score and explain</div>
+                            <div class="workflow-meta">Convert findings into readable engineering pressure with confidence, domains, and signals that can be acted on.</div>
+                        </div>
+                    </div>
+                    <div class="workflow-stage">
+                        <div class="workflow-index">03</div>
+                        <div>
+                            <div class="workflow-title">Compare revisions</div>
+                            <div class="workflow-meta">Spot what moved between runs so review energy stays focused on meaningful change.</div>
+                        </div>
+                    </div>
+                    <div class="workflow-stage">
+                        <div class="workflow-index">04</div>
+                        <div>
+                            <div class="workflow-title">Route next actions</div>
+                            <div class="workflow-meta">Use project awareness, recurring categories, and automation triggers to decide what happens next.</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <div class="scoreboard">
+                <article class="score-panel">
+                    <div class="panel-overline">Latest signal</div>
+                    <div class="score-value">{{ home_chart.latest_score if home_chart is defined else 0 }}/100</div>
+                    <div class="score-note">
+                        {% if home_chart and home_chart.latest_source %}
+                        Latest scored run: {{ home_chart.latest_source }}.
+                        {% else %}
+                        Run a board analysis to start building score history.
+                        {% endif %}
+                    </div>
+                    {% if home_chart and home_chart.trend and home_chart.trend.points %}
+                    <svg class="sparkline" viewBox="0 0 100 36" role="img" aria-label="Recent score trend">
+                        {% for guide in home_chart.trend.guides %}
+                        <line class="guide" x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}"></line>
+                        {% endfor %}
+                        <polyline class="path" points="{{ home_chart.trend.points }}"></polyline>
+                        {% for point in home_chart.trend.points.split() %}
+                            {% set coords = point.split(',') %}
+                            {% if coords|length == 2 %}
+                            <circle class="dot" cx="{{ coords[0] }}" cy="{{ coords[1] }}" r="1.9"></circle>
+                            {% endif %}
+                        {% endfor %}
+                    </svg>
+                    {% endif %}
+                </article>
+
+                <article class="score-panel">
+                    <div class="panel-overline">Run mix</div>
+                    <div class="bar-stack">
+                        {% if home_chart and home_chart.workflow_chart and home_chart.workflow_chart["items"] %}
+                            {% for item in home_chart.workflow_chart["items"] %}
+                            <div class="bar-row">
+                                <div class="bar-label">
+                                    <span>{{ item.label }}</span>
+                                    <span>{{ item.value }}</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="bar-row">
+                                <div class="bar-label"><span>No data yet</span><span>0</span></div>
+                                <div class="bar-track"><div class="bar-fill" style="width: 0%;"></div></div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+
+                <article class="maturity-panel">
+                    <div class="panel-overline">Platform maturity</div>
+                    <div class="maturity-list">
+                        {% if dashboard_story and dashboard_story.maturity_rows %}
+                            {% for row in dashboard_story.maturity_rows %}
+                            <div class="maturity-row">
+                                <div class="maturity-headline">
+                                    <span class="maturity-title">{{ row.title }}</span>
+                                    <span class="tone-pill {{ row.status_tone }}">{{ row.status }}</span>
+                                </div>
+                                <div class="run-meta">{{ row.evidence }}</div>
+                                <div class="workflow-meta">{{ row.meaning }}</div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="activity-grid">
+        <article class="activity-card">
+            <div class="panel-overline">Format readiness</div>
+            <h3>Parsers and import paths</h3>
+            <p class="control-summary">Silicore is not just a viewer shell. The product surface should clearly communicate which engineering inputs are already wired into the workflow.</p>
+            <div class="parser-grid" style="margin-top:18px;">
+                {% if dashboard_story and dashboard_story.parser_readiness %}
+                    {% for parser in dashboard_story.parser_readiness[:6] %}
+                    <div class="parser-card">
+                        <strong>{{ parser.label }}</strong>
+                        <span>{{ parser.status }} · {{ parser.extension }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="activity-card">
+            <div class="panel-overline">Recent activity</div>
+            <h3>What the workspace is doing right now</h3>
+            {% if recent_runs %}
+            <div class="run-feed">
+                {% for run in recent_runs %}
+                <div class="run-row">
+                    <div>
+                        <div class="run-title">{{ run.label or run.name }}</div>
+                        <div class="run-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+                    </div>
+                    <a class="capsule-link" href="{{ run.path }}">Open Run</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-callout">No saved runs are available yet. Start with a single-board analysis to populate the workspace and unlock comparisons.</div>
+            {% endif %}
+        </article>
+    </section>
+
+    <section class="signal-grid" id="deployment">
+        <article class="deployment-card" id="pricing">
+            <div class="panel-overline">Starter path</div>
+            <h2>Manual review, faster.</h2>
+            <p>For teams that need better board analysis and export quality first, without changing the whole process at once.</p>
+            <div class="deployment-list">
+                <div>Single-board uploads and report generation.</div>
+                <div>Engineering visibility into why a score moved.</div>
+                <div>A cleaner starting point for design review discipline.</div>
+            </div>
+        </article>
+
+        <article class="deployment-card">
+            <div class="panel-overline">Team path</div>
+            <h2>Shared workspaces and revision continuity.</h2>
+            <p>For engineering groups that need project memory, saved history, and a repeatable operating cadence across boards.</p>
+            <div class="deployment-list">
+                <div>Project-aware comparisons across multiple runs.</div>
+                <div>Workspace-level visibility into recurring pressure.</div>
+                <div>Review continuity that survives personnel changes.</div>
+            </div>
+        </article>
+
+        <article class="deployment-card">
+            <div class="panel-overline">Operations path</div>
+            <h2>Automation, policy, and release posture.</h2>
+            <p>For organizations that want Silicore to function like an engineering system instead of a standalone review tool.</p>
+            <div class="deployment-list">
+                <div>Alerting, scheduled analysis, and project thresholds.</div>
+                <div>Governance signals for readiness and signoff.</div>
+                <div>Room to integrate downstream reporting and decision loops.</div>
+            </div>
+        </article>
+    </section>
+</div>
 {% endblock %}
