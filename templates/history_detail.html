@@ -1,1108 +1,135 @@
 {% extends "base.html" %}
 {% block content %}
-
-<style>
-    .run-detail-shell {
-        display: grid;
-        gap: 22px;
-    }
-
-    .run-detail-metric-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .run-detail-metric-card {
-        padding: 18px 18px 16px;
-        display: grid;
-        gap: 8px;
-        align-content: start;
-        min-height: 144px;
-    }
-
-    .run-detail-value-meta,
-    .run-detail-value-text,
-    .run-detail-value-number {
-        font-family: var(--font-display);
-        font-weight: 700;
-        letter-spacing: -0.05em;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-
-    .run-detail-value-number {
-        font-size: clamp(1.9rem, 3vw, 3rem);
-        line-height: 0.94;
-    }
-
-    .run-detail-value-text {
-        font-size: clamp(1.4rem, 2.4vw, 2.1rem);
-        line-height: 0.98;
-    }
-
-    .run-detail-value-meta {
-        font-size: clamp(1.2rem, 1.9vw, 1.75rem);
-        line-height: 1.04;
-    }
-
-    .run-detail-sub {
-        line-height: 1.45;
-        overflow-wrap: anywhere;
-    }
-</style>
-
-{% set run_score = run_detail.get("score", none) %}
-{% set run_score_display = (run_score|round|int if run_score > 10 else (run_score * 10)|round|int) if run_score is not none else "N/A" %}
-
-<div class="run-detail-shell">
-<section class="page-hero">
-    <div class="page-hero-inner">
-        <div class="page-hero-copy">
-            <div class="page-eyebrow">Saved Analysis Run</div>
-            <h1 class="page-title">Run history with full engineering traceability.</h1>
-            <p class="page-copy">
-                Reopen a saved run, inspect its score and findings, and carry forward the exact context, exports, and CAM trust posture behind the review.
+{% set run_score = run_detail.get("score") %}
+{% set context = run_detail.analysis_context_view %}
+<section class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Saved analysis run</div>
+            <h1 class="hero-title">Reopen a run with full engineering traceability.</h1>
+            <p class="hero-copy">
+                Review the saved score, findings, outputs, CAM trust, and operating context that existed when this analysis was executed.
             </p>
         </div>
-        <div class="hero-side">
-            <div class="top-badge">{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</div>
-            <div class="top-badge">Score {{ run_score_display }}</div>
-        </div>
-    </div>
-</section>
-
-<section class="platform-band">
-    <section class="platform-intro-card">
-        <div class="platform-kicker">Run Playback Surface</div>
-        <h2 class="platform-title">Treat each saved analysis as reusable engineering memory.</h2>
-        <p class="platform-copy">
-            Review score posture, export history, saved artifacts, CAM package trust, and the exact assumptions used when the run was executed.
-        </p>
-    </section>
-
-    <aside class="platform-panel">
-        <div class="platform-panel-label">Run Telemetry</div>
-        <div class="platform-stat-grid">
-            <div class="platform-stat">
-                <span>Run type</span>
-                <strong>{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</strong>
+        <aside class="hero-card">
+            <div class="hero-card-label">Run telemetry</div>
+            <div class="metric-grid" style="margin-top:18px;">
+                <div class="metric-card">
+                    <div class="metric-label">Run type</div>
+                    <div class="metric-value-text">{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Score</div>
+                    <div class="metric-value">{% if run_score is not none %}{{ run_score|round|int if run_score > 10 else (run_score * 10)|round|int }}{% else %}N/A{% endif %}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Artifacts</div>
+                    <div class="metric-value">{{ run_detail.files|length if run_detail.files else 0 }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Findings</div>
+                    <div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div>
+                </div>
             </div>
-            <div class="platform-stat">
-                <span>Score</span>
-                <strong>{{ run_score_display }}</strong>
-            </div>
-            <div class="platform-stat">
-                <span>Artifacts</span>
-                <strong>{{ run_detail.files|length if run_detail.files else 0 }}</strong>
-            </div>
-            <div class="platform-stat">
-                <span>Findings</span>
-                <strong>{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</strong>
-            </div>
-        </div>
-        <div class="platform-note">
-            Saved runs keep the evidence trail intact so Atlas explanations, export posture, and design decisions can be revisited instead of recreated.
-        </div>
-    </aside>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Saved Run Overview</h2>
-        <p class="section-copy">
-            Deep dive into a saved analysis run including score, findings, artifacts, and the exact analysis context used.
-        </p>
-    </div>
-
-    <div class="card-body">
-        <div class="metric-grid run-detail-metric-grid">
-            <div class="metric-card run-detail-metric-card">
-                <div class="metric-label">Run Name</div>
-                <div class="metric-value run-detail-value-text">{{ run_detail.name }}</div>
-                <div class="metric-sub run-detail-sub">Saved analysis identifier</div>
-            </div>
-
-            <div class="metric-card run-detail-metric-card">
-                <div class="metric-label">Run Type</div>
-                <div class="metric-value run-detail-value-text">{{ run_detail.run_type if run_detail.run_type else "unknown" }}</div>
-                <div class="metric-sub run-detail-sub">Analysis mode</div>
-            </div>
-
-            <div class="metric-card run-detail-metric-card">
-                <div class="metric-label">Score</div>
-                <div class="metric-value run-detail-value-number">{{ run_score_display }}</div>
-                <div class="metric-sub run-detail-sub">0–100 risk scale</div>
-            </div>
-
-            <div class="metric-card run-detail-metric-card">
-                <div class="metric-label">Created</div>
-                <div class="metric-value run-detail-value-meta">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div>
-                <div class="metric-sub run-detail-sub">Execution timestamp</div>
-            </div>
-        </div>
+        </aside>
     </div>
 </section>
 
 <section class="grid grid-2">
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Stored Artifacts</h2>
-            <p class="section-copy">Files generated and saved for this run.</p>
+    <article class="card">
+        <div class="section-kicker">Run overview</div>
+        <h2 class="section-title">Stored analysis context</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">Run name</div><div class="metric-value-text">{{ run_detail.name }}</div></div>
+            <div class="metric-card"><div class="metric-label">Board</div><div class="metric-value-text">{{ context.board_name if context else "Unknown" }}</div></div>
+            <div class="metric-card"><div class="metric-label">Profile</div><div class="metric-value-text">{{ context.profile.replace('_', ' ')|title if context and context.profile else "Balanced" }}</div></div>
+            <div class="metric-card"><div class="metric-label">Created</div><div class="metric-value-meta">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div></div>
         </div>
+    </article>
 
-        <div class="card-body">
-            {% if run_detail.files %}
-            <div class="artifact-list">
-                {% for file in run_detail.files %}
-                <div class="artifact-row">
-                    <div>
-                        <div class="artifact-name">{{ file.label }}</div>
-                        <div class="artifact-kind">{{ file.kind|upper }}</div>
-                    </div>
-                    <a class="btn-link" href="{{ download_href(file) }}">Download</a>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">No saved artifacts found for this run.</div>
-            {% endif %}
-        </div>
-    </section>
-
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Export Center</h2>
-            <p class="section-copy">Audit-ready report access and shareable artifact links for this run.</p>
-        </div>
-
-        <div class="card-body">
-            {% if run_detail.export_summary %}
+    <article class="card">
+        <div class="section-kicker">Export Center</div>
+        <h2 class="section-title">Artifacts and reporting access</h2>
+        {% if run_detail.export_summary %}
+        <div class="page-stack" style="margin-top:18px;">
             <div class="summary-panel">
-                <h3>Export Summary</h3>
-                <p>{{ run_detail.export_summary.summary }}</p>
+                <strong>Export Center</strong>
+                <p class="section-copy">{{ run_detail.export_summary.summary }}</p>
             </div>
-
-            {% if run_detail.export_summary.artifact_counts %}
-            <div class="metric-grid" style="margin-top:16px;">
-                {% for item in run_detail.export_summary.artifact_counts %}
-                <div class="metric-card">
-                    <div class="metric-label">{{ item.label }}</div>
-                    <div class="metric-value">{{ item.value }}</div>
-                    <div class="metric-sub">Saved artifact count</div>
-                </div>
-                {% endfor %}
+            <div class="summary-panel">
+                <strong>Review Readiness</strong>
+                <p class="section-copy">{{ run_detail.export_summary.review_ready_label }} at {{ run_detail.export_summary.review_ready_score }} / 100.</p>
             </div>
-            {% endif %}
-
-            <div class="summary-strip" style="margin-top:16px;">
-                <div class="summary-panel">
-                    <h3>Review Readiness</h3>
-                    <p>{{ run_detail.export_summary.review_ready_label }} at {{ run_detail.export_summary.review_ready_score }} / 100.</p>
-                </div>
-                <div class="summary-panel">
-                    <h3>Recommended Use</h3>
-                    <p>{{ run_detail.export_summary.recommended_uses|join(', ') if run_detail.export_summary.recommended_uses else "No suggested review workflow yet." }}</p>
-                </div>
-            </div>
-
-            <div class="btn-link-row" style="margin-top:16px;">
+            <div class="btn-row" style="margin-top:0;">
                 <a class="btn btn-secondary" href="{{ url_for('history_printable_page', run_dir=run_detail.run_dir) }}" target="_blank">
                     {{ run_detail.export_summary.print_label }}
                 </a>
             </div>
-
-            {% if run_detail.export_summary.share_links %}
-            <div class="artifact-list" style="margin-top:16px;">
-                {% for file in run_detail.export_summary.share_links %}
-                <div class="artifact-row">
-                    <div>
-                        <div class="artifact-name">{{ file.label }}</div>
-                        <div class="artifact-kind">{{ file.kind|upper }}</div>
-                    </div>
-                    <a class="btn-link" href="{{ file.href }}">Open Artifact</a>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% else %}
-            <div class="empty-state">No export summary is available for this run.</div>
-            {% endif %}
         </div>
-    </section>
+        {% else %}
+        <div class="empty-state" style="margin-top:18px;">No export summary is available for this run.</div>
+        {% endif %}
+    </article>
 </section>
 
 <section class="grid grid-2">
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Analysis Context</h2>
-            <p class="section-copy">Settings and assumptions used for this saved analysis.</p>
-        </div>
-
-        <div class="card-body">
-            {% set context = run_detail.analysis_context_view %}
-            <div class="context-grid">
-                <div class="context-card">
-                    <div class="context-label">Board</div>
-                    <div class="context-value">{{ context.board_name }}</div>
-                </div>
-                <div class="context-card">
-                    <div class="context-label">Performed At</div>
-                    <div class="context-value">{{ context.performed_at }}</div>
-                </div>
-                <div class="context-card">
-                    <div class="context-label">Profile</div>
-                    <div class="context-value">{{ context.profile.replace('_', ' ')|title if context.profile else "Balanced" }}</div>
-                </div>
-                <div class="context-card">
-                    <div class="context-label">Board Type</div>
-                    <div class="context-value">{{ context.board_type.replace('_', ' ')|title if context.board_type else "General" }}</div>
-                </div>
-            </div>
-
-            {% if context.config_rows %}
-            <div class="config-list">
-                {% for row in context.config_rows %}
-                <div class="config-pill">
-                    <span class="config-pill-label">{{ row.section }} · {{ row.label }}</span>
-                    <span class="config-pill-value">{{ row.value }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">No config snapshot was saved with this run.</div>
-            {% endif %}
-        </div>
-    </section>
-
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Score Explainability</h2>
-            <p class="section-copy">How the final score was calculated for this saved run.</p>
-        </div>
-
-        <div class="card-body">
-            {% set score_data = run_detail.analysis_context_view.score_breakdown %}
-            <div class="metric-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Start Score</div>
-                    <div class="metric-value">{{ score_data.start_score }}</div>
-                    <div class="metric-sub">Initial baseline</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Total Penalty</div>
-                    <div class="metric-value">{{ score_data.total_penalty }}</div>
-                    <div class="metric-sub">Total deduction</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Final Score</div>
-                    <div class="metric-value">{{ score_data.final_score }}</div>
-                    <div class="metric-sub">Final 0–100 score</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Findings</div>
-                    <div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div>
-                    <div class="metric-sub">Total detected issues</div>
-                </div>
-            </div>
-        </div>
-    </section>
-</section>
-
-{% if run_detail.cam_detail_view and run_detail.cam_detail_view.active %}
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Gerber / CAM Import Review</h2>
-        <p class="section-copy">Saved fabrication-package completeness and geometry-recognition summary for this run.</p>
-    </div>
-    <div class="card-body">
-        <div class="metric-grid">
-            {% for item in run_detail.cam_detail_view.stats %}
-            <div class="metric-card">
-                <div class="metric-label">{{ item.label }}</div>
-                <div class="metric-value">{{ item.value }}</div>
-                <div class="metric-sub">{{ run_detail.cam_detail_view.bundle_type }}</div>
-            </div>
-            {% endfor %}
-            <div class="metric-card">
-                <div class="metric-label">CAM Readiness</div>
-                <div class="metric-value">{{ run_detail.cam_detail_view.readiness_score }}</div>
-                <div class="metric-sub">{{ run_detail.cam_detail_view.status_label }}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Source Family</div>
-                <div class="metric-value">{{ run_detail.cam_detail_view.source_family }}</div>
-                <div class="metric-sub">{{ run_detail.cam_detail_view.trust_call|replace('_', ' ')|title }}</div>
-            </div>
-        </div>
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Bundle Summary</h3>
-            <p>{{ run_detail.cam_detail_view.summary }}</p>
-            {% if run_detail.cam_detail_view.files %}
-            <p class="small-muted" style="margin-top:10px;">Recognized files: {{ run_detail.cam_detail_view.files|join(', ') }}</p>
-            {% endif %}
-        </div>
-        {% if run_detail.cam_detail_view.missing_signals %}
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Missing Signals</h3>
-            <p>{{ run_detail.cam_detail_view.missing_signals|join(' • ') }}</p>
-        </div>
-        {% endif %}
-        {% if run_detail.cam_detail_view.remediation_steps %}
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Recommended CAM Fixes</h3>
-            <p>{{ run_detail.cam_detail_view.remediation_steps|join(' ') }}</p>
-        </div>
-        {% endif %}
-        {% if run_detail.cam_detail_view.parser_warnings %}
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Parser Trust Warnings</h3>
-            <p>{{ run_detail.cam_detail_view.parser_warnings|join(' • ') }}</p>
-        </div>
-        {% endif %}
-    </div>
-</section>
-{% endif %}
-
-</div>
-
-        {% if score_data.severity_rows %}
-        <div class="breakdown-table">
-            <div class="breakdown-table-header">
-                <div>Severity</div>
-                <div>Count</div>
-                <div>Total Penalty</div>
-            </div>
-
-            {% for row in score_data.severity_rows %}
-            <div class="breakdown-table-row">
-                <div>{{ row.label }}</div>
-                <div>{{ row.count }}</div>
-                <div>{{ row.total_penalty }}</div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-</section>
-
-{% if run_detail.preview %}
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Run Preview</h2>
-    </div>
-
-    <div class="card-body">
-        <div class="preview-box">{{ run_detail.preview }}</div>
-    </div>
-</section>
-{% endif %}
-
-{% if run_detail.result and run_detail.result.board_view %}
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Board Viewer</h2>
-        <p class="section-copy">Saved 2D geometry view for this run with risk-colored traces, vias, and components.</p>
-    </div>
-
-    <div class="card-body">
-        {% if run_detail.result.board_view.has_data %}
-        <div class="board-toolbar">
-            <label>
-                Layer Filter
-                <select class="board-filter-select" data-board-filter="layer">
-                    <option value="">All layers</option>
-                    {% for layer in run_detail.result.board_view.available_layers %}
-                    <option value="{{ layer }}">{{ layer }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                Net Filter
-                <select class="board-filter-select" data-board-filter="net">
-                    <option value="">All nets</option>
-                    {% for net in run_detail.result.board_view.available_nets %}
-                    <option value="{{ net }}">{{ net }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <div class="board-toolbar-actions">
-                <button type="button" class="btn btn-secondary board-tool-btn" data-board-action="reset">Reset View</button>
-                <button type="button" class="btn btn-secondary board-tool-btn" data-board-action="clear">Clear Focus</button>
-            </div>
-        </div>
-        <div class="board-view-shell" data-board-inspector>
-            <div class="board-canvas-stage">
-            <div class="board-stage-meta">
-                <div class="board-stage-kicker">Saved inspection canvas</div>
-                <div class="board-stage-copy">Reopen geometry, inspect routed regions, and revisit the most important saved focus anchors.</div>
-            </div>
-            <svg class="board-view-svg" viewBox="{{ run_detail.result.board_view.base_view_box }}" data-base-view-box="{{ run_detail.result.board_view.base_view_box }}" preserveAspectRatio="xMidYMid meet" aria-label="Saved board viewer">
-                <rect x="6" y="6" width="{{ run_detail.result.board_view.width - 12 }}" height="{{ run_detail.result.board_view.height - 12 }}" rx="18" class="board-view-frame"></rect>
-                {% for zone in run_detail.result.board_view.zones %}
-                <polygon points="{{ zone.points }}" class="board-zone board-zone-{{ zone.tone }} board-entity" data-layer="{{ zone.layer }}" data-nets="{{ zone.net_list|join('|') }}" data-kind="zone"><title>{{ zone.net }} · {{ zone.layer }} · Area {{ zone.area_estimate }}</title></polygon>
-                {% endfor %}
-                {% for segment in run_detail.result.board_view.outline_segments %}
-                <line x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}" class="board-outline board-entity" data-kind="outline"></line>
-                {% endfor %}
-                {% for trace in run_detail.result.board_view.traces %}
-                <line x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" class="board-trace board-trace-{{ trace.tone }} board-entity" data-layer="{{ trace.layer }}" data-nets="{{ trace.net }}" data-kind="trace"><title>{{ trace.net }}</title></line>
-                {% endfor %}
-                {% for via in run_detail.result.board_view.vias %}
-                <circle cx="{{ via.x }}" cy="{{ via.y }}" r="2.4" class="board-via board-via-{{ via.tone }} board-entity" data-layer="{{ via.layers|join('|') }}" data-nets="{{ via.net }}" data-kind="via"><title>{{ via.net }}</title></circle>
-                {% endfor %}
-                {% for component in run_detail.result.board_view.components %}
-                <g class="board-component board-component-{{ component.tone }} board-entity" data-layer="{{ component.layer }}" data-components="{{ component.ref }}" data-nets="{{ component.net_list|join('|') }}" data-kind="component">
-                    <circle cx="{{ component.x }}" cy="{{ component.y }}" r="5.2"></circle>
-                    <text x="{{ component.x + 7 }}" y="{{ component.y - 7 }}">{{ component.ref }}</text>
-                    <title>{{ component.ref }} · {{ component.value }}{% if component.nets %} · {{ component.nets }}{% endif %}</title>
-                </g>
-                {% endfor %}
-            </svg>
-            </div>
-            <div class="board-focus-list">
-                {% if run_detail.result.board_view.summary_stats %}
-                <div class="board-focus-item">
-                    <div class="board-focus-top">
-                        <strong>Saved Board Snapshot</strong>
-                        <span class="mini-chip mini-chip-low">{{ run_detail.result.board_view.source_format.replace('_', ' ')|title }}</span>
-                    </div>
-                    <div class="board-stat-grid">
-                        {% for item in run_detail.result.board_view.summary_stats %}
-                        <div class="board-stat-card">
-                            <div class="board-stat-label">{{ item.label }}</div>
-                            <div class="board-stat-value">{{ item.value }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if run_detail.result.board_view.focus_items %}
-                {% for item in run_detail.result.board_view.focus_items %}
-                <button type="button" class="board-focus-item board-focus-button" data-board-focus data-components="{{ item.component_list|join('|') }}" data-nets="{{ item.net_list|join('|') }}">
-                    <div class="board-focus-top">
-                        <span class="mini-chip mini-chip-{{ item.severity }}">{{ item.severity|title }}</span>
-                        <strong>{{ item.label }}</strong>
-                    </div>
-                    <div class="small-muted">Components: {{ item.components }}</div>
-                    <div class="small-muted">Nets: {{ item.nets }}</div>
-                </button>
-                {% endfor %}
-                {% endif %}
-            </div>
+    <article class="card">
+        <div class="section-kicker">Score Explainability</div>
+        <h2 class="section-title">Why the score landed where it did</h2>
+        {% set score_data = context.score_breakdown if context and context.score_breakdown is defined else None %}
+        {% if score_data %}
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">Start</div><div class="metric-value">{{ score_data.start_score|default(0) }}</div></div>
+            <div class="metric-card"><div class="metric-label">Penalty</div><div class="metric-value">{{ score_data.total_penalty|default(0) }}</div></div>
+            <div class="metric-card"><div class="metric-label">Final</div><div class="metric-value">{{ score_data.final_score|default(0) }}</div></div>
+            <div class="metric-card"><div class="metric-label">Risk count</div><div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div></div>
         </div>
         {% else %}
-        <div class="empty-state">No saved geometry is available for this run.</div>
+        <div class="empty-state" style="margin-top:18px;">Score Explainability data is not available for this run.</div>
         {% endif %}
-    </div>
-</section>
-{% endif %}
+    </article>
 
-<script>
-(() => {
-    const inspector = document.querySelector('[data-board-inspector]');
-    if (!inspector) return;
-
-    const svg = inspector.querySelector('.board-view-svg');
-    const entities = Array.from(inspector.querySelectorAll('.board-entity'));
-    const layerSelect = document.querySelector('[data-board-filter="layer"]');
-    const netSelect = document.querySelector('[data-board-filter="net"]');
-    const focusButtons = Array.from(inspector.querySelectorAll('[data-board-focus]'));
-    const resetButton = document.querySelector('[data-board-action="reset"]');
-    const clearButton = document.querySelector('[data-board-action="clear"]');
-    const baseViewBox = svg.getAttribute('data-base-view-box') || svg.getAttribute('viewBox');
-
-    const splitTokens = (value) => String(value || '').split('|').map((item) => item.trim()).filter(Boolean);
-
-    const applyFilters = () => {
-        const activeLayer = layerSelect ? layerSelect.value : '';
-        const activeNet = netSelect ? netSelect.value : '';
-        entities.forEach((entity) => {
-            const layers = splitTokens(entity.dataset.layer);
-            const nets = splitTokens(entity.dataset.nets);
-            const layerMatch = !activeLayer || layers.length === 0 || layers.includes(activeLayer);
-            const netMatch = !activeNet || nets.length === 0 || nets.includes(activeNet);
-            entity.classList.toggle('board-hidden', !(layerMatch && netMatch));
-        });
-    };
-
-    const focusEntities = (componentNames, netNames) => {
-        const componentSet = new Set(componentNames);
-        const netSet = new Set(netNames);
-        let matched = 0;
-        entities.forEach((entity) => {
-            const entityComponents = splitTokens(entity.dataset.components);
-            const entityNets = splitTokens(entity.dataset.nets);
-            const isMatch =
-                (componentSet.size > 0 && entityComponents.some((value) => componentSet.has(value))) ||
-                (netSet.size > 0 && entityNets.some((value) => netSet.has(value)));
-            entity.classList.toggle('board-dimmed', !isMatch);
-            entity.classList.toggle('board-highlighted', isMatch);
-            if (isMatch) matched += 1;
-        });
-        return matched;
-    };
-
-    const clearFocus = () => {
-        entities.forEach((entity) => {
-            entity.classList.remove('board-dimmed', 'board-highlighted');
-        });
-        focusButtons.forEach((button) => button.classList.remove('is-active'));
-        svg.setAttribute('viewBox', baseViewBox);
-    };
-
-    const zoomToContent = () => {
-        const highlighted = entities.filter((entity) => entity.classList.contains('board-highlighted'));
-        if (!highlighted.length) return;
-        let minX = Infinity;
-        let minY = Infinity;
-        let maxX = -Infinity;
-        let maxY = -Infinity;
-        highlighted.forEach((entity) => {
-            const box = entity.getBBox();
-            minX = Math.min(minX, box.x);
-            minY = Math.min(minY, box.y);
-            maxX = Math.max(maxX, box.x + box.width);
-            maxY = Math.max(maxY, box.y + box.height);
-        });
-        if (!Number.isFinite(minX)) return;
-        const pad = 28;
-        const width = Math.max(80, maxX - minX + pad * 2);
-        const height = Math.max(80, maxY - minY + pad * 2);
-        svg.setAttribute('viewBox', `${Math.max(0, minX - pad)} ${Math.max(0, minY - pad)} ${width} ${height}`);
-    };
-
-    if (layerSelect) layerSelect.addEventListener('change', applyFilters);
-    if (netSelect) netSelect.addEventListener('change', applyFilters);
-
-    focusButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            focusButtons.forEach((item) => item.classList.remove('is-active'));
-            button.classList.add('is-active');
-            applyFilters();
-            const matches = focusEntities(splitTokens(button.dataset.components), splitTokens(button.dataset.nets));
-            if (matches > 0) zoomToContent();
-        });
-    });
-
-    if (resetButton) resetButton.addEventListener('click', () => {
-        if (layerSelect) layerSelect.value = '';
-        if (netSelect) netSelect.value = '';
-        clearFocus();
-        applyFilters();
-    });
-
-    if (clearButton) clearButton.addEventListener('click', () => {
-        clearFocus();
-        applyFilters();
-    });
-
-    applyFilters();
-})();
-</script>
-
-{% if run_detail.result %}
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Findings Overview</h2>
-    </div>
-
-    <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
-                <div class="metric-label">Total Risks</div>
-                <div class="metric-value">{{ run_detail.result.risks|length }}</div>
-                <div class="metric-sub">Detected findings</div>
+    <article class="card">
+        <div class="section-kicker">Review Readiness</div>
+        <h2 class="section-title">Use this run in downstream engineering review.</h2>
+        <div class="page-stack" style="margin-top:18px;">
+            <div class="summary-panel">
+                <strong>Review Readiness</strong>
+                <p class="section-copy">
+                    {% if run_detail.export_summary %}
+                        {{ run_detail.export_summary.review_ready_label }} with {{ run_detail.export_summary.review_ready_score }} / 100 readiness.
+                    {% else %}
+                        This run has not produced a full review-readiness summary yet.
+                    {% endif %}
+                </p>
             </div>
-
-            <div class="metric-card">
-                <div class="metric-label">Critical</div>
-                <div class="metric-value">{{ run_detail.critical_count }}</div>
-                <div class="metric-sub">Highest severity</div>
+            {% if run_detail.cam_detail_view and run_detail.cam_detail_view.active %}
+            <div class="summary-panel">
+                <strong>CAM trust</strong>
+                <p class="section-copy">{{ run_detail.cam_detail_view.summary }}</p>
             </div>
-
-            <div class="metric-card">
-                <div class="metric-label">High</div>
-                <div class="metric-value">{{ run_detail.high_count }}</div>
-                <div class="metric-sub">High severity issues</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-label">Medium</div>
-                <div class="metric-value">{{ run_detail.medium_count }}</div>
-                <div class="metric-sub">Moderate issues</div>
-            </div>
+            {% endif %}
         </div>
-    </div>
+    </article>
 </section>
 
 <section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Detailed Findings</h2>
-    </div>
-
-    <div class="card-body">
-        {% if run_detail.result.risks %}
-            <div class="finding-list">
-                {% for risk in run_detail.result.risks %}
-                    <div class="finding">
-                        <div class="finding-top">
-                            <div>
-                                <div class="chip {{ chip_class(risk.severity) }}">
-                                    {{ risk.severity|upper }}
-                                </div>
-                                <h4>{{ risk.message }}</h4>
-                            </div>
-
-                            <div class="small-muted">
-                                {{ risk.category.replace('_', ' ').title() if risk.category else "Uncategorized" }}
-                            </div>
-                        </div>
-
-                        {% if risk.recommendation %}
-                        <div class="finding-block">
-                            <span class="finding-label">Recommendation:</span>
-                            {{ risk.recommendation }}
-                        </div>
-                        {% endif %}
-
-                        {% if risk.components %}
-                        <div class="finding-block">
-                            <span class="finding-label">Components:</span>
-                            {{ risk.components|join(', ') }}
-                        </div>
-                        {% endif %}
-
-                        {% if risk.nets %}
-                        <div class="finding-block">
-                            <span class="finding-label">Nets:</span>
-                            {{ risk.nets|join(', ') }}
-                        </div>
-                        {% endif %}
-
-                        {% if risk.metrics %}
-                        <div class="finding-metrics">
-                            {% for key, value in risk.metrics.items() %}
-                            <div class="metric-pill">
-                                <span class="metric-pill-label">{{ key|replace('_', ' ')|title }}</span>
-                                <span class="metric-pill-value">{{ value }}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        {% if risk.transparency_view %}
-                        <div class="finding-block">
-                            <span class="finding-label">Trigger:</span>
-                            {{ risk.transparency_view.trigger }}
-                        </div>
-                        <div class="finding-block">
-                            <span class="finding-label">Observed:</span>
-                            {{ risk.transparency_view.observed_text }}
-                        </div>
-                        <div class="finding-block">
-                            <span class="finding-label">Why it matters:</span>
-                            {{ risk.transparency_view.engineering_impact }}
-                        </div>
-                        <div class="finding-block">
-                            <span class="finding-label">Confidence:</span>
-                            {{ risk.transparency_view.confidence_score }} / 100
-                        </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+    <div class="section-kicker">Detailed Findings</div>
+    <h2 class="section-title">Engineering findings captured in this run</h2>
+    {% if run_detail.result and run_detail.result.risks %}
+    <div class="timeline" style="margin-top:18px;">
+        {% for risk in run_detail.result.risks[:24] %}
+        <div class="timeline-row">
+            <div>
+                <div class="list-title">{{ risk.short_title if risk.short_title else risk.message }}</div>
+                <div class="list-meta">{{ risk.severity|upper }} · {{ risk.category|replace('_', ' ')|title }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</div>
             </div>
-        {% else %}
-            <div class="empty-state">No findings saved in this run.</div>
-        {% endif %}
+            <span class="mini-chip {% if risk.severity in ['critical','high'] %}mini-chip-critical{% elif risk.severity == 'medium' %}mini-chip-medium{% else %}mini-chip-low{% endif %}">{{ risk.severity }}</span>
+        </div>
+        {% endfor %}
     </div>
+    {% else %}
+    <div class="empty-state" style="margin-top:18px;">No findings were stored for this run.</div>
+    {% endif %}
 </section>
-{% endif %}
-
-<style>
-    .artifact-list,
-    .config-list,
-    .finding-list,
-    .finding-metrics {
-        display: grid;
-        gap: 12px;
-    }
-
-    .artifact-row,
-    .config-pill,
-    .finding,
-    .context-card {
-        padding: 16px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.03);
-    }
-
-    .artifact-row,
-    .config-pill {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-    }
-
-    .artifact-name,
-    .context-value {
-        color: var(--text-soft);
-        font-size: 15px;
-        font-weight: 700;
-    }
-
-    .artifact-kind,
-    .context-label,
-    .config-pill-label,
-    .metric-pill-label,
-    .finding-label {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .config-pill-value,
-    .metric-pill-value {
-        color: var(--text-soft);
-        font-size: 12px;
-        font-weight: 700;
-        text-align: right;
-    }
-
-    .context-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    .preview-box {
-        padding: 18px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.03);
-        color: #dbeafe;
-        line-height: 1.7;
-        white-space: pre-wrap;
-    }
-
-    .board-view-shell {
-        display: grid;
-        gap: 18px;
-    }
-
-    .board-canvas-stage {
-        padding: 18px;
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--line);
-        background:
-            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 24%),
-            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
-            rgba(9,18,30,0.48);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 16px 32px rgba(0,0,0,0.12);
-    }
-
-    .board-stage-meta {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        align-items: end;
-        margin-bottom: 14px;
-    }
-
-    .board-stage-kicker {
-        color: #dbeafe;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-    }
-
-    .board-stage-copy {
-        max-width: 32ch;
-        color: rgba(214,226,255,0.72);
-        font-size: 12px;
-        line-height: 1.6;
-        text-align: right;
-    }
-
-    .board-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: end;
-        margin-bottom: 16px;
-        padding: 14px 16px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.024), rgba(255,255,255,0.01)),
-            rgba(255,255,255,0.015);
-    }
-
-    .board-toolbar label {
-        display: grid;
-        gap: 6px;
-        color: #dbeafe;
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .board-filter-select {
-        min-width: 180px;
-    }
-
-    .board-toolbar-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .board-tool-btn {
-        min-height: 42px;
-    }
-
-    .board-view-svg {
-        width: 100%;
-        min-height: 420px;
-        border-radius: var(--radius-lg);
-        background:
-            radial-gradient(circle at top left, rgba(124,180,255,0.08), transparent 30%),
-            linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px),
-            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.016));
-        background-size: auto, 22px 22px, 22px 22px, auto;
-        border: 1px solid var(--line);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-    }
-
-    .board-view-frame {
-        fill: rgba(8,14,30,0.58);
-        stroke: rgba(255,255,255,0.08);
-        stroke-width: 1;
-    }
-
-    .board-outline {
-        stroke: rgba(191,219,254,0.95);
-        stroke-width: 1.6;
-        stroke-linecap: round;
-    }
-
-    .board-zone {
-        opacity: 0.22;
-        stroke-width: 1;
-    }
-
-    .board-zone-safe, .board-zone-low {
-        fill: rgba(124,180,255,0.22);
-        stroke: rgba(124,180,255,0.46);
-    }
-
-    .board-zone-medium {
-        fill: rgba(245,158,11,0.2);
-        stroke: rgba(251,191,36,0.46);
-    }
-
-    .board-zone-high, .board-zone-critical {
-        fill: rgba(239,68,68,0.16);
-        stroke: rgba(248,113,113,0.44);
-    }
-
-    .board-trace {
-        stroke-linecap: round;
-        stroke-width: 2.2;
-        opacity: 0.88;
-    }
-
-    .board-trace-safe, .board-via-safe, .board-component-safe circle { stroke: #7dd3fc; fill: rgba(125,211,252,0.75); }
-    .board-trace-low, .board-via-low, .board-component-low circle { stroke: #93c5fd; fill: rgba(147,197,253,0.78); }
-    .board-trace-medium, .board-via-medium, .board-component-medium circle { stroke: #fcd34d; fill: rgba(245,158,11,0.78); }
-    .board-trace-high, .board-via-high, .board-component-high circle { stroke: #fb923c; fill: rgba(251,146,60,0.82); }
-    .board-trace-critical, .board-via-critical, .board-component-critical circle { stroke: #f87171; fill: rgba(239,68,68,0.86); }
-
-    .board-component text {
-        fill: #e5eefc;
-        font-size: 11px;
-        font-weight: 700;
-    }
-
-    .board-entity {
-        transition: opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease;
-    }
-
-    .board-hidden {
-        opacity: 0.08;
-    }
-
-    .board-dimmed {
-        opacity: 0.12;
-    }
-
-    .board-highlighted {
-        opacity: 1;
-        filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.42));
-    }
-
-    .board-focus-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .board-focus-item {
-        padding: 14px;
-        border-radius: var(--radius-md);
-        background: rgba(255,255,255,0.03);
-        border: 1px solid var(--line);
-    }
-
-    .board-focus-top {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-        margin-bottom: 8px;
-    }
-
-    .board-focus-button {
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-        color: inherit;
-    }
-
-    .board-focus-button.is-active {
-        border-color: rgba(125,211,252,0.36);
-        background: rgba(124,180,255,0.08);
-    }
-
-    .board-stat-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .board-stat-card {
-        padding: 10px;
-        border-radius: 12px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid var(--line);
-    }
-
-    .board-stat-label {
-        color: rgba(191,219,254,0.75);
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-    }
-
-    .board-stat-value {
-        color: var(--text-soft);
-        font-size: 18px;
-        font-weight: 700;
-        margin-top: 4px;
-    }
-
-    .finding-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
-    }
-
-    .finding-top h4 {
-        margin: 10px 0 0;
-        color: var(--text-soft);
-        font-size: 16px;
-    }
-
-    .finding-block {
-        margin-top: 10px;
-        color: #dbeafe;
-        line-height: 1.7;
-    }
-
-    .breakdown-table {
-        margin-top: 18px;
-        display: grid;
-        gap: 10px;
-    }
-
-    .breakdown-table-header,
-    .breakdown-table-row {
-        display: grid;
-        grid-template-columns: 1fr 120px 140px;
-        gap: 12px;
-        align-items: center;
-        padding: 14px 16px;
-        border-radius: var(--radius-md);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.012)),
-            rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.045);
-    }
-
-    .breakdown-table-header {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .breakdown-table-row {
-        color: var(--text-soft);
-        font-weight: 700;
-    }
-
-    .metric-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 10px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid var(--line);
-        margin-right: 8px;
-        margin-top: 8px;
-    }
-
-    @media (max-width: 900px) {
-        .context-grid,
-        .breakdown-table-header,
-        .breakdown-table-row {
-            grid-template-columns: 1fr;
-        }
-
-        .artifact-row,
-        .config-pill {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .board-toolbar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .board-stage-meta {
-            display: grid;
-            grid-template-columns: 1fr;
-        }
-
-        .board-stage-copy {
-            text-align: left;
-            max-width: none;
-        }
-    }
-</style>
-
 {% endblock %}

@@ -228,8 +228,8 @@
                 "U1"
             ],
             "nets": [
-                "SW",
                 "VIN",
+                "SW",
                 "GND"
             ],
             "region": null,
@@ -268,8 +268,8 @@
                 "U1"
             ],
             "nets": [
-                "SW",
                 "VIN",
+                "SW",
                 "GND"
             ],
             "region": null,
@@ -307,8 +307,8 @@
                 "U2"
             ],
             "nets": [
-                "SENSOR_OUT",
                 "ADC_IN",
+                "SENSOR_OUT",
                 "GND"
             ],
             "region": null,
@@ -456,8 +456,8 @@
                 "L1"
             ],
             "nets": [
-                "SW",
-                "VIN"
+                "VIN",
+                "SW"
             ],
             "region": null,
             "metrics": {
@@ -475,8 +475,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SW",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "has_power": true,
                 "has_ground": false
@@ -511,8 +511,8 @@
                 "U2"
             ],
             "nets": [
-                "SENSOR_OUT",
                 "ADC_IN",
+                "SENSOR_OUT",
                 "GND"
             ],
             "region": null,
@@ -531,8 +531,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "SENSOR_OUT",
                     "ADC_IN",
+                    "SENSOR_OUT",
                     "GND"
                 ],
                 "has_power": false,
@@ -2441,7 +2441,7 @@
     },
     "analysis_context": {
         "board_name": "mixed_signal_noise_board.kicad_pcb",
-        "timestamp": "2026-04-20T03:28:53.112133+00:00",
+        "timestamp": "2026-04-21T02:45:44.868812+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -3186,8 +3186,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "SW",
                     "VIN",
+                    "SW",
                     "GND"
                 ],
                 "region": null,
@@ -3217,8 +3217,8 @@
                     "U1"
                 ],
                 "nets": [
-                    "SW",
                     "VIN",
+                    "SW",
                     "GND"
                 ],
                 "region": null,
@@ -3247,8 +3247,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "SENSOR_OUT",
                     "ADC_IN",
+                    "SENSOR_OUT",
                     "GND"
                 ],
                 "region": null,
@@ -3360,8 +3360,8 @@
                     "L1"
                 ],
                 "nets": [
-                    "SW",
-                    "VIN"
+                    "VIN",
+                    "SW"
                 ],
                 "region": null,
                 "metrics": {
@@ -3379,8 +3379,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SW",
-                        "VIN"
+                        "VIN",
+                        "SW"
                     ],
                     "has_power": true,
                     "has_ground": false
@@ -3406,8 +3406,8 @@
                     "U2"
                 ],
                 "nets": [
-                    "SENSOR_OUT",
                     "ADC_IN",
+                    "SENSOR_OUT",
                     "GND"
                 ],
                 "region": null,
@@ -3426,8 +3426,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "SENSOR_OUT",
                         "ADC_IN",
+                        "SENSOR_OUT",
                         "GND"
                     ],
                     "has_power": false,
@@ -3839,7 +3839,7 @@
         "score": 0.0,
         "total_penalty": 12.4
     },
-    "generated_at": "2026-04-20T03:28:53.112139+00:00",
+    "generated_at": "2026-04-21T02:45:44.868818+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

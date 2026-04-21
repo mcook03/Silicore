@@ -1,946 +1,121 @@
 {% extends "base.html" %}
 {% block content %}
-
-{% set ns = namespace(
-    most_active_name="No projects yet",
-    most_active_runs=0,
-    least_active_name="No projects yet",
-    least_active_runs=0,
-    newest_name="No projects yet",
-    newest_date="N/A"
-) %}
-{% set chart = projects_chart if projects_chart is defined else {} %}
-
-<style>
-    .projects-experience {
-        display: grid;
-        gap: 24px;
-    }
-
-    .projects-launch-band {
-        display: grid;
-        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-        gap: 22px;
-        align-items: stretch;
-    }
-
-    .projects-launch-panel {
-        padding: 28px;
-        border-radius: var(--radius-xl);
-        border: 1px solid var(--line);
-        background: rgba(10, 12, 18, 0.78);
-        box-shadow: 0 34px 86px rgba(0,0,0,0.44);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .projects-launch-panel::after {
-        content: none;
-        position: absolute;
-        left: -12%;
-        right: -12%;
-        bottom: 16%;
-        height: 96px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.9), rgba(77,141,255,0.55), rgba(255,255,255,0));
-        filter: blur(16px);
-        opacity: 0.76;
-        transform: rotate(-6deg);
-        pointer-events: none;
-    }
-
-    .projects-launch-kicker {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        margin-bottom: 14px;
-    }
-
-    .projects-launch-title {
-        margin: 0;
-        font-size: clamp(34px, 4.8vw, 56px);
-        line-height: 0.94;
-        letter-spacing: -0.07em;
-        font-weight: 800;
-        color: var(--text-soft);
-        text-wrap: balance;
-    }
-
-    .projects-launch-copy {
-        margin: 14px 0 0;
-        color: var(--muted);
-        font-size: 15px;
-        line-height: 1.82;
-        max-width: 58ch;
-    }
-
-    @media (max-width: 1080px) {
-        .projects-launch-band {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-{% if projects %}
-    {% set ns.least_active_runs = projects[0].run_count %}
-    {% for project in projects %}
-        {% if project.run_count >= ns.most_active_runs %}
-            {% set ns.most_active_runs = project.run_count %}
-            {% set ns.most_active_name = project.name %}
-        {% endif %}
-        {% if loop.first or project.run_count <= ns.least_active_runs %}
-            {% set ns.least_active_runs = project.run_count %}
-            {% set ns.least_active_name = project.name %}
-        {% endif %}
-        {% if loop.last %}
-            {% set ns.newest_name = project.name %}
-            {% set ns.newest_date = project.created_at %}
-        {% endif %}
-    {% endfor %}
-{% endif %}
-
-<div class="projects-experience">
-
-<section class="page-hero">
-    <div class="page-hero-inner">
-        <div class="page-hero-copy">
-            <div class="page-eyebrow">Silicore Portfolio</div>
-            <h1 class="page-title">Manage every engineering workspace from a single system view.</h1>
-            <p class="page-copy">
-                Track active projects, portfolio spread, workspace maturity, and review readiness across the Silicore environment.
+<section class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Nexus portfolio</div>
+            <h1 class="hero-title">Operate every engineering workspace from one command view.</h1>
+            <p class="hero-copy">
+                Manage active projects, review spread, linked runs, and portfolio health across the full Silicore environment.
             </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#create-project">Create Project</a>
+                <a class="btn btn-secondary" href="#workspace-gallery">View Workspaces</a>
+            </div>
         </div>
-
-        <div class="hero-side">
-            <div class="top-badge">{{ projects_summary.total_projects }} workspaces</div>
-            <div class="top-badge">{{ projects_summary.total_runs }} linked runs</div>
-        </div>
+        <aside class="hero-card">
+            <div class="hero-card-label">Portfolio telemetry</div>
+            <div class="metric-grid" style="margin-top:18px;">
+                <div class="metric-card">
+                    <div class="metric-label">Total projects</div>
+                    <div class="metric-value">{{ projects_summary.total_projects if projects_summary else projects|length }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Linked runs</div>
+                    <div class="metric-value">{{ projects_summary.total_runs if projects_summary else 0 }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Active</div>
+                    <div class="metric-value">{{ projects_summary.populated_projects if projects_summary else 0 }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Empty</div>
+                    <div class="metric-value">{{ projects_summary.empty_projects if projects_summary else 0 }}</div>
+                </div>
+            </div>
+        </aside>
     </div>
 </section>
-
-<section class="projects-launch-band">
-    <section class="projects-launch-panel">
-        <div class="projects-launch-kicker">Workspace Operating Layer</div>
-        <h2 class="projects-launch-title">Run the portfolio like an engineering command system.</h2>
-        <p class="projects-launch-copy">
-            Track workspace spread, review readiness, active execution surfaces, and project maturity across the full Silicore environment.
-        </p>
-    </section>
-
-<section class="projects-hero-grid">
-    <section class="card projects-score-card">
-        <div class="card-header">
-            <h2 class="section-title">Silicore Control</h2>
-            <p class="section-copy">
-                Portfolio-style view of Nexus workspaces, activity, and system-level workspace spread.
-            </p>
-        </div>
-
-        <div class="card-body">
-            <div class="projects-score-shell">
-                <div class="projects-score-main">
-                    <div class="projects-score-number">{{ projects_summary.total_projects }}</div>
-                    <div class="projects-score-label">total projects</div>
-                    <div class="projects-score-pill">Nexus Portfolio</div>
-                </div>
-
-                <div class="projects-score-visual">
-                    <div class="projects-ring">
-                        <div class="projects-ring-core">
-                            <span>{{ projects_summary.populated_projects }}</span>
-                            <small>active</small>
-                        </div>
-                    </div>
-
-                    <div class="projects-scale-row">
-                        <div class="projects-scale-pill low">Empty</div>
-                        <div class="projects-scale-pill watch">Building</div>
-                        <div class="projects-scale-pill high">Active</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="projects-foot-note">
-                Track total Nexus workspaces, active projects, and portfolio spread from one system-level management surface.
-            </div>
-        </div>
-    </section>
-
-    <section class="card projects-overview-card">
-        <div class="card-header">
-            <h2 class="section-title">Nexus Overview</h2>
-            <p class="section-copy">
-                Current management-level metrics across all saved Silicore workspaces.
-            </p>
-        </div>
-
-        <div class="card-body">
-            <div class="projects-overview-grid">
-                <div class="overview-mini-card">
-                    <div class="overview-mini-value">{{ projects_summary.total_runs }}</div>
-                    <div class="overview-mini-label">Linked Runs</div>
-                </div>
-
-                <div class="overview-mini-card">
-                    <div class="overview-mini-value">{{ projects_summary.populated_projects }}</div>
-                    <div class="overview-mini-label">Active Nexus Workspaces</div>
-                </div>
-
-                <div class="overview-mini-card">
-                    <div class="overview-mini-value">{{ projects_summary.empty_projects }}</div>
-                    <div class="overview-mini-label">Empty Nexus Workspaces</div>
-                </div>
-            </div>
-
-            <div class="workspace-trend-panel">
-                <div class="workspace-trend-header">
-                    <span>Portfolio Growth</span>
-                    <span>{{ chart.portfolio_average_score if chart else 0 }} avg score</span>
-                </div>
-                <div class="workspace-trend-chart">
-                    {% if chart and chart.portfolio_growth and chart.portfolio_growth.has_data %}
-                    <svg viewBox="0 0 100 36" class="workspace-trend-svg" preserveAspectRatio="none" aria-label="Workspace portfolio growth">
-                        {% for guide in chart.portfolio_growth.guides %}
-                        <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="chart-grid-line"></line>
-                        {% endfor %}
-                        {% for point in chart.portfolio_growth.points %}
-                        {% if not loop.first %}
-                        <line
-                            x1="{{ chart.portfolio_growth.points[loop.index0 - 1].x }}"
-                            y1="{{ chart.portfolio_growth.points[loop.index0 - 1].y }}"
-                            x2="{{ point.x }}"
-                            y2="{{ point.y }}"
-                            class="workspace-trend-stroke"
-                        ></line>
-                        {% endif %}
-                        {% endfor %}
-                        {% for point in chart.portfolio_growth.points %}
-                        <circle cx="{{ point.x }}" cy="{{ point.y }}" r="1.2" class="workspace-trend-point"></circle>
-                        {% endfor %}
-                    </svg>
-                    {% else %}
-                    <div class="workspace-chart-empty">Create projects to build a real portfolio trend.</div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </section>
-</section>
-</section>
-
-<section class="card" id="create-project">
-    <div class="card-header">
-        <div class="projects-top-row">
-            <div>
-                <h2 class="section-title">Create Project</h2>
-                <p class="section-copy">
-                    Start a new Silicore workspace for boards, runs, later comparisons, and team review flow.
-                </p>
-            </div>
-
-            <div class="btn-link-row">
-                <a class="btn-link" href="#workspace-gallery">View Nexus Workspaces</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="card-body">
-        <div class="divider"></div>
-
-        <form method="post" action="{{ url_for('create_project_route') }}">
-            <div class="inline-grid-2">
-                <label>
-                    Project Name
-                    <input type="text" name="name" placeholder="Enter project name" required>
-                </label>
-
-                <label>
-                    Description
-                    <input type="text" name="description" placeholder="Optional project description">
-                </label>
-            </div>
-
-            <div class="btn-link-row">
-                <button type="submit" class="btn btn-primary">Create Project</button>
-            </div>
-        </form>
-    </div>
-</section>
-</div>
 
 <section class="grid grid-2">
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Nexus Spotlight</h2>
-            <p class="section-copy">
-                Quick visual comparison of the strongest Nexus activity versus the lightest one.
-            </p>
-        </div>
+    <article class="card" id="create-project">
+        <div class="section-kicker">Create workspace</div>
+        <h2 class="section-title">Start a new Silicore project.</h2>
+        <p class="section-copy">Organize linked runs, reviews, release gates, assignments, and notes in one place.</p>
+        <form method="post" action="{{ url_for('create_project_route') }}" class="page-stack" style="margin-top:18px;">
+            <label>
+                Project Name
+                <input type="text" name="name" required placeholder="Falcon power module">
+            </label>
+            <label>
+                Description
+                <textarea name="description" rows="4" placeholder="Purpose, scope, or review context for this workspace."></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit">Create Project</button>
+        </form>
+    </article>
 
-        <div class="card-body">
-            <div class="spotlight-grid">
-                <div class="spotlight-card spotlight-best">
-                    <div class="spotlight-kicker">Most Active Nexus Workspace</div>
-                    <div class="spotlight-title">{{ ns.most_active_name }}</div>
-                    <div class="spotlight-copy">
-                        {{ ns.most_active_runs }} linked run{% if ns.most_active_runs != 1 %}s{% endif %}
-                    </div>
+    <article class="card">
+        <div class="section-kicker">Portfolio pulse</div>
+        <h2 class="section-title">Nexus portfolio status.</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card">
+                <div class="metric-label">Average score</div>
+                <div class="metric-value">{{ projects_chart.portfolio_average_score|round|int if projects_chart and projects_chart.portfolio_average_score is defined else "N/A" }}</div>
+                <div class="metric-sub">Across scored workspaces</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Shared projects</div>
+                <div class="metric-value">{{ projects_summary.shared_projects if projects_summary else 0 }}</div>
+                <div class="metric-sub">Visible to multiple members</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Active ratio</div>
+                <div class="metric-value">
+                    {% if projects_summary and projects_summary.total_projects %}
+                        {{ ((projects_summary.populated_projects / projects_summary.total_projects) * 100)|round|int }}%
+                    {% else %}
+                        0%
+                    {% endif %}
                 </div>
-
-                <div class="spotlight-card spotlight-worst">
-                    <div class="spotlight-kicker">Least Active Nexus Workspace</div>
-                    <div class="spotlight-title">{{ ns.least_active_name }}</div>
-                    <div class="spotlight-copy">
-                        {{ ns.least_active_runs }} linked run{% if ns.least_active_runs != 1 %}s{% endif %}
-                    </div>
-                </div>
+                <div class="metric-sub">Portfolio maturity level</div>
             </div>
         </div>
-    </section>
-
-    <section class="card">
-        <div class="card-header">
-            <h2 class="section-title">Nexus Distribution</h2>
-            <p class="section-copy">
-                Product-style breakdown of Nexus workspace status across your project list.
-            </p>
-        </div>
-
-        <div class="card-body">
-            <div class="distribution-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Total Nexus Workspaces</div>
-                    <div class="metric-value">{{ projects_summary.total_projects }}</div>
-                    <div class="metric-sub">All saved Silicore shells</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Active Share</div>
-                    <div class="metric-value">
-                        {% if projects_summary.total_projects > 0 %}
-                            {{ ((projects_summary.populated_projects / projects_summary.total_projects) * 100)|round|int }}
-                        {% else %}
-                            0
-                        {% endif %}
-                    </div>
-                    <div class="metric-sub">Percent with at least one run</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Most Active</div>
-                    <div class="metric-value">{{ ns.most_active_runs }}</div>
-                    <div class="metric-sub">Highest linked-run count</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Least Active</div>
-                    <div class="metric-value">{{ ns.least_active_runs }}</div>
-                    <div class="metric-sub">Lowest linked-run count</div>
-                </div>
-            </div>
-
-            {% if chart and chart.activity_bars and chart.activity_bars.has_data %}
-            <div class="workspace-bars-panel">
-                <div class="workspace-trend-header">
-                    <span>Most Active Nexus Workspaces</span>
-                    <span>Linked run volume</span>
-                </div>
-                <div class="workspace-bars-list">
-                    {% for item in chart.activity_bars["items"] %}
-                    <div class="workspace-bar-row">
-                        <div class="workspace-bar-label">{{ item.label }}</div>
-                        <div class="workspace-bar-track">
-                            <div class="workspace-bar-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
-                        <div class="workspace-bar-value">{{ item.value }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </section>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Portfolio Scoreboard</h2>
-        <p class="section-copy">
-            Latest scored project position for each workspace with real values pulled from linked project runs.
-        </p>
-    </div>
-
-    <div class="card-body">
-        {% if chart and chart.score_bars and chart.score_bars.has_data %}
-            <div class="workspace-bars-list">
-                {% for item in chart.score_bars["items"] %}
-                <div class="workspace-bar-row">
-                    <div class="workspace-bar-label">{{ item.label }}</div>
-                    <div class="workspace-bar-track">
-                        <div class="workspace-bar-fill score-bar-fill" style="width: {{ item.width_pct }}%;"></div>
-                    </div>
-                    <div class="workspace-bar-value">{{ item.value|round|int }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty-state">
-                No scored project runs yet. Analyze a project and attach it to a workspace to populate portfolio scoring.
-            </div>
-        {% endif %}
-    </div>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Insight</h2>
-        <p class="section-copy">
-            A clearer summary surface for Nexus activity and portfolio direction.
-        </p>
-    </div>
-
-    <div class="card-body">
-        <div class="summary-strip">
-            <div class="summary-panel">
-                <h3>Most Active Nexus Workspace</h3>
-                <p>
-                    <strong>{{ ns.most_active_name }}</strong> currently leads the Nexus list with
-                    {{ ns.most_active_runs }} linked run{% if ns.most_active_runs != 1 %}s{% endif %}.
-                </p>
-            </div>
-
-            <div class="summary-panel">
-                <h3>Newest Nexus Workspace</h3>
-                <p>
-                    <strong>{{ ns.newest_name }}</strong> is the most recently listed project in the current
-                    Nexus set, with creation timestamp {{ ns.newest_date }}.
-                </p>
-            </div>
-        </div>
-    </div>
+    </article>
 </section>
 
 <section class="card" id="workspace-gallery">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Gallery</h2>
-        <p class="section-copy">
-            Card-based Silicore view with stronger visual hierarchy and direct actions.
-        </p>
-    </div>
+    <div class="section-kicker">Workspace gallery</div>
+    <h2 class="section-title">Project portfolio</h2>
+    <p class="section-copy">Open a workspace to review trends, release gates, assignments, Atlas guidance, and linked analysis runs.</p>
 
-    <div class="card-body">
-        {% if projects %}
-            <div class="workspace-gallery">
-                {% for project in projects %}
-                    <article class="workspace-card">
-                        <div class="workspace-card-top">
-                            <div>
-                                <div class="workspace-card-title">{{ project.name }}</div>
-                                <div class="workspace-card-copy">
-                                    {{ project.description if project.description else "No description provided for this Nexus workspace yet." }}
-                                </div>
-                            </div>
-
-                            {% if project.run_count > 0 %}
-                                <span class="chip chip-soft">Active</span>
-                            {% else %}
-                                <span class="chip chip-medium">Empty</span>
-                            {% endif %}
-                        </div>
-
-                        <div class="workspace-mini-chart">
-                            {% if project.score_trend and project.score_trend.has_data %}
-                            <svg viewBox="0 0 {{ project.score_trend.width }} {{ project.score_trend.height }}" class="workspace-mini-svg" preserveAspectRatio="none" aria-label="Project score trend">
-                                <polygon points="{{ project.score_trend.area_points }}" class="workspace-mini-area"></polygon>
-                                <polyline points="{{ project.score_trend.points }}" class="workspace-mini-stroke"></polyline>
-                            </svg>
-                            {% else %}
-                            <div class="workspace-chart-empty">No score history yet</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="workspace-stat-row">
-                            <div class="workspace-stat-box">
-                                <div class="workspace-stat-value">{{ project.run_count }}</div>
-                                <div class="workspace-stat-label">Runs</div>
-                            </div>
-
-                            <div class="workspace-stat-box">
-                                <div class="workspace-stat-value">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
-                                <div class="workspace-stat-label">Latest Score</div>
-                            </div>
-                        </div>
-
-                        <div class="summary-panel">
-                            <h3>{{ project.health_label }}</h3>
-                            <p>Top recurring area: {{ project.top_category }}.</p>
-                        </div>
-
-                        <div class="workspace-meta">
-                            <div><span>Project ID</span><strong>{{ project.project_id }}</strong></div>
-                            <div><span>Created</span><strong>{{ project.created_at }}</strong></div>
-                            <div><span>Updated</span><strong>{{ project.updated_at }}</strong></div>
-                        </div>
-
-                        <div class="workspace-actions">
-                            <a class="btn btn-secondary" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open</a>
-
-                            <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" onsubmit="return confirm('Delete this project?');">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                    </article>
-                {% endfor %}
+    {% if projects %}
+    <div class="stats-grid" style="margin-top:18px;">
+        {% for project in projects %}
+        <article class="metric-card">
+            <div class="btn-row" style="margin-top:0; justify-content:space-between;">
+                <span class="score-pill {% if project.health_tone == 'critical' %}risk{% else %}healthy{% endif %}">{{ project.health_label }}</span>
+                <span class="mini-chip">{{ project.run_count }} run{% if project.run_count != 1 %}s{% endif %}</span>
             </div>
-        {% else %}
-            <div class="empty-state">
-                No projects yet. Create your first Silicore workspace above.
+            <div class="card-title" style="margin-top:0;">{{ project.name }}</div>
+            <div class="metric-value-text">
+                {% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}
             </div>
-        {% endif %}
+            <div class="metric-sub">
+                {{ project.description if project.description else "No workspace description yet." }}
+            </div>
+            <div class="metric-sub">
+                Top recurring domain:
+                {{ project.top_category if project.top_category else "No recurring category yet" }}
+            </div>
+            <div class="btn-row">
+                <a class="btn btn-secondary" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Workspace</a>
+            </div>
+        </article>
+        {% endfor %}
     </div>
+    {% else %}
+    <div class="empty-state" style="margin-top:18px;">No projects exist yet. Create the first workspace to start building the Nexus portfolio.</div>
+    {% endif %}
 </section>
-
-<style>
-    .projects-hero-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 18px;
-    }
-
-    .projects-score-shell {
-        display: grid;
-        grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1.1fr);
-        gap: 22px;
-        align-items: start;
-    }
-
-    .projects-score-main {
-        min-width: 220px;
-        display: grid;
-        align-content: start;
-        justify-items: start;
-    }
-
-    .projects-score-number {
-        font-size: 72px;
-        line-height: 1;
-        font-weight: 800;
-        color: var(--text);
-        letter-spacing: -0.05em;
-        white-space: nowrap;
-    }
-
-    .projects-score-label {
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-top: 8px;
-    }
-
-    .projects-score-pill {
-        display: inline-flex;
-        margin-top: 12px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        color: var(--muted);
-        background: rgba(124,180,255,0.12);
-        border: 1px solid rgba(124,180,255,0.16);
-        font-size: 12px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        max-width: 100%;
-        white-space: nowrap;
-    }
-
-    .projects-score-visual {
-        display: grid;
-        gap: 14px;
-        justify-items: center;
-        min-width: 0;
-    }
-
-    .projects-ring {
-        width: 160px;
-        height: 160px;
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        background:
-            radial-gradient(circle at center, rgba(255,255,255,0.03) 40%, transparent 41%),
-            conic-gradient(from 180deg, #2f67ff, #60a5fa, #93c5fd, #2f67ff);
-        padding: 12px;
-    }
-
-    .projects-ring-core {
-        width: 100%;
-        height: 100%;
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        background: rgba(10,16,32,0.96);
-        color: var(--text);
-        text-align: center;
-    }
-
-    .projects-ring-core span {
-        font-size: 34px;
-        font-weight: 800;
-        line-height: 1;
-    }
-
-    .projects-ring-core small {
-        color: var(--muted);
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-top: 4px;
-    }
-
-    .projects-scale-row,
-    .projects-overview-grid,
-    .spotlight-grid,
-    .distribution-grid,
-    .summary-strip,
-    .workspace-gallery,
-    .workspace-stat-row,
-    .workspace-actions {
-        display: grid;
-        gap: 14px;
-    }
-
-    .projects-scale-row {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        width: 100%;
-        margin-top: 4px;
-    }
-
-    .projects-scale-pill {
-        text-align: center;
-        padding: 8px 10px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        border: 1px solid var(--line);
-    }
-
-    .projects-scale-pill.low {
-        color: #cbd5e1;
-        background: rgba(148,163,184,0.12);
-    }
-
-    .projects-scale-pill.watch {
-        color: #fde68a;
-        background: rgba(245,158,11,0.12);
-    }
-
-    .projects-scale-pill.high {
-        color: #86efac;
-        background: rgba(62, 232, 160,0.12);
-    }
-
-    .projects-foot-note {
-        margin-top: 16px;
-        color: var(--muted);
-        line-height: 1.7;
-    }
-
-    .projects-overview-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .overview-mini-card,
-    .spotlight-card,
-    .workspace-card,
-    .workspace-stat-box {
-        padding: 18px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.03);
-    }
-
-    .overview-mini-value,
-    .workspace-stat-value {
-        font-size: 30px;
-        line-height: 1;
-        font-weight: 800;
-        color: var(--text);
-        letter-spacing: -0.04em;
-        margin-bottom: 8px;
-    }
-
-    .overview-mini-label,
-    .workspace-stat-label {
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .workspace-trend-panel,
-    .workspace-mini-chart {
-        margin-top: 16px;
-        padding: 16px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.02);
-    }
-
-    .workspace-trend-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 700;
-        margin-bottom: 12px;
-    }
-
-    .workspace-trend-chart,
-    .workspace-mini-chart {
-        height: 72px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .workspace-trend-svg,
-    .workspace-mini-svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-
-    .chart-grid-line {
-        stroke: rgba(255,255,255,0.06);
-        stroke-width: 0.45;
-    }
-
-    .workspace-trend-stroke,
-    .workspace-mini-stroke {
-        fill: none;
-        stroke: rgba(124,180,255,0.95);
-        stroke-width: 1.6;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .workspace-mini-area {
-        fill: rgba(124,180,255,0.16);
-    }
-
-    .workspace-trend-point {
-        fill: var(--muted);
-    }
-
-    .workspace-chart-empty {
-        height: 100%;
-        display: grid;
-        place-items: center;
-        color: var(--muted);
-        font-size: 12px;
-        border-radius: var(--radius-sm);
-        background:
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-        background-size: 18px 18px;
-    }
-
-    .workspace-bars-panel {
-        margin-top: 18px;
-        padding: 16px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.02);
-    }
-
-    .workspace-bars-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .workspace-bar-row {
-        display: grid;
-        grid-template-columns: minmax(0, 160px) 1fr 42px;
-        gap: 12px;
-        align-items: center;
-    }
-
-    .workspace-bar-label {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--text-soft);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .workspace-bar-value {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--text-soft);
-    }
-
-    .workspace-bar-track {
-        height: 12px;
-        border-radius: 999px;
-        overflow: hidden;
-        background: rgba(255,255,255,0.06);
-    }
-
-    .workspace-bar-fill {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(124,180,255,0.95), rgba(124,180,255,0.68));
-    }
-
-    .score-bar-fill {
-        background: linear-gradient(90deg, rgba(62, 232, 160,0.95), rgba(124,180,255,0.78));
-    }
-
-    .projects-top-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        align-items: flex-start;
-        flex-wrap: wrap;
-    }
-
-    .spotlight-grid,
-    .distribution-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .spotlight-kicker {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 10px;
-    }
-
-    .spotlight-title,
-    .workspace-card-title {
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--text);
-        letter-spacing: -0.04em;
-        margin-bottom: 8px;
-    }
-
-    .spotlight-copy {
-        color: var(--muted);
-        line-height: 1.7;
-        margin: 0;
-    }
-
-    .workspace-card-copy {
-        color: var(--muted);
-        line-height: 1.7;
-        margin: 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .summary-strip {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .workspace-gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .workspace-card {
-        display: grid;
-        gap: 16px;
-    }
-
-    .workspace-card-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        align-items: flex-start;
-    }
-
-    .workspace-card-top > div:first-child {
-        min-width: 0;
-    }
-
-    .workspace-card-top > .chip {
-        flex-shrink: 0;
-    }
-
-    .workspace-meta {
-        display: grid;
-        gap: 8px;
-    }
-
-    .workspace-meta div {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        color: var(--muted);
-        font-size: 13px;
-        padding-top: 8px;
-        border-top: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .workspace-meta strong {
-        color: var(--text-soft);
-        font-weight: 700;
-    }
-
-    .workspace-actions {
-        grid-template-columns: 1fr auto;
-        align-items: center;
-    }
-
-    @media (max-width: 1100px) {
-        .projects-hero-grid,
-        .workspace-gallery,
-        .summary-strip,
-        .spotlight-grid,
-        .distribution-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .projects-overview-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .projects-score-shell {
-            grid-template-columns: 1fr;
-        }
-
-        .projects-score-main {
-            justify-items: start;
-        }
-    }
-
-    @media (max-width: 700px) {
-        .projects-scale-row,
-        .workspace-actions {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-bar-row {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-card-top,
-        .projects-top-row {
-            flex-direction: column;
-        }
-    }
-</style>
-
 {% endblock %}

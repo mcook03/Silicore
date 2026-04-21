@@ -1,0 +1,84 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Project Summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .board-card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 18px;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Project Summary</h1>
+                <p><strong>Total Boards:</strong> 2</p>
+                <p><strong>Average Score:</strong> 13.05 / 100</p>
+                <p><strong>Best Score:</strong> 20.0 / 100</p>
+                <p><strong>Worst Score:</strong> 6.1 / 100</p>
+            </div>
+
+            
+        <div class="hero">
+            <p><strong>Project comparison complete</strong></p>
+            <p>The strongest board is fixtures_thermal_hotspot_board.kicad_pcb at 20.0 / 100, while the weakest board is fixtures_high_speed_pair_bad.kicad_pcb at 6.1 / 100. The current score spread across the project is 13.9 points. The most recurring issue area across the project is power integrity.</p>
+        </div>
+        
+
+            <div class="hero">
+                <p><strong>Review Readiness</strong></p>
+                <p>Project packet includes ranked boards, project insight summary, and per-board finding traceability for revision reviews and signoff preparation.</p>
+            </div>
+
+            <div class="hero">
+                <p><strong>Parser Capability</strong></p>
+                <p>Current production-ready inputs: .kicad_pcb, .txt</p>
+                <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            
+            <div class="board-card">
+                <h3>#1 — fixtures_thermal_hotspot_board.kicad_pcb</h3>
+                <p><strong>Score:</strong> 20.0 / 100</p>
+                <p><strong>Total Risks:</strong> 18</p>
+                <p><strong>Total Penalty:</strong> 80.0</p>
+                <p>This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests VIN is running high current density (214.3 A/mm²). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+            <div class="board-card">
+                <h3>#2 — fixtures_high_speed_pair_bad.kicad_pcb</h3>
+                <p><strong>Score:</strong> 6.1 / 100</p>
+                <p><strong>Total Risks:</strong> 44</p>
+                <p><strong>Total Penalty:</strong> 224.0</p>
+                <p>This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700). The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
+    

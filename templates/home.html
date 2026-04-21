@@ -1,758 +1,213 @@
 {% extends "base.html" %}
 {% block content %}
-
-<style>
-    .silicore-lp {
-        --lp-accent: var(--blue);
-        --lp-accent-dim: rgba(124, 180, 255, 0.55);
-        --lp-max: min(1200px, 100%);
-        --lp-pad-x: clamp(20px, 4vw, 48px);
-        --lp-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-        font-family: var(--font-sans);
-        color: var(--text);
-        position: relative;
-        isolation: isolate;
-    }
-
-    .silicore-lp::before {
-        content: "";
-        position: absolute;
-        left: max(0px, calc(50% - 70vw));
-        top: 0;
-        width: 1px;
-        height: clamp(320px, 42vh, 520px);
-        background: linear-gradient(180deg, transparent, var(--lp-accent-dim) 35%, rgba(94, 224, 240, 0.35) 70%, transparent);
-        opacity: 0.65;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .silicore-lp *,
-    .silicore-lp *::before,
-    .silicore-lp *::after {
-        box-sizing: border-box;
-    }
-
-    .silicore-lp a:focus-visible {
-        outline: 2px solid var(--lp-accent);
-        outline-offset: 3px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .silicore-lp [data-reveal] {
-            animation: none !important;
-            opacity: 1 !important;
-            transform: none !important;
-        }
-
-        .silicore-lp .lp-hero-glow,
-        .silicore-lp .lp-preview-inner::after,
-        .silicore-lp .lp-trace-svg .lp-draw {
-            animation: none !important;
-        }
-    }
-
-    @keyframes lp-rise {
-        from {
-            opacity: 0;
-            transform: translateY(22px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes lp-glow-drift {
-        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-        50% { transform: translate(1.5%, -1.5%) scale(1.03); opacity: 0.68; }
-    }
-
-    @keyframes lp-shimmer {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
-    }
-
-    @keyframes lp-dash {
-        to { stroke-dashoffset: 0; }
-    }
-
-    .silicore-lp [data-reveal] {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: lp-rise 0.88s var(--lp-ease-out) forwards;
-    }
-
-    .silicore-lp [data-reveal][data-delay="1"] { animation-delay: 0.06s; }
-    .silicore-lp [data-reveal][data-delay="2"] { animation-delay: 0.12s; }
-    .silicore-lp [data-reveal][data-delay="3"] { animation-delay: 0.2s; }
-    .silicore-lp [data-reveal][data-delay="4"] { animation-delay: 0.28s; }
-    .silicore-lp [data-reveal][data-delay="5"] { animation-delay: 0.36s; }
-
-    .lp-wrap {
-        width: min(var(--lp-max), 100%);
-        margin-inline: auto;
-        padding-inline: var(--lp-pad-x);
-    }
-
-    .lp-kicker {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--muted-2);
-    }
-
-    .lp-hero {
-        position: relative;
-        padding-block: clamp(64px, 12vh, 108px) clamp(48px, 9vh, 88px);
-        border-bottom: 1px solid var(--line);
-    }
-
-    .lp-hero-glow {
-        pointer-events: none;
-        position: absolute;
-        inset: -25% -20% auto -20%;
-        height: min(560px, 75vh);
-        background:
-            radial-gradient(ellipse 50% 42% at 72% 12%, rgba(124, 180, 255, 0.11), transparent 55%),
-            radial-gradient(ellipse 40% 36% at 12% 28%, rgba(94, 224, 240, 0.06), transparent 50%),
-            radial-gradient(ellipse 55% 40% at 50% 100%, rgba(255, 255, 255, 0.03), transparent 45%);
-        animation: lp-glow-drift 22s ease-in-out infinite;
-    }
-
-    .lp-hero-grid {
-        position: absolute;
-        inset: 0;
-        opacity: 0.4;
-        background-image:
-            linear-gradient(var(--line) 1px, transparent 1px),
-            linear-gradient(90deg, var(--line) 1px, transparent 1px);
-        background-size: 56px 56px;
-        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), transparent 88%);
-        pointer-events: none;
-    }
-
-    .lp-hero-inner {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        gap: clamp(24px, 4vw, 36px);
-    }
-
-    @media (min-width: 1080px) {
-        .lp-hero-inner.lp-hero-split {
-            grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-            align-items: start;
-            gap: clamp(32px, 5vw, 64px);
-        }
-    }
-
-    .lp-hero-main {
-        display: grid;
-        gap: clamp(20px, 3vw, 28px);
-    }
-
-    .lp-hero-visual {
-        position: relative;
-        display: none;
-        min-height: 260px;
-        align-self: stretch;
-    }
-
-    @media (min-width: 1080px) {
-        .lp-hero-visual {
-            display: block;
-        }
-    }
-
-    .lp-trace-wrap {
-        position: absolute;
-        inset: 0;
-        border-left: 1px solid var(--line);
-        padding-left: clamp(20px, 2.5vw, 32px);
-        margin-left: 8px;
-    }
-
-    .lp-trace-svg {
-        width: 100%;
-        height: 100%;
-        min-height: 280px;
-        opacity: 0.85;
-    }
-
-    .lp-trace-svg .lp-draw {
-        fill: none;
-        stroke: url(#lpStroke);
-        stroke-width: 1.15;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-dasharray: 520;
-        stroke-dashoffset: 520;
-        animation: lp-dash 2.2s var(--lp-ease-out) forwards 0.25s;
-    }
-
-    .lp-trace-svg .lp-draw-delay {
-        stroke-dasharray: 380;
-        stroke-dashoffset: 380;
-        animation-delay: 0.55s;
-    }
-
-    .lp-trace-svg .lp-node {
-        fill: rgba(124, 180, 255, 0.35);
-        stroke: rgba(255, 255, 255, 0.2);
-        stroke-width: 0.6;
-    }
-
-    .lp-trace-label {
-        position: absolute;
-        bottom: 8px;
-        right: 0;
-        font-family: var(--font-mono);
-        font-size: 9px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--muted-2);
-    }
-
-    .lp-hero h1 {
-        margin: 0;
-        max-width: 13ch;
-        font-family: var(--font-display);
-        font-weight: 600;
-        font-size: clamp(2.55rem, 5.2vw, 4.1rem);
-        line-height: 1.02;
-        letter-spacing: -0.048em;
-    }
-
-    .lp-hero h1 em {
-        font-style: normal;
-        color: var(--muted);
-    }
-
-    .lp-lede {
-        margin: 0;
-        max-width: 48ch;
-        font-size: clamp(1.02rem, 0.9vw + 0.95rem, 1.22rem);
-        line-height: 1.62;
-        color: var(--muted);
-        font-weight: 400;
-    }
-
-    .lp-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-        margin-top: 2px;
-    }
-
-    .lp-actions .btn {
-        min-height: 44px;
-        padding-inline: 22px;
-        font-weight: 600;
-        letter-spacing: -0.012em;
-        transition: transform 0.2s var(--lp-ease-out), box-shadow 0.2s var(--lp-ease-out), border-color 0.2s;
-    }
-
-    .lp-actions .btn-primary:hover {
-        transform: translateY(-1px);
-    }
-
-    .lp-actions .btn-secondary:hover {
-        transform: translateY(-1px);
-        border-color: var(--line-strong);
-    }
-
-    .lp-hero-meta {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px 28px;
-        padding-top: clamp(20px, 3vw, 30px);
-        border-top: 1px solid var(--line);
-        margin-top: clamp(4px, 1.5vw, 12px);
-    }
-
-    .lp-meta-item {
-        display: grid;
-        gap: 5px;
-        min-width: 0;
-    }
-
-    .lp-meta-item span:first-child {
-        font-family: var(--font-mono);
-        font-size: 10px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--muted-2);
-    }
-
-    .lp-meta-item span:last-child {
-        font-size: 14px;
-        color: var(--muted);
-        line-height: 1.5;
-    }
-
-    .lp-section {
-        padding-block: clamp(68px, 10vh, 104px);
-    }
-
-    .lp-section-head {
-        display: grid;
-        gap: 14px;
-        margin-bottom: clamp(36px, 5vw, 56px);
-        max-width: 44ch;
-    }
-
-    .lp-section-head h2 {
-        margin: 0;
-        font-family: var(--font-display);
-        font-size: clamp(1.72rem, 2vw + 1rem, 2.4rem);
-        font-weight: 600;
-        letter-spacing: -0.038em;
-        line-height: 1.1;
-    }
-
-    .lp-section-intro {
-        margin: 0;
-        font-size: 1.05rem;
-        line-height: 1.62;
-        color: var(--muted);
-        max-width: 50ch;
-    }
-
-    .lp-pillars {
-        display: grid;
-        gap: 0;
-    }
-
-    @media (min-width: 900px) {
-        .lp-pillars {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0 40px;
-        }
-    }
-
-    .lp-pillar {
-        padding-block: clamp(26px, 3.5vw, 34px);
-        border-top: 1px solid var(--line);
-    }
-
-    @media (min-width: 900px) {
-        .lp-pillar {
-            border-top: 1px solid var(--line);
-            padding-inline-end: 12px;
-        }
-    }
-
-    .lp-pillar-index {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        color: var(--lp-accent);
-        margin-bottom: 12px;
-    }
-
-    .lp-pillar h3 {
-        margin: 0 0 10px;
-        font-family: var(--font-display);
-        font-size: 1.12rem;
-        font-weight: 600;
-        letter-spacing: -0.022em;
-        line-height: 1.22;
-    }
-
-    .lp-pillar p {
-        margin: 0;
-        font-size: 0.96rem;
-        line-height: 1.68;
-        color: var(--muted);
-    }
-
-    .lp-preview {
-        padding-block: clamp(52px, 8vh, 84px);
-        border-block: 1px solid var(--line);
-        background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.018) 45%, transparent);
-    }
-
-    .lp-preview-header {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 16px 24px;
-        margin-bottom: clamp(24px, 3.5vw, 36px);
-    }
-
-    .lp-preview-header h2 {
-        margin: 0;
-        font-family: var(--font-display);
-        font-size: clamp(1.48rem, 1.4vw + 1rem, 1.95rem);
-        font-weight: 600;
-        letter-spacing: -0.032em;
-    }
-
-    .lp-preview-caption {
-        margin: 0;
-        font-family: var(--font-mono);
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--muted-2);
-    }
-
-    .lp-preview-frame {
-        position: relative;
-        border-radius: 2px;
-        border: 1px solid var(--line);
-        overflow: hidden;
-        aspect-ratio: 16 / 9;
-        max-height: min(580px, 74vh);
-        background:
-            radial-gradient(ellipse 90% 55% at 50% -5%, rgba(124, 180, 255, 0.07), transparent 52%),
-            linear-gradient(168deg, rgba(10, 12, 18, 0.98) 0%, rgba(5, 6, 10, 0.99) 100%);
-        box-shadow:
-            inset 0 0 0 1px rgba(255, 255, 255, 0.02),
-            0 40px 100px rgba(0, 0, 0, 0.35);
-    }
-
-    .lp-preview-frame::before,
-    .lp-preview-frame::after {
-        content: "";
-        position: absolute;
-        width: 28px;
-        height: 28px;
-        border: 1px solid rgba(124, 180, 255, 0.35);
-        pointer-events: none;
-        z-index: 2;
-    }
-
-    .lp-preview-frame::before {
-        top: 14px;
-        left: 14px;
-        border-right: none;
-        border-bottom: none;
-    }
-
-    .lp-preview-frame::after {
-        bottom: 14px;
-        right: 14px;
-        border-left: none;
-        border-top: none;
-    }
-
-    .lp-preview-inner {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        padding: 36px 28px;
-    }
-
-    .lp-preview-inner::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image:
-            linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-        background-size: 40px 40px;
-        opacity: 0.55;
-        mask-image: radial-gradient(ellipse 72% 62% at 50% 48%, black 18%, transparent 100%);
-    }
-
-    .lp-preview-inner::after {
-        content: "";
-        position: absolute;
-        inset: -40%;
-        background: linear-gradient(
-            102deg,
-            transparent 42%,
-            rgba(255, 255, 255, 0.035) 50%,
-            transparent 58%
-        );
-        background-size: 200% 200%;
-        animation: lp-shimmer 14s linear infinite;
-        pointer-events: none;
-    }
-
-    .lp-scan {
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(124, 180, 255, 0.5), transparent);
-        opacity: 0.5;
-        animation: lp-glow-drift 6s ease-in-out infinite;
-        pointer-events: none;
-        z-index: 1;
-    }
-
-    .lp-placeholder-label {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        display: grid;
-        gap: 12px;
-        justify-items: center;
-    }
-
-    .lp-placeholder-label strong {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--text-soft);
-    }
-
-    .lp-placeholder-label span {
-        font-size: 14px;
-        color: var(--muted-2);
-        max-width: 38ch;
-        line-height: 1.55;
-    }
-
-    .lp-steps {
-        display: grid;
-        gap: 0;
-        counter-reset: lpstep;
-    }
-
-    @media (min-width: 920px) {
-        .lp-steps {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0 36px;
-        }
-    }
-
-    .lp-step {
-        position: relative;
-        padding-block: clamp(22px, 3vw, 30px);
-        border-top: 1px solid var(--line);
-    }
-
-    @media (min-width: 920px) {
-        .lp-step:not(:last-child)::after {
-            content: "";
-            position: absolute;
-            top: 36px;
-            right: -18px;
-            width: 36px;
-            height: 1px;
-            background: linear-gradient(90deg, var(--line-strong), transparent);
-            opacity: 0.85;
-        }
-    }
-
-    .lp-step::before {
-        counter-increment: lpstep;
-        content: counter(lpstep, decimal-leading-zero);
-        font-family: var(--font-mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.12em;
-        color: var(--muted-2);
-        display: block;
-        margin-bottom: 14px;
-    }
-
-    .lp-step h3 {
-        margin: 0 0 8px;
-        font-family: var(--font-display);
-        font-size: 1.06rem;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-    }
-
-    .lp-step p {
-        margin: 0;
-        font-size: 0.95rem;
-        line-height: 1.66;
-        color: var(--muted);
-    }
-
-    .lp-cta-final {
-        padding-block: clamp(72px, 12vh, 112px);
-        text-align: center;
-        border-top: 1px solid var(--line);
-        background: radial-gradient(ellipse 70% 80% at 50% 100%, rgba(124, 180, 255, 0.06), transparent 55%);
-    }
-
-    .lp-cta-final .lp-wrap {
-        display: grid;
-        gap: 18px;
-        justify-items: center;
-        max-width: 640px;
-    }
-
-    .lp-cta-final h2 {
-        margin: 0;
-        font-family: var(--font-display);
-        font-size: clamp(1.82rem, 2.3vw + 1rem, 2.65rem);
-        font-weight: 600;
-        letter-spacing: -0.038em;
-        line-height: 1.06;
-    }
-
-    .lp-cta-final p {
-        margin: 0;
-        font-size: 1.05rem;
-        line-height: 1.62;
-        color: var(--muted);
-        max-width: 42ch;
-    }
-
-    .lp-cta-final .lp-actions {
-        margin-top: 6px;
-        justify-content: center;
-    }
-</style>
-
-<div class="silicore-lp">
-    <header class="lp-hero">
-        <div class="lp-hero-glow" aria-hidden="true"></div>
-        <div class="lp-hero-grid" aria-hidden="true"></div>
-        <div class="lp-wrap lp-hero-inner lp-hero-split">
-            <div class="lp-hero-main">
-                <p class="lp-kicker" data-reveal>AI hardware design intelligence</p>
-                <h1 data-reveal data-delay="1">PCB analysis that keeps pace with your revision cycle<em>.</em></h1>
-                <p class="lp-lede" data-reveal data-delay="2">
-                    Silicore ingests layout and manufacturing inputs, scores engineering risk across domains, and turns dense geometry into decisions your team can act on—before the board leaves the lab.
-                </p>
-                <div class="lp-actions" data-reveal data-delay="3">
-                    <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Run analysis</a>
-                    <a class="btn btn-secondary" href="#capabilities">Explore capabilities</a>
-                </div>
-                <div class="lp-hero-meta" data-reveal data-delay="4">
-                    <div class="lp-meta-item">
-                        <span>Scope</span>
-                        <span>Signal, power, thermal, EMI, DFM, safety, parser trust</span>
-                    </div>
-                    <div class="lp-meta-item">
-                        <span>Outputs</span>
-                        <span>Ranked findings, revision deltas, review-ready briefs</span>
-                    </div>
-                    <div class="lp-meta-item">
-                        <span>Audience</span>
-                        <span>PCB engineers, review leads, hardware program owners</span>
-                    </div>
-                </div>
-            </div>
-            <aside class="lp-hero-visual" aria-hidden="true">
-                <div class="lp-trace-wrap">
-                    <svg class="lp-trace-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <defs>
-                            <linearGradient id="lpStroke" x1="0" y1="0" x2="320" y2="320" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="rgba(124,180,255,0.2)"/>
-                                <stop offset="0.5" stop-color="rgba(124,180,255,0.9)"/>
-                                <stop offset="1" stop-color="rgba(94,224,240,0.45)"/>
-                            </linearGradient>
-                        </defs>
-                        <path class="lp-draw" d="M 28 52 L 124 52 L 124 92 L 52 92 L 52 212 L 204 212 L 204 128 L 284 128 L 284 272 L 28 272 Z"/>
-                        <path class="lp-draw lp-draw-delay" d="M 252 36 L 252 104 L 168 104 L 168 40 M 152 148 L 296 148 L 296 228 L 212 228"/>
-                        <circle class="lp-node" cx="124" cy="72" r="3.2"/>
-                        <circle class="lp-node" cy="212" cx="204" r="3.2"/>
-                        <circle class="lp-node" cx="284" cy="200" r="3.2"/>
-                        <circle class="lp-node" cx="52" cy="152" r="3.2"/>
-                    </svg>
-                    <span class="lp-trace-label">Abstract layer · not to scale</span>
-                </div>
-            </aside>
-        </div>
-    </header>
-
-    <section class="lp-section" id="capabilities" aria-labelledby="capabilities-heading">
-        <div class="lp-wrap">
-            <div class="lp-section-head">
-                <p class="lp-kicker" data-reveal>What Silicore does</p>
-                <h2 id="capabilities-heading" data-reveal data-delay="1">A single layer of intelligence across layout, checks, and review workflow.</h2>
-                <p class="lp-section-intro" data-reveal data-delay="2">
-                    Built for teams that ship hardware on aggressive timelines: fewer hand-wavy reviews, more traceable rationale tied to the artifacts you already produce.
-                </p>
-            </div>
-            <div class="lp-pillars">
-                <article class="lp-pillar" data-reveal data-delay="1">
-                    <div class="lp-pillar-index">01 — Ingestion</div>
-                    <h3>Deep PCB understanding, not keyword heuristics</h3>
-                    <p>
-                        Parse KiCad, Gerber, and CAM bundles into a consistent model of nets, copper, stackup assumptions, and fabrication posture—so downstream scoring reflects the board you actually built.
-                    </p>
-                </article>
-                <article class="lp-pillar" data-reveal data-delay="2">
-                    <div class="lp-pillar-index">02 — Analysis</div>
-                    <h3>Cross-domain risk with engineering-grade framing</h3>
-                    <p>
-                        Evaluate integrity, thermal, EMI, manufacturability, and safety signals in one pass. Every issue is positioned with severity, mechanism, and what to verify on the next spin.
-                    </p>
-                </article>
-                <article class="lp-pillar" data-reveal data-delay="3">
-                    <div class="lp-pillar-index">03 — Action</div>
-                    <h3>From detection to the next review step</h3>
-                    <p>
-                        Compare revisions, track score movement across projects, and route critical deltas into summaries your leads can sign off on—without rebuilding context from scratch each time.
-                    </p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="lp-preview" id="product-preview" aria-labelledby="preview-heading">
-        <div class="lp-wrap">
-            <div class="lp-preview-header">
-                <h2 id="preview-heading" data-reveal>Product surface</h2>
-                <p class="lp-preview-caption" data-reveal data-delay="1">Interface preview · placeholder</p>
-            </div>
-            <div class="lp-preview-frame" data-reveal data-delay="2">
-                <div class="lp-scan" style="top: 38%;" aria-hidden="true"></div>
-                <div class="lp-preview-inner">
-                    <div class="lp-placeholder-label">
-                        <strong>Dashboard / analysis workspace</strong>
-                        <span>Swap this region for a crisp 16∶9 capture of the live product—ideally neutral chrome, sRGB, and one primary story on screen.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="lp-section" id="how-it-works" aria-labelledby="how-heading">
-        <div class="lp-wrap">
-            <div class="lp-section-head">
-                <p class="lp-kicker" data-reveal>How it works</p>
-                <h2 id="how-heading" data-reveal data-delay="1">Three steps from files to a defensible engineering read.</h2>
-            </div>
-            <div class="lp-steps">
-                <article class="lp-step" data-reveal data-delay="1">
-                    <h3>Upload design artifacts</h3>
-                    <p>Bring layout sources and fabrication outputs into one workspace. Silicore normalizes structure so the same rules apply across vendors and revision bumps.</p>
-                </article>
-                <article class="lp-step" data-reveal data-delay="2">
-                    <h3>Run automated PCB intelligence</h3>
-                    <p>The engine scores domains, surfaces regressions against prior runs, and flags fabrication blockers early—when changes are still cheap.</p>
-                </article>
-                <article class="lp-step" data-reveal data-delay="3">
-                    <h3>Ship the brief, not the noise</h3>
-                    <p>Atlas condenses findings into ranked actions, comparison narratives, and review-ready exports so stakeholders see signal, not raw tool chatter.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="lp-cta-final" id="cta-final" aria-labelledby="cta-heading">
-        <div class="lp-wrap">
-            <p class="lp-kicker" data-reveal>Silicore</p>
-            <h2 id="cta-heading" data-reveal data-delay="1">Put PCB risk scoring where your team already works.</h2>
-            <p data-reveal data-delay="2">
-                Start with a single-board run, then scale into project history, revision intelligence, and operational review cadence as your program matures.
+<section class="hero" id="product">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Hardware design intelligence and automation</div>
+            <h1 class="hero-title">Detect PCB risk earlier. Automate what happens next.</h1>
+            <p class="hero-copy">
+                Silicore analyzes PCB designs, explains engineering issues, compares revisions, tracks workspace health, and helps hardware teams operate design review like a system instead of a manual checklist.
             </p>
-            <div class="lp-actions" data-reveal data-delay="3">
-                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Start analysis</a>
-                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Open workspace</a>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Start Analysis</a>
+                <a class="btn btn-secondary" href="{{ url_for('project_page') }}">View Platform</a>
+            </div>
+            <div class="hero-meta">
+                <span class="chip">PCB Risk Analysis</span>
+                <span class="chip">Revision Intelligence</span>
+                <span class="chip">Workflow Automation</span>
+                <span class="chip">Atlas-guided review</span>
             </div>
         </div>
-    </section>
-</div>
 
+        <aside class="hero-card">
+            <div class="hero-card-label">Live product preview</div>
+            <div class="hero-card-title">Engineering command window</div>
+            <p class="section-copy">
+                A single operating surface for board review, revision changes, automation triggers, and team response.
+            </p>
+            <div class="canvas-frame" style="margin-top:18px;">
+                <div class="canvas-center"></div>
+            </div>
+            <div class="metric-grid" style="margin-top:18px;">
+                <div class="metric-card">
+                    <div class="metric-label">Runs tracked</div>
+                    <div class="metric-value">{{ stats.total_runs if stats is defined else 0 }}</div>
+                    <div class="metric-sub">Across the current Silicore environment</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Projects</div>
+                    <div class="metric-value">{{ projects|length if projects is defined else 0 }}</div>
+                    <div class="metric-sub">Active engineering workspaces</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+
+<section class="card">
+    <div class="btn-row" style="margin-top:0;">
+        <span class="top-badge">Built for hardware teams</span>
+        <span class="top-badge">Revision-aware analysis</span>
+        <span class="top-badge">Reports and exports</span>
+        <span class="top-badge">Workflow automation</span>
+        <span class="top-badge">Operations visibility</span>
+    </div>
+</section>
+
+<section class="grid grid-2" id="how-it-works">
+    <article class="card">
+        <div class="section-kicker">Why teams struggle</div>
+        <h2 class="section-title">Design risk gets buried in slow review systems.</h2>
+        <div class="data-list" style="margin-top:18px;">
+            <div class="panel-muted">Critical issues are hard to catch early enough to prevent downstream waste.</div>
+            <div class="panel-muted">Revision changes can introduce new failure pressure without clear visibility.</div>
+            <div class="panel-muted">Manual review handoffs make engineering decisions inconsistent and hard to repeat.</div>
+            <div class="panel-muted">Teams lose time moving from detection to action, reporting, and follow-up.</div>
+        </div>
+    </article>
+
+    <article class="card">
+        <div class="section-kicker">What Silicore changes</div>
+        <h2 class="section-title">Silicore turns analysis into an operating workflow.</h2>
+        <div class="data-list" style="margin-top:18px;">
+            <div class="panel-muted">Automated design analysis and engineering risk scoring.</div>
+            <div class="panel-muted">Revision comparison with Atlas-guided prioritization.</div>
+            <div class="panel-muted">Persistent projects, release gates, review history, and auditability.</div>
+            <div class="panel-muted">Alerts, scheduled runs, validation lanes, and external package trust reporting.</div>
+        </div>
+    </article>
+</section>
+
+<section class="page-stack" id="capabilities">
+    <div>
+        <div class="eyebrow">Platform capabilities</div>
+        <h2 class="section-title">A PCB intelligence platform, not a file viewer.</h2>
+        <p class="page-copy">The product is organized around engineering decisions, not isolated outputs.</p>
+    </div>
+
+    <div class="stats-grid">
+        <article class="card">
+            <div class="section-kicker">PCB Risk Analysis</div>
+            <h3 class="card-title">Electrical, production, thermal, safety, and fabrication trust in one review surface.</h3>
+        </article>
+        <article class="card">
+            <div class="section-kicker">Revision Comparison</div>
+            <h3 class="card-title">Track score delta, recurring domains, and what actually changed between runs.</h3>
+        </article>
+        <article class="card">
+            <div class="section-kicker">Engineering Recommendations</div>
+            <h3 class="card-title">Move from findings to fix order with Atlas-guided next actions.</h3>
+        </article>
+        <article class="card">
+            <div class="section-kicker">Automations & Alerts</div>
+            <h3 class="card-title">Trigger scans, reports, and escalation when project risk crosses thresholds.</h3>
+        </article>
+    </div>
+</section>
+
+<section class="grid grid-2">
+    <article class="card">
+        <div class="section-kicker">How it works</div>
+        <h2 class="section-title">Five steps from design file to engineering action.</h2>
+        <div class="timeline" style="margin-top:18px;">
+            <div class="timeline-row"><div><div class="list-title">1. Upload board design files</div><div class="list-meta">Single-board review, project reviews, CAM packages, and saved workspaces.</div></div></div>
+            <div class="timeline-row"><div><div class="list-title">2. Silicore parses and evaluates design risk</div><div class="list-meta">Format-aware parsing across KiCad, Gerber/CAM, and expanding import paths.</div></div></div>
+            <div class="timeline-row"><div><div class="list-title">3. Atlas Intelligence identifies concerns</div><div class="list-meta">Findings are clustered, prioritized, and framed as engineering decisions.</div></div></div>
+            <div class="timeline-row"><div><div class="list-title">4. Risk scoring and comparisons surface priorities</div><div class="list-meta">Use board-level and workspace-level posture to guide the next review loop.</div></div></div>
+            <div class="timeline-row"><div><div class="list-title">5. Automations notify teams and trigger follow-up</div><div class="list-meta">Reports, validation, alerts, and release workflow can all move from the same platform.</div></div></div>
+        </div>
+    </article>
+
+    <article class="card" id="automations">
+        <div class="section-kicker">From analysis to action</div>
+        <h2 class="section-title">Automate engineering review workflows.</h2>
+        <p class="section-copy">
+            Silicore should not stop at identifying issues. It should monitor change, trigger alerts, generate reports, support design reviews, and help teams respond automatically.
+        </p>
+        <div class="timeline" style="margin-top:18px;">
+            <div class="timeline-row"><div><div class="list-title">Trigger</div><div class="list-meta">New file upload, revision change, score threshold crossed, scheduled interval.</div></div></div>
+            <div class="timeline-row"><div><div class="list-title">Condition</div><div class="list-meta">If thermal risk increases, if project score falls, if critical issues appear, if CAM trust drops.</div></div></div>
+            <div class="timeline-row"><div><div class="list-title">Action</div><div class="list-meta">Notify the team, create a report, assign a review, or open the next engineering task.</div></div></div>
+        </div>
+    </article>
+</section>
+
+<section class="grid grid-2">
+    <article class="card">
+        <div class="section-kicker">Recent platform activity</div>
+        <h2 class="section-title">What the current Silicore environment is doing.</h2>
+        {% if recent_runs %}
+        <div class="timeline" style="margin-top:18px;">
+            {% for run in recent_runs %}
+            <div class="timeline-row">
+                <div>
+                    <div class="list-title">{{ run.label or run.name }}</div>
+                    <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+                </div>
+                <a class="btn btn-secondary" href="{{ run.path }}">Open</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No recent activity is available yet.</div>
+        {% endif %}
+    </article>
+
+    <article class="card">
+        <div class="section-kicker">Solutions</div>
+        <h2 class="section-title">Built for serious engineering organizations.</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">PCB Engineers</div><div class="metric-sub">Catch design risk earlier and shorten the next review cycle.</div></div>
+            <div class="metric-card"><div class="metric-label">Review Leads</div><div class="metric-sub">Standardize scoring, comparison, and signoff preparation.</div></div>
+            <div class="metric-card"><div class="metric-label">Reliability Teams</div><div class="metric-sub">Track recurring problem families and emerging fabrication risk.</div></div>
+            <div class="metric-card"><div class="metric-label">Manufacturing Readiness</div><div class="metric-sub">Validate package completeness, CAM trust, and project posture before handoff.</div></div>
+        </div>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-kicker">Outcomes</div>
+    <h2 class="section-title">What Silicore should improve across the hardware organization.</h2>
+    <div class="stats-grid" style="margin-top:18px;">
+        <div class="metric-card"><div class="metric-value">{{ stats.single_runs if stats is defined else 0 }}</div><div class="metric-label">single-board runs</div><div class="metric-sub">Fast inspection cycles on focused designs.</div></div>
+        <div class="metric-card"><div class="metric-value">{{ stats.project_runs if stats is defined else 0 }}</div><div class="metric-label">project reviews</div><div class="metric-sub">Cross-board review and revision monitoring.</div></div>
+        <div class="metric-card"><div class="metric-value">{{ stats.exported_runs if stats is defined else 0 }}</div><div class="metric-label">export packages</div><div class="metric-sub">Reports, outputs, and engineering continuity artifacts.</div></div>
+        <div class="metric-card"><div class="metric-value">{{ projects|length if projects is defined else 0 }}</div><div class="metric-label">active workspaces</div><div class="metric-sub">Scalable project oversight in the product.</div></div>
+    </div>
+</section>
+
+<section class="card" id="pricing">
+    <div class="section-kicker">Pricing</div>
+    <h2 class="section-title">Simple, premium tiers that match platform maturity.</h2>
+    <div class="stats-grid" style="margin-top:18px;">
+        <div class="metric-card"><div class="metric-label">Starter</div><div class="metric-value-text">Manual analysis</div><div class="metric-sub">Single board review and baseline exports.</div></div>
+        <div class="metric-card"><div class="metric-label">Professional</div><div class="metric-value-text">Projects + history</div><div class="metric-sub">Saved workspaces, exports, and review continuity.</div></div>
+        <div class="metric-card"><div class="metric-label">Team</div><div class="metric-value-text">Monitoring</div><div class="metric-sub">Scheduled runs, alerts, comparisons, and shared review.</div></div>
+        <div class="metric-card"><div class="metric-label">Enterprise</div><div class="metric-value-text">Governance</div><div class="metric-sub">Automation, audit history, validation lanes, and integration readiness.</div></div>
+    </div>
+</section>
+
+<section class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Build with more confidence</div>
+            <h2 class="hero-title">Turn PCB review into a smarter operating system.</h2>
+            <p class="hero-copy">
+                Silicore is evolving from a risk analysis tool into a hardware design intelligence and automation platform for real engineering teams.
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
+                <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">Open Projects</a>
+            </div>
+        </div>
+        <aside class="hero-card">
+            <div class="hero-card-label">Platform posture</div>
+            <div class="hero-card-title">Engineering-first. Operationally powerful.</div>
+            <p class="section-copy">
+                This should feel like software serious hardware organizations trust for high-value design decisions.
+            </p>
+        </aside>
+    </div>
+</section>
 {% endblock %}

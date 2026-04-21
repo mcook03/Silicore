@@ -1,2350 +1,312 @@
 {% extends "base.html" %}
 {% block content %}
-
-{% set score_trend = workspace_chart.score_trend if workspace_chart is defined else {} %}
-{% set risk_trend = workspace_chart.risk_trend if workspace_chart is defined else {} %}
-{% set critical_trend = workspace_chart.critical_trend if workspace_chart is defined else {} %}
-{% set confidence_trend = workspace_chart.confidence_trend if workspace_chart is defined else {} %}
-{% set category_bars = workspace_chart.category_bars if workspace_chart is defined else {} %}
-{% set quality_mix = workspace_chart.quality_mix if workspace_chart is defined else {} %}
 {% set latest_compare_ids = workspace_chart.latest_compare_run_ids if workspace_chart is defined else [] %}
-{% set timeline = timeline_data if timeline_data is defined else {} %}
-{% set workspace_intel = workspace_intelligence if workspace_intelligence is defined else {} %}
-
-<style>
-    .workspace-experience {
-        display: grid;
-        gap: 24px;
-    }
-
-    .workspace-metric-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .workspace-metric-card {
-        padding: 18px 18px 16px;
-        display: grid;
-        align-content: start;
-        gap: 8px;
-        min-height: 148px;
-    }
-
-    .workspace-metric-card .metric-label {
-        overflow-wrap: anywhere;
-    }
-
-    .workspace-metric-value-text,
-    .workspace-metric-value-meta,
-    .workspace-metric-value-number {
-        font-family: var(--font-display);
-        font-weight: 700;
-        letter-spacing: -0.05em;
-        line-height: 0.98;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-
-    .workspace-metric-value-text {
-        font-size: clamp(1.55rem, 2.3vw, 2.4rem);
-    }
-
-    .workspace-metric-value-number {
-        font-size: clamp(2rem, 3vw, 3.2rem);
-    }
-
-    .workspace-metric-value-meta {
-        font-size: clamp(1.3rem, 1.95vw, 1.95rem);
-        line-height: 1.02;
-    }
-
-    .workspace-metric-sub {
-        font-size: 12px;
-        line-height: 1.45;
-        overflow-wrap: anywhere;
-    }
-
-    .workspace-launch-band {
-        display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
-        gap: 22px;
-        align-items: stretch;
-    }
-
-    .workspace-launch-panel {
-        padding: 28px;
-        border-radius: var(--radius-xl);
-        border: 1px solid var(--line);
-        background:
-            radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 24%),
-            radial-gradient(circle at top left, rgba(124,180,255,0.12), transparent 26%),
-            linear-gradient(180deg, rgba(9,12,18,0.98), rgba(5,7,12,0.99));
-        box-shadow: 0 34px 86px rgba(0,0,0,0.44);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .workspace-launch-panel::after {
-        content: "";
-        position: absolute;
-        left: -10%;
-        right: -10%;
-        bottom: 18%;
-        height: 100px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.88), rgba(77,141,255,0.55), rgba(255,255,255,0));
-        filter: blur(16px);
-        opacity: 0.74;
-        transform: rotate(-5deg);
-        pointer-events: none;
-    }
-
-    .workspace-launch-kicker {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        margin-bottom: 14px;
-    }
-
-    .workspace-launch-title {
-        margin: 0;
-        font-size: clamp(34px, 4.8vw, 56px);
-        line-height: 0.94;
-        letter-spacing: -0.07em;
-        font-weight: 800;
-        color: var(--text-soft);
-        text-wrap: balance;
-    }
-
-    .workspace-launch-copy {
-        margin: 14px 0 0;
-        color: var(--muted);
-        font-size: 15px;
-        line-height: 1.82;
-        max-width: 58ch;
-    }
-
-    .workspace-command-panel {
-        position: relative;
-        overflow: hidden;
-        padding: 28px;
-        border-radius: var(--radius-xl);
-        border: 1px solid var(--line);
-        background:
-            radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 22%),
-            radial-gradient(circle at top right, rgba(6,182,212,0.1), transparent 24%),
-            linear-gradient(180deg, rgba(10,13,20,0.98), rgba(6,8,13,0.98));
-        box-shadow: 0 34px 86px rgba(0,0,0,0.44);
-        display: grid;
-        gap: 18px;
-    }
-
-    .workspace-command-panel::after {
-        content: "";
-        position: absolute;
-        inset: auto -12% -22% auto;
-        width: 220px;
-        height: 220px;
-        border-radius: 999px;
-        background: radial-gradient(circle, rgba(124,180,255,0.18), transparent 64%);
-        filter: blur(8px);
-        pointer-events: none;
-    }
-
-    .workspace-command-label {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-    }
-
-    .workspace-command-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    .workspace-command-metric {
-        position: relative;
-        z-index: 1;
-        padding: 16px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.03);
-        display: grid;
-        gap: 8px;
-    }
-
-    .workspace-command-metric strong {
-        font-family: var(--font-display);
-        font-size: clamp(1.6rem, 3vw, 2.7rem);
-        line-height: 0.92;
-        letter-spacing: -0.06em;
-    }
-
-    .workspace-command-metric span {
-        color: var(--muted-2);
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-    }
-
-    .workspace-command-note {
-        position: relative;
-        z-index: 1;
-        padding: 16px 18px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.025);
-        color: var(--muted);
-        line-height: 1.7;
-    }
-
-    @media (max-width: 1080px) {
-        .workspace-launch-band {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-command-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    @media (max-width: 720px) {
-        .workspace-command-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-metric-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .workspace-metric-card {
-            min-height: 132px;
-        }
-    }
-</style>
-
-<div class="workspace-experience">
-
-<section class="page-hero">
-    <div class="page-hero-inner">
-        <div class="page-hero-copy">
-            <div class="page-eyebrow">Silicore Workspace</div>
-            <h1 class="page-title">{{ project.name }}</h1>
-            <p class="page-copy">
+<section class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Nexus workspace</div>
+            <h1 class="hero-title">{{ project.name }}</h1>
+            <p class="hero-copy">
                 {{ project.description if project.description else "Track workspace health, recurring engineering pressure, release posture, and Atlas-guided execution from one continuous review surface." }}
             </p>
+            <div class="hero-actions">
+                <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">Back to Projects</a>
+                {% if latest_compare_ids and latest_compare_ids|length == 2 %}
+                <a class="btn btn-primary" href="{{ url_for('compare_runs', project_id=project.project_id, run_a=latest_compare_ids[0], run_b=latest_compare_ids[1]) }}">Open Compare</a>
+                {% endif %}
+            </div>
         </div>
-
-        <div class="hero-side">
-            <div class="top-badge">Runs {{ project.runs|length }}</div>
-            <div class="top-badge">Health {{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</div>
-            {% if latest_compare_ids and latest_compare_ids|length == 2 %}
-            <a class="btn btn-secondary" href="{{ url_for('compare_runs', project_id=project.project_id, run_a=latest_compare_ids[0], run_b=latest_compare_ids[1]) }}">Open Compare</a>
-            {% endif %}
-        </div>
+        <aside class="hero-card">
+            <div class="hero-card-label">Workspace telemetry</div>
+            <div class="metric-grid" style="margin-top:18px;">
+                <div class="metric-card"><div class="metric-label">Linked runs</div><div class="metric-value">{{ project.runs|length }}</div></div>
+                <div class="metric-card"><div class="metric-label">Latest score</div><div class="metric-value">{% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}</div></div>
+                <div class="metric-card"><div class="metric-label">Health</div><div class="metric-value-text">{{ workspace_intelligence.health_score|round|int if workspace_intelligence else "N/A" }}</div></div>
+                <div class="metric-card"><div class="metric-label">Confidence</div><div class="metric-value">{{ workspace_intelligence.average_confidence|round|int if workspace_intelligence else "N/A" }}</div></div>
+            </div>
+        </aside>
     </div>
 </section>
 
-<section class="platform-band">
-    <section class="platform-intro-card">
-        <div class="platform-kicker">Workspace Review Architecture</div>
-        <h2 class="platform-title">Operate the project like a living engineering system.</h2>
-        <p class="platform-copy">
-            Track recurring risk families, readiness posture, compare movement, team review flow, and Atlas-guided execution through one Nexus workspace surface.
-        </p>
-    </section>
-
-    <aside class="platform-panel">
-        <div class="platform-panel-label">Workspace Telemetry</div>
-        <div class="platform-stat-grid">
-            <div class="platform-stat">
-                <span>Health score</span>
-                <strong>{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</strong>
-            </div>
-            <div class="platform-stat">
-                <span>Linked runs</span>
-                <strong>{{ project.runs|length }}</strong>
-            </div>
-            <div class="platform-stat">
-                <span>Top pattern</span>
-                <strong style="font-size:1.15rem; line-height:1.08;">{{ project.top_category if project.top_category else "Building" }}</strong>
-            </div>
-            <div class="platform-stat">
-                <span>Confidence</span>
-                <strong>{{ workspace_intel.average_confidence|round|int if workspace_intel else "N/A" }}</strong>
-            </div>
-        </div>
-        <div class="platform-note">
-            {{ workspace_intel.trend_summary if workspace_intel else "This workspace becomes more useful as Atlas builds score, recurrence, and confidence history across linked runs." }}
-        </div>
-    </aside>
-    
+<section class="card">
+    <div class="section-kicker">Nexus Workspace Overview</div>
+    <h2 class="section-title">Project command context</h2>
+    <p class="section-copy">{{ project.description if project.description else "No description yet for this project." }}</p>
+    <div class="stats-grid" style="margin-top:18px;">
+        <div class="metric-card"><div class="metric-label">Project ID</div><div class="metric-value-text">{{ project.project_id }}</div><div class="metric-sub">Nexus workspace identifier</div></div>
+        <div class="metric-card"><div class="metric-label">Linked Runs</div><div class="metric-value">{{ project.runs|length }}</div><div class="metric-sub">Attached analyses</div></div>
+        <div class="metric-card"><div class="metric-label">Latest Score</div><div class="metric-value">{% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}</div><div class="metric-sub">{{ project.health_label if project.health_label else "Healthy" }}</div></div>
+        <div class="metric-card"><div class="metric-label">Created</div><div class="metric-value-meta">{{ project.created_at }}</div><div class="metric-sub">Project creation time</div></div>
+        <div class="metric-card"><div class="metric-label">Updated</div><div class="metric-value-meta">{{ project.updated_at }}</div><div class="metric-sub">Latest change time</div></div>
+        <div class="metric-card"><div class="metric-label">Project Health</div><div class="metric-value">{{ workspace_intelligence.health_score|round|int if workspace_intelligence else "N/A" }}</div><div class="metric-sub">Confidence + recurrence adjusted</div></div>
+    </div>
 </section>
-
-<section class="assistant-console-layout">
-    <section class="card assistant-console-main">
-        <div class="card-header">
-            <h2 class="section-title">{{ project_assistant_console.title }}</h2>
-            <p class="section-copy">{{ project_assistant_console.summary }}</p>
-        </div>
-        <div class="card-body">
-            <div class="assistant-thread" data-assistant-project-thread>
-                <div class="assistant-message assistant-message-system">
-                    <div class="assistant-message-role">{{ project_assistant_console.eyebrow }}</div>
-                    <div class="assistant-message-copy">Ask about recurring patterns, trend direction, or next team action to build a workspace review thread.</div>
-                </div>
-            </div>
-            <div class="assistant-run-history" data-assistant-project-runs></div>
-
-            <div class="assistant-prompt-row">
-                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="What is repeating across this workspace?">What is repeating?</button>
-                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="Are we improving enough for the next review gate?">Are we improving?</button>
-                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="What should the team do next?">What should the team do next?</button>
-                <button type="button" class="assistant-prompt-chip" data-assistant-project-prompt="How healthy are the CAM packages across this workspace?">CAM portfolio</button>
-            </div>
-
-            <form class="assistant-composer" data-assistant-project-form>
-                <input type="text" class="assistant-composer-input" data-assistant-project-input placeholder="Ask about recurring issues, readiness, CAM packages, or execution plan">
-                <button type="submit" class="btn btn-primary">Send</button>
-            </form>
-
-            <div class="summary-panel" data-assistant-project-response style="margin-top:16px;">
-                <h3>{{ project_assistant_console.eyebrow }}</h3>
-                <p>Select a workspace question or review lens to open Atlas Intelligence guidance.</p>
-            </div>
-        </div>
-    </section>
-
-    <aside class="card assistant-console-side">
-        <div class="card-header">
-            <h2 class="section-title">Silicore</h2>
-            <p class="section-copy">Use workspace prompts and review lenses to understand the project like an engineering lead.</p>
-        </div>
-        <div class="card-body">
-            <div class="assistant-console-group">
-                <div class="assistant-console-label">Follow-Up Questions</div>
-                <div class="assistant-console-list">
-                    {% for item in project_assistant_console.questions %}
-                    <button type="button" class="assistant-console-chip" data-assistant-project-question data-title="{{ item.label }}" data-answer="{{ item.answer }}" data-route-key="{{ item.route_key }}">
-                        {{ item.label }}
-                    </button>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="assistant-console-group" style="margin-top:16px;">
-                <div class="assistant-console-label">Apply Review Lens</div>
-                <div class="assistant-console-list">
-                    {% for item in project_assistant_console.review_lenses %}
-                    <button type="button" class="assistant-console-lens" data-assistant-project-lens data-title="{{ item.headline }}" data-answer="{{ item.copy }}" data-route-key="{{ item.route_key }}">
-                        <span>{{ item.label }}</span>
-                        <strong>{{ item.headline }}</strong>
-                    </button>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="assistant-console-group" style="margin-top:16px;">
-                <div class="assistant-console-label">Atlas Actions</div>
-                <div class="assistant-console-list">
-                    <button type="button" class="assistant-console-lens" data-project-action="compare_latest_runs">
-                        <span>Revision Delta</span>
-                        <strong>Compare Latest Runs</strong>
-                    </button>
-                    <button type="button" class="assistant-console-lens" data-project-action="generate_signoff_packet">
-                        <span>Backend Packet</span>
-                        <strong>Generate Signoff Packet</strong>
-                    </button>
-                    <button type="button" class="assistant-console-lens" data-project-action="run_fixture_evaluation">
-                        <span>Calibration</span>
-                        <strong>Run Fixture Evaluation</strong>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </aside>
-</section>
-
-<script id="project-assistant-data" type="application/json">
-{{ {
-    "assistant": project_assistant_console,
-    "copilot": project_copilot,
-    "atlas_context": project_atlas_context if project_atlas_context is defined else {}
-}|tojson }}
-</script>
 
 <section class="grid grid-2">
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Workspace Overview</h2>
-        <p class="section-copy">
-            {{ project.description if project.description else "No description yet for this project." }}
-        </p>
-    </div>
-
-    <div class="card-body">
-        <div class="metric-grid workspace-metric-grid">
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Project ID</div>
-                <div class="metric-value workspace-metric-value-text">{{ project.project_id }}</div>
-                <div class="metric-sub workspace-metric-sub">Nexus workspace identifier</div>
-            </div>
-
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Linked Runs</div>
-                <div class="metric-value workspace-metric-value-number">{{ project.runs|length }}</div>
-                <div class="metric-sub workspace-metric-sub">Attached analyses</div>
-            </div>
-
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Latest Score</div>
-                <div class="metric-value workspace-metric-value-text">{{ project.latest_score|round|int if project.latest_score else "N/A" }}</div>
-                <div class="metric-sub workspace-metric-sub">{{ project.health_label }}</div>
-            </div>
-
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Created</div>
-                <div class="metric-value workspace-metric-value-meta">{{ project.created_at }}</div>
-                <div class="metric-sub workspace-metric-sub">Project creation time</div>
-            </div>
-
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Updated</div>
-                <div class="metric-value workspace-metric-value-meta">{{ project.updated_at }}</div>
-                <div class="metric-sub workspace-metric-sub">Latest change time</div>
-            </div>
-
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Project Health</div>
-                <div class="metric-value workspace-metric-value-text">{{ workspace_intel.health_score|round|int if workspace_intel else "N/A" }}</div>
-                <div class="metric-sub workspace-metric-sub">Confidence + recurrence adjusted</div>
-            </div>
+    <article class="card">
+        <div class="section-kicker">Confidence Timeline</div>
+        <h2 class="section-title">Workspace momentum</h2>
+        <div class="summary-panel" style="margin-top:18px;">
+            <p class="section-copy">{{ workspace_intelligence.trend_summary if workspace_intelligence else "No trend summary yet." }}</p>
         </div>
-    </div>
-</section>
-</div>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Workspace Trends</h2>
-        <p class="section-copy">
-            Real run history for this workspace, including score movement and issue volume across linked analyses.
-        </p>
-    </div>
-
-    <div class="card-body">
-        <div class="project-trend-grid">
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Score Trend</span>
-                    <strong>{{ score_trend.last_value|round|int if score_trend and score_trend.has_data else "N/A" }}</strong>
-                </div>
-                {% if score_trend and score_trend.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in score_trend.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in score_trend.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ score_trend.points[loop.index0 - 1].x }}" y1="{{ score_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-score-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">Run more analyses to build score history.</div>
-                {% endif %}
-            </div>
-
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Risk Count Trend</span>
-                    <strong>{{ risk_trend.last_value|round|int if risk_trend and risk_trend.has_data else "N/A" }}</strong>
-                </div>
-                {% if risk_trend and risk_trend.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in risk_trend.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in risk_trend.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ risk_trend.points[loop.index0 - 1].x }}" y1="{{ risk_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-risk-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">No risk history yet.</div>
-                {% endif %}
-            </div>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">Average confidence</div><div class="metric-value">{{ workspace_intelligence.average_confidence|round|int if workspace_intelligence else 0 }}</div></div>
+            <div class="metric-card"><div class="metric-label">Confidence delta</div><div class="metric-value">{{ timeline_data.confidence_delta|default(0) if timeline_data else 0 }}</div></div>
+            <div class="metric-card"><div class="metric-label">Score delta</div><div class="metric-value">{{ timeline_data.score_delta|default(0) if timeline_data else 0 }}</div></div>
         </div>
+    </article>
 
-        <div class="project-trend-grid" style="margin-top:16px;">
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Critical Findings</span>
-                    <strong>{{ critical_trend.last_value|round|int if critical_trend and critical_trend.has_data else 0 }}</strong>
-                </div>
-                {% if critical_trend and critical_trend.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in critical_trend.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in critical_trend.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ critical_trend.points[loop.index0 - 1].x }}" y1="{{ critical_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-critical-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">No critical finding history yet.</div>
-                {% endif %}
-            </div>
-
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Issue Mix</span>
-                    <strong>{{ project.top_category }}</strong>
-                </div>
-                {% if quality_mix and quality_mix.has_data %}
-                <div class="mini-bar-list">
-                    {% for item in quality_mix["items"] %}
-                    <div class="mini-bar-row">
-                        <div class="mini-bar-label">{{ item.label }}</div>
-                        <div class="mini-bar-track"><div class="mini-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                        <div class="mini-bar-value">{{ item.value }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="trend-empty">Workspace mix will appear after scored runs are linked.</div>
-                {% endif %}
-            </div>
+    <article class="card">
+        <div class="section-kicker">Recurring Failure Pattern</div>
+        <h2 class="section-title">Repeated engineering pressure</h2>
+        <div class="summary-panel" style="margin-top:18px;">
+            <p class="section-copy">{{ workspace_intelligence.recurring_family_summary if workspace_intelligence else "No recurring family summary yet." }}</p>
         </div>
-
-        <div class="project-trend-grid" style="margin-top:16px;">
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Confidence Trend</span>
-                    <strong>{{ confidence_trend.last_value|round|int if confidence_trend and confidence_trend.has_data else "N/A" }}</strong>
-                </div>
-                {% if confidence_trend and confidence_trend.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in confidence_trend.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in confidence_trend.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ confidence_trend.points[loop.index0 - 1].x }}" y1="{{ confidence_trend.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-confidence-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">Confidence history will appear after linked runs include evidence-backed findings.</div>
-                {% endif %}
-            </div>
-
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Trust Summary</span>
-                    <strong>{{ workspace_intel.average_confidence|round|int if workspace_intel else "N/A" }}</strong>
-                </div>
-                <div class="summary-panel compact-summary">
-                    <h3>Nexus Health Summary</h3>
-                    <p>{{ workspace_intel.health_summary if workspace_intel else "No workspace health summary yet." }}</p>
-                </div>
-                <p class="trend-summary-copy">{{ workspace_intel.confidence_summary if workspace_intel else "No confidence summary yet." }}</p>
-            </div>
-        </div>
-
-        <div class="summary-strip" style="margin-top:16px;">
-            <div class="summary-panel">
-                <h3>Trend Direction</h3>
-                <p>{{ workspace_intel.trend_summary if workspace_intel else "No trend summary yet." }}</p>
-            </div>
-            <div class="summary-panel">
-                <h3>Recurring Failure Pattern</h3>
-                <p>{{ workspace_intel.recurring_family_summary if workspace_intel else "No recurring family summary yet." }}</p>
-            </div>
-        </div>
-    </div>
-</section>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Access</h2>
-        <p class="section-copy">Project ownership and member visibility for shared engineering review.</p>
-    </div>
-
-    <div class="card-body">
-        <div class="metric-grid workspace-metric-grid">
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Owner</div>
-                <div class="metric-value workspace-metric-value-text">{{ project.owner_name }}</div>
-                <div class="metric-sub workspace-metric-sub">{{ project.owner_email if project.owner_email else "No owner assigned" }}</div>
-            </div>
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Team Size</div>
-                <div class="metric-value workspace-metric-value-number">{{ project.team_size }}</div>
-                <div class="metric-sub workspace-metric-sub">Users with project access</div>
-            </div>
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Notes</div>
-                <div class="metric-value workspace-metric-value-number">{{ project.note_count }}</div>
-                <div class="metric-sub workspace-metric-sub">Review comments captured</div>
-            </div>
-        </div>
-
-        {% if current_user %}
-        <form method="post" action="{{ url_for('project_members_route', project_id=project.project_id) }}" style="margin-top:16px;">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Add Team Member By Email
-                    <input type="email" name="email" list="known-users" placeholder="teammate@example.com" required>
-                    <datalist id="known-users">
-                        {% for user in available_users %}
-                        <option value="{{ user.email }}">{{ user.name }}</option>
-                        {% endfor %}
-                    </datalist>
-                </label>
-            </div>
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-secondary">Add Member</button>
-            </div>
-        </form>
-        {% else %}
-        <div class="empty-state" style="margin-top:16px;">Sign in to manage project access and team members.</div>
-        {% endif %}
-
-        {% if project.team_members %}
-        <div class="timeline-list" style="margin-top:16px;">
-            {% for member in project.team_members %}
+        {% if workspace_intelligence and workspace_intelligence.attention_areas %}
+        <div class="timeline" style="margin-top:18px;">
+            {% for item in workspace_intelligence.attention_areas %}
             <div class="timeline-row">
                 <div>
-                    <div class="timeline-title">{{ member.name }}</div>
-                    <div class="timeline-copy">{{ member.email }}</div>
+                    <div class="list-title">{{ item.category }}</div>
+                    <div class="list-meta">{{ item.reason }}</div>
                 </div>
-                <div class="timeline-copy">Member</div>
             </div>
             {% endfor %}
         </div>
         {% endif %}
-    </div>
+    </article>
 </section>
 
 <section class="grid grid-2">
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Assignments & Mentions</h2>
-        <p class="section-copy">Turn workspace findings into named engineering work with ownership, priority, and due dates.</p>
-    </div>
-    <div class="card-body">
-        {% if current_user %}
-        <form method="post" action="{{ url_for('project_assignments_route', project_id=project.project_id) }}">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Assignment Title
-                    <input type="text" name="title" placeholder="Validate power rail under transient load" required>
-                </label>
-                <label>
-                    Assignee
-                    <input type="email" name="assignee_email" list="known-users" placeholder="teammate@example.com">
-                </label>
-            </div>
-            <div class="project-detail-compare-grid" style="margin-top:12px;">
-                <label>
-                    Priority
-                    <select name="priority">
-                        <option value="high">High</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="low">Low</option>
-                    </select>
-                </label>
-                <label>
-                    Due Date
-                    <input type="date" name="due_at">
-                </label>
-            </div>
-            <label style="display:block; margin-top:12px;">
-                Task Detail
-                <textarea name="body" rows="3" placeholder="Capture what should be checked, what evidence is needed, or who needs to follow up."></textarea>
-            </label>
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-primary">Create Assignment</button>
-            </div>
+    <article class="card">
+        <div class="section-kicker">Nexus Access</div>
+        <h2 class="section-title">Project ownership and team visibility</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">Owner</div><div class="metric-value-text">{{ project.owner_name if project.owner_name else "Workspace Lead" }}</div><div class="metric-sub">{{ project.owner_email if project.owner_email else "No owner assigned" }}</div></div>
+            <div class="metric-card"><div class="metric-label">Team size</div><div class="metric-value">{{ project.team_size if project.team_size is defined else (project.team_members|length) }}</div><div class="metric-sub">Users with project access</div></div>
+            <div class="metric-card"><div class="metric-label">Notes</div><div class="metric-value">{{ project.note_count if project.note_count is defined else (project.collaboration_notes|length) }}</div><div class="metric-sub">Review comments captured</div></div>
+        </div>
+        <form method="post" action="{{ url_for('project_members_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
+            <label>Email<input type="email" name="email" placeholder="engineer@example.com" required></label>
+            <label>Name<input type="text" name="name" placeholder="Team member name"></label>
+            <label>Role<select name="role"><option value="viewer">Viewer</option><option value="lead">Lead</option><option value="admin">Admin</option></select></label>
+            <button class="btn btn-secondary" type="submit">Add Member</button>
         </form>
-        {% endif %}
+    </article>
 
+    <article class="card">
+        <div class="section-kicker">Value Metrics</div>
+        <h2 class="section-title">Business-facing change signals</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">Project trend</div><div class="metric-value-text">{{ "Improving" if (timeline_data.score_delta|default(0)) >= 0 else "Weakening" }}</div><div class="metric-sub">Current improvement posture</div></div>
+            <div class="metric-card"><div class="metric-label">Score delta</div><div class="metric-value">{{ timeline_data.score_delta|default(0) if timeline_data else 0 }}</div><div class="metric-sub">Change across linked runs</div></div>
+            <div class="metric-card"><div class="metric-label">Risk delta</div><div class="metric-value">{{ timeline_data.risk_delta|default(0) if timeline_data else 0 }}</div><div class="metric-sub">Finding count movement</div></div>
+        </div>
+    </article>
+</section>
+
+<section class="grid grid-2">
+    <article class="card">
+        <div class="section-kicker">Assignments & Mentions</div>
+        <h2 class="section-title">Coordinate review work</h2>
+        <form method="post" action="{{ url_for('project_assignments_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
+            <label>Title<input type="text" name="title" required></label>
+            <label>Body<textarea name="body" rows="4" required></textarea></label>
+            <label>Priority<select name="priority"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
+            <button class="btn btn-secondary" type="submit">Create Assignment</button>
+        </form>
         {% if project.assignments %}
-        <div class="timeline-list" style="margin-top:16px;">
-            {% for item in project.assignments %}
+        <div class="timeline" style="margin-top:18px;">
+            {% for item in project.assignments[:10] %}
             <div class="timeline-row">
                 <div>
-                    <div class="timeline-title">{{ item.title }}</div>
-                    <div class="timeline-copy">
-                        {{ item.assignee_name or item.assignee_email or "Unassigned" }} · {{ item.priority|replace('_', ' ')|title }}
-                        {% if item.due_at %} · due {{ item.due_at }}{% endif %}
-                    </div>
+                    <div class="list-title">{{ item.title }}</div>
+                    <div class="list-meta">{{ item.priority|upper }} · {{ item.status|replace('_', ' ')|title }}{% if item.assignee_name %} · {{ item.assignee_name }}{% endif %}</div>
                 </div>
-                <div class="timeline-copy">{{ item.body or item.status|replace('_', ' ')|title }}</div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="empty-state" style="margin-top:16px;">No workspace assignments have been created yet.</div>
+        <div class="empty-state" style="margin-top:18px;">No workspace assignments have been created yet.</div>
         {% endif %}
-    </div>
-</section>
+    </article>
 
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Release Gates</h2>
-        <p class="section-copy">Formal multi-approver readiness gates tied to a workspace or a specific linked run.</p>
-    </div>
-    <div class="card-body">
-        {% if current_user %}
-        <form method="post" action="{{ url_for('project_release_gate_route', project_id=project.project_id) }}">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Gate Title
-                    <input type="text" name="title" placeholder="Rev C signoff gate" required>
-                </label>
-                <label>
-                    Related Run
-                    <select name="run_id">
-                        <option value="">Workspace-level gate</option>
-                        {% for run in project.runs|reverse %}
-                        <option value="{{ run.run_id }}">{{ run.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-            <div class="project-detail-compare-grid" style="margin-top:12px;">
-                <label>
-                    Required Approvals
-                    <input type="number" name="required_approvals" min="1" max="5" value="2">
-                </label>
-                <label>
-                    Target Date
-                    <input type="date" name="target_date">
-                </label>
-            </div>
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-secondary">Create Release Gate</button>
-            </div>
+    <article class="card">
+        <div class="section-kicker">Release Gates</div>
+        <h2 class="section-title">Formal approval checkpoints</h2>
+        <form method="post" action="{{ url_for('project_release_gate_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
+            <label>Title<input type="text" name="title" required></label>
+            <label>Run<select name="run_id">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
+            <label>Required Approvals<input type="number" name="required_approvals" min="1" value="1" required></label>
+            <button class="btn btn-secondary" type="submit">Create Release Gate</button>
         </form>
-        {% endif %}
-
         {% if project.release_gates %}
-        <div class="timeline-list" style="margin-top:16px;">
-            {% for gate in project.release_gates %}
-            <div class="timeline-row" style="align-items:flex-start;">
+        <div class="timeline" style="margin-top:18px;">
+            {% for gate in project.release_gates[:10] %}
+            <div class="timeline-row">
                 <div>
-                    <div class="timeline-title">{{ gate.title }}</div>
-                    <div class="timeline-copy">
-                        {{ gate.approval_count }} / {{ gate.required_approvals }} approvals
-                        {% if gate.target_date %} · target {{ gate.target_date }}{% endif %}
-                        {% if gate.run_id %} · run {{ gate.run_id }}{% endif %}
-                    </div>
-                    {% if gate.approvals %}
-                    <div class="small-muted" style="margin-top:8px;">
-                        {% for approval in gate.approvals %}
-                        <span class="mini-chip mini-chip-medium">{{ approval.decision|replace('_', ' ')|title }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    <div class="list-title">{{ gate.title }}</div>
+                    <div class="list-meta">{{ gate.status|replace('_', ' ')|title }} · {{ gate.approval_count }}/{{ gate.required_approvals }} approvals</div>
                 </div>
-                <div style="min-width:220px;">
-                    <div class="timeline-copy">{{ gate.status|replace('_', ' ')|title }}</div>
-                    {% if current_user %}
-                    <form method="post" action="{{ url_for('project_release_gate_approval_route', project_id=project.project_id, gate_id=gate.gate_id) }}" style="margin-top:10px;">
-                        <input type="hidden" name="summary" value="Recorded from the Nexus workspace release gate panel.">
-                        <div class="btn-link-row">
-                            <button type="submit" class="mini-chip mini-chip-low" name="decision" value="approved">Approve</button>
-                            <button type="submit" class="mini-chip mini-chip-medium" name="decision" value="needs_changes">Needs Changes</button>
-                            <button type="submit" class="mini-chip mini-chip-critical" name="decision" value="rejected">Reject</button>
-                        </div>
-                    </form>
-                    {% endif %}
-                </div>
+                <form method="post" action="{{ url_for('project_release_gate_approval_route', project_id=project.project_id, gate_id=gate.gate_id) }}">
+                    <input type="hidden" name="summary" value="Recorded from the Nexus workspace release gate panel.">
+                    <button class="btn btn-secondary" type="submit">Approve</button>
+                </form>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="empty-state" style="margin-top:16px;">No release gates have been created for this workspace yet.</div>
+        <div class="empty-state" style="margin-top:18px;">No release gates have been created for this workspace yet.</div>
         {% endif %}
-    </div>
-</section>
+    </article>
 </section>
 
 <section class="grid grid-2">
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Value Metrics</h2>
-        <p class="section-copy">Business-facing change signals pulled directly from linked engineering runs.</p>
-    </div>
-
-    <div class="card-body">
-        <div class="metric-grid workspace-metric-grid">
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Project Trend</div>
-                <div class="metric-value workspace-metric-value-text">{{ project_value_metrics.improvement_label }}</div>
-                <div class="metric-sub workspace-metric-sub">Current improvement posture</div>
-            </div>
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Score Delta</div>
-                <div class="metric-value workspace-metric-value-number">{{ project_value_metrics.score_delta|round(1) }}</div>
-                <div class="metric-sub workspace-metric-sub">Change across linked runs</div>
-            </div>
-            <div class="metric-card workspace-metric-card">
-                <div class="metric-label">Risk Delta</div>
-                <div class="metric-value workspace-metric-value-number">{{ project_value_metrics.risk_delta }}</div>
-                <div class="metric-sub workspace-metric-sub">Finding count movement</div>
-            </div>
+    <article class="card">
+        <div class="section-kicker">Nexus Review Architecture</div>
+        <h2 class="section-title">How this workspace is modeled</h2>
+        <div class="summary-panel" style="margin-top:18px;">
+            <p class="section-copy">The project workspace now surfaces domain depth, traceability posture, signal intelligence, and compare readiness as separate review layers.</p>
         </div>
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Improvement Readout</h3>
-            <p>{{ project_value_metrics.note }}</p>
-        </div>
-    </div>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Review Workflow</h2>
-        <p class="section-copy">Lightweight collaboration and iteration tracking for shared engineering review.</p>
-    </div>
-
-    <div class="card-body">
-        <form method="post" action="{{ url_for('project_status_route', project_id=project.project_id) }}">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Review Status
-                    <select name="review_status" required>
-                        <option value="active_review" {% if project.review_status_view.value == 'active_review' %}selected{% endif %}>Active Review</option>
-                        <option value="fix_in_progress" {% if project.review_status_view.value == 'fix_in_progress' %}selected{% endif %}>Fix In Progress</option>
-                        <option value="re_analysis_planned" {% if project.review_status_view.value == 're_analysis_planned' %}selected{% endif %}>Re-Analysis Planned</option>
-                        <option value="ready_for_signoff" {% if project.review_status_view.value == 'ready_for_signoff' %}selected{% endif %}>Ready For Signoff</option>
-                    </select>
-                </label>
-            </div>
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-secondary">Update Status</button>
-            </div>
-        </form>
-
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Current Review State</h3>
-            <p><span class="chip chip-{{ project.review_status_view.tone }}">{{ project.review_status_view.label }}</span></p>
-        </div>
-
-        <form method="post" action="{{ url_for('project_notes_route', project_id=project.project_id) }}" style="margin-top:16px;">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Reviewer
-                    <input type="text" name="author" placeholder="Silicore Review">
-                </label>
-            </div>
-            <label style="display:block; margin-top:12px;">
-                Note
-                <textarea name="body" rows="4" placeholder="Capture a decision, open issue, or review note for the team." required></textarea>
-            </label>
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-primary">Add Review Note</button>
-            </div>
-        </form>
-
-        {% if project.collaboration_notes %}
-        <div class="timeline-list" style="margin-top:16px;">
-            {% for note in project.collaboration_notes|reverse %}
-            <div class="timeline-row">
-                <div>
-                    <div class="timeline-title">{{ note.author }}</div>
-                    <div class="timeline-copy">{{ note.created_at }}</div>
-                </div>
-                <div class="timeline-copy">{{ note.body }}</div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:16px;">No collaboration notes yet for this workspace.</div>
-        {% endif %}
-    </div>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Formal Review Decisions</h2>
-        <p class="section-copy">Create auditable gate decisions tied to the workspace or a specific linked run.</p>
-    </div>
-
-    <div class="card-body">
-        {% if current_user %}
-        <form method="post" action="{{ url_for('project_review_decision_route', project_id=project.project_id) }}">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Decision
-                    <select name="status" required>
-                        <option value="active_review">Active Review</option>
-                        <option value="fix_in_progress">Fix In Progress</option>
-                        <option value="re_analysis_planned">Re-Analysis Planned</option>
-                        <option value="ready_for_signoff">Ready For Signoff</option>
-                        <option value="approved">Approved</option>
-                        <option value="blocked">Blocked</option>
-                    </select>
-                </label>
-
-                <label>
-                    Related Run
-                    <select name="run_id">
-                        <option value="">Workspace-level decision</option>
-                        {% for run in project.runs|reverse %}
-                        <option value="{{ run.run_id }}">{{ run.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-
-            <label style="display:block; margin-top:12px;">
-                Decision Summary
-                <textarea name="summary" rows="3" placeholder="Document why this workspace is approved, blocked, or moving to the next gate." required></textarea>
-            </label>
-
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-primary">Record Decision</button>
-            </div>
-        </form>
-        {% endif %}
-
-        {% if project_review_feed %}
-        <div class="timeline-list" style="margin-top:16px;">
-            {% for decision in project_review_feed %}
-            <div class="timeline-row">
-                <div>
-                    <div class="timeline-title">{{ decision.status_label }}</div>
-                    <div class="timeline-copy">{{ decision.created_at }} · {{ decision.run_name }}</div>
-                </div>
-                <div class="timeline-copy">{{ decision.summary }}</div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:16px;">No formal review decisions have been recorded for this workspace yet.</div>
-        {% endif %}
-    </div>
-</section>
-</section>
-
-{% if operations_snapshot and operations_snapshot.summary %}
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Runtime Snapshot</h2>
-        <p class="section-copy">A quick read of worker state and backend job posture behind this workspace.</p>
-    </div>
-
-    <div class="card-body">
-        <div class="metric-grid">
-            <div class="metric-card">
-                <div class="metric-label">Worker</div>
-                <div class="metric-value">{{ operations_snapshot.summary.worker_label }}</div>
-                <div class="metric-sub">Atlas job runtime status</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Queued Jobs</div>
-                <div class="metric-value">{{ operations_snapshot.summary.queued_jobs }}</div>
-                <div class="metric-sub">Waiting backend actions</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Completed Jobs</div>
-                <div class="metric-value">{{ operations_snapshot.summary.completed_jobs }}</div>
-                <div class="metric-sub">Successful workflow actions</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Failed Jobs</div>
-                <div class="metric-value">{{ operations_snapshot.summary.failed_jobs }}</div>
-                <div class="metric-sub">Jobs needing review</div>
-            </div>
-        </div>
-        {% if current_user and current_user.role in ['lead', 'admin'] %}
-        <div class="btn-link-row" style="margin-top:16px;">
-            <a href="{{ url_for('nexus_ops_page') }}" class="btn btn-secondary">Open Nexus Ops</a>
-        </div>
-        {% endif %}
-    </div>
-</section>
-{% endif %}
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Atlas Intelligence</h2>
-        <p class="section-copy">
-            Portfolio-level guidance for repeated issue families, release posture, and the next engineering loop.
-        </p>
-    </div>
-
-    <div class="card-body">
-        {% if project_copilot %}
-        <div class="grid grid-2">
-            <div>
-                <div class="summary-panel">
-                    <h3>Nexus Call</h3>
-                    <p>{{ project_copilot.posture }}</p>
-                    <p class="small-muted" style="margin-top:10px;">{{ project_copilot.momentum }}</p>
-                </div>
-
-                <div class="big-stat-grid compact-stat-grid" style="margin-top:16px;">
-                    <div class="big-stat-card">
-                        <div class="big-stat-value">{{ project_copilot.health_score|round|int }}</div>
-                        <div class="big-stat-label">Nexus Health</div>
-                        <div class="big-stat-sub">0-100 posture</div>
-                    </div>
-                    <div class="big-stat-card">
-                        <div class="big-stat-value">{{ project_copilot.average_confidence|round|int }}</div>
-                        <div class="big-stat-label">Confidence</div>
-                        <div class="big-stat-sub">{{ project_copilot.confidence_band }} support</div>
-                    </div>
-                    <div class="big-stat-card">
-                        <div class="big-stat-value">{{ project.runs|length }}</div>
-                        <div class="big-stat-label">Linked Runs</div>
-                        <div class="big-stat-sub">{{ project_copilot.systemic_pattern }}</div>
-                    </div>
-                </div>
-
-                <div class="summary-panel" style="margin-top:16px;">
-                    <h3>Release Readiness</h3>
-                    <p>{{ project_copilot.release_readiness }}</p>
-                </div>
-            </div>
-
-            <div>
-                <div class="summary-panel">
-                    <h3>Trend Readout</h3>
-                    <p>{{ project_copilot.trend_summary }}</p>
-                </div>
-
-                <div class="summary-panel" style="margin-top:16px;">
-                    <h3>Ask Atlas</h3>
-                    <div class="focus-chip-row" style="margin-top:10px;">
-                        {% for prompt in project_copilot.prompt_starters %}
-                        <span class="mini-chip mini-chip-medium">{{ prompt }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                {% if project_copilot.metric_notes %}
-                <div class="summary-panel" style="margin-top:16px;">
-                    <h3>Value Readout</h3>
-                    <div class="timeline-list" style="margin-top:10px;">
-                        {% for item in project_copilot.metric_notes %}
-                        <div class="timeline-row">
-                            <div class="timeline-copy">{{ item }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <section class="grid grid-2" style="margin-top:16px;">
-            <section class="card">
-                <div class="card-header">
-                    <h2 class="section-title">Execution Plan</h2>
-                    <p class="section-copy">What the team should attack next across the workspace.</p>
-                </div>
-
-                <div class="card-body">
-                    {% if project_copilot.execution_plan %}
-                    <div class="focus-list">
-                        {% for item in project_copilot.execution_plan %}
-                        <article class="focus-card" id="project-execution-{{ loop.index }}" data-project-copilot-item data-title="{{ item.title }}" data-why="{{ item.why }}" data-action="{{ item.action }}">
-                            <div class="focus-top">
-                                <div>
-                                    <div class="focus-title">{{ item.title }}</div>
-                                    <div class="small-muted">{{ item.why }}</div>
-                                </div>
-                                <div class="focus-score">{{ item.priority_score|round|int }}</div>
-                            </div>
-                            <div class="focus-chip-row">
-                                <span class="mini-chip mini-chip-medium">Confidence {{ item.confidence_score }}</span>
-                            </div>
-                            <p class="focus-copy">{{ item.action }}</p>
-                            <div class="focus-chip-row" style="margin-top:10px;">
-                                <button type="button" class="mini-chip mini-chip-medium copilot-inline-btn" data-project-copilot-explain>Open Drilldown</button>
-                            </div>
-                        </article>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <div class="empty-state">Link more runs to activate a project execution plan.</div>
-                    {% endif %}
-                </div>
-            </section>
-
-            <section class="card">
-                <div class="card-header">
-                    <h2 class="section-title">Team Guidance</h2>
-                    <p class="section-copy">How to run the next design-review loop as a coordinated team.</p>
-                </div>
-
-                <div class="card-body">
-                    <div class="timeline-list">
-                        {% for item in project_copilot.team_guidance %}
-                        <div class="timeline-row">
-                            <div>
-                                <div class="timeline-title">Guidance {{ loop.index }}</div>
-                                <div class="timeline-copy">{{ item }}</div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="summary-panel" style="margin-top:16px;" data-project-copilot-detail>
-                        <h3>Select an execution plan item</h3>
-                        <p>Atlas Intelligence will show the workspace rationale and next action detail here.</p>
-                    </div>
-                </div>
-            </section>
-        </section>
-        {% else %}
-        <div class="empty-state">Atlas Intelligence guidance appears once Silicore has enough run history.</div>
-        {% endif %}
-    </div>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Review Architecture</h2>
-        <p class="section-copy">
-            The project workspace now surfaces domain depth, traceability posture, signal intelligence, and compare readiness as separate review layers.
-        </p>
-    </div>
-
-    <div class="card-body">
         {% if workspace_review_layers and workspace_review_layers.review_cards %}
-        <div class="workspace-review-grid">
-            {% for item in workspace_review_layers.review_cards %}
-            <article class="workspace-review-card">
-                <div class="workspace-review-top">
-                    <div>
-                        <div class="workspace-review-title" title="{{ item.title }}">{{ item.title }}</div>
-                        <div class="workspace-review-copy">{{ item.copy }}</div>
-                    </div>
-                    <div class="workspace-review-value">{{ item.value }}</div>
-                </div>
-                <div class="small-muted">{{ item.subtext }}</div>
-            </article>
+        <div class="stats-grid" style="margin-top:18px;">
+            {% for item in workspace_review_layers.review_cards[:6] %}
+            <div class="metric-card">
+                <div class="metric-label">{{ item.title }}</div>
+                <div class="metric-value-text">{{ item.value }}</div>
+                <div class="metric-sub">{{ item.copy }}</div>
+            </div>
             {% endfor %}
         </div>
-        <div class="summary-panel" style="margin-top:16px;">
-            <h3>Nexus Posture</h3>
-            <p>{{ workspace_review_layers.workspace_posture }}</p>
-        </div>
-        {% else %}
-        <div class="empty-state">Nexus review architecture will appear once runs are linked to this project.</div>
         {% endif %}
-    </div>
-</section>
+    </article>
 
-<section class="grid grid-2">
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Trusted Focus</h2>
-        <p class="section-copy">
-            Repeated, confidence-backed issue patterns that deserve project-wide attention first.
-        </p>
-    </div>
-
-    <div class="card-body">
-        {% if workspace_intel and workspace_intel.trusted_focus_items %}
-        <div class="focus-list">
-            {% for item in workspace_intel.trusted_focus_items %}
-            <article class="focus-card">
-                <div class="focus-top">
-                    <div>
-                        <div class="focus-title">{{ item.category }}</div>
-                        <div class="small-muted">{{ item.message }}</div>
-                    </div>
-                    <div class="focus-score">{{ item.priority_score|round|int }}</div>
-                </div>
-                <div class="focus-chip-row">
-                    <span class="mini-chip mini-chip-low">Confidence {{ item.confidence_score }}</span>
-                    <span class="mini-chip mini-chip-medium">{{ item.appearances }} finding(s)</span>
-                    <span class="mini-chip mini-chip-medium">{{ item.run_count }} run(s)</span>
-                </div>
-                <p class="focus-copy">{{ item.recommendation }}</p>
-            </article>
-            {% endfor %}
+    <article class="card">
+        <div class="section-kicker">Nexus Review Workflow</div>
+        <h2 class="section-title">Run the next review loop</h2>
+        <div class="summary-panel" style="margin-top:18px;">
+            <p class="section-copy">{{ project_copilot.release_readiness if project_copilot and project_copilot.release_readiness else "Atlas Intelligence will show the workspace rationale and next action detail here." }}</p>
         </div>
-        {% else %}
-        <div class="empty-state">Trusted focus items will appear once repeated patterns emerge across linked runs.</div>
-        {% endif %}
-    </div>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Next Actions</h2>
-        <p class="section-copy">
-            Ranked actions driven by recurrence, severity pressure, and available evidence across the project timeline.
-        </p>
-    </div>
-
-    <div class="card-body">
-        {% if workspace_intel and workspace_intel.next_actions %}
-        <div class="focus-list">
-            {% for item in workspace_intel.next_actions %}
-            <article class="focus-card">
-                <div class="focus-top">
-                    <div>
-                        <div class="focus-title">{{ item.category }}</div>
-                        <div class="small-muted">{{ item.message }}</div>
-                    </div>
-                    <div class="focus-score">{{ item.priority_score|round|int }}</div>
-                </div>
-                <p class="focus-copy">{{ item.recommendation }}</p>
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">No ranked workspace actions are available yet.</div>
-        {% endif %}
-
-        <div style="margin-top:16px;">
-            <h3 style="margin-bottom:10px;">Engineering Domain Pressure</h3>
-            {% if workspace_intel and workspace_intel.domain_bars and workspace_intel.domain_bars.has_data %}
-            <div class="mini-bar-list">
-                {% for item in workspace_intel.domain_bars["items"] %}
-                <div class="mini-bar-row">
-                    <div class="mini-bar-label">{{ item.label }}</div>
-                    <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                    <div class="mini-bar-value">{{ item.value }}</div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="trend-empty">Domain pressure appears once the workspace accumulates categorized findings.</div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Nexus Timeline Intelligence</h2>
-        <p class="section-copy">Revision-over-time movement for score and issue count, plus event-by-event engineering context.</p>
-    </div>
-
-    <div class="card-body">
-        <div class="summary-panel">
-            <h3>Timeline Summary</h3>
-            <p>{{ timeline.summary if timeline else "No timeline summary is available yet." }}</p>
-        </div>
-
-        <div class="project-trend-grid" style="margin-top:16px;">
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Score Timeline</span>
-                    <strong>{{ timeline.score_chart.last_value|round|int if timeline and timeline.score_chart and timeline.score_chart.has_data else "N/A" }}</strong>
-                </div>
-                {% if timeline and timeline.score_chart and timeline.score_chart.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in timeline.score_chart.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in timeline.score_chart.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ timeline.score_chart.points[loop.index0 - 1].x }}" y1="{{ timeline.score_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-score-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">No score timeline yet.</div>
-                {% endif %}
-            </div>
-
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Risk Timeline</span>
-                    <strong>{{ timeline.risk_chart.last_value|round|int if timeline and timeline.risk_chart and timeline.risk_chart.has_data else "N/A" }}</strong>
-                </div>
-                {% if timeline and timeline.risk_chart and timeline.risk_chart.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in timeline.risk_chart.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in timeline.risk_chart.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ timeline.risk_chart.points[loop.index0 - 1].x }}" y1="{{ timeline.risk_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-risk-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">No risk timeline yet.</div>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="project-trend-grid" style="margin-top:16px;">
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Confidence Timeline</span>
-                    <strong>{{ timeline.confidence_chart.last_value|round|int if timeline and timeline.confidence_chart and timeline.confidence_chart.has_data else "N/A" }}</strong>
-                </div>
-                {% if timeline and timeline.confidence_chart and timeline.confidence_chart.has_data %}
-                <svg viewBox="0 0 100 36" class="project-trend-svg" preserveAspectRatio="none">
-                    {% for guide in timeline.confidence_chart.guides %}
-                    <line x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}" class="trend-grid-line"></line>
-                    {% endfor %}
-                    {% for point in timeline.confidence_chart.points %}
-                    {% if not loop.first %}
-                    <line x1="{{ timeline.confidence_chart.points[loop.index0 - 1].x }}" y1="{{ timeline.confidence_chart.points[loop.index0 - 1].y }}" x2="{{ point.x }}" y2="{{ point.y }}" class="trend-confidence-line"></line>
-                    {% endif %}
-                    {% endfor %}
-                </svg>
-                {% else %}
-                <div class="trend-empty">No confidence timeline yet.</div>
-                {% endif %}
-            </div>
-
-            <div class="trend-panel">
-                <div class="trend-header">
-                    <span>Timeline Readout</span>
-                    <strong>{{ timeline.score_delta|round|int if timeline else "N/A" }}</strong>
-                </div>
-                <div class="mini-bar-list">
-                    <div class="mini-bar-row">
-                        <div class="mini-bar-label">Score Delta</div>
-                        <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ [timeline.score_delta|abs * 4, 100]|min if timeline else 0 }}%;"></div></div>
-                        <div class="mini-bar-value">{{ timeline.score_delta|round(1) if timeline else "0" }}</div>
-                    </div>
-                    <div class="mini-bar-row">
-                        <div class="mini-bar-label">Risk Delta</div>
-                        <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ [timeline.risk_delta|abs * 8, 100]|min if timeline else 0 }}%;"></div></div>
-                        <div class="mini-bar-value">{{ timeline.risk_delta if timeline else 0 }}</div>
-                    </div>
-                    <div class="mini-bar-row">
-                        <div class="mini-bar-label">Confidence Delta</div>
-                        <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ [timeline.confidence_delta|abs, 100]|min if timeline else 0 }}%;"></div></div>
-                        <div class="mini-bar-value">{{ timeline.confidence_delta|round(1) if timeline else "0" }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {% if timeline and timeline.events %}
-        <div class="timeline-list">
-            {% for event in timeline.events %}
+        {% if workspace_intelligence and workspace_intelligence.next_actions %}
+        <div class="timeline" style="margin-top:18px;">
+            {% for item in workspace_intelligence.next_actions %}
             <div class="timeline-row">
                 <div>
-                    <div class="timeline-title">{{ event.name }}</div>
-                    <div class="timeline-copy">{{ event.created_at }} · {{ event.run_type|upper }}</div>
+                    <div class="list-title">{{ item.label }}</div>
+                    <div class="list-meta">{{ item.reasoning if item.reasoning is defined else item.message if item.message is defined else item.category if item.category is defined else "Next action" }}</div>
                 </div>
-                <div class="timeline-metrics">
-                    <span class="mini-chip mini-chip-low">Score {{ event.score|round|int if event.score is not none else "N/A" }}</span>
-                    <span class="mini-chip mini-chip-medium">Risks {{ event.risk_count }}</span>
-                    {% if event.score_delta is not none %}
-                    <span class="mini-chip {% if event.score_delta > 0 %}mini-chip-low{% elif event.score_delta < 0 %}mini-chip-critical{% else %}mini-chip-medium{% endif %}">Delta {{ event.score_delta }}</span>
-                    {% endif %}
-                </div>
-                <div class="timeline-copy">{{ event.movement }}</div>
             </div>
             {% endfor %}
         </div>
         {% endif %}
-    </div>
+    </article>
 </section>
 
 <section class="grid grid-2">
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Compare Revisions</h2>
-        <p class="section-copy">
-            Compare two linked runs to understand score movement, risk change, and revision-level engineering differences.
-        </p>
-    </div>
+    <article class="card">
+        <div class="section-kicker">Atlas Intelligence</div>
+        <h2 class="section-title">Workspace-level guidance</h2>
+        <div class="summary-panel" style="margin-top:18px;">
+            <p class="section-copy">{{ project_copilot.executive_summary if project_copilot and project_copilot.executive_summary else workspace_intelligence.health_summary if workspace_intelligence else "Atlas Intelligence guidance appears once Silicore has enough run history." }}</p>
+        </div>
+    </article>
 
-    <div class="card-body">
-        {% if project.runs|length >= 2 %}
-        <form method="get" action="{{ url_for('compare_runs', project_id=project.project_id) }}">
-            <div class="project-detail-compare-grid">
-                <label>
-                    Baseline Run
-                    <select name="run_a" required>
-                        <option value="">Select first run</option>
-                        {% for run in project.runs|reverse %}
-                        <option value="{{ run.run_id }}" {% if latest_compare_ids|length > 0 and run.run_id == latest_compare_ids[0] %}selected{% endif %}>
-                            {{ run.name }} · {{ run.run_type }} · {{ run.created_at }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </label>
+    <article class="card">
+        <div class="section-kicker">Nexus Runtime Snapshot</div>
+        <h2 class="section-title">Operational context</h2>
+        <div class="stats-grid" style="margin-top:18px;">
+            <div class="metric-card"><div class="metric-label">Queued jobs</div><div class="metric-value">{{ operations_snapshot.summary.queued_jobs if operations_snapshot and operations_snapshot.summary is defined else 0 }}</div><div class="metric-sub">Atlas job runtime status</div></div>
+            <div class="metric-card"><div class="metric-label">Completed</div><div class="metric-value">{{ operations_snapshot.summary.completed_jobs if operations_snapshot and operations_snapshot.summary is defined else 0 }}</div><div class="metric-sub">Successful backend actions</div></div>
+            <div class="metric-card"><div class="metric-label">Failed</div><div class="metric-value">{{ operations_snapshot.summary.failed_jobs if operations_snapshot and operations_snapshot.summary is defined else 0 }}</div><div class="metric-sub">Jobs needing review</div></div>
+        </div>
+        <div class="btn-row">
+            <a class="btn btn-secondary" href="{{ url_for('nexus_ops_page') }}">Open Nexus Ops</a>
+        </div>
+    </article>
+</section>
 
-                <label>
-                    New Run
-                    <select name="run_b" required>
-                        <option value="">Select second run</option>
-                        {% for run in project.runs|reverse %}
-                        <option value="{{ run.run_id }}" {% if latest_compare_ids|length > 1 and run.run_id == latest_compare_ids[1] %}selected{% endif %}>
-                            {{ run.name }} · {{ run.run_type }} · {{ run.created_at }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-
-            <div class="btn-link-row" style="margin-top:14px;">
-                <button type="submit" class="btn btn-primary">Compare Runs</button>
-            </div>
+<section class="grid grid-2">
+    <article class="card">
+        <div class="section-kicker">Formal Review Decisions</div>
+        <h2 class="section-title">Recorded review outcomes</h2>
+        <form method="post" action="{{ url_for('project_review_decision_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
+            <label>Status<select name="status"><option value="active_review">Active Review</option><option value="approved">Approved</option><option value="blocked">Blocked</option></select></label>
+            <label>Run<select name="run_id">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
+            <label>Summary<textarea name="summary" rows="4" required></textarea></label>
+            <button class="btn btn-secondary" type="submit">Record Decision</button>
         </form>
+        {% if project_review_feed %}
+        <div class="timeline" style="margin-top:18px;">
+            {% for decision in project_review_feed[:10] %}
+            <div class="timeline-row">
+                <div>
+                    <div class="list-title">{{ decision.status_label }}</div>
+                    <div class="list-meta">{{ decision.run_name }} · {{ decision.created_at }}</div>
+                    <div class="list-meta">{{ decision.summary }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         {% else %}
-        <div class="empty-state">
-            You need at least two linked runs before you can compare them.
+        <div class="empty-state" style="margin-top:18px;">No formal review decisions have been recorded for this workspace yet.</div>
+        {% endif %}
+    </article>
+
+    <article class="card">
+        <div class="section-kicker">Workspace notes</div>
+        <h2 class="section-title">Status and collaboration</h2>
+        <form method="post" action="{{ url_for('project_status_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
+            <label>Review status
+                <select name="review_status" required>
+                    <option value="active_review" {% if project.review_status_view and project.review_status_view.value == 'active_review' %}selected{% endif %}>Active Review</option>
+                    <option value="fix_in_progress" {% if project.review_status_view and project.review_status_view.value == 'fix_in_progress' %}selected{% endif %}>Fix In Progress</option>
+                    <option value="re_analysis_planned" {% if project.review_status_view and project.review_status_view.value == 're_analysis_planned' %}selected{% endif %}>Re-Analysis Planned</option>
+                    <option value="ready_for_signoff" {% if project.review_status_view and project.review_status_view.value == 'ready_for_signoff' %}selected{% endif %}>Ready For Signoff</option>
+                </select>
+            </label>
+            <button class="btn btn-secondary" type="submit">Update Status</button>
+        </form>
+        <form method="post" action="{{ url_for('project_notes_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
+            <label>Note<textarea name="body" rows="4" placeholder="Capture a decision, open issue, or review note for the team." required></textarea></label>
+            <button class="btn btn-secondary" type="submit">Add Note</button>
+        </form>
+        {% if project.collaboration_notes %}
+        <div class="timeline" style="margin-top:18px;">
+            {% for note in project.collaboration_notes|reverse %}
+            <div class="timeline-row"><div><div class="list-title">{{ note.author_name if note.author_name else "Workspace Note" }}</div><div class="list-meta">{{ note.body }}</div></div></div>
+            {% endfor %}
         </div>
         {% endif %}
-    </div>
+    </article>
 </section>
 
 <section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Recurring Categories</h2>
-        <p class="section-copy">
-            Top engineering categories showing up across this workspace's linked analyses.
-        </p>
-    </div>
-
-    <div class="card-body">
-        {% if category_bars and category_bars.has_data %}
-            <div class="mini-bar-list">
-                {% for item in category_bars["items"] %}
-                <div class="mini-bar-row">
-                    <div class="mini-bar-label">{{ item.label }}</div>
-                    <div class="mini-bar-track"><div class="mini-bar-fill category-bar-fill" style="width: {{ item.width_pct }}%;"></div></div>
-                    <div class="mini-bar-value">{{ item.value }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty-state">No recurring category data is available yet for this workspace.</div>
-        {% endif %}
-    </div>
-</section>
-</section>
-
-<section class="card">
-    <div class="card-header">
-        <h2 class="section-title">Linked Analysis Runs</h2>
-        <p class="section-copy">
-            Saved runs attached to this workspace, with score, type, and run-level summaries.
-        </p>
-    </div>
-
-    <div class="card-body">
-        {% if project.runs %}
-            <div class="project-detail-run-list">
-                {% for run in project.runs|reverse %}
-                <div class="project-detail-run-card">
-                    <div class="project-detail-run-top">
-                        <div>
-                            <div class="project-detail-run-title">{{ run.name }}</div>
-                            <div class="small-muted">Type: {{ run.run_type }}</div>
-                        </div>
-
-                        <span class="chip chip-soft">{{ run.run_type|upper }}</span>
-                    </div>
-
-                    <div class="project-detail-run-metrics">
-                        <div class="metric-row">
-                            <span class="metric-label">Score</span>
-                            <span class="metric-value">
-                                {% if run.score is not none %}
-                                    {{ run.score|round|int if run.score > 10 else (run.score * 10)|round|int }}
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </span>
-                        </div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Risk Count</span>
-                            <span class="metric-value">
-                                {{ run.risk_count if run.risk_count is not none else "N/A" }}
-                            </span>
-                        </div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Created</span>
-                            <span class="metric-value">{{ run.created_at }}</span>
-                        </div>
-
-                        {% if run.critical_count is defined %}
-                        <div class="metric-row">
-                            <span class="metric-label">Critical</span>
-                            <span class="metric-value">{{ run.critical_count }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="summary-panel" style="margin-top:14px;">
-                        <h3>{{ "Strong" if run.score is not none and run.score >= 8 else "Watch" if run.score is not none and run.score >= 5 else "Attention" if run.score is not none else "Unscored" }}</h3>
-                        <p>
-                            {% if run.score is not none %}
-                                This run scored {{ run.score|round|int if run.score > 10 else (run.score * 10)|round|int }} / 100 with {{ run.risk_count if run.risk_count is not none else 0 }} total finding(s).
-                            {% else %}
-                                This run does not include a score snapshot yet.
-                            {% endif %}
-                        </p>
-                    </div>
-
-                    {% if run.summary %}
-                    <div class="summary-panel" style="margin-top:14px;">
-                        <h3>Run Summary</h3>
-                        <p>{{ run.summary }}</p>
-                    </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty-state">No runs are linked to this project yet.</div>
-        {% endif %}
-    </div>
-</section>
-
-<div class="btn-link-row">
-    <a class="btn-link" href="{{ url_for('projects_page') }}">Back to Projects</a>
-    <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" onsubmit="return confirm('Delete this project and its linked workspace data?');">
-        <button type="submit" class="btn btn-danger">Delete Project</button>
+    <div class="section-kicker">Linked runs</div>
+    <h2 class="section-title">Workspace run inventory</h2>
+    {% if project.runs|length >= 2 %}
+    <form method="get" action="{{ url_for('compare_runs', project_id=project.project_id) }}" class="project-detail-compare-grid" style="margin-top:18px;">
+        <label>Run A<select name="run_a">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
+        <label>Run B<select name="run_b">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
+        <div><button class="btn btn-primary" type="submit">Compare Runs</button></div>
     </form>
-</div>
-
-<style>
-    .project-trend-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    .trend-panel {
-        padding: 20px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius-lg);
-        background:
-            radial-gradient(circle at top right, rgba(124,180,255,0.08), transparent 30%),
-            linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
-            rgba(255,255,255,0.02);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 14px 30px rgba(0,0,0,0.1);
-    }
-
-    .trend-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 12px;
-        color: #dbe7ff;
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .project-trend-svg {
-        width: 100%;
-        height: 90px;
-        display: block;
-        padding: 10px;
-        border-radius: var(--radius-md);
-        background:
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008));
-        background-size: 18px 18px, 18px 18px, auto;
-        border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    .trend-grid-line {
-        stroke: rgba(255,255,255,0.06);
-        stroke-width: 0.45;
-    }
-
-    .trend-score-line,
-    .trend-risk-line,
-    .trend-critical-line,
-    .trend-confidence-line {
-        fill: none;
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .trend-score-line {
-        stroke: rgba(124,180,255,0.96);
-    }
-
-    .trend-risk-line {
-        stroke: rgba(248,113,113,0.94);
-    }
-
-    .trend-critical-line {
-        stroke: rgba(251,191,36,0.94);
-    }
-
-    .trend-confidence-line {
-        stroke: rgba(125,211,252,0.96);
-    }
-
-    .trend-empty {
-        height: 90px;
-        display: grid;
-        place-items: center;
-        color: rgba(191,219,254,0.8);
-        border-radius: var(--radius-md);
-        background: rgba(15,23,42,0.24);
-        border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    .mini-bar-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .timeline-list {
-        display: grid;
-        gap: 12px;
-        margin-top: 16px;
-    }
-
-    .assistant-message-user {
-        background: rgba(124,180,255,0.12);
-        border-color: rgba(124,180,255,0.18);
-    }
-
-    .assistant-message-role {
-        color: #dbeafe;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 6px;
-    }
-
-    .assistant-message-copy {
-        color: #edf3ff;
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    .assistant-citation-list,
-    .assistant-follow-row,
-    .assistant-prompt-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 12px;
-    }
-
-    .assistant-citation,
-    .assistant-follow-chip,
-    .assistant-prompt-chip {
-        border: 1px solid rgba(124,180,255,0.18);
-        background: rgba(124,180,255,0.1);
-        color: #dbeafe;
-        border-radius: 999px;
-        padding: 8px 10px;
-        cursor: pointer;
-        font: inherit;
-    }
-
-    .assistant-detail-copy {
-        margin-top: 10px;
-        color: #b8c7df;
-        font-size: 13px;
-    }
-
-    .assistant-composer {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
-        margin-top: 14px;
-    }
-
-    .assistant-composer-input {
-        width: 100%;
-        min-height: 46px;
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.03);
-        color: #eff6ff;
-        padding: 0 14px;
-        font: inherit;
-    }
-
-    .timeline-row {
-        display: grid;
-        gap: 10px;
-        padding: 18px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--line);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
-            rgba(255,255,255,0.02);
-    }
-
-    .timeline-title {
-        color: #eaf2ff;
-        font-size: 15px;
-        font-weight: 700;
-        overflow-wrap: break-word;
-        word-break: break-word;
-    }
-
-    .timeline-copy {
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.6;
-        overflow-wrap: break-word;
-        word-break: break-word;
-    }
-
-    .timeline-metrics {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .compact-summary {
-        margin-bottom: 12px;
-    }
-
-    .trend-summary-copy {
-        margin: 0;
-        color: rgba(214, 226, 255, 0.78);
-        font-size: 13px;
-        line-height: 1.6;
-    }
-
-    .focus-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .focus-card {
-        padding: 18px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        background: rgba(255,255,255,0.025);
-    }
-
-    .focus-card.is-selected {
-        border-color: rgba(124,180,255,0.34);
-        box-shadow: 0 0 0 1px rgba(124,180,255,0.14) inset, 0 16px 30px rgba(0, 0, 0, 0.18);
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.024)),
-            rgba(17, 30, 48, 0.82);
-    }
-
-    .copilot-inline-btn {
-        border: 0;
-        cursor: pointer;
-        font: inherit;
-    }
-
-    .focus-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .focus-title {
-        margin-bottom: 4px;
-        color: #eaf2ff;
-        font-size: 15px;
-        font-weight: 700;
-    }
-
-    .focus-score {
-        min-width: 44px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(124,180,255,0.14);
-        color: #dbeafe;
-        font-size: 13px;
-        font-weight: 700;
-        text-align: center;
-    }
-
-    .focus-chip-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin: 12px 0 10px;
-    }
-
-    .focus-copy {
-        margin: 0;
-        color: rgba(214, 226, 255, 0.82);
-        font-size: 13px;
-        line-height: 1.6;
-    }
-
-    .mini-bar-row {
-        display: grid;
-        grid-template-columns: minmax(0, 140px) 1fr 42px;
-        gap: 12px;
-        align-items: center;
-    }
-
-    .mini-bar-label {
-        font-size: 13px;
-        font-weight: 700;
-        color: #dbe7ff;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .mini-bar-value {
-        font-size: 13px;
-        font-weight: 700;
-        color: #dbe7ff;
-    }
-
-    .mini-bar-track {
-        height: 12px;
-        border-radius: 999px;
-        overflow: hidden;
-        background: rgba(255,255,255,0.06);
-    }
-
-    .mini-bar-fill {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(124,180,255,0.95), rgba(62, 232, 160,0.72));
-    }
-
-    .category-bar-fill {
-        background: linear-gradient(90deg, rgba(168,85,247,0.92), rgba(124,180,255,0.72));
-    }
-
-    .project-detail-compare-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    .project-detail-run-list {
-        display: grid;
-        gap: 14px;
-    }
-
-    .project-detail-run-card {
-        padding: 18px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius-sm);
-        background: rgba(255,255,255,0.03);
-        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .project-detail-run-card:hover {
-        background: rgba(255,255,255,0.05);
-        border-color: rgba(124,180,255,0.14);
-        transform: translateY(-1px);
-    }
-
-    .card input[type="text"],
-    .card textarea,
-    .card select {
-        width: 100%;
-        box-sizing: border-box;
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.04);
-        color: var(--text-soft);
-        padding: 12px 14px;
-        font-size: 14px;
-        outline: none;
-    }
-
-    .card textarea {
-        resize: vertical;
-        min-height: 120px;
-    }
-
-    .project-detail-run-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 14px;
-    }
-
-    .project-detail-run-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #E5E7EB;
-        margin-bottom: 4px;
-    }
-
-    .project-detail-run-metrics {
-        display: grid;
-        gap: 10px;
-        margin-top: 14px;
-    }
-
-    .metric-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        align-items: center;
-        padding-top: 10px;
-        border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .metric-row:first-child {
-        padding-top: 0;
-        border-top: 0;
-    }
-
-    .chip-soft {
-        background: rgba(124,180,255,0.10);
-        color: #BFDBFE;
-        border: 1px solid rgba(124,180,255,0.16);
-    }
-
-    .workspace-review-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    @media (max-width: 1100px) {
-        .workspace-review-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
-
-    .workspace-review-card {
-        padding: 20px;
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--line);
-        background:
-            radial-gradient(circle at top right, rgba(124,180,255,0.12), transparent 44%),
-            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012)),
-            rgba(255,255,255,0.02);
-    }
-
-    .workspace-review-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        align-items: flex-start;
-        margin-bottom: 12px;
-    }
-
-    .workspace-review-title {
-        color: #eff6ff;
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-
-    .workspace-review-copy {
-        color: rgba(214, 226, 255, 0.74);
-        font-size: 13px;
-        line-height: 1.55;
-    }
-
-    .workspace-review-value {
-        min-width: 40px;
-        padding: 8px 10px;
-        border-radius: 999px;
-        background: rgba(124,180,255,0.14);
-        color: #dbeafe;
-        text-align: center;
-        font-size: 14px;
-        font-weight: 800;
-    }
-
-    .project-copilot-inline-script {
-        display: none;
-    }
-
-    @media (max-width: 860px) {
-        .assistant-console-layout,
-        .project-trend-grid,
-        .project-detail-compare-grid,
-        .workspace-review-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .project-detail-run-top,
-        .metric-row {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .mini-bar-row {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<script class="project-copilot-inline-script">
-(() => {
-    const cards = Array.from(document.querySelectorAll('[data-project-copilot-item]'));
-    const detailPanel = document.querySelector('[data-project-copilot-detail]');
-    if (!cards.length || !detailPanel) return;
-
-    const renderDetail = (card) => {
-        detailPanel.innerHTML = `
-            <h3>${card.dataset.title || 'Workspace item'}</h3>
-            <p><strong>Why this matters:</strong> ${card.dataset.why || 'No rationale preserved.'}</p>
-            <p><strong>Next move:</strong> ${card.dataset.action || 'No action preserved.'}</p>
-        `;
-    };
-
-    const setActive = (card) => {
-        cards.forEach((item) => item.classList.toggle('is-selected', item === card));
-        renderDetail(card);
-    };
-
-    cards.forEach((card) => {
-        card.addEventListener('click', (event) => {
-            if (event.target.closest('button')) return;
-            setActive(card);
-        });
-        const explainButton = card.querySelector('[data-project-copilot-explain]');
-        if (explainButton) {
-            explainButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                setActive(card);
-            });
-        }
-    });
-
-    setActive(cards[0]);
-})();
-
-(() => {
-    const responsePanel = document.querySelector('[data-assistant-project-response]');
-    const questionButtons = Array.from(document.querySelectorAll('[data-assistant-project-question]'));
-    const lensButtons = Array.from(document.querySelectorAll('[data-assistant-project-lens]'));
-    const promptButtons = Array.from(document.querySelectorAll('[data-assistant-project-prompt]'));
-    const actionButtons = Array.from(document.querySelectorAll('[data-project-action]'));
-    const form = document.querySelector('[data-assistant-project-form]');
-    const input = document.querySelector('[data-assistant-project-input]');
-    const thread = document.querySelector('[data-assistant-project-thread]');
-    const runHistory = document.querySelector('[data-assistant-project-runs]');
-    const rawData = document.querySelector('#project-assistant-data');
-    if (!responsePanel) return;
-
-    const projectData = rawData ? JSON.parse(rawData.textContent || '{}') : {};
-    const atlasContext = projectData.atlas_context || {};
-    const assistantData = projectData.assistant || {};
-    const assistantRoutes = Array.isArray(assistantData.routes) ? assistantData.routes : [];
-    const routesByKey = Object.fromEntries(assistantRoutes.map((item) => [item.key, item]));
-    const threadKey = `silicore-project-thread::${atlasContext.project_id || atlasContext.project_name || 'workspace'}`;
-    let threadState = [];
-    const escapeHtml = (value) => String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    const renderFollowUps = (followUps) => {
-        if (!Array.isArray(followUps) || !followUps.length) return '';
-        return `
-            <div class="assistant-follow-row">
-                ${followUps.map((item) => `
-                    <button type="button" class="assistant-follow-chip" data-assistant-project-followup="${escapeHtml(item)}">
-                        ${escapeHtml(item)}
-                    </button>
-                `).join('')}
+    {% endif %}
+    {% if project.runs %}
+    <div class="timeline" style="margin-top:18px;">
+        {% for run in project.runs|reverse %}
+        <div class="timeline-row">
+            <div>
+                <div class="list-title">{{ run.name }}</div>
+                <div class="list-meta">{{ run.created_at }} · Score {{ run.score|round|int if run.score is not none else "N/A" }} · {{ run.risk_count }} risks</div>
             </div>
-        `;
-    };
-    const renderWorkflow = (result) => {
-        const plan = Array.isArray(result.workflow_plan) ? result.workflow_plan : [];
-        const results = Array.isArray(result.workflow_results) ? result.workflow_results : [];
-        const trace = Array.isArray(result.agent_trace) ? result.agent_trace : [];
-        const suggestions = Array.isArray(result.tool_suggestions) ? result.tool_suggestions : [];
-        const planMarkup = plan.length ? `<div class="assistant-citation-list">${plan.map((item) => `<span class="assistant-citation">${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}</span>`).join('')}</div>` : '';
-        const traceMarkup = trace.length ? `<div class="assistant-detail-copy">${trace.map((item) => `${escapeHtml(item.label)}: ${escapeHtml(item.summary || item.status || 'completed')}`).join('<br>')}</div>` : '';
-        const resultMarkup = results.length ? `<div class="assistant-detail-copy">${results.map((item) => {
-            const detail = item.error || ((item.result || {}).summary || (item.result || {}).status || (item.job || {}).status || 'completed');
-            return `${escapeHtml(String(item.action_name || '').replace(/_/g, ' '))}: ${escapeHtml(detail)}`;
-        }).join('<br>')}</div>` : '';
-        const suggestionMarkup = suggestions.length ? `<div class="assistant-citation-list">${suggestions.map((item) => `<span class="assistant-citation">${escapeHtml(String(item).replace(/_/g, ' '))}</span>`).join('')}</div>` : '';
-        return {planMarkup, traceMarkup, resultMarkup, suggestionMarkup};
-    };
-    const resultToMarkup = (result) => {
-        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        const workflow = renderWorkflow(result);
-        return `<p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.traceMarkup}${workflow.resultMarkup}`;
-    };
-    const renderResponse = (result) => {
-        if (!result) return;
-        const detail = result.detail ? `<p class="assistant-detail-copy">${result.detail}</p>` : '';
-        const workflow = renderWorkflow(result);
-        responsePanel.innerHTML = `<h3>${result.title}</h3><p>${result.answer}</p>${detail}${workflow.planMarkup}${workflow.traceMarkup}${workflow.resultMarkup}${workflow.suggestionMarkup}${renderFollowUps(result.follow_ups)}`;
-        responsePanel.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
-            button.addEventListener('click', () => submitPrompt(button.dataset.assistantProjectFollowup));
-        });
-    };
-
-    const renderAgentRuns = (runs) => {
-        if (!runHistory) return;
-        if (!Array.isArray(runs) || !runs.length) {
-            runHistory.innerHTML = '';
-            return;
-        }
-        runHistory.innerHTML = `
-            <div class="assistant-detail-copy" style="margin-top:12px;">
-                <strong>Recent Atlas runs</strong><br>
-                ${runs.slice(0, 3).map((run) => {
-                    const stepCount = Array.isArray(run.results) ? run.results.length : 0;
-                    return `${escapeHtml(run.status)} • ${stepCount} step(s) • ${escapeHtml(run.created_at || '')}`;
-                }).join('<br>')}
-            </div>
-        `;
-    };
-
-    const serializeHistory = () => threadState.slice(-8).map((item) => ({
-        role: item.role,
-        intent: item.intent || '',
-        copy: String(item.copy || '').replace(/<[^>]+>/g, ' ').trim(),
-    }));
-    const renderThread = (messages) => {
-        if (!thread) return;
-        thread.innerHTML = messages.map((item) => `
-                <div class="assistant-message assistant-message-${item.role}">
-                    <div class="assistant-message-role">${item.role === 'user' ? 'You' : 'Atlas Intelligence'}</div>
-                    <div class="assistant-message-copy">${item.copy}</div>
-                    ${renderFollowUps(item.follow_ups)}
-            </div>
-        `).join('');
-        thread.querySelectorAll('[data-assistant-project-followup]').forEach((button) => {
-            button.addEventListener('click', () => {
-                submitPrompt(button.dataset.assistantProjectFollowup);
-            });
-        });
-    };
-    const routeResult = (route) => ({
-        title: route.title || route.label || 'Atlas Intelligence',
-        answer: route.answer || 'No answer available yet.',
-        detail: route.detail || '',
-        follow_ups: route.follow_ups || [],
-    });
-    const matchAssistantRoute = (prompt) => {
-        const lower = String(prompt || '').toLowerCase();
-        for (const route of assistantRoutes) {
-            const keywords = Array.isArray(route.keywords) ? route.keywords : [];
-            if (keywords.some((keyword) => lower.includes(String(keyword).toLowerCase()))) return route;
-            if (route.label && lower.includes(String(route.label).toLowerCase())) return route;
-            if (route.title && lower.includes(String(route.title).toLowerCase())) return route;
-        }
-        return null;
-    };
-    const fallbackProjectPrompt = (text) => {
-        const lower = String(text || '').toLowerCase();
-        const copilot = projectData.copilot || {};
-        const assistantRoute = matchAssistantRoute(text);
-        if (assistantRoute) return routeResult(assistantRoute);
-        if (lower.includes('improv')) {
-            return {
-                title: 'Workspace Momentum',
-                answer: copilot.momentum || copilot.trend_summary || 'No workspace momentum note is available yet.',
-                detail: 'Atlas reads momentum as trend quality plus repeatability, not just whether one revision happened to score better.',
-                follow_ups: ['What is repeating across this workspace?', 'Are we review-gate ready?', 'What should the team do next?'],
-            };
-        }
-        if (lower.includes('team') || lower.includes('next')) {
-            return {
-                title: 'Next Team Action',
-                answer: (copilot.execution_plan && copilot.execution_plan[0] && copilot.execution_plan[0].action) || 'No execution-plan action is available yet.',
-                detail: (copilot.execution_plan && copilot.execution_plan[0] && copilot.execution_plan[0].why) || 'Use the next workspace cycle to close the strongest repeated issue family with one clear owner.',
-                follow_ups: ['Who should own this next?', 'What should we validate after the rerun?', 'Are we improving enough for the next review gate?'],
-            };
-        }
-        return {
-            title: 'Recurring Pattern',
-            answer: copilot.posture || 'No workspace posture is available yet.',
-            detail: 'Atlas is using this to frame the workspace as an engineering system, so repeated patterns matter more than one isolated board result.',
-            follow_ups: ['What is repeating across this workspace?', 'What should the team do next?', 'Are we review-gate ready?'],
-        };
-    };
-    const requestAtlas = async (promptText) => {
-        try {
-            const response = await fetch('/atlas/query/stream', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    page_type: 'project',
-                    prompt: promptText,
-                    thread_key: threadKey,
-                    history: serializeHistory(),
-                    context: atlasContext,
-                }),
-            });
-            if (!response.ok) {
-                throw new Error(`Atlas request failed with ${response.status}`);
-            }
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-            let finalPayload = null;
-            while (true) {
-                const {value, done} = await reader.read();
-                if (done) break;
-                buffer += decoder.decode(value, {stream: true});
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.trim()) continue;
-                    const event = JSON.parse(line);
-                    if (event.type === 'status') {
-                        renderResponse({
-                            title: 'Atlas Intelligence',
-                            answer: event.stage === 'planning' ? 'Atlas is building a workspace review plan.' : 'Atlas is executing workspace review actions.',
-                            detail: event.stage === 'planning'
-                                ? 'The response is being grounded against linked runs, recurring patterns, and workspace context.'
-                                : 'Atlas is resolving workspace actions before finalizing the answer.',
-                            workflow_plan: event.workflow_plan || [],
-                            workflow_results: event.workflow_results || [],
-                            agent_trace: event.agent_trace || [],
-                            follow_ups: [],
-                        });
-                    } else if (event.type === 'final') {
-                        finalPayload = event.payload;
-                    }
-                }
-            }
-            if (!finalPayload) throw new Error('Atlas stream ended without a final payload.');
-            return finalPayload;
-        } catch (error) {
-            console.debug('atlas project query fallback', error);
-            return fallbackProjectPrompt(promptText);
-        }
-    };
-    const runProjectAction = async (actionName) => {
-        try {
-            const response = await fetch('/atlas/action', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    action_name: actionName,
-                    context: atlasContext,
-                }),
-            });
-            if (!response.ok) throw new Error(`Atlas action failed with ${response.status}`);
-            const payload = await response.json();
-            renderResponse({
-                title: actionName.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
-                answer: (payload.result || {}).summary || (payload.result || {}).status || `Atlas completed ${actionName.replace(/_/g, ' ')}.`,
-                detail: payload.job ? `Job ${payload.job.job_id} is ${payload.job.status}.` : '',
-                follow_ups: ['What should the team do next?', 'Are we review-gate ready?'],
-                workflow_results: [{action_name: actionName, result: payload.result, job: payload.job, error: payload.error}],
-            });
-        } catch (error) {
-            renderResponse({
-                title: 'Atlas Action Failed',
-                answer: error.message || 'The requested Atlas action did not complete.',
-                follow_ups: ['What is repeating across this workspace?'],
-            });
-        }
-    };
-    const pushThreadExchange = (promptText, result) => {
-        if (Array.isArray(result.thread) && result.thread.length) {
-            threadState = result.thread;
-        } else {
-            threadState = [
-                ...threadState,
-                {role: 'user', copy: promptText},
-                {role: 'assistant', copy: resultToMarkup(result), follow_ups: result.follow_ups || [], intent: result.intent || ''},
-            ];
-        }
-        renderThread(threadState);
-        renderResponse(result);
-    };
-    const submitPrompt = async (promptText) => {
-        const result = await requestAtlas(promptText);
-        pushThreadExchange(promptText, result);
-        hydrateAgentRuns();
-    };
-
-    questionButtons.forEach((button) => {
-        button.addEventListener('click', async () => {
-            await submitPrompt(button.dataset.title || 'Question');
-        });
-    });
-
-    lensButtons.forEach((button) => {
-        button.addEventListener('click', async () => {
-            await submitPrompt(button.dataset.title || 'Review Lens');
-        });
-    });
-
-    promptButtons.forEach((button) => {
-        button.addEventListener('click', async () => {
-            await submitPrompt(button.dataset.assistantProjectPrompt || button.textContent);
-        });
-    });
-    actionButtons.forEach((button) => {
-        button.addEventListener('click', async () => {
-            await runProjectAction(button.dataset.projectAction);
-        });
-    });
-
-    if (form && input) {
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const value = input.value.trim();
-            if (!value) return;
-            await submitPrompt(value);
-            input.value = '';
-        });
-    }
-
-    const hydrateThread = async () => {
-        try {
-            const response = await fetch(`/atlas/thread?thread_key=${encodeURIComponent(threadKey)}`);
-            if (!response.ok) {
-                throw new Error(`Thread request failed with ${response.status}`);
-            }
-            const payload = await response.json();
-            threadState = Array.isArray(payload.messages) ? payload.messages : [];
-            if (threadState.length) {
-                renderThread(threadState);
-            }
-        } catch (error) {
-            console.debug('project assistant thread hydrate skipped', error);
-            threadState = [];
-        }
-        if (questionButtons[0]) {
-            const route = routesByKey[questionButtons[0].dataset.routeKey || ''];
-            renderResponse(route ? routeResult(route) : {
-                title: questionButtons[0].dataset.title || 'Question',
-                answer: questionButtons[0].dataset.answer || 'No answer available.',
-                follow_ups: [],
-            });
-        }
-    };
-
-    const hydrateAgentRuns = async () => {
-        try {
-            const response = await fetch(`/atlas/agent-runs?thread_key=${encodeURIComponent(threadKey)}`);
-            if (!response.ok) return;
-            const payload = await response.json();
-            renderAgentRuns(payload.runs || []);
-        } catch (error) {
-            console.debug('project assistant agent-run hydrate skipped', error);
-        }
-    };
-
-    hydrateThread();
-    hydrateAgentRuns();
-})();
-</script>
-
+            {% if run.path %}<a class="btn btn-secondary" href="{{ run.path }}">Open</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="btn-row">
+        <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" onsubmit="return confirm('Delete this project and its linked workspace data?');">
+            <button type="submit" class="btn btn-danger">Delete Project</button>
+        </form>
+    </div>
+</section>
 {% endblock %}
