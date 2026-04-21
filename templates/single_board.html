@@ -1,70 +1,76 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Single board review</div>
-        <h2 class="section-title">Analyze one board</h2>
-        <p class="section-copy">Upload a design, choose the review context, and run analysis without the oversized launch hero.</p>
-        <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
-            <label>
-                Board File
-                <input type="file" name="board_file" required>
-            </label>
-            <label>
-                Attach to Project
-                <select name="project_id">
-                    <option value="">No project</option>
-                    {% for project in project_options %}
-                    <option value="{{ project.project_id }}">{{ project.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                Analysis Profile
-                <select name="analysis_profile">
-                    {% for option in analysis_modes.profiles %}
-                    <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                Board Type
-                <select name="analysis_board_type">
-                    {% for option in analysis_modes.board_types %}
-                    <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <button class="btn btn-primary" type="submit">Analyze Board</button>
-        </form>
-    </article>
+<div class="page-shell">
+    <section class="hero">
+        <div class="hero-inner">
+            <div>
+                <div class="eyebrow">Single-Board Analysis</div>
+                <h1 class="hero-title">Run a finished-product review flow on one board.</h1>
+                <p class="hero-copy">Upload a design, choose the engineering context, and generate a fix-first Silicore readout with score traceability, category breakdowns, and review guidance.</p>
+                <div class="hero-metrics">
+                    <div class="data-pill">
+                        <div class="data-pill-label">Board score</div>
+                        <div class="data-pill-value">{% if result %}{{ result.score|round|int if result.score > 10 else (result.score * 10)|round|int }}{% else %}--{% endif %}</div>
+                        <div class="data-pill-copy">Overall engineering posture for the current upload.</div>
+                    </div>
+                    <div class="data-pill">
+                        <div class="data-pill-label">Findings</div>
+                        <div class="data-pill-value">{% if result and result.risks %}{{ result.risks|length }}{% else %}0{% endif %}</div>
+                        <div class="data-pill-copy">Prioritized issues ready for review and triage.</div>
+                    </div>
+                    <div class="data-pill">
+                        <div class="data-pill-label">Review posture</div>
+                        <div class="data-pill-value">{{ selected_board_type.replace('_', ' ')|title if selected_board_type else "General" }}</div>
+                        <div class="data-pill-copy">Analysis tuned to the board context you selected.</div>
+                    </div>
+                </div>
+            </div>
 
-    <article class="card">
-        <div class="section-kicker">Current posture</div>
-        <h2 class="section-title">{% if result %}Board context is loaded{% else %}Awaiting board input{% endif %}</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card">
-                <div class="metric-label">Current board score</div>
-                <div class="metric-value">{% if result %}{{ result.score|round|int if result.score > 10 else (result.score * 10)|round|int }}{% else %}--{% endif %}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Engineering findings</div>
-                <div class="metric-value">{% if result and result.risks %}{{ result.risks|length }}{% else %}0{% endif %}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Review posture</div>
-                <div class="metric-value-text">{{ selected_board_type.replace('_', ' ')|title if selected_board_type else "General" }}</div>
-            </div>
+            <aside class="form-shell">
+                <div class="hero-card-label">Launch review</div>
+                <div class="hero-card-title">Analyze a board</div>
+                <p class="section-copy">Run the same polished workflow every time instead of jumping between raw upload forms and output dumps.</p>
+                <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
+                    <label>
+                        Board File
+                        <input type="file" name="board_file" required>
+                    </label>
+                    <label>
+                        Attach to Project
+                        <select name="project_id">
+                            <option value="">No project</option>
+                            {% for project in project_options %}
+                            <option value="{{ project.project_id }}">{{ project.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        Analysis Profile
+                        <select name="analysis_profile">
+                            {% for option in analysis_modes.profiles %}
+                            <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        Board Type
+                        <select name="analysis_board_type">
+                            {% for option in analysis_modes.board_types %}
+                            <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <button class="btn btn-primary" type="submit">Analyze Board</button>
+                </form>
+            </aside>
         </div>
-    </article>
-</section>
+    </section>
 
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Atlas Intelligence</div>
-        <h2 class="section-title">Board narrative</h2>
-        {% if result and result.executive_summary %}
-        <div class="page-stack" style="margin-top:18px;">
+    <section class="viz-grid">
+        <article class="feature-flow">
+            <div class="section-kicker">Atlas narrative</div>
+            <h2 class="section-title">Executive engineering readout</h2>
+            {% if result and result.executive_summary %}
             <div class="summary-panel">
                 <strong>{{ result.executive_summary.headline }}</strong>
                 <p class="section-copy">{{ result.executive_summary.summary }}</p>
@@ -81,86 +87,155 @@
                 {% endfor %}
             </div>
             {% endif %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">Atlas Intelligence guidance appears after the first board analysis.</div>
-        {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Advanced Review Lenses</div>
-        <h2 class="section-title">Read the board through multiple engineering lenses.</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            {% if board_review_layers and board_review_layers.review_cards %}
-                {% for item in board_review_layers.review_cards[:6] %}
-                <div class="metric-card">
-                    <div class="metric-label">{{ item.title }}</div>
-                    <div class="metric-value-text">{{ item.value }}</div>
-                    <div class="metric-sub">{{ item.copy }}</div>
-                </div>
-                {% endfor %}
             {% else %}
-                <div class="empty-state">Advanced Review Lenses become available once analysis has produced enough board context.</div>
+            <div class="empty-state">Atlas Intelligence guidance appears after the first board analysis.</div>
             {% endif %}
-        </div>
-    </article>
-</section>
+        </article>
 
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Traceability & Signal Posture</div>
-        <h2 class="section-title">Why this board is being scored the way it is.</h2>
-        {% if result and result.score_explanation %}
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card">
-                <div class="metric-label">Start score</div>
-                <div class="metric-value">{{ result.score_explanation.start_score|default(0) }}</div>
+        <article class="feature-flow">
+            <div class="section-kicker">Board stage</div>
+            <h2 class="section-title">Inspection surface</h2>
+            <div class="canvas-frame">
+                <div class="canvas-center"></div>
             </div>
-            <div class="metric-card">
-                <div class="metric-label">Total penalty</div>
-                <div class="metric-value">{{ result.score_explanation.total_penalty|default(0) }}</div>
+        </article>
+    </section>
+
+    <section class="viz-grid">
+        <article class="viz-panel">
+            <div class="viz-header">
+                <div>
+                    <div class="section-kicker">Severity split</div>
+                    <h2 class="section-title">Finding intensity</h2>
+                </div>
             </div>
-            <div class="metric-card">
-                <div class="metric-label">Parser confidence</div>
-                <div class="metric-value">{{ result.parser_confidence.score|round|int if result.parser_confidence and result.parser_confidence.score is defined else 0 }}</div>
+            <div class="bar-list">
+                {% if single_chart and single_chart.severity_bars and single_chart.severity_bars.items %}
+                    {% for item in single_chart.severity_bars.items %}
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span>{{ item.label }}</span>
+                            <span>{{ item.value }}</span>
+                        </div>
+                        <div class="bar-meter">
+                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="margin:0;">Severity distribution appears after analysis.</div>
+                {% endif %}
             </div>
-            <div class="metric-card">
-                <div class="metric-label">Physics risks</div>
-                <div class="metric-value">{{ result.physics_summary.risks|length if result.physics_summary and result.physics_summary.risks else 0 }}</div>
+        </article>
+
+        <article class="viz-panel">
+            <div class="viz-header">
+                <div>
+                    <div class="section-kicker">Category spread</div>
+                    <h2 class="section-title">Risk distribution by domain</h2>
+                </div>
             </div>
+            <div class="bar-list">
+                {% if single_chart and single_chart.category_bars and single_chart.category_bars.items %}
+                    {% for item in single_chart.category_bars.items %}
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span>{{ item.label }}</span>
+                            <span>{{ item.value }}</span>
+                        </div>
+                        <div class="bar-meter">
+                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="margin:0;">Category distribution appears once grouped findings are available.</div>
+                {% endif %}
+            </div>
+        </article>
+    </section>
+
+    <section class="viz-grid">
+        <article class="feature-flow">
+            <div class="section-kicker">Review lenses</div>
+            <h2 class="section-title">Read the board through multiple engineering lenses.</h2>
+            <div class="stats-grid">
+                {% if board_review_layers and board_review_layers.review_cards %}
+                    {% for item in board_review_layers.review_cards[:6] %}
+                    <div class="metric-card">
+                        <div class="metric-label">{{ item.title }}</div>
+                        <div class="metric-value-text">{{ item.value }}</div>
+                        <div class="metric-sub">{{ item.copy }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">Advanced review lenses become available once analysis has produced enough board context.</div>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="feature-flow">
+            <div class="section-kicker">Traceability</div>
+            <h2 class="section-title">Why this score exists</h2>
+            {% if result and result.score_explanation %}
+            <div class="stats-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Start score</div>
+                    <div class="metric-value">{{ result.score_explanation.start_score|default(0) }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total penalty</div>
+                    <div class="metric-value">{{ result.score_explanation.total_penalty|default(0) }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Parser confidence</div>
+                    <div class="metric-value">{{ result.parser_confidence.score|round|int if result.parser_confidence and result.parser_confidence.score is defined else 0 }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Physics risks</div>
+                    <div class="metric-value">{{ result.physics_summary.risks|length if result.physics_summary and result.physics_summary.risks else 0 }}</div>
+                </div>
+            </div>
+            <div class="bar-list" style="margin-top:18px;">
+                {% if single_chart and single_chart.penalty_bars and single_chart.penalty_bars.items %}
+                    {% for item in single_chart.penalty_bars.items %}
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span>{{ item.label }}</span>
+                            <span>{{ item.value }}</span>
+                        </div>
+                        <div class="bar-meter">
+                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="empty-state">Traceability and penalty logic become available after analysis.</div>
+            {% endif %}
+        </article>
+    </section>
+
+    <section class="feature-flow">
+        <div class="section-kicker">Findings queue</div>
+        <h2 class="section-title">Fix-first engineering review</h2>
+        {% if result and result.risks %}
+        <div class="timeline">
+            {% for risk in result.risks[:20] %}
+            <div class="timeline-row">
+                <div>
+                    <div class="list-title">{{ risk.short_title if risk.short_title else risk.message }}</div>
+                    <div class="list-meta">{{ risk.category|replace('_', ' ')|title }} · {{ risk.severity|upper }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</div>
+                    {% if risk.recommendation %}<div class="list-meta">{{ risk.recommendation }}</div>{% endif %}
+                </div>
+                <span class="mini-chip {% if risk.severity in ['critical','high'] %}mini-chip-critical{% elif risk.severity == 'medium' %}mini-chip-medium{% else %}mini-chip-low{% endif %}">{{ risk.severity }}</span>
+            </div>
+            {% endfor %}
         </div>
         {% else %}
-        <div class="empty-state" style="margin-top:18px;">Traceability & Signal Posture becomes available after analysis.</div>
+        <div class="empty-state">No findings yet. Upload a board to populate the review queue.</div>
         {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Board stage</div>
-        <h2 class="section-title">Inspection surface</h2>
-        <div class="canvas-frame" style="margin-top:18px;">
-            <div class="canvas-center"></div>
-        </div>
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Findings</div>
-    <h2 class="section-title">Fix-first review queue</h2>
-    {% if result and result.risks %}
-    <div class="timeline" style="margin-top:18px;">
-        {% for risk in result.risks[:20] %}
-        <div class="timeline-row">
-            <div>
-                <div class="list-title">{{ risk.short_title if risk.short_title else risk.message }}</div>
-                <div class="list-meta">{{ risk.category|replace('_', ' ')|title }} · {{ risk.severity|upper }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</div>
-                {% if risk.recommendation %}<div class="list-meta">{{ risk.recommendation }}</div>{% endif %}
-            </div>
-            <span class="mini-chip {% if risk.severity in ['critical','high'] %}mini-chip-critical{% elif risk.severity == 'medium' %}mini-chip-medium{% else %}mini-chip-low{% endif %}">{{ risk.severity }}</span>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state" style="margin-top:18px;">No findings yet. Upload a board to populate the review queue.</div>
-    {% endif %}
-</section>
+    </section>
+</div>
 {% endblock %}

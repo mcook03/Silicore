@@ -1,70 +1,127 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Nexus review</div>
-        <h2 class="section-title">Compare a board set</h2>
-        <p class="section-copy">Upload multiple designs and run a grouped review without the large launch hero.</p>
-        <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
-            <label>
-                Project Files
-                <input type="file" name="project_files" multiple required>
-            </label>
-            <label>
-                Attach to Project
-                <select name="project_id">
-                    <option value="">No project</option>
-                    {% for project in project_options %}
-                    <option value="{{ project.project_id }}">{{ project.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                Analysis Profile
-                <select name="analysis_profile">
-                    {% for option in analysis_modes.profiles %}
-                    <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                Board Type
-                <select name="analysis_board_type">
-                    {% for option in analysis_modes.board_types %}
-                    <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <button class="btn btn-primary" type="submit">Run Nexus Review</button>
-        </form>
-    </article>
+<div class="page-shell">
+    <section class="hero">
+        <div class="hero-inner">
+            <div>
+                <div class="eyebrow">Portfolio Review</div>
+                <h1 class="hero-title">Compare a board set inside one polished review flow.</h1>
+                <p class="hero-copy">Upload multiple designs, run grouped analysis, and review board ranking, distribution, CAM readiness, and portfolio-level posture from one deliberate surface.</p>
+                <div class="hero-metrics">
+                    <div class="data-pill">
+                        <div class="data-pill-label">Boards loaded</div>
+                        <div class="data-pill-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</div>
+                        <div class="data-pill-copy">Active designs inside the current review set.</div>
+                    </div>
+                    <div class="data-pill">
+                        <div class="data-pill-label">Average score</div>
+                        <div class="data-pill-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</div>
+                        <div class="data-pill-copy">Portfolio-wide engineering posture for this run.</div>
+                    </div>
+                    <div class="data-pill">
+                        <div class="data-pill-label">CAM-aware</div>
+                        <div class="data-pill-value">{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</div>
+                        <div class="data-pill-copy">Boards with fabrication package coverage surfaced in the review.</div>
+                    </div>
+                </div>
+            </div>
 
-    <article class="card">
-        <div class="section-kicker">Current review set</div>
-        <h2 class="section-title">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }} boards loaded{% else %}Awaiting portfolio input{% endif %}</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card">
-                <div class="metric-label">Boards in current review set</div>
-                <div class="metric-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.total_boards }}{% else %}--{% endif %}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Average portfolio score</div>
-                <div class="metric-value">{% if project_result and project_result.project_summary %}{{ project_result.project_summary.average_score|round|int }}{% else %}--{% endif %}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">CAM-aware boards</div>
-                <div class="metric-value">{% if cam_boards %}{{ cam_boards|length }}{% else %}0{% endif %}</div>
-            </div>
+            <aside class="form-shell">
+                <div class="hero-card-label">Launch portfolio review</div>
+                <div class="hero-card-title">Run Nexus Review</div>
+                <form action="{{ url_for('project_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
+                    <label>
+                        Project Files
+                        <input type="file" name="project_files" multiple required>
+                    </label>
+                    <label>
+                        Attach to Project
+                        <select name="project_id">
+                            <option value="">No project</option>
+                            {% for project in project_options %}
+                            <option value="{{ project.project_id }}">{{ project.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        Analysis Profile
+                        <select name="analysis_profile">
+                            {% for option in analysis_modes.profiles %}
+                            <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        Board Type
+                        <select name="analysis_board_type">
+                            {% for option in analysis_modes.board_types %}
+                            <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <button class="btn btn-primary" type="submit">Run Nexus Review</button>
+                </form>
+            </aside>
         </div>
-    </article>
-</section>
+    </section>
 
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Portfolio summary</div>
-        <h2 class="section-title">Project review posture</h2>
-        {% if project_result and project_result.project_summary %}
-        <div class="page-stack" style="margin-top:18px;">
+    <section class="viz-grid">
+        <article class="viz-panel">
+            <div class="viz-header">
+                <div>
+                    <div class="section-kicker">Score trend</div>
+                    <h2 class="section-title">Ranking curve</h2>
+                </div>
+            </div>
+            <div class="sparkline-shell">
+                {% if project_chart and project_chart.score_trend and project_chart.score_trend.points %}
+                <svg class="series-chart" viewBox="0 0 100 36" role="img" aria-label="Project board score trend">
+                    {% for guide in project_chart.score_trend.guides %}
+                    <line class="guide" x1="0" y1="{{ guide }}" x2="100" y2="{{ guide }}"></line>
+                    {% endfor %}
+                    <polyline class="path" points="{% for point in project_chart.score_trend.points %}{{ point.x }},{{ point.y }} {% endfor %}"></polyline>
+                    {% for point in project_chart.score_trend.points %}
+                    <circle class="dot" cx="{{ point.x }}" cy="{{ point.y }}" r="1.9"></circle>
+                    {% endfor %}
+                </svg>
+                {% else %}
+                <div class="empty-state" style="margin:0;">Run a grouped review to unlock score trend visualization.</div>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="viz-panel">
+            <div class="viz-header">
+                <div>
+                    <div class="section-kicker">Distribution</div>
+                    <h2 class="section-title">Portfolio quality mix</h2>
+                </div>
+            </div>
+            <div class="bar-list">
+                {% if project_chart and project_chart.distribution_bars %}
+                    {% for item in project_chart.distribution_bars %}
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span>{{ item.label }}</span>
+                            <span>{{ item.value }}</span>
+                        </div>
+                        <div class="bar-meter">
+                            <div class="bar-meter-fill" style="width: {{ item.width }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="margin:0;">Quality mix appears after the review set is scored.</div>
+                {% endif %}
+            </div>
+        </article>
+    </section>
+
+    <section class="viz-grid">
+        <article class="feature-flow">
+            <div class="section-kicker">Portfolio summary</div>
+            <h2 class="section-title">Project review posture</h2>
+            {% if project_result and project_result.project_summary %}
             <div class="summary-panel">
                 <strong>{{ project_result.project_insight.headline if project_result.project_insight else "Review summary" }}</strong>
                 <p class="section-copy">{{ project_result.project_insight.summary if project_result.project_insight else "Project-level summary is not available." }}</p>
@@ -74,56 +131,70 @@
                 <div class="metric-card"><div class="metric-label">Worst score</div><div class="metric-value">{{ project_result.project_summary.worst_score|round|int }}</div></div>
                 <div class="metric-card"><div class="metric-label">Common category</div><div class="metric-value-text">{{ project_result.project_insight.common_category if project_result.project_insight else "N/A" }}</div></div>
             </div>
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">No project review has been executed yet.</div>
-        {% endif %}
-    </article>
+            {% else %}
+            <div class="empty-state">No project review has been executed yet.</div>
+            {% endif %}
+        </article>
 
-    <article class="card">
-        <div class="section-kicker">CAM readiness</div>
-        <h2 class="section-title">Fabrication package coverage</h2>
-        {% if cam_boards %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for board in cam_boards %}
+        <article class="feature-flow">
+            <div class="section-kicker">CAM readiness</div>
+            <h2 class="section-title">Fabrication package coverage</h2>
+            {% if cam_boards %}
+            <div class="timeline">
+                {% for board in cam_boards %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="list-title">{{ board.filename }}</div>
+                        <div class="list-meta">{{ board.cam_summary.source_format|replace('_', ' ')|title if board.cam_summary and board.cam_summary.source_format is defined else "CAM board" }}</div>
+                    </div>
+                    <span class="mini-chip">{{ board.cam_summary.readiness_level|default("tracked") }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No CAM-aware boards are in the current review set.</div>
+            {% endif %}
+        </article>
+    </section>
+
+    <section class="feature-flow">
+        <div class="section-kicker">Board ranking</div>
+        <h2 class="section-title">Ranked board results</h2>
+        {% if project_chart and project_chart.ranking %}
+        <div class="bar-list">
+            {% for item in project_chart.ranking %}
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span>{{ item.label }}</span>
+                    <span>{{ item.value }}</span>
+                </div>
+                <div class="bar-meter">
+                    <div class="bar-meter-fill" style="width: {{ item.width }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% elif project_result and project_result.boards %}
+        <div class="timeline">
+            {% for board in project_result.boards %}
             <div class="timeline-row">
                 <div>
                     <div class="list-title">{{ board.filename }}</div>
-                    <div class="list-meta">{{ board.cam_summary.source_format|replace('_', ' ')|title if board.cam_summary and board.cam_summary.source_format is defined else "CAM board" }}</div>
+                    <div class="list-meta">
+                        Score {{ board.score|round|int if board.score > 10 else (board.score * 10)|round|int }} ·
+                        {{ board.risks|length if board.risks else 0 }} findings ·
+                        Rank {{ board.rank if board.rank is defined else loop.index }}
+                    </div>
                 </div>
-                <span class="mini-chip">{{ board.cam_summary.readiness_level|default("tracked") }}</span>
+                <span class="mini-chip {% if board.score and board.score >= 7 %}mini-chip-low{% elif board.score and board.score >= 4 %}mini-chip-medium{% else %}mini-chip-critical{% endif %}">
+                    {{ board.executive_summary.headline if board.executive_summary and board.executive_summary.headline else "Review" }}
+                </span>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="empty-state" style="margin-top:18px;">No CAM-aware boards are in the current review set.</div>
+        <div class="empty-state">Upload multiple files to build the portfolio ranking view.</div>
         {% endif %}
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Boards</div>
-    <h2 class="section-title">Ranked board results</h2>
-    {% if project_result and project_result.boards %}
-    <div class="timeline" style="margin-top:18px;">
-        {% for board in project_result.boards %}
-        <div class="timeline-row">
-            <div>
-                <div class="list-title">{{ board.filename }}</div>
-                <div class="list-meta">
-                    Score {{ board.score|round|int if board.score > 10 else (board.score * 10)|round|int }} ·
-                    {{ board.risks|length if board.risks else 0 }} findings ·
-                    Rank {{ board.rank if board.rank is defined else loop.index }}
-                </div>
-            </div>
-            <span class="mini-chip {% if board.score and board.score >= 7 %}mini-chip-low{% elif board.score and board.score >= 4 %}mini-chip-medium{% else %}mini-chip-critical{% endif %}">
-                {{ board.executive_summary.headline if board.executive_summary and board.executive_summary.headline else "Review" }}
-            </span>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state" style="margin-top:18px;">Upload multiple files to build the portfolio ranking view.</div>
-    {% endif %}
-</section>
+    </section>
+</div>
 {% endblock %}

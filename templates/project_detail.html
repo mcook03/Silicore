@@ -42,6 +42,59 @@
     </div>
 </section>
 
+<section class="viz-grid">
+    <article class="viz-panel">
+        <div class="viz-header">
+            <div>
+                <div class="section-kicker">Workspace score</div>
+                <h2 class="section-title">Run-to-run momentum</h2>
+            </div>
+            <div class="chart-stat">{{ workspace_chart.score_trend.last_value|round|int if workspace_chart and workspace_chart.score_trend else 0 }}</div>
+        </div>
+        <div class="sparkline-shell">
+            {% if workspace_chart and workspace_chart.score_trend and workspace_chart.score_trend.has_data %}
+            <svg class="series-chart" viewBox="0 0 {{ workspace_chart.score_trend.width }} {{ workspace_chart.score_trend.height }}" role="img" aria-label="Workspace score trend">
+                {% for guide in workspace_chart.score_trend.guides %}
+                <line class="guide" x1="0" y1="{{ guide }}" x2="{{ workspace_chart.score_trend.width }}" y2="{{ guide }}"></line>
+                {% endfor %}
+                <polyline class="path" points="{% for point in workspace_chart.score_trend.points %}{{ point.x }},{{ point.y }} {% endfor %}"></polyline>
+                {% for point in workspace_chart.score_trend.points %}
+                <circle class="dot" cx="{{ point.x }}" cy="{{ point.y }}" r="1.8"></circle>
+                {% endfor %}
+            </svg>
+            {% else %}
+            <div class="empty-state" style="margin:0;">Link runs into this workspace to unlock score trend telemetry.</div>
+            {% endif %}
+        </div>
+    </article>
+
+    <article class="viz-panel">
+        <div class="viz-header">
+            <div>
+                <div class="section-kicker">Quality mix</div>
+                <h2 class="section-title">Workspace health distribution</h2>
+            </div>
+        </div>
+        <div class="bar-list">
+            {% if workspace_chart and workspace_chart.quality_mix and workspace_chart.quality_mix.items %}
+                {% for item in workspace_chart.quality_mix.items %}
+                <div class="bar-row">
+                    <div class="bar-label">
+                        <span>{{ item.label }}</span>
+                        <span>{{ item.value }}</span>
+                    </div>
+                    <div class="bar-meter">
+                        <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="empty-state" style="margin:0;">Workspace quality mix appears after scored runs are linked.</div>
+            {% endif %}
+        </div>
+    </article>
+</section>
+
 <section class="grid grid-2">
     <article class="card">
         <div class="section-kicker">Confidence Timeline</div>

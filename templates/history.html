@@ -1,79 +1,112 @@
 {% extends "base.html" %}
 {% block content %}
 {% set run_list = history_runs if history_runs is defined else [] %}
-<section class="card">
-    <div class="section-kicker">Silicore archive</div>
-    <h2 class="section-title">Run history and saved outputs</h2>
-    <p class="section-copy">Reopen past analyses and keep engineering decisions tied to the evidence that created them, without the oversized hero block.</p>
-    <div class="stats-grid" style="margin-top:18px;">
-        <div class="metric-card">
-            <div class="metric-label">Total runs</div>
-            <div class="metric-value">{{ history_summary.total_runs if history_summary is defined else run_list|length }}</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Export files</div>
-            <div class="metric-value">{{ history_summary.total_files if history_summary is defined else 0 }}</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">HTML reports</div>
-            <div class="metric-value">{{ history_summary.total_html if history_summary is defined else 0 }}</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">JSON outputs</div>
-            <div class="metric-value">{{ history_summary.total_json if history_summary is defined else 0 }}</div>
-        </div>
-    </div>
-</section>
+<div class="page-shell">
+    <section class="hero">
+        <div class="hero-inner">
+            <div>
+                <div class="eyebrow">Silicore Archive</div>
+                <h1 class="hero-title">History that reads like a product memory layer.</h1>
+                <p class="hero-copy">Reopen earlier analyses, inspect saved outputs, and keep engineering decisions tied to the evidence that created them.</p>
+                <div class="hero-metrics">
+                    {% for item in history_chart.archive_metrics if history_chart and history_chart.archive_metrics %}
+                    <div class="data-pill">
+                        <div class="data-pill-label">{{ item.label }}</div>
+                        <div class="data-pill-value">{{ item.value }}</div>
+                        <div class="data-pill-copy">{{ item.note }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
 
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Run Quality</div>
-        <h2 class="section-title">Score Trend</h2>
-        <div class="empty-state" style="margin-top:18px;">
-            <strong>Score Trend</strong><br>
-            Saved runs are used to show movement over time across board and project analyses.
+            <aside class="viz-panel">
+                <div class="viz-header">
+                    <div>
+                        <div class="hero-card-label">Score trend</div>
+                        <div class="hero-card-title">Archive quality movement</div>
+                    </div>
+                </div>
+                <div class="sparkline-shell">
+                    {% if history_chart and history_chart.score_trend and history_chart.score_trend.has_data %}
+                    <svg class="sparkline-chart" viewBox="0 0 {{ history_chart.score_trend.width }} {{ history_chart.score_trend.height }}" role="img" aria-label="History score trend">
+                        <polygon class="area" points="{{ history_chart.score_trend.area_points }}"></polygon>
+                        <polyline class="path" points="{{ history_chart.score_trend.points }}"></polyline>
+                    </svg>
+                    {% else %}
+                    <div class="empty-state" style="margin:0;">Saved runs are used to show movement over time across board and project analyses.</div>
+                    {% endif %}
+                </div>
+            </aside>
         </div>
-    </article>
+    </section>
 
-    <article class="card">
-        <div class="section-kicker">Artifact volume</div>
-        <h2 class="section-title">Saved Outputs</h2>
-        {% if run_list %}
-        <div class="artifact-list" style="margin-top:18px;">
-            {% for run in run_list[:8] %}
-            <div class="artifact-row">
+    <section class="viz-grid">
+        <article class="viz-panel">
+            <div class="viz-header">
                 <div>
-                    <div class="artifact-name">{{ run.label or run.name }}</div>
-                    <div class="artifact-kind">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+                    <div class="section-kicker">Artifact volume</div>
+                    <h2 class="section-title">Saved outputs</h2>
+                </div>
+            </div>
+            <div class="bar-list">
+                {% if history_chart and history_chart.artifact_bars and history_chart.artifact_bars.items %}
+                    {% for item in history_chart.artifact_bars.items %}
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span>{{ item.label }}</span>
+                            <span>{{ item.value }}</span>
+                        </div>
+                        <div class="bar-meter">
+                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="margin:0;">Artifact volume appears once runs contain saved downloads.</div>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="feature-flow">
+            <div class="section-kicker">Archive access</div>
+            <h2 class="section-title">Recent stored runs</h2>
+            {% if run_list %}
+            <div class="artifact-list">
+                {% for run in run_list[:8] %}
+                <div class="artifact-row">
+                    <div>
+                        <div class="artifact-name">{{ run.label or run.name }}</div>
+                        <div class="artifact-kind">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+                    </div>
+                    <a class="btn btn-secondary" href="{{ run.detail_url or run.path }}">Open Run</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No saved outputs exist yet.</div>
+            {% endif %}
+        </article>
+    </section>
+
+    <section class="feature-flow">
+        <div class="section-kicker">Timeline</div>
+        <h2 class="section-title">Recent activity across the archive</h2>
+        <p class="section-copy">Latest board and project runs across the current Silicore timeline.</p>
+        {% if run_list %}
+        <div class="timeline">
+            {% for run in run_list %}
+            <div class="timeline-row">
+                <div>
+                    <div class="list-title">{{ run.label or run.name }}</div>
+                    <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
                 </div>
                 <a class="btn btn-secondary" href="{{ run.detail_url or run.path }}">Open Run</a>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="empty-state" style="margin-top:18px;">No saved outputs exist yet.</div>
+        <div class="empty-state">No archived runs are available yet.</div>
         {% endif %}
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Archive timeline</div>
-    <h2 class="section-title">Recent Activity</h2>
-    <p class="section-copy">Latest board and project runs across the current Nexus timeline.</p>
-    {% if run_list %}
-    <div class="timeline" style="margin-top:18px;">
-        {% for run in run_list %}
-        <div class="timeline-row">
-            <div>
-                <div class="list-title">{{ run.label or run.name }}</div>
-                <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
-            </div>
-            <a class="btn btn-secondary" href="{{ run.detail_url or run.path }}">Open Run</a>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state" style="margin-top:18px;">No archived runs are available yet.</div>
-    {% endif %}
-</section>
+    </section>
+</div>
 {% endblock %}
