@@ -1,45 +1,567 @@
 {% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    .page-home {
+        --landing-text: rgba(255, 255, 255, 0.92);
+        --landing-soft: rgba(255, 255, 255, 0.72);
+        --landing-faint: rgba(255, 255, 255, 0.54);
+        --landing-line: rgba(255, 255, 255, 0.2);
+        --landing-panel: rgba(255, 255, 255, 0.08);
+        --landing-panel-strong: rgba(255, 255, 255, 0.12);
+        --landing-shadow: 0 36px 90px rgba(148, 96, 121, 0.18);
+        --landing-shell: min(1220px, calc(100vw - 28px));
+    }
+
+    .page-home body,
+    body.page-home {
+        background:
+            radial-gradient(circle at 15% 20%, rgba(255, 214, 228, 0.92), transparent 30%),
+            radial-gradient(circle at 75% 18%, rgba(239, 169, 227, 0.9), transparent 24%),
+            radial-gradient(circle at 20% 85%, rgba(255, 202, 143, 0.72), transparent 28%),
+            radial-gradient(circle at 85% 82%, rgba(255, 243, 248, 0.76), transparent 28%),
+            linear-gradient(135deg, #f7dce9 0%, #efc8e9 34%, #f4c0cf 62%, #fbf2f6 100%);
+    }
+
+    body.page-home::before {
+        top: 6%;
+        right: 8%;
+        width: 580px;
+        height: 580px;
+        filter: blur(18px);
+        opacity: 0.8;
+        background: radial-gradient(circle, rgba(221, 141, 213, 0.42), rgba(221, 141, 213, 0));
+    }
+
+    body.page-home::after {
+        left: -4%;
+        bottom: -4%;
+        width: 560px;
+        height: 560px;
+        filter: blur(20px);
+        opacity: 0.75;
+        background: radial-gradient(circle, rgba(255, 190, 108, 0.34), rgba(255, 190, 108, 0));
+    }
+
+    .page-home .ambient-grid {
+        opacity: 0.14;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 78%);
+    }
+
+    .page-home .app-shell {
+        width: var(--landing-shell);
+        padding-top: 22px;
+    }
+
+    .page-home .site-header-inner {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.22);
+        box-shadow: 0 20px 50px rgba(164, 112, 139, 0.14);
+    }
+
+    .page-home .brand-mark {
+        background: rgba(255, 255, 255, 0.34);
+        border-color: rgba(255, 255, 255, 0.26);
+    }
+
+    .page-home .brand-title,
+    .page-home .nav-pill:hover,
+    .page-home .nav-pill.active,
+    .page-home .status-value,
+    .page-home .hero-title,
+    .page-home .section-title,
+    .page-home .story-stat-value,
+    .page-home .showcase-number,
+    .page-home .chart-stat,
+    .page-home .data-pill-value,
+    .page-home .metric-value-text,
+    .page-home .list-title {
+        color: var(--landing-text);
+    }
+
+    .page-home .brand-subtitle,
+    .page-home .nav-pill,
+    .page-home .status-label,
+    .page-home .status-pill,
+    .page-home .hero-copy,
+    .page-home .section-copy,
+    .page-home .story-stat-label,
+    .page-home .data-pill-copy,
+    .page-home .metric-sub,
+    .page-home .list-meta,
+    .page-home .footer,
+    .page-home .marketing-link {
+        color: var(--landing-soft);
+    }
+
+    .page-home .nav-pill {
+        background: transparent;
+    }
+
+    .page-home .nav-pill-icon,
+    .page-home .status-pill,
+    .page-home .data-pill,
+    .page-home .story-stat,
+    .page-home .feature-stage,
+    .page-home .showcase-card,
+    .page-home .metric-card,
+    .page-home .timeline-row,
+    .page-home .viz-panel,
+    .page-home .feature-flow {
+        background: var(--landing-panel);
+        border-color: var(--landing-line);
+        box-shadow: var(--landing-shadow);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .page-home .btn-primary {
+        color: #7d4f60;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 50px rgba(255, 255, 255, 0.26);
+    }
+
+    .page-home .btn-secondary {
+        color: var(--landing-text);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .page-home .page-shell {
+        gap: 22px;
+    }
+
+    .landing-hero {
+        min-height: calc(100vh - 112px);
+        padding: clamp(28px, 5vw, 54px);
+        border-radius: 44px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background:
+            radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.22), transparent 26%),
+            radial-gradient(circle at 72% 24%, rgba(232, 134, 219, 0.26), transparent 20%),
+            radial-gradient(circle at 20% 82%, rgba(255, 197, 119, 0.24), transparent 25%),
+            linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+        box-shadow: var(--landing-shadow);
+        display: grid;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .landing-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 60% 35%, rgba(206, 118, 194, 0.22), transparent 20%),
+            linear-gradient(130deg, transparent 37%, rgba(222, 152, 179, 0.28) 61%, transparent 78%);
+        pointer-events: none;
+    }
+
+    .landing-hero::after {
+        content: "";
+        position: absolute;
+        left: 8%;
+        right: 8%;
+        bottom: -24%;
+        height: 36%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 205, 141, 0.44), rgba(255, 205, 141, 0));
+        filter: blur(18px);
+        pointer-events: none;
+    }
+
+    .landing-hero-inner {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 28px;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .landing-eyebrow,
+    .showcase-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+    }
+
+    .landing-eyebrow::before,
+    .showcase-label::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+    }
+
+    .landing-title {
+        margin: 0;
+        max-width: 10ch;
+        font-family: var(--font-display);
+        font-size: clamp(3.4rem, 10vw, 7.2rem);
+        line-height: 0.92;
+        letter-spacing: -0.08em;
+        color: var(--landing-text);
+    }
+
+    .landing-copy {
+        max-width: 680px;
+        margin: 0;
+        color: var(--landing-soft);
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        line-height: 1.8;
+    }
+
+    .landing-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: center;
+    }
+
+    .landing-strip {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 12px;
+    }
+
+    .story-grid,
+    .stats-band,
+    .deployment-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .story-panel,
+    .feature-stage,
+    .showcase-card {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(24px, 3vw, 34px);
+        border-radius: 34px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .story-panel::before,
+    .feature-stage::before,
+    .showcase-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 52%);
+        pointer-events: none;
+    }
+
+    .story-panel > *,
+    .feature-stage > *,
+    .showcase-card > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .story-panel {
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: var(--landing-shadow);
+    }
+
+    .story-copy {
+        margin: 18px 0 0;
+        max-width: 56ch;
+        color: var(--landing-soft);
+        line-height: 1.8;
+    }
+
+    .story-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .story-stat {
+        padding: 18px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .story-stat-value {
+        font-family: var(--font-display);
+        font-size: clamp(1.7rem, 3vw, 2.6rem);
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+    }
+
+    .story-stat-label {
+        margin-top: 10px;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .pulse-shell {
+        min-height: 100%;
+        display: grid;
+        gap: 18px;
+        align-content: start;
+    }
+
+    .pulse-graph {
+        min-height: 220px;
+        padding: 18px;
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .pulse-note {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-top: 8px;
+        color: var(--landing-soft);
+        font-size: 13px;
+    }
+
+    .showcase-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .showcase-intro {
+        position: sticky;
+        top: 108px;
+        align-self: start;
+    }
+
+    .showcase-stack {
+        display: grid;
+        gap: 18px;
+    }
+
+    .showcase-card {
+        display: grid;
+        gap: 18px;
+        min-height: 220px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .showcase-number {
+        font-family: var(--font-display);
+        font-size: clamp(2.4rem, 5vw, 4rem);
+        line-height: 0.9;
+        letter-spacing: -0.08em;
+        opacity: 0.9;
+    }
+
+    .showcase-points {
+        display: grid;
+        gap: 10px;
+    }
+
+    .showcase-point {
+        padding: 12px 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--landing-soft);
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .stats-band .viz-panel,
+    .deployment-grid .feature-flow,
+    .page-home .metric-card,
+    .page-home .timeline-row {
+        border-radius: 30px;
+    }
+
+    .page-home .viz-panel,
+    .page-home .feature-flow {
+        padding: 28px;
+    }
+
+    .page-home .timeline-row {
+        background:
+            linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 40%),
+            rgba(255, 255, 255, 0.05);
+        border-left-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .page-home .bar-meter,
+    .page-home .pulse-graph,
+    .page-home .sparkline-shell {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04)),
+            rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .page-home .bar-meter-fill,
+    .page-home .sparkline-chart .path {
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 214, 147, 0.92));
+        stroke: rgba(255, 255, 255, 0.92);
+    }
+
+    .page-home .sparkline-chart .area {
+        fill: rgba(255, 255, 255, 0.12);
+    }
+
+    .reveal {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0) scale(0.985);
+        transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity, transform;
+    }
+
+    .reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    .reveal[data-delay="1"] {
+        transition-delay: 90ms;
+    }
+
+    .reveal[data-delay="2"] {
+        transition-delay: 180ms;
+    }
+
+    .reveal[data-delay="3"] {
+        transition-delay: 270ms;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal,
+        .reveal.is-visible {
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+    }
+
+    @media (max-width: 1040px) {
+        .landing-strip,
+        .story-grid,
+        .stats-band,
+        .deployment-grid,
+        .showcase-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .showcase-intro {
+            position: static;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .landing-hero {
+            min-height: auto;
+            padding: 24px;
+        }
+
+        .landing-title {
+            font-size: clamp(2.6rem, 17vw, 4.2rem);
+        }
+
+        .story-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .page-home .viz-panel,
+        .page-home .feature-flow,
+        .story-panel,
+        .feature-stage,
+        .showcase-card {
+            padding: 22px;
+            border-radius: 28px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-shell">
-    <section class="hero" id="product">
-        <div class="hero-inner">
-            <div>
-                <div class="eyebrow">Hardware Review Operating System</div>
-                <h1 class="hero-title">A PCB intelligence product, not a utility dashboard.</h1>
-                <p class="hero-copy">{{ dashboard_story.summary if dashboard_story is defined else "Silicore brings board analysis, revision awareness, and engineering follow-through into one product-grade operating surface for hardware teams." }}</p>
-                <div class="hero-actions">
-                    <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
-                    <a class="btn btn-secondary" href="{{ url_for('project_page') }}">Run Portfolio Review</a>
-                    <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">Open Workspaces</a>
-                </div>
-                <div class="hero-metrics">
-                    <div class="data-pill">
-                        <div class="data-pill-label">Runs tracked</div>
-                        <div class="data-pill-value">{{ stats.total_runs if stats is defined else 0 }}</div>
-                        <div class="data-pill-copy">Persistent review memory across every saved analysis.</div>
-                    </div>
-                    <div class="data-pill">
-                        <div class="data-pill-label">Workspaces online</div>
-                        <div class="data-pill-value">{{ projects|length if projects is defined else 0 }}</div>
-                        <div class="data-pill-copy">Project-level continuity instead of isolated uploads.</div>
-                    </div>
-                    <div class="data-pill">
-                        <div class="data-pill-label">Latest score</div>
-                        <div class="data-pill-value">{{ home_chart.latest_score if home_chart is defined else 0 }}</div>
-                        <div class="data-pill-copy">The most recent engineering posture across the system.</div>
-                    </div>
-                </div>
+    <section class="landing-hero" id="product">
+        <div class="landing-hero-inner">
+            <div class="landing-eyebrow reveal is-visible">Silicore platform</div>
+            <h1 class="landing-title reveal is-visible" data-delay="1">Minimal design. Serious hardware signal.</h1>
+            <p class="landing-copy reveal is-visible" data-delay="2">
+                {{ dashboard_story.summary if dashboard_story is defined else "Silicore brings board analysis, revision awareness, and engineering follow-through into one product-grade operating surface for hardware teams." }}
+            </p>
+            <div class="landing-actions reveal is-visible" data-delay="3">
+                <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Analyze a Board</a>
+                <a class="btn btn-secondary" href="#workflows">Learn More</a>
             </div>
 
-            <aside class="viz-panel">
-                <div class="viz-header">
-                    <div>
-                        <div class="hero-card-label">System pulse</div>
-                        <div class="hero-card-title">Live platform signal</div>
-                    </div>
-                    <div class="chip">Atlas online</div>
+            <div class="landing-strip">
+                <div class="data-pill reveal">
+                    <div class="data-pill-label">Runs tracked</div>
+                    <div class="data-pill-value">{{ stats.total_runs if stats is defined else 0 }}</div>
+                    <div class="data-pill-copy">Persistent engineering memory across every saved review.</div>
                 </div>
-                <div class="sparkline-shell">
+                <div class="data-pill reveal" data-delay="1">
+                    <div class="data-pill-label">Workspaces online</div>
+                    <div class="data-pill-value">{{ projects|length if projects is defined else 0 }}</div>
+                    <div class="data-pill-copy">Project continuity instead of isolated uploads and exports.</div>
+                </div>
+                <div class="data-pill reveal" data-delay="2">
+                    <div class="data-pill-label">Latest score</div>
+                    <div class="data-pill-value">{{ home_chart.latest_score if home_chart is defined else 0 }}</div>
+                    <div class="data-pill-copy">A live view of the platform's current engineering posture.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="story-grid" id="workflows">
+        <article class="story-panel reveal">
+            <div class="section-kicker">Product narrative</div>
+            <h2 class="section-title">The homepage now opens like a product, then reveals depth as you scroll.</h2>
+            <p class="story-copy">
+                Silicore starts with a calm, focused first impression and then gradually opens into workflow detail, live telemetry, parser readiness, and recent workspace activity. The goal is to make the surface feel more premium without losing the practical information your users need.
+            </p>
+            <div class="story-stats">
+                <div class="story-stat">
+                    <div class="story-stat-value">01</div>
+                    <div class="story-stat-label">A softer hero sets the tone before asking the user to choose an action.</div>
+                </div>
+                <div class="story-stat">
+                    <div class="story-stat-value">02</div>
+                    <div class="story-stat-label">Motion reveals sections progressively so the page feels alive instead of dense.</div>
+                </div>
+                <div class="story-stat">
+                    <div class="story-stat-value">03</div>
+                    <div class="story-stat-label">Existing platform data still shows up further down in a more readable sequence.</div>
+                </div>
+            </div>
+        </article>
+
+        <aside class="feature-stage reveal" data-delay="1">
+            <div class="viz-header">
+                <div>
+                    <div class="section-kicker">System pulse</div>
+                    <h2 class="section-title">Live platform signal</h2>
+                </div>
+                <div class="chip">Atlas online</div>
+            </div>
+            <div class="pulse-shell">
+                <div class="pulse-graph">
                     {% if home_chart and home_chart.trend and home_chart.trend.has_data %}
                     <svg class="sparkline-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" role="img" aria-label="Recent score trend">
                         <polygon class="area" points="{{ home_chart.trend.area_points }}"></polygon>
@@ -49,55 +571,85 @@
                     <div class="empty-state" style="margin:0;">Run a board analysis to start building score history.</div>
                     {% endif %}
                 </div>
-                <div class="signal-ribbon">
-                    {% if dashboard_story and dashboard_story.pillars %}
-                        {% for pillar in dashboard_story.pillars[:3] %}
-                        <div class="data-pill">
-                            <div class="data-pill-label">{{ pillar.title }}</div>
-                            <div class="data-pill-value">{{ pillar.value_label }}</div>
-                            <div class="data-pill-copy">{{ pillar.description }}</div>
+                <div class="pulse-note">
+                    <span>The hero stays minimal. Supporting telemetry appears just below it.</span>
+                    <span>{{ home_chart.latest_score if home_chart is defined else 0 }}/100 latest score</span>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="showcase-shell">
+        <article class="story-panel showcase-intro reveal">
+            <div class="showcase-label">Scroll to reveal</div>
+            <h2 class="section-title">Each section adds context instead of dropping everything at once.</h2>
+            <p class="story-copy">
+                This flow mirrors the layout direction from your reference: one clean focal point at the top, then more detail enters with spacious cards, light glass surfaces, and motion that stays subtle.
+            </p>
+        </article>
+
+        <div class="showcase-stack">
+            <article class="showcase-card reveal">
+                <div class="showcase-number">01</div>
+                <div>
+                    <div class="section-kicker">Workflow stack</div>
+                    <h2 class="section-title">Move from single-board ingest to release judgment.</h2>
+                </div>
+                <div class="showcase-points">
+                    <div class="showcase-point">Single-board review turns raw PCB files into prioritized engineering signal.</div>
+                    <div class="showcase-point">Workspace continuity keeps runs, revisions, and release posture connected.</div>
+                    <div class="showcase-point">Automation routing pushes output toward the next engineering action.</div>
+                </div>
+            </article>
+
+            <article class="showcase-card reveal">
+                <div class="showcase-number">02</div>
+                <div>
+                    <div class="section-kicker">Format readiness</div>
+                    <h2 class="section-title">Parser availability becomes part of the story instead of hidden setup detail.</h2>
+                </div>
+                <div class="stats-grid">
+                    {% if dashboard_story and dashboard_story.parser_readiness %}
+                        {% for parser in dashboard_story.parser_readiness[:6] %}
+                        <div class="metric-card">
+                            <div class="metric-label">{{ parser.label }}</div>
+                            <div class="metric-value-text">{{ parser.status }}</div>
+                            <div class="metric-sub">{{ parser.extension }}</div>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div class="data-pill">
-                            <div class="data-pill-label">Analyze</div>
-                            <div class="data-pill-value">Board posture</div>
-                            <div class="data-pill-copy">Turn board files into fix-first engineering signal.</div>
-                        </div>
+                        <div class="empty-state">Parser readiness data is not available right now.</div>
                     {% endif %}
                 </div>
-            </aside>
+            </article>
+
+            <article class="showcase-card reveal">
+                <div class="showcase-number">03</div>
+                <div>
+                    <div class="section-kicker">Recent activity</div>
+                    <h2 class="section-title">Fresh workspace actions appear only after the product promise is clear.</h2>
+                </div>
+                {% if recent_runs %}
+                <div class="timeline">
+                    {% for run in recent_runs[:4] %}
+                    <div class="timeline-row">
+                        <div>
+                            <div class="list-title">{{ run.label or run.name }}</div>
+                            <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+                        </div>
+                        <a class="btn btn-secondary" href="{{ run.path }}">Open Run</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">No saved runs are available yet. Start with a single-board analysis to populate the product timeline.</div>
+                {% endif %}
+            </article>
         </div>
     </section>
 
-    <section class="viz-grid" id="workflows">
-        <article class="feature-flow">
-            <div class="section-kicker">Workflow stack</div>
-            <h2 class="section-title">Move from file ingest to release judgment.</h2>
-            <p class="section-copy">The product experience is organized around the sequence real hardware teams follow: analyze, compare, prioritize, and operationalize.</p>
-            <div class="timeline">
-                <div class="timeline-row">
-                    <div>
-                        <div class="list-title">Single-board review</div>
-                        <div class="list-meta">Upload a board, score physical and electrical pressure, and understand why the score moved.</div>
-                    </div>
-                </div>
-                <div class="timeline-row">
-                    <div>
-                        <div class="list-title">Workspace continuity</div>
-                        <div class="list-meta">Attach runs to projects so change history, recurring patterns, and release posture stay together.</div>
-                    </div>
-                </div>
-                <div class="timeline-row">
-                    <div>
-                        <div class="list-title">Automation & routing</div>
-                        <div class="list-meta">Push review output into the next action instead of letting signal die inside exports.</div>
-                    </div>
-                </div>
-            </div>
-        </article>
-
-        <article class="viz-panel">
+    <section class="stats-band">
+        <article class="viz-panel reveal">
             <div class="viz-header">
                 <div>
                     <div class="section-kicker">Run mix</div>
@@ -123,10 +675,8 @@
                 {% endif %}
             </div>
         </article>
-    </section>
 
-    <section class="viz-grid">
-        <article class="viz-panel">
+        <article class="viz-panel reveal" data-delay="1">
             <div class="viz-header">
                 <div>
                     <div class="section-kicker">Engineering domains</div>
@@ -151,77 +701,10 @@
                 {% endif %}
             </div>
         </article>
-
-        <article class="viz-panel">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Score spread</div>
-                    <h2 class="section-title">Quality distribution</h2>
-                </div>
-            </div>
-            <div class="bar-list">
-                {% if home_chart and home_chart.score_distribution and home_chart.score_distribution["items"] %}
-                    {% for item in home_chart.score_distribution["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
-                        </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state" style="margin:0;">Score bands appear after multiple scored runs.</div>
-                {% endif %}
-            </div>
-        </article>
     </section>
 
-    <section class="viz-grid">
-        <article class="feature-flow">
-            <div class="section-kicker">Format readiness</div>
-            <h2 class="section-title">Parsers and import paths</h2>
-            <p class="section-copy">Silicore communicates platform readiness directly inside the product surface, not buried in support docs.</p>
-            <div class="stats-grid">
-                {% if dashboard_story and dashboard_story.parser_readiness %}
-                    {% for parser in dashboard_story.parser_readiness[:6] %}
-                    <div class="metric-card">
-                        <div class="metric-label">{{ parser.label }}</div>
-                        <div class="metric-value-text">{{ parser.status }}</div>
-                        <div class="metric-sub">{{ parser.extension }}</div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">Parser readiness data is not available right now.</div>
-                {% endif %}
-            </div>
-        </article>
-
-        <article class="feature-flow">
-            <div class="section-kicker">Recent activity</div>
-            <h2 class="section-title">What the workspace is doing now</h2>
-            {% if recent_runs %}
-            <div class="timeline">
-                {% for run in recent_runs %}
-                <div class="timeline-row">
-                    <div>
-                        <div class="list-title">{{ run.label or run.name }}</div>
-                        <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
-                    </div>
-                    <a class="btn btn-secondary" href="{{ run.path }}">Open Run</a>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">No saved runs are available yet. Start with a single-board analysis to populate the product timeline.</div>
-            {% endif %}
-        </article>
-    </section>
-
-    <section class="viz-grid" id="deployment">
-        <article class="feature-flow">
+    <section class="deployment-grid" id="deployment">
+        <article class="feature-flow reveal">
             <div class="section-kicker">Starter path</div>
             <h2 class="section-title">Manual review, sharpened.</h2>
             <div class="timeline">
@@ -231,7 +714,7 @@
             </div>
         </article>
 
-        <article class="feature-flow">
+        <article class="feature-flow reveal" data-delay="1">
             <div class="section-kicker">Team path</div>
             <h2 class="section-title">Shared workspaces and revision continuity.</h2>
             <div class="timeline">
@@ -242,4 +725,33 @@
         </article>
     </section>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (() => {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const items = document.querySelectorAll(".reveal");
+
+        if (reducedMotion || !("IntersectionObserver" in window)) {
+            items.forEach((item) => item.classList.add("is-visible"));
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            });
+        }, {
+            threshold: 0.16,
+            rootMargin: "0px 0px -8% 0px"
+        });
+
+        items.forEach((item) => observer.observe(item));
+    })();
+</script>
 {% endblock %}
