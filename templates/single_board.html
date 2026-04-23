@@ -3,53 +3,128 @@
 {% block extra_head %}
 <style>
     .page-single {
-        --board-shell: min(1380px, calc(100vw - 32px));
-        --board-glow: linear-gradient(135deg, rgba(125, 178, 255, 0.24), rgba(96, 240, 198, 0.1));
-        --board-surface: linear-gradient(180deg, rgba(10, 22, 34, 0.88), rgba(7, 16, 26, 0.88));
-        --board-surface-strong: linear-gradient(180deg, rgba(9, 20, 31, 0.96), rgba(6, 13, 21, 0.96));
+        --dash-shell: min(1500px, calc(100vw - 32px));
+        --dash-panel: linear-gradient(180deg, rgba(12, 23, 36, 0.94), rgba(7, 16, 27, 0.94));
+        --dash-panel-soft: linear-gradient(180deg, rgba(15, 28, 43, 0.86), rgba(9, 18, 30, 0.9));
     }
 
     .page-single .app-shell {
-        width: var(--board-shell);
+        width: var(--dash-shell);
     }
 
-    .board-page {
+    .board-dashboard {
         display: grid;
-        gap: clamp(28px, 4vw, 44px);
+        gap: 18px;
     }
 
-    .board-hero {
+    .board-topbar,
+    .board-hero,
+    .board-panel {
         position: relative;
         overflow: hidden;
-        display: grid;
-        gap: 28px;
-        padding: clamp(28px, 4vw, 42px);
-        border-radius: 34px;
-        border: 1px solid rgba(136, 214, 255, 0.14);
-        background:
-            radial-gradient(circle at 86% 16%, rgba(76, 149, 255, 0.16), transparent 24%),
-            radial-gradient(circle at 14% 100%, rgba(96, 240, 198, 0.08), transparent 28%),
-            var(--board-surface-strong);
-        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+        border-radius: 26px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: var(--dash-panel);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
     }
 
-    .board-hero::before {
+    .board-topbar::before,
+    .board-hero::before,
+    .board-panel::before {
         content: "";
         position: absolute;
         inset: 0;
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%),
-            linear-gradient(90deg, transparent 0%, rgba(136, 214, 255, 0.03) 48%, transparent 100%);
         pointer-events: none;
+        background:
+            radial-gradient(circle at top right, rgba(125, 178, 255, 0.14), transparent 28%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%);
+    }
+
+    .board-topbar-body,
+    .board-hero-body,
+    .board-panel-body {
+        position: relative;
+        z-index: 1;
+        padding: 22px;
+    }
+
+    .board-topbar-body {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .board-page-title {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 3.2vw, 2.8rem);
+        line-height: 1;
+        letter-spacing: -0.05em;
+    }
+
+    .board-meta-row {
+        margin-top: 8px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .board-status-pill,
+    .board-filter-pill,
+    .board-toolbar-btn,
+    .board-tab {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-soft);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+    }
+
+    .board-status-pill.warning {
+        color: #ffd89f;
+        background: rgba(255, 187, 114, 0.14);
+        border-color: rgba(255, 187, 114, 0.18);
+    }
+
+    .board-toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .board-toolbar-btn.primary {
+        color: #03111a;
+        background: linear-gradient(135deg, #7fe0ff, #73aaff);
+        box-shadow: 0 14px 28px rgba(107, 227, 255, 0.2);
+    }
+
+    .board-toolbar-btn.purple {
+        background: linear-gradient(135deg, #6b4cff, #8857ff);
+        border-color: rgba(136, 214, 255, 0.08);
     }
 
     .board-hero-grid {
-        position: relative;
-        z-index: 1;
         display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
-        gap: clamp(24px, 4vw, 48px);
-        align-items: stretch;
+        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+        gap: 18px;
+    }
+
+    .board-hero-copy {
+        display: grid;
+        gap: 14px;
+        align-content: start;
     }
 
     .board-kicker {
@@ -59,7 +134,7 @@
         color: var(--muted-strong);
         font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.2em;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
     }
 
@@ -72,214 +147,49 @@
         box-shadow: 0 0 0 5px rgba(107, 227, 255, 0.12);
     }
 
-    .board-hero-copy {
-        display: grid;
-        gap: 18px;
-        align-content: start;
-    }
-
     .board-hero-title {
         margin: 0;
-        max-width: 10ch;
+        max-width: 12ch;
         font-family: var(--font-display);
-        font-size: clamp(3rem, 7.2vw, 6.1rem);
-        line-height: 1;
-        letter-spacing: -0.055em;
+        font-size: clamp(2.3rem, 5vw, 4.5rem);
+        line-height: 0.98;
+        letter-spacing: -0.05em;
         text-wrap: balance;
     }
 
-    .board-hero-subtitle {
+    .board-hero-copy p {
         margin: 0;
-        max-width: 60ch;
-        color: var(--text-soft);
-        font-size: clamp(1rem, 1.75vw, 1.14rem);
-        line-height: 1.85;
-    }
-
-    .board-inline-stats {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-        margin-top: 10px;
-    }
-
-    .board-inline-stat {
-        padding: 16px 18px;
-        border-radius: 22px;
-        border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .board-inline-label {
-        color: var(--muted-strong);
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-    }
-
-    .board-inline-value {
-        margin-top: 10px;
-        font-family: var(--font-display);
-        font-size: clamp(1.7rem, 3vw, 2.7rem);
-        line-height: 0.92;
-        letter-spacing: -0.06em;
-    }
-
-    .board-inline-copy {
-        margin-top: 8px;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.65;
-    }
-
-    .board-hero-panel {
-        display: grid;
-        gap: 18px;
-        padding: 22px;
-        border-radius: 28px;
-        border: 1px solid rgba(136, 214, 255, 0.14);
-        background:
-            radial-gradient(circle at 100% 0%, rgba(76, 149, 255, 0.16), transparent 28%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
-            rgba(255, 255, 255, 0.025);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-    }
-
-    .board-orb-shell {
-        display: grid;
-        grid-template-columns: 180px minmax(0, 1fr);
-        gap: 18px;
-        align-items: center;
-    }
-
-    .board-orb {
-        position: relative;
-        width: 168px;
-        height: 168px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        background:
-            radial-gradient(circle at center, rgba(6, 13, 21, 0.94) 0 54%, transparent 55%),
-            conic-gradient(from 220deg, #60f0c6 0%, #7fe0ff 34%, #4c95ff 72%, rgba(255, 255, 255, 0.08) var(--score-arc, 70%), rgba(255, 255, 255, 0.08) 100%);
-        box-shadow:
-            inset 0 0 0 1px rgba(136, 214, 255, 0.12),
-            0 0 48px rgba(76, 149, 255, 0.18);
-    }
-
-    .board-orb.is-empty {
-        background:
-            radial-gradient(circle at center, rgba(6, 13, 21, 0.94) 0 54%, transparent 55%),
-            conic-gradient(from 220deg, rgba(255, 255, 255, 0.08) 0 100%);
-        box-shadow:
-            inset 0 0 0 1px rgba(136, 214, 255, 0.1),
-            0 0 24px rgba(76, 149, 255, 0.08);
-    }
-
-    .board-orb::before {
-        content: "";
-        position: absolute;
-        inset: 16px;
-        border-radius: 50%;
-        border: 1px solid rgba(136, 214, 255, 0.12);
-    }
-
-    .board-orb-score {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        gap: 4px;
-        justify-items: center;
-    }
-
-    .board-orb-value {
-        font-family: var(--font-display);
-        font-size: clamp(2rem, 3vw, 3rem);
-        line-height: 0.92;
-        letter-spacing: -0.06em;
-    }
-
-    .board-orb-value.is-empty {
-        color: var(--muted-strong);
-        letter-spacing: -0.02em;
-    }
-
-    .board-orb-label {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-    }
-
-    .board-posture-copy {
-        display: grid;
-        gap: 10px;
-    }
-
-    .board-posture-label {
-        color: var(--muted-strong);
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-    }
-
-    .board-posture-title {
-        margin: 0;
-        font-family: var(--font-display);
-        font-size: clamp(1.3rem, 2vw, 2rem);
-        line-height: 1.08;
-        letter-spacing: -0.04em;
-    }
-
-    .board-posture-text {
-        margin: 0;
+        max-width: 62ch;
         color: var(--muted);
         font-size: 14px;
-        line-height: 1.75;
+        line-height: 1.8;
     }
 
     .board-analysis-form {
         display: grid;
-        grid-template-columns: repeat(12, minmax(0, 1fr));
-        gap: 14px;
+        grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(140px, 1fr)) auto;
+        gap: 12px;
         align-items: end;
+        margin-top: 10px;
     }
 
     .board-field {
         display: grid;
         gap: 8px;
-        grid-column: span 2;
-    }
-
-    .board-field.file-field {
-        grid-column: span 5;
-    }
-
-    .board-field.project-field {
-        grid-column: span 3;
-    }
-
-    .board-field.profile-field,
-    .board-field.type-field {
-        grid-column: span 2;
     }
 
     .board-field label {
         color: var(--muted-strong);
         font-size: 10px;
         font-weight: 800;
-        letter-spacing: 0.18em;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
     }
 
     .board-field input,
     .board-field select {
-        min-height: 52px;
-        border-radius: 18px;
+        min-height: 50px;
+        border-radius: 14px;
         border: 1px solid rgba(136, 214, 255, 0.12);
         background: rgba(255, 255, 255, 0.03);
     }
@@ -298,7 +208,7 @@
         margin-right: 12px;
         padding: 10px 14px;
         border: 1px solid rgba(136, 214, 255, 0.16);
-        border-radius: 14px;
+        border-radius: 12px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
         color: var(--text);
         font: inherit;
@@ -308,193 +218,623 @@
 
     .board-form-actions {
         display: flex;
-        grid-column: 1 / -1;
-        justify-content: flex-start;
-        align-items: center;
-        padding-top: 6px;
+        align-items: end;
     }
 
-    .board-feature-grid {
+    .board-hero-side {
+        display: grid;
+        gap: 14px;
+    }
+
+    .board-score-panel {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: var(--dash-panel-soft);
+    }
+
+    .board-score-layout {
+        display: grid;
+        grid-template-columns: 170px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+    }
+
+    .board-gauge {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background:
+            radial-gradient(circle at center, rgba(8, 16, 27, 0.98) 0 56%, transparent 57%),
+            conic-gradient(from 220deg, #ff8a34 0%, #f1c24e 28%, #7fe0ff 60%, #4c95ff var(--score-arc, 72%), rgba(255,255,255,0.08) var(--score-arc, 72%), rgba(255,255,255,0.08) 100%);
+        box-shadow: 0 0 42px rgba(76, 149, 255, 0.14);
+    }
+
+    .board-gauge.empty {
+        background:
+            radial-gradient(circle at center, rgba(8, 16, 27, 0.98) 0 56%, transparent 57%),
+            conic-gradient(from 220deg, rgba(255,255,255,0.08) 0 100%);
+        box-shadow: 0 0 20px rgba(76, 149, 255, 0.06);
+    }
+
+    .board-gauge::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border-radius: 50%;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+    }
+
+    .board-gauge-copy {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 3px;
+        justify-items: center;
+    }
+
+    .board-gauge-value {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 3vw, 3rem);
+        line-height: 0.92;
+        letter-spacing: -0.05em;
+    }
+
+    .board-gauge-scale {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .board-score-title {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.4rem, 2vw, 2rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+    }
+
+    .board-score-copy,
+    .board-score-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .board-trend-shell {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(136, 214, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .board-trend-title {
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .board-trend-svg {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .board-trend-svg .guide {
+        stroke: rgba(255, 255, 255, 0.08);
+        stroke-width: 1;
+    }
+
+    .board-trend-svg .path {
+        fill: none;
+        stroke: #7c5cff;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .board-trend-svg .dot {
+        fill: #8f6eff;
+    }
+
+    .board-layout {
         display: grid;
         grid-template-columns: repeat(12, minmax(0, 1fr));
         gap: 18px;
     }
 
-    .board-panel {
-        position: relative;
-        overflow: hidden;
-        border-radius: 28px;
-        border: 1px solid rgba(136, 214, 255, 0.12);
-        background: var(--board-surface);
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
-    }
-
-    .board-panel::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-            radial-gradient(circle at top right, rgba(125, 178, 255, 0.14), transparent 28%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%);
-        pointer-events: none;
-    }
-
-    .board-panel-body {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        gap: 18px;
-        padding: 24px;
-    }
-
     .span-12 { grid-column: span 12; }
-    .span-8 { grid-column: span 8; }
     .span-7 { grid-column: span 7; }
-    .span-6 { grid-column: span 6; }
     .span-5 { grid-column: span 5; }
     .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
 
-    .board-panel-head {
+    .board-panel-header {
         display: flex;
-        align-items: end;
+        align-items: start;
         justify-content: space-between;
         gap: 16px;
         flex-wrap: wrap;
+        margin-bottom: 18px;
     }
 
     .board-panel-title {
         margin: 8px 0 0;
         font-family: var(--font-display);
-        font-size: clamp(1.55rem, 2vw, 2.2rem);
+        font-size: clamp(1.35rem, 2vw, 2rem);
         line-height: 1.04;
-        letter-spacing: -0.045em;
+        letter-spacing: -0.04em;
     }
 
-    .board-panel-copy {
+    .board-preview-shell {
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr) 180px;
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .board-preview-tools {
+        display: grid;
+        gap: 10px;
+        align-content: start;
+    }
+
+    .board-tool {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(255, 255, 255, 0.035);
+        color: var(--text-soft);
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .board-tool.active {
+        background: linear-gradient(180deg, rgba(125, 178, 255, 0.16), rgba(107, 227, 255, 0.08));
+        color: var(--text);
+    }
+
+    .board-preview-stage {
+        display: grid;
+        gap: 14px;
+    }
+
+    .board-tabs {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .board-tab {
+        cursor: pointer;
+    }
+
+    .board-tab.active {
+        background: linear-gradient(135deg, #6b4cff, #8857ff);
+        border-color: rgba(136, 214, 255, 0.08);
+    }
+
+    .board-svg-shell {
+        min-height: 360px;
+        border-radius: 22px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background:
+            radial-gradient(circle at 20% 18%, rgba(107, 227, 255, 0.14), transparent 18%),
+            linear-gradient(180deg, rgba(7, 17, 28, 0.98), rgba(5, 13, 21, 0.98));
+        overflow: hidden;
+        position: relative;
+    }
+
+    .board-svg-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 28px 28px;
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    .board-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .board-outline {
+        stroke: rgba(212, 236, 255, 0.32);
+        stroke-width: 2.4;
+        stroke-linecap: round;
+    }
+
+    .board-zone {
+        opacity: 0.18;
+    }
+
+    .board-zone.safe { fill: rgba(95, 174, 255, 0.14); }
+    .board-zone.low { fill: rgba(103, 220, 190, 0.18); }
+    .board-zone.medium { fill: rgba(255, 187, 114, 0.2); }
+    .board-zone.high,
+    .board-zone.critical { fill: rgba(255, 127, 127, 0.18); }
+
+    .board-trace {
+        stroke-width: 2.1;
+        stroke-linecap: round;
+        opacity: 0.78;
+    }
+
+    .board-trace.safe { stroke: rgba(92, 144, 211, 0.5); }
+    .board-trace.low { stroke: rgba(99, 224, 183, 0.75); }
+    .board-trace.medium { stroke: rgba(255, 190, 88, 0.86); }
+    .board-trace.high,
+    .board-trace.critical { stroke: rgba(255, 106, 88, 0.92); }
+
+    .board-via {
+        stroke: rgba(255, 255, 255, 0.18);
+        stroke-width: 1;
+    }
+
+    .board-via.safe { fill: rgba(120, 170, 235, 0.55); }
+    .board-via.low { fill: rgba(99, 224, 183, 0.72); }
+    .board-via.medium { fill: rgba(255, 190, 88, 0.78); }
+    .board-via.high,
+    .board-via.critical { fill: rgba(255, 106, 88, 0.82); }
+
+    .board-component {
+        stroke: rgba(255, 255, 255, 0.12);
+        stroke-width: 1;
+    }
+
+    .board-component.safe { fill: rgba(223, 244, 255, 0.1); }
+    .board-component.low { fill: rgba(99, 224, 183, 0.24); }
+    .board-component.medium { fill: rgba(255, 190, 88, 0.3); }
+    .board-component.high,
+    .board-component.critical { fill: rgba(255, 106, 88, 0.34); }
+
+    .board-hotspot {
+        mix-blend-mode: screen;
+        opacity: 0.78;
+    }
+
+    .board-hotspot.low { fill: rgba(94, 250, 190, 0.22); }
+    .board-hotspot.medium { fill: rgba(255, 190, 88, 0.28); }
+    .board-hotspot.high,
+    .board-hotspot.critical { fill: rgba(255, 78, 78, 0.32); }
+
+    .board-hotspot.thermal {
+        fill: rgba(255, 82, 64, 0.4);
+        filter: blur(4px);
+    }
+
+    .board-meta-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .board-meta-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .board-meta-item {
+        display: grid;
+        gap: 4px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(136, 214, 255, 0.08);
+    }
+
+    .board-meta-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .board-meta-label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .board-meta-value {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .board-preview-thumbs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .board-thumb {
+        width: 68px;
+        height: 50px;
+        border-radius: 12px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(255,255,255,0.03);
+        overflow: hidden;
+    }
+
+    .board-thumb svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .board-risk-cards {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .risk-card {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(136, 214, 255, 0.1);
+        background: rgba(255,255,255,0.03);
+        display: grid;
+        gap: 10px;
+    }
+
+    .risk-card-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-soft);
+        line-height: 1.45;
+    }
+
+    .risk-card-value {
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 2vw, 2.2rem);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+    }
+
+    .risk-card-meta {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .risk-card-trend {
+        display: grid;
+        gap: 6px;
+    }
+
+    .risk-card-bar {
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        overflow: hidden;
+    }
+
+    .risk-card-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(255, 120, 84, 0.92), rgba(255, 206, 82, 0.92));
+    }
+
+    .risk-card-fill.safe {
+        background: linear-gradient(90deg, rgba(99, 224, 183, 0.92), rgba(88, 161, 255, 0.9));
+    }
+
+    .board-issues-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .board-issues-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .board-filter-pill.active {
+        background: linear-gradient(135deg, #6b4cff, #8857ff);
+        border-color: rgba(136,214,255,0.08);
+    }
+
+    .board-issues-list {
+        display: grid;
+        gap: 0;
+    }
+
+    .board-issue-row {
+        display: grid;
+        grid-template-columns: 34px 130px minmax(0, 1.7fr) 120px 110px 170px 18px;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 0;
+        border-top: 1px solid rgba(136, 214, 255, 0.08);
+    }
+
+    .board-issue-row:first-child {
+        border-top: none;
+    }
+
+    .board-issue-rank {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, #ff983e, #ff673d);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .board-issue-thumb {
+        height: 74px;
+        border-radius: 14px;
+        border: 1px solid rgba(136, 214, 255, 0.1);
+        background: rgba(255,255,255,0.02);
+        overflow: hidden;
+    }
+
+    .board-issue-thumb svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .board-issue-title {
         margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .board-issue-copy {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .board-issue-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .issue-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        background: rgba(255,255,255,0.05);
+        color: var(--text-soft);
+    }
+
+    .issue-tag.severity-high,
+    .issue-tag.severity-critical {
+        background: rgba(255, 127, 127, 0.16);
+        color: #ffd9d9;
+    }
+
+    .issue-tag.severity-medium {
+        background: rgba(255, 187, 114, 0.16);
+        color: #ffe3bc;
+    }
+
+    .issue-tag.severity-low {
+        background: rgba(100, 228, 187, 0.16);
+        color: #d0ffee;
+    }
+
+    .board-issue-metric {
+        display: grid;
+        gap: 4px;
+    }
+
+    .board-issue-metric-label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .board-issue-metric-value {
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.55;
+    }
+
+    .impact-bars {
+        display: inline-flex;
+        gap: 3px;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    .impact-bars span {
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.12);
+    }
+
+    .impact-bars span.on.high,
+    .impact-bars span.on.critical { background: #ff6d58; }
+    .impact-bars span.on.medium { background: #ffbf53; }
+    .impact-bars span.on.low { background: #57a7ff; }
+
+    .board-issue-arrow {
+        color: rgba(255,255,255,0.3);
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .board-bottom-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr 0.9fr;
+        gap: 18px;
+    }
+
+    .board-bullet-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .board-bullet {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
         color: var(--muted);
         font-size: 14px;
         line-height: 1.75;
     }
 
-    .board-stack {
+    .board-bullet::before {
+        content: "◌";
+        color: var(--muted-strong);
+        margin-top: 1px;
+    }
+
+    .board-coverage-list {
         display: grid;
-        gap: 16px;
+        gap: 12px;
+        margin-top: 14px;
     }
 
-    .board-summary-hero {
-        padding: 18px 20px;
-        border-radius: 22px;
-        background:
-            radial-gradient(circle at 100% 0%, rgba(76, 149, 255, 0.18), transparent 32%),
-            rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(136, 214, 255, 0.12);
-    }
-
-    .board-summary-hero strong {
-        display: block;
-        font-size: 1.12rem;
-        line-height: 1.5;
-        color: var(--text);
-    }
-
-    .board-summary-hero p {
-        margin: 8px 0 0;
-        color: var(--muted);
-        line-height: 1.8;
-    }
-
-    .board-question-list,
-    .board-action-list,
-    .board-finding-list {
+    .board-coverage-row {
         display: grid;
-        gap: 14px;
+        gap: 6px;
     }
 
-    .board-question,
-    .board-action,
-    .board-finding {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 16px;
-        align-items: start;
-        padding: 18px 0;
-        border-top: 1px solid rgba(136, 214, 255, 0.1);
-    }
-
-    .board-question:first-child,
-    .board-action:first-child,
-    .board-finding:first-child {
-        border-top: none;
-        padding-top: 0;
-    }
-
-    .board-question-title,
-    .board-action-title,
-    .board-finding-title {
-        margin: 0;
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: var(--text);
-    }
-
-    .board-question-copy,
-    .board-action-copy,
-    .board-action-meta,
-    .board-finding-copy,
-    .board-finding-meta {
-        margin: 8px 0 0;
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.8;
-    }
-
-    .board-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 34px;
-        padding: 0 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(136, 214, 255, 0.14);
-        background: rgba(255, 255, 255, 0.045);
-        color: var(--text-soft);
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
-
-    .board-chip.low {
-        color: #d0ffee;
-        background: rgba(96, 240, 198, 0.12);
-        border-color: rgba(96, 240, 198, 0.2);
-    }
-
-    .board-chip.medium {
-        color: #ffe4bc;
-        background: rgba(255, 187, 114, 0.14);
-        border-color: rgba(255, 187, 114, 0.2);
-    }
-
-    .board-chip.critical {
-        color: #ffd6d6;
-        background: rgba(255, 127, 127, 0.12);
-        border-color: rgba(255, 127, 127, 0.18);
-    }
-
-    .board-chart-shell {
-        display: grid;
-        gap: 14px;
-    }
-
-    .board-chart-row {
-        display: grid;
-        gap: 8px;
-    }
-
-    .board-chart-label {
+    .board-coverage-label {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -504,213 +844,203 @@
         font-weight: 700;
     }
 
-    .board-chart-track {
-        height: 12px;
-        overflow: hidden;
+    .board-coverage-track {
+        height: 8px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.06);
+        background: rgba(255,255,255,0.06);
+        overflow: hidden;
     }
 
-    .board-chart-fill {
+    .board-coverage-fill {
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, rgba(125, 178, 255, 0.42), rgba(96, 240, 198, 0.92));
+        background: linear-gradient(90deg, #7c5cff, #8e6cff);
     }
 
-    .board-mini-grid {
+    .board-donut-layout {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 160px minmax(0, 1fr);
         gap: 16px;
+        align-items: center;
     }
 
-    .board-mini-card {
-        padding: 18px;
-        border-radius: 22px;
-        border: 1px solid rgba(136, 214, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
+    .board-donut {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background:
+            radial-gradient(circle at center, rgba(8, 16, 27, 0.98) 0 56%, transparent 57%),
+            conic-gradient(from 230deg,
+                #ff5d49 0 var(--sev-high-end, 0%),
+                #e0a72e var(--sev-high-end, 0%) var(--sev-medium-end, 0%),
+                #4f8dff var(--sev-medium-end, 0%) var(--sev-low-end, 0%),
+                rgba(255,255,255,0.08) var(--sev-low-end, 0%) 100%);
     }
 
-    .board-mini-label {
-        color: var(--muted-strong);
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
+    .board-donut.empty {
+        background:
+            radial-gradient(circle at center, rgba(8, 16, 27, 0.98) 0 56%, transparent 57%),
+            conic-gradient(from 230deg, rgba(255,255,255,0.08) 0 100%);
     }
 
-    .board-mini-value {
-        margin-top: 10px;
+    .board-donut-copy {
+        display: grid;
+        gap: 3px;
+        justify-items: center;
+    }
+
+    .board-donut-value {
         font-family: var(--font-display);
-        font-size: clamp(1.55rem, 2.2vw, 2.4rem);
-        line-height: 0.95;
+        font-size: 2.25rem;
+        line-height: 0.92;
         letter-spacing: -0.05em;
     }
 
-    .board-mini-copy {
-        margin-top: 8px;
+    .board-donut-label {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .board-legend {
+        display: grid;
+        gap: 10px;
+    }
+
+    .board-legend-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--text-soft);
+        font-size: 13px;
+    }
+
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .legend-dot.high { background: #ff5d49; }
+    .legend-dot.medium { background: #e0a72e; }
+    .legend-dot.low { background: #4f8dff; }
+
+    .board-focus-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .board-focus-item {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(136,214,255,0.1);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .board-focus-rank {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: rgba(123, 92, 255, 0.2);
+        color: #b7a5ff;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .board-focus-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.55;
+    }
+
+    .board-focus-copy {
+        margin: 4px 0 0;
         color: var(--muted);
         font-size: 13px;
         line-height: 1.65;
     }
 
-    .board-domain-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-    }
-
-    .board-domain-card {
-        padding: 18px;
-        border-radius: 22px;
-        border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .board-domain-name {
-        color: var(--text);
-        font-size: 1rem;
-        font-weight: 700;
-    }
-
-    .board-domain-stats {
-        margin-top: 10px;
-        font-family: var(--font-display);
-        font-size: clamp(1.7rem, 2vw, 2.4rem);
-        line-height: 0.95;
-        letter-spacing: -0.05em;
-    }
-
-    .board-domain-copy {
-        margin-top: 8px;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    .board-lane-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-    }
-
-    .board-lane {
-        padding: 20px;
-        border-radius: 22px;
-        border: 1px solid rgba(136, 214, 255, 0.12);
-        background:
-            radial-gradient(circle at 100% 0%, rgba(76, 149, 255, 0.14), transparent 32%),
-            rgba(255, 255, 255, 0.03);
-    }
-
-    .board-lane-title {
-        margin: 8px 0 0;
-        font-family: var(--font-display);
-        font-size: 1.2rem;
-        line-height: 1.08;
-        letter-spacing: -0.03em;
-    }
-
-    .board-lane-copy {
-        margin: 10px 0 0;
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.75;
-    }
-
-    .board-console-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-    }
-
-    .board-console-card {
-        padding: 18px;
-        border-radius: 22px;
-        border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .board-console-title {
-        margin: 10px 0 0;
-        font-size: 1.02rem;
-        font-weight: 700;
-        color: var(--text);
-    }
-
-    .board-console-copy {
-        margin: 8px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    .board-empty {
-        padding: 18px;
-        border-radius: 22px;
-        border: 1px dashed rgba(136, 214, 255, 0.16);
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.75;
-        background: rgba(255, 255, 255, 0.02);
-    }
-
-    @media (max-width: 1180px) {
+    @media (max-width: 1320px) {
         .board-hero-grid,
-        .board-domain-grid,
-        .board-lane-grid,
-        .board-console-grid {
+        .board-preview-shell,
+        .board-score-layout,
+        .board-bottom-grid,
+        .board-donut-layout {
             grid-template-columns: 1fr;
         }
 
-        .board-analysis-form {
+        .board-risk-cards {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .board-issue-row {
+            grid-template-columns: 34px 120px minmax(0, 1fr);
+            gap: 14px;
+        }
+
+        .board-issue-row > .board-issue-metric,
+        .board-issue-row > .board-issue-arrow {
+            display: none;
+        }
+    }
+
+    @media (max-width: 1180px) {
+        .board-analysis-form,
+        .board-risk-cards {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .board-field,
-        .board-field.file-field,
-        .board-field.project-field,
-        .board-field.profile-field,
-        .board-field.type-field {
-            grid-column: auto;
-        }
-
-        .board-inline-stats,
-        .board-mini-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .span-8,
         .span-7,
-        .span-6,
         .span-5,
-        .span-4 {
+        .span-4,
+        .span-3 {
             grid-column: span 12;
         }
     }
 
     @media (max-width: 760px) {
-        .board-inline-stats,
-        .board-mini-grid,
         .board-analysis-form,
-        .board-domain-grid,
-        .board-lane-grid {
+        .board-risk-cards,
+        .board-layout {
             grid-template-columns: 1fr;
         }
 
-        .board-orb-shell {
-            grid-template-columns: 1fr;
-            justify-items: center;
-            text-align: center;
+        .board-topbar-body,
+        .board-panel-header,
+        .board-issues-header {
+            align-items: flex-start;
         }
 
-        .board-question,
-        .board-action,
-        .board-finding {
+        .board-preview-shell {
             grid-template-columns: 1fr;
         }
 
-        .board-form-actions {
+        .board-preview-tools {
+            grid-template-columns: repeat(4, 42px);
+        }
+
+        .board-tabs {
             justify-content: flex-start;
+        }
+
+        .board-issue-row {
+            grid-template-columns: 1fr;
+        }
+
+        .board-issue-thumb {
+            height: 96px;
         }
     }
 </style>
@@ -719,355 +1049,305 @@
 {% block content %}
 {% set board_score = result.score|round|int if result and result.score > 10 else ((result.score * 10)|round|int if result and result.score is not none else 0) %}
 {% set finding_count = result.risks|length if result and result.risks else 0 %}
-{% set score_arc = board_score if board_score > 0 else 22 %}
+{% set critical_count = result.risks|selectattr('severity', 'equalto', 'critical')|list|length if result and result.risks else 0 %}
+{% set high_count = result.risks|selectattr('severity', 'equalto', 'high')|list|length if result and result.risks else 0 %}
+{% set medium_count = result.risks|selectattr('severity', 'equalto', 'medium')|list|length if result and result.risks else 0 %}
+{% set low_count = result.risks|selectattr('severity', 'equalto', 'low')|list|length if result and result.risks else 0 %}
+{% set total_issue_count = critical_count + high_count + medium_count + low_count %}
+{% set high_pct = (((critical_count + high_count) / total_issue_count) * 100) if total_issue_count else 0 %}
+{% set med_pct = ((medium_count / total_issue_count) * 100) if total_issue_count else 0 %}
+{% set low_pct = ((low_count / total_issue_count) * 100) if total_issue_count else 0 %}
+{% set sev_high_end = high_pct %}
+{% set sev_medium_end = high_pct + med_pct %}
+{% set sev_low_end = high_pct + med_pct + low_pct %}
+{% set score_arc = board_score if board_score > 0 else 0 %}
+{% set board_view = result.board_view if result and result.board_view else {} %}
+{% set board_context = result.analysis_context_view if result and result.analysis_context_view else {} %}
+{% set board_summary = result.board_summary if result and result.board_summary else {} %}
+{% set downloads = result.downloads if result and result.downloads else [] %}
+{% set download_url = downloads[2].url if downloads|length > 2 else (downloads[0].url if downloads else '') %}
 
-<div class="board-page">
-    <section class="board-hero" style="--score-arc: {{ score_arc }}%;">
-        <div class="board-hero-grid">
-            <div class="board-hero-copy">
-                <div class="board-kicker">Board Analysis</div>
-                <h1 class="board-hero-title">Analyze one board like a finished product, not a raw upload.</h1>
-                <p class="board-hero-subtitle">
-                    Silicore Board Analysis turns a single PCB into a full engineering surface: Atlas reasoning, score traceability, pressure distribution, parser trust, physics-informed signals, and a fix-first review queue built for real design decisions.
-                </p>
-
-                <div class="board-inline-stats">
-                    <div class="board-inline-stat">
-                        <div class="board-inline-label">Score</div>
-                        <div class="board-inline-value">{{ board_score if board_score else "--" }}</div>
-                        <div class="board-inline-copy">Current engineering confidence across the uploaded board.</div>
-                    </div>
-                    <div class="board-inline-stat">
-                        <div class="board-inline-label">Findings</div>
-                        <div class="board-inline-value">{{ finding_count }}</div>
-                        <div class="board-inline-copy">Prioritized risks ready for review, fix planning, and rerun validation.</div>
-                    </div>
-                    <div class="board-inline-stat">
-                        <div class="board-inline-label">Confidence</div>
-                        <div class="board-inline-value">{{ single_decision.average_confidence|round|int if single_decision and single_decision.average_confidence is defined else 0 }}</div>
-                        <div class="board-inline-copy">Finding trust level across the current Atlas readout.</div>
-                    </div>
+<div class="board-dashboard" style="--score-arc: {{ score_arc }}%; --sev-high-end: {{ sev_high_end }}%; --sev-medium-end: {{ sev_medium_end }}%; --sev-low-end: {{ sev_low_end }}%;">
+    <section class="board-topbar">
+        <div class="board-topbar-body">
+            <div>
+                <h1 class="board-page-title">Board Analysis</h1>
+                <div class="board-meta-row">
+                    <span class="board-status-pill warning">{{ board_copilot.score_posture if board_copilot and board_copilot.score_posture else "Needs Review" }}</span>
+                    <span>Analysis ID: {{ result.run_dir if result and result.run_dir else "Pending Run" }}</span>
+                    <span>Ran on {{ board_context.performed_at if board_context and board_context.performed_at else "No run yet" }}</span>
                 </div>
             </div>
-
-            <aside class="board-hero-panel">
-                <div class="board-orb-shell">
-                    <div class="board-orb{% if not result %} is-empty{% endif %}">
-                        <div class="board-orb-score">
-                            <div class="board-orb-value{% if not result %} is-empty{% endif %}">{{ board_score if board_score else "--" }}</div>
-                            <div class="board-orb-label">Board Score</div>
-                        </div>
-                    </div>
-                    <div class="board-posture-copy">
-                        <div class="board-posture-label">Current posture</div>
-                        <h2 class="board-posture-title">{{ board_copilot.posture if board_copilot and board_copilot.posture else "Run an analysis to activate the Silicore board readout." }}</h2>
-                        <p class="board-posture-text">{{ board_copilot.release_note if board_copilot and board_copilot.release_note else "The first run will define release posture, dominant engineering pressure, and the next validation loop." }}</p>
-                    </div>
-                </div>
-
-                <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="board-analysis-form">
-                    <div class="board-field file-field">
-                        <label for="board_file">Board File</label>
-                        <input id="board_file" type="file" name="board_file" required>
-                    </div>
-                    <div class="board-field project-field">
-                        <label for="project_id">Attach To Project</label>
-                        <select id="project_id" name="project_id">
-                            <option value="">No project</option>
-                            {% for project in project_options %}
-                            <option value="{{ project.project_id }}">{{ project.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="board-field profile-field">
-                        <label for="analysis_profile">Analysis Profile</label>
-                        <select id="analysis_profile" name="analysis_profile">
-                            {% for option in analysis_modes.profiles %}
-                            <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="board-field type-field">
-                        <label for="analysis_board_type">Board Type</label>
-                        <select id="analysis_board_type" name="analysis_board_type">
-                            {% for option in analysis_modes.board_types %}
-                            <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="board-form-actions">
-                        <button class="btn btn-primary" type="submit">Analyze Board</button>
-                    </div>
-                </form>
-            </aside>
+            <div class="board-toolbar">
+                {% if download_url %}
+                <a class="board-toolbar-btn" href="{{ download_url }}">Download Report</a>
+                {% endif %}
+                <button class="board-toolbar-btn purple" type="button">Share</button>
+            </div>
         </div>
     </section>
 
-    <section class="board-feature-grid">
+    <section class="board-hero">
+        <div class="board-hero-body">
+            <div class="board-hero-grid">
+                <div class="board-hero-copy">
+                    <div class="board-kicker">Silicore Surface</div>
+                    <h2 class="board-hero-title">Upload, analyze, inspect, and prioritize from one board workspace.</h2>
+                    <p>
+                        This page is built to feel like a real Silicore product surface: board geometry, risk scoring, domain breakdown, thermal-style hotspots, parser trust, CAM readiness, and actionable engineering issues in one connected review flow.
+                    </p>
+
+                    <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="board-analysis-form">
+                        <div class="board-field">
+                            <label for="board_file">Board File</label>
+                            <input id="board_file" type="file" name="board_file" required>
+                        </div>
+                        <div class="board-field">
+                            <label for="project_id">Attach To Project</label>
+                            <select id="project_id" name="project_id">
+                                <option value="">No project</option>
+                                {% for project in project_options %}
+                                <option value="{{ project.project_id }}">{{ project.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="board-field">
+                            <label for="analysis_profile">Analysis Profile</label>
+                            <select id="analysis_profile" name="analysis_profile">
+                                {% for option in analysis_modes.profiles %}
+                                <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="board-field">
+                            <label for="analysis_board_type">Board Type</label>
+                            <select id="analysis_board_type" name="analysis_board_type">
+                                {% for option in analysis_modes.board_types %}
+                                <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="board-form-actions">
+                            <button class="btn btn-primary" type="submit">Analyze Board</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="board-hero-side">
+                    <div class="board-score-panel">
+                        <div class="board-score-layout">
+                            <div class="board-gauge{% if not result %} empty{% endif %}">
+                                <div class="board-gauge-copy">
+                                    <div class="board-gauge-value">{{ board_score if board_score else "--" }}</div>
+                                    <div class="board-gauge-scale">/ 100</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="board-kicker">Current Posture</div>
+                                <h3 class="board-score-title">{{ board_copilot.posture if board_copilot and board_copilot.posture else "Run an analysis to activate board posture." }}</h3>
+                                <p class="board-score-copy">{{ board_copilot.release_note if board_copilot and board_copilot.release_note else "Silicore will summarize release readiness, dominant risk pressure, and the next fix-and-rerun path after the first board run." }}</p>
+                                <p class="board-score-note">{{ single_decision.confidence_summary if single_decision and single_decision.confidence_summary else "Confidence distribution will appear after findings are generated." }}</p>
+                            </div>
+                        </div>
+
+                        <div class="board-trend-shell">
+                            <div class="board-trend-title">Signal Snapshot</div>
+                            <svg class="board-trend-svg" viewBox="0 0 360 72" preserveAspectRatio="none" aria-hidden="true">
+                                <line class="guide" x1="0" y1="52" x2="360" y2="52"></line>
+                                <path class="path" d="M0 38 C52 34, 88 28, 126 30 S210 42, 252 36 S318 26, 360 24"></path>
+                                <circle class="dot" cx="58" cy="33" r="4.5"></circle>
+                                <circle class="dot" cx="183" cy="39" r="4.5"></circle>
+                                <circle class="dot" cx="330" cy="26" r="6"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="board-layout">
         <article class="board-panel span-7">
             <div class="board-panel-body">
-                <div class="board-panel-head">
+                <div class="board-panel-header">
                     <div>
-                        <div class="board-kicker">Atlas Intelligence</div>
-                        <h2 class="board-panel-title">Executive engineering readout</h2>
+                        <div class="board-kicker">Board Preview</div>
+                        <h2 class="board-panel-title">Geometry, routing, and hotspot view</h2>
+                    </div>
+                    <div class="board-tabs" data-board-tabs>
+                        <button class="board-tab active" type="button" data-mode="risk">Risk</button>
+                        <button class="board-tab" type="button" data-mode="thermal">Thermal</button>
+                        <button class="board-tab" type="button" data-mode="geometry">Geometry</button>
                     </div>
                 </div>
 
-                {% if result and result.executive_summary %}
-                <div class="board-summary-hero">
-                    <strong>{{ result.executive_summary.headline }}</strong>
-                    <p>{{ result.executive_summary.summary }}</p>
-                </div>
-                {% else %}
-                <div class="board-summary-hero">
-                    <strong>Atlas will summarize the board in engineering language after the first run.</strong>
-                    <p>Instead of exposing raw parser output first, Silicore should explain the posture, dominant pressure, and what needs to be fixed or validated next.</p>
-                </div>
-                {% endif %}
+                <div class="board-preview-shell">
+                    <div class="board-preview-tools">
+                        <div class="board-tool active">◫</div>
+                        <div class="board-tool">◎</div>
+                        <div class="board-tool">≈</div>
+                        <div class="board-tool">⌖</div>
+                    </div>
 
-                <div class="board-question-list">
-                    {% if board_assistant_console and board_assistant_console.questions %}
-                        {% for item in board_assistant_console.questions %}
-                        <div class="board-question">
-                            <div>
-                                <h3 class="board-question-title">{{ item.label }}</h3>
-                                <p class="board-question-copy">{{ item.answer }}</p>
-                            </div>
-                            <span class="board-chip">{{ item.route_key|replace('_', ' ')|title }}</span>
+                    <div class="board-preview-stage">
+                        <div class="board-svg-shell" data-board-stage data-mode="risk">
+                            {% if board_view and board_view.has_data %}
+                            <svg class="board-svg" viewBox="{{ board_view.base_view_box }}" aria-label="Board geometry preview">
+                                {% for zone in board_view.zones %}
+                                <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}"></polygon>
+                                {% endfor %}
+                                {% for trace in board_view.traces %}
+                                <line class="board-trace {{ trace.tone }}" x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}"></line>
+                                {% endfor %}
+                                {% for via in board_view.vias %}
+                                <circle class="board-via {{ via.tone }}" cx="{{ via.x }}" cy="{{ via.y }}" r="2.6"></circle>
+                                {% endfor %}
+                                {% for component in board_view.components %}
+                                <rect class="board-component {{ component.tone }}" x="{{ component.x - 6 }}" y="{{ component.y - 4 }}" rx="2" ry="2" width="12" height="8"></rect>
+                                {% endfor %}
+                                {% for segment in board_view.outline_segments %}
+                                <line class="board-outline" x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}"></line>
+                                {% endfor %}
+                                {% for hot in board_view.hotspots %}
+                                <circle class="board-hotspot {{ hot.tone }}" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius }}" data-mode-show="risk"></circle>
+                                {% if 'thermal' in hot.message|lower or 'heat' in hot.message|lower %}
+                                <circle class="board-hotspot thermal" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius + 12 }}" data-mode-show="thermal"></circle>
+                                {% endif %}
+                                {% endfor %}
+                            </svg>
+                            {% else %}
+                            <div class="board-empty">Board geometry preview appears after a board is parsed. Silicore will render traces, components, zones, vias, and risk-linked hotspots from the actual board snapshot.</div>
+                            {% endif %}
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Run an analysis to activate Atlas question routing and decision support.</div>
-                    {% endif %}
+
+                        <div class="board-preview-thumbs">
+                            {% if board_view and board_view.has_data %}
+                            {% for thumb_mode in ['risk', 'thermal', 'geometry'] %}
+                            <div class="board-thumb">
+                                <svg viewBox="{{ board_view.base_view_box }}" aria-hidden="true">
+                                    {% for zone in board_view.zones[:8] %}
+                                    <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}"></polygon>
+                                    {% endfor %}
+                                    {% for trace in board_view.traces[:180] %}
+                                    <line class="board-trace {{ trace.tone }}" x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}"></line>
+                                    {% endfor %}
+                                    {% for hot in board_view.hotspots[:3] %}
+                                        {% if thumb_mode == 'thermal' %}
+                                        <circle class="board-hotspot thermal" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius + 10 }}"></circle>
+                                        {% elif thumb_mode == 'risk' %}
+                                        <circle class="board-hotspot {{ hot.tone }}" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius }}"></circle>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for segment in board_view.outline_segments %}
+                                    <line class="board-outline" x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}"></line>
+                                    {% endfor %}
+                                </svg>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="board-meta-card">
+                        <div class="board-kicker">Board Details</div>
+                        <div class="board-meta-list" style="margin-top: 14px;">
+                            <div class="board-meta-item">
+                                <div class="board-meta-label">Board Name</div>
+                                <div class="board-meta-value">{{ board_context.board_name if board_context and board_context.board_name else (result.filename if result else "Pending board") }}</div>
+                            </div>
+                            <div class="board-meta-item">
+                                <div class="board-meta-label">File Type</div>
+                                <div class="board-meta-value">{{ board_view.source_format|replace('_', ' ')|title if board_view and board_view.source_format else "Unknown" }}</div>
+                            </div>
+                            <div class="board-meta-item">
+                                <div class="board-meta-label">Analysis Profile</div>
+                                <div class="board-meta-value">{{ selected_profile|replace('_', ' ')|title }}</div>
+                            </div>
+                            <div class="board-meta-item">
+                                <div class="board-meta-label">Board Type</div>
+                                <div class="board-meta-value">{{ selected_board_type|replace('_', ' ')|title }}</div>
+                            </div>
+                            <div class="board-meta-item">
+                                <div class="board-meta-label">Components / Nets</div>
+                                <div class="board-meta-value">{{ board_summary.component_count if board_summary else 0 }} components · {{ board_summary.net_count if board_summary else 0 }} nets</div>
+                            </div>
+                            <div class="board-meta-item">
+                                <div class="board-meta-label">Run ID</div>
+                                <div class="board-meta-value">{{ result.run_dir if result and result.run_dir else "Not generated yet" }}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </article>
 
         <article class="board-panel span-5">
             <div class="board-panel-body">
-                <div class="board-panel-head">
+                <div class="board-panel-header">
                     <div>
-                        <div class="board-kicker">Fix Priority</div>
-                        <h2 class="board-panel-title">What matters first</h2>
+                        <div class="board-kicker">Overall Risk Score</div>
+                        <h2 class="board-panel-title">Silicore board posture</h2>
                     </div>
                 </div>
 
-                <div class="board-action-list">
-                    {% if single_decision and single_decision.next_actions %}
-                        {% for item in single_decision.next_actions %}
-                        <div class="board-action">
-                            <div>
-                                <h3 class="board-action-title">{{ item.label }}</h3>
-                                <p class="board-action-meta">{{ item.category }} · Confidence {{ item.confidence_score|round|int if item.confidence_score is defined else 0 }} · Priority {{ item.priority_score|round|int if item.priority_score is defined else 0 }}</p>
-                                <p class="board-action-copy">{{ item.recommendation_short or item.recommendation or item.message_short or item.message }}</p>
-                            </div>
-                            <span class="board-chip {% if item.severity in ['critical','high'] %}critical{% elif item.severity == 'medium' %}medium{% else %}low{% endif %}">{{ item.severity }}</span>
+                <div class="board-score-layout">
+                    <div class="board-gauge{% if not result %} empty{% endif %}">
+                        <div class="board-gauge-copy">
+                            <div class="board-gauge-value">{{ board_score if board_score else "--" }}</div>
+                            <div class="board-gauge-scale">/ 100</div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Silicore will rank the first fix loop by severity, evidence, confidence, and likely engineering impact.</div>
-                    {% endif %}
+                    </div>
+                    <div>
+                        <p class="board-score-copy">
+                            Silicore analyzed your board across {{ board_review_layers.domain_cards|length if board_review_layers and board_review_layers.domain_cards else 0 }} engineering domains and detected {{ finding_count }} issue{% if finding_count != 1 %}s{% endif %} that may affect reliability, manufacturability, thermal behavior, or signal quality.
+                        </p>
+                        <p class="board-score-note">{{ board_copilot.mission if board_copilot and board_copilot.mission else "Run a board to activate the highest-priority engineering mission." }}</p>
+                    </div>
+                </div>
+
+                <div class="board-trend-shell">
+                    <div class="board-trend-title">Confidence Snapshot</div>
+                    <div class="board-score-note">{{ single_decision.confidence_summary if single_decision and single_decision.confidence_summary else "Confidence distribution is available after analysis." }}</div>
                 </div>
             </div>
         </article>
 
-        <article class="board-panel span-6">
+        <article class="board-panel span-12">
             <div class="board-panel-body">
-                <div class="board-panel-head">
+                <div class="board-panel-header">
                     <div>
-                        <div class="board-kicker">Severity Split</div>
-                        <h2 class="board-panel-title">Finding intensity</h2>
+                        <div class="board-kicker">Risk Category Breakdown</div>
+                        <h2 class="board-panel-title">Silicore review surfaces</h2>
                     </div>
                 </div>
 
-                <div class="board-chart-shell">
-                    {% if single_chart and single_chart.severity_bars and single_chart.severity_bars["items"] %}
-                        {% for item in single_chart.severity_bars["items"] %}
-                        <div class="board-chart-row">
-                            <div class="board-chart-label">
-                                <span>{{ item.label }}</span>
-                                <span>{{ item.value }}</span>
-                            </div>
-                            <div class="board-chart-track">
-                                <div class="board-chart-fill" style="width: {{ item.width_pct }}%;"></div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Severity distribution appears only after a real board run. No placeholder bars are shown when there is no analysis data yet.</div>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
-
-        <article class="board-panel span-6">
-            <div class="board-panel-body">
-                <div class="board-panel-head">
-                    <div>
-                        <div class="board-kicker">Category Spread</div>
-                        <h2 class="board-panel-title">Risk distribution by domain</h2>
-                    </div>
-                </div>
-
-                <div class="board-chart-shell">
-                    {% if single_chart and single_chart.category_bars and single_chart.category_bars["items"] %}
-                        {% for item in single_chart.category_bars["items"] %}
-                        <div class="board-chart-row">
-                            <div class="board-chart-label">
-                                <span>{{ item.label }}</span>
-                                <span>{{ item.value }}</span>
-                            </div>
-                            <div class="board-chart-track">
-                                <div class="board-chart-fill" style="width: {{ item.width_pct }}%;"></div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Risk distribution appears after findings are grouped into engineering domains.</div>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
-
-        <article class="board-panel span-8">
-            <div class="board-panel-body">
-                <div class="board-panel-head">
-                    <div>
-                        <div class="board-kicker">Silicore Lenses</div>
-                        <h2 class="board-panel-title">Read the board through the right engineering surfaces</h2>
-                        <p class="board-panel-copy">Board Analysis should expose the real Silicore system: domain pressure, parser trust, physics estimates, CAM readiness, and design-review context in one flow.</p>
-                    </div>
-                </div>
-
-                <div class="board-domain-grid">
+                <div class="board-risk-cards">
                     {% if board_review_layers and board_review_layers.domain_cards %}
                         {% for item in board_review_layers.domain_cards %}
-                        <div class="board-domain-card">
-                            <div class="board-domain-name">{{ item.title }}</div>
-                            <div class="board-domain-stats">{{ item.count }}</div>
-                            <div class="board-domain-copy">{{ item.severity_label }} · Confidence {{ item.confidence|round|int }} · Traceability {{ item.traceability|round|int }}. {{ item.headline }}</div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Domain pressure cards become active once analysis has enough context to classify findings by engineering surface.</div>
-                    {% endif %}
-                </div>
-
-                <div class="board-lane-grid">
-                    {% if board_review_layers %}
-                    <div class="board-lane">
-                        <div class="board-kicker">Signal & Timing</div>
-                        <h3 class="board-lane-title">{{ board_review_layers.signal_lane.title }}</h3>
-                        <p class="board-lane-copy">{{ board_review_layers.signal_lane.summary }} {{ board_review_layers.signal_lane.detail }}</p>
-                    </div>
-                    <div class="board-lane">
-                        <div class="board-kicker">Physics Integrity</div>
-                        <h3 class="board-lane-title">{{ board_review_layers.physics_lane.title }}</h3>
-                        <p class="board-lane-copy">{{ board_review_layers.physics_lane.summary }} {{ board_review_layers.physics_lane.detail }}</p>
-                    </div>
-                    <div class="board-lane">
-                        <div class="board-kicker">CAM Readiness</div>
-                        <h3 class="board-lane-title">{{ board_review_layers.cam_lane.title }}</h3>
-                        <p class="board-lane-copy">{{ board_review_layers.cam_lane.summary }} {{ board_review_layers.cam_lane.detail }}</p>
-                    </div>
-                    <div class="board-lane">
-                        <div class="board-kicker">Parser Trust</div>
-                        <h3 class="board-lane-title">{{ board_review_layers.parser_lane.title }}</h3>
-                        <p class="board-lane-copy">{{ board_review_layers.parser_lane.summary }} {{ board_review_layers.parser_lane.detail }}</p>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
-
-        <article class="board-panel span-4">
-            <div class="board-panel-body">
-                <div class="board-panel-head">
-                    <div>
-                        <div class="board-kicker">Traceability</div>
-                        <h2 class="board-panel-title">Why the score exists</h2>
-                    </div>
-                </div>
-
-                <div class="board-mini-grid">
-                    {% if board_review_layers and board_review_layers.traceability_stats %}
-                        {% for item in board_review_layers.traceability_stats %}
-                        <div class="board-mini-card">
-                            <div class="board-mini-label">{{ item.label }}</div>
-                            <div class="board-mini-value">{{ item.value }}</div>
-                            <div class="board-mini-copy">{{ item.subtext }}</div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Traceability metrics appear after the board has evidence linked to findings.</div>
-                    {% endif %}
-                </div>
-
-                {% if single_chart and single_chart.penalty_bars and single_chart.penalty_bars["items"] %}
-                <div class="board-chart-shell">
-                    {% for item in single_chart.penalty_bars["items"] %}
-                    <div class="board-chart-row">
-                        <div class="board-chart-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
-                        </div>
-                        <div class="board-chart-track">
-                            <div class="board-chart-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-        </article>
-
-        <article class="board-panel span-7">
-            <div class="board-panel-body">
-                <div class="board-panel-head">
-                    <div>
-                        <div class="board-kicker">Atlas Console</div>
-                        <h2 class="board-panel-title">Decision support built into the analysis flow</h2>
-                    </div>
-                </div>
-
-                <div class="board-console-grid">
-                    {% if board_assistant_console and board_assistant_console.review_lenses %}
-                        {% for item in board_assistant_console.review_lenses %}
-                        <div class="board-console-card">
-                            <div class="board-mini-label">{{ item.label }}</div>
-                            <h3 class="board-console-title">{{ item.headline }}</h3>
-                            <p class="board-console-copy">{{ item.copy }}</p>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="board-empty">Atlas review lenses appear here after the first run.</div>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
-
-        <article class="board-panel span-5">
-            <div class="board-panel-body">
-                <div class="board-panel-head">
-                    <div>
-                        <div class="board-kicker">Value Layer</div>
-                        <h2 class="board-panel-title">Silicore metrics that matter on one board</h2>
-                    </div>
-                </div>
-
-                <div class="board-action-list">
-                    {% if board_value_metrics %}
-                        {% for item in board_value_metrics %}
-                        <div class="board-action">
-                            <div>
-                                <h3 class="board-action-title">{{ item.label }}</h3>
-                                <p class="board-action-copy">{{ item.subtext }}</p>
+                        <div class="risk-card">
+                            <div class="risk-card-title">{{ item.title }}</div>
+                            <div class="risk-card-value">{{ item.confidence|round|int }} <span style="font-size:0.5em; color: var(--muted);">/ 100</span></div>
+                            <div class="risk-card-meta">{{ item.severity_label }} · {{ item.count }} finding{% if item.count != 1 %}s{% endif %}</div>
+                            <div class="risk-card-trend">
+                                <div class="risk-card-bar">
+                                    <div class="risk-card-fill{% if item.traceability >= 70 %} safe{% endif %}" style="width: {{ item.traceability }}%;"></div>
+                                </div>
+                                <div class="risk-card-meta">Traceability {{ item.traceability|round|int }} · {{ item.headline }}</div>
                             </div>
-                            <span class="board-chip">{{ item.value }}</span>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div class="board-empty">Value metrics appear after the current run has enough signal to summarize.</div>
+                        {% for label in ['Power Integrity','Thermal Performance','Manufacturability','Signal Integrity','Component Placement','Reliability'] %}
+                        <div class="risk-card">
+                            <div class="risk-card-title">{{ label }}</div>
+                            <div class="risk-card-value">-- <span style="font-size:0.5em; color: var(--muted);">/ 100</span></div>
+                            <div class="risk-card-meta">Run analysis to activate this domain card.</div>
+                            <div class="risk-card-trend">
+                                <div class="risk-card-bar"><div class="risk-card-fill safe" style="width: 0%;"></div></div>
+                                <div class="risk-card-meta">No live domain signal yet.</div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     {% endif %}
                 </div>
             </div>
@@ -1075,32 +1355,214 @@
 
         <article class="board-panel span-12">
             <div class="board-panel-body">
-                <div class="board-panel-head">
+                <div class="board-issues-header">
                     <div>
-                        <div class="board-kicker">Findings Queue</div>
-                        <h2 class="board-panel-title">Fix-first engineering review</h2>
-                        <p class="board-panel-copy">The findings stream should feel operational and actionable, not like a parser dump.</p>
+                        <div class="board-kicker">Detected Issues</div>
+                        <h2 class="board-panel-title">{{ finding_count }} issue{% if finding_count != 1 %}s{% endif %} in the current board analysis</h2>
+                    </div>
+                    <div class="board-issues-filters">
+                        <span class="board-filter-pill">All</span>
+                        <span class="board-filter-pill{% if critical_count + high_count > 0 %} active{% endif %}">High {{ critical_count + high_count }}</span>
+                        <span class="board-filter-pill{% if medium_count > 0 %} active{% endif %}">Medium {{ medium_count }}</span>
+                        <span class="board-filter-pill{% if low_count > 0 %} active{% endif %}">Low {{ low_count }}</span>
                     </div>
                 </div>
 
-                {% if result and result.risks %}
-                <div class="board-finding-list">
-                    {% for risk in result.risks[:20] %}
-                    <div class="board-finding">
-                        <div>
-                            <h3 class="board-finding-title">{{ risk.short_title if risk.short_title else risk.message }}</h3>
-                            <p class="board-finding-meta">{{ risk.category|replace('_', ' ')|title }} · {{ risk.severity|upper }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</p>
-                            {% if risk.recommendation %}<p class="board-finding-copy">{{ risk.recommendation }}</p>{% endif %}
+                <div class="board-issues-list">
+                    {% if result and result.risks %}
+                        {% for risk in result.risks[:8] %}
+                        {% set confidence = (risk.explanation.confidence * 100)|round|int if risk.explanation and risk.explanation.confidence is defined and risk.explanation.confidence <= 1 else (risk.explanation.confidence|round|int if risk.explanation and risk.explanation.confidence is defined else (risk.confidence.score|round|int if risk.confidence and risk.confidence.score is defined else 0)) %}
+                        {% set impact_level = 'high' if risk.severity in ['critical','high'] else ('medium' if risk.severity == 'medium' else 'low') %}
+                        <div class="board-issue-row">
+                            <div class="board-issue-rank">{{ loop.index }}</div>
+                            <div class="board-issue-thumb">
+                                {% if board_view and board_view.has_data %}
+                                <svg viewBox="{{ board_view.base_view_box }}" aria-hidden="true">
+                                    {% for zone in board_view.zones[:8] %}
+                                    <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}"></polygon>
+                                    {% endfor %}
+                                    {% for trace in board_view.traces[:160] %}
+                                    <line class="board-trace {{ trace.tone }}" x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}"></line>
+                                    {% endfor %}
+                                    {% for component in board_view.components[:140] %}
+                                    {% set component_hit = component.ref in (risk.components or []) %}
+                                    <rect class="board-component {% if component_hit %}{{ impact_level }}{% else %}safe{% endif %}" x="{{ component.x - 5 }}" y="{{ component.y - 3.5 }}" rx="2" ry="2" width="10" height="7"></rect>
+                                    {% endfor %}
+                                    {% for segment in board_view.outline_segments %}
+                                    <line class="board-outline" x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}"></line>
+                                    {% endfor %}
+                                    {% if 'thermal' in (risk.category or '')|lower or 'heat' in (risk.message or '')|lower %}
+                                        {% for hot in board_view.hotspots[:6] %}
+                                        <circle class="board-hotspot thermal" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius + 10 }}"></circle>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for hot in board_view.hotspots[:4] %}
+                                        <circle class="board-hotspot {{ impact_level }}" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius }}"></circle>
+                                        {% endfor %}
+                                    {% endif %}
+                                </svg>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h3 class="board-issue-title">{{ risk.short_title if risk.short_title else risk.message }}</h3>
+                                <p class="board-issue-copy">{{ risk.message }}</p>
+                                <div class="board-issue-tags">
+                                    <span class="issue-tag severity-{{ risk.severity }}">{{ risk.severity|title }}</span>
+                                    <span class="issue-tag">{{ risk.category|replace('_', ' ')|title }}</span>
+                                </div>
+                            </div>
+                            <div class="board-issue-metric">
+                                <div class="board-issue-metric-label">Impact</div>
+                                <div class="board-issue-metric-value">
+                                    {{ impact_level|title }}
+                                    <span class="impact-bars">
+                                        <span class="on {{ impact_level }}"></span>
+                                        <span class="{% if impact_level in ['high','critical','medium'] %}on {{ impact_level }}{% endif %}"></span>
+                                        <span class="{% if impact_level in ['high','critical'] %}on {{ impact_level }}{% endif %}"></span>
+                                        <span class="{% if impact_level in ['high','critical'] %}on {{ impact_level }}{% endif %}"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="board-issue-metric">
+                                <div class="board-issue-metric-label">Confidence</div>
+                                <div class="board-issue-metric-value">{{ confidence }}%</div>
+                            </div>
+                            <div class="board-issue-metric">
+                                <div class="board-issue-metric-label">Location</div>
+                                <div class="board-issue-metric-value">{{ (risk.nets|join(', ')) if risk.nets else ((risk.components|join(', ')) if risk.components else "Board region") }}</div>
+                            </div>
+                            <div class="board-issue-arrow">›</div>
                         </div>
-                        <span class="board-chip {% if risk.severity in ['critical','high'] %}critical{% elif risk.severity == 'medium' %}medium{% else %}low{% endif %}">{{ risk.severity }}</span>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="board-empty">Detected issues will populate here after analysis, complete with board thumbnails, severity, confidence, and board-linked location context.</div>
+                    {% endif %}
                 </div>
-                {% else %}
-                <div class="board-empty">No findings yet. Upload a board to activate the review queue, pressure distribution, Atlas guidance, and score traceability.</div>
-                {% endif %}
             </div>
         </article>
+
+        <div class="span-12 board-bottom-grid">
+            <article class="board-panel">
+                <div class="board-panel-body">
+                    <div class="board-kicker">Board Analysis Insights</div>
+                    <h2 class="board-panel-title">Key observations</h2>
+                    <div class="board-bullet-list">
+                        {% if result and result.executive_summary and result.executive_summary.top_issues %}
+                            {% for item in result.executive_summary.top_issues %}
+                            <div class="board-bullet">{{ item.message }}</div>
+                            {% endfor %}
+                        {% elif board_copilot and board_copilot.validation_plan %}
+                            {% for item in board_copilot.validation_plan[:4] %}
+                            <div class="board-bullet">{{ item }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="board-bullet">Run a board to activate board-level insights, validation guidance, and observed risk clusters.</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="board-coverage-list">
+                        <div class="board-coverage-row">
+                            <div class="board-coverage-label"><span>Parser Confidence</span><span>{{ result.parser_confidence.score|round|int if result and result.parser_confidence and result.parser_confidence.score is defined else 0 }}%</span></div>
+                            <div class="board-coverage-track"><div class="board-coverage-fill" style="width: {{ result.parser_confidence.score if result and result.parser_confidence and result.parser_confidence.score is defined else 0 }}%;"></div></div>
+                        </div>
+                        <div class="board-coverage-row">
+                            <div class="board-coverage-label"><span>CAM Readiness</span><span>{{ result.cam_summary.readiness_score|round|int if result and result.cam_summary and result.cam_summary.readiness_score is defined else 0 }}%</span></div>
+                            <div class="board-coverage-track"><div class="board-coverage-fill" style="width: {{ result.cam_summary.readiness_score if result and result.cam_summary and result.cam_summary.readiness_score is defined else 0 }}%;"></div></div>
+                        </div>
+                        <div class="board-coverage-row">
+                            <div class="board-coverage-label"><span>Traceability Ready</span><span>{{ board_review_layers.traceability_stats[0].value if board_review_layers and board_review_layers.traceability_stats else 0 }}</span></div>
+                            <div class="board-coverage-track"><div class="board-coverage-fill" style="width: {{ board_review_layers.traceability_stats[0].value if board_review_layers and board_review_layers.traceability_stats else 0 }}%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="board-panel">
+                <div class="board-panel-body">
+                    <div class="board-kicker">Risk Distribution</div>
+                    <h2 class="board-panel-title">Issue mix</h2>
+                    <div class="board-donut-layout">
+                        <div class="board-donut{% if not total_issue_count %} empty{% endif %}">
+                            <div class="board-donut-copy">
+                                <div class="board-donut-value">{{ total_issue_count }}</div>
+                                <div class="board-donut-label">Total Issues</div>
+                            </div>
+                        </div>
+                        <div class="board-legend">
+                            <div class="board-legend-row"><span><span class="legend-dot high"></span>High</span><span>{{ critical_count + high_count }}</span></div>
+                            <div class="board-legend-row"><span><span class="legend-dot medium"></span>Medium</span><span>{{ medium_count }}</span></div>
+                            <div class="board-legend-row"><span><span class="legend-dot low"></span>Low</span><span>{{ low_count }}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="board-chart-shell">
+                        {% if single_chart and single_chart.penalty_bars and single_chart.penalty_bars["items"] %}
+                            {% for item in single_chart.penalty_bars["items"][:5] %}
+                            <div class="board-chart-row">
+                                <div class="board-chart-label">
+                                    <span>{{ item.label }}</span>
+                                    <span>{{ item.value }}</span>
+                                </div>
+                                <div class="board-chart-track">
+                                    <div class="board-chart-fill" style="width: {{ item.width_pct }}%;"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="board-empty">Penalty distribution appears after analysis.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+
+            <article class="board-panel">
+                <div class="board-panel-body">
+                    <div class="board-kicker">Engineering Focus</div>
+                    <h2 class="board-panel-title">Recommended next moves</h2>
+                    <div class="board-focus-list">
+                        {% if single_decision and single_decision.next_actions %}
+                            {% for item in single_decision.next_actions %}
+                            <div class="board-focus-item">
+                                <div class="board-focus-rank">{{ loop.index }}</div>
+                                <div>
+                                    <h3 class="board-focus-title">{{ item.label }}</h3>
+                                    <p class="board-focus-copy">{{ item.recommendation_short or item.recommendation or item.message_short or item.message }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="board-empty">The next-action stack appears here after the first board run.</div>
+                        {% endif %}
+                    </div>
+
+                    <button class="btn btn-primary" type="button" style="margin-top: 12px; width: 100%;">Create Follow-up Analysis</button>
+                </div>
+            </article>
+        </div>
     </section>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (() => {
+        const stage = document.querySelector("[data-board-stage]");
+        const tabs = document.querySelectorAll("[data-board-tabs] [data-mode]");
+        if (!stage || !tabs.length) return;
+
+        const updateMode = (mode) => {
+            stage.dataset.mode = mode;
+            stage.querySelectorAll("[data-mode-show]").forEach((node) => {
+                node.style.display = node.getAttribute("data-mode-show") === mode ? "" : "none";
+            });
+            tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.mode === mode));
+        };
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => updateMode(tab.dataset.mode));
+        });
+
+        updateMode("risk");
+    })();
+</script>
 {% endblock %}
