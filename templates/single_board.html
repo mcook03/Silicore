@@ -519,6 +519,33 @@
         filter: blur(4px);
     }
 
+    .board-svg-shell.is-focused .board-zone,
+    .board-svg-shell.is-focused .board-trace,
+    .board-svg-shell.is-focused .board-via,
+    .board-svg-shell.is-focused .board-component,
+    .board-svg-shell.is-focused .board-hotspot {
+        opacity: 0.1;
+        transition: opacity 160ms ease;
+    }
+
+    .board-svg-shell.is-focused .is-match {
+        opacity: 1;
+    }
+
+    .board-svg-shell .board-trace.is-match {
+        stroke-width: 3.6;
+        filter: drop-shadow(0 0 4px rgba(255,255,255,0.22));
+    }
+
+    .board-svg-shell .board-component.is-match {
+        stroke: rgba(255,255,255,0.44);
+        stroke-width: 1.5;
+    }
+
+    .board-svg-shell .board-hotspot.is-match {
+        opacity: 0.95;
+    }
+
     .board-meta-card {
         padding: 18px;
         border-radius: 20px;
@@ -972,6 +999,47 @@
         line-height: 1.65;
     }
 
+    .board-readiness-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .board-readiness-item {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(136,214,255,0.1);
+        background: rgba(255,255,255,0.03);
+    }
+
+    .board-readiness-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .board-readiness-title {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .board-readiness-value {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: var(--text-soft);
+    }
+
+    .board-readiness-copy {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
     @media (max-width: 1320px) {
         .board-hero-grid,
         .board-preview-shell,
@@ -1194,24 +1262,24 @@
                             {% if board_view and board_view.has_data %}
                             <svg class="board-svg" viewBox="{{ board_view.base_view_box }}" aria-label="Board geometry preview">
                                 {% for zone in board_view.zones %}
-                                <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}"></polygon>
+                                <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}" {% if zone.net %}data-net="{{ zone.net }}"{% endif %}></polygon>
                                 {% endfor %}
                                 {% for trace in board_view.traces %}
-                                <line class="board-trace {{ trace.tone }}" x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}"></line>
+                                <line class="board-trace {{ trace.tone }}" x1="{{ trace.x1 }}" y1="{{ trace.y1 }}" x2="{{ trace.x2 }}" y2="{{ trace.y2 }}" {% if trace.net %}data-net="{{ trace.net }}"{% endif %}></line>
                                 {% endfor %}
                                 {% for via in board_view.vias %}
-                                <circle class="board-via {{ via.tone }}" cx="{{ via.x }}" cy="{{ via.y }}" r="2.6"></circle>
+                                <circle class="board-via {{ via.tone }}" cx="{{ via.x }}" cy="{{ via.y }}" r="2.6" {% if via.net %}data-net="{{ via.net }}"{% endif %}></circle>
                                 {% endfor %}
                                 {% for component in board_view.components %}
-                                <rect class="board-component {{ component.tone }}" x="{{ component.x - 6 }}" y="{{ component.y - 4 }}" rx="2" ry="2" width="12" height="8"></rect>
+                                <rect class="board-component {{ component.tone }}" x="{{ component.x - 6 }}" y="{{ component.y - 4 }}" rx="2" ry="2" width="12" height="8" data-ref="{{ component.ref }}"></rect>
                                 {% endfor %}
                                 {% for segment in board_view.outline_segments %}
                                 <line class="board-outline" x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}"></line>
                                 {% endfor %}
                                 {% for hot in board_view.hotspots %}
-                                <circle class="board-hotspot {{ hot.tone }}" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius }}" data-mode-show="risk"></circle>
+                                <circle class="board-hotspot {{ hot.tone }}" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius }}" data-mode-show="risk" data-risk-message="{{ hot.message|e }}"></circle>
                                 {% if 'thermal' in hot.message|lower or 'heat' in hot.message|lower %}
-                                <circle class="board-hotspot thermal" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius + 12 }}" data-mode-show="thermal"></circle>
+                                <circle class="board-hotspot thermal" cx="{{ hot.x }}" cy="{{ hot.y }}" r="{{ hot.radius + 12 }}" data-mode-show="thermal" data-risk-message="{{ hot.message|e }}"></circle>
                                 {% endif %}
                                 {% endfor %}
                             </svg>
@@ -1373,7 +1441,7 @@
                         {% for risk in result.risks[:8] %}
                         {% set confidence = (risk.explanation.confidence * 100)|round|int if risk.explanation and risk.explanation.confidence is defined and risk.explanation.confidence <= 1 else (risk.explanation.confidence|round|int if risk.explanation and risk.explanation.confidence is defined else (risk.confidence.score|round|int if risk.confidence and risk.confidence.score is defined else 0)) %}
                         {% set impact_level = 'high' if risk.severity in ['critical','high'] else ('medium' if risk.severity == 'medium' else 'low') %}
-                        <div class="board-issue-row">
+                        <div class="board-issue-row" data-issue-row data-severity="{{ risk.severity }}" data-category="{{ risk.category|default('', true) }}" data-components="{{ (risk.components or [])|join('|') }}" data-nets="{{ (risk.nets or [])|join('|') }}">
                             <div class="board-issue-rank">{{ loop.index }}</div>
                             <div class="board-issue-thumb">
                                 {% if board_view and board_view.has_data %}
@@ -1517,25 +1585,42 @@
 
             <article class="board-panel">
                 <div class="board-panel-body">
-                    <div class="board-kicker">Engineering Focus</div>
-                    <h2 class="board-panel-title">Recommended next moves</h2>
-                    <div class="board-focus-list">
-                        {% if single_decision and single_decision.next_actions %}
-                            {% for item in single_decision.next_actions %}
-                            <div class="board-focus-item">
-                                <div class="board-focus-rank">{{ loop.index }}</div>
-                                <div>
-                                    <h3 class="board-focus-title">{{ item.label }}</h3>
-                                    <p class="board-focus-copy">{{ item.recommendation_short or item.recommendation or item.message_short or item.message }}</p>
-                                </div>
+                    <div class="board-kicker">Fabrication Readiness</div>
+                    <h2 class="board-panel-title">Parser, CAM, and signoff readiness</h2>
+                    <div class="board-readiness-list">
+                        <div class="board-readiness-item">
+                            <div class="board-readiness-top">
+                                <div class="board-readiness-title">Parser confidence</div>
+                                <div class="board-readiness-value">{{ result.parser_confidence.score|round|int if result and result.parser_confidence and result.parser_confidence.score is defined else 0 }}/100</div>
                             </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="board-empty">The next-action stack appears here after the first board run.</div>
-                        {% endif %}
+                            <div class="board-readiness-copy">{{ board_review_layers.parser_lane.summary if board_review_layers and board_review_layers.parser_lane else "Parser confidence appears after analysis." }}</div>
+                        </div>
+                        <div class="board-readiness-item">
+                            <div class="board-readiness-top">
+                                <div class="board-readiness-title">CAM readiness</div>
+                                <div class="board-readiness-value">{{ result.cam_summary.readiness_score|round|int if result and result.cam_summary and result.cam_summary.readiness_score is defined else 0 }}/100</div>
+                            </div>
+                            <div class="board-readiness-copy">{{ board_review_layers.cam_lane.summary if board_review_layers and board_review_layers.cam_lane else "CAM readiness appears after analysis." }}</div>
+                        </div>
+                        <div class="board-readiness-item">
+                            <div class="board-readiness-top">
+                                <div class="board-readiness-title">Signoff gate</div>
+                                <div class="board-readiness-value">{{ result.signoff_gate.label if result and result.signoff_gate and result.signoff_gate.label else "Pending" }}</div>
+                            </div>
+                            <div class="board-readiness-copy">{{ result.signoff_gate.summary if result and result.signoff_gate and result.signoff_gate.summary else "Signoff readiness is evaluated after Silicore has enough board evidence." }}</div>
+                        </div>
+                        <div class="board-readiness-item">
+                            <div class="board-readiness-top">
+                                <div class="board-readiness-title">Physics modeling</div>
+                                <div class="board-readiness-value">{{ board_review_layers.traceability_stats[3].value if board_review_layers and board_review_layers.traceability_stats and board_review_layers.traceability_stats|length > 3 else 0 }}</div>
+                            </div>
+                            <div class="board-readiness-copy">{{ board_review_layers.physics_lane.summary if board_review_layers and board_review_layers.physics_lane else "Physics-informed signals appear after analysis." }}</div>
+                        </div>
                     </div>
 
-                    <button class="btn btn-primary" type="button" style="margin-top: 12px; width: 100%;">Create Follow-up Analysis</button>
+                    {% if download_url %}
+                    <a class="btn btn-primary" href="{{ download_url }}" style="margin-top: 12px; width: 100%;">Export Board Report</a>
+                    {% endif %}
                 </div>
             </article>
         </div>
@@ -1563,6 +1648,64 @@
         });
 
         updateMode("risk");
+
+        const issueRows = document.querySelectorAll("[data-issue-row]");
+        const refNodes = Array.from(stage.querySelectorAll("[data-ref]"));
+        const netNodes = Array.from(stage.querySelectorAll("[data-net]"));
+        const hotspotNodes = Array.from(stage.querySelectorAll("[data-risk-message]"));
+
+        const clearFocus = () => {
+            stage.classList.remove("is-focused");
+            stage.querySelectorAll(".is-match").forEach((node) => node.classList.remove("is-match"));
+            updateMode("risk");
+        };
+
+        issueRows.forEach((row) => {
+            row.addEventListener("mouseenter", () => {
+                const components = (row.dataset.components || "").split("|").filter(Boolean);
+                const nets = (row.dataset.nets || "").split("|").filter(Boolean);
+                const category = (row.dataset.category || "").toLowerCase();
+                const thermalMode = category.includes("thermal") || category.includes("heat");
+                let matched = false;
+
+                stage.classList.add("is-focused");
+                if (thermalMode) {
+                    updateMode("thermal");
+                }
+
+                refNodes.forEach((node) => {
+                    if (components.includes(node.dataset.ref || "")) {
+                        node.classList.add("is-match");
+                        matched = true;
+                    }
+                });
+
+                netNodes.forEach((node) => {
+                    if (nets.includes(node.dataset.net || "")) {
+                        node.classList.add("is-match");
+                        matched = true;
+                    }
+                });
+
+                hotspotNodes.forEach((node) => {
+                    const message = (node.dataset.riskMessage || "").toLowerCase();
+                    if (
+                        (thermalMode && node.classList.contains("thermal")) ||
+                        components.some((ref) => ref && message.includes(ref.toLowerCase())) ||
+                        nets.some((net) => net && message.includes(net.toLowerCase()))
+                    ) {
+                        node.classList.add("is-match");
+                        matched = true;
+                    }
+                });
+
+                if (!matched) {
+                    stage.classList.remove("is-focused");
+                }
+            });
+
+            row.addEventListener("mouseleave", clearFocus);
+        });
     })();
 </script>
 {% endblock %}
