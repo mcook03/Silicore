@@ -3,49 +3,45 @@
 {% block extra_head %}
 <style>
     .page-home {
-        --landing-text: rgba(255, 255, 255, 0.92);
-        --landing-soft: rgba(255, 255, 255, 0.72);
-        --landing-faint: rgba(255, 255, 255, 0.54);
-        --landing-line: rgba(255, 255, 255, 0.2);
-        --landing-panel: rgba(255, 255, 255, 0.08);
-        --landing-panel-strong: rgba(255, 255, 255, 0.12);
-        --landing-shadow: 0 36px 90px rgba(148, 96, 121, 0.18);
+        --landing-text: #f3fbff;
+        --landing-soft: #bfd3e4;
+        --landing-muted: #87a2b8;
+        --landing-line: rgba(136, 214, 255, 0.16);
+        --landing-line-strong: rgba(136, 214, 255, 0.3);
         --landing-shell: min(1220px, calc(100vw - 28px));
+        --intel-gradient: linear-gradient(135deg, #9fd2ff 0%, #3d8dff 42%, #0e48ff 100%);
     }
 
-    .page-home body,
     body.page-home {
         background:
-            radial-gradient(circle at 15% 20%, rgba(255, 214, 228, 0.92), transparent 30%),
-            radial-gradient(circle at 75% 18%, rgba(239, 169, 227, 0.9), transparent 24%),
-            radial-gradient(circle at 20% 85%, rgba(255, 202, 143, 0.72), transparent 28%),
-            radial-gradient(circle at 85% 82%, rgba(255, 243, 248, 0.76), transparent 28%),
-            linear-gradient(135deg, #f7dce9 0%, #efc8e9 34%, #f4c0cf 62%, #fbf2f6 100%);
+            radial-gradient(circle at 18% 12%, rgba(107, 227, 255, 0.12), transparent 24%),
+            radial-gradient(circle at 82% 14%, rgba(125, 178, 255, 0.16), transparent 26%),
+            radial-gradient(circle at 48% 62%, rgba(96, 240, 198, 0.08), transparent 28%),
+            linear-gradient(180deg, #04101a 0%, #07111b 38%, #091722 100%);
     }
 
     body.page-home::before {
-        top: 6%;
-        right: 8%;
-        width: 580px;
-        height: 580px;
-        filter: blur(18px);
-        opacity: 0.8;
-        background: radial-gradient(circle, rgba(221, 141, 213, 0.42), rgba(221, 141, 213, 0));
+        top: -120px;
+        right: -90px;
+        width: 460px;
+        height: 460px;
+        filter: blur(14px);
+        opacity: 0.72;
+        background: radial-gradient(circle, rgba(61, 141, 255, 0.24), rgba(61, 141, 255, 0));
     }
 
     body.page-home::after {
-        left: -4%;
-        bottom: -4%;
-        width: 560px;
-        height: 560px;
-        filter: blur(20px);
-        opacity: 0.75;
-        background: radial-gradient(circle, rgba(255, 190, 108, 0.34), rgba(255, 190, 108, 0));
+        left: -120px;
+        bottom: -180px;
+        width: 420px;
+        height: 420px;
+        filter: blur(16px);
+        opacity: 0.56;
+        background: radial-gradient(circle, rgba(96, 240, 198, 0.16), rgba(96, 240, 198, 0));
     }
 
     .page-home .ambient-grid {
-        opacity: 0.14;
-        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 78%);
+        opacity: 0.22;
     }
 
     .page-home .app-shell {
@@ -54,28 +50,17 @@
     }
 
     .page-home .site-header-inner {
-        background: rgba(255, 255, 255, 0.14);
-        border-color: rgba(255, 255, 255, 0.22);
-        box-shadow: 0 20px 50px rgba(164, 112, 139, 0.14);
-    }
-
-    .page-home .brand-mark {
-        background: rgba(255, 255, 255, 0.34);
-        border-color: rgba(255, 255, 255, 0.26);
+        background: rgba(5, 15, 23, 0.72);
+        border-color: rgba(136, 214, 255, 0.16);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
     }
 
     .page-home .brand-title,
-    .page-home .nav-pill:hover,
-    .page-home .nav-pill.active,
-    .page-home .status-value,
-    .page-home .hero-title,
     .page-home .section-title,
-    .page-home .story-stat-value,
-    .page-home .showcase-number,
-    .page-home .chart-stat,
-    .page-home .data-pill-value,
-    .page-home .metric-value-text,
-    .page-home .list-title {
+    .page-home .landing-title,
+    .page-home .signal-value,
+    .page-home .metric-inline-value,
+    .page-home .flow-index {
         color: var(--landing-text);
     }
 
@@ -83,355 +68,334 @@
     .page-home .nav-pill,
     .page-home .status-label,
     .page-home .status-pill,
-    .page-home .hero-copy,
-    .page-home .section-copy,
-    .page-home .story-stat-label,
-    .page-home .data-pill-copy,
-    .page-home .metric-sub,
-    .page-home .list-meta,
     .page-home .footer,
-    .page-home .marketing-link {
+    .page-home .marketing-link,
+    .page-home .section-copy,
+    .page-home .landing-copy,
+    .page-home .signal-copy,
+    .page-home .metric-inline-label,
+    .page-home .flow-copy,
+    .page-home .list-meta {
         color: var(--landing-soft);
     }
 
-    .page-home .nav-pill {
-        background: transparent;
-    }
-
-    .page-home .nav-pill-icon,
-    .page-home .status-pill,
-    .page-home .data-pill,
-    .page-home .story-stat,
-    .page-home .feature-stage,
-    .page-home .showcase-card,
-    .page-home .metric-card,
-    .page-home .timeline-row,
-    .page-home .viz-panel,
-    .page-home .feature-flow {
-        background: var(--landing-panel);
-        border-color: var(--landing-line);
-        box-shadow: var(--landing-shadow);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+    .page-home .nav-pill-icon {
+        background: rgba(255, 255, 255, 0.05);
     }
 
     .page-home .btn-primary {
-        color: #7d4f60;
-        background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 18px 50px rgba(255, 255, 255, 0.26);
+        color: #04101a;
+        background: linear-gradient(135deg, #85dfff, #6fa9ff);
+        box-shadow: 0 16px 34px rgba(107, 227, 255, 0.22);
     }
 
     .page-home .btn-secondary {
         color: var(--landing-text);
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(136, 214, 255, 0.18);
     }
 
     .page-home .page-shell {
-        gap: 22px;
+        gap: 0;
+    }
+
+    .landing-section {
+        position: relative;
+        padding: clamp(34px, 6vw, 72px) 0;
+    }
+
+    .landing-section + .landing-section {
+        border-top: 1px solid rgba(136, 214, 255, 0.1);
     }
 
     .landing-hero {
-        min-height: calc(100vh - 112px);
-        padding: clamp(28px, 5vw, 54px);
-        border-radius: 44px;
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        background:
-            radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.22), transparent 26%),
-            radial-gradient(circle at 72% 24%, rgba(232, 134, 219, 0.26), transparent 20%),
-            radial-gradient(circle at 20% 82%, rgba(255, 197, 119, 0.24), transparent 25%),
-            linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
-        box-shadow: var(--landing-shadow);
+        min-height: calc(100vh - 108px);
         display: grid;
         align-items: center;
-        overflow: hidden;
+        padding-top: clamp(20px, 5vw, 54px);
+        padding-bottom: clamp(32px, 8vw, 84px);
     }
 
     .landing-hero::before {
         content: "";
         position: absolute;
-        inset: 0;
-        background:
-            radial-gradient(circle at 60% 35%, rgba(206, 118, 194, 0.22), transparent 20%),
-            linear-gradient(130deg, transparent 37%, rgba(222, 152, 179, 0.28) 61%, transparent 78%);
-        pointer-events: none;
-    }
-
-    .landing-hero::after {
-        content: "";
-        position: absolute;
-        left: 8%;
-        right: 8%;
-        bottom: -24%;
-        height: 36%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255, 205, 141, 0.44), rgba(255, 205, 141, 0));
-        filter: blur(18px);
-        pointer-events: none;
+        inset: 12% 18% auto;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(136, 214, 255, 0.28), transparent);
     }
 
     .landing-hero-inner {
         position: relative;
         z-index: 1;
         display: grid;
-        gap: 28px;
+        gap: 24px;
         justify-items: center;
         text-align: center;
     }
 
-    .landing-eyebrow,
-    .showcase-label {
+    .landing-eyebrow {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
         gap: 10px;
-        padding: 10px 16px;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.24);
-        background: rgba(255, 255, 255, 0.08);
-        color: rgba(255, 255, 255, 0.84);
+        color: #9cb7ca;
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.2em;
         text-transform: uppercase;
     }
 
-    .landing-eyebrow::before,
-    .showcase-label::before {
+    .landing-eyebrow::before {
         content: "";
         width: 8px;
         height: 8px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.92);
+        background: linear-gradient(180deg, #7de0ff, #7db2ff);
+        box-shadow: 0 0 0 5px rgba(107, 227, 255, 0.12);
     }
 
     .landing-title {
         margin: 0;
-        max-width: 10ch;
+        max-width: 12ch;
         font-family: var(--font-display);
-        font-size: clamp(3.4rem, 10vw, 7.2rem);
+        font-size: clamp(3.4rem, 10vw, 7rem);
         line-height: 0.92;
-        letter-spacing: -0.08em;
-        color: var(--landing-text);
+        letter-spacing: -0.09em;
+    }
+
+    .landing-intel {
+        background: var(--intel-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
     }
 
     .landing-copy {
-        max-width: 680px;
         margin: 0;
-        color: var(--landing-soft);
-        font-size: clamp(1rem, 2vw, 1.2rem);
-        line-height: 1.8;
+        max-width: 720px;
+        font-size: clamp(1rem, 2vw, 1.16rem);
+        line-height: 1.9;
     }
 
     .landing-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 14px;
         justify-content: center;
+        gap: 14px;
     }
 
-    .landing-strip {
+    .metric-inline-strip {
         width: 100%;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-        margin-top: 12px;
+        gap: 22px;
+        margin-top: 18px;
+        padding-top: 22px;
+        border-top: 1px solid rgba(136, 214, 255, 0.14);
     }
 
-    .story-grid,
-    .stats-band,
+    .metric-inline {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .metric-inline-value {
+        font-family: var(--font-display);
+        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        line-height: 0.92;
+        letter-spacing: -0.08em;
+    }
+
+    .metric-inline-label {
+        max-width: 22ch;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .content-grid,
+    .signal-grid,
     .deployment-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
-    }
-
-    .story-panel,
-    .feature-stage,
-    .showcase-card {
-        position: relative;
-        overflow: hidden;
-        padding: clamp(24px, 3vw, 34px);
-        border-radius: 34px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .story-panel::before,
-    .feature-stage::before,
-    .showcase-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 52%);
-        pointer-events: none;
-    }
-
-    .story-panel > *,
-    .feature-stage > *,
-    .showcase-card > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    .story-panel {
-        background: rgba(255, 255, 255, 0.1);
-        box-shadow: var(--landing-shadow);
-    }
-
-    .story-copy {
-        margin: 18px 0 0;
-        max-width: 56ch;
-        color: var(--landing-soft);
-        line-height: 1.8;
-    }
-
-    .story-stats {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 22px;
-    }
-
-    .story-stat {
-        padding: 18px;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    .story-stat-value {
-        font-family: var(--font-display);
-        font-size: clamp(1.7rem, 3vw, 2.6rem);
-        line-height: 0.95;
-        letter-spacing: -0.06em;
-    }
-
-    .story-stat-label {
-        margin-top: 10px;
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .pulse-shell {
-        min-height: 100%;
-        display: grid;
-        gap: 18px;
-        align-content: start;
-    }
-
-    .pulse-graph {
-        min-height: 220px;
-        padding: 18px;
-        border-radius: 28px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        background: rgba(255, 255, 255, 0.06);
-    }
-
-    .pulse-note {
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        align-items: center;
-        flex-wrap: wrap;
-        padding-top: 8px;
-        color: var(--landing-soft);
-        font-size: 13px;
-    }
-
-    .showcase-shell {
-        display: grid;
-        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-        gap: 18px;
+        gap: 32px;
         align-items: start;
     }
 
-    .showcase-intro {
-        position: sticky;
-        top: 108px;
-        align-self: start;
-    }
-
-    .showcase-stack {
+    .section-heading {
         display: grid;
-        gap: 18px;
+        gap: 14px;
+        align-content: start;
     }
 
-    .showcase-card {
-        display: grid;
-        gap: 18px;
-        min-height: 220px;
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    .showcase-number {
+    .section-title {
+        margin: 0;
         font-family: var(--font-display);
-        font-size: clamp(2.4rem, 5vw, 4rem);
-        line-height: 0.9;
-        letter-spacing: -0.08em;
-        opacity: 0.9;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 0.97;
+        letter-spacing: -0.07em;
     }
 
-    .showcase-points {
+    .section-copy {
+        margin: 0;
+        line-height: 1.85;
+        max-width: 58ch;
+    }
+
+    .section-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #9cb7ca;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .section-kicker::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #6be3ff, #7db2ff);
+    }
+
+    .signal-chart-block,
+    .signal-list,
+    .flow-list,
+    .timeline-clean,
+    .parser-list,
+    .bar-list-clean {
         display: grid;
-        gap: 10px;
+        gap: 16px;
     }
 
-    .showcase-point {
-        padding: 12px 14px;
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.07);
-        color: var(--landing-soft);
+    .signal-chart {
+        padding: 18px 0 8px;
+        border-top: 1px solid rgba(136, 214, 255, 0.14);
+        border-bottom: 1px solid rgba(136, 214, 255, 0.14);
+    }
+
+    .signal-value {
+        font-family: var(--font-display);
+        font-size: clamp(2.2rem, 4vw, 3.3rem);
+        line-height: 0.92;
+        letter-spacing: -0.08em;
+    }
+
+    .signal-copy {
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .sparkline-chart {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .sparkline-chart .area {
+        fill: rgba(107, 227, 255, 0.12);
+    }
+
+    .sparkline-chart .path {
+        fill: none;
+        stroke: #8fc7ff;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .flow-item,
+    .timeline-clean-row,
+    .parser-item,
+    .bar-clean-row {
+        display: grid;
+        gap: 8px;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(136, 214, 255, 0.12);
+    }
+
+    .flow-item:first-child,
+    .timeline-clean-row:first-child,
+    .parser-item:first-child,
+    .bar-clean-row:first-child {
+        padding-top: 0;
+    }
+
+    .flow-header {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+    }
+
+    .flow-index {
+        min-width: 34px;
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        letter-spacing: -0.04em;
+    }
+
+    .flow-title,
+    .parser-title,
+    .timeline-clean-title {
+        color: var(--landing-text);
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .flow-copy {
+        padding-left: 48px;
+        line-height: 1.8;
+    }
+
+    .parser-meta,
+    .timeline-clean-meta {
+        color: var(--landing-muted);
         font-size: 13px;
         line-height: 1.7;
     }
 
-    .stats-band .viz-panel,
-    .deployment-grid .feature-flow,
-    .page-home .metric-card,
-    .page-home .timeline-row {
-        border-radius: 30px;
+    .timeline-clean-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
     }
 
-    .page-home .viz-panel,
-    .page-home .feature-flow {
-        padding: 28px;
+    .bar-clean-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--landing-text);
+        font-size: 13px;
+        font-weight: 700;
     }
 
-    .page-home .timeline-row {
-        background:
-            linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 40%),
-            rgba(255, 255, 255, 0.05);
-        border-left-color: rgba(255, 255, 255, 0.24);
+    .bar-clean-meter {
+        height: 8px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.06);
     }
 
-    .page-home .bar-meter,
-    .page-home .pulse-graph,
-    .page-home .sparkline-shell {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04)),
-            rgba(255, 255, 255, 0.04);
-        border-color: rgba(255, 255, 255, 0.18);
-    }
-
-    .page-home .bar-meter-fill,
-    .page-home .sparkline-chart .path {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 214, 147, 0.92));
-        stroke: rgba(255, 255, 255, 0.92);
-    }
-
-    .page-home .sparkline-chart .area {
-        fill: rgba(255, 255, 255, 0.12);
+    .bar-clean-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(107, 227, 255, 0.7), rgba(125, 178, 255, 0.96));
     }
 
     .reveal {
         opacity: 0;
-        transform: translate3d(0, 40px, 0) scale(0.985);
-        transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        transform: translate3d(0, 32px, 0);
+        transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
         will-change: opacity, transform;
     }
 
     .reveal.is-visible {
         opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
+        transform: translate3d(0, 0, 0);
     }
 
     .reveal[data-delay="1"] {
@@ -455,41 +419,34 @@
         }
     }
 
-    @media (max-width: 1040px) {
-        .landing-strip,
-        .story-grid,
-        .stats-band,
-        .deployment-grid,
-        .showcase-shell {
+    @media (max-width: 960px) {
+        .metric-inline-strip,
+        .content-grid,
+        .signal-grid,
+        .deployment-grid {
             grid-template-columns: 1fr;
         }
 
-        .showcase-intro {
-            position: static;
+        .timeline-clean-row {
+            grid-template-columns: 1fr;
         }
     }
 
     @media (max-width: 760px) {
         .landing-hero {
             min-height: auto;
-            padding: 24px;
         }
 
         .landing-title {
-            font-size: clamp(2.6rem, 17vw, 4.2rem);
+            font-size: clamp(2.7rem, 17vw, 4.4rem);
         }
 
-        .story-stats {
-            grid-template-columns: 1fr;
+        .metric-inline-strip {
+            gap: 18px;
         }
 
-        .page-home .viz-panel,
-        .page-home .feature-flow,
-        .story-panel,
-        .feature-stage,
-        .showcase-card {
-            padding: 22px;
-            border-radius: 28px;
+        .flow-copy {
+            padding-left: 0;
         }
     }
 </style>
@@ -497,10 +454,12 @@
 
 {% block content %}
 <div class="page-shell">
-    <section class="landing-hero" id="product">
+    <section class="landing-section landing-hero" id="product">
         <div class="landing-hero-inner">
             <div class="landing-eyebrow reveal is-visible">Silicore platform</div>
-            <h1 class="landing-title reveal is-visible" data-delay="1">Minimal design. Serious hardware signal.</h1>
+            <h1 class="landing-title reveal is-visible" data-delay="1">
+                Hardware Design <span class="landing-intel">Intel</span>ligence
+            </h1>
             <p class="landing-copy reveal is-visible" data-delay="2">
                 {{ dashboard_story.summary if dashboard_story is defined else "Silicore brings board analysis, revision awareness, and engineering follow-through into one product-grade operating surface for hardware teams." }}
             </p>
@@ -509,220 +468,197 @@
                 <a class="btn btn-secondary" href="#workflows">Learn More</a>
             </div>
 
-            <div class="landing-strip">
-                <div class="data-pill reveal">
-                    <div class="data-pill-label">Runs tracked</div>
-                    <div class="data-pill-value">{{ stats.total_runs if stats is defined else 0 }}</div>
-                    <div class="data-pill-copy">Persistent engineering memory across every saved review.</div>
+            <div class="metric-inline-strip reveal" data-delay="2">
+                <div class="metric-inline">
+                    <div class="metric-inline-value">{{ stats.total_runs if stats is defined else 0 }}</div>
+                    <div class="metric-inline-label">runs tracked across saved engineering reviews</div>
                 </div>
-                <div class="data-pill reveal" data-delay="1">
-                    <div class="data-pill-label">Workspaces online</div>
-                    <div class="data-pill-value">{{ projects|length if projects is defined else 0 }}</div>
-                    <div class="data-pill-copy">Project continuity instead of isolated uploads and exports.</div>
+                <div class="metric-inline">
+                    <div class="metric-inline-value">{{ projects|length if projects is defined else 0 }}</div>
+                    <div class="metric-inline-label">workspaces holding project and revision continuity</div>
                 </div>
-                <div class="data-pill reveal" data-delay="2">
-                    <div class="data-pill-label">Latest score</div>
-                    <div class="data-pill-value">{{ home_chart.latest_score if home_chart is defined else 0 }}</div>
-                    <div class="data-pill-copy">A live view of the platform's current engineering posture.</div>
+                <div class="metric-inline">
+                    <div class="metric-inline-value">{{ home_chart.latest_score if home_chart is defined else 0 }}</div>
+                    <div class="metric-inline-label">latest quality score visible in the platform pulse</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="story-grid" id="workflows">
-        <article class="story-panel reveal">
-            <div class="section-kicker">Product narrative</div>
-            <h2 class="section-title">The homepage now opens like a product, then reveals depth as you scroll.</h2>
-            <p class="story-copy">
-                Silicore starts with a calm, focused first impression and then gradually opens into workflow detail, live telemetry, parser readiness, and recent workspace activity. The goal is to make the surface feel more premium without losing the practical information your users need.
-            </p>
-            <div class="story-stats">
-                <div class="story-stat">
-                    <div class="story-stat-value">01</div>
-                    <div class="story-stat-label">A softer hero sets the tone before asking the user to choose an action.</div>
-                </div>
-                <div class="story-stat">
-                    <div class="story-stat-value">02</div>
-                    <div class="story-stat-label">Motion reveals sections progressively so the page feels alive instead of dense.</div>
-                </div>
-                <div class="story-stat">
-                    <div class="story-stat-value">03</div>
-                    <div class="story-stat-label">Existing platform data still shows up further down in a more readable sequence.</div>
-                </div>
+    <section class="landing-section" id="workflows">
+        <div class="content-grid">
+            <div class="section-heading reveal">
+                <div class="section-kicker">Workflow stack</div>
+                <h2 class="section-title">Clean at the top. More detail as the scroll continues.</h2>
+                <p class="section-copy">
+                    The homepage now starts with one focused message and then opens into the sequence hardware teams actually follow: analyze, compare, prioritize, and ship with more confidence.
+                </p>
             </div>
-        </article>
 
-        <aside class="feature-stage reveal" data-delay="1">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">System pulse</div>
-                    <h2 class="section-title">Live platform signal</h2>
+            <div class="flow-list reveal" data-delay="1">
+                <div class="flow-item">
+                    <div class="flow-header">
+                        <div class="flow-index">01</div>
+                        <div class="flow-title">Single-board review</div>
+                    </div>
+                    <div class="flow-copy">Upload a board, score physical and electrical pressure, and understand exactly why the score moved.</div>
                 </div>
-                <div class="chip">Atlas online</div>
+                <div class="flow-item">
+                    <div class="flow-header">
+                        <div class="flow-index">02</div>
+                        <div class="flow-title">Workspace continuity</div>
+                    </div>
+                    <div class="flow-copy">Attach runs to projects so change history, recurring patterns, and release posture stay together.</div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-header">
+                        <div class="flow-index">03</div>
+                        <div class="flow-title">Automation routing</div>
+                    </div>
+                    <div class="flow-copy">Push review output into the next engineering action instead of letting it die inside exports.</div>
+                </div>
             </div>
-            <div class="pulse-shell">
-                <div class="pulse-graph">
+        </div>
+    </section>
+
+    <section class="landing-section">
+        <div class="signal-grid">
+            <div class="section-heading reveal">
+                <div class="section-kicker">System pulse</div>
+                <h2 class="section-title">Live platform signal without the card clutter.</h2>
+                <p class="section-copy">
+                    Support data still appears on the page, but it sits in-line with the layout so the experience feels lighter and more product-led.
+                </p>
+                <div class="signal-value">{{ home_chart.latest_score if home_chart is defined else 0 }}/100</div>
+                <div class="signal-copy">Latest quality score across the most recent Silicore run.</div>
+            </div>
+
+            <div class="signal-chart-block reveal" data-delay="1">
+                <div class="signal-chart">
                     {% if home_chart and home_chart.trend and home_chart.trend.has_data %}
                     <svg class="sparkline-chart" viewBox="0 0 {{ home_chart.trend.width }} {{ home_chart.trend.height }}" role="img" aria-label="Recent score trend">
                         <polygon class="area" points="{{ home_chart.trend.area_points }}"></polygon>
                         <polyline class="path" points="{{ home_chart.trend.points }}"></polyline>
                     </svg>
                     {% else %}
-                    <div class="empty-state" style="margin:0;">Run a board analysis to start building score history.</div>
+                    <div class="signal-copy">Run a board analysis to start building score history.</div>
                     {% endif %}
                 </div>
-                <div class="pulse-note">
-                    <span>The hero stays minimal. Supporting telemetry appears just below it.</span>
-                    <span>{{ home_chart.latest_score if home_chart is defined else 0 }}/100 latest score</span>
-                </div>
-            </div>
-        </aside>
-    </section>
 
-    <section class="showcase-shell">
-        <article class="story-panel showcase-intro reveal">
-            <div class="showcase-label">Scroll to reveal</div>
-            <h2 class="section-title">Each section adds context instead of dropping everything at once.</h2>
-            <p class="story-copy">
-                This flow mirrors the layout direction from your reference: one clean focal point at the top, then more detail enters with spacious cards, light glass surfaces, and motion that stays subtle.
-            </p>
-        </article>
-
-        <div class="showcase-stack">
-            <article class="showcase-card reveal">
-                <div class="showcase-number">01</div>
-                <div>
-                    <div class="section-kicker">Workflow stack</div>
-                    <h2 class="section-title">Move from single-board ingest to release judgment.</h2>
-                </div>
-                <div class="showcase-points">
-                    <div class="showcase-point">Single-board review turns raw PCB files into prioritized engineering signal.</div>
-                    <div class="showcase-point">Workspace continuity keeps runs, revisions, and release posture connected.</div>
-                    <div class="showcase-point">Automation routing pushes output toward the next engineering action.</div>
-                </div>
-            </article>
-
-            <article class="showcase-card reveal">
-                <div class="showcase-number">02</div>
-                <div>
-                    <div class="section-kicker">Format readiness</div>
-                    <h2 class="section-title">Parser availability becomes part of the story instead of hidden setup detail.</h2>
-                </div>
-                <div class="stats-grid">
-                    {% if dashboard_story and dashboard_story.parser_readiness %}
-                        {% for parser in dashboard_story.parser_readiness[:6] %}
-                        <div class="metric-card">
-                            <div class="metric-label">{{ parser.label }}</div>
-                            <div class="metric-value-text">{{ parser.status }}</div>
-                            <div class="metric-sub">{{ parser.extension }}</div>
+                <div class="bar-list-clean">
+                    {% if home_chart and home_chart.workflow_chart and home_chart.workflow_chart["items"] %}
+                        {% for item in home_chart.workflow_chart["items"][:4] %}
+                        <div class="bar-clean-row">
+                            <div class="bar-clean-label">
+                                <span>{{ item.label }}</span>
+                                <span>{{ item.value }}</span>
+                            </div>
+                            <div class="bar-clean-meter">
+                                <div class="bar-clean-fill" style="width: {{ item.width_pct }}%;"></div>
+                            </div>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div class="empty-state">Parser readiness data is not available right now.</div>
+                        <div class="signal-copy">No workflow telemetry is available yet.</div>
                     {% endif %}
                 </div>
-            </article>
+            </div>
+        </div>
+    </section>
 
-            <article class="showcase-card reveal">
-                <div class="showcase-number">03</div>
-                <div>
-                    <div class="section-kicker">Recent activity</div>
-                    <h2 class="section-title">Fresh workspace actions appear only after the product promise is clear.</h2>
-                </div>
+    <section class="landing-section">
+        <div class="content-grid">
+            <div class="section-heading reveal">
+                <div class="section-kicker">Format readiness</div>
+                <h2 class="section-title">Parsers and import paths stay visible, just less boxed in.</h2>
+                <p class="section-copy">
+                    Readiness details now read like product capability notes instead of a dashboard grid, which keeps the homepage cleaner while still showing what the platform can handle.
+                </p>
+            </div>
+
+            <div class="parser-list reveal" data-delay="1">
+                {% if dashboard_story and dashboard_story.parser_readiness %}
+                    {% for parser in dashboard_story.parser_readiness[:6] %}
+                    <div class="parser-item">
+                        <div class="parser-title">{{ parser.label }} · {{ parser.status }}</div>
+                        <div class="parser-meta">{{ parser.extension }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="signal-copy">Parser readiness data is not available right now.</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-section">
+        <div class="content-grid">
+            <div class="section-heading reveal">
+                <div class="section-kicker">Recent activity</div>
+                <h2 class="section-title">Workspace activity appears lower in the page, after the product story is clear.</h2>
+                <p class="section-copy">
+                    That keeps the first screen intentional while still letting returning users see the latest movement in their boards and reviews.
+                </p>
+            </div>
+
+            <div class="timeline-clean reveal" data-delay="1">
                 {% if recent_runs %}
-                <div class="timeline">
                     {% for run in recent_runs[:4] %}
-                    <div class="timeline-row">
+                    <div class="timeline-clean-row">
                         <div>
-                            <div class="list-title">{{ run.label or run.name }}</div>
-                            <div class="list-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
+                            <div class="timeline-clean-title">{{ run.label or run.name }}</div>
+                            <div class="timeline-clean-meta">{{ run.created_at }} · {{ run.run_type|upper }}</div>
                         </div>
                         <a class="btn btn-secondary" href="{{ run.path }}">Open Run</a>
                     </div>
                     {% endfor %}
-                </div>
                 {% else %}
-                <div class="empty-state">No saved runs are available yet. Start with a single-board analysis to populate the product timeline.</div>
+                    <div class="signal-copy">No saved runs are available yet. Start with a single-board analysis to populate the timeline.</div>
                 {% endif %}
-            </article>
+            </div>
         </div>
     </section>
 
-    <section class="stats-band">
-        <article class="viz-panel reveal">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Run mix</div>
-                    <h2 class="section-title">What the platform is doing</h2>
-                </div>
-                <div class="chart-stat">{{ home_chart.latest_score if home_chart is defined else 0 }}/100</div>
-            </div>
-            <div class="bar-list">
-                {% if home_chart and home_chart.workflow_chart and home_chart.workflow_chart["items"] %}
-                    {% for item in home_chart.workflow_chart["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
-                        </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
+    <section class="landing-section" id="deployment">
+        <div class="deployment-grid">
+            <div class="section-heading reveal">
+                <div class="section-kicker">Starter path</div>
+                <h2 class="section-title">Manual review, sharpened.</h2>
+                <div class="flow-list">
+                    <div class="flow-item">
+                        <div class="flow-title">Single-board uploads</div>
+                        <div class="flow-copy">Generate reports and prioritized engineering signal without process overhead.</div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state" style="margin:0;">No workflow telemetry is available yet.</div>
-                {% endif %}
-            </div>
-        </article>
-
-        <article class="viz-panel reveal" data-delay="1">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Engineering domains</div>
-                    <h2 class="section-title">Where pressure is clustering</h2>
+                    <div class="flow-item">
+                        <div class="flow-title">Readable score logic</div>
+                        <div class="flow-copy">Explain why the score moved instead of hiding scoring behind backend logic.</div>
+                    </div>
+                    <div class="flow-item">
+                        <div class="flow-title">Stronger review discipline</div>
+                        <div class="flow-copy">Give teams a cleaner operating model for design review quality.</div>
+                    </div>
                 </div>
             </div>
-            <div class="bar-list">
-                {% if home_chart and home_chart.domain_distribution and home_chart.domain_distribution["items"] %}
-                    {% for item in home_chart.domain_distribution["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
-                        </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
+
+            <div class="section-heading reveal" data-delay="1">
+                <div class="section-kicker">Team path</div>
+                <h2 class="section-title">Shared workspaces and revision continuity.</h2>
+                <div class="flow-list">
+                    <div class="flow-item">
+                        <div class="flow-title">Project-aware comparisons</div>
+                        <div class="flow-copy">Keep revision context inside the same workspace rather than manually stitching history together.</div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state" style="margin:0;">Engineering domain clustering appears once recent runs contain findings.</div>
-                {% endif %}
+                    <div class="flow-item">
+                        <div class="flow-title">Recurring pressure visibility</div>
+                        <div class="flow-copy">Spot what is repeatedly slipping across boards and runs.</div>
+                    </div>
+                    <div class="flow-item">
+                        <div class="flow-title">Release readiness</div>
+                        <div class="flow-copy">Turn analysis into approvals, assignments, and repeatable operating cadence.</div>
+                    </div>
+                </div>
             </div>
-        </article>
-    </section>
-
-    <section class="deployment-grid" id="deployment">
-        <article class="feature-flow reveal">
-            <div class="section-kicker">Starter path</div>
-            <h2 class="section-title">Manual review, sharpened.</h2>
-            <div class="timeline">
-                <div class="timeline-row"><div><div class="list-title">Single-board uploads</div><div class="list-meta">Generate reports and prioritized engineering signal without process overhead.</div></div></div>
-                <div class="timeline-row"><div><div class="list-title">Readable score logic</div><div class="list-meta">Explain why the score moved instead of hiding scoring behind backend logic.</div></div></div>
-                <div class="timeline-row"><div><div class="list-title">Stronger review discipline</div><div class="list-meta">Give teams a clean first operating model for design review quality.</div></div></div>
-            </div>
-        </article>
-
-        <article class="feature-flow reveal" data-delay="1">
-            <div class="section-kicker">Team path</div>
-            <h2 class="section-title">Shared workspaces and revision continuity.</h2>
-            <div class="timeline">
-                <div class="timeline-row"><div><div class="list-title">Project-aware comparisons</div><div class="list-meta">Keep revision context inside the same workspace rather than manually stitching history together.</div></div></div>
-                <div class="timeline-row"><div><div class="list-title">Recurring pressure visibility</div><div class="list-meta">Spot what is repeatedly slipping across boards and runs.</div></div></div>
-                <div class="timeline-row"><div><div class="list-title">Release readiness</div><div class="list-meta">Turn analysis into approvals, assignments, and repeatable operating cadence.</div></div></div>
-            </div>
-        </article>
+        </div>
     </section>
 </div>
 {% endblock %}
@@ -747,7 +683,7 @@
                 observer.unobserve(entry.target);
             });
         }, {
-            threshold: 0.16,
+            threshold: 0.14,
             rootMargin: "0px 0px -8% 0px"
         });
 
