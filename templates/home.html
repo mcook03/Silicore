@@ -236,6 +236,41 @@
         align-items: center;
         padding-top: clamp(18px, 5vw, 44px);
         padding-bottom: clamp(42px, 8vw, 84px);
+        padding-left: clamp(22px, 3vw, 34px);
+        padding-right: clamp(22px, 3vw, 34px);
+        overflow: hidden;
+        border-radius: 42px;
+        border: 1px solid rgba(136, 214, 255, 0.14);
+        background:
+            radial-gradient(circle at 18% 22%, rgba(61, 141, 255, 0.08), transparent 22%),
+            radial-gradient(circle at 82% 70%, rgba(107, 227, 255, 0.06), transparent 18%),
+            linear-gradient(180deg, rgba(3, 11, 20, 0.96), rgba(4, 12, 20, 0.98));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 24px 90px rgba(0, 0, 0, 0.32);
+    }
+
+    .landing-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 28%),
+            radial-gradient(circle at 70% 54%, rgba(52, 103, 255, 0.08), transparent 24%);
+        pointer-events: none;
+    }
+
+    .landing-hero::after {
+        content: "";
+        position: absolute;
+        inset: auto 5% 10% auto;
+        width: 44%;
+        height: 62%;
+        background:
+            linear-gradient(rgba(76, 149, 255, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(76, 149, 255, 0.06) 1px, transparent 1px);
+        background-size: 28px 28px;
+        mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.68), transparent 78%);
+        opacity: 0.45;
+        pointer-events: none;
     }
 
     .hero-copy-stack,
@@ -248,12 +283,101 @@
     .landing-hero .hero-grid {
         grid-template-columns: 1fr;
         justify-items: center;
+        position: relative;
+        z-index: 1;
     }
 
     .landing-hero .hero-copy-stack {
         max-width: 980px;
         justify-items: center;
         text-align: center;
+    }
+
+    .hero-scene {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .hero-chip {
+        position: absolute;
+        right: 10%;
+        top: 51%;
+        width: min(360px, 34vw);
+        aspect-ratio: 1 / 1;
+        transform: translateY(-50%) rotate(45deg);
+        border-radius: 26px;
+        border: 1px solid rgba(136, 214, 255, 0.16);
+        background:
+            radial-gradient(circle at 34% 28%, rgba(107, 227, 255, 0.14), transparent 18%),
+            linear-gradient(180deg, rgba(8, 20, 36, 0.98), rgba(4, 11, 22, 0.98));
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.04),
+            0 0 0 1px rgba(76, 149, 255, 0.08),
+            0 30px 80px rgba(5, 10, 28, 0.44);
+    }
+
+    .hero-chip::before {
+        content: "";
+        position: absolute;
+        inset: 18%;
+        border-radius: 18px;
+        background:
+            radial-gradient(circle at 50% 50%, rgba(76, 149, 255, 0.3), rgba(76, 149, 255, 0.02) 58%, transparent 76%);
+        box-shadow: inset 0 0 0 1px rgba(136, 214, 255, 0.08);
+    }
+
+    .hero-chip::after {
+        content: "";
+        position: absolute;
+        inset: 36%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, rgba(223, 244, 255, 0.72), rgba(76, 149, 255, 0.92) 46%, rgba(13, 73, 255, 0.96) 100%);
+        filter: blur(0.4px);
+        box-shadow: 0 0 36px rgba(76, 149, 255, 0.34);
+    }
+
+    .hero-routes {
+        position: absolute;
+        inset: 0;
+        opacity: 0.42;
+        background:
+            radial-gradient(circle at 72% 52%, rgba(76, 149, 255, 0.22) 0 2px, transparent 3px),
+            linear-gradient(115deg, transparent 58%, rgba(76, 149, 255, 0.14) 59%, transparent 60%),
+            linear-gradient(65deg, transparent 62%, rgba(76, 149, 255, 0.14) 63%, transparent 64%),
+            linear-gradient(25deg, transparent 68%, rgba(107, 227, 255, 0.1) 69%, transparent 70%);
+        mask-image: radial-gradient(circle at 76% 50%, rgba(0, 0, 0, 0.9), transparent 44%);
+        animation: routePulse 16s ease-in-out infinite;
+    }
+
+    .hero-routes::before,
+    .hero-routes::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-repeat: no-repeat;
+        opacity: 0.9;
+    }
+
+    .hero-routes::before {
+        background-image:
+            linear-gradient(90deg, rgba(76, 149, 255, 0.34), rgba(76, 149, 255, 0)),
+            linear-gradient(90deg, rgba(76, 149, 255, 0.34), rgba(76, 149, 255, 0)),
+            linear-gradient(90deg, rgba(76, 149, 255, 0.3), rgba(76, 149, 255, 0)),
+            linear-gradient(90deg, rgba(76, 149, 255, 0.26), rgba(76, 149, 255, 0));
+        background-size: 220px 2px, 180px 2px, 160px 2px, 140px 2px;
+        background-position: calc(74% - 220px) 31%, calc(74% - 180px) 44%, calc(74% - 160px) 57%, calc(74% - 140px) 70%;
+    }
+
+    .hero-routes::after {
+        background-image:
+            linear-gradient(rgba(76, 149, 255, 0.34), rgba(76, 149, 255, 0)),
+            linear-gradient(rgba(76, 149, 255, 0.26), rgba(76, 149, 255, 0)),
+            linear-gradient(rgba(107, 227, 255, 0.28), rgba(107, 227, 255, 0));
+        background-size: 2px 160px, 2px 132px, 2px 148px;
+        background-position: 76% calc(50% - 160px), 69% calc(50% - 132px), 83% calc(50% - 148px);
     }
 
     .hero-title,
@@ -652,6 +776,17 @@
         }
     }
 
+    @keyframes routePulse {
+        0%, 100% {
+            opacity: 0.28;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.52;
+            transform: scale(1.015);
+        }
+    }
+
     .reveal[data-delay="1"] {
         transition-delay: 90ms;
     }
@@ -671,7 +806,8 @@
         .halo-core,
         .landing-motion-orb,
         .landing-motion-beam,
-        .landing-motion-grid {
+        .landing-motion-grid,
+        .hero-routes {
             opacity: 1;
             transform: none;
             transition: none;
@@ -699,6 +835,19 @@
             min-height: 420px;
             order: -1;
         }
+
+        .hero-chip {
+            right: 50%;
+            top: auto;
+            bottom: 8%;
+            width: min(260px, 54vw);
+            transform: translateX(50%) rotate(45deg);
+            opacity: 0.32;
+        }
+
+        .hero-routes {
+            mask-image: radial-gradient(circle at 50% 82%, rgba(0, 0, 0, 0.78), transparent 34%);
+        }
     }
 
     @media (max-width: 760px) {
@@ -718,6 +867,12 @@
         .hero-visual {
             min-height: 340px;
         }
+
+        .landing-hero {
+            border-radius: 30px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
     }
 </style>
 {% endblock %}
@@ -734,6 +889,10 @@
         <span class="landing-motion-orb orb-c"></span>
     </div>
     <section class="landing-section landing-hero" id="company">
+        <div class="hero-scene" aria-hidden="true">
+            <span class="hero-routes"></span>
+            <span class="hero-chip"></span>
+        </div>
         <div class="hero-grid">
             <div class="hero-copy-stack">
                 <div class="landing-kicker reveal is-visible">Silicore</div>
