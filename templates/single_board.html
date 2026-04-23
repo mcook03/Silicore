@@ -1,240 +1,838 @@
 {% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    .page-single .content-flow {
+        gap: 0;
+    }
+
+    .board-open-page {
+        display: grid;
+        gap: 0;
+    }
+
+    .board-open-section {
+        padding: clamp(32px, 6vw, 72px) 0;
+        border-top: 1px solid rgba(136, 214, 255, 0.08);
+    }
+
+    .board-open-section:first-child {
+        border-top: none;
+        padding-top: 8px;
+    }
+
+    .board-hero {
+        display: grid;
+        gap: 28px;
+    }
+
+    .board-hero-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        gap: clamp(24px, 4vw, 56px);
+        align-items: end;
+    }
+
+    .board-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted-strong);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+    }
+
+    .board-kicker::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--cyan), var(--blue));
+        box-shadow: 0 0 0 5px rgba(107, 227, 255, 0.12);
+    }
+
+    .board-hero-title {
+        margin: 12px 0 0;
+        max-width: 10ch;
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 8vw, 6.2rem);
+        line-height: 1.02;
+        letter-spacing: -0.05em;
+        text-wrap: balance;
+    }
+
+    .board-hero-copy {
+        margin: 18px 0 0;
+        max-width: 58ch;
+        color: var(--text-soft);
+        font-size: clamp(1rem, 1.8vw, 1.16rem);
+        line-height: 1.85;
+    }
+
+    .board-posture {
+        display: grid;
+        gap: 16px;
+        align-self: stretch;
+        padding-top: 36px;
+    }
+
+    .board-posture-label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .board-posture-value {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.45rem, 2.2vw, 2.2rem);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+        color: var(--text);
+    }
+
+    .board-posture-copy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .board-metric-ribbon {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        padding-top: 8px;
+    }
+
+    .board-metric {
+        display: grid;
+        gap: 8px;
+        padding-right: 18px;
+        border-right: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-metric:last-child {
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .board-metric-label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .board-metric-value {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 4vw, 4rem);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+        color: var(--text);
+    }
+
+    .board-metric-copy {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .board-analysis-strip {
+        display: grid;
+        grid-template-columns: minmax(220px, 1.15fr) repeat(3, minmax(150px, 1fr)) auto;
+        gap: 14px;
+        align-items: end;
+        padding-top: 8px;
+    }
+
+    .board-field {
+        display: grid;
+        gap: 10px;
+    }
+
+    .board-field label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .board-field input,
+    .board-field select {
+        min-height: 52px;
+        border-radius: 18px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(255, 255, 255, 0.025);
+    }
+
+    .board-field input[type="file"] {
+        padding: 12px 14px;
+    }
+
+    .board-analysis-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .board-open-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+        gap: clamp(28px, 4vw, 56px);
+        align-items: start;
+    }
+
+    .board-column {
+        display: grid;
+        gap: 28px;
+    }
+
+    .board-section-head {
+        display: grid;
+        gap: 10px;
+        max-width: 58ch;
+        margin-bottom: 22px;
+    }
+
+    .board-section-title {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 4.2vw, 4rem);
+        line-height: 1.04;
+        letter-spacing: -0.04em;
+        text-wrap: balance;
+    }
+
+    .board-section-copy {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 15px;
+        line-height: 1.85;
+    }
+
+    .board-open-block {
+        display: grid;
+        gap: 16px;
+        padding-top: 6px;
+    }
+
+    .board-story {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 16px;
+        line-height: 1.9;
+    }
+
+    .board-list {
+        display: grid;
+        gap: 0;
+    }
+
+    .board-list-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: start;
+        padding: 18px 0;
+        border-top: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-list-row:last-child {
+        border-bottom: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-list-title {
+        margin: 0;
+        font-size: 1.08rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .board-list-meta,
+    .board-list-copy {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .board-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        color: var(--text-soft);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .board-chip.low {
+        color: #d0ffee;
+        background: rgba(96, 240, 198, 0.12);
+        border-color: rgba(96, 240, 198, 0.2);
+    }
+
+    .board-chip.medium {
+        color: #ffe4bc;
+        background: rgba(255, 187, 114, 0.14);
+        border-color: rgba(255, 187, 114, 0.2);
+    }
+
+    .board-chip.critical {
+        color: #ffd6d6;
+        background: rgba(255, 127, 127, 0.12);
+        border-color: rgba(255, 127, 127, 0.18);
+    }
+
+    .board-finding-queue {
+        display: grid;
+        gap: 0;
+    }
+
+    .board-finding {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: start;
+        padding: 22px 0;
+        border-top: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-finding:last-child {
+        border-bottom: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-finding-title {
+        margin: 0;
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .board-finding-meta,
+    .board-finding-copy {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .board-bar-list {
+        display: grid;
+        gap: 16px;
+    }
+
+    .board-bar-row {
+        display: grid;
+        gap: 8px;
+    }
+
+    .board-bar-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .board-bar-track {
+        height: 10px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .board-bar-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(125, 178, 255, 0.38), rgba(96, 240, 198, 0.92));
+    }
+
+    .board-domain-grid,
+    .board-signal-grid,
+    .board-console-grid,
+    .board-trace-grid {
+        display: grid;
+        gap: 18px;
+    }
+
+    .board-domain-grid,
+    .board-signal-grid,
+    .board-console-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .board-trace-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .board-line-metric,
+    .board-line-story,
+    .board-console-item {
+        display: grid;
+        gap: 8px;
+        padding: 14px 0 18px;
+        border-top: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-line-metric:last-child,
+    .board-line-story:last-child,
+    .board-console-item:last-child {
+        border-bottom: 1px solid rgba(136, 214, 255, 0.1);
+    }
+
+    .board-line-label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .board-line-value {
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 2vw, 2.2rem);
+        line-height: 1;
+        letter-spacing: -0.04em;
+        color: var(--text);
+    }
+
+    .board-line-copy {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .board-console-question {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .board-console-answer {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .board-empty {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+        padding: 14px 0 6px;
+    }
+
+    @media (max-width: 1180px) {
+        .board-hero-head,
+        .board-open-grid,
+        .board-analysis-strip,
+        .board-domain-grid,
+        .board-signal-grid,
+        .board-console-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .board-metric-ribbon {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .board-metric {
+            border-right: none;
+            padding-right: 0;
+            border-top: 1px solid rgba(136, 214, 255, 0.1);
+            padding-top: 16px;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .board-hero-title,
+        .board-section-title {
+            max-width: none;
+        }
+
+        .board-metric-ribbon,
+        .board-trace-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .board-analysis-actions {
+            justify-content: flex-start;
+        }
+
+        .board-list-row,
+        .board-finding {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="page-shell">
-    <section class="hero">
-        <div class="hero-inner">
+<div class="board-open-page">
+    <section class="board-open-section board-hero">
+        <div class="board-hero-head">
             <div>
-                <div class="eyebrow">Single-Board Analysis</div>
-                <h1 class="hero-title">Run a finished-product review flow on one board.</h1>
-                <p class="hero-copy">Upload a design, choose the engineering context, and generate a fix-first Silicore readout with score traceability, category breakdowns, and review guidance.</p>
-                <div class="hero-metrics">
-                    <div class="data-pill">
-                        <div class="data-pill-label">Board score</div>
-                        <div class="data-pill-value">{% if result %}{{ result.score|round|int if result.score > 10 else (result.score * 10)|round|int }}{% else %}--{% endif %}</div>
-                        <div class="data-pill-copy">Overall engineering posture for the current upload.</div>
-                    </div>
-                    <div class="data-pill">
-                        <div class="data-pill-label">Findings</div>
-                        <div class="data-pill-value">{% if result and result.risks %}{{ result.risks|length }}{% else %}0{% endif %}</div>
-                        <div class="data-pill-copy">Prioritized issues ready for review and triage.</div>
-                    </div>
-                    <div class="data-pill">
-                        <div class="data-pill-label">Review posture</div>
-                        <div class="data-pill-value">{{ selected_board_type.replace('_', ' ')|title if selected_board_type else "General" }}</div>
-                        <div class="data-pill-copy">Analysis tuned to the board context you selected.</div>
-                    </div>
+                <div class="board-kicker">Board Analysis</div>
+                <h1 class="board-hero-title">Silicore intelligence for one board, end to end.</h1>
+                <p class="board-hero-copy">
+                    Upload a PCB design, tune the review context, and generate a Silicore readout that combines prioritized findings, score traceability, Atlas guidance, physics integrity, and readiness signals in one continuous surface.
+                </p>
+            </div>
+
+            <div class="board-posture">
+                <div class="board-posture-label">Current posture</div>
+                <p class="board-posture-value">{{ board_copilot.posture if board_copilot and board_copilot.posture else "Run an analysis to activate the Silicore board readout." }}</p>
+                <p class="board-posture-copy">{{ board_copilot.release_note if board_copilot and board_copilot.release_note else "Once a board is analyzed, Atlas will summarize release posture, dominant pressure, and the next validation loop." }}</p>
+            </div>
+        </div>
+
+        <div class="board-metric-ribbon">
+            <div class="board-metric">
+                <div class="board-metric-label">Board score</div>
+                <div class="board-metric-value">{% if result %}{{ result.score|round|int if result.score > 10 else (result.score * 10)|round|int }}{% else %}--{% endif %}</div>
+                <div class="board-metric-copy">Current 0-100 engineering position for the uploaded board.</div>
+            </div>
+            <div class="board-metric">
+                <div class="board-metric-label">Findings</div>
+                <div class="board-metric-value">{% if result and result.risks %}{{ result.risks|length }}{% else %}0{% endif %}</div>
+                <div class="board-metric-copy">Prioritized risks ready for immediate review and action.</div>
+            </div>
+            <div class="board-metric">
+                <div class="board-metric-label">Confidence</div>
+                <div class="board-metric-value">{{ single_decision.average_confidence|round|int if single_decision and single_decision.average_confidence is defined else 0 }}</div>
+                <div class="board-metric-copy">Average finding confidence across the current Atlas readout.</div>
+            </div>
+            <div class="board-metric">
+                <div class="board-metric-label">Board type</div>
+                <div class="board-metric-value">{{ selected_board_type.replace('_', ' ')|title if selected_board_type else "General" }}</div>
+                <div class="board-metric-copy">Analysis posture applied to this board run.</div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="board-analysis-strip">
+            <div class="board-field">
+                <label for="board_file">Board File</label>
+                <input id="board_file" type="file" name="board_file" required>
+            </div>
+            <div class="board-field">
+                <label for="project_id">Attach To Project</label>
+                <select id="project_id" name="project_id">
+                    <option value="">No project</option>
+                    {% for project in project_options %}
+                    <option value="{{ project.project_id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="board-field">
+                <label for="analysis_profile">Analysis Profile</label>
+                <select id="analysis_profile" name="analysis_profile">
+                    {% for option in analysis_modes.profiles %}
+                    <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="board-field">
+                <label for="analysis_board_type">Board Type</label>
+                <select id="analysis_board_type" name="analysis_board_type">
+                    {% for option in analysis_modes.board_types %}
+                    <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="board-analysis-actions">
+                <button class="btn btn-primary" type="submit">Analyze Board</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="board-open-section">
+        <div class="board-open-grid">
+            <div class="board-column">
+                <div class="board-section-head">
+                    <div class="board-kicker">Atlas Intelligence</div>
+                    <h2 class="board-section-title">Executive engineering readout</h2>
+                    <p class="board-section-copy">Silicore should tell the story of the board clearly before you get lost in raw findings.</p>
+                </div>
+
+                <div class="board-open-block">
+                    {% if result and result.executive_summary %}
+                    <p class="board-story"><strong>{{ result.executive_summary.headline }}</strong> {{ result.executive_summary.summary }}</p>
+                    {% else %}
+                    <p class="board-story">Atlas Intelligence guidance appears here after the first board analysis, summarizing what matters, what is driving risk, and what should be validated next.</p>
+                    {% endif %}
+                </div>
+
+                <div class="board-list">
+                    {% if board_assistant_console and board_assistant_console.questions %}
+                        {% for item in board_assistant_console.questions %}
+                        <div class="board-list-row">
+                            <div>
+                                <h3 class="board-list-title">{{ item.label }}</h3>
+                                <p class="board-list-copy">{{ item.answer }}</p>
+                            </div>
+                            <span class="board-chip">{{ item.route_key|replace('_', ' ')|title }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="board-empty">Run an analysis to activate the Atlas question set.</div>
+                    {% endif %}
                 </div>
             </div>
 
-            <aside class="form-shell">
-                <div class="hero-card-label">Launch review</div>
-                <div class="hero-card-title">Analyze a board</div>
-                <p class="section-copy">Run the same polished workflow every time instead of jumping between raw upload forms and output dumps.</p>
-                <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
-                    <label>
-                        Board File
-                        <input type="file" name="board_file" required>
-                    </label>
-                    <label>
-                        Attach to Project
-                        <select name="project_id">
-                            <option value="">No project</option>
-                            {% for project in project_options %}
-                            <option value="{{ project.project_id }}">{{ project.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </label>
-                    <label>
-                        Analysis Profile
-                        <select name="analysis_profile">
-                            {% for option in analysis_modes.profiles %}
-                            <option value="{{ option.value }}" {% if selected_profile == option.value %}selected{% endif %}>{{ option.label }}</option>
-                            {% endfor %}
-                        </select>
-                    </label>
-                    <label>
-                        Board Type
-                        <select name="analysis_board_type">
-                            {% for option in analysis_modes.board_types %}
-                            <option value="{{ option.value }}" {% if selected_board_type == option.value %}selected{% endif %}>{{ option.label }}</option>
-                            {% endfor %}
-                        </select>
-                    </label>
-                    <button class="btn btn-primary" type="submit">Analyze Board</button>
-                </form>
-            </aside>
+            <div class="board-column">
+                <div class="board-section-head">
+                    <div class="board-kicker">Next Actions</div>
+                    <h2 class="board-section-title">Fix-first sequencing</h2>
+                    <p class="board-section-copy">Prioritize what to change first, why it matters, and what should be checked on the rerun.</p>
+                </div>
+
+                <div class="board-list">
+                    {% if single_decision and single_decision.next_actions %}
+                        {% for item in single_decision.next_actions %}
+                        <div class="board-list-row">
+                            <div>
+                                <h3 class="board-list-title">{{ item.label }}</h3>
+                                <p class="board-list-meta">{{ item.category }} · Confidence {{ item.confidence_score|round|int if item.confidence_score is defined else 0 }} · Priority {{ item.priority_score|round|int if item.priority_score is defined else 0 }}</p>
+                                <p class="board-list-copy">{{ item.recommendation_short or item.recommendation or item.message_short or item.message }}</p>
+                            </div>
+                            <span class="board-chip {% if item.severity in ['critical','high'] %}critical{% elif item.severity == 'medium' %}medium{% else %}low{% endif %}">{{ item.severity }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="board-empty">The fix queue appears after analysis and ranks the top actions by confidence, pressure, and engineering impact.</div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="viz-grid">
-        <article class="feature-flow">
-            <div class="section-kicker">Atlas narrative</div>
-            <h2 class="section-title">Executive engineering readout</h2>
-            {% if result and result.executive_summary %}
-            <div class="summary-panel">
-                <strong>{{ result.executive_summary.headline }}</strong>
-                <p class="section-copy">{{ result.executive_summary.summary }}</p>
-            </div>
-            {% if result.executive_summary.top_issues %}
-            <div class="timeline">
-                {% for item in result.executive_summary.top_issues[:4] %}
-                <div class="timeline-row">
-                    <div>
-                        <div class="list-title">{{ item.short_title if item.short_title is defined else item.message }}</div>
-                        <div class="list-meta">{{ item.severity|upper if item.severity is defined else "ISSUE" }}</div>
-                    </div>
+    <section class="board-open-section">
+        <div class="board-section-head">
+            <div class="board-kicker">Silicore Lenses</div>
+            <h2 class="board-section-title">Read the board through the right engineering surfaces.</h2>
+            <p class="board-section-copy">The board page should expose the Silicore system, not just an upload result: domain pressure, parser trust, physics estimates, CAM readiness, and design-review context in one flow.</p>
+        </div>
+
+        <div class="board-domain-grid">
+            {% if board_review_layers and board_review_layers.domain_cards %}
+                {% for item in board_review_layers.domain_cards %}
+                <div class="board-line-story">
+                    <div class="board-line-label">{{ item.title }}</div>
+                    <div class="board-line-value">{{ item.count }}</div>
+                    <div class="board-line-copy">{{ item.severity_label }} · Confidence {{ item.confidence|round|int }} · Traceability {{ item.traceability|round|int }}. {{ item.headline }}</div>
                 </div>
                 {% endfor %}
-            </div>
-            {% endif %}
             {% else %}
-            <div class="empty-state">Atlas Intelligence guidance appears after the first board analysis.</div>
+                <div class="board-empty">Domain pressure cards appear after a board has enough engineering context to classify findings.</div>
             {% endif %}
-        </article>
+        </div>
 
-        <article class="feature-flow">
-            <div class="section-kicker">Board stage</div>
-            <h2 class="section-title">Inspection surface</h2>
-            <div class="canvas-frame">
-                <div class="canvas-center"></div>
+        <div class="board-signal-grid" style="margin-top: 20px;">
+            {% if board_review_layers %}
+            <div class="board-line-story">
+                <div class="board-line-label">{{ board_review_layers.signal_lane.title }}</div>
+                <div class="board-line-value">Signal</div>
+                <div class="board-line-copy">{{ board_review_layers.signal_lane.summary }} {{ board_review_layers.signal_lane.detail }}</div>
             </div>
-        </article>
+            <div class="board-line-story">
+                <div class="board-line-label">{{ board_review_layers.physics_lane.title }}</div>
+                <div class="board-line-value">Physics</div>
+                <div class="board-line-copy">{{ board_review_layers.physics_lane.summary }} {{ board_review_layers.physics_lane.detail }}</div>
+            </div>
+            <div class="board-line-story">
+                <div class="board-line-label">{{ board_review_layers.cam_lane.title }}</div>
+                <div class="board-line-value">CAM</div>
+                <div class="board-line-copy">{{ board_review_layers.cam_lane.summary }} {{ board_review_layers.cam_lane.detail }}</div>
+            </div>
+            <div class="board-line-story">
+                <div class="board-line-label">{{ board_review_layers.parser_lane.title }}</div>
+                <div class="board-line-value">Parser</div>
+                <div class="board-line-copy">{{ board_review_layers.parser_lane.summary }} {{ board_review_layers.parser_lane.detail }}</div>
+            </div>
+            {% endif %}
+        </div>
     </section>
 
-    <section class="viz-grid">
-        <article class="viz-panel">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Severity split</div>
-                    <h2 class="section-title">Finding intensity</h2>
+    <section class="board-open-section">
+        <div class="board-open-grid">
+            <div class="board-column">
+                <div class="board-section-head">
+                    <div class="board-kicker">Traceability</div>
+                    <h2 class="board-section-title">Why this score exists</h2>
+                    <p class="board-section-copy">Expose the score logic, the penalty distribution, and the evidence depth so the page feels like a real engineering tool, not a black box.</p>
                 </div>
-            </div>
-            <div class="bar-list">
-                {% if single_chart and single_chart.severity_bars and single_chart.severity_bars["items"] %}
-                    {% for item in single_chart.severity_bars["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
-                        </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state" style="margin:0;">Severity distribution appears after analysis.</div>
-                {% endif %}
-            </div>
-        </article>
 
-        <article class="viz-panel">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Category spread</div>
-                    <h2 class="section-title">Risk distribution by domain</h2>
-                </div>
-            </div>
-            <div class="bar-list">
-                {% if single_chart and single_chart.category_bars and single_chart.category_bars["items"] %}
-                    {% for item in single_chart.category_bars["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
+                <div class="board-trace-grid">
+                    {% if board_review_layers and board_review_layers.traceability_stats %}
+                        {% for item in board_review_layers.traceability_stats %}
+                        <div class="board-line-metric">
+                            <div class="board-line-label">{{ item.label }}</div>
+                            <div class="board-line-value">{{ item.value }}</div>
+                            <div class="board-line-copy">{{ item.subtext }}</div>
                         </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state" style="margin:0;">Category distribution appears once grouped findings are available.</div>
-                {% endif %}
-            </div>
-        </article>
-    </section>
+                        {% endfor %}
+                    {% else %}
+                        <div class="board-empty">Traceability metrics appear after the board has real evidence linked to findings.</div>
+                    {% endif %}
+                </div>
 
-    <section class="viz-grid">
-        <article class="feature-flow">
-            <div class="section-kicker">Review lenses</div>
-            <h2 class="section-title">Read the board through multiple engineering lenses.</h2>
-            <div class="stats-grid">
-                {% if board_review_layers and board_review_layers.review_cards %}
-                    {% for item in board_review_layers.review_cards[:6] %}
-                    <div class="metric-card">
-                        <div class="metric-label">{{ item.title }}</div>
-                        <div class="metric-value-text">{{ item.value }}</div>
-                        <div class="metric-sub">{{ item.copy }}</div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">Advanced review lenses become available once analysis has produced enough board context.</div>
-                {% endif %}
-            </div>
-        </article>
-
-        <article class="feature-flow">
-            <div class="section-kicker">Traceability</div>
-            <h2 class="section-title">Why this score exists</h2>
-            {% if result and result.score_explanation %}
-            <div class="stats-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Start score</div>
-                    <div class="metric-value">{{ result.score_explanation.start_score|default(0) }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Total penalty</div>
-                    <div class="metric-value">{{ result.score_explanation.total_penalty|default(0) }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Parser confidence</div>
-                    <div class="metric-value">{{ result.parser_confidence.score|round|int if result.parser_confidence and result.parser_confidence.score is defined else 0 }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Physics risks</div>
-                    <div class="metric-value">{{ result.physics_summary.risks|length if result.physics_summary and result.physics_summary.risks else 0 }}</div>
-                </div>
-            </div>
-            <div class="bar-list" style="margin-top:18px;">
                 {% if single_chart and single_chart.penalty_bars and single_chart.penalty_bars["items"] %}
+                <div class="board-bar-list" style="margin-top: 18px;">
                     {% for item in single_chart.penalty_bars["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
+                    <div class="board-bar-row">
+                        <div class="board-bar-label">
                             <span>{{ item.label }}</span>
                             <span>{{ item.value }}</span>
                         </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                        <div class="board-bar-track">
+                            <div class="board-bar-fill" style="width: {{ item.width_pct }}%;"></div>
                         </div>
                     </div>
                     {% endfor %}
+                </div>
                 {% endif %}
             </div>
-            {% else %}
-            <div class="empty-state">Traceability and penalty logic become available after analysis.</div>
-            {% endif %}
-        </article>
+
+            <div class="board-column">
+                <div class="board-section-head">
+                    <div class="board-kicker">Distribution</div>
+                    <h2 class="board-section-title">How the pressure is distributed</h2>
+                    <p class="board-section-copy">See intensity and risk spread by severity and engineering domain, so the board story stays legible at a glance.</p>
+                </div>
+
+                <div class="board-open-block">
+                    <div class="board-line-label">Severity split</div>
+                    <div class="board-bar-list">
+                        {% if single_chart and single_chart.severity_bars and single_chart.severity_bars["items"] %}
+                            {% for item in single_chart.severity_bars["items"] %}
+                            <div class="board-bar-row">
+                                <div class="board-bar-label">
+                                    <span>{{ item.label }}</span>
+                                    <span>{{ item.value }}</span>
+                                </div>
+                                <div class="board-bar-track">
+                                    <div class="board-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="board-empty">Severity distribution appears after analysis.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="board-open-block">
+                    <div class="board-line-label">Category spread</div>
+                    <div class="board-bar-list">
+                        {% if single_chart and single_chart.category_bars and single_chart.category_bars["items"] %}
+                            {% for item in single_chart.category_bars["items"] %}
+                            <div class="board-bar-row">
+                                <div class="board-bar-label">
+                                    <span>{{ item.label }}</span>
+                                    <span>{{ item.value }}</span>
+                                </div>
+                                <div class="board-bar-track">
+                                    <div class="board-bar-fill" style="width: {{ item.width_pct }}%;"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="board-empty">Category distribution appears when grouped findings are available.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section class="feature-flow">
-        <div class="section-kicker">Findings queue</div>
-        <h2 class="section-title">Fix-first engineering review</h2>
-        {% if result and result.risks %}
-        <div class="timeline">
-            {% for risk in result.risks[:20] %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ risk.short_title if risk.short_title else risk.message }}</div>
-                    <div class="list-meta">{{ risk.category|replace('_', ' ')|title }} · {{ risk.severity|upper }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</div>
-                    {% if risk.recommendation %}<div class="list-meta">{{ risk.recommendation }}</div>{% endif %}
+    <section class="board-open-section">
+        <div class="board-open-grid">
+            <div class="board-column">
+                <div class="board-section-head">
+                    <div class="board-kicker">Atlas Console</div>
+                    <h2 class="board-section-title">Decision support built into the analysis flow</h2>
+                    <p class="board-section-copy">The board page should feel like Silicore is helping the engineer think, not just listing issues.</p>
                 </div>
-                <span class="mini-chip {% if risk.severity in ['critical','high'] %}mini-chip-critical{% elif risk.severity == 'medium' %}mini-chip-medium{% else %}mini-chip-low{% endif %}">{{ risk.severity }}</span>
+
+                <div class="board-console-grid">
+                    {% if board_assistant_console and board_assistant_console.review_lenses %}
+                        {% for item in board_assistant_console.review_lenses %}
+                        <div class="board-console-item">
+                            <div class="board-line-label">{{ item.label }}</div>
+                            <div class="board-console-question">{{ item.headline }}</div>
+                            <div class="board-console-answer">{{ item.copy }}</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="board-empty">Atlas review lenses appear after analysis.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="board-column">
+                <div class="board-section-head">
+                    <div class="board-kicker">Value Layer</div>
+                    <h2 class="board-section-title">Silicore metrics that matter on one board</h2>
+                    <p class="board-section-copy">Critical pressure, actionable fixes, score posture, and readiness should all live in the same analysis story.</p>
+                </div>
+
+                <div class="board-list">
+                    {% if board_value_metrics %}
+                        {% for item in board_value_metrics %}
+                        <div class="board-list-row">
+                            <div>
+                                <h3 class="board-list-title">{{ item.label }}</h3>
+                                <p class="board-list-copy">{{ item.subtext }}</p>
+                            </div>
+                            <span class="board-chip">{{ item.value }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="board-empty">Value metrics appear after the current run has enough signal to summarize.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="board-open-section">
+        <div class="board-section-head">
+            <div class="board-kicker">Findings Queue</div>
+            <h2 class="board-section-title">Fix-first engineering review</h2>
+            <p class="board-section-copy">Keep the findings stream readable, grounded in engineering language, and immediately actionable.</p>
+        </div>
+
+        {% if result and result.risks %}
+        <div class="board-finding-queue">
+            {% for risk in result.risks[:20] %}
+            <div class="board-finding">
+                <div>
+                    <h3 class="board-finding-title">{{ risk.short_title if risk.short_title else risk.message }}</h3>
+                    <p class="board-finding-meta">{{ risk.category|replace('_', ' ')|title }} · {{ risk.severity|upper }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</p>
+                    {% if risk.recommendation %}<p class="board-finding-copy">{{ risk.recommendation }}</p>{% endif %}
+                </div>
+                <span class="board-chip {% if risk.severity in ['critical','high'] %}critical{% elif risk.severity == 'medium' %}medium{% else %}low{% endif %}">{{ risk.severity }}</span>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="empty-state">No findings yet. Upload a board to populate the review queue.</div>
+        <div class="board-empty">No findings yet. Upload a board to populate the Silicore review queue.</div>
         {% endif %}
     </section>
 </div>
