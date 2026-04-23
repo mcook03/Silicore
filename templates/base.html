@@ -910,6 +910,93 @@
             font-size: 12px;
         }
 
+        .marketing-footer {
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(220px, 1.2fr) repeat(4, minmax(120px, 1fr));
+            gap: 26px;
+            padding: 18px 0 4px;
+        }
+
+        .marketing-footer-brand {
+            display: grid;
+            gap: 14px;
+            align-content: start;
+        }
+
+        .marketing-footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            letter-spacing: -0.04em;
+            color: var(--text);
+        }
+
+        .marketing-footer-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #7b5cff, #2d59ff);
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 12px 24px rgba(45, 89, 255, 0.22);
+        }
+
+        .marketing-footer-copy {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+            max-width: 24ch;
+        }
+
+        .marketing-footer-socials {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .marketing-footer-social {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-soft);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .marketing-footer-group {
+            display: grid;
+            gap: 12px;
+            align-content: start;
+        }
+
+        .marketing-footer-title {
+            color: var(--muted-strong);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .marketing-footer-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .marketing-footer-item {
+            color: var(--text-soft);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
         @media (max-width: 1180px) {
             .site-header-inner,
             .hero-inner,
@@ -929,6 +1016,10 @@
             .nav-strip,
             .header-actions {
                 justify-content: flex-start;
+            }
+
+            .marketing-footer {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
@@ -968,6 +1059,10 @@
 
             .nav-pills {
                 width: 100%;
+            }
+
+            .marketing-footer {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1058,12 +1153,55 @@
 
         <footer class="footer">
             {% if active_page == "home" %}
-            <div>Silicore builds hardware design intelligence systems. Nexus is the platform. Atlas is the intelligence layer.</div>
-            <div class="marketing-nav">
-                <a class="marketing-link" href="{{ url_for('index') }}#company">Silicore</a>
-                <a class="marketing-link" href="{{ url_for('index') }}#platform">Nexus</a>
-                <a class="marketing-link" href="{{ url_for('index') }}#intelligence">Atlas</a>
-                <a class="marketing-link" href="{{ url_for('index') }}#demo">Demo</a>
+            <div class="marketing-footer">
+                <div class="marketing-footer-brand">
+                    <div class="marketing-footer-logo">
+                        <span class="marketing-footer-mark">S</span>
+                        <span>Silicore</span>
+                    </div>
+                    <div class="marketing-footer-copy">Deep engineering intelligence for PCB design and hardware teams.</div>
+                    <div class="marketing-footer-socials">
+                        <a class="marketing-footer-social" href="{{ url_for('index') }}#company" aria-label="LinkedIn">in</a>
+                        <a class="marketing-footer-social" href="{{ url_for('index') }}#platform" aria-label="X">X</a>
+                        <a class="marketing-footer-social" href="{{ url_for('index') }}#demo" aria-label="Contact">[]</a>
+                    </div>
+                </div>
+                <div class="marketing-footer-group">
+                    <div class="marketing-footer-title">Platform</div>
+                    <div class="marketing-footer-list">
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#platform">Overview</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#intelligence">Features</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">Lifecycle</a>
+                        <a class="marketing-footer-item" href="{{ url_for('login_page') }}">Security</a>
+                    </div>
+                </div>
+                <div class="marketing-footer-group">
+                    <div class="marketing-footer-title">Solutions</div>
+                    <div class="marketing-footer-list">
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">PCB Design</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">Signal Integrity</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">Power Integrity</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">Thermal Analysis</a>
+                    </div>
+                </div>
+                <div class="marketing-footer-group">
+                    <div class="marketing-footer-title">Resources</div>
+                    <div class="marketing-footer-list">
+                        <a class="marketing-footer-item" href="{{ url_for('login_page') }}">Documentation</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#intelligence">Blog</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#demo">Case Studies</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#demo">Webinars</a>
+                    </div>
+                </div>
+                <div class="marketing-footer-group">
+                    <div class="marketing-footer-title">Company</div>
+                    <div class="marketing-footer-list">
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#company">About Us</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#demo">Careers</a>
+                        <a class="marketing-footer-item" href="{{ url_for('index') }}#platform">Partners</a>
+                        <a class="marketing-footer-item" href="mailto:hello@silicore.ai">Contact Us</a>
+                    </div>
+                </div>
             </div>
             {% else %}
             <div>Silicore Nexus turns PCB analysis, revision intelligence, and release coordination into one engineering operating system.</div>
