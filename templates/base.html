@@ -913,7 +913,7 @@
         .marketing-footer {
             width: 100%;
             display: grid;
-            grid-template-columns: minmax(220px, 1.2fr) repeat(4, minmax(120px, 1fr));
+            grid-template-columns: minmax(240px, 1.35fr) repeat(3, minmax(140px, 1fr));
             gap: 26px;
             padding: 18px 0 4px;
         }
@@ -940,10 +940,17 @@
             border-radius: 14px;
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, #7b5cff, #2d59ff);
-            color: white;
-            font-weight: 800;
-            box-shadow: 0 12px 24px rgba(45, 89, 255, 0.22);
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 12px 24px rgba(45, 89, 255, 0.14);
+            overflow: hidden;
+        }
+
+        .marketing-footer-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .marketing-footer-copy {
@@ -1156,14 +1163,15 @@
             <div class="marketing-footer">
                 <div class="marketing-footer-brand">
                     <div class="marketing-footer-logo">
-                        <span class="marketing-footer-mark">S</span>
+                        <span class="marketing-footer-mark">
+                            <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore logo">
+                        </span>
                         <span>Silicore</span>
                     </div>
                     <div class="marketing-footer-copy">Deep engineering intelligence for PCB design and hardware teams.</div>
                     <div class="marketing-footer-socials">
                         <a class="marketing-footer-social" href="{{ url_for('index') }}#company" aria-label="LinkedIn">in</a>
                         <a class="marketing-footer-social" href="{{ url_for('index') }}#platform" aria-label="X">X</a>
-                        <a class="marketing-footer-social" href="{{ url_for('index') }}#demo" aria-label="Contact">[]</a>
                     </div>
                 </div>
                 <div class="marketing-footer-group">
@@ -1172,11 +1180,6 @@
                         <a class="marketing-footer-item" href="{{ url_for('index') }}#platform">Overview</a>
                         <a class="marketing-footer-item" href="{{ url_for('index') }}#intelligence">Features</a>
                         <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">Lifecycle</a>
-                    </div>
-                </div>
-                <div class="marketing-footer-group">
-                    <div class="marketing-footer-title">Solutions</div>
-                    <div class="marketing-footer-list">
                     </div>
                 </div>
                 <div class="marketing-footer-group">
