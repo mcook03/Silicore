@@ -432,15 +432,23 @@
         grid-template-columns: minmax(0, 1.1fr) auto;
         gap: 28px;
         align-items: center;
-        padding: clamp(26px, 4vw, 38px);
+        padding: clamp(28px, 4vw, 42px);
         border-radius: 34px;
         border: 1px solid rgba(136, 214, 255, 0.16);
         background:
-            radial-gradient(circle at 100% 100%, rgba(83, 110, 255, 0.28), transparent 28%),
-            radial-gradient(circle at 0% 0%, rgba(124, 83, 255, 0.12), transparent 26%),
-            linear-gradient(135deg, rgba(10, 12, 28, 0.96), rgba(12, 20, 44, 0.92));
-        box-shadow: 0 24px 70px rgba(8, 10, 30, 0.4);
+            radial-gradient(circle at 100% 100%, rgba(61, 141, 255, 0.22), transparent 30%),
+            radial-gradient(circle at 0% 0%, rgba(107, 227, 255, 0.1), transparent 24%),
+            linear-gradient(135deg, rgba(7, 17, 27, 0.98), rgba(12, 27, 42, 0.94));
+        box-shadow: 0 24px 70px rgba(4, 11, 18, 0.36);
         overflow: hidden;
+    }
+
+    .demo-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 46%);
+        pointer-events: none;
     }
 
     .demo-panel::after {
@@ -451,7 +459,7 @@
         width: 46%;
         height: 90%;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(120, 145, 255, 0.24), rgba(120, 145, 255, 0));
+        background: radial-gradient(circle, rgba(88, 146, 255, 0.2), rgba(88, 146, 255, 0));
         pointer-events: none;
     }
 
@@ -467,20 +475,23 @@
         margin: 0;
         font-family: var(--font-display);
         font-size: clamp(2rem, 4vw, 3.4rem);
-        line-height: 1;
-        letter-spacing: -0.05em;
-        color: #f4f7ff;
+        line-height: 1.04;
+        letter-spacing: -0.035em;
+        color: var(--landing-text);
     }
 
     .demo-panel-title .accent {
-        color: #9e7dff;
+        background: var(--intel-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
     }
 
     .demo-panel-copy p {
         margin: 0;
-        color: #c8d3e8;
-        font-size: 1rem;
-        line-height: 1.8;
+        color: var(--landing-soft);
+        font-size: 1.02rem;
+        line-height: 1.85;
     }
 
     .demo-panel-actions {
@@ -493,15 +504,15 @@
     }
 
     .page-home .demo-panel .btn-primary {
-        background: linear-gradient(135deg, #7a5cff, #8f8dff);
-        color: #f7f9ff;
-        box-shadow: 0 16px 34px rgba(122, 92, 255, 0.28);
+        background: linear-gradient(135deg, #7fe0ff, #4c95ff);
+        color: #03111a;
+        box-shadow: 0 16px 34px rgba(76, 149, 255, 0.22);
     }
 
     .page-home .demo-panel .btn-secondary {
-        background: rgba(255, 255, 255, 0.02);
-        border-color: rgba(160, 174, 255, 0.26);
-        color: #eef3ff;
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(136, 214, 255, 0.18);
+        color: var(--landing-text);
     }
 
     .reveal {
@@ -727,10 +738,9 @@
     <section class="landing-section" id="demo">
         <div class="demo-panel reveal">
             <div class="demo-panel-copy">
-                <div class="landing-kicker">Next Step</div>
-                <h2 class="demo-panel-title">Ready to accelerate your <span class="accent">hardware journey?</span></h2>
+                <h2 class="demo-panel-title">Ready to accelerate your <span class="accent">Silicore journey?</span></h2>
                 <p>
-                    Step into Silicore Nexus when you are ready to move from brand story into the full platform experience, or sign in to continue where your team left off.
+                    Analyze your designs with Silicore. Build with intelligence.
                 </p>
             </div>
             <div class="demo-panel-actions">
