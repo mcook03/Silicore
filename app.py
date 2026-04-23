@@ -3277,6 +3277,11 @@ def _build_board_review_layers(result):
                 "summary": "Gerber/CAM recognition appears after analysis.",
                 "detail": "Silicore will report bundle completeness, copper/outline/drill recognition, and geometry-backed review readiness for CAM inputs.",
             },
+            "parser_lane": {
+                "title": "Parser confidence",
+                "summary": "Parser confidence appears after analysis.",
+                "detail": "Silicore will report parser trust, recognized traces, component capture, and board-ingest confidence after the first run.",
+            },
         }
 
     domain_map = defaultdict(
