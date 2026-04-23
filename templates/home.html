@@ -236,41 +236,6 @@
         align-items: center;
         padding-top: clamp(18px, 5vw, 44px);
         padding-bottom: clamp(42px, 8vw, 84px);
-        padding-left: clamp(22px, 3vw, 34px);
-        padding-right: clamp(22px, 3vw, 34px);
-        overflow: hidden;
-        border-radius: 42px;
-        border: 1px solid rgba(136, 214, 255, 0.14);
-        background:
-            radial-gradient(circle at 18% 22%, rgba(61, 141, 255, 0.08), transparent 22%),
-            radial-gradient(circle at 82% 70%, rgba(107, 227, 255, 0.06), transparent 18%),
-            linear-gradient(180deg, rgba(3, 11, 20, 0.96), rgba(4, 12, 20, 0.98));
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 24px 90px rgba(0, 0, 0, 0.32);
-    }
-
-    .landing-hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 28%),
-            radial-gradient(circle at 72% 56%, rgba(52, 103, 255, 0.12), transparent 24%);
-        pointer-events: none;
-    }
-
-    .landing-hero::after {
-        content: "";
-        position: absolute;
-        inset: auto 5% 10% auto;
-        width: 44%;
-        height: 62%;
-        background:
-            linear-gradient(rgba(76, 149, 255, 0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(76, 149, 255, 0.06) 1px, transparent 1px);
-        background-size: 28px 28px;
-        mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.68), transparent 78%);
-        opacity: 0.22;
-        pointer-events: none;
     }
 
     .hero-copy-stack,
@@ -291,23 +256,6 @@
         max-width: 980px;
         justify-items: center;
         text-align: center;
-    }
-
-    .hero-scene {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-    }
-
-    .hero-board-svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0.92;
-        animation: routePulse 16s ease-in-out infinite;
     }
 
     .hero-title,
@@ -572,45 +520,14 @@
     }
 
     .demo-panel {
-        position: relative;
         display: grid;
         grid-template-columns: minmax(0, 1.1fr) auto;
         gap: 28px;
         align-items: center;
-        padding: clamp(28px, 4vw, 42px);
-        border-radius: 34px;
-        border: 1px solid rgba(136, 214, 255, 0.16);
-        background:
-            radial-gradient(circle at 100% 100%, rgba(61, 141, 255, 0.22), transparent 30%),
-            radial-gradient(circle at 0% 0%, rgba(107, 227, 255, 0.1), transparent 24%),
-            linear-gradient(135deg, rgba(7, 17, 27, 0.98), rgba(12, 27, 42, 0.94));
-        box-shadow: 0 24px 70px rgba(4, 11, 18, 0.36);
-        overflow: hidden;
-    }
-
-    .demo-panel::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 46%);
-        pointer-events: none;
-    }
-
-    .demo-panel::after {
-        content: "";
-        position: absolute;
-        right: -10%;
-        bottom: -32%;
-        width: 46%;
-        height: 90%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(88, 146, 255, 0.2), rgba(88, 146, 255, 0));
-        pointer-events: none;
+        padding: 0;
     }
 
     .demo-panel-copy {
-        position: relative;
-        z-index: 1;
         display: grid;
         gap: 14px;
         max-width: 560px;
@@ -645,8 +562,6 @@
     }
 
     .demo-panel-actions {
-        position: relative;
-        z-index: 1;
         display: flex;
         flex-wrap: wrap;
         gap: 14px;
@@ -706,17 +621,6 @@
         }
     }
 
-    @keyframes routePulse {
-        0%, 100% {
-            opacity: 0.28;
-            transform: scale(1);
-        }
-        50% {
-            opacity: 0.52;
-            transform: scale(1.015);
-        }
-    }
-
     .reveal[data-delay="1"] {
         transition-delay: 90ms;
     }
@@ -736,8 +640,7 @@
         .halo-core,
         .landing-motion-orb,
         .landing-motion-beam,
-        .landing-motion-grid,
-        .hero-board-svg {
+        .landing-motion-grid {
             opacity: 1;
             transform: none;
             transition: none;
@@ -761,9 +664,6 @@
             justify-content: flex-start;
         }
 
-        .hero-board-svg {
-            opacity: 0.42;
-        }
     }
 
     @media (max-width: 760px) {
@@ -781,9 +681,8 @@
         }
 
         .landing-hero {
-            border-radius: 30px;
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-left: 0;
+            padding-right: 0;
         }
     }
 </style>
@@ -801,118 +700,6 @@
         <span class="landing-motion-orb orb-c"></span>
     </div>
     <section class="landing-section landing-hero" id="company">
-        <div class="hero-scene" aria-hidden="true">
-            <svg class="hero-board-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                    <radialGradient id="heroChipGlow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="rgba(111,189,255,0.45)"/>
-                        <stop offset="55%" stop-color="rgba(61,141,255,0.18)"/>
-                        <stop offset="100%" stop-color="rgba(61,141,255,0)"/>
-                    </radialGradient>
-                    <linearGradient id="heroTrace" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#6ed9ff" stop-opacity="0.85"/>
-                        <stop offset="100%" stop-color="#2d59ff" stop-opacity="0.35"/>
-                    </linearGradient>
-                    <linearGradient id="heroChipBody" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#0b1c30"/>
-                        <stop offset="100%" stop-color="#071221"/>
-                    </linearGradient>
-                    <filter id="heroSoftGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="10"/>
-                    </filter>
-                    <filter id="heroSharpGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="3"/>
-                    </filter>
-                </defs>
-
-                <rect x="0" y="0" width="1600" height="900" fill="transparent"/>
-                <circle cx="1190" cy="515" r="230" fill="url(#heroChipGlow)" filter="url(#heroSoftGlow)" opacity="0.9"/>
-
-                <g stroke="url(#heroTrace)" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9">
-                    <path d="M1190 515 L930 360 L870 290" />
-                    <path d="M1190 515 L980 345 L950 250" />
-                    <path d="M1190 515 L1040 320 L1035 230" />
-                    <path d="M1190 515 L1120 300 L1125 210" />
-                    <path d="M1190 515 L1215 292 L1260 205" />
-                    <path d="M1190 515 L1310 320 L1380 236" />
-                    <path d="M1190 515 L1390 360 L1480 306" />
-                    <path d="M1190 515 L1470 420 L1540 398" />
-                    <path d="M1190 515 L1485 520 L1555 520" />
-                    <path d="M1190 515 L1468 610 L1535 640" />
-                    <path d="M1190 515 L1405 675 L1470 744" />
-                    <path d="M1190 515 L1315 705 L1365 790" />
-                    <path d="M1190 515 L1210 732 L1240 826" />
-                    <path d="M1190 515 L1110 720 L1105 816" />
-                    <path d="M1190 515 L1020 694 L980 790" />
-                    <path d="M1190 515 L940 650 L870 720" />
-                </g>
-
-                <g stroke="url(#heroTrace)" stroke-width="1.5" fill="none" opacity="0.42">
-                    <path d="M780 620 L930 560 L1030 570" />
-                    <path d="M820 700 L970 650 L1080 658" />
-                    <path d="M850 300 L965 360 L1048 372" />
-                    <path d="M940 248 L1038 338 L1115 352" />
-                    <path d="M1370 280 L1310 388 L1272 436" />
-                    <path d="M1455 356 L1368 438 L1308 468" />
-                </g>
-
-                <g fill="#5da7ff" opacity="0.9" filter="url(#heroSharpGlow)">
-                    <circle cx="870" cy="290" r="4"/>
-                    <circle cx="950" cy="250" r="4"/>
-                    <circle cx="1035" cy="230" r="4"/>
-                    <circle cx="1125" cy="210" r="4"/>
-                    <circle cx="1260" cy="205" r="4"/>
-                    <circle cx="1380" cy="236" r="4"/>
-                    <circle cx="1480" cy="306" r="4"/>
-                    <circle cx="1540" cy="398" r="4"/>
-                    <circle cx="1555" cy="520" r="4"/>
-                    <circle cx="1535" cy="640" r="4"/>
-                    <circle cx="1470" cy="744" r="4"/>
-                    <circle cx="1365" cy="790" r="4"/>
-                    <circle cx="1240" cy="826" r="4"/>
-                    <circle cx="1105" cy="816" r="4"/>
-                    <circle cx="980" cy="790" r="4"/>
-                    <circle cx="870" cy="720" r="4"/>
-                </g>
-
-                <g transform="translate(1190 515) rotate(45)">
-                    <rect x="-122" y="-122" width="244" height="244" rx="26" fill="url(#heroChipBody)" stroke="rgba(136,214,255,0.18)" stroke-width="2"/>
-                    <rect x="-92" y="-92" width="184" height="184" rx="18" fill="rgba(8,23,42,0.88)" stroke="rgba(136,214,255,0.08)" stroke-width="1.5"/>
-                    <g stroke="rgba(136,214,255,0.24)" stroke-width="3">
-                        <line x1="-142" y1="-78" x2="-122" y2="-78"/>
-                        <line x1="-142" y1="-52" x2="-122" y2="-52"/>
-                        <line x1="-142" y1="-26" x2="-122" y2="-26"/>
-                        <line x1="-142" y1="0" x2="-122" y2="0"/>
-                        <line x1="-142" y1="26" x2="-122" y2="26"/>
-                        <line x1="-142" y1="52" x2="-122" y2="52"/>
-                        <line x1="-142" y1="78" x2="-122" y2="78"/>
-                        <line x1="122" y1="-78" x2="142" y2="-78"/>
-                        <line x1="122" y1="-52" x2="142" y2="-52"/>
-                        <line x1="122" y1="-26" x2="142" y2="-26"/>
-                        <line x1="122" y1="0" x2="142" y2="0"/>
-                        <line x1="122" y1="26" x2="142" y2="26"/>
-                        <line x1="122" y1="52" x2="142" y2="52"/>
-                        <line x1="122" y1="78" x2="142" y2="78"/>
-                        <line x1="-78" y1="-142" x2="-78" y2="-122"/>
-                        <line x1="-52" y1="-142" x2="-52" y2="-122"/>
-                        <line x1="-26" y1="-142" x2="-26" y2="-122"/>
-                        <line x1="0" y1="-142" x2="0" y2="-122"/>
-                        <line x1="26" y1="-142" x2="26" y2="-122"/>
-                        <line x1="52" y1="-142" x2="52" y2="-122"/>
-                        <line x1="78" y1="-142" x2="78" y2="-122"/>
-                        <line x1="-78" y1="122" x2="-78" y2="142"/>
-                        <line x1="-52" y1="122" x2="-52" y2="142"/>
-                        <line x1="-26" y1="122" x2="-26" y2="142"/>
-                        <line x1="0" y1="122" x2="0" y2="142"/>
-                        <line x1="26" y1="122" x2="26" y2="142"/>
-                        <line x1="52" y1="122" x2="52" y2="142"/>
-                        <line x1="78" y1="122" x2="78" y2="142"/>
-                    </g>
-                    <ellipse cx="0" cy="0" rx="56" ry="34" fill="rgba(23,47,105,0.9)"/>
-                    <path d="M-14 -27 C17 -42, 48 -28, 31 -8 C18 6, -10 5, -20 18 C-28 29, -14 40, 14 35 C-10 48, -45 41, -40 15 C-34 -12, 18 -10, 14 -27 Z" fill="rgba(118,184,255,0.95)" filter="url(#heroSharpGlow)"/>
-                </g>
-            </svg>
-        </div>
         <div class="hero-grid">
             <div class="hero-copy-stack">
                 <div class="landing-kicker reveal is-visible">Silicore</div>
@@ -1055,7 +842,7 @@
     <section class="landing-section" id="demo">
         <div class="demo-panel reveal">
             <div class="demo-panel-copy">
-                <h2 class="demo-panel-title"><span class="lead">Accelerate your</span><span class="accent">Silicore journey</span></h2>
+                <h2 class="demo-panel-title"><span class="lead">Accelerate your</span><span class="accent">Silicore journey?</span></h2>
                 <p>
                     Analyze your designs with Silicore. Build with intelligence.
                 </p>
