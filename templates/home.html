@@ -154,6 +154,17 @@
         gap: 18px;
     }
 
+    .landing-hero .hero-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .landing-hero .hero-copy-stack {
+        max-width: 980px;
+        justify-items: center;
+        text-align: center;
+    }
+
     .hero-title,
     .section-title {
         margin: 0;
@@ -198,6 +209,10 @@
         flex-wrap: wrap;
         gap: 14px;
         margin-top: 8px;
+    }
+
+    .hero-actions {
+        justify-content: center;
     }
 
     .hero-visual {
@@ -434,20 +449,7 @@
                 </p>
                 <div class="hero-actions reveal is-visible" data-delay="3">
                     <a class="btn btn-primary" href="#demo">Request Demo</a>
-                    <a class="btn btn-secondary" href="{{ url_for('login_page') }}">Open Nexus</a>
-                </div>
-            </div>
-
-            <div class="hero-visual reveal is-visible" data-delay="2">
-                <div class="halo-stack">
-                    <div class="halo-ring r1"></div>
-                    <div class="halo-ring r2"></div>
-                    <div class="halo-ring r3"></div>
-                    <div class="halo-core"></div>
-                    <div class="halo-copy-block">
-                        <div class="halo-title">Silicore Nexus</div>
-                        <div class="halo-copy">A platform for hardware design intelligence, shaped by Atlas.</div>
-                    </div>
+                    <a class="btn btn-secondary" href="#platform">Learn More</a>
                 </div>
             </div>
         </div>
