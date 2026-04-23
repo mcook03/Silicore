@@ -307,12 +307,16 @@
     }
 
     .pillar-mark {
-        width: 48px;
-        height: 48px;
+        min-width: 112px;
+        min-height: 52px;
+        padding: 10px 14px;
         border-radius: 18px;
-        display: grid;
+        display: inline-grid;
         place-items: center;
-        font-size: 18px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
         color: #9ed2ff;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(136, 214, 255, 0.12);
@@ -466,7 +470,7 @@
 
         <div class="pillars-grid" style="margin-top: 34px;">
             <article class="pillar reveal">
-                <div class="pillar-mark">S</div>
+                <div class="pillar-mark">Company</div>
                 <h3 class="pillar-title">Silicore</h3>
                 <p class="pillar-copy">
                     The brand and company behind the system. Silicore represents a new category of hardware design intelligence built for teams designing real, high-stakes physical products.
@@ -474,7 +478,7 @@
             </article>
 
             <article class="pillar reveal" data-delay="1">
-                <div class="pillar-mark">N</div>
+                <div class="pillar-mark">Platform</div>
                 <h3 class="pillar-title">Silicore Nexus</h3>
                 <p class="pillar-copy">
                     The platform layer. Nexus is where the experience comes together into one coherent environment for hardware organizations, design review flow, and engineering coordination.
@@ -482,7 +486,7 @@
             </article>
 
             <article class="pillar reveal" data-delay="2">
-                <div class="pillar-mark">A</div>
+                <div class="pillar-mark">Intelligence</div>
                 <h3 class="pillar-title">Atlas Intelligence</h3>
                 <p class="pillar-copy">
                     The intelligence engine inside Nexus. Atlas interprets hardware context, organizes technical signal, and gives the platform a sharper understanding of what matters in design decisions.
