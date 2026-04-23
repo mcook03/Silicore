@@ -278,17 +278,22 @@
 
     .hero-title {
         max-width: 13ch;
-        padding-bottom: 0.1em;
+        padding-bottom: 0.16em;
+        overflow: visible;
     }
 
     .hero-title .landing-intel {
         display: inline-block;
         padding-right: 0.04em;
-        padding-bottom: 0.1em;
+        padding-bottom: 0.14em;
         background: var(--intel-gradient);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
+        filter: drop-shadow(0 0 18px rgba(76, 149, 255, 0.22));
+        text-shadow:
+            0 0 18px rgba(76, 149, 255, 0.18),
+            0 0 42px rgba(13, 73, 255, 0.16);
     }
 
     .hero-copy,
