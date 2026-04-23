@@ -91,6 +91,44 @@
             background: radial-gradient(circle, rgba(96, 240, 198, 0.18), rgba(96, 240, 198, 0));
         }
 
+        body.product-shell {
+            background:
+                radial-gradient(circle at 14% 18%, rgba(107, 227, 255, 0.1), transparent 24%),
+                radial-gradient(circle at 85% 16%, rgba(125, 178, 255, 0.14), transparent 28%),
+                radial-gradient(circle at 50% 72%, rgba(96, 240, 198, 0.05), transparent 26%),
+                linear-gradient(180deg, #04101a 0%, #06111b 36%, #081722 100%);
+        }
+
+        body.product-shell::before {
+            top: -140px;
+            right: -110px;
+            width: 520px;
+            height: 520px;
+            filter: blur(18px);
+            opacity: 0.72;
+            background: radial-gradient(circle, rgba(61, 141, 255, 0.2), rgba(61, 141, 255, 0));
+        }
+
+        body.product-shell::after {
+            left: -120px;
+            bottom: -180px;
+            width: 420px;
+            height: 420px;
+            filter: blur(16px);
+            opacity: 0.52;
+            background: radial-gradient(circle, rgba(96, 240, 198, 0.16), rgba(96, 240, 198, 0));
+        }
+
+        body.product-shell .ambient-grid {
+            opacity: 0.18;
+        }
+
+        body.product-shell .site-header-inner {
+            background: rgba(5, 15, 23, 0.74);
+            border-color: rgba(136, 214, 255, 0.14);
+            box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+        }
+
         a {
             color: inherit;
             text-decoration: none;
@@ -1079,7 +1117,7 @@
 
                 <div class="header-actions">
                     <a href="{{ url_for('login_page') }}" class="btn btn-secondary">Sign In</a>
-                    <a href="{{ url_for('projects_page') }}" class="btn btn-primary">Open Nexus</a>
+                    <a href="{{ url_for('single_board_page') }}" class="btn btn-primary">Open Nexus</a>
                 </div>
                 {% else %}
                 <nav class="nav-strip" aria-label="Primary">

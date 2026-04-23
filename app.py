@@ -3949,7 +3949,6 @@ def _download_href(item):
 
 def _get_nav_items(active_page):
     items = [
-        {"key": "home", "label": "Nexus", "subtitle": "Platform overview", "href": url_for("index"), "icon": "◈", "active": active_page == "home"},
         {"key": "single", "label": "Board Analysis", "subtitle": "Single-board review", "href": url_for("single_board_page"), "icon": "▣", "active": active_page == "single"},
         {"key": "project", "label": "Nexus Review", "subtitle": "Multi-board comparison", "href": url_for("project_page"), "icon": "▤", "active": active_page == "project"},
         {"key": "projects_workspace", "label": "Projects", "subtitle": "Engineering workspaces", "href": url_for("projects_page"), "icon": "◆", "active": active_page == "projects_workspace"},
@@ -5404,7 +5403,7 @@ def login_page():
                         if delivery.get("transport") == "smtp"
                         else f"Verification email written to outbox: {delivery.get('path')}"
                     )
-                return redirect(url_for("index"))
+                return redirect(url_for("single_board_page"))
             except Exception as exc:
                 flash(str(exc))
                 return redirect(url_for("login_page"))
@@ -5466,7 +5465,7 @@ def login_page():
             session["session_id"] = session_record["session_id"]
             session["session_token"] = session_record["session_token"]
             flash("Signed in successfully.")
-            return redirect(url_for("index"))
+            return redirect(url_for("single_board_page"))
 
         auth_result = begin_authentication(
             request.form.get("email"),
@@ -5510,7 +5509,7 @@ def login_page():
         session["session_id"] = session_record.get("session_id")
         session["session_token"] = session_record.get("session_token")
         flash("Signed in successfully.")
-        return redirect(url_for("index"))
+        return redirect(url_for("single_board_page"))
 
     return _render_page(
         active_page="login",
