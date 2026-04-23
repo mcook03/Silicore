@@ -928,31 +928,6 @@
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            font-family: var(--font-display);
-            font-size: 1.2rem;
-            letter-spacing: -0.04em;
-            color: var(--text);
-        }
-
-        .marketing-footer-mark {
-            width: 38px;
-            height: 38px;
-            border-radius: 14px;
-            display: grid;
-            place-items: center;
-            padding: 6px;
-            background: rgba(255, 255, 255, 0.04);
-            box-shadow: 0 12px 24px rgba(45, 89, 255, 0.14);
-            overflow: hidden;
-        }
-
-        .marketing-footer-mark img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transform: scale(1.9) translateX(10%);
-            transform-origin: center;
         }
 
         .marketing-footer-copy {
@@ -1165,10 +1140,13 @@
             <div class="marketing-footer">
                 <div class="marketing-footer-brand">
                     <div class="marketing-footer-logo">
-                        <span class="marketing-footer-mark">
+                        <span class="brand-mark">
                             <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore logo">
                         </span>
-                        <span>Silicore</span>
+                        <span>
+                            <div class="brand-title">Silicore</div>
+                            <div class="brand-subtitle">Engineering Intelligence</div>
+                        </span>
                     </div>
                     <div class="marketing-footer-copy">Deep engineering intelligence for PCB design and hardware teams.</div>
                     <div class="marketing-footer-socials">
