@@ -988,6 +988,21 @@
                     </span>
                 </a>
 
+                {% if active_page == "home" %}
+                <nav class="nav-strip" aria-label="Marketing">
+                    <div class="nav-pills">
+                        <a href="#company" class="nav-pill active"><span>Silicore</span></a>
+                        <a href="#platform" class="nav-pill"><span>Nexus</span></a>
+                        <a href="#intelligence" class="nav-pill"><span>Atlas</span></a>
+                        <a href="#experience" class="nav-pill"><span>Experience</span></a>
+                    </div>
+                </nav>
+
+                <div class="header-actions">
+                    <a href="#demo" class="btn btn-secondary">Request Demo</a>
+                    <a href="{{ url_for('login_page') }}" class="btn btn-primary">Open Nexus</a>
+                </div>
+                {% else %}
                 <nav class="nav-strip" aria-label="Primary">
                     <div class="nav-pills">
                         {% for item in nav_items %}
@@ -1021,6 +1036,7 @@
                         <a href="{{ url_for('login_page') }}" class="btn btn-primary">Sign In</a>
                     {% endif %}
                 </div>
+                {% endif %}
             </div>
         </header>
 
@@ -1041,12 +1057,22 @@
         </main>
 
         <footer class="footer">
+            {% if active_page == "home" %}
+            <div>Silicore builds hardware design intelligence systems. Nexus is the platform. Atlas is the intelligence layer.</div>
+            <div class="marketing-nav">
+                <a class="marketing-link" href="{{ url_for('index') }}#company">Silicore</a>
+                <a class="marketing-link" href="{{ url_for('index') }}#platform">Nexus</a>
+                <a class="marketing-link" href="{{ url_for('index') }}#intelligence">Atlas</a>
+                <a class="marketing-link" href="{{ url_for('index') }}#demo">Demo</a>
+            </div>
+            {% else %}
             <div>Silicore Nexus turns PCB analysis, revision intelligence, and release coordination into one engineering operating system.</div>
             <div class="marketing-nav">
                 <a class="marketing-link" href="{{ url_for('index') }}#product">Product</a>
                 <a class="marketing-link" href="{{ url_for('index') }}#workflows">Workflows</a>
                 <a class="marketing-link" href="{{ url_for('index') }}#deployment">Deployment</a>
             </div>
+            {% endif %}
         </footer>
     </div>
     {% block extra_scripts %}{% endblock %}
