@@ -1,115 +1,299 @@
 {% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    .page-login .app-shell {
+        width: min(1220px, calc(100vw - 28px));
+    }
+
+    .auth-shell {
+        display: grid;
+        gap: 28px;
+    }
+
+    .auth-hero-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+        gap: 24px;
+        padding: clamp(26px, 4vw, 42px);
+        border-radius: 40px;
+        border: 1px solid rgba(136, 214, 255, 0.14);
+        background:
+            radial-gradient(circle at 12% 18%, rgba(107, 227, 255, 0.08), transparent 24%),
+            radial-gradient(circle at 86% 18%, rgba(125, 178, 255, 0.1), transparent 28%),
+            linear-gradient(180deg, rgba(8, 20, 31, 0.94), rgba(5, 13, 21, 0.96));
+        box-shadow: var(--shadow-xl);
+    }
+
+    .auth-copy {
+        display: grid;
+        gap: 18px;
+        align-content: center;
+    }
+
+    .auth-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted-strong);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .auth-kicker::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--cyan), var(--blue));
+        box-shadow: 0 0 0 5px rgba(107, 227, 255, 0.12);
+    }
+
+    .auth-title {
+        margin: 0;
+        max-width: 11ch;
+        font-family: var(--font-display);
+        font-size: clamp(2.8rem, 7vw, 5.8rem);
+        line-height: 0.94;
+        letter-spacing: -0.075em;
+    }
+
+    .auth-copy p {
+        margin: 0;
+        max-width: 58ch;
+        color: var(--muted-strong);
+        font-size: 1.02rem;
+        line-height: 1.85;
+    }
+
+    .auth-points {
+        display: grid;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .auth-point {
+        padding: 14px 0;
+        border-top: 1px solid rgba(136, 214, 255, 0.12);
+        color: var(--text-soft);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .auth-card {
+        padding: 24px;
+        border-radius: 30px;
+        border: 1px solid rgba(136, 214, 255, 0.14);
+        background: rgba(255, 255, 255, 0.035);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .auth-card-head {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+
+    .auth-card-title {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 2vw, 2rem);
+        line-height: 1;
+        letter-spacing: -0.05em;
+    }
+
+    .auth-card-copy {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.75;
+    }
+
+    .auth-form {
+        display: grid;
+        gap: 14px;
+    }
+
+    .auth-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .auth-support-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .auth-support-card {
+        padding: 20px;
+        border-radius: 26px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .auth-support-card .card-title {
+        margin-top: 0;
+    }
+
+    .auth-inline-form {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .auth-inline-form.compact {
+        grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 1040px) {
+        .auth-hero-panel,
+        .auth-grid,
+        .auth-support-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Account access</div>
-            <h1 class="hero-title">Enter the engineering intelligence platform.</h1>
-            <p class="hero-copy">
-                Sign in to Silicore Nexus to run analyses, manage projects, review history, operate validations, and coordinate engineering workflows.
+<div class="auth-shell">
+    <section class="auth-hero-panel">
+        <div class="auth-copy">
+            <div class="auth-kicker">Silicore access</div>
+            <h1 class="auth-title">Sign in or create your account.</h1>
+            <p>
+                Access Silicore Nexus through a dedicated identity page built for both returning users and new teams. If you are new here, create your account first and continue into the platform after setup.
             </p>
-            <div class="stats-grid" style="margin-top:22px;">
-                <div class="metric-card">
-                    <div class="metric-label">Analysis</div>
-                    <div class="metric-sub">Board review, comparison, CAM trust, and risk scoring.</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Operations</div>
-                    <div class="metric-sub">Runtime health, validation lanes, exports, and audit-ready history.</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Governance</div>
-                    <div class="metric-sub">Projects, release gates, assignments, and formal review decisions.</div>
-                </div>
+
+            <div class="auth-points">
+                <div class="auth-point">Sign in with your existing Silicore account to continue into Nexus.</div>
+                <div class="auth-point">Create a new account for yourself or your organization if you are just getting started.</div>
+                <div class="auth-point">Manage verification, password reset, and MFA from the same identity surface.</div>
             </div>
         </div>
 
-        <aside class="hero-card">
-            <div class="hero-card-label">Sign In</div>
-            <div class="hero-card-title">Access the platform</div>
-            <p class="section-copy">Use your Silicore account to continue into the command center.</p>
-            <form method="post" action="{{ url_for('login_page') }}" class="page-stack" style="margin-top:18px;">
+        <aside class="auth-card">
+            <div class="auth-card-head">
+                <div class="section-kicker">Sign In</div>
+                <h2 class="auth-card-title">Access Nexus</h2>
+                <p class="auth-card-copy">Use your existing credentials to enter the dashboard.</p>
+            </div>
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
                 <input type="hidden" name="action" value="login">
                 <label>
                     Email
-                    <input type="email" name="email" required>
+                    <input type="email" name="email" autocomplete="email" required>
                 </label>
                 <label>
                     Password
-                    <input type="password" name="password" required>
+                    <input type="password" name="password" autocomplete="current-password" required>
                 </label>
                 <button class="btn btn-primary" type="submit">Sign In</button>
             </form>
         </aside>
-    </div>
-</section>
+    </section>
 
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Create Account</div>
-        <h2 class="section-title">Provision a new workspace identity.</h2>
-        <form method="post" action="{{ url_for('login_page') }}" class="page-stack" style="margin-top:18px;">
-            <input type="hidden" name="action" value="register">
-            <label>Name<input type="text" name="name" required></label>
-            <label>Email<input type="email" name="email" required></label>
-            <label>Password<input type="password" name="password" required></label>
-            <label>Organization Name<input type="text" name="organization_name" placeholder="Optional organization"></label>
-            <button class="btn btn-secondary" type="submit">Create Account</button>
-        </form>
-    </article>
+    <section class="auth-grid">
+        <article class="auth-card">
+            <div class="auth-card-head">
+                <div class="section-kicker">Create Account</div>
+                <h2 class="auth-card-title">New to Silicore?</h2>
+                <p class="auth-card-copy">Create an account and optional organization to begin using the platform.</p>
+            </div>
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-form">
+                <input type="hidden" name="action" value="register">
+                <label>
+                    Full Name
+                    <input type="text" name="name" autocomplete="name" required>
+                </label>
+                <label>
+                    Email
+                    <input type="email" name="email" autocomplete="email" required>
+                </label>
+                <label>
+                    Password
+                    <input type="password" name="password" autocomplete="new-password" required>
+                </label>
+                <label>
+                    Organization Name
+                    <input type="text" name="organization_name" placeholder="Optional organization">
+                </label>
+                <button class="btn btn-secondary" type="submit">Create Account</button>
+            </form>
+        </article>
 
-    <article class="card">
-        <div class="section-kicker">Identity lifecycle</div>
-        <h2 class="section-title">Verification, reset, and MFA controls.</h2>
-        <div class="page-stack" style="margin-top:18px;">
-            <div class="panel-muted">
-                <div class="card-title" style="margin-top:0;">Verify Email</div>
-                <div class="section-copy">Request a verification token or confirm email ownership.</div>
-                <div class="grid grid-2" style="margin-top:14px;">
-                    <form method="post" action="{{ url_for('login_page') }}" class="page-stack">
-                        <input type="hidden" name="action" value="request_verification">
-                        <label>Email<input type="email" name="email" required></label>
-                        <button class="btn btn-secondary" type="submit">Request Verification</button>
-                    </form>
-                    <form method="post" action="{{ url_for('login_page') }}" class="page-stack">
-                        <input type="hidden" name="action" value="verify_email">
-                        <label>Email<input type="email" name="email" required></label>
-                        <label>Token<input type="text" name="token" required></label>
-                        <button class="btn btn-secondary" type="submit">Verify Email</button>
-                    </form>
-                </div>
+        <article class="auth-card">
+            <div class="auth-card-head">
+                <div class="section-kicker">Identity Help</div>
+                <h2 class="auth-card-title">Verification and password recovery</h2>
+                <p class="auth-card-copy">Handle the common account steps from the same page.</p>
             </div>
 
-            <div class="panel-muted">
-                <div class="card-title" style="margin-top:0;">Reset Password</div>
-                <div class="section-copy">Request Reset or complete Reset Password with a valid token.</div>
-                <div class="grid grid-2" style="margin-top:14px;">
-                    <form method="post" action="{{ url_for('login_page') }}" class="page-stack">
-                        <input type="hidden" name="action" value="request_reset">
-                        <label>Email<input type="email" name="email" required></label>
-                        <button class="btn btn-secondary" type="submit">Request Reset</button>
-                    </form>
-                    <form method="post" action="{{ url_for('login_page') }}" class="page-stack">
-                        <input type="hidden" name="action" value="reset_password">
-                        <label>Email<input type="email" name="email" required></label>
-                        <label>Token<input type="text" name="token" required></label>
-                        <label>New Password<input type="password" name="password" required></label>
-                        <button class="btn btn-secondary" type="submit">Reset Password</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="panel-muted">
-                <div class="card-title" style="margin-top:0;">Verify MFA</div>
-                <div class="section-copy">Complete a pending multi-factor challenge.</div>
-                <form method="post" action="{{ url_for('login_page') }}" class="grid grid-2" style="margin-top:14px;">
-                    <input type="hidden" name="action" value="verify_mfa">
-                    <label>Challenge ID<input type="text" name="challenge_id" required></label>
-                    <label>Code<input type="text" name="code" required></label>
-                    <div><button class="btn btn-secondary" type="submit">Verify MFA</button></div>
+            <div class="auth-support-card">
+                <div class="card-title">Request Email Verification</div>
+                <form method="post" action="{{ url_for('login_page') }}" class="auth-inline-form compact">
+                    <input type="hidden" name="action" value="request_verification">
+                    <label>Email<input type="email" name="email" required></label>
+                    <button class="btn btn-secondary" type="submit">Send Verification</button>
                 </form>
             </div>
-        </div>
-    </article>
-</section>
+
+            <div class="auth-support-card" style="margin-top:16px;">
+                <div class="card-title">Verify Email</div>
+                <form method="post" action="{{ url_for('login_page') }}" class="auth-inline-form compact">
+                    <input type="hidden" name="action" value="verify_email">
+                    <label>Verification Token<input type="text" name="verification_token" required></label>
+                    <button class="btn btn-secondary" type="submit">Verify Email</button>
+                </form>
+            </div>
+
+            <div class="auth-support-card" style="margin-top:16px;">
+                <div class="card-title">Request Password Reset</div>
+                <form method="post" action="{{ url_for('login_page') }}" class="auth-inline-form compact">
+                    <input type="hidden" name="action" value="request_reset">
+                    <label>Email<input type="email" name="email" required></label>
+                    <button class="btn btn-secondary" type="submit">Send Reset Link</button>
+                </form>
+            </div>
+        </article>
+    </section>
+
+    <section class="auth-support-grid">
+        <article class="auth-support-card">
+            <div class="card-title">Reset Password</div>
+            <div class="auth-card-copy">Use the token from your reset email to choose a new password.</div>
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-inline-form">
+                <input type="hidden" name="action" value="reset_password">
+                <label>Reset Token<input type="text" name="reset_token" required></label>
+                <label>New Password<input type="password" name="new_password" required></label>
+                <button class="btn btn-secondary" type="submit">Reset Password</button>
+            </form>
+        </article>
+
+        <article class="auth-support-card">
+            <div class="card-title">Verify MFA</div>
+            <div class="auth-card-copy">Complete a pending multi-factor challenge with your emailed code.</div>
+            <form method="post" action="{{ url_for('login_page') }}" class="auth-inline-form">
+                <input type="hidden" name="action" value="verify_mfa">
+                <label>Challenge Token<input type="text" name="mfa_token" required></label>
+                <label>MFA Code<input type="text" name="mfa_code" required></label>
+                <button class="btn btn-secondary" type="submit">Verify MFA</button>
+            </form>
+        </article>
+
+        <article class="auth-support-card">
+            <div class="card-title">Need a new workspace?</div>
+            <div class="auth-card-copy">Create your account first, then request a demo or continue into Nexus once your identity is active.</div>
+            <div class="auth-inline-form">
+                <a class="btn btn-primary" href="{{ url_for('index') }}#demo">View Demo Section</a>
+                <a class="btn btn-secondary" href="{{ url_for('index') }}">Back to Homepage</a>
+            </div>
+        </article>
+    </section>
+</div>
 {% endblock %}
