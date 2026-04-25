@@ -98,6 +98,12 @@
         border-color: rgba(255, 187, 114, 0.18);
     }
 
+    .board-status-pill.neutral {
+        color: var(--text-soft);
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(136, 214, 255, 0.12);
+    }
+
     .board-toolbar {
         display: flex;
         gap: 10px;
@@ -167,7 +173,7 @@
 
     .board-analysis-form {
         display: grid;
-        grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(140px, 1fr)) auto;
+        grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(140px, 1fr));
         gap: 12px;
         align-items: end;
         margin-top: 6px;
@@ -226,11 +232,14 @@
     .board-form-actions {
         display: flex;
         align-items: end;
+        justify-content: flex-end;
+        grid-column: 1 / -1;
     }
 
     .board-analyze-btn {
         min-height: 54px;
         padding-inline: 26px;
+        min-width: 210px;
         border-radius: 18px;
         font-size: 1rem;
         font-weight: 800;
@@ -270,7 +279,7 @@
         place-items: center;
         background:
             radial-gradient(circle at center, rgba(8, 16, 27, 0.98) 0 56%, transparent 57%),
-            conic-gradient(from 220deg, #ff4d57 0%, #ffd152 32%, #ff983d 62%, #58d98f 100%);
+            conic-gradient(from -90deg, #ff4d57 0%, #ffd152 28%, #ff983d 58%, #58d98f 100%);
         box-shadow:
             inset 0 1px 0 rgba(255,255,255,0.08),
             0 0 44px rgba(88, 217, 143, 0.08);
@@ -283,7 +292,7 @@
         border-radius: 50%;
         background:
             radial-gradient(circle at center, transparent 0 62%, rgba(4, 11, 19, 0.96) 62.5% 100%),
-            conic-gradient(from 220deg, transparent 0 var(--score-arc, 0%), rgba(255,255,255,0.08) var(--score-arc, 0%) 100%);
+            conic-gradient(from calc(-90deg + (var(--score-value, 0) * 3.6deg)), rgba(255,255,255,0.08) 0 100%);
     }
 
     .board-gauge.empty {
@@ -308,6 +317,45 @@
         display: grid;
         gap: 3px;
         justify-items: center;
+    }
+
+    .board-gauge-pointer {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        transform: rotate(calc(-90deg + (var(--score-value, 0) * 3.6deg)));
+        pointer-events: none;
+    }
+
+    .board-gauge-pointer::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 8px;
+        width: 12px;
+        height: 12px;
+        margin-left: -6px;
+        border-radius: 50%;
+        background: #f4fbff;
+        box-shadow:
+            0 0 0 4px rgba(8, 16, 27, 0.92),
+            0 0 18px rgba(255, 255, 255, 0.28);
+    }
+
+    .board-gauge-pointer::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 18px;
+        width: 2px;
+        height: 24px;
+        margin-left: -1px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.28));
+    }
+
+    .board-gauge.empty .board-gauge-pointer {
+        display: none;
     }
 
     .board-gauge-value {
@@ -446,14 +494,14 @@
     .board-panel-copy {
         margin: 8px 0 0;
         color: var(--muted);
-        font-size: 13px;
-        line-height: 1.65;
-        max-width: 58ch;
+        font-size: 14px;
+        line-height: 1.7;
+        max-width: 64ch;
     }
 
     .board-preview-shell {
         display: grid;
-        grid-template-columns: 52px minmax(0, 1fr) 250px;
+        grid-template-columns: 52px minmax(0, 1fr) 224px;
         gap: 16px;
         align-items: stretch;
     }
@@ -746,6 +794,7 @@
         align-items: start;
         justify-content: space-between;
         gap: 14px;
+        flex-wrap: wrap;
         pointer-events: none;
         z-index: 2;
     }
@@ -758,7 +807,8 @@
 
     .board-hud-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        min-width: min(100%, 340px);
+        min-width: min(100%, 520px);
+        flex: 1 1 520px;
     }
 
     .board-hud-card,
@@ -787,10 +837,14 @@
         font-size: 1.05rem;
         line-height: 1;
         letter-spacing: -0.04em;
+        overflow-wrap: anywhere;
     }
 
     .board-diagnostic-stack {
-        min-width: 170px;
+        min-width: 150px;
+        width: 100%;
+        max-width: 200px;
+        flex: 0 1 200px;
     }
 
     .board-diagnostic-pill {
@@ -798,6 +852,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 10px;
+        min-height: 46px;
     }
 
     .board-diagnostic-pill.safe { border-color: rgba(100, 228, 187, 0.16); }
@@ -809,12 +864,16 @@
         color: var(--text-soft);
         font-size: 11px;
         font-weight: 700;
+        flex: 1 1 auto;
     }
 
     .board-diagnostic-value {
         color: var(--muted);
         font-size: 11px;
         font-weight: 700;
+        text-align: right;
+        max-width: 84px;
+        overflow-wrap: anywhere;
     }
 
     .board-stage-footer {
@@ -847,7 +906,7 @@
     }
 
     .board-stage-caption {
-        max-width: 320px;
+        max-width: 280px;
         color: var(--muted);
         font-size: 12px;
         line-height: 1.55;
@@ -953,7 +1012,7 @@
 
     .board-issue-row {
         display: grid;
-        grid-template-columns: 34px 130px minmax(0, 1.7fr) 120px 110px 170px 18px;
+        grid-template-columns: 34px 130px minmax(0, 1.9fr) 120px 110px 170px;
         gap: 16px;
         align-items: center;
         padding: 14px 0;
@@ -1082,13 +1141,6 @@
     .impact-bars span.on.critical { background: #ff6d58; }
     .impact-bars span.on.medium { background: #ffbf53; }
     .impact-bars span.on.low { background: #57a7ff; }
-
-    .board-issue-arrow {
-        color: rgba(255,255,255,0.3);
-        font-size: 18px;
-        font-weight: 700;
-        text-align: center;
-    }
 
     .board-bottom-grid {
         display: grid;
@@ -1364,8 +1416,7 @@
             gap: 14px;
         }
 
-        .board-issue-row > .board-issue-metric,
-        .board-issue-row > .board-issue-arrow {
+        .board-issue-row > .board-issue-metric {
             display: none;
         }
     }
@@ -1449,20 +1500,21 @@
 {% set sev_high_end = high_pct %}
 {% set sev_medium_end = high_pct + med_pct %}
 {% set sev_low_end = high_pct + med_pct + low_pct %}
-{% set score_arc = board_score if board_score > 0 else 0 %}
 {% set board_view = result.board_view if result and result.board_view else {} %}
+{% set has_analysis = (result and result.run_dir) or (board_view and board_view.has_data) or (result and result.risks and result.risks|length > 0) %}
+{% set score_arc = board_score if has_analysis and board_score > 0 else 0 %}
 {% set board_context = result.analysis_context_view if result and result.analysis_context_view else {} %}
 {% set board_summary = result.board_summary if result and result.board_summary else {} %}
 {% set downloads = result.downloads if result and result.downloads else [] %}
 {% set download_url = downloads[2].url if downloads|length > 2 else (downloads[0].url if downloads else '') %}
 
-<div class="board-dashboard" style="--score-arc: {{ score_arc }}%; --sev-high-end: {{ sev_high_end }}%; --sev-medium-end: {{ sev_medium_end }}%; --sev-low-end: {{ sev_low_end }}%;">
+<div class="board-dashboard" style="--score-arc: {{ score_arc }}%; --score-value: {{ score_arc }}; --sev-high-end: {{ sev_high_end }}%; --sev-medium-end: {{ sev_medium_end }}%; --sev-low-end: {{ sev_low_end }}%;">
     <section class="board-topbar">
         <div class="board-topbar-body">
             <div>
                 <h1 class="board-page-title">Board Analysis</h1>
                 <div class="board-meta-row">
-                    <span class="board-status-pill warning">{{ board_copilot.score_posture if board_copilot and board_copilot.score_posture else "Needs Review" }}</span>
+                    <span class="board-status-pill {% if has_analysis %}warning{% else %}neutral{% endif %}">{{ board_copilot.score_posture if has_analysis and board_copilot and board_copilot.score_posture else "Awaiting Analysis" }}</span>
                     <span>Analysis ID: {{ result.run_dir if result and result.run_dir else "Pending Run" }}</span>
                     <span>Ran on {{ board_context.performed_at if board_context and board_context.performed_at else "No run yet" }}</span>
                 </div>
@@ -1525,9 +1577,10 @@
                 <div class="board-hero-side">
                     <div class="board-score-panel">
                         <div class="board-score-layout">
-                            <div class="board-gauge{% if not result %} empty{% endif %}">
+                            <div class="board-gauge{% if not has_analysis %} empty{% endif %}">
+                                <div class="board-gauge-pointer" aria-hidden="true"></div>
                                 <div class="board-gauge-copy">
-                                    <div class="board-gauge-value">{{ board_score if board_score else "--" }}</div>
+                                    <div class="board-gauge-value">{{ board_score if has_analysis and board_score else "--" }}</div>
                                     <div class="board-gauge-scale">/ 100</div>
                                 </div>
                             </div>
@@ -1732,9 +1785,10 @@
                 </div>
 
                 <div class="board-score-layout">
-                    <div class="board-gauge{% if not result %} empty{% endif %}">
+                    <div class="board-gauge{% if not has_analysis %} empty{% endif %}">
+                        <div class="board-gauge-pointer" aria-hidden="true"></div>
                         <div class="board-gauge-copy">
-                            <div class="board-gauge-value">{{ board_score if board_score else "--" }}</div>
+                            <div class="board-gauge-value">{{ board_score if has_analysis and board_score else "--" }}</div>
                             <div class="board-gauge-scale">/ 100</div>
                         </div>
                     </div>
@@ -1872,7 +1926,6 @@
                                 <div class="board-issue-metric-label">Location</div>
                                 <div class="board-issue-metric-value">{{ (risk.nets|join(', ')) if risk.nets else ((risk.components|join(', ')) if risk.components else "Board region") }}</div>
                             </div>
-                            <div class="board-issue-arrow">›</div>
                         </div>
                         {% endfor %}
                     {% else %}
