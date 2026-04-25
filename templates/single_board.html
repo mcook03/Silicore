@@ -117,8 +117,8 @@
 
     .board-hero-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-        gap: 18px;
+        grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+        gap: 20px;
     }
 
     .board-hero-copy {
@@ -149,20 +149,20 @@
 
     .board-hero-title {
         margin: 0;
-        max-width: 12ch;
+        max-width: 9.5ch;
         font-family: var(--font-display);
-        font-size: clamp(2.3rem, 5vw, 4.5rem);
-        line-height: 0.98;
-        letter-spacing: -0.05em;
+        font-size: clamp(2rem, 4vw, 3.75rem);
+        line-height: 0.96;
+        letter-spacing: -0.055em;
         text-wrap: balance;
     }
 
     .board-hero-copy p {
         margin: 0;
-        max-width: 62ch;
+        max-width: 54ch;
         color: var(--muted);
-        font-size: 14px;
-        line-height: 1.8;
+        font-size: 15px;
+        line-height: 1.72;
     }
 
     .board-analysis-form {
@@ -170,7 +170,14 @@
         grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(140px, 1fr)) auto;
         gap: 12px;
         align-items: end;
-        margin-top: 10px;
+        margin-top: 6px;
+        padding: 16px;
+        border-radius: 22px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02)),
+            rgba(5, 14, 24, 0.78);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .board-field {
@@ -188,14 +195,14 @@
 
     .board-field input,
     .board-field select {
-        min-height: 50px;
-        border-radius: 14px;
+        min-height: 54px;
+        border-radius: 16px;
         border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.04);
     }
 
     .board-field input[type="file"] {
-        padding: 10px 12px;
+        padding: 10px 14px;
         color: var(--text-soft);
         line-height: 1.3;
         overflow: hidden;
@@ -221,6 +228,16 @@
         align-items: end;
     }
 
+    .board-analyze-btn {
+        min-height: 54px;
+        padding-inline: 26px;
+        border-radius: 18px;
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        box-shadow: 0 18px 36px rgba(103, 224, 190, 0.16);
+    }
+
     .board-hero-side {
         display: grid;
         gap: 14px;
@@ -229,10 +246,12 @@
     .board-score-panel {
         display: grid;
         gap: 14px;
-        padding: 18px;
-        border-radius: 20px;
+        padding: 20px;
+        border-radius: 24px;
         border: 1px solid rgba(136, 214, 255, 0.12);
-        background: var(--dash-panel-soft);
+        background:
+            radial-gradient(circle at top right, rgba(104, 164, 255, 0.12), transparent 34%),
+            linear-gradient(180deg, rgba(15, 28, 43, 0.9), rgba(7, 16, 28, 0.96));
     }
 
     .board-score-layout {
@@ -244,15 +263,27 @@
 
     .board-gauge {
         position: relative;
-        width: 160px;
-        height: 160px;
+        width: 172px;
+        height: 172px;
         border-radius: 50%;
         display: grid;
         place-items: center;
         background:
             radial-gradient(circle at center, rgba(8, 16, 27, 0.98) 0 56%, transparent 57%),
-            conic-gradient(from 220deg, #ff8a34 0%, #f1c24e 28%, #7fe0ff 60%, #4c95ff var(--score-arc, 72%), rgba(255,255,255,0.08) var(--score-arc, 72%), rgba(255,255,255,0.08) 100%);
-        box-shadow: 0 0 42px rgba(76, 149, 255, 0.14);
+            conic-gradient(from 220deg, #ff4d57 0%, #ffd152 32%, #ff983d 62%, #58d98f 100%);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            0 0 44px rgba(88, 217, 143, 0.08);
+    }
+
+    .board-gauge::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background:
+            radial-gradient(circle at center, transparent 0 62%, rgba(4, 11, 19, 0.96) 62.5% 100%),
+            conic-gradient(from 220deg, transparent 0 var(--score-arc, 0%), rgba(255,255,255,0.08) var(--score-arc, 0%) 100%);
     }
 
     .board-gauge.empty {
@@ -268,11 +299,12 @@
         inset: 14px;
         border-radius: 50%;
         border: 1px solid rgba(136, 214, 255, 0.12);
+        z-index: 1;
     }
 
     .board-gauge-copy {
         position: relative;
-        z-index: 1;
+        z-index: 2;
         display: grid;
         gap: 3px;
         justify-items: center;
@@ -320,6 +352,43 @@
         color: var(--text-soft);
         font-size: 13px;
         font-weight: 700;
+    }
+
+    .board-snapshot-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .board-snapshot-card {
+        display: grid;
+        gap: 6px;
+        padding: 12px 13px;
+        border-radius: 16px;
+        border: 1px solid rgba(136, 214, 255, 0.1);
+        background: rgba(255,255,255,0.025);
+    }
+
+    .board-snapshot-label {
+        color: var(--muted-strong);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .board-snapshot-value {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        color: var(--text);
+    }
+
+    .board-snapshot-copy {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
     }
 
     .board-trend-svg {
@@ -374,9 +443,17 @@
         letter-spacing: -0.04em;
     }
 
+    .board-panel-copy {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+        max-width: 58ch;
+    }
+
     .board-preview-shell {
         display: grid;
-        grid-template-columns: 48px minmax(0, 1fr) 180px;
+        grid-template-columns: 52px minmax(0, 1fr) 250px;
         gap: 16px;
         align-items: stretch;
     }
@@ -388,11 +465,11 @@
     }
 
     .board-tool {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
         border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255, 255, 255, 0.035);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
         color: var(--text-soft);
         display: grid;
         place-items: center;
@@ -426,14 +503,18 @@
     }
 
     .board-svg-shell {
-        min-height: 360px;
-        border-radius: 22px;
+        min-height: 520px;
+        border-radius: 28px;
         border: 1px solid rgba(136, 214, 255, 0.12);
         background:
-            radial-gradient(circle at 20% 18%, rgba(107, 227, 255, 0.14), transparent 18%),
-            linear-gradient(180deg, rgba(7, 17, 28, 0.98), rgba(5, 13, 21, 0.98));
+            radial-gradient(circle at 22% 18%, rgba(107, 227, 255, 0.12), transparent 18%),
+            radial-gradient(circle at 78% 14%, rgba(89, 134, 255, 0.08), transparent 22%),
+            linear-gradient(180deg, rgba(6, 16, 27, 0.99), rgba(4, 11, 19, 0.99));
         overflow: hidden;
         position: relative;
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.03),
+            inset 0 -80px 120px rgba(3, 9, 16, 0.44);
     }
 
     .board-svg-shell::before {
@@ -448,10 +529,31 @@
         pointer-events: none;
     }
 
+    .board-svg-shell::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(135deg, transparent 0 42%, rgba(105, 173, 255, 0.05) 58%, transparent 74%),
+            linear-gradient(180deg, rgba(255,255,255,0.02), transparent 18%, transparent 82%, rgba(255,255,255,0.02));
+        mix-blend-mode: screen;
+    }
+
     .board-svg {
         width: 100%;
         height: 100%;
         display: block;
+    }
+
+    .board-substrate {
+        fill: rgba(6, 21, 32, 0.72);
+        stroke: rgba(126, 194, 255, 0.08);
+        stroke-width: 1.2;
+    }
+
+    .board-substrate-glow {
+        fill: rgba(57, 164, 255, 0.05);
     }
 
     .board-outline {
@@ -473,7 +575,8 @@
     .board-trace {
         stroke-width: 2.1;
         stroke-linecap: round;
-        opacity: 0.78;
+        opacity: 0.82;
+        filter: drop-shadow(0 0 3px rgba(66, 123, 211, 0.08));
     }
 
     .board-trace.safe { stroke: rgba(92, 144, 211, 0.5); }
@@ -496,6 +599,7 @@
     .board-component {
         stroke: rgba(255, 255, 255, 0.12);
         stroke-width: 1;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.26));
     }
 
     .board-component.safe { fill: rgba(223, 244, 255, 0.1); }
@@ -515,8 +619,8 @@
     .board-hotspot.critical { fill: rgba(255, 78, 78, 0.32); }
 
     .board-hotspot.thermal {
-        fill: rgba(255, 82, 64, 0.4);
-        filter: blur(4px);
+        fill: rgba(255, 82, 64, 0.44);
+        filter: blur(8px);
     }
 
     .board-svg-shell.is-focused .board-zone,
@@ -547,10 +651,12 @@
     }
 
     .board-meta-card {
-        padding: 18px;
-        border-radius: 20px;
+        padding: 20px;
+        border-radius: 24px;
         border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255, 255, 255, 0.03);
+        background:
+            radial-gradient(circle at top right, rgba(104, 164, 255, 0.1), transparent 36%),
+            rgba(255, 255, 255, 0.03);
     }
 
     .board-meta-list {
@@ -593,18 +699,172 @@
     }
 
     .board-thumb {
-        width: 68px;
-        height: 50px;
-        border-radius: 12px;
+        width: 92px;
+        height: 66px;
+        border-radius: 16px;
         border: 1px solid rgba(136, 214, 255, 0.12);
-        background: rgba(255,255,255,0.03);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025));
         overflow: hidden;
+        position: relative;
+        cursor: pointer;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .board-thumb:hover,
+    .board-thumb.active {
+        transform: translateY(-2px);
+        border-color: rgba(136, 214, 255, 0.26);
+        box-shadow: 0 14px 28px rgba(0,0,0,0.18);
     }
 
     .board-thumb svg {
         width: 100%;
         height: 100%;
         display: block;
+    }
+
+    .board-thumb-label {
+        position: absolute;
+        left: 8px;
+        bottom: 8px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: rgba(4, 11, 19, 0.8);
+        color: var(--text-soft);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .board-stage-hud {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 16px;
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 14px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .board-hud-grid,
+    .board-diagnostic-stack {
+        display: grid;
+        gap: 8px;
+    }
+
+    .board-hud-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        min-width: min(100%, 340px);
+    }
+
+    .board-hud-card,
+    .board-diagnostic-pill,
+    .board-mode-chip {
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(136, 214, 255, 0.12);
+        background: rgba(6, 16, 27, 0.78);
+        backdrop-filter: blur(10px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .board-hud-label {
+        color: var(--muted-strong);
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .board-hud-value {
+        margin-top: 5px;
+        color: var(--text);
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        line-height: 1;
+        letter-spacing: -0.04em;
+    }
+
+    .board-diagnostic-stack {
+        min-width: 170px;
+    }
+
+    .board-diagnostic-pill {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .board-diagnostic-pill.safe { border-color: rgba(100, 228, 187, 0.16); }
+    .board-diagnostic-pill.medium { border-color: rgba(255, 187, 114, 0.18); }
+    .board-diagnostic-pill.high,
+    .board-diagnostic-pill.critical { border-color: rgba(255, 127, 127, 0.22); }
+
+    .board-diagnostic-label {
+        color: var(--text-soft);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .board-diagnostic-value {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .board-stage-footer {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .board-mode-legend {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .board-mode-chip {
+        color: var(--text-soft);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .board-mode-chip strong {
+        color: var(--text);
+    }
+
+    .board-stage-caption {
+        max-width: 320px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+        text-align: right;
+    }
+
+    .board-empty {
+        min-height: 520px;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.75;
+        text-align: center;
+        max-width: 56ch;
+        margin: 0 auto;
     }
 
     .board-risk-cards {
@@ -614,10 +874,12 @@
     }
 
     .risk-card {
-        padding: 16px;
-        border-radius: 18px;
+        padding: 18px;
+        border-radius: 20px;
         border: 1px solid rgba(136, 214, 255, 0.1);
-        background: rgba(255,255,255,0.03);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025)),
+            rgba(255,255,255,0.02);
         display: grid;
         gap: 10px;
     }
@@ -696,10 +958,15 @@
         align-items: center;
         padding: 14px 0;
         border-top: 1px solid rgba(136, 214, 255, 0.08);
+        transition: background 160ms ease;
     }
 
     .board-issue-row:first-child {
         border-top: none;
+    }
+
+    .board-issue-row:hover {
+        background: rgba(255,255,255,0.015);
     }
 
     .board-issue-rank {
@@ -1010,7 +1277,41 @@
         padding: 14px;
         border-radius: 16px;
         border: 1px solid rgba(136,214,255,0.1);
-        background: rgba(255,255,255,0.03);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025));
+    }
+
+    .board-chart-shell {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .board-chart-row {
+        display: grid;
+        gap: 8px;
+    }
+
+    .board-chart-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .board-chart-track {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        overflow: hidden;
+    }
+
+    .board-chart-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #ff5a52, #ffb347, #74d4a7);
     }
 
     .board-readiness-top {
@@ -1053,6 +1354,11 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .board-snapshot-grid,
+        .board-hud-grid {
+            grid-template-columns: 1fr;
+        }
+
         .board-issue-row {
             grid-template-columns: 34px 120px minmax(0, 1fr);
             gap: 14px;
@@ -1068,6 +1374,10 @@
         .board-analysis-form,
         .board-risk-cards {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .board-form-actions {
+            grid-column: 1 / -1;
         }
 
         .span-7,
@@ -1096,7 +1406,7 @@
         }
 
         .board-preview-tools {
-            grid-template-columns: repeat(4, 42px);
+            grid-template-columns: repeat(4, 48px);
         }
 
         .board-tabs {
@@ -1109,6 +1419,17 @@
 
         .board-issue-thumb {
             height: 96px;
+        }
+
+        .board-stage-hud,
+        .board-stage-footer {
+            position: static;
+            padding: 14px 14px 0;
+            pointer-events: auto;
+        }
+
+        .board-empty {
+            min-height: 360px;
         }
     }
 </style>
@@ -1160,9 +1481,9 @@
             <div class="board-hero-grid">
                 <div class="board-hero-copy">
                     <div class="board-kicker">Silicore Surface</div>
-                    <h2 class="board-hero-title">Upload, analyze, inspect, and prioritize from one board workspace.</h2>
+                    <h2 class="board-hero-title">Board intelligence, review, and action in one workspace.</h2>
                     <p>
-                        This page is built to feel like a real Silicore product surface: board geometry, risk scoring, domain breakdown, thermal-style hotspots, parser trust, CAM readiness, and actionable engineering issues in one connected review flow.
+                        Upload a board package, inspect real geometry, move between risk and thermal evidence, and see exactly where Silicore is surfacing engineering pressure before production.
                     </p>
 
                     <form action="{{ url_for('single_board_page') }}" method="post" enctype="multipart/form-data" class="board-analysis-form">
@@ -1196,7 +1517,7 @@
                             </select>
                         </div>
                         <div class="board-form-actions">
-                            <button class="btn btn-primary" type="submit">Analyze Board</button>
+                            <button class="btn btn-primary board-analyze-btn" type="submit">Analyze Board</button>
                         </div>
                     </form>
                 </div>
@@ -1219,14 +1540,24 @@
                         </div>
 
                         <div class="board-trend-shell">
-                            <div class="board-trend-title">Signal Snapshot</div>
-                            <svg class="board-trend-svg" viewBox="0 0 360 72" preserveAspectRatio="none" aria-hidden="true">
-                                <line class="guide" x1="0" y1="52" x2="360" y2="52"></line>
-                                <path class="path" d="M0 38 C52 34, 88 28, 126 30 S210 42, 252 36 S318 26, 360 24"></path>
-                                <circle class="dot" cx="58" cy="33" r="4.5"></circle>
-                                <circle class="dot" cx="183" cy="39" r="4.5"></circle>
-                                <circle class="dot" cx="330" cy="26" r="6"></circle>
-                            </svg>
+                            <div class="board-trend-title">Live Analysis Signal</div>
+                            <div class="board-snapshot-grid">
+                                <div class="board-snapshot-card">
+                                    <div class="board-snapshot-label">Findings</div>
+                                    <div class="board-snapshot-value">{{ finding_count }}</div>
+                                    <div class="board-snapshot-copy">{{ critical_count + high_count }} high-pressure items need the fastest attention.</div>
+                                </div>
+                                <div class="board-snapshot-card">
+                                    <div class="board-snapshot-label">Coverage</div>
+                                    <div class="board-snapshot-value">{{ board_review_layers.domain_cards|length if board_review_layers and board_review_layers.domain_cards else 0 }}</div>
+                                    <div class="board-snapshot-copy">Engineering review domains currently active in this run.</div>
+                                </div>
+                                <div class="board-snapshot-card">
+                                    <div class="board-snapshot-label">Parser Trust</div>
+                                    <div class="board-snapshot-value">{{ result.parser_confidence.score|round|int if result and result.parser_confidence and result.parser_confidence.score is defined else 0 }}%</div>
+                                    <div class="board-snapshot-copy">{{ result.signoff_gate.label if result and result.signoff_gate and result.signoff_gate.label else "Pending signoff state" }}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1240,7 +1571,8 @@
                 <div class="board-panel-header">
                     <div>
                         <div class="board-kicker">Board Preview</div>
-                        <h2 class="board-panel-title">Geometry, routing, and hotspot view</h2>
+                        <h2 class="board-panel-title">Interactive board surface</h2>
+                        <p class="board-panel-copy">Risk-linked routing, thermal hotspots, and parsed geometry are rendered from the live board snapshot instead of placeholder imagery.</p>
                     </div>
                     <div class="board-tabs" data-board-tabs>
                         <button class="board-tab active" type="button" data-mode="risk">Risk</button>
@@ -1260,7 +1592,38 @@
                     <div class="board-preview-stage">
                         <div class="board-svg-shell" data-board-stage data-mode="risk">
                             {% if board_view and board_view.has_data %}
+                            <div class="board-stage-hud">
+                                <div class="board-hud-grid">
+                                    {% for stat in board_view.summary_stats[:3] %}
+                                    <div class="board-hud-card">
+                                        <div class="board-hud-label">{{ stat.label }}</div>
+                                        <div class="board-hud-value">{{ stat.value }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="board-diagnostic-stack">
+                                    {% if board_view.cam_diagnostics %}
+                                        {% for diagnostic in board_view.cam_diagnostics[:3] %}
+                                        <div class="board-diagnostic-pill {{ diagnostic.tone }}">
+                                            <span class="board-diagnostic-label">{{ diagnostic.label }}</span>
+                                            <span class="board-diagnostic-value">{{ diagnostic.status }}</span>
+                                        </div>
+                                        {% endfor %}
+                                    {% else %}
+                                    <div class="board-diagnostic-pill safe">
+                                        <span class="board-diagnostic-label">Preview Mode</span>
+                                        <span class="board-diagnostic-value">{{ board_view.source_format|replace('_', ' ')|title if board_view.source_format else "Parsed board" }}</span>
+                                    </div>
+                                    <div class="board-diagnostic-pill medium">
+                                        <span class="board-diagnostic-label">Hotspots</span>
+                                        <span class="board-diagnostic-value">{{ board_view.hotspots|length }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                             <svg class="board-svg" viewBox="{{ board_view.base_view_box }}" aria-label="Board geometry preview">
+                                <rect class="board-substrate" x="22" y="22" rx="18" ry="18" width="{{ board_view.width - 44 }}" height="{{ board_view.height - 44 }}"></rect>
+                                <rect class="board-substrate-glow" x="44" y="44" rx="16" ry="16" width="{{ board_view.width - 88 }}" height="{{ board_view.height - 88 }}"></rect>
                                 {% for zone in board_view.zones %}
                                 <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}" {% if zone.net %}data-net="{{ zone.net }}"{% endif %}></polygon>
                                 {% endfor %}
@@ -1283,6 +1646,14 @@
                                 {% endif %}
                                 {% endfor %}
                             </svg>
+                            <div class="board-stage-footer">
+                                <div class="board-mode-legend">
+                                    <div class="board-mode-chip"><strong>Risk</strong> severity-linked traces, pads, and issue pressure</div>
+                                    <div class="board-mode-chip"><strong>Thermal</strong> heat density around active hotspots</div>
+                                    <div class="board-mode-chip"><strong>Geometry</strong> board structure, zones, and routing layout</div>
+                                </div>
+                                <div class="board-stage-caption">Hover an issue row below to isolate matching nets, references, and hotspot regions directly on the board surface.</div>
+                            </div>
                             {% else %}
                             <div class="board-empty">Board geometry preview appears after a board is parsed. Silicore will render traces, components, zones, vias, and risk-linked hotspots from the actual board snapshot.</div>
                             {% endif %}
@@ -1291,7 +1662,7 @@
                         <div class="board-preview-thumbs">
                             {% if board_view and board_view.has_data %}
                             {% for thumb_mode in ['risk', 'thermal', 'geometry'] %}
-                            <div class="board-thumb">
+                            <button class="board-thumb{% if loop.first %} active{% endif %}" type="button" data-thumb-mode="{{ thumb_mode }}">
                                 <svg viewBox="{{ board_view.base_view_box }}" aria-hidden="true">
                                     {% for zone in board_view.zones[:8] %}
                                     <polygon class="board-zone {{ zone.tone }}" points="{{ zone.points }}"></polygon>
@@ -1310,7 +1681,8 @@
                                     <line class="board-outline" x1="{{ segment.x1 }}" y1="{{ segment.y1 }}" x2="{{ segment.x2 }}" y2="{{ segment.y2 }}"></line>
                                     {% endfor %}
                                 </svg>
-                            </div>
+                                <span class="board-thumb-label">{{ thumb_mode }}</span>
+                            </button>
                             {% endfor %}
                             {% endif %}
                         </div>
@@ -1355,6 +1727,7 @@
                     <div>
                         <div class="board-kicker">Overall Risk Score</div>
                         <h2 class="board-panel-title">Silicore board posture</h2>
+                        <p class="board-panel-copy">The main score reflects cumulative board risk, parser trust, and issue confidence across the active engineering review surface.</p>
                     </div>
                 </div>
 
@@ -1633,6 +2006,7 @@
     (() => {
         const stage = document.querySelector("[data-board-stage]");
         const tabs = document.querySelectorAll("[data-board-tabs] [data-mode]");
+        const thumbs = document.querySelectorAll("[data-thumb-mode]");
         if (!stage || !tabs.length) return;
 
         const updateMode = (mode) => {
@@ -1641,10 +2015,15 @@
                 node.style.display = node.getAttribute("data-mode-show") === mode ? "" : "none";
             });
             tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.mode === mode));
+            thumbs.forEach((thumb) => thumb.classList.toggle("active", thumb.dataset.thumbMode === mode));
         };
 
         tabs.forEach((tab) => {
             tab.addEventListener("click", () => updateMode(tab.dataset.mode));
+        });
+
+        thumbs.forEach((thumb) => {
+            thumb.addEventListener("click", () => updateMode(thumb.dataset.thumbMode));
         });
 
         updateMode("risk");

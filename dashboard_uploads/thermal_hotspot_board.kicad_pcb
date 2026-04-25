@@ -1,0 +1,41 @@
+(kicad_pcb
+  (net 0 "")
+  (net 1 "VIN")
+  (net 2 "GND")
+  (net 3 "VOUT")
+
+  (footprint "Regulator"
+    (layer "F.Cu")
+    (at 22 18 0)
+    (property "Reference" "U1")
+    (property "Value" "linear_reg")
+    (pad 1 smd rect (at 0 0) (size 1.2 1.2) (layers "F.Cu") (net 1 "VIN"))
+    (pad 2 smd rect (at 2 0) (size 1.2 1.2) (layers "F.Cu") (net 3 "VOUT"))
+    (pad 3 smd rect (at 1 2) (size 1.2 1.2) (layers "F.Cu") (net 2 "GND"))
+  )
+
+  (footprint "MOSFET"
+    (layer "F.Cu")
+    (at 27 18 0)
+    (property "Reference" "Q1")
+    (property "Value" "mosfet")
+    (pad 1 smd rect (at 0 0) (size 1.2 1.2) (layers "F.Cu") (net 1 "VIN"))
+    (pad 2 smd rect (at 2 0) (size 1.2 1.2) (layers "F.Cu") (net 3 "VOUT"))
+    (pad 3 smd rect (at 1 2) (size 1.2 1.2) (layers "F.Cu") (net 2 "GND"))
+  )
+
+  (footprint "Load"
+    (layer "F.Cu")
+    (at 62 18 0)
+    (property "Reference" "U2")
+    (property "Value" "processor")
+    (pad 1 smd rect (at 0 0) (size 1.1 1.1) (layers "F.Cu") (net 3 "VOUT"))
+    (pad 2 smd rect (at 2 0) (size 1.1 1.1) (layers "F.Cu") (net 2 "GND"))
+  )
+
+  (segment (start 22 18) (end 27 18) (width 0.20) (layer "F.Cu") (net 1))
+  (segment (start 24 20) (end 28 20) (width 0.20) (layer "F.Cu") (net 2))
+  (segment (start 24 18) (end 29 18) (width 0.18) (layer "F.Cu") (net 3))
+  (segment (start 29 18) (end 62 18) (width 0.18) (layer "F.Cu") (net 3))
+  (segment (start 24 20) (end 64 20) (width 0.18) (layer "F.Cu") (net 2))
+)
