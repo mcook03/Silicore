@@ -1,12 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { ScorePill } from "@/components/silicore/Panel";
 import {
   LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, AreaChart, Area,
 } from "recharts";
-import { ArrowUpRight, CircuitBoard, TrendingUp, AlertTriangle } from "lucide-react";
+import { TrendingUp, AlertTriangle } from "lucide-react";
 import { AppShell } from "@/components/silicore/AppShell";
 import { useApiData } from "@/lib/api";
 
@@ -47,9 +46,9 @@ function Dashboard() {
   return (
     <AppShell title="Dashboard">
       {error ? (
-        <DashboardSection title="Dashboard unavailable">
+        <section data-reveal className="rounded-[30px] border border-danger/20 bg-danger/10 p-6">
           <p className="text-sm text-danger">{error}</p>
-        </DashboardSection>
+        </section>
       ) : (
         <div className="space-y-6">
           <section
@@ -99,122 +98,170 @@ function Dashboard() {
             </div>
           </section>
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            <div data-reveal className="premium-panel rounded-[28px] p-6 lg:row-span-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Overall risk score</div>
-                  <div className="mt-1 text-sm text-muted-foreground">Across recent analyses</div>
-                </div>
-                <span className="rounded-full border border-success/30 bg-success/10 px-2 py-0.5 font-mono text-xs text-success">
-                  {stats ? `${stats.score_change >= 0 ? "+" : ""}${stats.score_change}` : "…"}
-                </span>
-              </div>
-              <div className="mt-8 flex flex-col items-center">
-                <ScoreRing score={Math.round(stats?.overall_score || 0)} size={180} />
-                <div className="mt-4 text-center text-sm text-muted-foreground">
-                  {loading ? "Loading…" : `${stats?.boards_analyzed || 0} runs summarized.`}
-                </div>
-              </div>
-              <div className="mt-8 grid grid-cols-3 gap-4 border-t border-border pt-6 text-center">
-                <Mini label="Critical" value={String(stats?.critical_total ?? 0)} tone="danger" />
-                <Mini label="Medium" value={String(stats?.medium_total ?? 0)} tone="warning" />
-                <Mini label="Low" value={String(stats?.low_total ?? 0)} tone="muted" />
+          <section data-reveal className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_320px]">
+            <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,17,27,0.96),rgba(7,14,22,0.98))] p-5">
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Telemetry rail</div>
+              <div className="mt-5 space-y-6">
+                <RailMetric label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} />
+                <RailMetric label="Average score" value={String(stats?.avg_score_30d ?? 0)} />
+                <RailMetric label="Critical open" value={String(stats?.open_critical_issues ?? 0)} tone="danger" />
+                <RailMetric label="Issue change" value={String(stats?.issue_change ?? 0)} tone={(stats?.issue_change || 0) > 0 ? "danger" : undefined} />
               </div>
             </div>
 
-            <KpiCard label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} trend="Recent runs" icon={CircuitBoard} />
-            <KpiCard label="Avg score" value={String(stats?.avg_score_30d ?? 0)} trend="Across recent runs" icon={TrendingUp} />
-            <KpiCard label="Open critical issues" value={String(stats?.open_critical_issues ?? 0)} trend={`${stats?.issue_change ?? 0} vs oldest sample`} icon={AlertTriangle} tone="danger" />
-            <KpiCard label="Latest change" value={`${stats?.score_change ?? 0}`} trend="Newest vs oldest score" icon={ArrowUpRight} />
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-2">
-            <DashboardSection title="Score trend" kicker="score telemetry">
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={trend}>
-                  <defs>
-                    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="oklch(0.85 0.16 195)" stopOpacity={0.45} />
-                      <stop offset="100%" stopColor="oklch(0.85 0.16 195)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
-                  <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
-                  <Area type="monotone" dataKey="score" stroke="oklch(0.85 0.16 195)" strokeWidth={2} fill="url(#g1)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </DashboardSection>
-            <DashboardSection title="Issues over time" kicker="risk flow">
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={trend}>
-                  <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
-                  <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
-                  <Line type="monotone" dataKey="issues" stroke="oklch(0.82 0.16 75)" strokeWidth={2} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
-            </DashboardSection>
-          </div>
-
-          <DashboardSection title="Severity over time" kicker="severity stack">
-            <ResponsiveContainer width="100%" height={260}>
-              <AreaChart data={trend}>
-                <defs>
-                  <linearGradient id="sevCritical" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.22} />
-                  </linearGradient>
-                  <linearGradient id="sevHigh" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.77 0.18 52)" stopOpacity={0.85} />
-                    <stop offset="100%" stopColor="oklch(0.77 0.18 52)" stopOpacity={0.2} />
-                  </linearGradient>
-                  <linearGradient id="sevMedium" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.82 0.16 75)" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="oklch(0.82 0.16 75)" stopOpacity={0.18} />
-                  </linearGradient>
-                  <linearGradient id="sevLow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.84 0.15 205)" stopOpacity={0.75} />
-                    <stop offset="100%" stopColor="oklch(0.84 0.15 205)" stopOpacity={0.15} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
-                <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
-                <Area type="monotone" dataKey="critical" stackId="1" stroke="oklch(0.68 0.2 24)" fill="url(#sevCritical)" />
-                <Area type="monotone" dataKey="high" stackId="1" stroke="oklch(0.77 0.18 52)" fill="url(#sevHigh)" />
-                <Area type="monotone" dataKey="medium" stackId="1" stroke="oklch(0.82 0.16 75)" fill="url(#sevMedium)" />
-                <Area type="monotone" dataKey="low" stackId="1" stroke="oklch(0.84 0.15 205)" fill="url(#sevLow)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </DashboardSection>
-
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-            <BoardHeatmap
-              title="Fleet hotspot overview"
-              matrixRows={data?.risk_heatmap}
-              emptyCopy="Recent runs do not expose enough categorized findings yet to render a workspace heat map."
-            />
-            <DashboardSection title="Hotspot reading guide" kicker="spatial context">
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
-                  This overview gives the dashboard a spatial read on where board pressure typically concentrates across recent analyses. Switch between thermal, density, and findings modes to change the lens.
+            <div className="relative overflow-hidden rounded-[34px] border border-white/8 bg-[linear-gradient(180deg,rgba(8,17,28,0.95),rgba(6,13,21,0.98))] px-6 py-6 shadow-[0_32px_80px_-46px_rgba(0,0,0,0.95)]">
+              <div className="pointer-events-none absolute inset-0 opacity-45 [background-image:linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:64px_64px]" />
+              <div className="relative">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="max-w-xl">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Central score field</div>
+                    <h3 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Live design pressure across recent analyses</h3>
+                    <p className="mt-2 text-sm leading-7 text-muted-foreground">This canvas pulls score, risk, and severity movement into one field instead of scattering them into stacked blocks.</p>
+                  </div>
+                  <div className="relative shrink-0">
+                    <div className="absolute inset-[-20px] rounded-full bg-primary/10 blur-2xl" />
+                    <div className="relative rounded-full border border-white/8 bg-background/50 p-4">
+                      <ScoreRing score={Math.round(stats?.overall_score || 0)} size={168} />
+                    </div>
+                  </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <MetricCard label="Recent runs" value={String(recent.length)} copy="Included in the latest dashboard sample" />
-                  <MetricCard label="Trend points" value={String(trend.length)} copy="Used to shape the score and issue curves" />
-                  <MetricCard label="Critical findings" value={String(stats?.critical_total ?? 0)} copy="Open critical issues across recent analyses" />
-                  <MetricCard label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} copy="Total runs represented in this dashboard view" />
+
+                <div className="mt-6 h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={trend}>
+                      <defs>
+                        <linearGradient id="dashboardScore" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="oklch(0.85 0.16 195)" stopOpacity={0.48} />
+                          <stop offset="100%" stopColor="oklch(0.85 0.16 195)" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="dashboardCritical" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.3} />
+                          <stop offset="100%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.02} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid stroke="rgba(148,163,184,0.15)" vertical={false} />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} stroke="rgba(148,163,184,0.78)" fontSize={11} />
+                      <YAxis yAxisId="score" domain={[0, 100]} tickLine={false} axisLine={false} stroke="rgba(148,163,184,0.78)" fontSize={11} />
+                      <YAxis yAxisId="critical" orientation="right" tickLine={false} axisLine={false} stroke="rgba(248,113,113,0.45)" fontSize={11} />
+                      <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 12, fontSize: 12 }} />
+                      <Area yAxisId="critical" type="monotone" dataKey="critical" stroke="oklch(0.68 0.2 24)" strokeWidth={1.5} fill="url(#dashboardCritical)" />
+                      <Area yAxisId="score" type="monotone" dataKey="score" stroke="oklch(0.85 0.16 195)" strokeWidth={3} fill="url(#dashboardScore)" />
+                      <Line yAxisId="score" type="monotone" dataKey="issues" stroke="oklch(0.82 0.16 75)" strokeWidth={2} dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="mt-5 grid gap-4 md:grid-cols-3">
+                  <InlineSignal label="Critical" value={String(stats?.critical_total ?? 0)} tone="danger" />
+                  <InlineSignal label="Medium" value={String(stats?.medium_total ?? 0)} tone="warning" />
+                  <InlineSignal label="Low" value={String(stats?.low_total ?? 0)} />
                 </div>
               </div>
-            </DashboardSection>
-          </div>
+            </div>
 
-          <DashboardSection title="Recent analyses" kicker="activity ledger" action={<Link to="/history" className="font-mono text-xs text-primary hover:underline">view all →</Link>}>
+            <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,17,27,0.96),rgba(7,14,22,0.98))] p-5">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Activity strip</div>
+                  <h3 className="mt-1 text-lg font-medium tracking-tight">Recent analyses</h3>
+                </div>
+                <Link to="/history" className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary hover:underline">View all</Link>
+              </div>
+              <div className="space-y-3">
+                {recent.slice(0, 5).map((item) => (
+                  <div key={item.run_dir} className="border-l border-white/10 pl-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium text-foreground">{item.name}</div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{item.rev}</div>
+                      </div>
+                      <ScorePill score={item.score} />
+                    </div>
+                    <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>{item.issues} issues</span>
+                      <span className={item.delta && item.delta > 0 ? "text-success" : item.delta && item.delta < 0 ? "text-danger" : ""}>
+                        {item.delta == null ? "stable" : `${item.delta > 0 ? "+" : ""}${item.delta}`}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section data-reveal className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+            <div className="relative overflow-hidden rounded-[32px] border border-white/8 bg-[linear-gradient(170deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_30px_76px_-44px_rgba(0,0,0,0.95)]">
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Spatial context</div>
+                  <h3 className="mt-1 text-xl font-medium tracking-tight">Fleet hotspot overview</h3>
+                </div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{recent.length} recent runs</div>
+              </div>
+              <BoardHeatmap
+                title="Fleet hotspot overview"
+                matrixRows={data?.risk_heatmap}
+                emptyCopy="Recent runs do not expose enough categorized findings yet to render a workspace heat map."
+              />
+            </div>
+
+            <div className="grid gap-6">
+              <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Severity stack</div>
+                <h3 className="mt-1 text-lg font-medium tracking-tight">Severity over time</h3>
+                <div className="mt-4 h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={trend}>
+                      <defs>
+                        <linearGradient id="sevCritical" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.9} />
+                          <stop offset="100%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.22} />
+                        </linearGradient>
+                        <linearGradient id="sevHigh" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="oklch(0.77 0.18 52)" stopOpacity={0.85} />
+                          <stop offset="100%" stopColor="oklch(0.77 0.18 52)" stopOpacity={0.2} />
+                        </linearGradient>
+                        <linearGradient id="sevMedium" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="oklch(0.82 0.16 75)" stopOpacity={0.8} />
+                          <stop offset="100%" stopColor="oklch(0.82 0.16 75)" stopOpacity={0.18} />
+                        </linearGradient>
+                        <linearGradient id="sevLow" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="oklch(0.84 0.15 205)" stopOpacity={0.75} />
+                          <stop offset="100%" stopColor="oklch(0.84 0.15 205)" stopOpacity={0.15} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
+                      <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 12, fontSize: 12 }} />
+                      <Area type="monotone" dataKey="critical" stackId="1" stroke="oklch(0.68 0.2 24)" fill="url(#sevCritical)" />
+                      <Area type="monotone" dataKey="high" stackId="1" stroke="oklch(0.77 0.18 52)" fill="url(#sevHigh)" />
+                      <Area type="monotone" dataKey="medium" stackId="1" stroke="oklch(0.82 0.16 75)" fill="url(#sevMedium)" />
+                      <Area type="monotone" dataKey="low" stackId="1" stroke="oklch(0.84 0.15 205)" fill="url(#sevLow)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Reading guide</div>
+                <h3 className="mt-1 text-lg font-medium tracking-tight">How to interpret the field</h3>
+                <div className="mt-4 space-y-4 text-sm leading-7 text-muted-foreground">
+                  <p>The central canvas prioritizes score movement first, then critical pressure and issue drift, so you can see whether the fleet is improving or just reshuffling lower-severity noise.</p>
+                  <p>The hotspot map reads spatial pressure across recent runs, while the activity strip keeps the latest boards close at hand without dropping you into a table-first layout.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section data-reveal className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Run ledger</div>
+                <h3 className="mt-1 text-xl font-medium tracking-tight">Extended recent analyses</h3>
+              </div>
+              <Link to="/history" className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary hover:underline">Go to archive</Link>
+            </div>
             <div className="-mx-6 overflow-x-auto">
               <table className="premium-table w-full text-sm">
                 <thead>
@@ -248,43 +295,10 @@ function Dashboard() {
                 </tbody>
               </table>
             </div>
-          </DashboardSection>
+          </section>
         </div>
       )}
     </AppShell>
-  );
-}
-
-function KpiCard({ label, value, trend, icon: Icon, tone }: { label: string; value: string; trend: string; icon: React.ComponentType<{ className?: string }>; tone?: "danger" }) {
-  return (
-    <div data-reveal className="premium-card rounded-[26px] p-6">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
-        <Icon className={`h-4 w-4 ${tone === "danger" ? "text-danger" : "text-primary"}`} />
-      </div>
-      <div className="mt-4 text-3xl font-semibold">{value}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{trend}</div>
-    </div>
-  );
-}
-
-function Mini({ label, value, tone }: { label: string; value: string; tone: "danger" | "warning" | "muted" }) {
-  const c = { danger: "text-danger", warning: "text-warning", muted: "text-muted-foreground" }[tone];
-  return (
-    <div>
-      <div className={`text-xl font-semibold ${c}`}>{value}</div>
-      <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
-function MetricCard({ label, value, copy }: { label: string; value: string; copy: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-background/40 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold">{value}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{copy}</div>
-    </div>
   );
 }
 
@@ -297,30 +311,21 @@ function HeroMetric({ label, value, tone }: { label: string; value: string; tone
   );
 }
 
-function DashboardSection({
-  title,
-  kicker,
-  action,
-  children,
-}: {
-  title: string;
-  kicker?: string;
-  action?: ReactNode;
-  children: ReactNode;
-}) {
+function RailMetric({ label, value, tone }: { label: string; value: string; tone?: "danger" }) {
   return (
-    <section data-reveal className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6 shadow-[0_30px_80px_-42px_rgba(0,0,0,0.9)]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(86,211,240,0.06),transparent_28%)]" />
-      <div className="relative">
-        <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
-          <div>
-            {kicker ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{kicker}</div> : null}
-            <h3 className="mt-1 text-lg font-medium tracking-tight text-foreground">{title}</h3>
-          </div>
-          {action}
-        </div>
-        {children}
-      </div>
-    </section>
+    <div className="border-l border-white/10 pl-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className={`mt-1 text-3xl font-semibold ${tone === "danger" ? "text-danger" : "text-foreground"}`}>{value}</div>
+    </div>
+  );
+}
+
+function InlineSignal({ label, value, tone }: { label: string; value: string; tone?: "danger" | "warning" }) {
+  const toneClass = tone === "danger" ? "text-danger" : tone === "warning" ? "text-warning" : "text-foreground";
+  return (
+    <div className="border-t border-white/8 pt-3">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className={`mt-1 text-2xl font-semibold ${toneClass}`}>{value}</div>
+    </div>
   );
 }
