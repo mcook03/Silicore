@@ -17,6 +17,18 @@ import {
   TrendingUp,
   TriangleAlert,
 } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { useApiData } from "@/lib/api";
 
 export const Route = createFileRoute("/compare")({
@@ -107,6 +119,39 @@ function Compare() {
   const categoryScale = Math.max(
     1,
     ...(compare.data?.categories || []).map((item) => Math.max(item.before, item.after, Math.abs(item.delta))),
+  );
+  const trendData = useMemo(
+    () =>
+      [...runs]
+        .slice(0, 6)
+        .reverse()
+        .map((run, index) => ({
+          label: run.name?.slice(0, 14) || `R${index + 1}`,
+          fullLabel: run.name || run.run_id,
+          score: normalizeScore(run.score),
+          issues: Number(run.risk_count || 0),
+          critical: Number(run.critical_count || 0),
+        })),
+    [runs],
+  );
+  const categoryHeatmap = useMemo(
+    () =>
+      (compare.data?.categories || []).map((item) => ({
+        category: item.name,
+        baseline: item.before,
+        candidate: item.after,
+        delta: item.delta,
+        intensity: Math.max(Math.abs(item.delta), item.before, item.after),
+      })),
+    [compare.data?.categories],
+  );
+  const changeMix = useMemo(
+    () => [
+      { name: "Resolved", value: improvements, fill: "oklch(0.76 0.16 160)" },
+      { name: "Regressed", value: regressions, fill: "oklch(0.68 0.2 24)" },
+      { name: "New", value: neutralChanges, fill: "oklch(0.8 0.14 82)" },
+    ],
+    [improvements, regressions, neutralChanges],
   );
 
   const swapRuns = () => {
@@ -316,6 +361,83 @@ function Compare() {
           </Panel>
         </section>
 
+        <section className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+          <Panel title="Revision trendline" action={<span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Last 6 runs</span>}>
+            {trendData.length ? (
+              <div className="space-y-4">
+                <div className="h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={trendData} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
+                      <CartesianGrid stroke="rgba(148, 163, 184, 0.14)" vertical={false} />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
+                      <YAxis yAxisId="score" domain={[0, 100]} tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
+                      <YAxis yAxisId="issues" orientation="right" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.45)" />
+                      <Tooltip content={<TrendTooltip />} />
+                      <Line yAxisId="score" type="monotone" dataKey="score" stroke="oklch(0.84 0.15 205)" strokeWidth={3} dot={{ r: 3, fill: "oklch(0.84 0.15 205)" }} activeDot={{ r: 5 }} />
+                      <Line yAxisId="issues" type="monotone" dataKey="issues" stroke="oklch(0.76 0.15 76)" strokeWidth={2} dot={{ r: 0 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <MiniStat label="Latest score" value={String(trendData[trendData.length - 1]?.score ?? 0)} />
+                  <MiniStat label="Latest issues" value={String(trendData[trendData.length - 1]?.issues ?? 0)} />
+                  <MiniStat label="Latest critical" value={String(trendData[trendData.length - 1]?.critical ?? 0)} />
+                </div>
+              </div>
+            ) : (
+              <EmptyPanel copy="There are not enough runs in this workspace yet to render a score and findings trendline." />
+            )}
+          </Panel>
+
+          <Panel title="Change mix and issue pressure">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+              <div className="rounded-[22px] border border-border bg-background/25 p-4">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Outcome mix</div>
+                <div className="mt-4 h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={changeMix} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
+                      <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
+                      <YAxis tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" allowDecimals={false} />
+                      <Tooltip content={<MixTooltip />} />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                        {changeMix.map((entry) => (
+                          <Cell key={entry.name} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="rounded-[22px] border border-border bg-background/25 p-4">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Run pressure snapshot</div>
+                <div className="mt-4 space-y-3">
+                  <PressureMeter
+                    label="Baseline pressure"
+                    value={compare.data?.run_a.issues || 0}
+                    max={Math.max(compare.data?.run_a.issues || 0, compare.data?.run_b.issues || 0, 1)}
+                    tone="baseline"
+                  />
+                  <PressureMeter
+                    label="Candidate pressure"
+                    value={compare.data?.run_b.issues || 0}
+                    max={Math.max(compare.data?.run_a.issues || 0, compare.data?.run_b.issues || 0, 1)}
+                    tone="candidate"
+                  />
+                  <PressureMeter
+                    label="Risk shift"
+                    value={Math.abs(issueDelta)}
+                    max={Math.max(Math.abs(issueDelta), 1)}
+                    tone={issueDelta <= 0 ? "candidate" : "danger"}
+                    suffix={issueDelta === 0 ? "stable" : issueDelta < 0 ? "improved" : "higher"}
+                  />
+                </div>
+              </div>
+            </div>
+          </Panel>
+        </section>
+
         {compare.error ? (
           <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{compare.error}</div>
         ) : null}
@@ -323,10 +445,13 @@ function Compare() {
         <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
           <Panel title={`Category movement · ${compare.data?.project.name || selectedProjectLabel}`}>
             {(compare.data?.categories || []).length ? (
-              <div className="space-y-4">
-                {(compare.data?.categories || []).map((item) => (
-                  <CategoryRow key={item.name} item={item} scale={categoryScale} />
-                ))}
+              <div className="space-y-5">
+                <CategoryHeatmap rows={categoryHeatmap} scale={categoryScale} />
+                <div className="space-y-4">
+                  {(compare.data?.categories || []).map((item) => (
+                    <CategoryRow key={item.name} item={item} scale={categoryScale} />
+                  ))}
+                </div>
               </div>
             ) : (
               <EmptyPanel copy="These runs do not currently expose category deltas. Compare two richer analysis runs to see domain-level movement here." />
@@ -449,6 +574,40 @@ function DecisionBoard({
           }
           tone="muted"
         />
+      </div>
+    </div>
+  );
+}
+
+function CategoryHeatmap({
+  rows,
+  scale,
+}: {
+  rows: Array<{ category: string; baseline: number; candidate: number; delta: number; intensity: number }>;
+  scale: number;
+}) {
+  return (
+    <div className="rounded-[22px] border border-border bg-background/20 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Delta heat map</div>
+          <div className="mt-1 text-sm text-muted-foreground">Each row shows baseline, candidate, and delta intensity for a category.</div>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+          <span>cool</span>
+          <div className="h-2 w-24 rounded-full bg-[linear-gradient(90deg,oklch(0.76_0.16_160),oklch(0.82_0.15_205),oklch(0.74_0.18_80),oklch(0.68_0.2_24))]" />
+          <span>hot</span>
+        </div>
+      </div>
+      <div className="mt-4 space-y-2">
+        {rows.map((row) => (
+          <div key={row.category} className="grid grid-cols-[minmax(0,1.2fr)_72px_72px_72px] items-center gap-2">
+            <div className="truncate pr-2 text-sm">{row.category}</div>
+            <HeatCell label="Base" value={row.baseline} fill={heatColor(row.baseline, scale, "baseline")} />
+            <HeatCell label="Cand" value={row.candidate} fill={heatColor(row.candidate, scale, "candidate")} />
+            <HeatCell label="Delta" value={row.delta} fill={heatColor(Math.abs(row.delta), scale, row.delta < 0 ? "danger" : "delta")} prefix={row.delta > 0 ? "+" : ""} />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -578,6 +737,36 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+function TrendTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: { fullLabel: string; score: number; issues: number; critical: number } }> }) {
+  if (!active || !payload?.length) {
+    return null;
+  }
+  const point = payload[0]?.payload;
+  return (
+    <div className="rounded-xl border border-border bg-background/95 px-3 py-2 text-xs shadow-xl">
+      <div className="max-w-[220px] break-words font-medium">{point.fullLabel}</div>
+      <div className="mt-2 space-y-1 text-muted-foreground">
+        <div>Score: <span className="text-foreground">{point.score}</span></div>
+        <div>Issues: <span className="text-foreground">{point.issues}</span></div>
+        <div>Critical: <span className="text-foreground">{point.critical}</span></div>
+      </div>
+    </div>
+  );
+}
+
+function MixTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name: string; value: number } }> }) {
+  if (!active || !payload?.length) {
+    return null;
+  }
+  const point = payload[0]?.payload;
+  return (
+    <div className="rounded-xl border border-border bg-background/95 px-3 py-2 text-xs shadow-xl">
+      <div className="font-medium">{point.name}</div>
+      <div className="mt-1 text-muted-foreground">Count: <span className="text-foreground">{point.value}</span></div>
+    </div>
+  );
+}
+
 function DecisionLine({
   label,
   value,
@@ -592,6 +781,68 @@ function DecisionLine({
     <div className="rounded-2xl border border-border bg-background/35 p-3">
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className={`mt-1 text-sm font-semibold ${toneClass}`}>{value}</div>
+    </div>
+  );
+}
+
+function HeatCell({
+  label,
+  value,
+  fill,
+  prefix = "",
+}: {
+  label: string;
+  value: number;
+  fill: string;
+  prefix?: string;
+}) {
+  return (
+    <div
+      className="rounded-xl border border-white/8 px-2 py-2 text-center"
+      style={{ background: fill }}
+      title={`${label}: ${prefix}${value}`}
+    >
+      <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-black/65">{label}</div>
+      <div className="mt-1 text-sm font-semibold text-slate-950">
+        {prefix}
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function PressureMeter({
+  label,
+  value,
+  max,
+  tone,
+  suffix,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  tone: "baseline" | "candidate" | "danger";
+  suffix?: string;
+}) {
+  const width = `${Math.max(8, (value / Math.max(max, 1)) * 100)}%`;
+  const fill =
+    tone === "baseline"
+      ? "linear-gradient(90deg, rgba(148,163,184,0.65), rgba(203,213,225,0.9))"
+      : tone === "candidate"
+        ? "linear-gradient(90deg, rgba(86,211,240,0.72), rgba(90,160,255,0.96))"
+        : "linear-gradient(90deg, rgba(248,113,113,0.72), rgba(239,68,68,0.96))";
+  return (
+    <div className="rounded-[18px] border border-border bg-background/30 p-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+        <div className="text-sm font-semibold">
+          {value}
+          {suffix ? <span className="ml-1 text-xs font-normal text-muted-foreground">{suffix}</span> : null}
+        </div>
+      </div>
+      <div className="mt-3 h-3 rounded-full bg-muted/70">
+        <div className="h-3 rounded-full" style={{ width, background: fill }} />
+      </div>
     </div>
   );
 }
@@ -642,4 +893,18 @@ function normalizeScore(value?: number | null) {
     return 0;
   }
   return Math.round(numeric <= 10 ? numeric * 10 : numeric);
+}
+
+function heatColor(value: number, scale: number, mode: "baseline" | "candidate" | "delta" | "danger") {
+  const normalized = Math.max(0, Math.min(1, value / Math.max(scale, 1)));
+  if (mode === "baseline") {
+    return `oklch(${0.34 + normalized * 0.32} ${0.04 + normalized * 0.08} 245 / 0.92)`;
+  }
+  if (mode === "candidate") {
+    return `oklch(${0.48 + normalized * 0.32} ${0.08 + normalized * 0.12} 202 / 0.96)`;
+  }
+  if (mode === "danger") {
+    return `oklch(${0.64 + normalized * 0.1} ${0.14 + normalized * 0.08} 28 / 0.96)`;
+  }
+  return `oklch(${0.66 + normalized * 0.12} ${0.12 + normalized * 0.06} 88 / 0.96)`;
 }
