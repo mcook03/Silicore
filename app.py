@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from flask_cors import CORS
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from engine.atlas_intelligence import (
@@ -100,7 +101,7 @@ RUNTIME_CONFIG = get_runtime_config()
 
 app = Flask(__name__)
 
-from flask_cors import CORS
+
 CORS(app,
     origins=[
         "http://localhost:3000",
