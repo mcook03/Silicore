@@ -5,8 +5,20 @@ import { AppShell } from "@/components/silicore/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { apiGet, apiPostJson, useApiData } from "@/lib/api";
-import { Sparkles, Send, Bot, User, Zap, History as HistoryIcon, PlayCircle } from "lucide-react";
+import { apiPostJson, useApiData } from "@/lib/api";
+import {
+  Bot,
+  BrainCircuit,
+  CheckCircle2,
+  History as HistoryIcon,
+  PlayCircle,
+  Send,
+  Sparkles,
+  User,
+  Workflow,
+  Wrench,
+  Zap,
+} from "lucide-react";
 
 export const Route = createFileRoute("/atlas")({
   head: () => ({ meta: [{ title: "Atlas — Silicore" }] }),
@@ -14,7 +26,7 @@ export const Route = createFileRoute("/atlas")({
 });
 
 type SessionPayload = {
-  project_options: Array<{ value: string; label: string }>;
+  project_options: Array<{ project_id: string; name: string }>;
 };
 
 type ThreadMessage = {
@@ -22,17 +34,32 @@ type ThreadMessage = {
   content?: string;
   prompt?: string;
   answer?: string;
-  created_at?: string;
+  copy?: string;
 };
 
 type AtlasResponse = {
+  title?: string;
   answer?: string;
-  summary?: string;
+  detail?: string;
+  confidence?: number;
+  citations?: Array<{ label?: string; components?: string[]; nets?: string[] }>;
+  follow_ups?: string[];
+  actions?: { components?: string[]; nets?: string[]; net?: string; heat_mode?: string };
   thread_key?: string;
   thread?: ThreadMessage[];
   tool_suggestions?: string[];
-  workflow_plan?: Array<{ step?: string; title?: string }>;
-  workflow_results?: Array<{ status?: string; action_name?: string; summary?: string }>;
+  workflow_plan?: Array<{ step?: string; title?: string; action_name?: string; reason?: string }>;
+  workflow_results?: Array<{ status?: string; action_name?: string; summary?: string; reason?: string; result?: { summary?: string; status?: string; count?: number } }>;
+  agent_trace?: Array<{ step?: number; label?: string; status?: string; summary?: string }>;
+};
+
+type AtlasContextPayload = {
+  context: Record<string, unknown>;
+  selected_project_id?: string;
+  selected_run_id?: string;
+  summary?: { title?: string; copy?: string };
+  prompt_starters?: string[];
+  quick_actions?: string[];
 };
 
 type AgentRunsPayload = {
@@ -48,46 +75,66 @@ function Atlas() {
   const [threadKey, setThreadKey] = useState("");
   const [messages, setMessages] = useState<Array<{ who: "user" | "atlas"; text: string }>>([]);
   const [toolSuggestions, setToolSuggestions] = useState<string[]>([]);
-  const [workflowPlan, setWorkflowPlan] = useState<Array<{ step?: string; title?: string }>>([]);
-  const [workflowResults, setWorkflowResults] = useState<Array<{ status?: string; action_name?: string; summary?: string }>>([]);
+  const [workflowPlan, setWorkflowPlan] = useState<Array<{ step?: string; title?: string; action_name?: string; reason?: string }>>([]);
+  const [workflowResults, setWorkflowResults] = useState<Array<{ status?: string; action_name?: string; summary?: string; reason?: string; result?: { summary?: string; status?: string; count?: number } }>>([]);
+  const [latestAnswer, setLatestAnswer] = useState<AtlasResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const contextUrl = useMemo(() => {
+    const params = new URLSearchParams({ page_type: pageType });
+    if (projectId) {
+      params.set("project_id", projectId);
+    }
+    if (boardName) {
+      params.set("board_name", boardName);
+    }
+    return `/api/frontend/atlas/context?${params.toString()}`;
+  }, [boardName, pageType, projectId]);
+
+  const atlasContext = useApiData<AtlasContextPayload>(contextUrl);
   const runs = useApiData<AgentRunsPayload>(threadKey ? `/atlas/agent-runs?thread_key=${encodeURIComponent(threadKey)}` : "/atlas/agent-runs");
 
-  const context = useMemo(() => ({
-    project_id: projectId || session.data?.project_options?.[0]?.value || "",
+  useEffect(() => {
+    if (!projectId && atlasContext.data?.selected_project_id) {
+      setProjectId(atlasContext.data.selected_project_id);
+    }
+  }, [atlasContext.data?.selected_project_id, projectId]);
+
+  const resolvedContext = atlasContext.data?.context || {
+    project_id: projectId || session.data?.project_options?.[0]?.project_id || "",
     board_name: boardName,
-  }), [projectId, boardName, session.data]);
+  };
+
+  const parseThread = (thread: ThreadMessage[] = []) =>
+    thread.flatMap((message) => {
+      const rows: Array<{ who: "user" | "atlas"; text: string }> = [];
+      if (message.prompt) rows.push({ who: "user", text: message.prompt });
+      if (message.answer) rows.push({ who: "atlas", text: message.answer });
+      if (!message.prompt && !message.answer && (message.content || message.copy)) {
+        rows.push({ who: message.role === "user" ? "user" : "atlas", text: stripHtml(message.content || message.copy || "") });
+      }
+      return rows;
+    });
 
   useEffect(() => {
     if (!threadKey) {
       return;
     }
-    void apiGet<{ messages: ThreadMessage[] }>(`/atlas/thread?thread_key=${encodeURIComponent(threadKey)}`).then((payload) => {
-      const nextMessages = payload.messages.flatMap((message) => {
-        const rows: Array<{ who: "user" | "atlas"; text: string }> = [];
-        if (message.prompt) rows.push({ who: "user", text: message.prompt });
-        if (message.answer) rows.push({ who: "atlas", text: message.answer });
-        if (!message.prompt && !message.answer && message.content) {
-          rows.push({ who: message.role === "user" ? "user" : "atlas", text: message.content });
-        }
-        return rows;
-      });
-      if (nextMessages.length) {
-        setMessages(nextMessages);
-      }
-    }).catch(() => undefined);
+    setMessages([]);
+    setLatestAnswer(null);
   }, [threadKey]);
 
-  const sendPrompt = async () => {
-    if (!prompt.trim()) {
+  const sendPrompt = async (overridePrompt?: string) => {
+    const nextPrompt = (overridePrompt ?? prompt).trim();
+    if (!nextPrompt) {
       return;
     }
     setError(null);
     try {
       const payload = await apiPostJson<AtlasResponse>("/atlas/query", {
         page_type: pageType,
-        prompt,
-        context,
+        prompt: nextPrompt,
+        context: resolvedContext,
         thread_key: threadKey || undefined,
         history: messages.map((message) => ({
           role: message.who === "user" ? "user" : "assistant",
@@ -98,15 +145,8 @@ function Atlas() {
       setToolSuggestions(payload.tool_suggestions || []);
       setWorkflowPlan(payload.workflow_plan || []);
       setWorkflowResults(payload.workflow_results || []);
-      setMessages(payload.thread?.flatMap((message) => {
-        const rows: Array<{ who: "user" | "atlas"; text: string }> = [];
-        if (message.prompt) rows.push({ who: "user", text: message.prompt });
-        if (message.answer) rows.push({ who: "atlas", text: message.answer });
-        if (!message.prompt && !message.answer && message.content) {
-          rows.push({ who: message.role === "user" ? "user" : "atlas", text: message.content });
-        }
-        return rows;
-      }) || []);
+      setLatestAnswer(payload);
+      setMessages(parseThread(payload.thread || []));
       setPrompt("");
       await runs.reload();
     } catch (err) {
@@ -117,15 +157,35 @@ function Atlas() {
   const runQuickAction = async (actionName: string) => {
     setError(null);
     try {
-      await apiPostJson("/atlas/action", {
+      const payload = await apiPostJson<{ result?: { summary?: string; status?: string; count?: number }; error?: string; job?: { status?: string; created_at?: string } }>("/atlas/action", {
         action_name: actionName,
-        context,
+        context: resolvedContext,
       });
+      if (payload.error) {
+        setError(payload.error);
+      } else {
+        setWorkflowResults((current) => [
+          {
+            action_name: actionName,
+            status: payload.job?.status || payload.result?.status || "completed",
+            summary: payload.result?.summary || payload.result?.status || "Atlas action completed.",
+            result: payload.result,
+          },
+          ...current,
+        ]);
+      }
       await runs.reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Atlas action failed.");
     }
   };
+
+  const visibleQuickActions = toolSuggestions.length ? toolSuggestions : atlasContext.data?.quick_actions || ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"];
+  const starterPrompts = atlasContext.data?.prompt_starters || [];
+  const selectedProjectLabel =
+    session.data?.project_options?.find((option) => option.project_id === projectId)?.name ||
+    session.data?.project_options?.[0]?.name ||
+    "Latest project";
 
   return (
     <AppShell title="Atlas — AI copilot">
@@ -142,147 +202,251 @@ function Atlas() {
                 Copilot interface
               </div>
               <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.15rem] sm:leading-[1.02]">
-                Atlas should feel like a live copilot station, not a chatbot dropped into a dashboard.
+                Atlas is now grounded in live Silicore context instead of acting like a detached chatbot.
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
-                Context, thread state, quick actions, and agent runs should support the conversation instead of competing with it. This layout is moving toward that more intentional flow.
+                Workspace intelligence, board analysis context, compare posture, workflow actions, and follow-up prompts are now driven by the same backend intelligence layer as the rest of the product.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              <AtlasSignal label="Mode" value={pageType} copy={atlasContext.data?.summary?.title || "Atlas context"} />
               <AtlasSignal label="Thread" value={threadKey ? "Live" : "New"} copy={threadKey || "Start a new Atlas thread"} />
-              <AtlasSignal label="Messages" value={String(messages.length)} copy="Conversation items in memory" />
               <AtlasSignal label="Agent runs" value={String(runs.data?.runs.length || 0)} copy="Tracked against this thread" />
             </div>
           </div>
         </section>
 
-        <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-4">
-          <AtlasStage title="Context" rail="working context">
-            <div className="grid gap-3 md:grid-cols-3">
-              <Field label="Page type">
-                <div className="grid grid-cols-3 gap-2">
-                  {(["board", "project", "compare"] as const).map((option) => (
-                    <button key={option} onClick={() => setPageType(option)} className={`interactive-lift rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}>
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </Field>
-              <Field label="Project">
-                <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
-                  <option value="">Latest project</option>
-                  {(session.data?.project_options || []).map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Board name">
-                <Input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="sentinel-power.kicad_pcb" className="premium-input" />
-              </Field>
-            </div>
-          </AtlasStage>
-
-          <AtlasStage title="Thread" rail="conversation stream" action={<Button size="sm" variant="ghost" className="h-7 rounded-full text-xs" onClick={() => { setThreadKey(""); setMessages([]); setToolSuggestions([]); setWorkflowPlan([]); setWorkflowResults([]); }}><HistoryIcon className="mr-1.5 h-3 w-3" /> New</Button>}>
-            <div className="space-y-3">
-              {messages.map((message, index) => (
-                <div key={`${message.who}-${index}`} className={`flex items-start gap-3 rounded-xl border border-border p-4 ${message.who === "user" ? "bg-background/40" : "bg-primary/5"}`}>
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${message.who === "user" ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary"}`}>
-                    {message.who === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+        <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+          <div className="space-y-4">
+            <AtlasStage title="Context" rail="working context">
+              <div className="grid gap-3 md:grid-cols-3">
+                <Field label="Page type">
+                  <div className="grid grid-cols-3 gap-2">
+                    {(["board", "project", "compare"] as const).map((option) => (
+                      <button key={option} onClick={() => setPageType(option)} className={`interactive-lift rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}>
+                        {option}
+                      </button>
+                    ))}
                   </div>
-                  <div className="flex-1">
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{message.who === "user" ? "You" : "Atlas"}</div>
-                    <p className="mt-1 text-sm whitespace-pre-wrap">{message.text}</p>
-                  </div>
-                </div>
-              ))}
-              {!messages.length ? <p className="text-sm text-muted-foreground">Ask Atlas about a board, project, or comparison and Silicore will answer against the live backend context.</p> : null}
-            </div>
-          </AtlasStage>
-
-          <AtlasStage title="Ask Atlas" rail="input rail">
-            <div className="space-y-3">
-              <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask about a board, request a fix, or trigger an action…" className="premium-textarea min-h-[100px]" />
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex flex-wrap gap-1.5">
-                  {["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"].map((suggestion) => (
-                    <button key={suggestion} onClick={() => setPrompt(`Run ${suggestion.replaceAll("_", " ")} for the current context.`)} className="rounded-full border border-border bg-background/40 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground">
-                      {suggestion.replaceAll("_", " ")}
-                    </button>
-                  ))}
-                </div>
-                <Button size="sm" className="rounded-full" onClick={() => void sendPrompt()}><Send className="mr-1.5 h-3.5 w-3.5" /> Send</Button>
+                </Field>
+                <Field label="Project">
+                  <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
+                    <option value="">{selectedProjectLabel}</option>
+                    {(session.data?.project_options || []).map((option) => (
+                      <option key={option.project_id} value={option.project_id}>{option.name}</option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Board name">
+                  <Input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="sentinel-power.kicad_pcb" className="premium-input" />
+                </Field>
               </div>
-              {error ? <div className="text-sm text-danger">{error}</div> : null}
-            </div>
-          </AtlasStage>
-        </div>
+              <div className="mt-4 rounded-2xl border border-primary/14 bg-primary/8 p-4">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Atlas brief</div>
+                <div className="mt-2 text-lg font-semibold text-foreground">{atlasContext.data?.summary?.title || "Loading context…"}</div>
+                <div className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {atlasContext.data?.summary?.copy || "Atlas is preparing context from the active page type and selected workspace."}
+                </div>
+              </div>
+            </AtlasStage>
 
-        <div className="space-y-4">
-          <AtlasStage title="Agent runs" rail="execution history" action={<Sparkles className="h-4 w-4 text-primary" />}>
-            <div className="space-y-2">
-              {(runs.data?.runs || []).map((run, index) => (
-                <div key={`${run.run_id || run.action_name}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">{run.action_name || run.run_id || "Atlas run"}</span>
-                    <span className={`font-mono text-[10px] uppercase tracking-wider ${run.status === "completed" ? "text-success" : run.status === "failed" ? "text-danger" : "text-warning"}`}>{run.status || "unknown"}</span>
+            <AtlasStage
+              title="Ask Atlas"
+              rail="copilot input"
+              action={
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 rounded-full text-xs"
+                  onClick={() => {
+                    setThreadKey("");
+                    setMessages([]);
+                    setToolSuggestions([]);
+                    setWorkflowPlan([]);
+                    setWorkflowResults([]);
+                    setLatestAnswer(null);
+                    setPrompt("");
+                  }}
+                >
+                  <HistoryIcon className="mr-1.5 h-3 w-3" />
+                  New
+                </Button>
+              }
+            >
+              <div className="space-y-4">
+                <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask Atlas what matters, what changed, what blocks signoff, or what to inspect next…" className="premium-textarea min-h-[110px]" />
+                <div className="flex flex-wrap gap-1.5">
+                  {starterPrompts.map((suggestion) => (
+                    <button key={suggestion} onClick={() => void sendPrompt(suggestion)} className="rounded-full border border-border bg-background/40 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-xs text-muted-foreground">
+                    Atlas is answering from live workspace/board/compare context instead of a generic prompt shell.
                   </div>
-                  <div className="mt-1 font-mono text-[11px] text-muted-foreground">{run.created_at || "now"} {run.duration_ms ? `· ${run.duration_ms} ms` : ""}</div>
+                  <Button size="sm" className="rounded-full" onClick={() => void sendPrompt()}><Send className="mr-1.5 h-3.5 w-3.5" /> Send</Button>
                 </div>
-              ))}
-              {!runs.data?.runs.length ? <p className="text-sm text-muted-foreground">No Atlas runs recorded for this thread yet.</p> : null}
-            </div>
-          </AtlasStage>
+                {error ? <div className="text-sm text-danger">{error}</div> : null}
+              </div>
+            </AtlasStage>
 
-          <AtlasStage title="Workflow plan" rail="planner">
-            <div className="space-y-2">
-              {workflowPlan.map((step, index) => (
-                <div key={`${step.step || step.title}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
-                  <div className="text-sm">{step.title || step.step || `Step ${index + 1}`}</div>
+            <AtlasStage title="Atlas answer" rail="reasoned output" action={<BrainCircuit className="h-4 w-4 text-primary" />}>
+              {latestAnswer ? (
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-white/8 bg-background/35 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{latestAnswer.title || "Atlas"}</div>
+                        <div className="mt-2 text-xl font-semibold text-foreground">{latestAnswer.answer || "No answer returned."}</div>
+                      </div>
+                      <div className="rounded-full border border-primary/18 bg-primary/10 px-3 py-1.5 text-xs text-primary">
+                        Confidence {Math.round((latestAnswer.confidence || 0) * 100)}%
+                      </div>
+                    </div>
+                    {latestAnswer.detail ? <p className="mt-3 text-sm leading-7 text-muted-foreground">{latestAnswer.detail}</p> : null}
+                  </div>
+
+                  {latestAnswer.citations?.length ? (
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {latestAnswer.citations.map((citation, index) => (
+                        <div key={`${citation.label}-${index}`} className="rounded-2xl border border-white/8 bg-background/35 p-4">
+                          <div className="text-sm font-medium text-foreground">{citation.label || "Evidence item"}</div>
+                          <div className="mt-2 text-xs leading-6 text-muted-foreground">
+                            Components: {(citation.components || []).join(", ") || "—"}<br />
+                            Nets: {(citation.nets || []).join(", ") || "—"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {latestAnswer.follow_ups?.length ? (
+                    <div className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Follow-up prompts</div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {latestAnswer.follow_ups.map((item) => (
+                          <button key={item} onClick={() => void sendPrompt(item)} className="rounded-full border border-primary/18 bg-primary/8 px-3 py-1.5 text-xs text-primary hover:bg-primary/12">
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {latestAnswer.agent_trace?.length ? (
+                    <div className="space-y-2">
+                      {latestAnswer.agent_trace.map((item, index) => (
+                        <div key={`${item.label}-${index}`} className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="text-sm font-medium text-foreground">{item.label || `Step ${index + 1}`}</div>
+                            <span className={`font-mono text-[10px] uppercase tracking-[0.16em] ${item.status === "completed" ? "text-success" : item.status === "failed" ? "text-danger" : "text-warning"}`}>{item.status || "ready"}</span>
+                          </div>
+                          <div className="mt-2 text-sm text-muted-foreground">{item.summary || "Atlas executed this step."}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-              ))}
-              {!workflowPlan.length ? <p className="text-sm text-muted-foreground">Atlas will surface its workflow plan here after a request.</p> : null}
-            </div>
-          </AtlasStage>
+              ) : (
+                <p className="text-sm text-muted-foreground">Ask Atlas a real engineering question and this panel will show the answer, its confidence, cited signals, and suggested follow-ups.</p>
+              )}
+            </AtlasStage>
 
-          <AtlasStage title="Quick actions" rail="action shortcuts" action={<Zap className="h-4 w-4 text-primary" />}>
-            <div className="space-y-2">
-              {(toolSuggestions.length ? toolSuggestions : ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"]).map((actionName) => (
-                <button key={actionName} onClick={() => void runQuickAction(actionName)} className="flex w-full items-center justify-between rounded-lg border border-border bg-background/40 p-3 text-left text-sm hover:border-primary/30">
-                  <span>{actionName.replaceAll("_", " ")}</span>
-                  <PlayCircle className="h-4 w-4 text-muted-foreground" />
-                </button>
-              ))}
-            </div>
-            {workflowResults.length ? (
-              <div className="mt-4 space-y-2 border-t border-border pt-4">
-                {workflowResults.map((result, index) => (
-                  <div key={`${result.action_name}-${index}`} className="rounded-lg border border-border bg-background/40 p-3">
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{result.action_name || "workflow"}</div>
-                    <div className="mt-1 text-sm">{result.summary || result.status || "completed"}</div>
+            <AtlasStage title="Thread" rail="conversation stream">
+              <div className="space-y-3">
+                {messages.map((message, index) => (
+                  <div key={`${message.who}-${index}`} className={`flex items-start gap-3 rounded-xl border border-border p-4 ${message.who === "user" ? "bg-background/40" : "bg-primary/5"}`}>
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${message.who === "user" ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary"}`}>
+                      {message.who === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{message.who === "user" ? "You" : "Atlas"}</div>
+                      <p className="mt-1 whitespace-pre-wrap text-sm">{message.text}</p>
+                    </div>
                   </div>
                 ))}
+                {!messages.length ? <p className="text-sm text-muted-foreground">Start with one of the suggested prompts above and Atlas will keep the thread anchored to this live context.</p> : null}
               </div>
-            ) : null}
-          </AtlasStage>
+            </AtlasStage>
+          </div>
+
+          <div className="space-y-4">
+            <AtlasStage title="Quick actions" rail="action shortcuts" action={<Wrench className="h-4 w-4 text-primary" />}>
+              <div className="space-y-2">
+                {visibleQuickActions.map((actionName) => (
+                  <button key={actionName} onClick={() => void runQuickAction(actionName)} className="flex w-full items-center justify-between rounded-lg border border-border bg-background/40 p-3 text-left text-sm hover:border-primary/30">
+                    <span>{actionName.replaceAll("_", " ")}</span>
+                    <PlayCircle className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                ))}
+              </div>
+            </AtlasStage>
+
+            <AtlasStage title="Workflow plan" rail="planner" action={<Workflow className="h-4 w-4 text-primary" />}>
+              <div className="space-y-2">
+                {workflowPlan.map((step, index) => (
+                  <div key={`${step.action_name || step.title}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
+                    <div className="text-sm text-foreground">{step.title || step.action_name || step.step || `Step ${index + 1}`}</div>
+                    {step.reason ? <div className="mt-1 text-xs text-muted-foreground">{step.reason}</div> : null}
+                  </div>
+                ))}
+                {!workflowPlan.length ? <p className="text-sm text-muted-foreground">Atlas will surface a workflow plan here whenever your prompt implies a concrete engineering action path.</p> : null}
+              </div>
+            </AtlasStage>
+
+            <AtlasStage title="Workflow results" rail="execution output" action={<CheckCircle2 className="h-4 w-4 text-primary" />}>
+              <div className="space-y-2">
+                {workflowResults.map((result, index) => (
+                  <div key={`${result.action_name}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-sm text-foreground">{(result.action_name || "workflow").replaceAll("_", " ")}</div>
+                      <span className={`font-mono text-[10px] uppercase tracking-wider ${result.status === "completed" ? "text-success" : result.status === "failed" ? "text-danger" : "text-warning"}`}>{result.status || "ready"}</span>
+                    </div>
+                    <div className="mt-1 text-sm text-muted-foreground">{result.summary || result.result?.summary || result.result?.status || result.reason || "Atlas recorded a workflow event."}</div>
+                  </div>
+                ))}
+                {!workflowResults.length ? <p className="text-sm text-muted-foreground">When Atlas executes or suggests actions, their outputs will show up here instead of getting lost in the thread.</p> : null}
+              </div>
+            </AtlasStage>
+
+            <AtlasStage title="Agent runs" rail="execution history" action={<Zap className="h-4 w-4 text-primary" />}>
+              <div className="space-y-2">
+                {(runs.data?.runs || []).map((run, index) => (
+                  <div key={`${run.run_id || run.action_name}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">{run.action_name || run.run_id || "Atlas run"}</span>
+                      <span className={`font-mono text-[10px] uppercase tracking-wider ${run.status === "completed" ? "text-success" : run.status === "failed" ? "text-danger" : "text-warning"}`}>{run.status || "unknown"}</span>
+                    </div>
+                    <div className="mt-1 font-mono text-[11px] text-muted-foreground">{run.created_at || "now"} {run.duration_ms ? `· ${run.duration_ms} ms` : ""}</div>
+                  </div>
+                ))}
+                {!runs.data?.runs.length ? <p className="text-sm text-muted-foreground">No Atlas runs recorded for this thread yet.</p> : null}
+              </div>
+            </AtlasStage>
+          </div>
         </div>
-      </div>
       </div>
     </AppShell>
   );
+}
+
+function stripHtml(value: string) {
+  return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function AtlasSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
   return (
     <div className="border-l border-white/10 pl-4">
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
-      <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-3xl font-semibold capitalize text-foreground">{value}</div>
       <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="space-y-1.5">
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>

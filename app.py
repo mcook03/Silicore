@@ -488,6 +488,219 @@ def _compare_payload(project_id, run_a_id=None, run_b_id=None):
     }
 
 
+def _atlas_default_project():
+    projects = [project for project in list_projects() if not _is_placeholder_project(project)]
+    return projects[0] if projects else None
+
+
+def _atlas_project_context_payload(project_id=""):
+    project = get_project(project_id) if project_id else None
+    if project is None:
+        project = _atlas_default_project()
+    if project is None:
+        return {
+            "context": {
+                "project_name": "Workspace",
+                "health_summary": "Create or link a workspace to give Atlas real project intelligence.",
+            },
+            "selected_project_id": "",
+            "summary": {
+                "title": "Atlas needs a workspace context",
+                "copy": "Create or link a workspace with analysis runs so Atlas can reason about trend, recurring issue families, and release posture.",
+            },
+            "prompt_starters": [
+                "What should the team do next?",
+                "Is this workspace improving enough?",
+                "What issue family is repeating?",
+            ],
+            "quick_actions": ["compare_latest_runs", "review_validation_history", "generate_signoff_packet"],
+        }
+
+    enriched_project = _enrich_project_for_display(project)
+    workspace_intelligence = _build_project_workspace_intelligence(enriched_project)
+    timeline_data = _build_project_timeline_data(enriched_project)
+    project_copilot = build_project_copilot_brief(enriched_project, workspace_intelligence, timeline_data)
+    context = _build_project_atlas_context(enriched_project, workspace_intelligence, timeline_data, project_copilot)
+
+    return {
+        "context": context,
+        "selected_project_id": enriched_project.get("project_id"),
+        "summary": {
+            "title": project_copilot.get("posture") or enriched_project.get("name") or "Workspace",
+            "copy": project_copilot.get("release_readiness") or workspace_intelligence.get("health_summary"),
+        },
+        "prompt_starters": project_copilot.get("prompt_starters") or [
+            "What should the team do next?",
+            "Is this workspace improving enough for the next review gate?",
+            "What issue family is repeating across this workspace?",
+        ],
+        "quick_actions": ["compare_latest_runs", "review_validation_history", "generate_signoff_packet", "run_fixture_evaluation"],
+    }
+
+
+def _atlas_board_context_payload(board_name=""):
+    history_runs = _build_history_runs()
+    selected_run = None
+    if board_name:
+        lowered = board_name.strip().lower()
+        selected_run = next(
+            (
+                run
+                for run in history_runs
+                if lowered in str(run.get("name") or "").lower()
+                or lowered in str(run.get("label") or "").lower()
+            ),
+            None,
+        )
+    if selected_run is None and history_runs:
+        selected_run = history_runs[0]
+    if selected_run is None:
+        return {
+            "context": {
+                "board_name": board_name or "Board",
+                "summary": "Run a board analysis to unlock Atlas engineering guidance.",
+            },
+            "selected_run_id": "",
+            "summary": {
+                "title": "Atlas needs a board analysis",
+                "copy": "Run a single-board analysis first so Atlas can reason about score, hotspots, signoff, and confidence.",
+            },
+            "prompt_starters": [
+                "What should I fix first?",
+                "Why is the score low?",
+                "Am I signoff ready?",
+            ],
+            "quick_actions": ["inspect_parser_trust", "evaluate_signoff_gate", "open_high_confidence_findings"],
+        }
+
+    detail = _build_run_detail(selected_run.get("name") or "") or {}
+    enriched_result = _enrich_single_result(detail)
+    single_decision = _build_single_decision_data(enriched_result)
+    board_copilot = build_board_copilot_brief(enriched_result, single_decision)
+    board_review_layers = _build_board_review_layers(enriched_result)
+    board_value_metrics = _build_board_value_metrics(enriched_result)
+    context = _build_board_atlas_context(
+        enriched_result,
+        single_decision,
+        board_copilot,
+        board_review_layers,
+        board_value_metrics,
+    )
+
+    return {
+        "context": context,
+        "selected_run_id": context.get("run_id") or selected_run.get("name"),
+        "summary": {
+            "title": board_copilot.get("mission") or context.get("board_name") or "Board context",
+            "copy": board_copilot.get("release_note") or context.get("summary"),
+        },
+        "prompt_starters": board_copilot.get("prompt_starters") or [
+            "What should I fix first?",
+            "Show me the evidence behind that priority",
+            "Am I signoff ready?",
+        ],
+        "quick_actions": ["inspect_parser_trust", "evaluate_signoff_gate", "generate_signoff_packet", "open_high_confidence_findings"],
+    }
+
+
+def _atlas_compare_context_payload(project_id=""):
+    project = get_project(project_id) if project_id else None
+    if project is None:
+        project = _atlas_default_project()
+    if project is None:
+        return {
+            "context": {
+                "posture": "No comparison context is available yet.",
+            },
+            "selected_project_id": "",
+            "summary": {
+                "title": "Atlas needs two linked runs",
+                "copy": "Create a workspace with at least two runs so Atlas can reason about approval, regression, and changed subsystems.",
+            },
+            "prompt_starters": [
+                "Can I approve this revision?",
+                "What got worse?",
+                "What should I inspect next?",
+            ],
+            "quick_actions": ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"],
+        }
+
+    compare_payload = _compare_payload(project.get("project_id"))
+    if not compare_payload or compare_payload.get("error"):
+        return {
+            "context": {
+                "project_id": project.get("project_id"),
+                "project_name": project.get("name"),
+                "posture": compare_payload.get("error") if isinstance(compare_payload, dict) else "Comparison is not available yet.",
+            },
+            "selected_project_id": project.get("project_id"),
+            "summary": {
+                "title": project.get("name") or "Workspace",
+                "copy": compare_payload.get("error") if isinstance(compare_payload, dict) else "Atlas cannot compare this workspace yet.",
+            },
+            "prompt_starters": [
+                "Can I approve this revision?",
+                "What got worse?",
+                "What should I inspect next?",
+            ],
+            "quick_actions": ["compare_latest_runs", "generate_signoff_packet"],
+        }
+
+    focus_items = compare_payload.get("focus_items") or []
+    comparison = {
+        "project_id": compare_payload.get("project", {}).get("project_id"),
+        "run_a": compare_payload.get("run_a") or {},
+        "run_b": compare_payload.get("run_b") or {},
+        "compare_focus_items": [
+            {
+                "label": item.get("label") or item.get("title") or "Changed finding",
+                "components": item.get("components") or [],
+                "nets": item.get("nets") or [],
+                "severity": item.get("severity"),
+                "change_type": item.get("change_type") or "change",
+            }
+            for item in focus_items
+        ],
+        "score_diff": ((compare_payload.get("summary") or {}).get("score_delta")) or 0,
+        "risk_diff": ((compare_payload.get("summary") or {}).get("risk_delta")) or 0,
+        "critical_diff": ((compare_payload.get("summary") or {}).get("critical_delta")) or 0,
+        "insights": {
+            "domain_impacts": [
+                {
+                    "domain": item.get("name"),
+                    "delta": item.get("delta", 0),
+                }
+                for item in (compare_payload.get("categories") or [])[:6]
+            ],
+            "recommendations": [
+                {
+                    "title": item.get("label") or item.get("title") or "Compare focus",
+                    "summary": item.get("recommendation") or "Inspect this changed issue family before approval.",
+                }
+                for item in focus_items[:3]
+            ],
+        },
+    }
+    compare_copilot = build_compare_copilot_brief(comparison)
+    context = _build_compare_atlas_context(comparison, compare_copilot)
+    context["project_name"] = compare_payload.get("project", {}).get("name")
+
+    return {
+        "context": context,
+        "selected_project_id": compare_payload.get("project", {}).get("project_id"),
+        "summary": {
+            "title": compare_copilot.get("posture") or compare_payload.get("project", {}).get("name") or "Comparison context",
+            "copy": compare_copilot.get("signoff_note") or compare_copilot.get("root_cause"),
+        },
+        "prompt_starters": compare_copilot.get("prompt_starters") or [
+            "Can I approve this revision?",
+            "What got worse in this revision?",
+            "What should I inspect next?",
+        ],
+        "quick_actions": ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings", "inspect_parser_trust"],
+    }
+
+
 @app.before_request
 def load_current_user():
     g.current_user = _current_user()
@@ -721,6 +934,19 @@ def frontend_compare_route():
     if payload.get("error"):
         return _json_error(payload["error"], 400)
     return jsonify(payload)
+
+
+@app.route("/api/frontend/atlas/context", methods=["GET"])
+def frontend_atlas_context_route():
+    page_type = str(request.args.get("page_type") or "project").strip().lower()
+    project_id = str(request.args.get("project_id") or "").strip()
+    board_name = str(request.args.get("board_name") or "").strip()
+
+    if page_type == "board":
+        return jsonify(_atlas_board_context_payload(board_name))
+    if page_type == "compare":
+        return jsonify(_atlas_compare_context_payload(project_id))
+    return jsonify(_atlas_project_context_payload(project_id))
 
 
 @app.route("/api/frontend/jobs", methods=["GET"])
