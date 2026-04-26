@@ -129,9 +129,11 @@ function Atlas() {
     }
   }, [atlasContext.data?.board_options, atlasContext.data?.selected_run_id, pageType, selectedRunId]);
 
+  const availableBoardOptions = atlasContext.data?.board_options || [];
+  const activeRunId = selectedRunId || atlasContext.data?.selected_run_id || availableBoardOptions[0]?.run_id || "";
   const selectedBoardOption = useMemo(
-    () => (atlasContext.data?.board_options || []).find((option) => option.run_id === selectedRunId) || (atlasContext.data?.board_options || [])[0],
-    [atlasContext.data?.board_options, selectedRunId],
+    () => availableBoardOptions.find((option) => option.run_id === activeRunId) || availableBoardOptions[0],
+    [activeRunId, availableBoardOptions],
   );
 
   useEffect(() => {
@@ -321,7 +323,7 @@ function Atlas() {
                 {pageType === "board" ? (
                   <>
                     <Field label="Board snapshot">
-                      <select value={selectedRunId} onChange={(event) => setSelectedRunId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
+                      <select value={activeRunId} onChange={(event) => setSelectedRunId(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
                         {(atlasContext.data?.board_options || []).map((option) => (
                           <option key={option.run_id} value={option.run_id}>
                             {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
@@ -330,15 +332,20 @@ function Atlas() {
                       </select>
                     </Field>
                     <Field label="Board label">
-                      <div className="premium-input flex min-h-10 items-center rounded-2xl px-3 text-sm text-foreground">
-                        {selectedBoardOption?.label || boardName || "Select a board run"}
+                      <div className="premium-input flex min-h-10 w-full flex-col items-start justify-center rounded-2xl px-3 py-2 text-sm text-foreground">
+                        <div className="truncate font-medium text-foreground">
+                          {selectedBoardOption?.label || boardName || "Select a board run"}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
+                          {activeRunId ? `Run ${activeRunId}` : "Choose a board snapshot to anchor Atlas to a real analysis run"}
+                        </div>
                       </div>
                     </Field>
                   </>
                 ) : (
                   <>
                     <Field label="Project">
-                      <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
+                      <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
                         <option value="">{selectedProjectLabel}</option>
                         {(session.data?.project_options || []).map((option) => (
                           <option key={option.project_id} value={option.project_id}>{option.name}</option>
