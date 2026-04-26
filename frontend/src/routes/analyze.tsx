@@ -493,6 +493,11 @@ function Analyze() {
                       title: "Linked issue focus",
                       detail: `Selected finding: ${selectedFinding.message || "Unnamed issue"} · ${(selectedFinding.components || []).length || 0} components · ${(selectedFinding.nets || []).length || 0} nets`,
                     } : null}
+                    linkedFinding={selectedFinding ? {
+                      message: selectedFinding.message,
+                      components: selectedFinding.components || [],
+                      nets: selectedFinding.nets || [],
+                    } : null}
                   />
                 </div>
               </div>

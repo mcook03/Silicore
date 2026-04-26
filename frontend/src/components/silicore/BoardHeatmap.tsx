@@ -39,6 +39,7 @@ type BoardViewData = {
   outline_segments?: BoardOutline[];
   hotspots?: BoardHotspot[];
   summary_stats?: Array<{ label: string; value: number }>;
+  focus_items?: Array<{ label: string; severity?: string; components?: string; nets?: string; component_list?: string[]; net_list?: string[] }>;
   components?: BoardPoint[];
   vias?: BoardPoint[];
   traces?: BoardTrace[];
@@ -76,18 +77,33 @@ export function BoardHeatmap({
   matrixRows,
   emptyCopy = "No heat-map data is available for this view yet.",
   focusSummary,
+  linkedFinding,
 }: {
   title?: string;
   boardView?: BoardViewData | null;
   matrixRows?: MatrixRow[] | null;
   emptyCopy?: string;
   focusSummary?: { title: string; detail: string } | null;
+  linkedFinding?: { message?: string; components?: string[]; nets?: string[] } | null;
 }) {
   const [mode, setMode] = useState<HeatMode>("thermal");
   const hasBoardData = Boolean(
     boardView?.has_data && ((boardView?.hotspots?.length || 0) > 0 || (boardView?.outline_segments?.length || 0) > 0),
   );
   const hasMatrixData = Boolean(matrixRows?.length);
+  const linkedMatches = useMemo(() => {
+    if (!boardView || !linkedFinding) return [];
+    const componentSet = new Set(linkedFinding.components || []);
+    const netSet = new Set(linkedFinding.nets || []);
+    return (boardView.focus_items || []).filter((item) => {
+      const itemComponents = item.component_list || [];
+      const itemNets = item.net_list || [];
+      const componentMatch = itemComponents.some((value) => componentSet.has(value));
+      const netMatch = itemNets.some((value) => netSet.has(value));
+      const messageMatch = linkedFinding.message && item.label?.toLowerCase().includes(linkedFinding.message.toLowerCase().slice(0, 20));
+      return Boolean(componentMatch || netMatch || messageMatch);
+    }).slice(0, 4);
+  }, [boardView, linkedFinding]);
 
   return (
     <div className="rounded-[30px] border border-border bg-[radial-gradient(circle_at_top_left,_rgba(86,211,240,0.08),_transparent_28%),linear-gradient(180deg,rgba(8,18,28,0.98),rgba(7,15,24,0.96))] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
@@ -138,6 +154,19 @@ export function BoardHeatmap({
         <div className="mt-4 rounded-2xl border border-primary/18 bg-primary/8 px-4 py-3">
           <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{focusSummary.title}</div>
           <div className="mt-2 text-sm leading-6 text-muted-foreground">{focusSummary.detail}</div>
+        </div>
+      ) : null}
+
+      {linkedMatches.length ? (
+        <div className="mt-4 rounded-2xl border border-white/8 bg-background/35 px-4 py-3">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Linked board focus</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {linkedMatches.map((item) => (
+              <span key={item.label} className="rounded-full border border-primary/20 bg-primary/8 px-3 py-1.5 text-xs text-primary">
+                {item.label}
+              </span>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>

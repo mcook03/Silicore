@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import {
   LayoutDashboard,
@@ -43,8 +43,11 @@ const internalToolsNav = [
 
 export function AppShell({ children, title }: { children: ReactNode; title?: string }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [internalToolsOpen, setInternalToolsOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState("");
   const { data } = useApiData<{ user?: { name?: string; email?: string; roles?: string[]; organization_names?: string[] } }>("/api/frontend/session");
   const user = data?.user;
   const canAccessInternalTools = Boolean(user?.roles?.some((role) => role === "lead" || role === "admin"));
@@ -63,6 +66,48 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
       setInternalToolsOpen(true);
     }
   }, [internalRouteActive]);
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTyping = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.getAttribute("contenteditable") === "true");
+      const key = event.key.toLowerCase();
+
+      if ((event.metaKey || event.ctrlKey) && key === "k") {
+        event.preventDefault();
+        setCommandOpen((current) => !current);
+        return;
+      }
+      if (commandOpen && key === "escape") {
+        setCommandOpen(false);
+        return;
+      }
+      if (isTyping) {
+        return;
+      }
+      if (key === "g") {
+        const next = (ev: KeyboardEvent) => {
+          const subKey = ev.key.toLowerCase();
+          const map: Record<string, string> = {
+            d: "/dashboard",
+            a: "/analyze",
+            c: "/compare",
+            p: "/projects",
+            h: "/history",
+            s: "/settings",
+          };
+          if (map[subKey]) {
+            ev.preventDefault();
+            void navigate({ to: map[subKey] });
+          }
+          window.removeEventListener("keydown", next);
+        };
+        window.addEventListener("keydown", next, { once: true });
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [commandOpen, navigate]);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -112,6 +157,17 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
       mutationObserver.disconnect();
     };
   }, [location.pathname]);
+
+  const commandItems = [
+    ...coreNav.map((item) => ({
+      label: item.label,
+      meta: item.to,
+      action: () => navigate({ to: item.to }),
+    })),
+    { label: "Run board analysis", meta: "Go to analyze", action: () => navigate({ to: "/analyze" }) },
+    { label: "Open history ledger", meta: "Go to history", action: () => navigate({ to: "/history" }) },
+    { label: "Open compare cockpit", meta: "Go to compare", action: () => navigate({ to: "/compare" }) },
+  ].filter((item) => item.label.toLowerCase().includes(commandQuery.toLowerCase()) || item.meta.toLowerCase().includes(commandQuery.toLowerCase()));
 
   return (
     <div className="app-shell-bg flex min-h-screen bg-background">
@@ -230,11 +286,15 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
                 <span className="flex h-2 w-2 rounded-full bg-success shadow-[0_0_14px_rgba(96,240,198,0.7)]" />
                 <span>Session live</span>
               </div>
-              <div className="command-strip hidden items-center gap-2 rounded-2xl px-3 py-2 text-sm text-muted-foreground sm:flex">
+              <button
+                type="button"
+                onClick={() => setCommandOpen(true)}
+                className="command-strip hidden items-center gap-2 rounded-2xl px-3 py-2 text-sm text-muted-foreground sm:flex"
+              >
                 <Search className="h-3.5 w-3.5" />
                 <span>Search boards, runs, workspaces</span>
                 <kbd className="ml-3 rounded-full border border-border/70 px-2 py-0.5 font-mono text-[10px]">⌘K</kbd>
-              </div>
+              </button>
               <button className="command-strip flex h-11 w-11 items-center justify-center rounded-2xl text-muted-foreground hover:text-foreground">
                 <Bell className="h-4 w-4" />
               </button>
@@ -294,6 +354,51 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
             {children}
           </div>
         </main>
+        {commandOpen ? (
+          <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/55 px-4 pt-[12vh] backdrop-blur-md">
+            <div className="w-full max-w-2xl rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(8,17,27,0.98),rgba(7,14,22,0.98))] p-4 shadow-[0_36px_90px_-40px_rgba(0,0,0,0.9)]">
+              <div className="mb-3 flex items-center gap-3 rounded-2xl border border-white/8 bg-background/35 px-4 py-3">
+                <Command className="h-4 w-4 text-primary" />
+                <input
+                  autoFocus
+                  value={commandQuery}
+                  onChange={(event) => setCommandQuery(event.target.value)}
+                  placeholder="Jump to a surface or workflow"
+                  className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+                <kbd className="rounded-full border border-border/70 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">esc</kbd>
+              </div>
+              <div className="space-y-2">
+                {commandItems.slice(0, 10).map((item) => (
+                  <button
+                    key={`${item.label}-${item.meta}`}
+                    type="button"
+                    onClick={() => {
+                      void item.action();
+                      setCommandOpen(false);
+                      setCommandQuery("");
+                    }}
+                    className="flex w-full items-center justify-between rounded-2xl border border-white/8 bg-white/3 px-4 py-3 text-left transition-colors hover:border-primary/20 hover:bg-primary/8"
+                  >
+                    <div>
+                      <div className="text-sm font-medium text-foreground">{item.label}</div>
+                      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{item.meta}</div>
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                <span className="rounded-full border border-white/8 px-2 py-1">⌘K command</span>
+                <span className="rounded-full border border-white/8 px-2 py-1">g d dashboard</span>
+                <span className="rounded-full border border-white/8 px-2 py-1">g a analyze</span>
+                <span className="rounded-full border border-white/8 px-2 py-1">g c compare</span>
+                <span className="rounded-full border border-white/8 px-2 py-1">g p projects</span>
+                <span className="rounded-full border border-white/8 px-2 py-1">g h history</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
