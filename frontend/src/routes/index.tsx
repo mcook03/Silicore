@@ -590,7 +590,7 @@ function CTA() {
             </p>
             <div className="flex flex-wrap gap-3">
               <PrimaryPill to="/dashboard">Open Nexus</PrimaryPill>
-              <GhostPill to="/dashboard">Sign In</GhostPill>
+              <GhostPill to="/login">Sign In</GhostPill>
             </div>
           </Reveal>
         </div>
