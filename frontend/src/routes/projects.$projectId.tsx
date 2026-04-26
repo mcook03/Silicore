@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
+import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
+import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
 import { Panel, ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -52,6 +54,10 @@ function ProjectDetail() {
 
   const project = data?.project;
   const reviewFeed = data?.review_feed ?? [];
+  const runTrend = (project?.runs || []).slice(0, 6).reverse().map((run, index) => ({
+    label: `R${index + 1}`,
+    score: normalizeRunScore(run.score),
+  }));
 
   return (
     <AppShell title={project?.name || "Project detail"}>
@@ -81,6 +87,30 @@ function ProjectDetail() {
           <Stat label="Open critical" value={String((project?.runs || []).reduce((sum, run) => sum + Number(run.critical_count || 0), 0))} tone="danger" icon={AlertTriangle} />
           <Stat label="Pending approvals" value={String((project?.release_gates || []).filter((gate) => !["approved", "rejected"].includes((gate.status || "").toLowerCase())).length)} tone="warning" icon={Clock} />
         </div>
+
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+          <BoardHeatmap title="Project hotspot overview" />
+          <Panel title="Project signal">
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
+                This view adds a spatial overview for the current project so you can scan likely risk concentration before diving into release gates, notes, or individual runs.
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <QuickStat label="Latest score" value={String(Math.round(project?.latest_score || 0))} />
+                <QuickStat label="Team size" value={String((project?.team_members || []).length)} />
+                <QuickStat label="Gates" value={String((project?.release_gates || []).length)} />
+              </div>
+            </div>
+          </Panel>
+        </div>
+
+        <Panel title="Run score trend">
+          {runTrend.length ? (
+            <ScoreTrend data={runTrend} />
+          ) : (
+            <p className="text-sm text-muted-foreground">Run trend data appears here as soon as this project has recorded analyses.</p>
+          )}
+        </Panel>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
           <Panel title="Runs">
@@ -196,4 +226,13 @@ function normalizeRunScore(value?: number) {
     return 0;
   }
   return Math.round(numeric <= 10 ? numeric * 10 : numeric);
+}
+
+function QuickStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/40 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-2 text-xl font-semibold">{value}</div>
+    </div>
+  );
 }

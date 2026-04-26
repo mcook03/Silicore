@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
+import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, FileText } from "lucide-react";
@@ -64,7 +65,32 @@ function RunDetail() {
             </div>
           </Panel>
         </div>
+
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+          <BoardHeatmap title="Run hotspot map" />
+          <Panel title="Spatial readout">
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
+                This view adds a spatial lens to the saved run so you can quickly scan where thermal pressure, density, or findings intensity would likely surface before downloading artifacts or opening the original deliverables.
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <RunStat label="Score" value={String(Math.round(Number(data?.result?.score || 0)))} />
+                <RunStat label="Artifacts" value={String((data?.files ?? []).length)} />
+                <RunStat label="Run id" value={runDir.slice(0, 8)} />
+              </div>
+            </div>
+          </Panel>
+        </div>
       </div>
     </AppShell>
+  );
+}
+
+function RunStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/40 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-2 text-xl font-semibold">{value}</div>
+    </div>
   );
 }

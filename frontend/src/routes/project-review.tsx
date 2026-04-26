@@ -2,6 +2,8 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
+import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
+import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
 import { Button } from "@/components/ui/button";
 import { Upload, Layers, Sparkles } from "lucide-react";
 import { apiPostForm, useApiData } from "@/lib/api";
@@ -66,6 +68,10 @@ function ProjectReview() {
 
   const boards = result?.project_result.boards ?? [];
   const summary = result?.project_result.summary ?? {};
+  const boardTrend = boards.map((board, index) => ({
+    label: `B${index + 1}`,
+    score: normalizeScore(board.score),
+  }));
 
   return (
     <AppShell title="Project review">
@@ -148,6 +154,30 @@ function ProjectReview() {
               <SummaryStat label="Best score" value={String(normalizeScore(summary.best_score))} />
               <SummaryStat label="Worst score" value={String(normalizeScore(summary.worst_score))} />
             </div>
+
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+              <BoardHeatmap title="Project hotspot map" />
+              <Panel title="Review signal">
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
+                    Use this map as a quick scan for where board pressure would likely cluster across the reviewed set. Switch modes to read thermal, density, or findings emphasis before drilling into individual board results.
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <SummaryStat label="Boards loaded" value={String(boards.length)} />
+                    <SummaryStat label="Best board" value={String(normalizeScore(result.comparison.best_board?.score))} />
+                    <SummaryStat label="Spread" value={String(normalizeScore(result.comparison.score_spread))} />
+                  </div>
+                </div>
+              </Panel>
+            </div>
+
+            <Panel title="Board score spread">
+              {boardTrend.length ? (
+                <ScoreTrend data={boardTrend} />
+              ) : (
+                <p className="text-sm text-muted-foreground">Board-to-board score trend appears after a project review completes.</p>
+              )}
+            </Panel>
 
             <Panel title="Board comparison" action={<span className="font-mono text-xs text-muted-foreground">spread {result.comparison.score_spread || 0}</span>}>
               <div className="space-y-2">
