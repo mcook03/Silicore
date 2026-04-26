@@ -133,6 +133,8 @@ def should_render_frontend_html():
     if (request.args.get("format") or "").strip().lower() == "json":
         return False
     best = request.accept_mimetypes.best_match(["text/html", "application/json"])
+    if best is None:
+        return True
     if best == "application/json":
         return False
     return request.accept_mimetypes[best] >= request.accept_mimetypes["application/json"]

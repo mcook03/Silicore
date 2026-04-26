@@ -16,6 +16,7 @@ import {
   Activity,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { useApiData } from "@/lib/api";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -33,6 +34,10 @@ const nav = [
 
 export function AppShell({ children, title }: { children: ReactNode; title?: string }) {
   const location = useLocation();
+  const { data } = useApiData<{ user?: { name?: string; email?: string; roles?: string[]; organization_names?: string[] } }>("/api/frontend/session");
+  const user = data?.user;
+  const initials = ((user?.name || user?.email || "SC").match(/\b\w/g) || ["S", "C"]).slice(0, 2).join("").toUpperCase();
+  const subtitle = user?.organization_names?.[0] || user?.roles?.join(" · ") || "Silicore workspace";
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
@@ -61,10 +66,10 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
         </nav>
         <div className="border-t border-sidebar-border p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 font-mono text-xs text-primary">EM</div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 font-mono text-xs text-primary">{initials}</div>
             <div className="min-w-0">
-              <div className="truncate text-sm">Elena Morris</div>
-              <div className="truncate text-xs text-muted-foreground">Pro · Astrabit Labs</div>
+              <div className="truncate text-sm">{user?.name || user?.email || "Silicore user"}</div>
+              <div className="truncate text-xs text-muted-foreground">{subtitle}</div>
             </div>
           </div>
         </div>

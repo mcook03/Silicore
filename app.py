@@ -192,6 +192,242 @@ def _require_role(minimum_role):
     return True
 
 
+def _json_error(message, status=400):
+    return jsonify({"error": message}), status
+
+
+def _public_user(user):
+    if not user:
+        return None
+    return {
+        "user_id": user.get("user_id"),
+        "name": user.get("name"),
+        "email": user.get("email"),
+        "role": user.get("role"),
+        "organization_key": user.get("organization_key"),
+    }
+
+
+def _run_summary_payload(run_name):
+    detail = _build_run_detail(run_name)
+    if not detail:
+        return None
+    result = detail.get("result") or detail
+    return {
+        "run_id": detail.get("run_dir") or run_name,
+        "run_dir": detail.get("run_dir") or run_name,
+        "name": detail.get("name") or run_name,
+        "run_type": detail.get("run_type"),
+        "created_at": detail.get("created_at"),
+        "score": _safe_float(result.get("score"), 0.0),
+        "display_score": _score_to_100(result.get("score")),
+        "risk_count": _safe_int(detail.get("risk_count"), 0),
+        "critical_count": _safe_int(detail.get("critical_count"), 0),
+        "high_count": _safe_int(detail.get("high_count"), 0),
+        "medium_count": _safe_int(detail.get("medium_count"), 0),
+        "low_count": _safe_int(detail.get("low_count"), 0),
+        "filename": detail.get("filename") or detail.get("name"),
+        "summary": result.get("health_summary") or detail.get("summary"),
+    }
+
+
+def _dashboard_payload():
+    recent_run_refs = _get_recent_runs(limit=14)
+    recent_runs = []
+    for run in recent_run_refs:
+        payload = _run_summary_payload(run.get("name"))
+        if payload:
+            recent_runs.append(payload)
+
+    projects = [_enrich_project_for_display(project) for project in list_projects()]
+    current_user = _current_user()
+    if current_user:
+        projects = [project for project in projects if project_is_visible_to_user(current_user, project)]
+
+    scores = [item.get("display_score", 0) for item in recent_runs]
+    issue_counts = [item.get("risk_count", 0) for item in recent_runs]
+    critical_total = sum(item.get("critical_count", 0) for item in recent_runs)
+    medium_total = sum(item.get("medium_count", 0) for item in recent_runs)
+    low_total = sum(item.get("low_count", 0) for item in recent_runs)
+
+    trend = []
+    for index, item in enumerate(reversed(recent_runs[-14:]), start=1):
+        trend.append(
+            {
+                "label": f"R{index}",
+                "score": item.get("display_score", 0),
+                "issues": item.get("risk_count", 0),
+                "name": item.get("name"),
+            }
+        )
+
+    recent_table = []
+    previous_by_name = {}
+    for item in recent_runs:
+        board_key = str(item.get("filename") or item.get("name") or "")
+        previous = previous_by_name.get(board_key)
+        delta = None
+        if previous:
+            delta = round(item.get("display_score", 0) - previous.get("display_score", 0), 1)
+        previous_by_name[board_key] = item
+        recent_table.append(
+            {
+                "name": board_key or "Run",
+                "rev": item.get("run_id"),
+                "score": item.get("display_score", 0),
+                "delta": delta,
+                "issues": item.get("risk_count", 0),
+                "status": "ready" if item.get("critical_count", 0) == 0 and item.get("display_score", 0) >= 80 else "warn",
+                "run_dir": item.get("run_dir"),
+            }
+        )
+    recent_table = recent_table[:8]
+
+    avg_score = round(sum(scores) / len(scores), 1) if scores else 0.0
+    score_change = round(scores[0] - scores[-1], 1) if len(scores) >= 2 else 0.0
+    issue_change = issue_counts[0] - issue_counts[-1] if len(issue_counts) >= 2 else 0
+
+    return {
+        "stats": {
+            "overall_score": avg_score,
+            "score_change": score_change,
+            "critical_total": critical_total,
+            "medium_total": medium_total,
+            "low_total": low_total,
+            "boards_analyzed": len(recent_runs),
+            "avg_score_30d": avg_score,
+            "open_critical_issues": critical_total,
+            "issue_change": issue_change,
+            "project_count": len(projects),
+        },
+        "trend": trend,
+        "recent": recent_table,
+        "projects": [
+            {
+                "project_id": project.get("project_id"),
+                "name": project.get("name"),
+                "description": project.get("description"),
+                "average_score": project.get("average_score"),
+                "latest_score": project.get("latest_score"),
+                "open_critical": sum(_safe_int(run.get("critical_count"), 0) for run in project.get("runs", []) or []),
+                "run_count": len(project.get("runs", []) or []),
+            }
+            for project in projects[:8]
+        ],
+    }
+
+
+def _project_payload(project_id):
+    project = get_project(project_id)
+    if not project:
+        return None
+    project = _enrich_project_for_display(project)
+    current_user = _current_user()
+    if current_user and not project_is_visible_to_user(current_user, project):
+        return False
+
+    review_feed = _build_project_review_feed(project)
+    return {
+        "project": project,
+        "review_feed": review_feed,
+        "score_history": [
+            {
+                "label": run.get("name") or run.get("run_id"),
+                "score": _score_to_100(run.get("score")),
+            }
+            for run in project.get("runs", []) or []
+        ],
+    }
+
+
+def _history_payload():
+    history_runs = _build_history_runs()
+    return {
+        "runs": history_runs,
+        "summary": _build_history_summary(history_runs),
+    }
+
+
+def _compare_payload(project_id, run_a_id=None, run_b_id=None):
+    project = get_project(project_id)
+    if not project:
+        return None
+
+    runs = project.get("runs", []) or []
+    if len(runs) < 2:
+        return {"error": "At least two runs are required for comparison."}
+
+    fallback_a = runs[-2]
+    fallback_b = runs[-1]
+    run_a = fallback_a
+    run_b = fallback_b
+
+    if run_a_id and run_b_id and run_a_id != run_b_id:
+        run_a = next((run for run in runs if str(run.get("run_id")) == str(run_a_id)), fallback_a)
+        run_b = next((run for run in runs if str(run.get("run_id")) == str(run_b_id)), fallback_b)
+
+    score_a = _score_to_100(run_a.get("score"))
+    score_b = _score_to_100(run_b.get("score"))
+    risk_a = _safe_int(run_a.get("risk_count"), 0)
+    risk_b = _safe_int(run_b.get("risk_count"), 0)
+
+    categories = sorted(
+        set((run_a.get("category_summary") or {}).keys()) | set((run_b.get("category_summary") or {}).keys())
+    )
+    category_rows = []
+    for category in categories:
+        before = _safe_int((run_a.get("category_summary") or {}).get(category), 0)
+        after = _safe_int((run_b.get("category_summary") or {}).get(category), 0)
+        category_rows.append(
+            {
+                "name": _format_category_name(category),
+                "before": before,
+                "after": after,
+                "delta": after - before,
+            }
+        )
+
+    snapshot_a = _normalize_snapshot(run_a.get("risk_snapshot") or [])
+    snapshot_b = _normalize_snapshot(run_b.get("risk_snapshot") or [])
+    keys_a = {risk.get("signature"): risk for risk in snapshot_a}
+    keys_b = {risk.get("signature"): risk for risk in snapshot_b}
+    fixed = [keys_a[key] for key in keys_a.keys() - keys_b.keys()]
+    new = [keys_b[key] for key in keys_b.keys() - keys_a.keys()]
+    unchanged = [keys_b[key] for key in keys_a.keys() & keys_b.keys()]
+
+    def _change_item(kind, risk):
+        category = _format_category_name(risk.get("category"))
+        return {
+            "kind": kind,
+            "title": risk.get("message") or "Unnamed issue",
+            "impact": category,
+            "why": risk.get("recommendation") or "Review this change in the board comparison.",
+        }
+
+    changes = []
+    changes.extend(_change_item("fixed", item) for item in fixed[:4])
+    changes.extend(_change_item("new", item) for item in new[:4])
+    changes.extend(_change_item("regressed", item) for item in unchanged[:2] if str(item.get("severity") or "").lower() in {"critical", "high"})
+
+    return {
+        "project": {"project_id": project.get("project_id"), "name": project.get("name")},
+        "run_a": {
+            "run_id": run_a.get("run_id"),
+            "name": run_a.get("name"),
+            "score": score_a,
+            "issues": risk_a,
+        },
+        "run_b": {
+            "run_id": run_b.get("run_id"),
+            "name": run_b.get("name"),
+            "score": score_b,
+            "issues": risk_b,
+        },
+        "categories": category_rows,
+        "changes": changes[:8],
+    }
+
+
 @app.before_request
 def load_current_user():
     g.current_user = _current_user()
@@ -210,6 +446,347 @@ def inject_global_view_context():
     return {
         "current_user": getattr(g, "current_user", None),
     }
+
+
+@app.route("/api/frontend/session", methods=["GET"])
+def frontend_session_route():
+    config, editable = get_dashboard_config(CONFIG_PATH)
+    return jsonify(
+        {
+            "user": _public_user(_current_user()),
+            "organizations": list_organizations(),
+            "analysis_modes": _analysis_mode_options((editable.get("analysis") or {}).get("custom_profile_name", "Custom Project Profile")),
+            "editable_config": editable,
+            "config": config,
+            "project_options": _project_options(),
+        }
+    )
+
+
+@app.route("/api/frontend/dashboard", methods=["GET"])
+def frontend_dashboard_route():
+    return jsonify(_dashboard_payload())
+
+
+@app.route("/api/frontend/analyze/options", methods=["GET"])
+def frontend_analyze_options_route():
+    _, editable = get_dashboard_config(CONFIG_PATH)
+    return jsonify(
+        {
+            "analysis_modes": _analysis_mode_options((editable.get("analysis") or {}).get("custom_profile_name", "Custom Project Profile")),
+            "project_options": _project_options(),
+        }
+    )
+
+
+@app.route("/api/frontend/analyze/single", methods=["POST"])
+def frontend_analyze_single_route():
+    board_file = request.files.get("board_file")
+    selected_project_id = (request.form.get("project_id") or "").strip()
+    profile_name = (request.form.get("analysis_profile") or "").strip() or None
+    board_type = (request.form.get("analysis_board_type") or "").strip() or None
+    try:
+        response = analyze_single_board(
+            uploaded_file=board_file,
+            upload_folder=UPLOAD_FOLDER,
+            runs_folder=RUNS_FOLDER,
+            config_path=CONFIG_PATH,
+            profile_name=profile_name,
+            board_type=board_type,
+        )
+        result = _enrich_single_result(response.get("result") or {})
+        if selected_project_id:
+            add_run_to_project(selected_project_id, response.get("run_record") or {})
+        return jsonify(
+            {
+                "result": result,
+                "single_chart": _build_single_chart_data(result),
+                "single_decision": _build_single_decision_data(result),
+                "board_review_layers": _build_board_review_layers(result),
+                "board_value_metrics": _build_board_value_metrics(result),
+                "run_record": response.get("run_record"),
+            }
+        )
+    except Exception as exc:
+        return _json_error(str(exc), 400)
+
+
+@app.route("/api/frontend/analyze/project", methods=["POST"])
+def frontend_analyze_project_route():
+    project_files = request.files.getlist("project_files")
+    selected_project_id = (request.form.get("project_id") or "").strip()
+    profile_name = (request.form.get("analysis_profile") or "").strip() or None
+    board_type = (request.form.get("analysis_board_type") or "").strip() or None
+    try:
+        response = analyze_project_files(
+            uploaded_files=project_files,
+            upload_folder=UPLOAD_FOLDER,
+            runs_folder=RUNS_FOLDER,
+            config_path=CONFIG_PATH,
+            profile_name=profile_name,
+            board_type=board_type,
+        )
+        project_result = response.get("project_result") or {}
+        project_result["project_summary"] = project_result.get("summary", {})
+        project_result = _enrich_project_result(project_result)
+        if selected_project_id:
+            add_run_to_project(selected_project_id, response.get("run_record") or {})
+        comparison = _build_project_comparison(project_result)
+        return jsonify(
+            {
+                "project_result": project_result,
+                "comparison": comparison,
+                "project_chart": _build_project_chart_data(project_result, comparison),
+                "project_intelligence_review": _build_project_review_intelligence(project_result),
+                "cam_boards": _extract_cam_boards(project_result),
+                "run_record": response.get("run_record"),
+            }
+        )
+    except Exception as exc:
+        return _json_error(str(exc), 400)
+
+
+@app.route("/api/frontend/projects", methods=["GET", "POST"])
+def frontend_projects_route():
+    if request.method == "POST":
+        payload = request.get_json(silent=True) or {}
+        name = str(payload.get("name") or "").strip()
+        description = str(payload.get("description") or "").strip()
+        if not name:
+            return _json_error("Project name is required.", 400)
+        project = create_project(name, description, owner=_current_user())
+        return jsonify({"project": _enrich_project_for_display(project)})
+
+    projects = [_enrich_project_for_display(project) for project in list_projects()]
+    current_user = _current_user()
+    if current_user:
+        projects = [project for project in projects if project_is_visible_to_user(current_user, project)]
+    return jsonify({"projects": projects, "summary": _build_projects_summary(projects)})
+
+
+@app.route("/api/frontend/projects/<project_id>", methods=["GET"])
+def frontend_project_detail_route(project_id):
+    payload = _project_payload(project_id)
+    if payload is None:
+        return _json_error("Project not found.", 404)
+    if payload is False:
+        return _json_error("You do not have access to that project.", 403)
+    return jsonify(payload)
+
+
+@app.route("/api/frontend/projects/<project_id>/notes", methods=["POST"])
+def frontend_project_note_route(project_id):
+    payload = request.get_json(silent=True) or {}
+    project = get_project(project_id)
+    if project is None:
+        return _json_error("Project not found.", 404)
+    if not can_manage_project(_current_user(), project):
+        return _json_error("You do not have permission to update this workspace.", 403)
+    updated = add_project_note(project_id, str(payload.get("author") or "").strip(), str(payload.get("body") or "").strip())
+    if updated is None:
+        return _json_error("Project not found.", 404)
+    return jsonify({"project": _enrich_project_for_display(updated)})
+
+
+@app.route("/api/frontend/projects/<project_id>/reviews", methods=["POST"])
+def frontend_project_review_route(project_id):
+    payload = request.get_json(silent=True) or {}
+    project = get_project(project_id)
+    if project is None:
+        return _json_error("Project not found.", 404)
+    if not can_manage_project(_current_user(), project):
+        return _json_error("You do not have permission to record a review decision for this workspace.", 403)
+    updated = create_review_decision(
+        project_id,
+        str(payload.get("status") or "").strip(),
+        summary=str(payload.get("summary") or "").strip(),
+        run_id=str(payload.get("run_id") or "").strip() or None,
+        actor_user_id=((_current_user() or {}).get("user_id")),
+    )
+    if updated is None:
+        return _json_error("Review decision could not be recorded.", 400)
+    return jsonify({"reviews": list_review_decisions(project_id=project_id)})
+
+
+@app.route("/api/frontend/history", methods=["GET"])
+def frontend_history_route():
+    return jsonify(_history_payload())
+
+
+@app.route("/api/frontend/history/<run_dir>", methods=["GET"])
+def frontend_history_detail_route(run_dir):
+    detail = _build_run_detail(run_dir)
+    if not detail:
+        return _json_error("Requested run folder was not found.", 404)
+    return jsonify(detail)
+
+
+@app.route("/api/frontend/compare", methods=["GET"])
+def frontend_compare_route():
+    project_id = str(request.args.get("project_id") or "").strip()
+    if not project_id:
+        projects = list_projects()
+        if not projects:
+            return _json_error("No projects are available for comparison.", 404)
+        project_id = projects[0].get("project_id")
+    payload = _compare_payload(project_id, request.args.get("run_a"), request.args.get("run_b"))
+    if payload is None:
+        return _json_error("Project not found.", 404)
+    if payload.get("error"):
+        return _json_error(payload["error"], 400)
+    return jsonify(payload)
+
+
+@app.route("/api/frontend/jobs", methods=["GET"])
+def frontend_jobs_route():
+    if not _require_role("lead"):
+        return _json_error("Lead or admin access is required.", 403)
+    jobs = list_jobs(limit=_safe_int(request.args.get("limit"), 20))
+    return jsonify({"jobs": jobs, "worker": worker_status(), "summary": summarize_jobs(limit=100)})
+
+
+@app.route("/api/frontend/jobs/<job_id>", methods=["GET"])
+def frontend_job_detail_route(job_id):
+    if not _require_role("lead"):
+        return _json_error("Lead or admin access is required.", 403)
+    job = get_job(job_id)
+    if not job:
+        return _json_error("Job not found.", 404)
+    return jsonify(job)
+
+
+@app.route("/api/frontend/jobs/process", methods=["POST"])
+def frontend_jobs_process_route():
+    if not _require_role("lead"):
+        return _json_error("Lead or admin access is required.", 403)
+    return jsonify({"processed": process_queued_jobs(limit=_safe_int(request.args.get("limit"), 10))})
+
+
+@app.route("/api/frontend/worker/start", methods=["POST"])
+def frontend_worker_start_route():
+    if not _require_role("lead"):
+        return _json_error("Lead or admin access is required.", 403)
+    return jsonify(start_worker(interval_seconds=_safe_float(request.args.get("interval"), 2.0)))
+
+
+@app.route("/api/frontend/worker/stop", methods=["POST"])
+def frontend_worker_stop_route():
+    if not _require_role("lead"):
+        return _json_error("Lead or admin access is required.", 403)
+    return jsonify(stop_worker())
+
+
+@app.route("/api/frontend/health", methods=["GET"])
+def frontend_health_route():
+    db_health = _database_health()
+    ready_payload, ready_status = health_ready_route()
+    return jsonify(
+        {
+            "live": {
+                "status": "ok",
+                "service": "silicore-web",
+                "environment": RUNTIME_CONFIG["environment"],
+            },
+            "ready": ready_payload.get_json(),
+            "ready_status": ready_status,
+            "database": db_health,
+            "runtime": database_runtime_info(),
+        }
+    )
+
+
+@app.route("/api/frontend/settings", methods=["GET", "POST"])
+def frontend_settings_route():
+    if request.method == "POST":
+        payload = request.get_json(silent=True) or {}
+        config = payload.get("config")
+        if not isinstance(config, dict):
+            return _json_error("A config object is required.", 400)
+        save_config(config, CONFIG_PATH)
+    config, editable = get_dashboard_config(CONFIG_PATH)
+    settings_view = _build_settings_view_model(editable)
+    return jsonify(
+        {
+            "config": config,
+            "editable_config": editable,
+            "settings_view": settings_view,
+            "settings_architecture": _build_settings_architecture(editable, settings_view),
+        }
+    )
+
+
+@app.route("/api/frontend/ops", methods=["GET"])
+def frontend_ops_route():
+    current_user = _current_user()
+    if not current_user or not has_role(current_user, "lead"):
+        return _json_error("Lead or admin access is required to open Nexus Ops.", 403)
+    return jsonify({"operations_snapshot": _build_operations_snapshot(current_user)})
+
+
+@app.route("/api/frontend/ops/integrations", methods=["POST"])
+def frontend_ops_integrations_route():
+    current_user = _current_user()
+    if not current_user or not has_role(current_user, "lead"):
+        return _json_error("Lead or admin access is required to manage integrations.", 403)
+    payload = request.get_json(silent=True) or {}
+    integration_type = str(payload.get("integration_type") or "").strip().lower()
+    label = str(payload.get("label") or "").strip() or integration_type.replace("_", " ").title()
+    status = str(payload.get("status") or "configured").strip().lower()
+    endpoint = str(payload.get("endpoint") or "").strip()
+    project_key = str(payload.get("project_key") or "").strip()
+    upsert_integration_config(
+        integration_type,
+        label,
+        status=status,
+        config={"endpoint": endpoint, "project_key": project_key},
+        created_by_user_id=current_user.get("user_id"),
+    )
+    return jsonify({"operations_snapshot": _build_operations_snapshot(current_user)})
+
+
+@app.route("/api/frontend/ops/external-validation", methods=["POST"])
+def frontend_ops_external_validation_route():
+    current_user = _current_user()
+    if not current_user or not has_role(current_user, "lead"):
+        return _json_error("Lead or admin access is required to validate external packages.", 403)
+    label = (request.form.get("label") or "").strip() or "External Validation"
+    files = request.files.getlist("validation_files")
+    try:
+        samples_dir = _save_external_validation_upload(files, label)
+        summary = evaluate_external_suite(samples_dir, config=CONFIG_PATH, label=label)
+        return jsonify({"summary": summary, "operations_snapshot": _build_operations_snapshot(current_user)})
+    except Exception as exc:
+        return _json_error(str(exc), 400)
+
+
+@app.route("/api/frontend/admin/audit", methods=["GET"])
+def frontend_admin_audit_route():
+    if not _require_role("admin"):
+        return _json_error("Admin access is required.", 403)
+    return jsonify(
+        {
+            "events": list_audit_events(
+                limit=_safe_int(request.args.get("limit"), 100),
+                event_type=(request.args.get("event_type") or "").strip() or None,
+            )
+        }
+    )
+
+
+@app.route("/api/frontend/admin/evaluation", methods=["GET"])
+def frontend_admin_evaluation_route():
+    if not _require_role("lead"):
+        return _json_error("Lead or admin access is required.", 403)
+    scope = (request.args.get("scope") or "fixtures").strip().lower()
+    if scope == "external":
+        evaluations = list_evaluation_runs(limit=50)
+        external = [item for item in evaluations if item.get("scope") == "external"]
+        latest = external[0].get("summary") if external else {"scope": "external", "fixture_count": 0, "boards": []}
+        latest["history_summary"] = summarize_evaluation_history(limit=20)
+        return jsonify(latest)
+    payload = evaluate_fixture_suite()
+    payload["history_summary"] = summarize_evaluation_history(limit=20)
+    return jsonify(payload)
 
 
 def _safe_float(value, default=0.0):

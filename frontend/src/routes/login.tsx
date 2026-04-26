@@ -21,22 +21,21 @@ function Login() {
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-xl">
           <div className="mb-6">
             <h1 className="text-xl font-medium tracking-tight">Sign in to Silicore</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Use your workspace credentials to continue.
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">Use your real workspace credentials. This form posts directly into the Flask auth flow.</p>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" method="post" action="/login">
+            <input type="hidden" name="action" value="login" />
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs uppercase tracking-wider text-muted-foreground">Email</Label>
-              <Input id="email" type="email" placeholder="elena@astrabit.io" />
+              <Input id="email" name="email" type="email" placeholder="elena@astrabit.io" required />
             </div>
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-xs uppercase tracking-wider text-muted-foreground">Password</Label>
-                <button type="button" className="text-xs text-primary hover:underline">Forgot?</button>
+                <Link to="/" className="text-xs text-primary hover:underline">Back home</Link>
               </div>
-              <Input id="password" type="password" placeholder="••••••••" />
+              <Input id="password" name="password" type="password" placeholder="••••••••" required />
             </div>
 
             <Button type="submit" className="w-full rounded-full">
@@ -44,9 +43,15 @@ function Login() {
             </Button>
           </form>
 
+          <form method="post" action="/login" className="mt-4">
+            <input type="hidden" name="action" value="request_reset" />
+            <input type="hidden" name="email" value="" />
+            <div className="text-xs text-muted-foreground">Password reset, email verification, MFA, and registration still run through the existing Flask auth backend.</div>
+          </form>
+
           <div className="mt-6 flex items-center gap-2 rounded-md border border-border bg-background/40 p-3 text-xs text-muted-foreground">
             <Shield className="h-3.5 w-3.5 text-primary" />
-            <span>Protected by Silicore Sentinel auth · SSO available on Pro.</span>
+            <span>Protected by Silicore Sentinel auth with the original backend session flow.</span>
           </div>
         </div>
 

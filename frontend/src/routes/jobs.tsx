@@ -3,31 +3,58 @@ import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Play, RefreshCcw, Cpu, ChevronRight } from "lucide-react";
+import { apiPostJson, useApiData } from "@/lib/api";
 
 export const Route = createFileRoute("/jobs")({
   head: () => ({ meta: [{ title: "Jobs — Silicore" }] }),
   component: Jobs,
 });
 
-const jobs = [
-  { id: "job_8af21c", kind: "board.analyze", target: "sentinel-power.brd", status: "running", queued: "12s ago", duration: "11s" },
-  { id: "job_e03b77", kind: "project.compare", target: "Sentinel rev-c↔rev-b", status: "queued", queued: "30s ago", duration: "—" },
-  { id: "job_2cd901", kind: "board.analyze", target: "halo-sensor.kicad_pcb", status: "complete", queued: "5m ago", duration: "27s" },
-  { id: "job_44e8a2", kind: "external.validate", target: "atlas-rf-fe.brd → JLCPCB", status: "failed", queued: "12m ago", duration: "8s" },
-  { id: "job_9b1afe", kind: "report.generate", target: "Sentinel weekly", status: "complete", queued: "1h ago", duration: "1m 14s" },
-];
+type Job = {
+  job_id: string;
+  job_type: string;
+  status: string;
+  payload?: Record<string, unknown>;
+  started_at?: string | null;
+  completed_at?: string | null;
+};
+
+type JobsPayload = {
+  jobs: Job[];
+  worker: { running: boolean; thread_name?: string | null };
+};
 
 function Jobs() {
+  const { data, error, reload } = useApiData<JobsPayload>("/api/frontend/jobs");
+
+  const processQueue = async () => {
+    await apiPostJson("/api/frontend/jobs/process", {});
+    await reload();
+  };
+
+  const toggleWorker = async () => {
+    if (data?.worker.running) {
+      await apiPostJson("/api/frontend/worker/stop", {});
+    } else {
+      await apiPostJson("/api/frontend/worker/start", {});
+    }
+    await reload();
+  };
+
+  const jobs = data?.jobs ?? [];
+
   return (
     <AppShell title="Jobs">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">{jobs.length} jobs · 1 running · 1 queued</p>
+          <p className="text-sm text-muted-foreground">{jobs.length} jobs</p>
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" className="rounded-full"><RefreshCcw className="mr-1.5 h-3.5 w-3.5" /> Refresh</Button>
-            <Button size="sm" className="rounded-full"><Play className="mr-1.5 h-3.5 w-3.5" /> Process queue</Button>
+            <Button size="sm" variant="ghost" className="rounded-full" onClick={() => void reload()}><RefreshCcw className="mr-1.5 h-3.5 w-3.5" /> Refresh</Button>
+            <Button size="sm" className="rounded-full" onClick={() => void processQueue()}><Play className="mr-1.5 h-3.5 w-3.5" /> Process queue</Button>
           </div>
         </div>
+
+        {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
 
         <Panel title="Queue">
           <div className="overflow-hidden rounded-xl border border-border">
@@ -38,20 +65,18 @@ function Jobs() {
                   <th className="px-4 py-3">Kind</th>
                   <th className="px-4 py-3">Target</th>
                   <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Duration</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
-                {jobs.map((j) => (
-                  <tr key={j.id} className="border-t border-border hover:bg-background/40">
-                    <td className="px-4 py-3 font-mono text-xs">{j.id}</td>
-                    <td className="px-4 py-3"><span className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{j.kind}</span></td>
-                    <td className="px-4 py-3 text-muted-foreground">{j.target}</td>
-                    <td className="px-4 py-3"><JobStatus status={j.status} /></td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{j.duration}</td>
+                {jobs.map((job) => (
+                  <tr key={job.job_id} className="border-t border-border hover:bg-background/40">
+                    <td className="px-4 py-3 font-mono text-xs">{job.job_id}</td>
+                    <td className="px-4 py-3"><span className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{job.job_type}</span></td>
+                    <td className="px-4 py-3 text-muted-foreground">{String(job.payload?.filename || job.payload?.label || job.payload?.path || "—")}</td>
+                    <td className="px-4 py-3"><JobStatus status={job.status} /></td>
                     <td className="px-4 py-3 text-right">
-                      <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                      <Link to="/jobs/$jobId" params={{ jobId: job.job_id }} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                         details <ChevronRight className="h-3 w-3" />
                       </Link>
                     </td>
@@ -63,14 +88,14 @@ function Jobs() {
         </Panel>
 
         <Panel title="Worker" action={<Cpu className="h-4 w-4 text-primary" />}>
-          <div className="grid gap-3 md:grid-cols-3">
-            <Stat label="Status" value="running" tone="success" />
-            <Stat label="Throughput" value="14 / hr" />
-            <Stat label="Avg latency" value="22 s" />
+          <div className="grid gap-3 md:grid-cols-2">
+            <Stat label="Status" value={data?.worker.running ? "running" : "stopped"} tone={data?.worker.running ? "success" : undefined} />
+            <Stat label="Thread" value={data?.worker.thread_name || "—"} />
           </div>
           <div className="mt-4 flex gap-2">
-            <Button size="sm" variant="ghost" className="rounded-full">Stop worker</Button>
-            <Button size="sm" className="rounded-full">Start worker</Button>
+            <Button size="sm" className="rounded-full" onClick={() => void toggleWorker()}>
+              {data?.worker.running ? "Stop worker" : "Start worker"}
+            </Button>
           </div>
         </Panel>
       </div>
@@ -81,7 +106,7 @@ function Jobs() {
 function JobStatus({ status }: { status: string }) {
   const c =
     status === "running" ? "text-warning" :
-    status === "complete" ? "text-success" :
+    status === "completed" ? "text-success" :
     status === "failed" ? "text-danger" :
     "text-muted-foreground";
   return <span className={`font-mono text-xs ${c}`}>● {status}</span>;

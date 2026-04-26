@@ -1,82 +1,166 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plug, ShieldCheck, ExternalLink, CheckCircle2, AlertCircle, Plus } from "lucide-react";
+import { apiPostForm, apiPostJson, useApiData } from "@/lib/api";
+import { Plug, ShieldCheck, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/nexus-ops")({
   head: () => ({ meta: [{ title: "Nexus Ops — Silicore" }] }),
   component: NexusOps,
 });
 
-const integrations = [
-  { name: "Altium 365", status: "connected", desc: "Sync workspaces, projects and reviews", last: "synced 4 min ago" },
-  { name: "JIRA", status: "connected", desc: "Auto-file findings as issues", last: "synced 12 min ago" },
-  { name: "Slack", status: "connected", desc: "Notify channels on new criticals", last: "active" },
-  { name: "GitHub", status: "disconnected", desc: "Mirror release-gate status to PRs", last: "—" },
-  { name: "PLM (Arena)", status: "error", desc: "Push BOMs and rev metadata", last: "auth failed 1h ago" },
-];
+type OperationsSnapshot = {
+  worker: { running: boolean; thread_name?: string | null };
+  jobs: Array<{ job_id: string; job_type_label?: string; status?: string; created_at?: string }>;
+  reviews: Array<{ status?: string; created_at?: string; summary?: string }>;
+  audit_events: Array<{ event_type?: string; created_at?: string; message?: string }>;
+  evaluations: Array<{ evaluation_id?: string; scope?: string; created_at?: string; summary?: Record<string, unknown> }>;
+  fixture_evaluations: Array<Record<string, unknown>>;
+  external_evaluations: Array<Record<string, unknown>>;
+  integrations: Array<{ integration_id?: string; label?: string; integration_type?: string; status?: string; config?: Record<string, unknown> }>;
+  summary: {
+    queued_jobs: number;
+    failed_jobs: number;
+    completed_jobs: number;
+    latest_job_label: string;
+    latest_review_status: string;
+    latest_evaluation_label: string;
+    external_validation_label: string;
+    worker_label: string;
+  };
+};
 
-const validations = [
-  { vendor: "JLCPCB DFM", board: "sentinel-power.brd", status: "passed", at: "1h ago" },
-  { vendor: "PCBWay manufacturability", board: "halo-sensor.kicad_pcb", status: "warnings", at: "3h ago" },
-  { vendor: "Sierra signal integrity", board: "atlas-rf-fe.brd", status: "failed", at: "yesterday" },
-];
+type OpsPayload = { operations_snapshot: OperationsSnapshot };
 
 function NexusOps() {
+  const { data, error, reload } = useApiData<OpsPayload>("/api/frontend/ops");
+  const [integrationType, setIntegrationType] = useState("");
+  const [integrationLabel, setIntegrationLabel] = useState("");
+  const [integrationStatus, setIntegrationStatus] = useState("configured");
+  const [integrationEndpoint, setIntegrationEndpoint] = useState("");
+  const [validationLabel, setValidationLabel] = useState("");
+  const [validationFiles, setValidationFiles] = useState<FileList | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const addIntegration = async () => {
+    setMessage(null);
+    try {
+      await apiPostJson("/api/frontend/ops/integrations", {
+        integration_type: integrationType,
+        label: integrationLabel,
+        status: integrationStatus,
+        endpoint: integrationEndpoint,
+      });
+      setMessage("Integration saved.");
+      setIntegrationType("");
+      setIntegrationLabel("");
+      setIntegrationEndpoint("");
+      await reload();
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Unable to save integration.");
+    }
+  };
+
+  const submitValidation = async () => {
+    setMessage(null);
+    try {
+      const formData = new FormData();
+      formData.append("label", validationLabel || "External validation");
+      Array.from(validationFiles || []).forEach((file) => formData.append("validation_files", file));
+      await apiPostForm("/api/frontend/ops/external-validation", formData);
+      setMessage("External validation run queued.");
+      setValidationFiles(null);
+      setValidationLabel("");
+      await reload();
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Unable to submit validation package.");
+    }
+  };
+
+  const snapshot = data?.operations_snapshot;
+
   return (
     <AppShell title="Nexus Ops">
       <div className="space-y-6">
-        <div className="flex items-end justify-between">
-          <div>
-            <h2 className="text-xl font-medium tracking-tight">Operations & external validation</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Manage integrations and forward boards to external validators.</p>
-          </div>
-          <Button size="sm" className="rounded-full"><Plus className="mr-1.5 h-3.5 w-3.5" /> Add integration</Button>
+        {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
+        {message ? <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm">{message}</div> : null}
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <StatCard label="Queued jobs" value={String(snapshot?.summary.queued_jobs ?? 0)} />
+          <StatCard label="Failed jobs" value={String(snapshot?.summary.failed_jobs ?? 0)} />
+          <StatCard label="Completed jobs" value={String(snapshot?.summary.completed_jobs ?? 0)} />
+          <StatCard label="Worker" value={snapshot?.summary.worker_label || "unknown"} />
         </div>
 
-        <Panel title="Integrations">
+        <Panel title="Integrations" action={<Plug className="h-4 w-4 text-primary" />}>
           <div className="grid gap-3 md:grid-cols-2">
-            {integrations.map((i) => (
-              <div key={i.name} className="flex items-start justify-between rounded-xl border border-border bg-background/40 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Plug className="h-4 w-4" />
-                  </div>
+            {(snapshot?.integrations || []).map((integration) => (
+              <div key={integration.integration_id || integration.label} className="rounded-xl border border-border bg-background/40 p-4">
+                <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-sm">{i.name}</div>
-                    <div className="text-xs text-muted-foreground">{i.desc}</div>
-                    <div className="mt-1 font-mono text-[11px] text-muted-foreground">{i.last}</div>
+                    <div className="text-sm">{integration.label || integration.integration_type}</div>
+                    <div className="font-mono text-[11px] text-muted-foreground">{integration.integration_type}</div>
                   </div>
+                  <span className="rounded border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{integration.status || "configured"}</span>
                 </div>
-                <StatusBadge status={i.status} />
+                {integration.config?.endpoint ? <div className="mt-2 break-all font-mono text-[11px] text-muted-foreground">{String(integration.config.endpoint)}</div> : null}
               </div>
             ))}
+            {!snapshot?.integrations.length ? <p className="text-sm text-muted-foreground">No integrations configured yet.</p> : null}
           </div>
         </Panel>
 
-        <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-          <Panel title="External validation runs" action={<ExternalLink className="h-4 w-4 text-muted-foreground" />}>
+        <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+          <Panel title="Recent operations">
             <div className="space-y-2">
-              {validations.map((v, i) => (
-                <div key={i} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
-                  <div>
-                    <div className="text-sm">{v.board}</div>
-                    <div className="font-mono text-[11px] text-muted-foreground">{v.vendor} · {v.at}</div>
+              {(snapshot?.jobs || []).slice(0, 8).map((job) => (
+                <div key={job.job_id} className="rounded-xl border border-border bg-background/40 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm">{job.job_type_label || job.job_id}</div>
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{job.status || "unknown"}</span>
                   </div>
-                  <StatusBadge status={v.status} />
+                  <div className="mt-1 font-mono text-[11px] text-muted-foreground">{job.created_at || "no timestamp"}</div>
                 </div>
               ))}
+              {!snapshot?.jobs.length ? <p className="text-sm text-muted-foreground">No recent jobs were reported.</p> : null}
             </div>
           </Panel>
 
-          <Panel title="Send for external validation" action={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}>
+          <Panel title="Add integration">
             <div className="space-y-3">
-              <Field label="Board"><Input placeholder="sentinel-power.brd" /></Field>
-              <Field label="Vendor"><Input placeholder="JLCPCB · DFM scan" /></Field>
-              <Field label="Notes"><Input placeholder="Optional context for the vendor" /></Field>
-              <Button className="w-full rounded-full">Submit run</Button>
+              <Field label="Type"><Input value={integrationType} onChange={(event) => setIntegrationType(event.target.value)} placeholder="github" /></Field>
+              <Field label="Label"><Input value={integrationLabel} onChange={(event) => setIntegrationLabel(event.target.value)} placeholder="GitHub" /></Field>
+              <Field label="Status"><Input value={integrationStatus} onChange={(event) => setIntegrationStatus(event.target.value)} placeholder="configured" /></Field>
+              <Field label="Endpoint"><Input value={integrationEndpoint} onChange={(event) => setIntegrationEndpoint(event.target.value)} placeholder="https://api.example.com" /></Field>
+              <Button className="w-full rounded-full" onClick={() => void addIntegration()}>Save integration</Button>
+            </div>
+          </Panel>
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+          <Panel title="Evaluation history" action={<ShieldCheck className="h-4 w-4 text-primary" />}>
+            <div className="space-y-2">
+              {(snapshot?.evaluations || []).map((evaluation) => (
+                <div key={evaluation.evaluation_id} className="rounded-xl border border-border bg-background/40 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm">{evaluation.evaluation_id || "evaluation"}</div>
+                    <span className="rounded border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{evaluation.scope || "scope"}</span>
+                  </div>
+                  <div className="mt-1 font-mono text-[11px] text-muted-foreground">{evaluation.created_at || "no timestamp"}</div>
+                </div>
+              ))}
+              {!snapshot?.evaluations.length ? <p className="text-sm text-muted-foreground">No evaluation history is available.</p> : null}
+            </div>
+          </Panel>
+
+          <Panel title="External validation upload" action={<Upload className="h-4 w-4 text-muted-foreground" />}>
+            <div className="space-y-3">
+              <Field label="Run label"><Input value={validationLabel} onChange={(event) => setValidationLabel(event.target.value)} placeholder="Vendor CAM package" /></Field>
+              <Field label="Files"><Input type="file" multiple onChange={(event) => setValidationFiles(event.target.files)} /></Field>
+              <Button className="w-full rounded-full" onClick={() => void submitValidation()}>Submit validation package</Button>
             </div>
           </Panel>
         </div>
@@ -85,20 +169,12 @@ function NexusOps() {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { cls: string; Icon: typeof CheckCircle2; label: string }> = {
-    connected: { cls: "text-success bg-success/10 border-success/20", Icon: CheckCircle2, label: "Connected" },
-    passed: { cls: "text-success bg-success/10 border-success/20", Icon: CheckCircle2, label: "Passed" },
-    warnings: { cls: "text-warning bg-warning/10 border-warning/20", Icon: AlertCircle, label: "Warnings" },
-    failed: { cls: "text-danger bg-danger/10 border-danger/20", Icon: AlertCircle, label: "Failed" },
-    error: { cls: "text-danger bg-danger/10 border-danger/20", Icon: AlertCircle, label: "Error" },
-    disconnected: { cls: "text-muted-foreground bg-muted/40 border-border", Icon: AlertCircle, label: "Disconnected" },
-  };
-  const m = map[status] ?? map.disconnected;
+function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${m.cls}`}>
-      <m.Icon className="h-3 w-3" /> {m.label}
-    </span>
+    <div className="rounded-2xl border border-border bg-surface p-5">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-2 text-2xl font-semibold">{value}</div>
+    </div>
   );
 }
 
