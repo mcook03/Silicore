@@ -6,6 +6,7 @@ import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, FileText } from "lucide-react";
 import { useApiData } from "@/lib/api";
+import { DecisionStrip, EmptySurface, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 export const Route = createFileRoute("/history/$runDir")({
   head: () => ({ meta: [{ title: "Run detail — Silicore" }] }),
@@ -30,7 +31,7 @@ type RunDetailPayload = {
 
 function RunDetail() {
   const { runDir } = Route.useParams();
-  const { data, error } = useApiData<RunDetailPayload>(`/api/frontend/history/${runDir}`);
+  const { data, error, loading } = useApiData<RunDetailPayload>(`/api/frontend/history/${runDir}`);
   const healthSummaryText = typeof data?.result?.health_summary === "string"
     ? data.result.health_summary
     : data?.result?.health_summary?.summary || data?.result?.health_summary?.title || "Run loaded.";
@@ -41,6 +42,7 @@ function RunDetail() {
           <ArrowLeft className="h-3 w-3" /> All runs
         </Link>
 
+        {loading ? <LoadingSurface title="Loading run detail" copy="Silicore is assembling the archived run, artifacts, and spatial readout." /> : null}
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
 
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -49,6 +51,22 @@ function RunDetail() {
             <h2 className="mt-1 text-2xl font-medium tracking-tight">{data?.name || runDir}</h2>
           </div>
         </div>
+
+        <DecisionStrip
+          eyebrow="Run archive decision"
+          title={
+            Number(data?.result?.score || 0) >= 80
+              ? "This archived run still reads as one of the healthier snapshots."
+              : "This archived run captures a risk state worth revisiting before repeating it."
+          }
+          copy={`${healthSummaryText} Use the hotspot readout, artifact rail, and history workflow actions below to decide whether this run should become the baseline for another compare cycle.`}
+          metrics={[
+            { label: "Run score", value: String(Math.round(Number(data?.result?.score || 0))), tone: Number(data?.result?.score || 0) >= 80 ? "success" : "warning" },
+            { label: "Artifacts", value: String((data?.files ?? []).length) },
+            { label: "Run id", value: runDir.slice(0, 8) },
+            { label: "Spatial map", value: data?.board_view?.has_data ? "Live" : "Sparse", tone: data?.board_view?.has_data ? "success" : "warning" },
+          ]}
+        />
 
         <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
           <div className="rounded-2xl border border-border bg-surface p-6">
@@ -90,6 +108,11 @@ function RunDetail() {
                 <RunStat label="Score" value={String(Math.round(Number(data?.result?.score || 0)))} />
                 <RunStat label="Artifacts" value={String((data?.files ?? []).length)} />
                 <RunStat label="Run id" value={runDir.slice(0, 8)} />
+              </div>
+              <div className="grid gap-3 lg:grid-cols-3">
+                <WorkflowAction to="/history" label="Return to archive" copy="Step back into the broader run ledger." />
+                <WorkflowAction to="/compare" label="Move into compare" copy="Use this archived run as a reference point for another revision." />
+                <WorkflowAction to="/analyze" label="Run a fresh board" copy="Generate the next data point after reviewing this snapshot." />
               </div>
             </div>
           </RunStage>

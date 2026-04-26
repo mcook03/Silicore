@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
@@ -12,6 +12,7 @@ import {
   CircleDot, Clock, FileCheck2, AlertTriangle, Trash2,
 } from "lucide-react";
 import { apiPostJson, useApiData } from "@/lib/api";
+import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 export const Route = createFileRoute("/projects/$projectId")({
   head: () => ({ meta: [{ title: "Project detail — Silicore" }] }),
@@ -39,15 +40,18 @@ type ProjectDetailPayload = {
 
 function ProjectDetail() {
   const { projectId } = Route.useParams();
-  const { data, error, reload } = useApiData<ProjectDetailPayload>(`/api/frontend/projects/${projectId}`);
+  const { data, error, reload, loading } = useApiData<ProjectDetailPayload>(`/api/frontend/projects/${projectId}`);
   const [note, setNote] = useState("");
   const [reviewSummary, setReviewSummary] = useState("");
   const [reviewStatus, setReviewStatus] = useState("approved");
+  const [flash, setFlash] = useState<string | null>(null);
+  const [runSort, setRunSort] = useState<"latest" | "score" | "critical">("latest");
 
   const submitNote = async () => {
     if (!note.trim()) return;
     await apiPostJson(`/api/frontend/projects/${projectId}/notes`, { author: "Silicore UI", body: note });
     setNote("");
+    setFlash("Note posted to the workspace feed.");
     await reload();
   };
 
@@ -55,6 +59,7 @@ function ProjectDetail() {
     if (!reviewSummary.trim()) return;
     await apiPostJson(`/api/frontend/projects/${projectId}/reviews`, { status: reviewStatus, summary: reviewSummary });
     setReviewSummary("");
+    setFlash("Review submitted to the workspace.");
     await reload();
   };
 
@@ -64,6 +69,19 @@ function ProjectDetail() {
     label: `R${index + 1}`,
     score: normalizeRunScore(run.score),
   }));
+  const sortedRuns = useMemo(() => {
+    const runs = [...(project?.runs || [])];
+    if (runSort === "score") {
+      return runs.sort((a, b) => normalizeRunScore(b.score) - normalizeRunScore(a.score));
+    }
+    if (runSort === "critical") {
+      return runs.sort((a, b) => Number(b.critical_count || 0) - Number(a.critical_count || 0));
+    }
+    return runs;
+  }, [project?.runs, runSort]);
+  const latestRun = project?.runs?.[0];
+  const riskiestRun = [...(project?.runs || [])].sort((a, b) => Number(b.critical_count || 0) - Number(a.critical_count || 0))[0];
+  const pendingGates = (project?.release_gates || []).filter((gate) => !["approved", "rejected"].includes((gate.status || "").toLowerCase())).length;
 
   return (
     <AppShell title={project?.name || "Project detail"}>
@@ -72,8 +90,13 @@ function ProjectDetail() {
           <ArrowLeft className="h-3 w-3" /> All projects
         </Link>
 
+        {loading ? <LoadingSurface title="Loading workspace detail" copy="Silicore is assembling workspace history, gates, team context, and review activity." /> : null}
+
         {error ? (
           <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>
+        ) : null}
+        {flash ? (
+          <div className="rounded-xl border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{flash}</div>
         ) : null}
 
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -113,6 +136,26 @@ function ProjectDetail() {
           <Stat label="Pending approvals" value={String((project?.release_gates || []).filter((gate) => !["approved", "rejected"].includes((gate.status || "").toLowerCase())).length)} tone="warning" icon={Clock} />
         </div>
 
+        <DecisionStrip
+          eyebrow="Workspace decision"
+          title={
+            riskiestRun
+              ? `${project?.name || "This workspace"} is currently being defined by ${riskiestRun.name || riskiestRun.run_id}.`
+              : "This workspace needs more run history before Silicore can guide the next decision strongly."
+          }
+          copy={
+            riskiestRun
+              ? `The current highest-pressure run carries ${riskiestRun.critical_count || 0} critical findings. Use the run ladder, history, and compare workflow to decide whether this workspace is converging or stalling.`
+              : "As soon as this workspace has enough recorded analyses, Silicore will surface the most urgent run and the next best action here."
+          }
+          metrics={[
+            { label: "Latest score", value: String(Math.round(project?.latest_score || 0)), tone: (project?.latest_score || 0) >= 80 ? "success" : "warning" },
+            { label: "Runs", value: String(project?.runs.length || 0) },
+            { label: "Critical focus", value: String(riskiestRun?.critical_count || 0), tone: (riskiestRun?.critical_count || 0) > 0 ? "danger" : "success" },
+            { label: "Pending gates", value: String(pendingGates), tone: pendingGates > 0 ? "warning" : "success" },
+          ]}
+        />
+
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <BoardHeatmap
             title="Project hotspot overview"
@@ -129,6 +172,11 @@ function ProjectDetail() {
                 <QuickStat label="Team size" value={String((project?.team_members || []).length)} />
                 <QuickStat label="Gates" value={String((project?.release_gates || []).length)} />
               </div>
+              <div className="grid gap-3 lg:grid-cols-3">
+                <WorkflowAction to="/compare" label="Open compare" copy="Take the strongest two workspace runs into revision arbitration." />
+                <WorkflowAction to="/history" label="Open history" copy="Use the archive to validate how this workspace has moved over time." />
+                <WorkflowAction to="/analyze" label="Run another board" copy="Feed a new analysis into this workspace when it needs fresh evidence." />
+              </div>
             </div>
           </ProjectStage>
         </div>
@@ -143,8 +191,22 @@ function ProjectDetail() {
 
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
           <ProjectStage title="Runs" rail="run ladder">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <FilterPills
+                active={runSort}
+                onChange={setRunSort}
+                options={[
+                  { value: "latest", label: "Latest first", count: project?.runs.length || 0 },
+                  { value: "score", label: "Best score" },
+                  { value: "critical", label: "Most critical" },
+                ]}
+              />
+              <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                {latestRun ? `${latestRun.name || latestRun.run_id} is the freshest run` : "No runs yet"}
+              </div>
+            </div>
             <div className="space-y-2">
-              {(project?.runs || []).map((run) => (
+              {sortedRuns.length ? sortedRuns.map((run) => (
                 <div key={run.run_id} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
                   <div>
                     <div className="text-sm">{run.name || run.run_id}</div>
@@ -152,7 +214,13 @@ function ProjectDetail() {
                   </div>
                   <ScorePill score={normalizeRunScore(run.score)} />
                 </div>
-              ))}
+              )) : (
+                <EmptySurface
+                  eyebrow="Run ladder"
+                  title="This workspace does not have linked runs yet."
+                  copy="Attach the next analysis to this workspace and the ladder will turn into the main path for compare, review, and release decisions."
+                />
+              )}
             </div>
           </ProjectStage>
 

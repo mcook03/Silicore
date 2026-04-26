@@ -92,6 +92,8 @@ function Analyze() {
   const [analysis, setAnalysis] = useState<AnalysisResultPayload | null>(null);
   const [severityFilter, setSeverityFilter] = useState<"all" | "critical" | "high" | "medium" | "low">("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selectedFindingKey, setSelectedFindingKey] = useState<string | null>(null);
+  const [justCompleted, setJustCompleted] = useState(false);
 
   const result = analysis?.result;
   const risks = Array.isArray(result?.risks) ? result.risks : [];
@@ -193,6 +195,12 @@ function Analyze() {
       }),
     [risks, severityFilter, categoryFilter],
   );
+  const selectedFinding =
+    filteredRisks.find((risk) => findingKey(risk) === selectedFindingKey)
+    || risks.find((risk) => findingKey(risk) === selectedFindingKey)
+    || filteredRisks[0]
+    || risks[0]
+    || null;
   const topCategory = [...groupedRisks].sort((a, b) => Number(b.count || 0) - Number(a.count || 0))[0];
   const lowestConfidenceBucket = confidenceData.find((item) => item.label === "Low")?.value || 0;
   const highestComponent = componentLeaderboard[0];
@@ -215,6 +223,9 @@ function Analyze() {
       setAnalysis(payload);
       setSeverityFilter("all");
       setCategoryFilter("all");
+      const nextRisks = Array.isArray(payload.result?.risks) ? payload.result.risks : [];
+      setSelectedFindingKey(nextRisks[0] ? findingKey(nextRisks[0]) : null);
+      setJustCompleted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Analysis failed.");
     } finally {
@@ -383,6 +394,20 @@ function Analyze() {
 
         {result ? (
           <>
+            {justCompleted ? (
+              <DecisionStrip
+                eyebrow="Analysis complete"
+                title="Silicore finished the run and the workstation is now centered on the newest result."
+                copy="Use the trust surface and focused finding panel below to move from score into exact evidence without losing the broader result context."
+                metrics={[
+                  { label: "Result state", value: "Ready", tone: "success" },
+                  { label: "Score", value: String(Math.round(Number(result.score || 0))), tone: Number(result.score || 0) >= 80 ? "success" : "warning" },
+                  { label: "Findings", value: String(risks.length), tone: risks.length > 10 ? "danger" : "default" },
+                  { label: "Exports", value: String(downloadItems.length), tone: "default" },
+                ]}
+              />
+            ) : null}
+
             <DecisionStrip
               eyebrow="Run decision"
               title={
@@ -537,6 +562,30 @@ function Analyze() {
               </AnalysisSurface>
             </div>
 
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+              <AnalysisSurface title="Focused finding" rail="issue drill-down" action={<span className="font-mono text-xs text-muted-foreground">{selectedFinding ? "selected" : "idle"}</span>}>
+                {selectedFinding ? (
+                  <FocusedFindingCard risk={selectedFinding} />
+                ) : (
+                  <EmptySurface
+                    eyebrow="Focused finding"
+                    title="Pick a finding to inspect its evidence."
+                    copy="The selected issue here becomes the drill-down context for confidence, traceability, and remediation planning."
+                  />
+                )}
+              </AnalysisSurface>
+
+              <AnalysisSurface title="Trust & explainability" rail="why Silicore said this">
+                <TrustSurface
+                  score={Math.round(Number(result.score || 0))}
+                  totalFindings={risks.length}
+                  topCategory={topCategory?.title || "General"}
+                  lowConfidenceCount={lowestConfidenceBucket}
+                  selectedFinding={selectedFinding}
+                />
+              </AnalysisSurface>
+            </div>
+
             <div className="grid gap-4 xl:grid-cols-2">
               <AnalysisSurface title="Penalty contribution" rail="score drag">
                 {penaltyRows.length ? (
@@ -642,7 +691,14 @@ function Analyze() {
               </div>
               <div className="space-y-2">
                 {filteredRisks.length ? (
-                  filteredRisks.map((finding, index) => <FindingRow key={`${finding.message}-${index}`} risk={finding} />)
+                  filteredRisks.map((finding, index) => (
+                    <FindingRow
+                      key={`${finding.message}-${index}`}
+                      risk={finding}
+                      selected={findingKey(finding) === findingKey(selectedFinding)}
+                      onSelect={() => setSelectedFindingKey(findingKey(finding))}
+                    />
+                  ))
                 ) : (
                   <EmptySurface
                     eyebrow="Filtered view"
@@ -713,7 +769,15 @@ function Tally({ tone, label, n }: { tone: "danger" | "warning" | "muted"; label
   );
 }
 
-function FindingRow({ risk }: { risk: Risk }) {
+function FindingRow({
+  risk,
+  selected,
+  onSelect,
+}: {
+  risk: Risk;
+  selected?: boolean;
+  onSelect?: () => void;
+}) {
   const severity = (risk.severity || "low").toLowerCase();
   const map = {
     critical: { Icon: AlertCircle, cls: "text-danger bg-danger/10 border-danger/20" },
@@ -723,7 +787,13 @@ function FindingRow({ risk }: { risk: Risk }) {
   } as const;
   const { Icon, cls } = map[severity as keyof typeof map] ?? map.low;
   return (
-    <div className="group flex items-start gap-4 rounded-xl border border-border bg-background/40 p-4 transition-colors hover:border-primary/30">
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`group flex w-full items-start gap-4 rounded-xl border bg-background/40 p-4 text-left transition-colors hover:border-primary/30 ${
+        selected ? "border-primary/35 bg-primary/8" : "border-border"
+      }`}
+    >
       <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border ${cls}`}><Icon className="h-4 w-4" /></span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -736,8 +806,12 @@ function FindingRow({ risk }: { risk: Risk }) {
         </div>
       </div>
       <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
-    </div>
+    </button>
   );
+}
+
+function findingKey(risk?: Risk | null) {
+  return `${risk?.message || "issue"}|${risk?.category || "General"}|${risk?.recommendation || ""}`;
 }
 
 function SignalStat({ label, value }: { label: string; value: string }) {
@@ -745,6 +819,83 @@ function SignalStat({ label, value }: { label: string; value: string }) {
     <div className="rounded-xl border border-border bg-background/40 p-4">
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 text-2xl font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function FocusedFindingCard({ risk }: { risk: Risk }) {
+  const confidence = Number(risk.transparency_view?.confidence_score || 0);
+  const traceability = Number(risk.transparency_view?.traceability_score || 0);
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-white/8 bg-background/35 p-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            {(risk.severity || "low").toUpperCase()}
+          </span>
+          <span className="rounded-full border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            {risk.category || "General"}
+          </span>
+        </div>
+        <h4 className="mt-4 text-xl font-semibold tracking-tight text-foreground">{risk.message || "Unnamed issue"}</h4>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">{risk.recommendation || "Review this issue directly in layout and confirm the design intent."}</p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <SignalStat label="Confidence" value={String(confidence || 0)} />
+        <SignalStat label="Traceability" value={String(traceability || 0)} />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <TagBucket label="Components" values={risk.components || []} empty="No component references were preserved." />
+        <TagBucket label="Nets" values={risk.nets || []} empty="No net references were preserved." />
+      </div>
+    </div>
+  );
+}
+
+function TrustSurface({
+  score,
+  totalFindings,
+  topCategory,
+  lowConfidenceCount,
+  selectedFinding,
+}: {
+  score: number;
+  totalFindings: number;
+  topCategory: string;
+  lowConfidenceCount: number;
+  selectedFinding: Risk | null;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-border bg-background/35 p-5 text-sm leading-7 text-muted-foreground">
+        Silicore’s score is being dragged most by <span className="text-foreground">{topCategory}</span>, across <span className="text-foreground">{totalFindings}</span> findings. {lowConfidenceCount > 0 ? `${lowConfidenceCount} findings still sit in the lower-confidence band, so review those before treating the run as signoff-ready.` : "The run does not currently show any low-confidence findings, which makes the recommendation set easier to trust."}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <SignalStat label="Run score" value={String(score)} />
+        <SignalStat label="Top drag" value={topCategory} />
+        <SignalStat label="Low confidence" value={String(lowConfidenceCount)} />
+      </div>
+      <div className="rounded-2xl border border-border bg-background/35 p-5">
+        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Selected issue rationale</div>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          {selectedFinding
+            ? `Silicore flagged "${selectedFinding.message || "this issue"}" under ${selectedFinding.category || "General"} with a confidence score of ${Number(selectedFinding.transparency_view?.confidence_score || 0)} and traceability score of ${Number(selectedFinding.transparency_view?.traceability_score || 0)}.`
+            : "Select a finding from the action list and this panel will explain why it is in the result set and how trustworthy the evidence looks."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function TagBucket({ label, values, empty }: { label: string; values: string[]; empty: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/35 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {values.length ? values.map((item) => (
+          <span key={item} className="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">{item}</span>
+        )) : <span className="text-sm text-muted-foreground">{empty}</span>}
+      </div>
     </div>
   );
 }
