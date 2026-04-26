@@ -100,6 +100,14 @@ RUNTIME_CONFIG = get_runtime_config()
 
 app = Flask(__name__)
 
+from flask_cors import CORS
+CORS(app, origins=[
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://*.lovable.app",
+])
+
+
 
 def _load_app_secret():
     env_secret = os.environ.get("SILICORE_SECRET_KEY") or os.environ.get("FLASK_SECRET_KEY")
