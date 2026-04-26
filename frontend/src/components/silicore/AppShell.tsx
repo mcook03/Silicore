@@ -22,7 +22,7 @@ import {
   Orbit,
   X,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 import { useApiData } from "@/lib/api";
 
 const coreNav = [
@@ -49,6 +49,7 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
   const [internalToolsOpen, setInternalToolsOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState("");
+  const [activeCommandIndex, setActiveCommandIndex] = useState(0);
   const { data } = useApiData<{ user?: { name?: string; email?: string; roles?: string[]; organization_names?: string[] } }>("/api/frontend/session");
   const user = data?.user;
   const canAccessInternalTools = Boolean(user?.roles?.some((role) => role === "lead" || role === "admin"));
@@ -169,6 +170,66 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
     { label: "Open history ledger", meta: "Go to history", action: () => navigate({ to: "/history" }) },
     { label: "Open compare cockpit", meta: "Go to compare", action: () => navigate({ to: "/compare" }) },
   ].filter((item) => item.label.toLowerCase().includes(commandQuery.toLowerCase()) || item.meta.toLowerCase().includes(commandQuery.toLowerCase()));
+
+  useEffect(() => {
+    if (!commandOpen) {
+      setActiveCommandIndex(0);
+      return;
+    }
+    setActiveCommandIndex((current) => Math.min(current, Math.max(commandItems.length - 1, 0)));
+  }, [commandItems.length, commandOpen]);
+
+  useEffect(() => {
+    if (!commandOpen) {
+      return;
+    }
+    const activeNode = document.getElementById(`command-item-${activeCommandIndex}`);
+    activeNode?.scrollIntoView({ block: "nearest" });
+  }, [activeCommandIndex, commandOpen]);
+
+  const closeCommandPalette = () => {
+    setCommandOpen(false);
+    setCommandQuery("");
+    setActiveCommandIndex(0);
+  };
+
+  const handleCommandSubmit = (index: number) => {
+    const item = commandItems[index];
+    if (!item) {
+      return;
+    }
+    void item.action();
+    closeCommandPalette();
+  };
+
+  const handleCommandInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (!commandItems.length) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeCommandPalette();
+      }
+      return;
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveCommandIndex((current) => (current + 1) % commandItems.length);
+      return;
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveCommandIndex((current) => (current - 1 + commandItems.length) % commandItems.length);
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleCommandSubmit(activeCommandIndex);
+      return;
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeCommandPalette();
+    }
+  };
 
   return (
     <div className="app-shell-bg flex min-h-screen bg-background">
@@ -358,10 +419,7 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
         {commandOpen ? (
           <div
             className="fixed inset-0 z-50 overflow-y-auto bg-black/55 px-4 py-6 backdrop-blur-md"
-            onClick={() => {
-              setCommandOpen(false);
-              setCommandQuery("");
-            }}
+            onClick={closeCommandPalette}
           >
             <div className="flex min-h-full items-start justify-center pt-[6vh]">
               <div
@@ -374,16 +432,14 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
                     autoFocus
                     value={commandQuery}
                     onChange={(event) => setCommandQuery(event.target.value)}
+                    onKeyDown={handleCommandInputKeyDown}
                     placeholder="Jump to a surface or workflow"
                     className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                   />
                   <kbd className="hidden rounded-full border border-border/70 px-2 py-0.5 font-mono text-[10px] text-muted-foreground sm:inline-flex">esc</kbd>
                   <button
                     type="button"
-                    onClick={() => {
-                      setCommandOpen(false);
-                      setCommandQuery("");
-                    }}
+                    onClick={closeCommandPalette}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/8 bg-white/4 text-muted-foreground transition-colors hover:border-primary/20 hover:text-foreground"
                     aria-label="Close command palette"
                   >
@@ -391,24 +447,35 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
                   </button>
                 </div>
                 <div className="max-h-[min(56vh,32rem)] space-y-2 overflow-y-auto pr-1">
-                  {commandItems.slice(0, 10).map((item) => (
-                    <button
-                      key={`${item.label}-${item.meta}`}
-                      type="button"
-                      onClick={() => {
-                        void item.action();
-                        setCommandOpen(false);
-                        setCommandQuery("");
-                      }}
-                      className="flex w-full items-center justify-between rounded-2xl border border-white/8 bg-white/3 px-4 py-3 text-left transition-colors hover:border-primary/20 hover:bg-primary/8"
-                    >
-                      <div>
-                        <div className="text-sm font-medium text-foreground">{item.label}</div>
-                        <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{item.meta}</div>
-                      </div>
-                      <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  ))}
+                  {commandItems.slice(0, 10).length ? (
+                    commandItems.slice(0, 10).map((item, index) => {
+                      const active = index === activeCommandIndex;
+                      return (
+                        <button
+                          id={`command-item-${index}`}
+                          key={`${item.label}-${item.meta}`}
+                          type="button"
+                          onMouseEnter={() => setActiveCommandIndex(index)}
+                          onClick={() => handleCommandSubmit(index)}
+                          className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition-colors ${
+                            active
+                              ? "border-primary/28 bg-primary/10 shadow-[0_0_0_1px_rgba(86,211,240,0.08)]"
+                              : "border-white/8 bg-white/3 hover:border-primary/20 hover:bg-primary/8"
+                          }`}
+                        >
+                          <div>
+                            <div className="text-sm font-medium text-foreground">{item.label}</div>
+                            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{item.meta}</div>
+                          </div>
+                          <ArrowUpRight className={`h-4 w-4 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-white/10 bg-white/3 px-4 py-6 text-sm text-muted-foreground">
+                      No surfaces match that query yet.
+                    </div>
+                  )}
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
                   <span className="rounded-full border border-white/8 px-2 py-1">⌘K command</span>
