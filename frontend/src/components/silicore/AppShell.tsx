@@ -49,13 +49,17 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
   }, [location.pathname]);
 
   useEffect(() => {
-    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (!elements.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      elements.forEach((element) => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const seen = new WeakSet<HTMLElement>();
+    const elements = () => Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+
+    if (reducedMotion) {
+      elements().forEach((element) => {
         element.dataset.reveal = "in";
       });
       return;
     }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -67,11 +71,30 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
       },
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
     );
-    elements.forEach((element, index) => {
-      element.style.setProperty("--reveal-delay", `${Math.min(index * 40, 220)}ms`);
-      observer.observe(element);
+
+    const registerElements = () => {
+      elements().forEach((element, index) => {
+        if (seen.has(element)) {
+          return;
+        }
+        seen.add(element);
+        element.style.setProperty("--reveal-delay", `${Math.min(index * 40, 220)}ms`);
+        observer.observe(element);
+      });
+    };
+
+    registerElements();
+
+    const mutationObserver = new MutationObserver(() => {
+      registerElements();
     });
-    return () => observer.disconnect();
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
   }, [location.pathname]);
 
   return (
