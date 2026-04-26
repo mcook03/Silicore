@@ -374,7 +374,7 @@ function Atlas() {
             <AtlasStage title="Context" rail="working context">
               <div className={`grid gap-3 ${pageType === "compare" ? "md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]" : "md:grid-cols-3"}`}>
                 <Field label="Page type">
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {(["board", "project", "compare"] as const).map((option) => (
                       <button
                         key={option}
@@ -388,7 +388,7 @@ function Atlas() {
                             setCompareRunB("");
                           }
                         }}
-                        className={`interactive-lift min-w-0 whitespace-nowrap rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}
+                        className={`interactive-lift whitespace-nowrap rounded-2xl border px-4 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}
                       >
                         {option}
                       </button>
