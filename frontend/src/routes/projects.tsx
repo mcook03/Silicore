@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
@@ -149,16 +149,13 @@ function Projects() {
                         Delete workspace
                       </Button>
                     </form>
-                    <Button
-                      asChild
-                      size="sm"
-                      variant="ghost"
-                      className="h-11 rounded-2xl border border-primary/20 bg-primary/10 px-4 text-primary hover:bg-primary/15 hover:text-primary"
+                    <Link
+                      to="/projects/$projectId"
+                      params={{ projectId: project.project_id }}
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/10 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/15 hover:text-primary"
                     >
-                      <a href={`/projects/${project.project_id}`}>
-                        Open workspace <ArrowRight className="h-3.5 w-3.5" />
-                      </a>
-                    </Button>
+                      Open workspace <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">

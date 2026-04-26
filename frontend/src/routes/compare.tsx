@@ -50,6 +50,7 @@ type ProjectRun = {
   risk_count?: number;
   critical_count?: number;
   run_type?: string;
+  summary?: string | null;
 };
 
 type ProjectDetailPayload = {
@@ -88,13 +89,37 @@ function Compare() {
       .sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
   }, [projectDetail.data]);
 
+  const compareReadyRuns = useMemo(
+    () =>
+      runs.filter((run) => {
+        const hasScore = run.score != null;
+        const hasIssues = Number(run.risk_count || 0) > 0;
+        const hasCritical = Number(run.critical_count || 0) > 0;
+        const looksLikeAnalysis = run.run_type === "single" || Boolean(run.summary);
+        return hasScore || hasIssues || hasCritical || looksLikeAnalysis;
+      }),
+    [runs],
+  );
+
+  const selectableRuns = compareReadyRuns.length >= 2 ? compareReadyRuns : runs;
+
   useEffect(() => {
-    if (!runs.length) {
+    if (!selectableRuns.length) {
       return;
     }
-    setRunBId((current) => current || runs[0]?.run_id || "");
-    setRunAId((current) => current || runs[1]?.run_id || runs[0]?.run_id || "");
-  }, [runs]);
+    setRunBId((current) => {
+      if (current && selectableRuns.some((run) => run.run_id === current)) {
+        return current;
+      }
+      return selectableRuns[0]?.run_id || "";
+    });
+    setRunAId((current) => {
+      if (current && selectableRuns.some((run) => run.run_id === current) && current !== (selectableRuns[0]?.run_id || "")) {
+        return current;
+      }
+      return selectableRuns[1]?.run_id || selectableRuns[0]?.run_id || "";
+    });
+  }, [selectableRuns]);
 
   const compareUrl = useMemo(() => {
     if (!activeProjectId) {
@@ -110,8 +135,8 @@ function Compare() {
 
   const selectedProjectLabel =
     session.data?.project_options?.find((option) => option.value === activeProjectId)?.label || "Select project";
-  const selectedRunA = runs.find((run) => run.run_id === runAId);
-  const selectedRunB = runs.find((run) => run.run_id === runBId);
+  const selectedRunA = selectableRuns.find((run) => run.run_id === runAId);
+  const selectedRunB = selectableRuns.find((run) => run.run_id === runBId);
   const scoreDelta = (compare.data?.run_b.score || 0) - (compare.data?.run_a.score || 0);
   const issueDelta = (compare.data?.run_b.issues || 0) - (compare.data?.run_a.issues || 0);
   const strongestCategoryShift = [...(compare.data?.categories || [])].sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))[0];
@@ -124,7 +149,7 @@ function Compare() {
   );
   const trendData = useMemo(
     () =>
-      [...runs]
+      [...selectableRuns]
         .slice(0, 6)
         .reverse()
         .map((run, index) => ({
@@ -134,7 +159,7 @@ function Compare() {
           issues: Number(run.risk_count || 0),
           critical: Number(run.critical_count || 0),
         })),
-    [runs],
+    [selectableRuns],
   );
   const categoryHeatmap = useMemo(
     () =>
@@ -269,7 +294,7 @@ function Compare() {
                     onChange={(event) => setRunAId(event.target.value)}
                     className="h-11 w-full rounded-2xl border border-input bg-background/50 px-3 text-sm"
                   >
-                    {runs.map((run) => (
+                    {selectableRuns.map((run) => (
                       <option key={run.run_id} value={run.run_id}>
                         {run.name || run.run_id}
                       </option>
@@ -289,7 +314,7 @@ function Compare() {
                     onChange={(event) => setRunBId(event.target.value)}
                     className="h-11 w-full rounded-2xl border border-input bg-background/50 px-3 text-sm"
                   >
-                    {runs.map((run) => (
+                    {selectableRuns.map((run) => (
                       <option key={run.run_id} value={run.run_id}>
                         {run.name || run.run_id}
                       </option>
@@ -314,7 +339,7 @@ function Compare() {
                     Selection logic
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    Tap any run below to reassign the candidate. Tapping the current candidate moves it into the baseline slot.
+                    Compare now prioritizes runs that actually contain analyzable score/risk data so the page doesn’t silently land on empty batch shells.
                   </span>
                 </div>
               </div>
@@ -322,8 +347,11 @@ function Compare() {
           </CompareStage>
 
           <CompareStage title="Run library" rail="workspace runs" action={<Sparkles className="h-4 w-4 text-primary" />}>
+            {selectableRuns.length < 2 ? (
+              <EmptyPanel copy="This workspace needs at least two comparable analysis runs before Silicore can produce a meaningful revision comparison." />
+            ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              {runs.map((run) => {
+              {selectableRuns.map((run) => {
                 const state = run.run_id === runAId ? "baseline" : run.run_id === runBId ? "candidate" : "idle";
                 return (
                   <button
@@ -361,6 +389,7 @@ function Compare() {
                 );
               })}
             </div>
+            )}
           </CompareStage>
         </section>
 

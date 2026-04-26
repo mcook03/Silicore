@@ -366,14 +366,25 @@ def _compare_payload(project_id, run_a_id=None, run_b_id=None):
     if len(runs) < 2:
         return {"error": "At least two runs are required for comparison."}
 
-    fallback_a = runs[-2]
-    fallback_b = runs[-1]
+    compare_ready_runs = [
+        run
+        for run in runs
+        if run.get("score") is not None
+        or _safe_int(run.get("risk_count"), 0) > 0
+        or _safe_int(run.get("critical_count"), 0) > 0
+        or (run.get("run_type") == "single")
+        or bool(run.get("summary"))
+    ]
+    candidate_runs = compare_ready_runs if len(compare_ready_runs) >= 2 else runs
+
+    fallback_a = candidate_runs[-2]
+    fallback_b = candidate_runs[-1]
     run_a = fallback_a
     run_b = fallback_b
 
     if run_a_id and run_b_id and run_a_id != run_b_id:
-        run_a = next((run for run in runs if str(run.get("run_id")) == str(run_a_id)), fallback_a)
-        run_b = next((run for run in runs if str(run.get("run_id")) == str(run_b_id)), fallback_b)
+        run_a = next((run for run in candidate_runs if str(run.get("run_id")) == str(run_a_id)), fallback_a)
+        run_b = next((run for run in candidate_runs if str(run.get("run_id")) == str(run_b_id)), fallback_b)
 
     score_a = _score_to_100(run_a.get("score"))
     score_b = _score_to_100(run_b.get("score"))
