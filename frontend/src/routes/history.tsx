@@ -16,6 +16,7 @@ type HistoryRun = {
   label?: string;
   created_at?: string;
   result?: { score?: number };
+  score?: number;
   risk_count?: number;
   critical_count?: number;
   preview?: string;
@@ -29,13 +30,21 @@ type HistoryPayload = {
 
 function History() {
   const { data, error } = useApiData<HistoryPayload>("/api/frontend/history");
+  const getRunScore = (run: HistoryRun) => {
+    const nestedScore = Number(run.result?.score);
+    if (Number.isFinite(nestedScore)) {
+      return nestedScore;
+    }
+    const topLevelScore = Number(run.score);
+    return Number.isFinite(topLevelScore) ? topLevelScore : NaN;
+  };
   const scoreHistory = (data?.runs ?? [])
-    .filter((run) => Number.isFinite(Number(run.result?.score)))
+    .filter((run) => Number.isFinite(getRunScore(run)))
     .slice(0, 20)
     .reverse()
     .map((run, index) => ({
       label: `wk${index + 1}`,
-      score: Math.round(Number(run.result?.score || 0)),
+      score: Math.round(getRunScore(run) || 0),
       runLabel: run.label || run.name,
       createdAt: run.created_at || "—",
     }));
@@ -129,7 +138,7 @@ function History() {
                         <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{run.run_type || "run"}</div>
                       </td>
                       <td className="px-6 py-3.5 font-mono text-xs text-muted-foreground">{run.created_at || "—"}</td>
-                      <td className="px-6 py-3.5"><ScorePill score={Math.round(Number(run.result?.score || 0))} /></td>
+                      <td className="px-6 py-3.5"><ScorePill score={Math.round(getRunScore(run) || 0)} /></td>
                       <td className="px-6 py-3.5 text-muted-foreground">{run.risk_count || 0}</td>
                       <td className="px-6 py-3.5 text-muted-foreground">{run.critical_count || 0}</td>
                       <td className="px-6 py-3.5 text-right">

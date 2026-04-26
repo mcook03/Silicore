@@ -1431,6 +1431,13 @@ def _build_history_runs():
         html_count = sum(1 for item in files if item["kind"] == "html")
         json_count = sum(1 for item in files if item["kind"] == "json")
         text_count = sum(1 for item in files if item["kind"] == "text")
+        detail = _build_run_detail(run_name) or {}
+        result = detail.get("result") if isinstance(detail.get("result"), dict) else {}
+        display_score = _safe_float(result.get("score"), None)
+        if display_score is None:
+            display_score = _safe_float(detail.get("score"), None)
+        if display_score is None:
+            display_score = _resolve_display_score(detail) if detail else 0.0
 
         enriched.append(
             {
@@ -1442,6 +1449,15 @@ def _build_history_runs():
                 "json_count": json_count,
                 "text_count": text_count,
                 "detail_url": url_for("history_detail_page", run_dir=run_name),
+                "result": {
+                    "score": display_score,
+                },
+                "score": display_score,
+                "risk_count": detail.get("risk_count", 0),
+                "critical_count": detail.get("critical_count", 0),
+                "high_count": detail.get("high_count", 0),
+                "medium_count": detail.get("medium_count", 0),
+                "low_count": detail.get("low_count", 0),
             }
         )
 
