@@ -17,36 +17,51 @@ import {
   Menu,
   Command,
   ArrowUpRight,
+  ChevronDown,
+  Wrench,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useApiData } from "@/lib/api";
 
-const nav = [
+const coreNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/analyze", label: "Board analysis", icon: CircuitBoard },
   { to: "/compare", label: "Compare", icon: GitCompareArrows },
   { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/atlas", label: "Atlas AI", icon: Sparkles },
+  { to: "/history", label: "History", icon: History },
+  { to: "/settings", label: "Settings", icon: Settings },
+] as const;
+
+const internalToolsNav = [
   { to: "/nexus-ops", label: "Nexus Ops", icon: Network },
   { to: "/jobs", label: "Jobs", icon: ListChecks },
-  { to: "/history", label: "History", icon: History },
   { to: "/admin/audit", label: "Audit log", icon: ShieldCheck },
   { to: "/health", label: "Health", icon: Activity },
-  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export function AppShell({ children, title }: { children: ReactNode; title?: string }) {
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [internalToolsOpen, setInternalToolsOpen] = useState(false);
   const { data } = useApiData<{ user?: { name?: string; email?: string; roles?: string[]; organization_names?: string[] } }>("/api/frontend/session");
   const user = data?.user;
+  const canAccessInternalTools = Boolean(user?.roles?.some((role) => role === "lead" || role === "admin"));
   const initials = ((user?.name || user?.email || "SC").match(/\b\w/g) || ["S", "C"]).slice(0, 2).join("").toUpperCase();
   const subtitle = user?.organization_names?.[0] || user?.roles?.join(" · ") || "Silicore workspace";
-  const activeNav = nav.find((item) => location.pathname === item.to || (item.to !== "/dashboard" && location.pathname.startsWith(item.to)));
+  const allNav = [...coreNav, ...internalToolsNav];
+  const activeNav = allNav.find((item) => location.pathname === item.to || (item.to !== "/dashboard" && location.pathname.startsWith(item.to)));
+  const internalRouteActive = internalToolsNav.some((item) => location.pathname === item.to || location.pathname.startsWith(item.to));
 
   useEffect(() => {
     setMobileNavOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (internalRouteActive) {
+      setInternalToolsOpen(true);
+    }
+  }, [internalRouteActive]);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -111,7 +126,7 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
           </div>
         </div>
         <nav className="flex-1 space-y-1 p-4">
-          {nav.map(({ to, label, icon: Icon }) => {
+          {coreNav.map(({ to, label, icon: Icon }) => {
             const active = location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
             return (
               <Link
@@ -129,6 +144,50 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
               </Link>
             );
           })}
+          {canAccessInternalTools ? (
+            <div className="pt-4">
+              <button
+                type="button"
+                onClick={() => setInternalToolsOpen((current) => !current)}
+                className={`interactive-lift flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm transition-colors ${
+                  internalRouteActive
+                    ? "border border-primary/20 bg-[linear-gradient(90deg,rgba(86,211,240,0.12),rgba(125,178,255,0.06))] text-foreground"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
+                }`}
+              >
+                <Wrench className="h-4 w-4" />
+                <span className="font-medium">Internal tools</span>
+                <span className="ml-auto inline-flex items-center gap-2">
+                  <span className="rounded-full border border-border/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Hidden
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${internalToolsOpen ? "rotate-180" : ""}`} />
+                </span>
+              </button>
+              {internalToolsOpen ? (
+                <div className="mt-2 space-y-1 pl-3">
+                  {internalToolsNav.map(({ to, label, icon: Icon }) => {
+                    const active = location.pathname === to || location.pathname.startsWith(to);
+                    return (
+                      <Link
+                        key={to}
+                        to={to}
+                        className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition-colors ${
+                          active
+                            ? "bg-primary/10 text-foreground shadow-[0_14px_30px_-22px_rgba(86,211,240,0.75)]"
+                            : "text-muted-foreground hover:bg-sidebar-accent/45 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{label}</span>
+                        {active ? <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" /> : null}
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </nav>
         <div className="border-t border-sidebar-border/70 p-4">
           <div className="premium-subtle flex items-center gap-3 rounded-2xl p-4">
@@ -181,7 +240,7 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
             <div className="pb-4 md:hidden">
               <div className="premium-panel rounded-[26px] p-3">
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {nav.map(({ to, label, icon: Icon }) => {
+                  {coreNav.map(({ to, label, icon: Icon }) => {
                     const active = location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
                     return (
                       <Link
@@ -200,6 +259,34 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
                     );
                   })}
                 </div>
+                {canAccessInternalTools ? (
+                  <div className="mt-3 border-t border-border/60 pt-3">
+                    <div className="mb-2 flex items-center gap-2 px-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                      <Wrench className="h-3.5 w-3.5" />
+                      Internal tools
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {internalToolsNav.map(({ to, label, icon: Icon }) => {
+                        const active = location.pathname === to || location.pathname.startsWith(to);
+                        return (
+                          <Link
+                            key={to}
+                            to={to}
+                            className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm ${
+                              active
+                                ? "border border-primary/20 bg-primary/10 text-foreground"
+                                : "border border-transparent bg-background/35 text-muted-foreground"
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" />
+                            <span>{label}</span>
+                            <ArrowUpRight className="ml-auto h-3.5 w-3.5" />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           ) : null}
