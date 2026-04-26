@@ -1,7 +1,6 @@
 import json
 import os
 import re
-import subprocess
 from flask_cors import CORS
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
@@ -31,6 +30,12 @@ from engine.db import (
 )
 from engine.email_service import send_identity_email
 from engine.evaluation_backend import evaluate_external_suite, evaluate_fixture_suite, summarize_evaluation_history
+from engine.frontend_bridge import (
+    FRONTEND_ASSETS_ROOT,
+    FRONTEND_CLIENT_ROOT,
+    render_frontend,
+    should_render_frontend_html,
+)
 from engine.insight_engine import generate_comparison_insights
 from engine.job_store import get_job, list_jobs, summarize_jobs
 from engine.job_runner import process_queued_jobs
@@ -153,9 +158,6 @@ RUNS_FOLDER = "dashboard_runs"
 PROJECTS_FOLDER = "dashboard_projects"
 VALIDATION_FOLDER = "dashboard_validation_samples"
 CONFIG_PATH = "custom_config.json"
-LOVEABLE_FRONTEND_ROOT = os.path.join(os.path.dirname(__file__), "frontend_loveable", "dist", "client")
-LOVEABLE_FRONTEND_ASSETS = os.path.join(LOVEABLE_FRONTEND_ROOT, "assets")
-LOVEABLE_FRONTEND_SERVER_ENTRY = os.path.join(os.path.dirname(__file__), "frontend_loveable", "dist", "server", "index.js")
 
 initialize_database()
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -181,129 +183,6 @@ def _current_user():
     if user_id:
         return get_user_by_id(user_id)
     return None
-
-
-_loveable_bundle_cache = None
-_loveable_ssr_script = """
-const requestUrl = process.argv[1];
-const { default: serverEntry } = await import('./dist/server/index.js');
-const response = await serverEntry.fetch(new Request(requestUrl));
-const body = await response.text();
-const payload = {
-  status: response.status,
-  headers: Object.fromEntries(response.headers.entries()),
-  body,
-};
-process.stdout.write(JSON.stringify(payload));
-"""
-
-
-def _get_loveable_bundle():
-    global _loveable_bundle_cache
-    if _loveable_bundle_cache:
-        return _loveable_bundle_cache
-
-    if not os.path.isdir(LOVEABLE_FRONTEND_ASSETS):
-        return None
-
-    css_name = None
-    entry_name = None
-    for item in sorted(os.listdir(LOVEABLE_FRONTEND_ASSETS)):
-        if item.startswith("styles-") and item.endswith(".css"):
-            css_name = item
-    for item in sorted(os.listdir(LOVEABLE_FRONTEND_ASSETS)):
-        if item.startswith("index-") and item.endswith(".js"):
-            file_path = os.path.join(LOVEABLE_FRONTEND_ASSETS, item)
-            try:
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as handle:
-                    content = handle.read()
-                if "hydrateRoot" in content or "createRouter" in content:
-                    entry_name = item
-                    break
-            except OSError:
-                continue
-
-    if not css_name or not entry_name:
-        return None
-
-    _loveable_bundle_cache = {
-        "styles_href": url_for("loveable_client_route", filename=f"assets/{css_name}"),
-        "entry_href": url_for("loveable_client_route", filename=f"assets/{entry_name}"),
-    }
-    return _loveable_bundle_cache
-
-
-def _render_loveable_shell(frontend_path=None):
-    rendered = _render_loveable_ssr(frontend_path=frontend_path)
-    if rendered is not None:
-        return rendered
-    bundle = _get_loveable_bundle()
-    if not bundle:
-        return render_template(
-            "loveable_shell.html",
-            styles_href=None,
-            entry_href=None,
-            frontend_path=frontend_path or request.path,
-        )
-    return render_template(
-        "loveable_shell.html",
-        styles_href=bundle["styles_href"],
-        entry_href=bundle["entry_href"],
-        frontend_path=frontend_path or request.path,
-    )
-
-
-def _inject_loveable_path(html, frontend_path):
-    target_path = frontend_path or request.path
-    if not target_path or target_path == request.path:
-        return html
-    script = (
-        "<script>(function(){var p="
-        + json.dumps(target_path)
-        + ";var u=p+window.location.search+window.location.hash;"
-        + "if(window.location.pathname!==p){window.history.replaceState({},'',u);}})();</script>"
-    )
-    if "<head>" in html:
-        return html.replace("<head>", f"<head>{script}", 1)
-    return script + html
-
-
-def _render_loveable_ssr(frontend_path=None):
-    if not os.path.isfile(LOVEABLE_FRONTEND_SERVER_ENTRY):
-        return None
-    target_path = frontend_path or request.path
-    request_url = f"http://localhost{target_path}"
-    if request.query_string:
-        request_url = f"{request_url}?{request.query_string.decode('utf-8', errors='ignore')}"
-    try:
-        completed = subprocess.run(
-            ["node", "--input-type=module", "-e", _loveable_ssr_script, request_url],
-            cwd=os.path.join(os.path.dirname(__file__), "frontend_loveable"),
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    except OSError:
-        return None
-    if completed.returncode != 0 or not completed.stdout:
-        return None
-    try:
-        payload = json.loads(completed.stdout)
-    except json.JSONDecodeError:
-        return None
-    body = _inject_loveable_path(payload.get("body") or "", frontend_path)
-    headers = payload.get("headers") or {}
-    content_type = headers.get("content-type", "text/html; charset=utf-8")
-    return Response(body, status=payload.get("status", 200), content_type=content_type)
-
-
-def _should_render_loveable_html():
-    if (request.args.get("format") or "").strip().lower() == "json":
-        return False
-    best = request.accept_mimetypes.best_match(["text/html", "application/json"])
-    if best == "application/json":
-        return False
-    return request.accept_mimetypes[best] >= request.accept_mimetypes["application/json"]
 
 
 def _require_role(minimum_role):
@@ -4480,13 +4359,13 @@ def _build_project_intelligence(project, run_a, run_b):
 
 @app.route("/", methods=["GET"])
 def index():
-    return _render_loveable_shell("/")
+    return render_frontend("/")
 
 
 @app.route("/single-board", methods=["GET", "POST"])
 def single_board_page():
     if request.method == "GET":
-        return _render_loveable_shell("/analyze")
+        return render_frontend("/analyze")
     result = None
     single_chart = None
     single_decision = None
@@ -4562,7 +4441,7 @@ def single_board_page():
 @app.route("/project-review", methods=["GET", "POST"])
 def project_page():
     if request.method == "GET":
-        return _render_loveable_shell("/project-review")
+        return render_frontend("/project-review")
     project_result = None
     comparison = None
     project_chart = None
@@ -4629,12 +4508,12 @@ def project_page():
 
 @app.route("/projects", methods=["GET"])
 def projects_page():
-    return _render_loveable_shell("/projects")
+    return render_frontend("/projects")
 
 
 @app.route("/nexus-ops", methods=["GET"])
 def nexus_ops_page():
-    return _render_loveable_shell("/nexus-ops")
+    return render_frontend("/nexus-ops")
 
 
 @app.route("/projects/create", methods=["POST"])
@@ -4672,7 +4551,7 @@ def delete_project_route(project_id):
 
 @app.route("/projects/<project_id>", methods=["GET"])
 def project_detail_page(project_id):
-    return _render_loveable_shell(f"/projects/{project_id}")
+    return render_frontend(f"/projects/{project_id}")
 
 
 @app.route("/projects/<project_id>/notes", methods=["POST"])
@@ -4902,7 +4781,7 @@ def nexus_ops_external_validation_route():
 
 @app.route("/projects/<project_id>/compare", methods=["GET"])
 def compare_runs(project_id):
-    return _render_loveable_shell("/compare")
+    return render_frontend("/compare")
     project = get_project(project_id)
     run_a_id = (request.args.get("run_a") or "").strip()
     run_b_id = (request.args.get("run_b") or "").strip()
@@ -5241,39 +5120,39 @@ def atlas_action_route():
     return jsonify(result)
 
 
-@app.route("/loveable-client/<path:filename>", methods=["GET"])
-def loveable_client_route(filename):
-    return send_from_directory(LOVEABLE_FRONTEND_ROOT, filename)
+@app.route("/frontend-client/<path:filename>", methods=["GET"])
+def frontend_client_route(filename):
+    return send_from_directory(str(FRONTEND_CLIENT_ROOT), filename)
 
 
 @app.route("/assets/<path:filename>", methods=["GET"])
 def loveable_asset_route(filename):
-    return send_from_directory(LOVEABLE_FRONTEND_ASSETS, filename)
+    return send_from_directory(str(FRONTEND_ASSETS_ROOT), filename)
 
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard_page():
-    return _render_loveable_shell("/dashboard")
+    return render_frontend("/dashboard")
 
 
 @app.route("/analyze", methods=["GET"])
 def analyze_page():
-    return _render_loveable_shell("/analyze")
+    return render_frontend("/analyze")
 
 
 @app.route("/compare", methods=["GET"])
 def compare_page():
-    return _render_loveable_shell("/compare")
+    return render_frontend("/compare")
 
 
 @app.route("/atlas", methods=["GET"])
 def atlas_page():
-    return _render_loveable_shell("/atlas")
+    return render_frontend("/atlas")
 
 
 @app.route("/health", methods=["GET"])
 def health_page():
-    return _render_loveable_shell("/health")
+    return render_frontend("/health")
 
 
 @app.route("/health/live", methods=["GET"])
@@ -5322,8 +5201,8 @@ def runtime_meta_route():
 
 @app.route("/jobs", methods=["GET"])
 def jobs_route():
-    if _should_render_loveable_html():
-        return _render_loveable_shell("/jobs")
+    if should_render_frontend_html():
+        return render_frontend("/jobs")
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
     return jsonify({"jobs": list_jobs(limit=_safe_int(request.args.get("limit"), 20))})
@@ -5331,8 +5210,8 @@ def jobs_route():
 
 @app.route("/jobs/<job_id>", methods=["GET"])
 def job_detail_route(job_id):
-    if _should_render_loveable_html():
-        return _render_loveable_shell(f"/jobs/{job_id}")
+    if should_render_frontend_html():
+        return render_frontend(f"/jobs/{job_id}")
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
     job = get_job(job_id)
@@ -5343,8 +5222,8 @@ def job_detail_route(job_id):
 
 @app.route("/admin/evaluation", methods=["GET"])
 def evaluation_route():
-    if _should_render_loveable_html():
-        return _render_loveable_shell("/admin/evaluation")
+    if should_render_frontend_html():
+        return render_frontend("/admin/evaluation")
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
     scope = (request.args.get("scope") or "fixtures").strip().lower()
@@ -5389,8 +5268,8 @@ def worker_status_route():
 
 @app.route("/admin/audit", methods=["GET"])
 def audit_route():
-    if _should_render_loveable_html():
-        return _render_loveable_shell("/admin/audit")
+    if should_render_frontend_html():
+        return render_frontend("/admin/audit")
     if not _require_role("admin"):
         return jsonify({"error": "Admin access is required."}), 403
     return jsonify(
@@ -5415,12 +5294,12 @@ def project_reviews_route(project_id):
 
 @app.route("/history", methods=["GET"])
 def history_page():
-    return _render_loveable_shell("/history")
+    return render_frontend("/history")
 
 
 @app.route("/history/<run_dir>", methods=["GET"])
 def history_detail_page(run_dir):
-    return _render_loveable_shell(f"/history/{run_dir}")
+    return render_frontend(f"/history/{run_dir}")
 
 
 @app.route("/history/<run_dir>/print", methods=["GET"])
@@ -5579,7 +5458,7 @@ def login_page():
         flash("Signed in successfully.")
         return redirect(url_for("single_board_page"))
 
-    return _render_loveable_shell("/login")
+    return render_frontend("/login")
 
 
 @app.route("/logout", methods=["POST"])
@@ -5595,7 +5474,7 @@ def logout_route():
 @app.route("/settings", methods=["GET", "POST"])
 def settings_page():
     if request.method == "GET":
-        return _render_loveable_shell("/settings")
+        return render_frontend("/settings")
     if request.method == "POST":
         try:
             updated_fields = parse_config_form(request.form)
