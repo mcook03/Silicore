@@ -28,6 +28,11 @@ type DashboardPayload = {
   };
   trend: Array<{ label: string; score: number; issues: number; name: string }>;
   recent: Array<{ name: string; rev: string; score: number; delta: number | null; issues: number; status: string; run_dir: string }>;
+  risk_heatmap?: Array<{
+    category: string;
+    total?: number;
+    cells: Array<{ label?: string; value: number; tone: "none" | "light" | "medium" | "strong" }>;
+  }>;
 };
 
 function Dashboard() {
@@ -106,7 +111,11 @@ function Dashboard() {
           </div>
 
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-            <BoardHeatmap title="Fleet hotspot overview" />
+            <BoardHeatmap
+              title="Fleet hotspot overview"
+              matrixRows={data?.risk_heatmap}
+              emptyCopy="Recent runs do not expose enough categorized findings yet to render a workspace heat map."
+            />
             <Panel title="Hotspot reading guide">
               <div className="space-y-4">
                 <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">

@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import re
 from flask_cors import CORS
@@ -286,6 +287,7 @@ def _dashboard_payload():
     avg_score = round(sum(scores) / len(scores), 1) if scores else 0.0
     score_change = round(scores[0] - scores[-1], 1) if len(scores) >= 2 else 0.0
     issue_change = issue_counts[0] - issue_counts[-1] if len(issue_counts) >= 2 else 0
+    risk_heatmap = _build_run_category_heatmap(recent_runs, limit_rows=5, limit_cols=6)
 
     return {
         "stats": {
@@ -302,6 +304,7 @@ def _dashboard_payload():
         },
         "trend": trend,
         "recent": recent_table,
+        "risk_heatmap": risk_heatmap,
         "projects": [
             {
                 "project_id": project.get("project_id"),
@@ -330,6 +333,7 @@ def _project_payload(project_id):
     return {
         "project": project,
         "review_feed": review_feed,
+        "risk_heatmap": _build_run_category_heatmap(project.get("runs", []) or [], limit_rows=5, limit_cols=6),
         "score_history": [
             {
                 "label": run.get("name") or run.get("run_id"),
@@ -618,6 +622,11 @@ def frontend_history_detail_route(run_dir):
     detail = _build_run_detail(run_dir)
     if not detail:
         return _json_error("Requested run folder was not found.", 404)
+    if detail.get("risks"):
+        enriched_detail = _enrich_single_result(dict(detail))
+        detail["grouped_risks"] = enriched_detail.get("grouped_risks") or []
+        detail["board_view"] = enriched_detail.get("board_view") or {"has_data": False}
+        detail["analysis_context_view"] = enriched_detail.get("analysis_context_view") or {}
     return jsonify(detail)
 
 
@@ -908,6 +917,68 @@ def _prepare_grouped_risks(risks):
         )
     )
     return grouped_sections
+
+
+def _build_intensity_tone(value, max_value):
+    if value <= 0:
+        return "none"
+    if max_value <= 1:
+        return "strong"
+    if value >= max_value:
+        return "strong"
+    if value >= max(2, math.ceil(max_value * 0.55)):
+        return "medium"
+    return "light"
+
+
+def _build_run_category_heatmap(runs, limit_rows=5, limit_cols=6):
+    normalized_runs = list(runs or [])
+    if not normalized_runs:
+        return []
+
+    selected_runs = normalized_runs[-limit_cols:]
+    category_run_counts = defaultdict(lambda: defaultdict(int))
+
+    for index, run in enumerate(selected_runs, start=1):
+        run_label = str(run.get("name") or run.get("filename") or run.get("run_id") or f"Run {index}").strip()
+        snapshot = _normalize_snapshot(run.get("risk_snapshot") or run.get("risks") or [])
+        if not snapshot:
+            run_payload = _load_run_payload(run)
+            snapshot = _normalize_snapshot(run_payload.get("risks") or [])
+
+        for risk in snapshot:
+            category = risk.get("category") or "uncategorized"
+            category_run_counts[category][run_label] += 1
+
+    top_categories = sorted(
+        category_run_counts.items(),
+        key=lambda item: (-sum(item[1].values()), _format_category_name(item[0]).lower()),
+    )[:limit_rows]
+
+    heatmap_rows = []
+    for category, run_counts in top_categories:
+        max_value = max(run_counts.values()) if run_counts else 1
+        cells = []
+        for index, run in enumerate(selected_runs, start=1):
+            run_label = str(run.get("name") or run.get("filename") or run.get("run_id") or f"Run {index}").strip()
+            value = run_counts.get(run_label, 0)
+            cells.append(
+                {
+                    "label": run_label,
+                    "value": value,
+                    "tone": _build_intensity_tone(value, max_value),
+                }
+            )
+
+        heatmap_rows.append(
+            {
+                "category": _format_category_name(category),
+                "cells": cells,
+                "total": sum(run_counts.values()),
+            }
+        )
+
+    return heatmap_rows
 
 
 def _prepare_top_issues(risks, limit=3):

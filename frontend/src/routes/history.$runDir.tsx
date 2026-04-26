@@ -17,6 +17,15 @@ type RunDetailPayload = {
   name?: string;
   result?: { score?: number; health_summary?: string | { title?: string; summary?: string } };
   files?: Array<{ filename: string; kind: string; run_dir: string }>;
+  board_view?: {
+    has_data?: boolean;
+    width?: number;
+    height?: number;
+    base_view_box?: string;
+    outline_segments?: Array<{ x1: number; y1: number; x2: number; y2: number }>;
+    hotspots?: Array<{ x: number; y: number; radius: number; tone: "safe" | "low" | "medium" | "high" | "critical" }>;
+    summary_stats?: Array<{ label: string; value: number }>;
+  };
 };
 
 function RunDetail() {
@@ -67,7 +76,11 @@ function RunDetail() {
         </div>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-          <BoardHeatmap title="Run hotspot map" />
+          <BoardHeatmap
+            title="Run hotspot map"
+            boardView={data?.board_view}
+            emptyCopy="This saved run does not include enough board geometry to render a spatial hotspot map."
+          />
           <Panel title="Spatial readout">
             <div className="space-y-4">
               <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">

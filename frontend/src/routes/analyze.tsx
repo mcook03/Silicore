@@ -53,6 +53,15 @@ type AnalysisResultPayload = {
     risks?: Risk[];
     grouped_risks?: GroupedRisk[];
     downloads?: DownloadItem[] | Record<string, string>;
+    board_view?: {
+      has_data?: boolean;
+      width?: number;
+      height?: number;
+      base_view_box?: string;
+      outline_segments?: Array<{ x1: number; y1: number; x2: number; y2: number }>;
+      hotspots?: Array<{ x: number; y: number; radius: number; tone: "safe" | "low" | "medium" | "high" | "critical" }>;
+      summary_stats?: Array<{ label: string; value: number }>;
+    };
   };
 };
 
@@ -251,7 +260,11 @@ function Analyze() {
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-              <BoardHeatmap title="Board hotspot map" />
+              <BoardHeatmap
+                title="Board hotspot map"
+                boardView={result.board_view}
+                emptyCopy="This run does not include enough board geometry to render a spatial hotspot map yet."
+              />
               <Panel title="Board signal">
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-border bg-background/40 p-4">

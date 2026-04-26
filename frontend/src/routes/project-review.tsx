@@ -31,6 +31,13 @@ type ProjectReviewResult = {
     worst_board?: { filename?: string; score?: number };
     score_spread?: number;
   };
+  project_intelligence_review?: {
+    category_heatmap?: Array<{
+      category: string;
+      total?: number;
+      cells: Array<{ board?: string; value: number; tone: "none" | "light" | "medium" | "strong" }>;
+    }>;
+  };
 };
 
 function ProjectReview() {
@@ -156,7 +163,11 @@ function ProjectReview() {
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-              <BoardHeatmap title="Project hotspot map" />
+              <BoardHeatmap
+                title="Project hotspot map"
+                matrixRows={result.project_intelligence_review?.category_heatmap}
+                emptyCopy="This review needs categorized board findings before it can render a real project heat map."
+              />
               <Panel title="Review signal">
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">

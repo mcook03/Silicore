@@ -29,6 +29,11 @@ type ProjectDetailPayload = {
     release_gates?: Array<{ gate_id: string; title?: string; status?: string; approval_count?: number; required_approvals?: number }>;
   };
   review_feed: Array<{ review_id?: string; actor_name?: string; created_at?: string; summary?: string; status_label?: string }>;
+  risk_heatmap?: Array<{
+    category: string;
+    total?: number;
+    cells: Array<{ label?: string; value: number; tone: "none" | "light" | "medium" | "strong" }>;
+  }>;
 };
 
 function ProjectDetail() {
@@ -89,7 +94,11 @@ function ProjectDetail() {
         </div>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-          <BoardHeatmap title="Project hotspot overview" />
+          <BoardHeatmap
+            title="Project hotspot overview"
+            matrixRows={data?.risk_heatmap}
+            emptyCopy="This project needs linked run findings before a real heat map can be shown."
+          />
           <Panel title="Project signal">
             <div className="space-y-4">
               <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">

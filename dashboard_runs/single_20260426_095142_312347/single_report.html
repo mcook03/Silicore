@@ -1,0 +1,579 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .issue-card, .risk-card {
+                background: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            h1, h2, h3 {
+                margin-top: 0;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .muted {
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Engineering Report</h1>
+                <p><strong>File:</strong> thermal_hotspot_board.kicad_pcb</p>
+                <p><strong>Score:</strong> 20.0 / 100</p>
+                <p><strong>Total Risks:</strong> 18</p>
+                <p><strong>Total Penalty:</strong> 80.0</p>
+            </div>
+
+            <div class="card">
+                <h2>Executive Summary</h2>
+                <p><strong>Board needs focused engineering review</strong></p>
+                <p class="muted">This board shows high design risk. The main risk concentration is in power integrity. The highest-priority issue is Physics estimate suggests VIN is running high current density (214.3 A/mm²). The current design snapshot includes 3 components and 3 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+
+            <div class="card">
+                <h2>Parser Capability</h2>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .txt</p>
+                <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            <div class="card">
+                <h2>Review Readiness</h2>
+                <p><strong>Output format:</strong> engineering review packet</p>
+                <p><strong>Includes:</strong> score rationale, finding traceability, recommendations, and saved analysis context</p>
+                <p><strong>Best use:</strong> design reviews, management updates, supplier communication, and internal signoff</p>
+            </div>
+
+            <div class="card">
+                <h2>Top Issues</h2>
+                
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
+                <p>Physics estimate suggests VIN is running high current density (214.3 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
+                <p>U1 appears to lack enough local decoupling support</p>
+                <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — power_integrity</p>
+                <p>U2 appears to lack enough local decoupling support</p>
+                <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
+            </div>
+            
+            </div>
+
+            <div class="card">
+                <h2>Board Summary</h2>
+                <p><strong>Component Count:</strong> 3</p>
+                <p><strong>Net Count:</strong> 3</p>
+                <p><strong>Risk Count:</strong> 18</p>
+                <p><strong>Sample Components:</strong> U1, Q1, U2</p>
+            </div>
+
+            <div class="card">
+                <h2>Severity Penalties</h2>
+                <ul><li>medium: 5.6</li><li>high: 2.4</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Category Penalties</h2>
+                <ul><li>assembly_testability: 0.8</li><li>power_integrity: 4.4</li><li>signal_integrity: 1.6</li><li>reliability: 0.4</li><li>thermal: 0.8</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Detailed Findings</h2>
+                
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Board has limited visible fiducial strategy for assembly alignment</p>
+                <p><strong>Recommendation:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 5</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 76.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 76.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;fiducials&quot;: 0, &quot;threshold&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Ground test-point coverage appears limited for bring-up and probing</p>
+                <p><strong>Recommendation:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=1</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 5</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 81.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 81.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;ground_test_points&quot;: 0, &quot;threshold&quot;: 1}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U1 (linear_reg) has no nearby decoupling capacitor</p>
+                <p><strong>Recommendation:</strong> Place a decoupling capacitor close to the device power pin and on the relevant supply net.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1, U2</p>
+                
+                <p><strong>Metrics:</strong> {&quot;nearest_cap_distance&quot;: 40.0, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 (processor) has no nearby decoupling capacitor</p>
+                <p><strong>Recommendation:</strong> Place a decoupling capacitor close to the device power pin and on the relevant supply net.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U2, U1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;nearest_cap_distance&quot;: 40.0, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U1 appears to lack enough local decoupling support</p>
+                <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 10</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 87.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 87.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> VIN, VOUT, GND</p>
+                <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U1 may be missing nearby bulk capacitance support</p>
+                <p><strong>Recommendation:</strong> Place appropriate bulk capacitance near the converter or regulator input/output path to reduce transients and rail collapse risk.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 79.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 79.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> VIN, VOUT, GND</p>
+                <p><strong>Metrics:</strong> {&quot;bulk_caps_found&quot;: 0, &quot;bulk_distance_threshold&quot;: 12.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 appears to lack enough local decoupling support</p>
+                <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 87.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 87.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U2</p>
+                <p><strong>Nets:</strong> VOUT, GND</p>
+                <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net VOUT has a long path between U1 and U2 (40.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=40.0, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Shorten the net path from 40.0 toward 25.0 or below by improving placement or route topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1, U2</p>
+                <p><strong>Nets:</strong> VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 40.0, &quot;threshold&quot;: 25.0, &quot;is_critical_net&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net VOUT has a long path between Q1 and U2 (35.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=35.0, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Shorten the net path from 35.0 toward 25.0 or below by improving placement or route topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> Q1, U2</p>
+                <p><strong>Nets:</strong> VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 35.0, &quot;threshold&quot;: 25.0, &quot;is_critical_net&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U2 has ground but no visible power rail</p>
+                <p><strong>Recommendation:</strong> Verify that the component is connected to the intended supply net as well as ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U2</p>
+                <p><strong>Nets:</strong> VOUT, GND</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;VOUT&quot;, &quot;GND&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Regulator or converter U1 lacks a nearby shared capacitor network</p>
+                <p><strong>Recommendation:</strong> Move input or output capacitors closer to the converter power pins so current loops stay compact.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=7.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 75.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 75.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> GND, VIN, VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;nearest_shared_cap_distance&quot;: null, &quot;threshold&quot;: 7.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Power net VIN uses a narrow trace width (0.20)</p>
+                <p><strong>Recommendation:</strong> Increase power trace width to reduce resistance, heating, and voltage drop.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the power trace width from 0.2 to at least 0.5 or more, depending on current demand.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_width&quot;: 0.2, &quot;minimum_expected&quot;: 0.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> reliability</p>
+                <p><strong>Message:</strong> Ground net GND has limited visible connectivity (3 connections)</p>
+                <p><strong>Recommendation:</strong> Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 74.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 74.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> GND</p>
+                <p><strong>Metrics:</strong> {&quot;ground_connections&quot;: 3, &quot;threshold&quot;: 4}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net VOUT has a long signal path between U1 and U2 (40.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce path length or improve routing to lower noise and signal quality risks.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=40.0, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce the signal path length from 40.0 to at or below 25.0 by improving placement or rerouting.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1, U2</p>
+                <p><strong>Nets:</strong> VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 40.0, &quot;threshold&quot;: 25.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net VOUT has a long signal path between Q1 and U2 (35.00 units)</p>
+                <p><strong>Recommendation:</strong> Reduce path length or improve routing to lower noise and signal quality risks.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=35.0, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce the signal path length from 35.0 to at or below 25.0 by improving placement or rerouting.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> Q1, U2</p>
+                <p><strong>Nets:</strong> VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 35.0, &quot;threshold&quot;: 25.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> Q1 appears to have limited nearby thermal via support (0)</p>
+                <p><strong>Recommendation:</strong> Add thermal vias or improve heat escape near this power-dissipating component.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=1</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 10</p>
+                <p><strong>Engineering Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> Q1</p>
+                <p><strong>Nets:</strong> GND, VIN, VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;nearby_thermal_vias&quot;: 0, &quot;threshold&quot;: 1, &quot;radius&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> thermal</p>
+                <p><strong>Message:</strong> Q1 connects to relatively narrow copper for heat spreading (0.20)</p>
+                <p><strong>Recommendation:</strong> Increase local copper width or area around this component to improve heat spreading.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=0.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Trust Confidence:</strong> 76.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Thermal concentration or poor heat spreading</p>
+                <p><strong>Impact:</strong> Hotspots, reduced reliability, or thermal stress</p>
+                <p><strong>Confidence:</strong> 76.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve thermal distribution with better spacing, copper spreading, or thermal-aware placement.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> Q1</p>
+                <p><strong>Nets:</strong> GND, VIN, VOUT</p>
+                <p><strong>Metrics:</strong> {&quot;max_connected_width&quot;: 0.2, &quot;threshold&quot;: 0.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VIN is running high current density (214.3 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=12.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VIN</p>
+                <p><strong>Metrics:</strong> {&quot;current_density_a_per_mm2&quot;: 214.29, &quot;estimated_current_a&quot;: 1.5, &quot;cross_section_mm2&quot;: 0.007, &quot;threshold&quot;: 12.0}</p>
+            </div>
+            
+            </div>
+        </div>
+    </body>
+    </html>
+    

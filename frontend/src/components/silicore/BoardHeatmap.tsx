@@ -1,58 +1,56 @@
-import { useMemo, useState } from "react";
+type BoardHotspot = {
+  x: number;
+  y: number;
+  radius: number;
+  tone: "safe" | "low" | "medium" | "high" | "critical";
+  message?: string;
+  components?: string[];
+  nets?: string[];
+};
 
-type Mode = "thermal" | "density" | "findings";
+type BoardOutline = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
 
-const MODES: { id: Mode; label: string }[] = [
-  { id: "thermal", label: "Thermal" },
-  { id: "density", label: "Density" },
-  { id: "findings", label: "Findings" },
-];
+type BoardViewData = {
+  has_data?: boolean;
+  width?: number;
+  height?: number;
+  base_view_box?: string;
+  outline_segments?: BoardOutline[];
+  hotspots?: BoardHotspot[];
+  summary_stats?: Array<{ label: string; value: number }>;
+};
 
-// Deterministic pseudo-random so the SSR/CSR output matches.
-function seeded(x: number, y: number, mode: Mode) {
-  const seed = { thermal: 11, density: 23, findings: 41 }[mode];
-  const v = Math.sin(x * 12.9898 + y * 78.233 + seed) * 43758.5453;
-  return v - Math.floor(v);
-}
+type MatrixCell = {
+  label?: string;
+  board?: string;
+  value: number;
+  tone: "none" | "light" | "medium" | "strong";
+};
 
-function colorFor(value: number, mode: Mode) {
-  // value 0..1
-  if (mode === "thermal") {
-    // cool blue → hot red/orange
-    const hue = 250 - value * 230; // 250 → 20
-    return `oklch(0.72 ${0.12 + value * 0.12} ${hue})`;
-  }
-  if (mode === "density") {
-    // teal scale
-    return `oklch(${0.32 + value * 0.5} ${0.05 + value * 0.13} 195)`;
-  }
-  // findings: green → amber → red
-  const hue = 150 - value * 130; // 150 → 20
-  return `oklch(${0.55 + value * 0.2} ${0.1 + value * 0.16} ${hue})`;
-}
+type MatrixRow = {
+  category: string;
+  cells: MatrixCell[];
+  total?: number;
+};
 
 export function BoardHeatmap({
-  cols = 18,
-  rows = 12,
-  title = "Board heatmap",
+  title = "Board heat map",
+  boardView,
+  matrixRows,
+  emptyCopy = "No heat-map data is available for this view yet.",
 }: {
-  cols?: number;
-  rows?: number;
   title?: string;
+  boardView?: BoardViewData | null;
+  matrixRows?: MatrixRow[] | null;
+  emptyCopy?: string;
 }) {
-  const [mode, setMode] = useState<Mode>("thermal");
-
-  const cells = useMemo(() => {
-    const arr: { x: number; y: number; v: number }[] = [];
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        // Combine two noise samples for a more "regional" hot-spot feel.
-        const v = (seeded(x, y, mode) * 0.6 + seeded(x / 2, y / 2, mode) * 0.4);
-        arr.push({ x, y, v });
-      }
-    }
-    return arr;
-  }, [cols, rows, mode]);
+  const hasBoardData = Boolean(boardView?.has_data && ((boardView?.hotspots?.length || 0) > 0 || (boardView?.outline_segments?.length || 0) > 0));
+  const hasMatrixData = Boolean(matrixRows?.length);
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-6">
@@ -60,57 +58,191 @@ export function BoardHeatmap({
         <div>
           <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{title}</div>
           <div className="mt-0.5 text-sm text-muted-foreground">
-            Hotspots across the board surface ·{" "}
-            <span className="text-foreground">{mode}</span>
+            {hasBoardData
+              ? "Real board hotspots from component, net, and finding positions"
+              : hasMatrixData
+                ? "Real category intensity by board or revision"
+                : "No real heat-map payload is available for this screen yet"}
           </div>
         </div>
-        <div className="inline-flex rounded-full border border-border bg-background/40 p-0.5 text-xs">
-          {MODES.map((m) => (
-            <button
-              key={m.id}
-              type="button"
-              onClick={() => setMode(m.id)}
-              className={`rounded-full px-3 py-1 font-mono uppercase tracking-wider transition-colors ${
-                mode === m.id ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {m.label}
-            </button>
-          ))}
-        </div>
+        {hasBoardData ? <BoardLegend /> : hasMatrixData ? <MatrixLegend /> : null}
       </div>
 
-      <div className="relative overflow-hidden rounded-xl border border-border bg-background/60 p-3">
-        <div
-          className="grid gap-[3px]"
-          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-        >
-          {cells.map((c) => (
-            <div
-              key={`${c.x}-${c.y}`}
-              title={`(${c.x},${c.y}) · ${(c.v * 100).toFixed(0)}`}
-              className="aspect-square rounded-[3px] transition-transform hover:scale-110"
-              style={{ background: colorFor(c.v, mode), opacity: 0.35 + c.v * 0.65 }}
+      {hasBoardData ? (
+        <BoardViewHeatmap boardView={boardView!} />
+      ) : hasMatrixData ? (
+        <MatrixHeatmap rows={matrixRows!} />
+      ) : (
+        <p className="rounded-xl border border-dashed border-border bg-background/40 p-5 text-sm text-muted-foreground">
+          {emptyCopy}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function BoardViewHeatmap({ boardView }: { boardView: BoardViewData }) {
+  const width = boardView.width || 820;
+  const height = boardView.height || 440;
+  const viewBox = boardView.base_view_box || `0 0 ${width} ${height}`;
+  const stats = boardView.summary_stats || [];
+
+  return (
+    <div className="space-y-4">
+      <div className="overflow-hidden rounded-xl border border-border bg-[radial-gradient(circle_at_top,_rgba(86,211,240,0.08),_transparent_35%),linear-gradient(180deg,rgba(7,13,22,0.96),rgba(12,18,28,0.94))] p-3">
+        <svg viewBox={viewBox} className="h-auto w-full">
+          <rect x="0" y="0" width={width} height={height} rx="20" fill="rgba(15,23,42,0.45)" />
+
+          {(boardView.outline_segments || []).map((segment, index) => (
+            <line
+              key={`outline-${index}`}
+              x1={segment.x1}
+              y1={segment.y1}
+              x2={segment.x2}
+              y2={segment.y2}
+              stroke="rgba(226,232,240,0.85)"
+              strokeWidth="1.6"
+              strokeLinecap="round"
             />
           ))}
-        </div>
+
+          {(boardView.hotspots || []).map((spot, index) => (
+            <g key={`hotspot-${index}`}>
+              <circle cx={spot.x} cy={spot.y} r={spot.radius} fill={toneFill(spot.tone, 0.2)} />
+              <circle cx={spot.x} cy={spot.y} r={Math.max(spot.radius * 0.58, 8)} fill={toneFill(spot.tone, 0.34)} />
+              <circle cx={spot.x} cy={spot.y} r="4.5" fill={toneCore(spot.tone)} stroke="rgba(255,255,255,0.72)" strokeWidth="1.2" />
+            </g>
+          ))}
+        </svg>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-4">
-        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">low</div>
-        <div
-          className="h-2 flex-1 rounded-full"
-          style={{
-            background:
-              mode === "thermal"
-                ? "linear-gradient(90deg, oklch(0.72 0.12 250), oklch(0.78 0.18 195), oklch(0.78 0.2 75), oklch(0.72 0.22 20))"
-                : mode === "density"
-                ? "linear-gradient(90deg, oklch(0.32 0.05 195), oklch(0.82 0.18 195))"
-                : "linear-gradient(90deg, oklch(0.6 0.16 150), oklch(0.72 0.2 75), oklch(0.7 0.22 20))",
-          }}
-        />
-        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">high</div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {stats.slice(0, 3).map((item) => (
+          <div key={item.label} className="rounded-xl border border-border bg-background/40 p-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{item.label}</div>
+            <div className="mt-1 text-lg font-semibold">{item.value}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
+}
+
+function MatrixHeatmap({ rows }: { rows: MatrixRow[] }) {
+  const columnCount = rows[0]?.cells?.length || 0;
+  return (
+    <div className="overflow-hidden rounded-xl border border-border bg-background/45">
+      <div
+        className="grid gap-px bg-border/70 p-px"
+        style={{ gridTemplateColumns: `minmax(132px, 1.2fr) repeat(${columnCount}, minmax(0, 1fr)) minmax(56px, 0.6fr)` }}
+      >
+        <div className="bg-background px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Category</div>
+        {(rows[0]?.cells || []).map((cell, index) => (
+          <div key={`head-${index}`} className="bg-background px-2 py-2 text-center font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            {truncateLabel(cell.label || cell.board || `C${index + 1}`)}
+          </div>
+        ))}
+        <div className="bg-background px-2 py-2 text-center font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Total</div>
+
+        {rows.map((row) => (
+          <Row key={row.category} row={row} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Row({ row }: { row: MatrixRow }) {
+  return (
+    <>
+      <div className="flex items-center bg-background px-3 py-3 text-sm font-medium">{row.category}</div>
+      {row.cells.map((cell, index) => (
+        <div
+          key={`${row.category}-${index}`}
+          className="flex min-h-[58px] items-center justify-center bg-background px-2 py-3 text-sm font-semibold"
+          style={{ background: matrixTone(cell.tone) }}
+          title={`${cell.label || cell.board || "Cell"}: ${cell.value}`}
+        >
+          {cell.value}
+        </div>
+      ))}
+      <div className="flex items-center justify-center bg-background px-2 py-3 text-sm font-semibold text-primary">
+        {row.total ?? row.cells.reduce((sum, cell) => sum + cell.value, 0)}
+      </div>
+    </>
+  );
+}
+
+function BoardLegend() {
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+      {[
+        ["Low", "low"],
+        ["Medium", "medium"],
+        ["High", "high"],
+        ["Critical", "critical"],
+      ].map(([label, tone]) => (
+        <span key={label} className="inline-flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: toneCore(tone as BoardHotspot["tone"]) }} />
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function MatrixLegend() {
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+      {[
+        ["Low", "light"],
+        ["Medium", "medium"],
+        ["High", "strong"],
+      ].map(([label, tone]) => (
+        <span key={label} className="inline-flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-sm" style={{ background: matrixTone(tone as MatrixCell["tone"]) }} />
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function toneFill(tone: BoardHotspot["tone"], opacity: number) {
+  const map = {
+    safe: `rgba(74, 222, 128, ${opacity})`,
+    low: `rgba(86, 211, 240, ${opacity})`,
+    medium: `rgba(250, 204, 21, ${opacity})`,
+    high: `rgba(251, 146, 60, ${opacity})`,
+    critical: `rgba(248, 113, 113, ${opacity})`,
+  };
+  return map[tone] || map.low;
+}
+
+function toneCore(tone: BoardHotspot["tone"]) {
+  const map = {
+    safe: "rgb(74, 222, 128)",
+    low: "rgb(86, 211, 240)",
+    medium: "rgb(250, 204, 21)",
+    high: "rgb(251, 146, 60)",
+    critical: "rgb(248, 113, 113)",
+  };
+  return map[tone] || map.low;
+}
+
+function matrixTone(tone: MatrixCell["tone"]) {
+  const map = {
+    none: "rgba(15, 23, 42, 0.28)",
+    light: "rgba(86, 211, 240, 0.22)",
+    medium: "rgba(250, 204, 21, 0.28)",
+    strong: "rgba(248, 113, 113, 0.3)",
+  };
+  return map[tone] || map.none;
+}
+
+function truncateLabel(value: string) {
+  if (value.length <= 10) {
+    return value;
+  }
+  return `${value.slice(0, 10)}…`;
 }
