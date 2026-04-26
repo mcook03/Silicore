@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Plus, FolderKanban, ArrowRight, Trash2 } from "lucide-react";
-import { apiDelete, apiPostJson, useApiData } from "@/lib/api";
+import { apiPostJson, useApiData } from "@/lib/api";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({ meta: [{ title: "Projects — Silicore" }] }),
@@ -28,10 +28,8 @@ type ProjectsPayload = {
 };
 
 function Projects() {
-  const navigate = useNavigate();
   const { data, loading, error, reload } = useApiData<ProjectsPayload>("/api/frontend/projects");
   const [creating, setCreating] = useState(false);
-  const [deletingId, setDeletingId] = useState("");
 
   const onCreate = async () => {
     const name = window.prompt("Project name");
@@ -43,23 +41,6 @@ function Projects() {
     } finally {
       setCreating(false);
     }
-  };
-
-  const onDelete = async (projectId: string, name: string) => {
-    if (!window.confirm(`Delete project "${name}"? This cannot be undone.`)) {
-      return;
-    }
-    setDeletingId(projectId);
-    try {
-      await apiDelete(`/api/frontend/projects/${projectId}`);
-      await reload();
-    } finally {
-      setDeletingId("");
-    }
-  };
-
-  const onOpen = async (projectId: string) => {
-    await navigate({ to: "/projects/$projectId", params: { projectId } });
   };
 
   return (
@@ -85,14 +66,10 @@ function Projects() {
                 </div>
                 <ScorePill score={Math.round(project.latest_score || project.average_score || 0)} />
               </div>
-              <button
-                type="button"
-                onClick={() => void onOpen(project.project_id)}
-                className="block w-full text-left"
-              >
+              <a href={`/projects/${project.project_id}`} className="block">
                 <h3 className="mt-4 text-lg font-medium">{project.name}</h3>
                 <p className="text-sm text-muted-foreground">{project.description || "No description yet."}</p>
-              </button>
+              </a>
               <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-4 text-center">
                 <Stat label="runs" value={String(project.runs.length)} />
                 <Stat label="avg score" value={String(Math.round(project.average_score || 0))} />
@@ -101,28 +78,34 @@ function Projects() {
               <div className="mt-4 flex items-center justify-between gap-3 text-xs">
                 <span className="font-mono text-muted-foreground">{loading ? "Loading…" : project.project_id}</span>
                 <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 rounded-full border border-danger/25 bg-danger/10 px-3 text-danger hover:bg-danger/15 hover:text-danger"
-                    disabled={deletingId === project.project_id}
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      void onDelete(project.project_id, project.name);
+                  <form
+                    method="post"
+                    action={`/projects/${project.project_id}/delete`}
+                    onSubmit={(event) => {
+                      if (!window.confirm(`Delete project "${project.name}"? This cannot be undone.`)) {
+                        event.preventDefault();
+                      }
                     }}
                   >
-                    <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                    {deletingId === project.project_id ? "Deleting…" : "Delete"}
-                  </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 rounded-full border border-danger/25 bg-danger/10 px-3 text-danger hover:bg-danger/15 hover:text-danger"
+                      type="submit"
+                    >
+                      <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                      Delete
+                    </Button>
+                  </form>
                   <Button
+                    asChild
                     size="sm"
                     variant="ghost"
                     className="h-8 rounded-full border border-primary/20 bg-primary/10 px-3 text-primary hover:bg-primary/15 hover:text-primary"
-                    type="button"
-                    onClick={() => void onOpen(project.project_id)}
                   >
-                    Open <ArrowRight className="h-3.5 w-3.5" />
+                    <a href={`/projects/${project.project_id}`}>
+                      Open <ArrowRight className="h-3.5 w-3.5" />
+                    </a>
                   </Button>
                 </div>
               </div>

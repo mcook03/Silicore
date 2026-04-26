@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
@@ -10,7 +10,7 @@ import {
   ArrowLeft, Users, MessageSquare, ShieldCheck, GitBranch, CheckCircle2,
   CircleDot, Clock, FileCheck2, AlertTriangle, Trash2,
 } from "lucide-react";
-import { apiDelete, apiPostJson, useApiData } from "@/lib/api";
+import { apiPostJson, useApiData } from "@/lib/api";
 
 export const Route = createFileRoute("/projects/$projectId")({
   head: () => ({ meta: [{ title: "Project detail — Silicore" }] }),
@@ -38,12 +38,10 @@ type ProjectDetailPayload = {
 
 function ProjectDetail() {
   const { projectId } = Route.useParams();
-  const navigate = useNavigate();
   const { data, error, reload } = useApiData<ProjectDetailPayload>(`/api/frontend/projects/${projectId}`);
   const [note, setNote] = useState("");
   const [reviewSummary, setReviewSummary] = useState("");
   const [reviewStatus, setReviewStatus] = useState("approved");
-  const [deleting, setDeleting] = useState(false);
 
   const submitNote = async () => {
     if (!note.trim()) return;
@@ -57,19 +55,6 @@ function ProjectDetail() {
     await apiPostJson(`/api/frontend/projects/${projectId}/reviews`, { status: reviewStatus, summary: reviewSummary });
     setReviewSummary("");
     await reload();
-  };
-
-  const removeProject = async () => {
-    if (!project || !window.confirm(`Delete project "${project.name}"? This cannot be undone.`)) {
-      return;
-    }
-    setDeleting(true);
-    try {
-      await apiDelete(`/api/frontend/projects/${projectId}`);
-      await navigate({ to: "/projects" });
-    } finally {
-      setDeleting(false);
-    }
   };
 
   const project = data?.project;
@@ -99,16 +84,25 @@ function ProjectDetail() {
           <div className="flex items-center gap-2">
             <ScorePill score={Math.round(project?.latest_score || 0)} />
             <Button size="sm" variant="ghost" className="rounded-full">Owner: {project?.owner_name || "Unassigned"}</Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="rounded-full border border-danger/25 bg-danger/10 text-danger hover:bg-danger/15 hover:text-danger"
-              disabled={deleting}
-              onClick={() => void removeProject()}
+            <form
+              method="post"
+              action={`/projects/${projectId}/delete`}
+              onSubmit={(event) => {
+                if (!window.confirm(`Delete project "${project?.name || "Project"}"? This cannot be undone.`)) {
+                  event.preventDefault();
+                }
+              }}
             >
-              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-              {deleting ? "Deleting…" : "Delete project"}
-            </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-full border border-danger/25 bg-danger/10 text-danger hover:bg-danger/15 hover:text-danger"
+                type="submit"
+              >
+                <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                Delete project
+              </Button>
+            </form>
           </div>
         </div>
 
