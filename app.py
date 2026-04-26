@@ -101,11 +101,16 @@ RUNTIME_CONFIG = get_runtime_config()
 app = Flask(__name__)
 
 from flask_cors import CORS
-CORS(app, origins=[
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://*.lovable.app",
-])
+CORS(app,
+    origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8080",
+        "https://*.lovable.app",
+        "https://*.lovable.dev",
+    ],
+    supports_credentials=True,
+)
 
 
 
