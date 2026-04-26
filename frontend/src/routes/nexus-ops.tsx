@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
+import { PageHero } from "@/components/silicore/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiPostForm, apiPostJson, useApiData } from "@/lib/api";
@@ -86,6 +87,17 @@ function NexusOps() {
   return (
     <AppShell title="Nexus Ops">
       <div className="space-y-6">
+        <PageHero
+          eyebrow={<><Plug className="h-3.5 w-3.5" /> Operations fabric</>}
+          title="Run integrations, validation, and operational telemetry from a surface that feels built for serious internal ops."
+          description="Nexus Ops now has stronger hierarchy and clearer action grouping so the power-user workflows feel deliberate instead of improvised."
+          metrics={[
+            { label: "Queued jobs", value: String(snapshot?.summary.queued_jobs ?? 0), copy: "Waiting in the operational pipeline" },
+            { label: "Completed", value: String(snapshot?.summary.completed_jobs ?? 0), copy: "Finished jobs in the current snapshot" },
+            { label: "Worker", value: snapshot?.summary.worker_label || "Unknown", copy: "Current execution posture" },
+          ]}
+        />
+
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
         {accessBlocked ? (
           <Panel title="Lead access required">
@@ -137,10 +149,10 @@ function NexusOps() {
 
           <Panel title="Add integration">
             <div className="space-y-3">
-              <Field label="Type"><Input value={integrationType} onChange={(event) => setIntegrationType(event.target.value)} placeholder="github" /></Field>
-              <Field label="Label"><Input value={integrationLabel} onChange={(event) => setIntegrationLabel(event.target.value)} placeholder="GitHub" /></Field>
-              <Field label="Status"><Input value={integrationStatus} onChange={(event) => setIntegrationStatus(event.target.value)} placeholder="configured" /></Field>
-              <Field label="Endpoint"><Input value={integrationEndpoint} onChange={(event) => setIntegrationEndpoint(event.target.value)} placeholder="https://api.example.com" /></Field>
+              <Field label="Type"><Input className="premium-input" value={integrationType} onChange={(event) => setIntegrationType(event.target.value)} placeholder="github" /></Field>
+              <Field label="Label"><Input className="premium-input" value={integrationLabel} onChange={(event) => setIntegrationLabel(event.target.value)} placeholder="GitHub" /></Field>
+              <Field label="Status"><Input className="premium-input" value={integrationStatus} onChange={(event) => setIntegrationStatus(event.target.value)} placeholder="configured" /></Field>
+              <Field label="Endpoint"><Input className="premium-input" value={integrationEndpoint} onChange={(event) => setIntegrationEndpoint(event.target.value)} placeholder="https://api.example.com" /></Field>
               <Button className="w-full rounded-full" onClick={() => void addIntegration()}>Save integration</Button>
             </div>
           </Panel>
@@ -164,8 +176,8 @@ function NexusOps() {
 
           <Panel title="External validation upload" action={<Upload className="h-4 w-4 text-muted-foreground" />}>
             <div className="space-y-3">
-              <Field label="Run label"><Input value={validationLabel} onChange={(event) => setValidationLabel(event.target.value)} placeholder="Vendor CAM package" /></Field>
-              <Field label="Files"><Input type="file" multiple onChange={(event) => setValidationFiles(event.target.files)} /></Field>
+              <Field label="Run label"><Input className="premium-input" value={validationLabel} onChange={(event) => setValidationLabel(event.target.value)} placeholder="Vendor CAM package" /></Field>
+              <Field label="Files"><Input className="premium-input" type="file" multiple onChange={(event) => setValidationFiles(event.target.files)} /></Field>
               <Button className="w-full rounded-full" onClick={() => void submitValidation()}>Submit validation package</Button>
             </div>
           </Panel>
@@ -177,7 +189,7 @@ function NexusOps() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div data-reveal className="premium-card rounded-[24px] p-5">
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 text-2xl font-semibold">{value}</div>
     </div>

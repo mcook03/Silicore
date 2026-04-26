@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
+import { PageHero } from "@/components/silicore/PageHero";
 import { Button } from "@/components/ui/button";
 import { Play, RefreshCcw, Cpu, ChevronRight } from "lucide-react";
 import { apiPostJson, useApiData } from "@/lib/api";
@@ -47,13 +48,21 @@ function Jobs() {
   return (
     <AppShell title="Jobs">
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">{jobs.length} jobs</p>
-          <div className="flex gap-2">
-            <Button size="sm" variant="ghost" className="rounded-full" onClick={() => void reload()}><RefreshCcw className="mr-1.5 h-3.5 w-3.5" /> Refresh</Button>
-            <Button size="sm" className="rounded-full" onClick={() => void processQueue()}><Play className="mr-1.5 h-3.5 w-3.5" /> Process queue</Button>
-          </div>
-        </div>
+        <PageHero
+          eyebrow={<><Cpu className="h-3.5 w-3.5" /> Queue control</>}
+          title="Manage background work with a cleaner operations surface for queue health, worker state, and job flow."
+          description="This page now reads like an operational console instead of a raw table, while keeping the job controls explicit and fast."
+          metrics={[
+            { label: "Jobs", value: String(jobs.length), copy: "Visible in the active queue snapshot" },
+            { label: "Worker", value: data?.worker.running ? "Running" : "Stopped", copy: data?.worker.thread_name || "No worker thread attached" },
+          ]}
+          actions={
+            <>
+              <Button size="sm" variant="ghost" onClick={() => void reload()}><RefreshCcw className="mr-1.5 h-3.5 w-3.5" /> Refresh</Button>
+              <Button size="sm" onClick={() => void processQueue()}><Play className="mr-1.5 h-3.5 w-3.5" /> Process queue</Button>
+            </>
+          }
+        />
 
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
         {accessBlocked ? (
@@ -64,7 +73,7 @@ function Jobs() {
 
         <Panel title="Queue">
           <div className="overflow-hidden rounded-xl border border-border">
-            <table className="w-full text-sm">
+            <table className="premium-table w-full text-sm">
               <thead className="bg-background/40 text-left font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">Job ID</th>
@@ -120,7 +129,7 @@ function JobStatus({ status }: { status: string }) {
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "success" }) {
   return (
-    <div className="rounded-xl border border-border bg-background/40 p-4">
+    <div data-reveal className="premium-subtle rounded-2xl p-4">
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className={`mt-1 text-lg font-semibold ${tone === "success" ? "text-success" : ""}`}>{value}</div>
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
+import { PageHero } from "@/components/silicore/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -129,21 +130,33 @@ function Atlas() {
 
   return (
     <AppShell title="Atlas — AI copilot">
-      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="space-y-6">
+        <PageHero
+          eyebrow={<><Sparkles className="h-3.5 w-3.5" /> Copilot interface</>}
+          title="Work with Atlas in a UI that feels like an integrated engineering copilot, not a raw prompt box."
+          description="Context, thread state, agent runs, and workflow planning now sit inside the same premium control surface so the AI layer feels native to Silicore."
+          metrics={[
+            { label: "Thread", value: threadKey ? "Live" : "New", copy: threadKey || "Start a new Atlas thread" },
+            { label: "Messages", value: String(messages.length), copy: "Conversation items in memory" },
+            { label: "Agent runs", value: String(runs.data?.runs.length || 0), copy: "Tracked against this thread" },
+          ]}
+        />
+
+        <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           <Panel title="Context">
             <div className="grid gap-3 md:grid-cols-3">
               <Field label="Page type">
                 <div className="grid grid-cols-3 gap-2">
                   {(["board", "project", "compare"] as const).map((option) => (
-                    <button key={option} onClick={() => setPageType(option)} className={`rounded-lg border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/5" : "border-border bg-background/40"}`}>
+                    <button key={option} onClick={() => setPageType(option)} className={`interactive-lift rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}>
                       {option}
                     </button>
                   ))}
                 </div>
               </Field>
               <Field label="Project">
-                <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="h-10 rounded-md border border-input bg-transparent px-3 text-sm">
+                <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
                   <option value="">Latest project</option>
                   {(session.data?.project_options || []).map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -151,7 +164,7 @@ function Atlas() {
                 </select>
               </Field>
               <Field label="Board name">
-                <Input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="sentinel-power.kicad_pcb" />
+                <Input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="sentinel-power.kicad_pcb" className="premium-input" />
               </Field>
             </div>
           </Panel>
@@ -175,7 +188,7 @@ function Atlas() {
 
           <Panel title="Ask Atlas">
             <div className="space-y-3">
-              <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask about a board, request a fix, or trigger an action…" className="min-h-[100px]" />
+              <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask about a board, request a fix, or trigger an action…" className="premium-textarea min-h-[100px]" />
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap gap-1.5">
                   {["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings", "run_fixture_evaluation"].map((suggestion) => (
@@ -239,6 +252,7 @@ function Atlas() {
             ) : null}
           </Panel>
         </div>
+      </div>
       </div>
     </AppShell>
   );

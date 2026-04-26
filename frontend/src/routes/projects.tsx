@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
+import { PageHero } from "@/components/silicore/PageHero";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Plus, FolderKanban, ArrowRight, Trash2 } from "lucide-react";
@@ -46,20 +47,27 @@ function Projects() {
   return (
     <AppShell title="Projects">
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {data?.summary.total_projects ?? 0} workspaces · {data?.summary.total_runs ?? 0} linked runs
-          </p>
-          <Button size="sm" className="rounded-full" onClick={onCreate} disabled={creating}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" /> New project
-          </Button>
-        </div>
+        <PageHero
+          eyebrow={<><FolderKanban className="h-3.5 w-3.5" /> Workspace system</>}
+          title="Organize boards into durable workspaces that stay ready for review, comparison, and release."
+          description="Projects now act like a polished control layer over Silicore’s backend workflows, giving each workspace clearer identity, state, and action hierarchy."
+          metrics={[
+            { label: "Workspaces", value: String(data?.summary.total_projects ?? 0), copy: "Visible in your current view" },
+            { label: "Linked runs", value: String(data?.summary.total_runs ?? 0), copy: "Attached to project history" },
+            { label: "Create flow", value: creating ? "Busy" : "Ready", copy: "Launch a new workspace instantly" },
+          ]}
+          actions={
+            <Button size="sm" onClick={onCreate} disabled={creating}>
+              <Plus className="mr-1.5 h-3.5 w-3.5" /> New project
+            </Button>
+          }
+        />
         {error ? (
           <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>
         ) : null}
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {(data?.projects ?? []).map((project) => (
-            <div key={project.project_id} className="group rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary/30">
+            <div key={project.project_id} data-reveal className="premium-card group rounded-[26px] p-6">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <FolderKanban className="h-5 w-5" />

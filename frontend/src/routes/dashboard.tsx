@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
+import { PageHero } from "@/components/silicore/PageHero";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel, ScorePill } from "@/components/silicore/Panel";
 import {
@@ -51,8 +52,19 @@ function Dashboard() {
         </Panel>
       ) : (
         <div className="space-y-6">
+          <PageHero
+            eyebrow={<><TrendingUp className="h-3.5 w-3.5" /> Mission control</>}
+            title="Track design health, hotspot movement, and risk momentum without digging through raw runs."
+            description="The dashboard now behaves like an engineering command surface: trend-aware, spatially aware, and tuned for fast review across boards and revisions."
+            metrics={[
+              { label: "Boards analyzed", value: String(stats?.boards_analyzed ?? 0), copy: "Runs represented in the active sample" },
+              { label: "Overall score", value: String(Math.round(stats?.overall_score ?? 0)), copy: "Blended across recent analyses" },
+              { label: "Open critical", value: String(stats?.open_critical_issues ?? 0), copy: "Immediate engineering attention" },
+            ]}
+          />
+
           <div className="grid gap-4 lg:grid-cols-3">
-            <div className="rounded-2xl border border-border bg-surface p-6 lg:row-span-2">
+            <div data-reveal className="premium-panel rounded-[28px] p-6 lg:row-span-2">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Overall risk score</div>
@@ -168,7 +180,7 @@ function Dashboard() {
 
           <Panel title="Recent analyses" action={<Link to="/history" className="font-mono text-xs text-primary hover:underline">view all →</Link>}>
             <div className="-mx-6 overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="premium-table w-full text-sm">
                 <thead>
                   <tr className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                     <th className="px-6 py-3 text-left font-normal">Board</th>
@@ -209,7 +221,7 @@ function Dashboard() {
 
 function KpiCard({ label, value, trend, icon: Icon, tone }: { label: string; value: string; trend: string; icon: React.ComponentType<{ className?: string }>; tone?: "danger" }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6">
+    <div data-reveal className="premium-card rounded-[26px] p-6">
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
         <Icon className={`h-4 w-4 ${tone === "danger" ? "text-danger" : "text-primary"}`} />

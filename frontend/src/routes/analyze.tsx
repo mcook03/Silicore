@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
+import { PageHero } from "@/components/silicore/PageHero";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel } from "@/components/silicore/Panel";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
@@ -194,7 +195,18 @@ function Analyze() {
   return (
     <AppShell title="Board analysis">
       <div className="space-y-6">
-        <form onSubmit={onSubmit} className="relative overflow-hidden rounded-2xl border border-dashed border-border bg-surface p-8">
+        <PageHero
+          eyebrow={<><Sparkles className="h-3.5 w-3.5" /> Analysis studio</>}
+          title="Upload a board and step through a modern analysis flow that feels like a real product surface, not a static form."
+          description="This workspace combines upload, tuning, results, charts, and heat mapping into one interactive analysis environment built on the real Silicore backend."
+          metrics={[
+            { label: "Profiles", value: String(options?.analysis_modes.profiles.length ?? 0), copy: "Analysis presets available" },
+            { label: "Board types", value: String(options?.analysis_modes.board_types.length ?? 0), copy: "Context modes for the run" },
+            { label: "Workspaces", value: String(options?.project_options.length ?? 0), copy: "Projects available for linking" },
+          ]}
+        />
+
+        <form onSubmit={onSubmit} className="premium-hero relative overflow-hidden rounded-[30px] p-8">
           <div className="bg-hero-glow pointer-events-none absolute inset-0 opacity-40" />
           <div className="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="text-center lg:text-left">
@@ -233,7 +245,7 @@ function Analyze() {
                 <select
                   value={projectId}
                   onChange={(event) => setProjectId(event.target.value)}
-                  className="h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  className="premium-select h-10 w-full px-3 text-sm"
                 >
                   <option value="">No workspace</option>
                   {(options?.project_options ?? []).map((option) => (
@@ -246,7 +258,7 @@ function Analyze() {
                 <select
                   value={profile}
                   onChange={(event) => setProfile(event.target.value)}
-                  className="h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  className="premium-select h-10 w-full px-3 text-sm"
                 >
                   {(options?.analysis_modes.profiles ?? []).map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -258,7 +270,7 @@ function Analyze() {
                 <select
                   value={boardType}
                   onChange={(event) => setBoardType(event.target.value)}
-                  className="h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  className="premium-select h-10 w-full px-3 text-sm"
                 >
                   {(options?.analysis_modes.board_types ?? []).map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>

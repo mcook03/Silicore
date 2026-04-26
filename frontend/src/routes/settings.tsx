@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
+import { PageHero } from "@/components/silicore/PageHero";
 import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -111,30 +112,16 @@ function Settings() {
       <div className="space-y-6">
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
 
-        <section className="relative overflow-hidden rounded-[28px] border border-border bg-[radial-gradient(circle_at_top_left,_rgba(86,211,240,0.16),_transparent_34%),linear-gradient(180deg,_rgba(12,20,31,0.98),_rgba(11,17,26,0.96))] p-8">
-          <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-primary">
-                <SlidersHorizontal className="h-3.5 w-3.5" />
-                Control board
-              </div>
-              <h2 className="mt-5 max-w-2xl text-4xl font-semibold tracking-tight">Tune how Silicore thinks about spacing, score pressure, power realism, and review strictness.</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-                This page is now the human-friendly surface for the most common configuration changes. Use the sliders and toggles for daily tuning, and drop into JSON only when you need the full config.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {summaryCards.map((card) => (
-                <div key={card.label} className="rounded-2xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{card.label}</div>
-                  <div className="mt-2 text-xl font-semibold">{humanize(card.value)}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{card.subtext}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <PageHero
+          eyebrow={<><SlidersHorizontal className="h-3.5 w-3.5" /> Control board</>}
+          title="Tune how Silicore thinks about spacing, score pressure, power realism, and review strictness."
+          description="This page is now the human-friendly surface for the most common configuration changes. Use the sliders and toggles for daily tuning, and drop into JSON only when you need the full config."
+          metrics={summaryCards.map((card) => ({
+            label: card.label,
+            value: humanize(card.value),
+            copy: card.subtext,
+          }))}
+        />
 
         <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
           <Panel title="Workspace posture">
@@ -160,7 +147,7 @@ function Settings() {
                   <select
                     value={String(getNested(draftConfig, ["analysis", "profile"]) || "balanced")}
                     onChange={(event) => updateConfig((current) => setNested(current, ["analysis", "profile"], event.target.value))}
-                    className="h-11 w-full rounded-xl border border-input bg-transparent px-3 text-sm"
+                    className="premium-select h-11 w-full px-3 text-sm"
                   >
                     {profileOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
@@ -169,7 +156,7 @@ function Settings() {
                   <select
                     value={String(getNested(draftConfig, ["analysis", "board_type"]) || "general")}
                     onChange={(event) => updateConfig((current) => setNested(current, ["analysis", "board_type"], event.target.value))}
-                    className="h-11 w-full rounded-xl border border-input bg-transparent px-3 text-sm"
+                    className="premium-select h-11 w-full px-3 text-sm"
                   >
                     {boardTypeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
