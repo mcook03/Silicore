@@ -1,43 +1,46 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="page-shell">
     <section class="hero">
         <div class="hero-inner">
             <div>
-                <div class="eyebrow">Workspace Portfolio</div>
-                <h1 class="hero-title">Project spaces that feel like product surfaces.</h1>
-                <p class="hero-copy">Organize boards, saved runs, release gates, assignments, and review notes into workspace views that feel deliberate, legible, and ready for team use.</p>
+                <div class="eyebrow">Projects workspace</div>
+                <h1 class="hero-title">Portfolio control with a cleaner design-intelligence shell.</h1>
+                <p class="hero-copy">
+                    Every project now lives inside the same donor-style workspace surface, while Silicore keeps the existing linked runs, release context, and compare-ready history behind the scenes.
+                </p>
                 <div class="hero-metrics">
                     <div class="data-pill">
                         <div class="data-pill-label">Total projects</div>
                         <div class="data-pill-value">{{ projects_summary.total_projects if projects_summary else projects|length }}</div>
-                        <div class="data-pill-copy">All workspace containers in the current environment.</div>
+                        <div class="small-muted">Workspace containers available in the current environment.</div>
                     </div>
                     <div class="data-pill">
                         <div class="data-pill-label">Linked runs</div>
                         <div class="data-pill-value">{{ projects_summary.total_runs if projects_summary else 0 }}</div>
-                        <div class="data-pill-copy">Saved analyses attached to workspace history.</div>
+                        <div class="small-muted">Saved analyses attached to active project history.</div>
                     </div>
                     <div class="data-pill">
-                        <div class="data-pill-label">Average score</div>
+                        <div class="data-pill-label">Portfolio average</div>
                         <div class="data-pill-value">{{ projects_chart.portfolio_average_score|round|int if projects_chart and projects_chart.portfolio_average_score is defined else "N/A" }}</div>
-                        <div class="data-pill-copy">Portfolio-wide engineering posture across scored workspaces.</div>
+                        <div class="small-muted">Average engineering posture across scored workspaces.</div>
                     </div>
                 </div>
             </div>
 
-            <aside class="form-shell" id="create-project">
+            <aside class="form-shell">
                 <div class="hero-card-label">Create workspace</div>
                 <div class="hero-card-title">Start a new Silicore project</div>
-                <p class="section-copy">Create a workspace for linked runs, team coordination, release checkpoints, and design-review continuity.</p>
-                <form method="post" action="{{ url_for('create_project_route') }}" class="page-stack" style="margin-top:18px;">
+                <p class="section-copy">Create a workspace for linked runs, review continuity, assignments, and release-gate tracking.</p>
+                <form method="post" action="{{ url_for('create_project_route') }}" class="page-stack" style="margin-top: 18px;">
                     <label>
-                        Project Name
+                        Project name
                         <input type="text" name="name" required placeholder="Falcon power module">
                     </label>
                     <label>
                         Description
-                        <textarea name="description" rows="4" placeholder="Purpose, scope, or review context for this workspace."></textarea>
+                        <textarea name="description" rows="4" placeholder="Purpose, board family, or review context."></textarea>
                     </label>
                     <button class="btn btn-primary" type="submit">Create Project</button>
                 </form>
@@ -47,16 +50,11 @@
 
     <section class="viz-grid">
         <article class="viz-panel">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Portfolio growth</div>
-                    <h2 class="section-title">Workspace adoption</h2>
-                </div>
-                <div class="chart-stat">{{ projects_summary.populated_projects if projects_summary else 0 }}</div>
-            </div>
-            <div class="sparkline-shell">
+            <div class="section-kicker">Portfolio growth</div>
+            <h2 class="section-title">Workspace adoption</h2>
+            <div class="sparkline-shell" style="margin-top: 18px;">
                 {% if projects_chart and projects_chart.portfolio_growth and projects_chart.portfolio_growth.has_data %}
-                <svg class="series-chart" viewBox="0 0 {{ projects_chart.portfolio_growth.width }} {{ projects_chart.portfolio_growth.height }}" role="img" aria-label="Portfolio growth trend">
+                <svg class="series-chart" viewBox="0 0 {{ projects_chart.portfolio_growth.width }} {{ projects_chart.portfolio_growth.height }}" role="img" aria-label="Workspace adoption trend">
                     {% for guide in projects_chart.portfolio_growth.guides %}
                     <line class="guide" x1="0" y1="{{ guide }}" x2="{{ projects_chart.portfolio_growth.width }}" y2="{{ guide }}"></line>
                     {% endfor %}
@@ -66,18 +64,14 @@
                     {% endfor %}
                 </svg>
                 {% else %}
-                <div class="empty-state" style="margin:0;">Portfolio growth appears after workspaces are created.</div>
+                <div class="empty-state" style="margin: 16px;">Workspace growth appears here once project creation history is available.</div>
                 {% endif %}
             </div>
         </article>
 
-        <article class="viz-panel">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Portfolio pulse</div>
-                    <h2 class="section-title">Operational mix</h2>
-                </div>
-            </div>
+        <article class="feature-flow">
+            <div class="section-kicker">Operational mix</div>
+            <h2 class="section-title">Project activity</h2>
             <div class="bar-list">
                 {% if projects_chart and projects_chart.activity_bars and projects_chart.activity_bars["items"] %}
                     {% for item in projects_chart.activity_bars["items"] %}
@@ -92,83 +86,35 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="empty-state" style="margin:0;">Run activity appears after projects accumulate linked analyses.</div>
+                <div class="empty-state" style="margin: 0;">Run activity will appear after projects accumulate linked analysis history.</div>
                 {% endif %}
-            </div>
-            <div class="stats-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Shared projects</div>
-                    <div class="metric-value">{{ projects_summary.shared_projects if projects_summary else 0 }}</div>
-                    <div class="metric-sub">Visible to multiple workspace members.</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Active ratio</div>
-                    <div class="metric-value">
-                        {% if projects_summary and projects_summary.total_projects %}
-                            {{ ((projects_summary.populated_projects / projects_summary.total_projects) * 100)|round|int }}%
-                        {% else %}
-                            0%
-                        {% endif %}
-                    </div>
-                    <div class="metric-sub">Share of workspaces with actual project history.</div>
-                </div>
             </div>
         </article>
     </section>
 
-    <section class="viz-grid">
-        <article class="viz-panel">
-            <div class="viz-header">
-                <div>
-                    <div class="section-kicker">Top scores</div>
-                    <h2 class="section-title">Best-performing workspaces</h2>
+    <section class="feature-flow">
+        <div class="section-kicker">Workspace gallery</div>
+        <h2 class="section-title">Open a project</h2>
+        <p class="section-copy">Projects open into timeline, compare, release-gate, and Atlas decision views without changing the underlying backend workflow.</p>
+        {% if projects %}
+        <div class="stats-grid">
+            {% for project in projects %}
+            <article class="metric-card">
+                <div class="btn-row" style="justify-content: space-between; margin-top: 0;">
+                    <span class="score-pill {% if project.health_tone == 'critical' %}risk{% else %}healthy{% endif %}">{{ project.health_label }}</span>
+                    <span class="mini-chip">{{ project.run_count }} run{% if project.run_count != 1 %}s{% endif %}</span>
                 </div>
-            </div>
-            <div class="bar-list">
-                {% if projects_chart and projects_chart.score_bars and projects_chart.score_bars["items"] %}
-                    {% for item in projects_chart.score_bars["items"] %}
-                    <div class="bar-row">
-                        <div class="bar-label">
-                            <span>{{ item.label }}</span>
-                            <span>{{ item.value }}</span>
-                        </div>
-                        <div class="bar-meter">
-                            <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state" style="margin:0;">Score ranking appears once scored workspaces exist.</div>
-                {% endif %}
-            </div>
-        </article>
-
-        <article class="feature-flow">
-            <div class="section-kicker">Workspace gallery</div>
-            <h2 class="section-title">Open a project</h2>
-            <p class="section-copy">Each workspace opens into trends, compare flows, release gates, assignments, Atlas guidance, and linked analysis history.</p>
-            {% if projects %}
-            <div class="stats-grid">
-                {% for project in projects %}
-                <article class="metric-card">
-                    <div class="btn-row" style="margin-top:0; justify-content:space-between;">
-                        <span class="score-pill {% if project.health_tone == 'critical' %}risk{% else %}healthy{% endif %}">{{ project.health_label }}</span>
-                        <span class="mini-chip">{{ project.run_count }} run{% if project.run_count != 1 %}s{% endif %}</span>
-                    </div>
-                    <div class="card-title" style="margin-top:0;">{{ project.name }}</div>
-                    <div class="metric-value-text">{% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}</div>
-                    <div class="metric-sub">{{ project.description if project.description else "No workspace description yet." }}</div>
-                    <div class="metric-sub">Top recurring domain: {{ project.top_category if project.top_category else "No recurring category yet" }}</div>
-                    <div class="btn-row">
-                        <a class="btn btn-secondary" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Workspace</a>
-                    </div>
-                </article>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">No projects exist yet. Create the first workspace to start building the portfolio.</div>
-            {% endif %}
-        </article>
+                <div class="card-title" style="margin-top: 4px;">{{ project.name }}</div>
+                <div class="metric-sub">{{ project.description if project.description else "No workspace description yet." }}</div>
+                <div class="metric-value-text">{% if project.latest_score is defined and project.latest_score is not none %}{{ project.latest_score|round|int }} score{% else %}No score yet{% endif %}</div>
+                <div class="metric-sub">Top recurring domain: {{ project.top_category if project.top_category else "No recurring category yet" }}</div>
+                <a class="btn btn-secondary" href="{{ url_for('project_detail_page', project_id=project.project_id) }}">Open Workspace</a>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No projects exist yet. Create the first workspace to start building the portfolio.</div>
+        {% endif %}
     </section>
 </div>
 {% endblock %}

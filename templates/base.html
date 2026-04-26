@@ -5,39 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page_title or "Silicore" }}</title>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap");
 
         :root {
-            --font-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-            --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-            --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-            --bg: #07111b;
-            --bg-deep: #04101a;
-            --bg-core: #081724;
-            --surface: rgba(10, 22, 34, 0.72);
-            --surface-strong: rgba(12, 26, 40, 0.88);
-            --surface-soft: rgba(255, 255, 255, 0.03);
-            --surface-wash: rgba(113, 216, 255, 0.08);
-            --line: rgba(136, 214, 255, 0.12);
-            --line-strong: rgba(136, 214, 255, 0.24);
-            --text: #f3fbff;
-            --text-soft: #d7e7f4;
+            --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+            --background: #07111b;
+            --background-deep: #04101a;
+            --surface: rgba(11, 24, 37, 0.88);
+            --surface-elevated: rgba(16, 31, 47, 0.94);
+            --surface-soft: rgba(255, 255, 255, 0.035);
+            --border: rgba(140, 165, 186, 0.18);
+            --border-strong: rgba(107, 227, 255, 0.24);
+            --foreground: #f3fbff;
+            --foreground-soft: #d7e7f4;
             --muted: #8ca5ba;
-            --muted-strong: #afc5d6;
-            --cyan: #6be3ff;
-            --teal: #60f0c6;
-            --blue: #7db2ff;
-            --amber: #ffbb72;
-            --red: #ff7f7f;
-            --shadow-xl: 0 40px 120px rgba(0, 0, 0, 0.38);
-            --shadow-lg: 0 28px 72px rgba(0, 0, 0, 0.28);
-            --shadow-md: 0 14px 30px rgba(0, 0, 0, 0.18);
-            --radius-2xl: 40px;
-            --radius-xl: 32px;
-            --radius-lg: 24px;
-            --radius-md: 18px;
+            --primary: #6be3ff;
+            --primary-2: #7db2ff;
+            --success: #60f0c6;
+            --warning: #ffbb72;
+            --danger: #ff7f7f;
+            --shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+            --shadow-soft: 0 16px 36px rgba(0, 0, 0, 0.18);
             --radius-sm: 14px;
-            --shell: min(1480px, calc(100vw - 28px));
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-xl: 36px;
+            --shell: min(1380px, calc(100vw - 32px));
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-2));
+            --gradient-hero:
+                radial-gradient(circle at 12% 14%, rgba(96, 240, 198, 0.18), transparent 26%),
+                radial-gradient(circle at 84% 18%, rgba(125, 178, 255, 0.22), transparent 32%),
+                radial-gradient(circle at 54% 96%, rgba(107, 227, 255, 0.16), transparent 28%),
+                linear-gradient(180deg, #04101a 0%, #07111b 44%, #0a1722 100%);
         }
 
         * {
@@ -52,13 +52,11 @@
         body {
             margin: 0;
             min-height: 100vh;
-            color: var(--text);
-            font-family: var(--font-body);
-            background:
-                radial-gradient(circle at 0% 0%, rgba(96, 240, 198, 0.12), transparent 24%),
-                radial-gradient(circle at 100% 4%, rgba(125, 178, 255, 0.18), transparent 26%),
-                radial-gradient(circle at 50% 100%, rgba(107, 227, 255, 0.14), transparent 30%),
-                linear-gradient(180deg, #04101a 0%, #07111b 36%, #0a1722 100%);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            background: var(--gradient-hero);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
             overflow-x: hidden;
         }
 
@@ -69,64 +67,26 @@
             inset: auto;
             pointer-events: none;
             z-index: 0;
-            filter: blur(8px);
+            filter: blur(24px);
             opacity: 0.7;
         }
 
         body::before {
             top: -140px;
             right: -120px;
-            width: 440px;
-            height: 440px;
-            border-radius: 48% 52% 66% 34% / 34% 45% 55% 66%;
-            background: radial-gradient(circle, rgba(125, 178, 255, 0.24), rgba(125, 178, 255, 0));
+            width: 420px;
+            height: 420px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(125, 178, 255, 0.26), rgba(125, 178, 255, 0));
         }
 
         body::after {
             bottom: -180px;
-            left: -110px;
-            width: 420px;
-            height: 420px;
-            border-radius: 61% 39% 38% 62% / 55% 37% 63% 45%;
-            background: radial-gradient(circle, rgba(96, 240, 198, 0.18), rgba(96, 240, 198, 0));
-        }
-
-        body.product-shell {
-            background:
-                radial-gradient(circle at 14% 18%, rgba(107, 227, 255, 0.1), transparent 24%),
-                radial-gradient(circle at 85% 16%, rgba(125, 178, 255, 0.14), transparent 28%),
-                radial-gradient(circle at 50% 72%, rgba(96, 240, 198, 0.05), transparent 26%),
-                linear-gradient(180deg, #04101a 0%, #06111b 36%, #081722 100%);
-        }
-
-        body.product-shell::before {
-            top: -140px;
-            right: -110px;
-            width: 520px;
-            height: 520px;
-            filter: blur(18px);
-            opacity: 0.72;
-            background: radial-gradient(circle, rgba(61, 141, 255, 0.2), rgba(61, 141, 255, 0));
-        }
-
-        body.product-shell::after {
-            left: -120px;
-            bottom: -180px;
-            width: 420px;
-            height: 420px;
-            filter: blur(16px);
-            opacity: 0.52;
+            left: -160px;
+            width: 460px;
+            height: 460px;
+            border-radius: 999px;
             background: radial-gradient(circle, rgba(96, 240, 198, 0.16), rgba(96, 240, 198, 0));
-        }
-
-        body.product-shell .ambient-grid {
-            opacity: 0.18;
-        }
-
-        body.product-shell .site-header-inner {
-            background: rgba(5, 15, 23, 0.74);
-            border-color: rgba(136, 214, 255, 0.14);
-            box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
         }
 
         a {
@@ -146,398 +106,451 @@
             inset: 0;
             pointer-events: none;
             background-image:
-                linear-gradient(rgba(170, 220, 255, 0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(170, 220, 255, 0.035) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 84%);
-            opacity: 0.45;
+                linear-gradient(rgba(140, 165, 186, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(140, 165, 186, 0.08) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(circle at 50% 0%, rgba(0, 0, 0, 0.55), transparent 72%);
+            opacity: 0.2;
         }
 
-        .app-shell {
+        .marketing-shell {
             position: relative;
             z-index: 1;
             width: var(--shell);
             margin: 0 auto;
-            padding: 18px 0 42px;
+            padding: 18px 0 44px;
         }
 
-        .site-header {
+        .marketing-header {
             position: sticky;
-            top: 14px;
+            top: 16px;
             z-index: 50;
             margin-bottom: 28px;
         }
 
-        .site-header-inner {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr) auto;
-            gap: 16px;
+        .marketing-header-inner {
+            display: flex;
             align-items: center;
-            padding: 14px 18px;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            background: rgba(5, 15, 23, 0.72);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            box-shadow: var(--shadow-lg);
+            justify-content: space-between;
+            gap: 18px;
+            min-height: 68px;
+            padding: 10px 12px 10px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(11, 24, 37, 0.9), rgba(7, 17, 27, 0.78));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow);
         }
 
         .brand {
             display: inline-flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .brand-mark {
-            width: 54px;
-            height: 54px;
-            border-radius: 18px;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
             display: grid;
             place-items: center;
             overflow: hidden;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(125, 178, 255, 0.18), transparent 36%),
-                rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(136, 214, 255, 0.16);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .brand-mark img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            display: block;
+        }
+
+        .brand-text {
+            display: grid;
+            gap: 3px;
         }
 
         .brand-title {
             margin: 0;
-            font-family: var(--font-display);
-            font-size: 1.04rem;
+            font-size: 0.98rem;
+            font-weight: 700;
             letter-spacing: -0.03em;
         }
 
         .brand-subtitle {
-            margin-top: 4px;
             color: var(--muted);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.22em;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
             text-transform: uppercase;
+            letter-spacing: 0.14em;
         }
 
-        .nav-strip {
-            display: flex;
-            justify-content: center;
-        }
-
-        .nav-pills {
+        .marketing-nav {
             display: inline-flex;
-            gap: 8px;
+            align-items: center;
+            gap: 6px;
             padding: 6px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid rgba(136, 214, 255, 0.08);
-            overflow-x: auto;
-            scrollbar-width: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        .nav-pills::-webkit-scrollbar {
-            display: none;
-        }
-
-        .nav-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            min-height: 42px;
-            padding: 0 16px;
+        .marketing-nav a {
+            padding: 10px 16px;
             border-radius: 999px;
             color: var(--muted);
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease;
+            font-size: 0.92rem;
+            transition: background 180ms ease, color 180ms ease, transform 180ms ease;
         }
 
-        .nav-pill:hover,
-        .nav-pill.active {
-            color: var(--text);
-            transform: translateY(-1px);
-            background: linear-gradient(180deg, rgba(125, 178, 255, 0.16), rgba(107, 227, 255, 0.08));
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        }
-
-        .nav-pill-icon {
-            width: 20px;
-            height: 20px;
-            display: grid;
-            place-items: center;
-            border-radius: 999px;
+        .marketing-nav a:hover,
+        .marketing-nav a.active {
+            color: var(--foreground);
             background: rgba(255, 255, 255, 0.06);
-            color: var(--cyan);
-            font-size: 10px;
-            flex-shrink: 0;
+            transform: translateY(-1px);
         }
 
-        .header-actions {
+        .marketing-actions,
+        .topbar-actions,
+        .hero-actions,
+        .btn-row {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
-        .status-pill,
-        .top-badge,
-        .chip,
-        .mini-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            min-height: 40px;
-            padding: 0 14px;
-            border-radius: 999px;
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--muted-strong);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 999px;
-            background: var(--teal);
-            box-shadow: 0 0 0 5px rgba(96, 240, 198, 0.12);
-        }
-
-        .status-copy {
-            display: grid;
-            gap: 2px;
-        }
-
-        .status-label {
-            color: var(--muted);
-            font-size: 9px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-        }
-
-        .status-value {
-            color: var(--text-soft);
-            font-size: 11px;
-        }
-
-        .main-stage,
-        .content-flow,
-        .page,
-        .page-stack,
-        .content-grid,
-        .section-stack,
-        .data-list,
-        .timeline,
-        .artifact-list,
-        .flash-stack {
-            display: grid;
-            gap: 20px;
-        }
-
-        .page-shell {
-            display: grid;
-            gap: 24px;
-        }
-
-        .flash {
-            padding: 16px 18px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(125, 178, 255, 0.22);
-            background: rgba(125, 178, 255, 0.1);
-            color: var(--text-soft);
-            box-shadow: var(--shadow-md);
-        }
-
-        .hero,
-        .hero-card,
-        .card,
-        .panel,
-        .panel-muted,
-        .summary-panel,
-        .empty-state,
-        .metric-card,
-        .timeline-row,
-        .artifact-row,
-        .context-card,
-        .preview-box,
-        .viz-panel,
-        .feature-flow,
-        .form-shell {
+        .app-frame {
             position: relative;
-            overflow: hidden;
-            isolation: isolate;
-            border: 1px solid var(--line);
-            box-shadow: var(--shadow-lg);
+            z-index: 1;
+            display: flex;
+            min-height: 100vh;
         }
 
-        .hero::before,
-        .hero-card::before,
-        .card::before,
-        .panel::before,
-        .panel-muted::before,
-        .summary-panel::before,
-        .empty-state::before,
-        .metric-card::before,
-        .viz-panel::before,
-        .feature-flow::before,
-        .form-shell::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at top right, rgba(125, 178, 255, 0.14), transparent 28%),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 46%);
-            pointer-events: none;
-            z-index: -1;
+        .app-sidebar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            height: 100vh;
+            width: 264px;
+            flex-shrink: 0;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            background: linear-gradient(180deg, rgba(4, 16, 26, 0.96), rgba(7, 17, 27, 0.92));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
 
-        .hero {
-            padding: clamp(28px, 4vw, 48px);
-            border-radius: clamp(28px, 5vw, 44px);
-            background:
-                radial-gradient(circle at top left, rgba(96, 240, 198, 0.1), transparent 28%),
-                linear-gradient(155deg, rgba(8, 21, 33, 0.96), rgba(6, 14, 22, 0.9));
+        .sidebar-head {
+            display: flex;
+            min-height: 84px;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .hero-card,
-        .card,
-        .panel,
-        .panel-muted,
-        .feature-flow,
-        .form-shell,
-        .viz-panel {
-            padding: 24px;
-            border-radius: var(--radius-xl);
-            background: var(--surface);
+        .sidebar-nav {
+            display: grid;
+            gap: 6px;
+            padding: 18px 14px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            color: var(--muted);
+            transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--foreground);
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(2px);
+        }
+
+        .sidebar-link-icon {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-link-copy {
+            display: grid;
+            gap: 3px;
+        }
+
+        .sidebar-link-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .sidebar-link-subtitle {
+            color: var(--muted);
+            font-size: 0.72rem;
+        }
+
+        .sidebar-link.active .sidebar-link-subtitle,
+        .sidebar-link:hover .sidebar-link-subtitle {
+            color: var(--foreground-soft);
+        }
+
+        .sidebar-user {
+            margin-top: auto;
+            padding: 18px 20px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: rgba(107, 227, 255, 0.12);
+            color: var(--primary);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+
+        .app-main {
+            min-width: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-height: 84px;
+            padding: 18px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: linear-gradient(180deg, rgba(7, 17, 27, 0.84), rgba(7, 17, 27, 0.7));
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
         }
 
-        .summary-panel,
-        .empty-state,
-        .metric-card,
-        .timeline-row,
-        .artifact-row,
-        .context-card,
-        .preview-box {
-            border-radius: var(--radius-lg);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .panel-muted {
-            background: rgba(255, 255, 255, 0.025);
-        }
-
-        .summary-panel,
-        .empty-state {
-            padding: 20px;
-        }
-
-        .timeline-row,
-        .artifact-row,
-        .data-row {
-            padding: 18px 18px 18px 22px;
+        .topbar-copy {
             display: grid;
-            gap: 10px;
-            align-items: center;
-            grid-template-columns: minmax(0, 1fr) auto;
-            border-left: 2px solid rgba(107, 227, 255, 0.16);
-            background:
-                linear-gradient(90deg, rgba(107, 227, 255, 0.05), transparent 28%),
-                rgba(255, 255, 255, 0.03);
+            gap: 6px;
         }
 
-        .hero-inner,
-        .hero-split {
-            display: grid;
-            grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-            gap: 24px;
-            align-items: stretch;
-        }
-
-        .hero-title,
-        .page-title {
-            margin: 0;
-            max-width: 11ch;
-            font-family: var(--font-display);
-            font-size: clamp(2.6rem, 6vw, 5.8rem);
-            line-height: 0.92;
-            letter-spacing: -0.08em;
-        }
-
-        .hero-copy,
-        .page-copy,
-        .lede,
-        .section-copy,
-        .metric-sub,
-        .small-muted,
-        .helper-copy,
-        .list-meta,
-        .artifact-kind,
-        .data-meta {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.75;
-        }
-
+        .topbar-eyebrow,
         .eyebrow,
         .section-kicker,
         .hero-card-label,
-        .panel-kicker,
         .metric-label {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: var(--muted-strong);
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.18em;
+            color: var(--foreground-soft);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
             text-transform: uppercase;
+            letter-spacing: 0.18em;
         }
 
+        .topbar-eyebrow::before,
         .eyebrow::before,
         .section-kicker::before,
         .hero-card-label::before,
         .metric-label::before {
             content: "";
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 999px;
-            background: linear-gradient(180deg, var(--cyan), var(--teal));
-            box-shadow: 0 0 0 5px rgba(107, 227, 255, 0.12);
+            background: var(--gradient-primary);
+            box-shadow: 0 0 0 4px rgba(107, 227, 255, 0.12);
         }
 
-        .hero-card-title,
-        .section-title,
-        .card-title {
-            margin: 12px 0 0;
-            font-family: var(--font-display);
-            font-size: clamp(1.5rem, 2vw, 2.1rem);
-            line-height: 1;
-            letter-spacing: -0.05em;
+        .topbar-title,
+        .hero-title,
+        .page-title {
+            margin: 0;
+            font-size: clamp(2.3rem, 5vw, 4.8rem);
+            line-height: 0.94;
+            letter-spacing: -0.08em;
+            font-weight: 700;
         }
 
+        .topbar-subtitle,
+        .hero-copy,
+        .page-copy,
+        .section-copy,
+        .metric-sub,
+        .helper-copy,
+        .list-meta,
+        .artifact-kind,
+        .small-muted {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .topbar-search {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .topbar-key {
+            margin-left: auto;
+            padding: 3px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--foreground-soft);
+        }
+
+        .topbar-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--foreground-soft);
+        }
+
+        .app-content {
+            width: min(100%, calc(100vw - 264px));
+            padding: 28px;
+        }
+
+        .page-shell,
+        .page-stack,
+        .timeline,
+        .artifact-list,
+        .flash-stack {
+            display: grid;
+            gap: 24px;
+        }
+
+        .hero,
+        .card,
+        .hero-card,
+        .panel,
+        .panel-muted,
+        .summary-panel,
+        .metric-card,
+        .timeline-row,
+        .artifact-row,
+        .viz-panel,
+        .feature-flow,
+        .form-shell,
+        .empty-state,
+        .data-pill {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(11, 24, 37, 0.88), rgba(7, 17, 27, 0.92));
+            box-shadow: var(--shadow);
+        }
+
+        .hero::before,
+        .card::before,
+        .hero-card::before,
+        .panel::before,
+        .summary-panel::before,
+        .metric-card::before,
+        .viz-panel::before,
+        .feature-flow::before,
+        .form-shell::before,
+        .empty-state::before,
+        .data-pill::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at top right, rgba(125, 178, 255, 0.14), transparent 28%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 46%);
+        }
+
+        .hero {
+            padding: clamp(28px, 4vw, 44px);
+            border-radius: var(--radius-xl);
+        }
+
+        .card,
+        .hero-card,
+        .panel,
+        .panel-muted,
+        .summary-panel,
+        .metric-card,
+        .timeline-row,
+        .artifact-row,
+        .viz-panel,
+        .feature-flow,
+        .form-shell,
+        .empty-state,
+        .data-pill {
+            padding: 24px;
+            border-radius: var(--radius-lg);
+        }
+
+        .timeline-row,
+        .artifact-row {
+            display: grid;
+            align-items: center;
+            gap: 12px;
+            grid-template-columns: minmax(0, 1fr) auto;
+            background:
+                linear-gradient(90deg, rgba(107, 227, 255, 0.06), transparent 30%),
+                rgba(255, 255, 255, 0.03);
+        }
+
+        .hero-inner,
+        .hero-split,
+        .viz-grid,
         .stats-grid,
         .metric-grid,
-        .surface-grid,
         .grid,
-        .inline-grid-2,
-        .project-detail-compare-grid,
+        .surface-grid,
         .context-grid,
-        .viz-grid {
+        .project-detail-compare-grid {
             display: grid;
-            gap: 16px;
+            gap: 18px;
+        }
+
+        .hero-inner,
+        .hero-split {
+            grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.96fr);
+            align-items: stretch;
         }
 
         .stats-grid,
@@ -546,314 +559,195 @@
         }
 
         .grid-2,
+        .viz-grid,
         .surface-grid-2,
         .inline-grid-2,
-        .project-detail-compare-grid,
-        .viz-grid {
+        .project-detail-compare-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .metric-card {
-            padding: 18px;
-            align-content: start;
-            display: grid;
-            gap: 10px;
-            border-radius: 28px 28px 20px 28px;
+        .section-title,
+        .hero-card-title,
+        .card-title {
+            margin: 12px 0 0;
+            font-size: clamp(1.45rem, 2vw, 2rem);
+            line-height: 1;
+            letter-spacing: -0.05em;
+            font-weight: 700;
         }
 
         .metric-value,
         .big-stat-value,
-        .overview-mini-value,
-        .context-value {
-            font-family: var(--font-display);
-            font-size: clamp(1.85rem, 3vw, 3.2rem);
-            line-height: 0.9;
+        .context-value,
+        .data-pill-value {
+            font-size: clamp(1.75rem, 3vw, 3.1rem);
+            line-height: 0.95;
             letter-spacing: -0.07em;
-            overflow-wrap: anywhere;
+            font-weight: 700;
         }
 
-        .metric-value-meta,
         .metric-value-text,
         .context-meta {
-            font-family: var(--font-display);
-            font-size: clamp(1.1rem, 1.8vw, 1.6rem);
-            line-height: 1.05;
+            font-size: clamp(1.05rem, 1.8vw, 1.4rem);
+            line-height: 1.1;
             letter-spacing: -0.04em;
-            overflow-wrap: anywhere;
         }
 
-        .hero-actions,
-        .btn-row,
-        .btn-link-row,
-        .hero-meta {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 22px;
+        .data-pill-label,
+        .metric-sub,
+        .artifact-kind {
+            font-size: 0.82rem;
+        }
+
+        .hero-metrics,
+        .surface-grid,
+        .content-grid,
+        .data-list {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         }
 
         .btn,
         button.btn {
             appearance: none;
-            border: none;
+            border: 1px solid transparent;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            min-height: 46px;
-            padding: 0 20px;
+            min-height: 44px;
+            padding: 0 18px;
             border-radius: 999px;
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
+            font-size: 0.92rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 170ms ease, background 170ms ease, box-shadow 170ms ease, border-color 170ms ease;
+            transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
         }
 
-        .btn:hover {
+        .btn:hover,
+        button.btn:hover {
             transform: translateY(-1px);
         }
 
         .btn-primary {
-            color: #031017;
-            background: linear-gradient(135deg, var(--teal), var(--blue));
-            box-shadow: 0 18px 34px rgba(107, 227, 255, 0.24);
+            color: #04101a;
+            background: var(--gradient-primary);
+            box-shadow: 0 0 34px -10px rgba(107, 227, 255, 0.72);
         }
 
         .btn-secondary {
-            color: var(--text-soft);
-            background: rgba(255, 255, 255, 0.045);
-            border: 1px solid var(--line);
+            color: var(--foreground);
+            border-color: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .btn-danger {
-            color: #fff5f5;
+            color: #fff;
+            border-color: rgba(255, 127, 127, 0.22);
             background: rgba(255, 127, 127, 0.14);
-            border: 1px solid rgba(255, 127, 127, 0.2);
         }
 
         .btn-link {
-            color: var(--cyan);
-            font-weight: 700;
-            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
         }
 
         label {
             display: grid;
             gap: 8px;
-            color: var(--text-soft);
-            font-size: 13px;
-            font-weight: 700;
+            color: var(--foreground-soft);
+            font-size: 0.88rem;
+            font-weight: 600;
         }
 
         input,
         select,
         textarea {
             width: 100%;
-            min-height: 48px;
-            padding: 13px 16px;
-            border-radius: 18px;
-            border: 1px solid rgba(136, 214, 255, 0.12);
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--text);
+            min-height: 46px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--foreground);
             outline: none;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
         textarea {
-            resize: vertical;
             min-height: 120px;
+            resize: vertical;
         }
 
         input:focus,
         select:focus,
         textarea:focus {
-            border-color: rgba(107, 227, 255, 0.3);
+            border-color: rgba(107, 227, 255, 0.26);
             box-shadow: 0 0 0 4px rgba(107, 227, 255, 0.08);
+        }
+
+        .flash {
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(107, 227, 255, 0.22);
+            background: rgba(107, 227, 255, 0.12);
+            color: var(--foreground-soft);
         }
 
         .list-title,
         .artifact-name,
         .data-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--text-soft);
-            overflow-wrap: anywhere;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--foreground-soft);
         }
 
-        .divider {
-            height: 1px;
-            margin: 4px 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-        }
-
-        .canvas-frame,
-        .preview-box,
-        .board-stage {
-            min-height: 320px;
-            border-radius: 34px;
-            border: 1px solid var(--line);
-            background:
-                radial-gradient(circle at 20% 18%, rgba(107, 227, 255, 0.18), transparent 18%),
-                linear-gradient(180deg, rgba(8, 20, 31, 0.98), rgba(5, 13, 21, 0.98));
-            position: relative;
-            overflow: hidden;
-        }
-
-        .canvas-frame::before,
-        .board-stage::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 38px 38px;
-            opacity: 0.6;
-        }
-
-        .canvas-center {
-            position: absolute;
-            inset: 18% 12%;
-            border-radius: 28px;
-            border: 1px solid rgba(107, 227, 255, 0.16);
-            transform: perspective(1200px) rotateX(64deg) rotateZ(-15deg);
-            background:
-                radial-gradient(circle at 18% 22%, rgba(125, 178, 255, 0.18), transparent 12%),
-                linear-gradient(180deg, rgba(10, 24, 38, 0.9), rgba(4, 13, 21, 0.96));
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 28px 44px rgba(0, 0, 0, 0.28);
-        }
-
-        .canvas-center::before,
-        .canvas-center::after {
-            content: "";
-            position: absolute;
-            border-radius: 999px;
-            background: linear-gradient(90deg, transparent, rgba(231, 247, 255, 0.84), transparent);
-            box-shadow: 0 0 14px rgba(107, 227, 255, 0.24);
-        }
-
-        .canvas-center::before {
-            top: 35%;
-            left: 14%;
-            width: 54%;
-            height: 3px;
-        }
-
-        .canvas-center::after {
-            top: 18%;
-            left: 48%;
-            width: 3px;
-            height: 54%;
-        }
-
-        .risk-badge,
+        .score-pill,
+        .chip,
+        .mini-chip,
         .severity-badge,
-        .score-pill {
+        .risk-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 32px;
+            gap: 8px;
+            min-height: 30px;
             padding: 0 12px;
             border-radius: 999px;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
             border: 1px solid transparent;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
         }
 
         .chip-low,
         .mini-chip-low,
         .score-pill.healthy {
             color: #d0ffee;
-            background: rgba(96, 240, 198, 0.12);
-            border-color: rgba(96, 240, 198, 0.2);
+            background: rgba(96, 240, 198, 0.14);
+            border-color: rgba(96, 240, 198, 0.18);
         }
 
         .chip-medium,
         .mini-chip-medium {
             color: #ffe4bc;
             background: rgba(255, 187, 114, 0.14);
-            border-color: rgba(255, 187, 114, 0.2);
+            border-color: rgba(255, 187, 114, 0.18);
         }
 
+        .chip-high,
         .chip-critical,
         .mini-chip-critical,
         .score-pill.risk {
-            color: #ffd6d6;
-            background: rgba(255, 127, 127, 0.12);
+            color: #ffd9d9;
+            background: rgba(255, 127, 127, 0.14);
             border-color: rgba(255, 127, 127, 0.18);
         }
 
-        .viz-panel {
-            display: grid;
-            gap: 18px;
-        }
-
-        .viz-header {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-
-        .chart-stat {
-            font-family: var(--font-display);
-            font-size: clamp(1.7rem, 2.4vw, 2.7rem);
-            line-height: 0.92;
-            letter-spacing: -0.07em;
-        }
-
-        .sparkline-shell,
-        .mini-chart-shell {
-            position: relative;
-            min-height: 150px;
-            padding: 16px;
-            border-radius: 28px;
-            border: 1px solid rgba(136, 214, 255, 0.12);
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
-                rgba(255, 255, 255, 0.02);
-        }
-
-        .sparkline-chart,
-        .series-chart {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .sparkline-chart .guide,
-        .series-chart .guide {
-            stroke: rgba(255, 255, 255, 0.08);
-            stroke-width: 1;
-        }
-
-        .sparkline-chart .area {
-            fill: rgba(107, 227, 255, 0.12);
-        }
-
-        .sparkline-chart .path,
-        .series-chart .path {
-            fill: none;
-            stroke: var(--cyan);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .sparkline-chart .dot,
-        .series-chart .dot {
-            fill: var(--teal);
-        }
-
-        .bar-stack,
         .bar-list {
             display: grid;
-            gap: 12px;
+            gap: 14px;
         }
 
         .bar-row {
@@ -863,214 +757,185 @@
 
         .bar-label {
             display: flex;
-            align-items: center;
             justify-content: space-between;
             gap: 12px;
-            color: var(--text-soft);
-            font-size: 12px;
-            font-weight: 700;
+            color: var(--foreground-soft);
+            font-size: 0.88rem;
         }
 
-        .bar-track,
         .bar-meter {
-            height: 12px;
+            height: 10px;
             border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.06);
         }
 
-        .bar-fill,
         .bar-meter-fill {
             height: 100%;
             border-radius: inherit;
-            background: linear-gradient(90deg, rgba(125, 178, 255, 0.36), rgba(96, 240, 198, 0.92));
+            background: var(--gradient-primary);
         }
 
-        .hero-metrics,
-        .data-ribbon,
-        .signal-ribbon {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
+        .sparkline-shell,
+        .canvas-frame,
+        .preview-box,
+        .board-stage {
+            min-height: 220px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background:
+                radial-gradient(circle at 20% 18%, rgba(107, 227, 255, 0.18), transparent 18%),
+                linear-gradient(180deg, rgba(8, 20, 31, 0.98), rgba(5, 13, 21, 0.98));
+            overflow: hidden;
+            position: relative;
         }
 
-        .data-pill {
-            padding: 16px 18px;
-            border-radius: 26px;
-            border: 1px solid rgba(136, 214, 255, 0.12);
-            background: rgba(255, 255, 255, 0.035);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        .sparkline-shell::before,
+        .canvas-frame::before,
+        .board-stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.45;
         }
 
-        .data-pill-label {
-            color: var(--muted);
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-        }
-
-        .data-pill-value {
-            margin-top: 10px;
-            font-family: var(--font-display);
-            font-size: clamp(1.45rem, 2vw, 2.3rem);
-            line-height: 0.94;
-            letter-spacing: -0.06em;
-        }
-
-        .data-pill-copy {
-            margin-top: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        .footer {
-            margin-top: 26px;
-            padding: 20px 2px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            flex-wrap: wrap;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .marketing-nav {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .marketing-link {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .marketing-footer {
+        .sparkline-chart,
+        .series-chart {
             width: 100%;
-            display: grid;
-            grid-template-columns: minmax(240px, 1.35fr) repeat(3, minmax(140px, 1fr));
-            gap: 26px;
-            padding: 18px 0 4px;
+            height: 100%;
+            position: relative;
+            z-index: 1;
         }
 
-        .marketing-footer-brand {
-            display: grid;
-            gap: 14px;
-            align-content: start;
+        .sparkline-chart .path,
+        .series-chart .path {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .marketing-footer-logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
+        .sparkline-chart .area {
+            fill: rgba(107, 227, 255, 0.18);
         }
 
-        .marketing-footer-copy {
+        .series-chart .guide {
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 0.5;
+        }
+
+        .series-chart .dot {
+            fill: var(--primary);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 0;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        th {
             color: var(--muted);
-            font-size: 13px;
-            line-height: 1.7;
-            max-width: 24ch;
-        }
-
-        .marketing-footer-socials {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .marketing-footer-social {
-            width: 34px;
-            height: 34px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--text-soft);
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .marketing-footer-group {
-            display: grid;
-            gap: 12px;
-            align-content: start;
-        }
-
-        .marketing-footer-title {
-            color: var(--muted-strong);
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.14em;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
             text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-weight: 500;
         }
 
-        .marketing-footer-list {
-            display: grid;
-            gap: 10px;
+        td {
+            color: var(--foreground-soft);
+            font-size: 0.92rem;
         }
 
-        .marketing-footer-item {
-            color: var(--text-soft);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 1180px) {
-            .site-header-inner,
+        @media (max-width: 1100px) {
             .hero-inner,
             .hero-split,
+            .viz-grid,
             .grid-2,
             .surface-grid-2,
-            .inline-grid-2,
-            .project-detail-compare-grid,
-            .viz-grid {
+            .project-detail-compare-grid {
                 grid-template-columns: 1fr;
             }
 
-            .site-header-inner {
-                border-radius: 30px;
+            .app-sidebar {
+                display: none;
             }
 
-            .nav-strip,
-            .header-actions {
-                justify-content: flex-start;
+            .app-content {
+                width: 100%;
+                padding: 20px;
             }
 
-            .marketing-footer {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .app-topbar {
+                padding: 16px 20px;
+            }
+
+            .topbar-search {
+                display: none;
             }
         }
 
-        @media (max-width: 760px) {
-            .app-shell {
-                width: min(100vw - 18px, 100%);
-                padding-top: 12px;
+        @media (max-width: 840px) {
+            .marketing-shell {
+                width: min(100vw - 20px, 100%);
+                padding-top: 10px;
             }
 
+            .marketing-header-inner {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .marketing-nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
             .hero,
             .card,
+            .hero-card,
             .panel,
+            .summary-panel,
+            .metric-card,
+            .timeline-row,
+            .artifact-row,
+            .viz-panel,
             .feature-flow,
             .form-shell,
-            .viz-panel {
-                padding: 20px;
-                border-radius: 28px;
+            .empty-state,
+            .data-pill {
+                padding: 18px;
             }
 
+            .topbar-title,
             .hero-title,
             .page-title {
-                font-size: clamp(2.2rem, 12vw, 3.8rem);
+                font-size: clamp(2rem, 11vw, 3rem);
             }
 
             .stats-grid,
             .metric-grid,
-            .hero-metrics,
-            .data-ribbon,
-            .signal-ribbon {
+            .hero-metrics {
                 grid-template-columns: 1fr;
             }
 
@@ -1078,153 +943,138 @@
             .artifact-row {
                 grid-template-columns: 1fr;
             }
-
-            .nav-pills {
-                width: 100%;
-            }
-
-            .marketing-footer {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="{{ 'marketing-shell' if active_page in ['home', 'login'] else 'product-shell' }} page-{{ active_page|default('app')|replace('_', '-') }}">
-    <div class="ambient-grid" aria-hidden="true"></div>
-    <div class="app-shell">
-        <header class="site-header">
-            <div class="site-header-inner">
-                <a href="{{ url_for('index') }}" class="brand" aria-label="Silicore home">
+{% set is_marketing = active_page == "home" or active_page == "login" %}
+<body class="{% block body_class %}{% endblock %}">
+    <div class="ambient-grid"></div>
+
+    {% if is_marketing %}
+    <div class="marketing-shell">
+        <header class="marketing-header">
+            <div class="marketing-header-inner">
+                <a class="brand" href="{{ url_for('index') }}">
                     <span class="brand-mark">
-                        <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore logo">
+                        <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore">
                     </span>
-                    <span>
-                        <div class="brand-title">Silicore</div>
-                        <div class="brand-subtitle">Engineering Intelligence</div>
+                    <span class="brand-text">
+                        <span class="brand-title">Silicore</span>
+                        <span class="brand-subtitle">Hardware Design Intelligence</span>
                     </span>
                 </a>
 
-                {% if active_page == "home" %}
-                <nav class="nav-strip" aria-label="Marketing">
-                    <div class="nav-pills">
-                        <a href="#company" class="nav-pill active"><span>Silicore</span></a>
-                        <a href="#platform" class="nav-pill"><span>Nexus</span></a>
-                        <a href="#intelligence" class="nav-pill"><span>Atlas</span></a>
-                        <a href="#experience" class="nav-pill"><span>Experience</span></a>
-                    </div>
+                <nav class="marketing-nav" aria-label="Primary">
+                    <a class="{% if active_page == 'home' %}active{% endif %}" href="{{ url_for('index') }}">Overview</a>
+                    <a href="{{ url_for('single_board_page') }}">Board Analysis</a>
+                    <a href="{{ url_for('projects_page') }}">Projects</a>
+                    <a href="{{ url_for('history_page') }}">History</a>
                 </nav>
 
-                <div class="header-actions">
-                    <a href="{{ url_for('login_page') }}" class="btn btn-secondary">Sign In</a>
-                    <a href="{{ url_for('single_board_page') }}" class="btn btn-primary">Open Nexus</a>
+                <div class="marketing-actions">
+                    <a class="btn btn-secondary" href="{{ url_for('login_page') }}">Sign In</a>
+                    <a class="btn btn-primary" href="{{ url_for('single_board_page') }}">Open Nexus</a>
                 </div>
-                {% else %}
-                <nav class="nav-strip" aria-label="Primary">
-                    <div class="nav-pills">
-                        {% for item in nav_items %}
-                        <a href="{{ item.href }}" class="nav-pill{% if item.active %} active{% endif %}">
-                            <span class="nav-pill-icon">{{ item.icon }}</span>
-                            <span>{{ item.label }}</span>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </nav>
-
-                <div class="header-actions">
-                    <div class="status-pill">
-                        <span class="status-dot"></span>
-                        <span class="status-copy">
-                            <span class="status-label">Atlas Intelligence</span>
-                            <span class="status-value">Operational</span>
-                        </span>
-                    </div>
-                    {% if current_user %}
-                        <div class="status-pill">
-                            <span class="status-copy">
-                                <span class="status-label">Workspace</span>
-                                <span class="status-value">{{ current_user.name or current_user.email or "Workspace User" }}</span>
-                            </span>
-                        </div>
-                        <form method="post" action="{{ url_for('logout_route') }}">
-                            <button class="btn btn-secondary" type="submit">Sign Out</button>
-                        </form>
-                    {% else %}
-                        <a href="{{ url_for('login_page') }}" class="btn btn-primary">Sign In</a>
-                    {% endif %}
-                </div>
-                {% endif %}
             </div>
         </header>
 
-        <main class="main-stage">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="flash-stack">
-                    {% for message in messages %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            {% endwith %}
-
-            <div class="content-flow">
-                {% block content %}{% endblock %}
-            </div>
-        </main>
-
-        <footer class="footer">
-            {% if active_page == "home" %}
-            <div class="marketing-footer">
-                <div class="marketing-footer-brand">
-                    <div class="marketing-footer-logo">
-                        <span class="brand-mark">
-                            <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore logo">
-                        </span>
-                        <span>
-                            <div class="brand-title">Silicore</div>
-                            <div class="brand-subtitle">Engineering Intelligence</div>
-                        </span>
-                    </div>
-                    <div class="marketing-footer-copy">Deep engineering intelligence for PCB design and hardware teams.</div>
-                    <div class="marketing-footer-socials">
-                        <a class="marketing-footer-social" href="{{ url_for('index') }}#company" aria-label="LinkedIn">in</a>
-                        <a class="marketing-footer-social" href="{{ url_for('index') }}#platform" aria-label="X">X</a>
-                    </div>
-                </div>
-                <div class="marketing-footer-group">
-                    <div class="marketing-footer-title">Platform</div>
-                    <div class="marketing-footer-list">
-                        <a class="marketing-footer-item" href="{{ url_for('index') }}#platform">Overview</a>
-                        <a class="marketing-footer-item" href="{{ url_for('index') }}#intelligence">Features</a>
-                        <a class="marketing-footer-item" href="{{ url_for('index') }}#experience">Lifecycle</a>
-                    </div>
-                </div>
-                <div class="marketing-footer-group">
-                    <div class="marketing-footer-title">Resources</div>
-                    <div class="marketing-footer-list">
-                        <a class="marketing-footer-item" href="{{ url_for('index') }}#intelligence">Blog</a>
-                        <a class="marketing-footer-item" href="{{ url_for('index') }}#demo">Webinars</a>
-                    </div>
-                </div>
-                <div class="marketing-footer-group">
-                    <div class="marketing-footer-title">Company</div>
-                    <div class="marketing-footer-list">
-                        <a class="marketing-footer-item" href="{{ url_for('index') }}#company">About Us</a>
-                        <a class="marketing-footer-item" href="mailto:hello@silicore.ai">Contact Us</a>
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <div>Silicore Nexus turns PCB analysis, revision intelligence, and release coordination into one engineering operating system.</div>
-            <div class="marketing-nav">
-                <a class="marketing-link" href="{{ url_for('index') }}#product">Product</a>
-                <a class="marketing-link" href="{{ url_for('index') }}#workflows">Workflows</a>
-                <a class="marketing-link" href="{{ url_for('index') }}#deployment">Deployment</a>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="flash-stack">
+                {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
             </div>
             {% endif %}
-        </footer>
+        {% endwith %}
+    {% else %}
+    {% set user = g.current_user if g.current_user is defined else None %}
+    <div class="app-frame">
+        <aside class="app-sidebar">
+            <div class="sidebar-head">
+                <a class="brand" href="{{ url_for('index') }}">
+                    <span class="brand-mark">
+                        <img src="{{ url_for('static', filename='silicore-logo.png') }}" alt="Silicore">
+                    </span>
+                    <span class="brand-text">
+                        <span class="brand-title">Silicore</span>
+                        <span class="brand-subtitle">Nexus Workspace</span>
+                    </span>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Workspace">
+                {% for item in nav_items %}
+                <a class="sidebar-link {% if item.active %}active{% endif %}" href="{{ item.href }}">
+                    <span class="sidebar-link-icon">{{ item.icon }}</span>
+                    <span class="sidebar-link-copy">
+                        <span class="sidebar-link-title">{{ item.label }}</span>
+                        <span class="sidebar-link-subtitle">{{ item.subtitle }}</span>
+                    </span>
+                </a>
+                {% endfor %}
+            </nav>
+
+            <div class="sidebar-user">
+                <div class="user-chip">
+                    <div class="user-avatar">
+                        {% if user and user.name %}
+                            {{ user.name[:1]|upper }}
+                        {% else %}
+                            SI
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="sidebar-link-title">
+                            {% if user and user.name %}{{ user.name }}{% else %}Silicore User{% endif %}
+                        </div>
+                        <div class="sidebar-link-subtitle">
+                            {% if user and user.email %}{{ user.email }}{% else %}Atlas-enabled workspace{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-copy">
+                    <div class="topbar-eyebrow">{{ page_eyebrow or "Silicore Workspace" }}</div>
+                    <div class="sidebar-link-title">{{ page_title or "Silicore" }}</div>
+                    {% if page_copy %}
+                    <div class="topbar-subtitle">{{ page_copy }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="topbar-search">
+                    <span>Search boards, runs, and workspaces</span>
+                    <span class="topbar-key">⌘K</span>
+                </div>
+
+                <a class="topbar-icon" href="{{ url_for('settings_page') }}" aria-label="Settings">⚙</a>
+            </header>
+
+            <main class="app-content">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="flash-stack">
+                        {% for message in messages %}
+                        <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% if is_marketing %}
     </div>
-    {% block extra_scripts %}{% endblock %}
+    {% else %}
+            </main>
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>
