@@ -1,113 +1,88 @@
 {% extends "base.html" %}
+
 {% block content %}
 {% set ops = operations_snapshot if operations_snapshot is defined else {} %}
 {% set worker = ops.worker if ops.worker is defined else {} %}
 {% set summary = ops.summary if ops.summary is defined else {} %}
-{% set latest_external = ops.external_evaluations[0] if ops.external_evaluations is defined and ops.external_evaluations else None %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Nexus operations</div>
-            <h1 class="hero-title">Run the runtime, validation lanes, and governance surfaces from one control plane.</h1>
-            <p class="hero-copy">
-                Manage the worker loop, job queue, evaluation health, external validation uploads, integration registry, and audit stream from the same operational surface.
-            </p>
-        </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Nexus Runtime</div>
-            <div class="metric-grid" style="margin-top:18px;">
-                <div class="metric-card"><div class="metric-label">Worker</div><div class="metric-value-text">{{ "Online" if worker.running else "Idle" }}</div></div>
-                <div class="metric-card"><div class="metric-label">Queued jobs</div><div class="metric-value">{{ summary.queued_jobs or 0 }}</div></div>
-                <div class="metric-card"><div class="metric-label">Completed</div><div class="metric-value">{{ summary.completed_jobs or 0 }}</div></div>
-                <div class="metric-card"><div class="metric-label">Failed</div><div class="metric-value">{{ summary.failed_jobs or 0 }}</div></div>
-            </div>
-        </aside>
-    </div>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Runtime controls</div>
-        <h2 class="section-title">Worker and queue</h2>
-        <p class="section-copy">Start, stop, and process the queue from the operations surface.</p>
-        <div class="btn-row">
-            <button type="button" class="btn btn-primary" data-ops-action="worker-start">Start Worker</button>
-            <button type="button" class="btn btn-secondary" data-ops-action="worker-stop">Stop Worker</button>
-            <button type="button" class="btn btn-secondary" data-ops-action="jobs-process">Process Queue</button>
-            <button type="button" class="btn btn-secondary" data-ops-action="refresh">Refresh</button>
-        </div>
-        <div class="summary-panel" style="margin-top:18px;" data-ops-status-panel>
-            <strong>Runtime Status</strong>
-            <p class="section-copy">{{ summary.worker_label or "Worker state is not available." }}</p>
-        </div>
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Calibration History</div>
-        <h2 class="section-title">Evaluation health</h2>
-        {% if evaluation_summary %}
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Fixtures</div><div class="metric-value">{{ evaluation_summary.fixture_count }}</div></div>
-            <div class="metric-card"><div class="metric-label">Average score</div><div class="metric-value">{{ evaluation_summary.average_score|round|int }}</div></div>
-            <div class="metric-card"><div class="metric-label">Formats</div><div class="metric-value">{{ evaluation_summary.formats|length }}</div></div>
-            <div class="metric-card"><div class="metric-label">CAM ready</div><div class="metric-value">{{ evaluation_summary.cam_health.review_ready_bundles if evaluation_summary.cam_health else 0 }}</div></div>
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">Calibration History is available to lead/admin sessions.</div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">External Validation Lane</div>
-        <h2 class="section-title">Run outside packages through parser trust.</h2>
-        <form method="post" action="{{ url_for('nexus_ops_external_validation_route') }}" enctype="multipart/form-data" class="page-stack" style="margin-top:18px;">
-            <label>Validation Label<input type="text" name="label" placeholder="Vendor CAM Drop · Rev A"></label>
-            <label>External Package<input type="file" name="validation_files" multiple required></label>
-            <button class="btn btn-primary" type="submit">Run External Validation</button>
-        </form>
-        {% if latest_external %}
-        <div class="summary-panel" style="margin-top:18px;">
-            <strong>External Validation History</strong>
-            <p class="section-copy">{{ latest_external.created_at }} · {{ latest_external.summary.label if latest_external.summary is defined and latest_external.summary.label is defined else "External validation" }}</p>
-        </div>
-        {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Integration Registry</div>
-        <h2 class="section-title">External workflow readiness</h2>
-        {% if ops.integrations %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for item in ops.integrations %}
-            <div class="timeline-row"><div><div class="list-title">{{ item.name }}</div><div class="list-meta">{{ item.provider }} · {{ item.status }}</div></div></div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">Integration Registry is empty right now.</div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Audit stream</div>
-    <h2 class="section-title">Recent governance activity</h2>
-    {% if ops.audit_events %}
-    <div class="timeline" style="margin-top:18px;">
-        {% for item in ops.audit_events %}
-        <div class="timeline-row">
+<div class="page-shell">
+    <section class="hero">
+        <div class="hero-inner">
             <div>
-                <div class="list-title">{{ item.event_type|replace('_', ' ')|title }}</div>
-                <div class="list-meta">{{ item.created_at }}</div>
+                <div class="eyebrow">Nexus Ops</div>
+                <h1 class="hero-title">Operations and external validation.</h1>
+                <p class="hero-copy">This page now follows the zip’s ops-and-integrations layout while preserving Silicore’s runtime controls, external validation upload flow, and evaluation backend.</p>
             </div>
+            <aside class="hero-card">
+                <div class="hero-card-label">Runtime summary</div>
+                <div class="metric-grid" style="margin-top: 18px;">
+                    <div class="metric-card"><div class="metric-label">Worker</div><div class="metric-value-text">{{ "Online" if worker.running else "Idle" }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Queued</div><div class="metric-value">{{ summary.queued_jobs or 0 }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Completed</div><div class="metric-value">{{ summary.completed_jobs or 0 }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Failed</div><div class="metric-value">{{ summary.failed_jobs or 0 }}</div></div>
+                </div>
+            </aside>
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state" style="margin-top:18px;">No audit entries are available in this session.</div>
-    {% endif %}
-</section>
+    </section>
+
+    <section class="viz-grid">
+        <article class="feature-flow">
+            <div class="section-kicker">Integrations</div>
+            <h2 class="section-title">Registry and connection status</h2>
+            {% if ops.integrations %}
+            <div class="timeline">
+                {% for item in ops.integrations %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="list-title">{{ item.name }}</div>
+                        <div class="list-meta">{{ item.provider }} · {{ item.status }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No integrations have been configured yet.</div>
+            {% endif %}
+        </article>
+
+        <article class="feature-flow">
+            <div class="section-kicker">External validation</div>
+            <h2 class="section-title">Send a board package out</h2>
+            <form method="post" action="{{ url_for('nexus_ops_external_validation_route') }}" enctype="multipart/form-data" class="page-stack">
+                <label>Validation label<input type="text" name="label" placeholder="Vendor CAM Drop · Rev A"></label>
+                <label>Package files<input type="file" name="validation_files" multiple required></label>
+                <button class="btn btn-primary" type="submit">Submit Run</button>
+            </form>
+        </article>
+    </section>
+
+    <section class="viz-grid">
+        <article class="viz-panel">
+            <div class="section-kicker">Queue controls</div>
+            <h2 class="section-title">Worker and job actions</h2>
+            <div class="btn-row">
+                <button type="button" class="btn btn-primary" data-ops-action="worker-start">Start Worker</button>
+                <button type="button" class="btn btn-secondary" data-ops-action="worker-stop">Stop Worker</button>
+                <button type="button" class="btn btn-secondary" data-ops-action="jobs-process">Process Queue</button>
+                <button type="button" class="btn btn-secondary" data-ops-action="refresh">Refresh</button>
+            </div>
+            <div class="summary-panel" style="margin-top: 18px;" data-ops-status-panel>
+                <strong>Runtime status</strong>
+                <p class="section-copy">{{ summary.worker_label or "Worker state is not available." }}</p>
+            </div>
+        </article>
+
+        <article class="viz-panel">
+            <div class="section-kicker">Governance</div>
+            <h2 class="section-title">Audit and evaluation health</h2>
+            <div class="stats-grid">
+                <div class="metric-card"><div class="metric-label">Audits</div><div class="metric-value">{{ ops.audit_events|length if ops.audit_events else 0 }}</div></div>
+                <div class="metric-card"><div class="metric-label">Fixture evals</div><div class="metric-value">{{ ops.fixture_evaluations|length if ops.fixture_evaluations else 0 }}</div></div>
+                <div class="metric-card"><div class="metric-label">External evals</div><div class="metric-value">{{ ops.external_evaluations|length if ops.external_evaluations else 0 }}</div></div>
+                <div class="metric-card"><div class="metric-label">Reviews</div><div class="metric-value">{{ ops.reviews|length if ops.reviews else 0 }}</div></div>
+            </div>
+        </article>
+    </section>
+</div>
 
 <script>
 (() => {

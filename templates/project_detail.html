@@ -1,365 +1,125 @@
 {% extends "base.html" %}
+
 {% block content %}
 {% set latest_compare_ids = workspace_chart.latest_compare_run_ids if workspace_chart is defined else [] %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Nexus workspace</div>
-            <h1 class="hero-title">{{ project.name }}</h1>
-            <p class="hero-copy">
-                {{ project.description if project.description else "Track workspace health, recurring engineering pressure, release posture, and Atlas-guided execution from one continuous review surface." }}
-            </p>
-            <div class="hero-actions">
-                <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">Back to Projects</a>
-                {% if latest_compare_ids and latest_compare_ids|length == 2 %}
-                <a class="btn btn-primary" href="{{ url_for('compare_runs', project_id=project.project_id, run_a=latest_compare_ids[0], run_b=latest_compare_ids[1]) }}">Open Compare</a>
-                {% endif %}
-            </div>
-        </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Workspace telemetry</div>
-            <div class="metric-grid" style="margin-top:18px;">
-                <div class="metric-card"><div class="metric-label">Linked runs</div><div class="metric-value">{{ project.runs|length }}</div></div>
-                <div class="metric-card"><div class="metric-label">Latest score</div><div class="metric-value">{% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}</div></div>
-                <div class="metric-card"><div class="metric-label">Health</div><div class="metric-value-text">{{ workspace_intelligence.health_score|round|int if workspace_intelligence else "N/A" }}</div></div>
-                <div class="metric-card"><div class="metric-label">Confidence</div><div class="metric-value">{{ workspace_intelligence.average_confidence|round|int if workspace_intelligence else "N/A" }}</div></div>
-            </div>
-        </aside>
-    </div>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Nexus Workspace Overview</div>
-    <h2 class="section-title">Project command context</h2>
-    <p class="section-copy">{{ project.description if project.description else "No description yet for this project." }}</p>
-    <div class="stats-grid" style="margin-top:18px;">
-        <div class="metric-card"><div class="metric-label">Project ID</div><div class="metric-value-text">{{ project.project_id }}</div><div class="metric-sub">Nexus workspace identifier</div></div>
-        <div class="metric-card"><div class="metric-label">Linked Runs</div><div class="metric-value">{{ project.runs|length }}</div><div class="metric-sub">Attached analyses</div></div>
-        <div class="metric-card"><div class="metric-label">Latest Score</div><div class="metric-value">{% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}</div><div class="metric-sub">{{ project.health_label if project.health_label else "Healthy" }}</div></div>
-        <div class="metric-card"><div class="metric-label">Created</div><div class="metric-value-meta">{{ project.created_at }}</div><div class="metric-sub">Project creation time</div></div>
-        <div class="metric-card"><div class="metric-label">Updated</div><div class="metric-value-meta">{{ project.updated_at }}</div><div class="metric-sub">Latest change time</div></div>
-        <div class="metric-card"><div class="metric-label">Project Health</div><div class="metric-value">{{ workspace_intelligence.health_score|round|int if workspace_intelligence else "N/A" }}</div><div class="metric-sub">Confidence + recurrence adjusted</div></div>
-    </div>
-</section>
-
-<section class="viz-grid">
-    <article class="viz-panel">
-        <div class="viz-header">
+<div class="page-shell">
+    <section class="hero">
+        <div class="hero-inner">
             <div>
-                <div class="section-kicker">Workspace score</div>
-                <h2 class="section-title">Run-to-run momentum</h2>
+                <div class="eyebrow">Project detail</div>
+                <h1 class="hero-title">{{ project.name }}</h1>
+                <p class="hero-copy">{{ project.description if project.description else "Industrial project workspace with linked runs, reviewers, gates, notes, and compare-ready history." }}</p>
+                <div class="hero-actions">
+                    <a class="btn btn-secondary" href="{{ url_for('projects_page') }}">All Projects</a>
+                    {% if latest_compare_ids and latest_compare_ids|length == 2 %}
+                    <a class="btn btn-primary" href="{{ url_for('compare_runs', project_id=project.project_id, run_a=latest_compare_ids[0], run_b=latest_compare_ids[1]) }}">Open Compare</a>
+                    {% endif %}
+                </div>
             </div>
-            <div class="chart-stat">{{ workspace_chart.score_trend.last_value|round|int if workspace_chart and workspace_chart.score_trend else 0 }}</div>
+            <aside class="hero-card">
+                <div class="hero-card-label">Workspace telemetry</div>
+                <div class="metric-grid" style="margin-top: 18px;">
+                    <div class="metric-card"><div class="metric-label">Boards / runs</div><div class="metric-value">{{ project.runs|length }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Latest score</div><div class="metric-value">{% if project.latest_score is not none %}{{ project.latest_score|round|int }}{% else %}N/A{% endif %}</div></div>
+                    <div class="metric-card"><div class="metric-label">Health</div><div class="metric-value">{{ workspace_intelligence.health_score|round|int if workspace_intelligence else 0 }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Confidence</div><div class="metric-value">{{ workspace_intelligence.average_confidence|round|int if workspace_intelligence else 0 }}</div></div>
+                </div>
+            </aside>
         </div>
-        <div class="sparkline-shell">
-            {% if workspace_chart and workspace_chart.score_trend and workspace_chart.score_trend.has_data %}
-            <svg class="series-chart" viewBox="0 0 {{ workspace_chart.score_trend.width }} {{ workspace_chart.score_trend.height }}" role="img" aria-label="Workspace score trend">
-                {% for guide in workspace_chart.score_trend.guides %}
-                <line class="guide" x1="0" y1="{{ guide }}" x2="{{ workspace_chart.score_trend.width }}" y2="{{ guide }}"></line>
-                {% endfor %}
-                <polyline class="path" points="{% for point in workspace_chart.score_trend.points %}{{ point.x }},{{ point.y }} {% endfor %}"></polyline>
-                {% for point in workspace_chart.score_trend.points %}
-                <circle class="dot" cx="{{ point.x }}" cy="{{ point.y }}" r="1.8"></circle>
-                {% endfor %}
-            </svg>
-            {% else %}
-            <div class="empty-state" style="margin:0;">Link runs into this workspace to unlock score trend telemetry.</div>
-            {% endif %}
-        </div>
-    </article>
+    </section>
 
-    <article class="viz-panel">
-        <div class="viz-header">
-            <div>
-                <div class="section-kicker">Quality mix</div>
-                <h2 class="section-title">Workspace health distribution</h2>
-            </div>
-        </div>
-        <div class="bar-list">
-            {% if workspace_chart and workspace_chart.quality_mix and workspace_chart.quality_mix["items"] %}
-                {% for item in workspace_chart.quality_mix["items"] %}
-                <div class="bar-row">
-                    <div class="bar-label">
-                        <span>{{ item.label }}</span>
-                        <span>{{ item.value }}</span>
+    <section class="viz-grid">
+        <article class="feature-flow">
+            <div class="section-kicker">Boards</div>
+            <h2 class="section-title">Boards in this workspace</h2>
+            {% if project.runs %}
+            <div class="timeline">
+                {% for run in project.runs|reverse %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="list-title">{{ run.name }}</div>
+                        <div class="list-meta">
+                            {% if run.score is not none %}
+                            Score {{ run.score|round|int if run.score > 10 else (run.score * 10)|round|int }}
+                            {% else %}
+                            No score
+                            {% endif %}
+                            · {{ run.risk_count if run.risk_count is defined else 0 }} findings
+                        </div>
                     </div>
-                    <div class="bar-meter">
-                        <div class="bar-meter-fill" style="width: {{ item.width_pct }}%;"></div>
+                    <span class="score-pill {% if run.score and run.score >= 7 %}healthy{% else %}risk{% endif %}">
+                        {{ run.review_status|default("tracked")|replace('_', ' ')|title }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No linked runs exist for this workspace yet.</div>
+            {% endif %}
+        </article>
+
+        <article class="feature-flow">
+            <div class="section-kicker">Members</div>
+            <h2 class="section-title">Project access</h2>
+            <div class="stats-grid">
+                <div class="metric-card"><div class="metric-label">Owner</div><div class="metric-value-text">{{ project.owner_name if project.owner_name else "Workspace lead" }}</div><div class="metric-sub">{{ project.owner_email if project.owner_email else "No owner email recorded" }}</div></div>
+                <div class="metric-card"><div class="metric-label">Team size</div><div class="metric-value">{{ project.team_size if project.team_size is defined else 0 }}</div><div class="metric-sub">Users with access to this workspace.</div></div>
+            </div>
+            <form method="post" action="{{ url_for('project_members_route', project_id=project.project_id) }}" class="page-stack" style="margin-top: 18px;">
+                <label>Email<input type="email" name="email" placeholder="engineer@example.com" required></label>
+                <button class="btn btn-secondary" type="submit">Invite Member</button>
+            </form>
+        </article>
+    </section>
+
+    <section class="viz-grid">
+        <article class="viz-panel">
+            <div class="section-kicker">Release gates</div>
+            <h2 class="section-title">Approval checkpoints</h2>
+            {% if project.release_gates %}
+            <div class="timeline">
+                {% for gate in project.release_gates[:8] %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="list-title">{{ gate.title }}</div>
+                        <div class="list-meta">{{ gate.status|replace('_', ' ')|title }} · {{ gate.approval_count }}/{{ gate.required_approvals }} approvals</div>
+                    </div>
+                    <form method="post" action="{{ url_for('project_release_gate_approval_route', project_id=project.project_id, gate_id=gate.gate_id) }}">
+                        <input type="hidden" name="summary" value="Recorded from the project detail surface.">
+                        <button class="btn btn-secondary" type="submit">Approve</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No release gates exist for this workspace yet.</div>
+            {% endif %}
+        </article>
+
+        <article class="viz-panel">
+            <div class="section-kicker">Notes & activity</div>
+            <h2 class="section-title">Team review feed</h2>
+            {% if project_review_feed %}
+            <div class="timeline">
+                {% for item in project_review_feed[:8] %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="list-title">{{ item.run_name }}</div>
+                        <div class="list-meta">{{ item.status_label }} · {{ item.summary }}</div>
                     </div>
                 </div>
                 {% endfor %}
+            </div>
             {% else %}
-            <div class="empty-state" style="margin:0;">Workspace quality mix appears after scored runs are linked.</div>
+            <div class="empty-state">No review activity has been recorded yet.</div>
             {% endif %}
-        </div>
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Confidence Timeline</div>
-        <h2 class="section-title">Workspace momentum</h2>
-        <div class="summary-panel" style="margin-top:18px;">
-            <p class="section-copy">{{ workspace_intelligence.trend_summary if workspace_intelligence else "No trend summary yet." }}</p>
-        </div>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Average confidence</div><div class="metric-value">{{ workspace_intelligence.average_confidence|round|int if workspace_intelligence else 0 }}</div></div>
-            <div class="metric-card"><div class="metric-label">Confidence delta</div><div class="metric-value">{{ timeline_data.confidence_delta|default(0) if timeline_data else 0 }}</div></div>
-            <div class="metric-card"><div class="metric-label">Score delta</div><div class="metric-value">{{ timeline_data.score_delta|default(0) if timeline_data else 0 }}</div></div>
-        </div>
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Recurring Failure Pattern</div>
-        <h2 class="section-title">Repeated engineering pressure</h2>
-        <div class="summary-panel" style="margin-top:18px;">
-            <p class="section-copy">{{ workspace_intelligence.recurring_family_summary if workspace_intelligence else "No recurring family summary yet." }}</p>
-        </div>
-        {% if workspace_intelligence and workspace_intelligence.attention_areas %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for item in workspace_intelligence.attention_areas %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ item.category }}</div>
-                    <div class="list-meta">{{ item.reason }}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Nexus Access</div>
-        <h2 class="section-title">Project ownership and team visibility</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Owner</div><div class="metric-value-text">{{ project.owner_name if project.owner_name else "Workspace Lead" }}</div><div class="metric-sub">{{ project.owner_email if project.owner_email else "No owner assigned" }}</div></div>
-            <div class="metric-card"><div class="metric-label">Team size</div><div class="metric-value">{{ project.team_size if project.team_size is defined else (project.team_members|length) }}</div><div class="metric-sub">Users with project access</div></div>
-            <div class="metric-card"><div class="metric-label">Notes</div><div class="metric-value">{{ project.note_count if project.note_count is defined else (project.collaboration_notes|length) }}</div><div class="metric-sub">Review comments captured</div></div>
-        </div>
-        <form method="post" action="{{ url_for('project_members_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
-            <label>Email<input type="email" name="email" placeholder="engineer@example.com" required></label>
-            <label>Name<input type="text" name="name" placeholder="Team member name"></label>
-            <label>Role<select name="role"><option value="viewer">Viewer</option><option value="lead">Lead</option><option value="admin">Admin</option></select></label>
-            <button class="btn btn-secondary" type="submit">Add Member</button>
-        </form>
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Value Metrics</div>
-        <h2 class="section-title">Business-facing change signals</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Project trend</div><div class="metric-value-text">{{ "Improving" if (timeline_data.score_delta|default(0)) >= 0 else "Weakening" }}</div><div class="metric-sub">Current improvement posture</div></div>
-            <div class="metric-card"><div class="metric-label">Score delta</div><div class="metric-value">{{ timeline_data.score_delta|default(0) if timeline_data else 0 }}</div><div class="metric-sub">Change across linked runs</div></div>
-            <div class="metric-card"><div class="metric-label">Risk delta</div><div class="metric-value">{{ timeline_data.risk_delta|default(0) if timeline_data else 0 }}</div><div class="metric-sub">Finding count movement</div></div>
-        </div>
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Assignments & Mentions</div>
-        <h2 class="section-title">Coordinate review work</h2>
-        <form method="post" action="{{ url_for('project_assignments_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
-            <label>Title<input type="text" name="title" required></label>
-            <label>Body<textarea name="body" rows="4" required></textarea></label>
-            <label>Priority<select name="priority"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
-            <button class="btn btn-secondary" type="submit">Create Assignment</button>
-        </form>
-        {% if project.assignments %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for item in project.assignments[:10] %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ item.title }}</div>
-                    <div class="list-meta">{{ item.priority|upper }} · {{ item.status|replace('_', ' ')|title }}{% if item.assignee_name %} · {{ item.assignee_name }}{% endif %}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">No workspace assignments have been created yet.</div>
-        {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Release Gates</div>
-        <h2 class="section-title">Formal approval checkpoints</h2>
-        <form method="post" action="{{ url_for('project_release_gate_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
-            <label>Title<input type="text" name="title" required></label>
-            <label>Run<select name="run_id">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
-            <label>Required Approvals<input type="number" name="required_approvals" min="1" value="1" required></label>
-            <button class="btn btn-secondary" type="submit">Create Release Gate</button>
-        </form>
-        {% if project.release_gates %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for gate in project.release_gates[:10] %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ gate.title }}</div>
-                    <div class="list-meta">{{ gate.status|replace('_', ' ')|title }} · {{ gate.approval_count }}/{{ gate.required_approvals }} approvals</div>
-                </div>
-                <form method="post" action="{{ url_for('project_release_gate_approval_route', project_id=project.project_id, gate_id=gate.gate_id) }}">
-                    <input type="hidden" name="summary" value="Recorded from the Nexus workspace release gate panel.">
-                    <button class="btn btn-secondary" type="submit">Approve</button>
-                </form>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">No release gates have been created for this workspace yet.</div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Nexus Review Architecture</div>
-        <h2 class="section-title">How this workspace is modeled</h2>
-        <div class="summary-panel" style="margin-top:18px;">
-            <p class="section-copy">The project workspace now surfaces domain depth, traceability posture, signal intelligence, and compare readiness as separate review layers.</p>
-        </div>
-        {% if workspace_review_layers and workspace_review_layers.review_cards %}
-        <div class="stats-grid" style="margin-top:18px;">
-            {% for item in workspace_review_layers.review_cards[:6] %}
-            <div class="metric-card">
-                <div class="metric-label">{{ item.title }}</div>
-                <div class="metric-value-text">{{ item.value }}</div>
-                <div class="metric-sub">{{ item.copy }}</div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Nexus Review Workflow</div>
-        <h2 class="section-title">Run the next review loop</h2>
-        <div class="summary-panel" style="margin-top:18px;">
-            <p class="section-copy">{{ project_copilot.release_readiness if project_copilot and project_copilot.release_readiness else "Atlas Intelligence will show the workspace rationale and next action detail here." }}</p>
-        </div>
-        {% if workspace_intelligence and workspace_intelligence.next_actions %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for item in workspace_intelligence.next_actions %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ item.label }}</div>
-                    <div class="list-meta">{{ item.reasoning if item.reasoning is defined else item.message if item.message is defined else item.category if item.category is defined else "Next action" }}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Atlas Intelligence</div>
-        <h2 class="section-title">Workspace-level guidance</h2>
-        <div class="summary-panel" style="margin-top:18px;">
-            <p class="section-copy">{{ project_copilot.executive_summary if project_copilot and project_copilot.executive_summary else workspace_intelligence.health_summary if workspace_intelligence else "Atlas Intelligence guidance appears once Silicore has enough run history." }}</p>
-        </div>
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Nexus Runtime Snapshot</div>
-        <h2 class="section-title">Operational context</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Queued jobs</div><div class="metric-value">{{ operations_snapshot.summary.queued_jobs if operations_snapshot and operations_snapshot.summary is defined else 0 }}</div><div class="metric-sub">Atlas job runtime status</div></div>
-            <div class="metric-card"><div class="metric-label">Completed</div><div class="metric-value">{{ operations_snapshot.summary.completed_jobs if operations_snapshot and operations_snapshot.summary is defined else 0 }}</div><div class="metric-sub">Successful backend actions</div></div>
-            <div class="metric-card"><div class="metric-label">Failed</div><div class="metric-value">{{ operations_snapshot.summary.failed_jobs if operations_snapshot and operations_snapshot.summary is defined else 0 }}</div><div class="metric-sub">Jobs needing review</div></div>
-        </div>
-        <div class="btn-row">
-            <a class="btn btn-secondary" href="{{ url_for('nexus_ops_page') }}">Open Nexus Ops</a>
-        </div>
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Formal Review Decisions</div>
-        <h2 class="section-title">Recorded review outcomes</h2>
-        <form method="post" action="{{ url_for('project_review_decision_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
-            <label>Status<select name="status"><option value="active_review">Active Review</option><option value="approved">Approved</option><option value="blocked">Blocked</option></select></label>
-            <label>Run<select name="run_id">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
-            <label>Summary<textarea name="summary" rows="4" required></textarea></label>
-            <button class="btn btn-secondary" type="submit">Record Decision</button>
-        </form>
-        {% if project_review_feed %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for decision in project_review_feed[:10] %}
-            <div class="timeline-row">
-                <div>
-                    <div class="list-title">{{ decision.status_label }}</div>
-                    <div class="list-meta">{{ decision.run_name }} · {{ decision.created_at }}</div>
-                    <div class="list-meta">{{ decision.summary }}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">No formal review decisions have been recorded for this workspace yet.</div>
-        {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Workspace notes</div>
-        <h2 class="section-title">Status and collaboration</h2>
-        <form method="post" action="{{ url_for('project_status_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
-            <label>Review status
-                <select name="review_status" required>
-                    <option value="active_review" {% if project.review_status_view and project.review_status_view.value == 'active_review' %}selected{% endif %}>Active Review</option>
-                    <option value="fix_in_progress" {% if project.review_status_view and project.review_status_view.value == 'fix_in_progress' %}selected{% endif %}>Fix In Progress</option>
-                    <option value="re_analysis_planned" {% if project.review_status_view and project.review_status_view.value == 're_analysis_planned' %}selected{% endif %}>Re-Analysis Planned</option>
-                    <option value="ready_for_signoff" {% if project.review_status_view and project.review_status_view.value == 'ready_for_signoff' %}selected{% endif %}>Ready For Signoff</option>
-                </select>
-            </label>
-            <button class="btn btn-secondary" type="submit">Update Status</button>
-        </form>
-        <form method="post" action="{{ url_for('project_notes_route', project_id=project.project_id) }}" class="page-stack" style="margin-top:18px;">
-            <label>Note<textarea name="body" rows="4" placeholder="Capture a decision, open issue, or review note for the team." required></textarea></label>
-            <button class="btn btn-secondary" type="submit">Add Note</button>
-        </form>
-        {% if project.collaboration_notes %}
-        <div class="timeline" style="margin-top:18px;">
-            {% for note in project.collaboration_notes|reverse %}
-            <div class="timeline-row"><div><div class="list-title">{{ note.author_name if note.author_name else "Workspace Note" }}</div><div class="list-meta">{{ note.body }}</div></div></div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Linked runs</div>
-    <h2 class="section-title">Workspace run inventory</h2>
-    {% if project.runs|length >= 2 %}
-    <form method="get" action="{{ url_for('compare_runs', project_id=project.project_id) }}" class="project-detail-compare-grid" style="margin-top:18px;">
-        <label>Run A<select name="run_a">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
-        <label>Run B<select name="run_b">{% for run in project.runs|reverse %}<option value="{{ run.run_id }}">{{ run.name }}</option>{% endfor %}</select></label>
-        <div><button class="btn btn-primary" type="submit">Compare Runs</button></div>
-    </form>
-    {% endif %}
-    {% if project.runs %}
-    <div class="timeline" style="margin-top:18px;">
-        {% for run in project.runs|reverse %}
-        <div class="timeline-row">
-            <div>
-                <div class="list-title">{{ run.name }}</div>
-                <div class="list-meta">{{ run.created_at }} · Score {{ run.score|round|int if run.score is not none else "N/A" }} · {{ run.risk_count }} risks</div>
-            </div>
-            {% if run.path %}<a class="btn btn-secondary" href="{{ run.path }}">Open</a>{% endif %}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div class="btn-row">
-        <form method="post" action="{{ url_for('delete_project_route', project_id=project.project_id) }}" onsubmit="return confirm('Delete this project and its linked workspace data?');">
-            <button type="submit" class="btn btn-danger">Delete Project</button>
-        </form>
-    </div>
-</section>
+            <form method="post" action="{{ url_for('project_notes_route', project_id=project.project_id) }}" class="page-stack" style="margin-top: 18px;">
+                <label>Author<input type="text" name="author" placeholder="Reviewer name"></label>
+                <label>Note<textarea name="body" rows="4" placeholder="Add a note for the team." required></textarea></label>
+                <button class="btn btn-primary" type="submit">Post Note</button>
+            </form>
+        </article>
+    </section>
+    
+</div>
 {% endblock %}

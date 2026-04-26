@@ -1,135 +1,83 @@
 {% extends "base.html" %}
+
 {% block content %}
 {% set run_score = run_detail.get("score") %}
 {% set context = run_detail.analysis_context_view %}
-<section class="hero">
-    <div class="hero-inner">
-        <div>
-            <div class="eyebrow">Saved analysis run</div>
-            <h1 class="hero-title">Reopen a run with full engineering traceability.</h1>
-            <p class="hero-copy">
-                Review the saved score, findings, outputs, CAM trust, and operating context that existed when this analysis was executed.
-            </p>
-        </div>
-        <aside class="hero-card">
-            <div class="hero-card-label">Run telemetry</div>
-            <div class="metric-grid" style="margin-top:18px;">
-                <div class="metric-card">
-                    <div class="metric-label">Run type</div>
-                    <div class="metric-value-text">{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Score</div>
-                    <div class="metric-value">{% if run_score is not none %}{{ run_score|round|int if run_score > 10 else (run_score * 10)|round|int }}{% else %}N/A{% endif %}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Artifacts</div>
-                    <div class="metric-value">{{ run_detail.files|length if run_detail.files else 0 }}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Findings</div>
-                    <div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div>
-                </div>
-            </div>
-        </aside>
-    </div>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Run overview</div>
-        <h2 class="section-title">Stored analysis context</h2>
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Run name</div><div class="metric-value-text">{{ run_detail.name }}</div></div>
-            <div class="metric-card"><div class="metric-label">Board</div><div class="metric-value-text">{{ context.board_name if context else "Unknown" }}</div></div>
-            <div class="metric-card"><div class="metric-label">Profile</div><div class="metric-value-text">{{ context.profile.replace('_', ' ')|title if context and context.profile else "Balanced" }}</div></div>
-            <div class="metric-card"><div class="metric-label">Created</div><div class="metric-value-meta">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div></div>
-        </div>
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Export Center</div>
-        <h2 class="section-title">Artifacts and reporting access</h2>
-        {% if run_detail.export_summary %}
-        <div class="page-stack" style="margin-top:18px;">
-            <div class="summary-panel">
-                <strong>Export Center</strong>
-                <p class="section-copy">{{ run_detail.export_summary.summary }}</p>
-            </div>
-            <div class="summary-panel">
-                <strong>Review Readiness</strong>
-                <p class="section-copy">{{ run_detail.export_summary.review_ready_label }} at {{ run_detail.export_summary.review_ready_score }} / 100.</p>
-            </div>
-            <div class="btn-row" style="margin-top:0;">
-                <a class="btn btn-secondary" href="{{ url_for('history_printable_page', run_dir=run_detail.run_dir) }}" target="_blank">
-                    {{ run_detail.export_summary.print_label }}
-                </a>
-            </div>
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">No export summary is available for this run.</div>
-        {% endif %}
-    </article>
-</section>
-
-<section class="grid grid-2">
-    <article class="card">
-        <div class="section-kicker">Score Explainability</div>
-        <h2 class="section-title">Why the score landed where it did</h2>
-        {% set score_data = context.score_breakdown if context and context.score_breakdown is defined else None %}
-        {% if score_data %}
-        <div class="stats-grid" style="margin-top:18px;">
-            <div class="metric-card"><div class="metric-label">Start</div><div class="metric-value">{{ score_data.start_score|default(0) }}</div></div>
-            <div class="metric-card"><div class="metric-label">Penalty</div><div class="metric-value">{{ score_data.total_penalty|default(0) }}</div></div>
-            <div class="metric-card"><div class="metric-label">Final</div><div class="metric-value">{{ score_data.final_score|default(0) }}</div></div>
-            <div class="metric-card"><div class="metric-label">Risk count</div><div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div></div>
-        </div>
-        {% else %}
-        <div class="empty-state" style="margin-top:18px;">Score Explainability data is not available for this run.</div>
-        {% endif %}
-    </article>
-
-    <article class="card">
-        <div class="section-kicker">Review Readiness</div>
-        <h2 class="section-title">Use this run in downstream engineering review.</h2>
-        <div class="page-stack" style="margin-top:18px;">
-            <div class="summary-panel">
-                <strong>Review Readiness</strong>
-                <p class="section-copy">
-                    {% if run_detail.export_summary %}
-                        {{ run_detail.export_summary.review_ready_label }} with {{ run_detail.export_summary.review_ready_score }} / 100 readiness.
-                    {% else %}
-                        This run has not produced a full review-readiness summary yet.
-                    {% endif %}
-                </p>
-            </div>
-            {% if run_detail.cam_detail_view and run_detail.cam_detail_view.active %}
-            <div class="summary-panel">
-                <strong>CAM trust</strong>
-                <p class="section-copy">{{ run_detail.cam_detail_view.summary }}</p>
-            </div>
-            {% endif %}
-        </div>
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-kicker">Detailed Findings</div>
-    <h2 class="section-title">Engineering findings captured in this run</h2>
-    {% if run_detail.result and run_detail.result.risks %}
-    <div class="timeline" style="margin-top:18px;">
-        {% for risk in run_detail.result.risks[:24] %}
-        <div class="timeline-row">
+<div class="page-shell">
+    <section class="hero">
+        <div class="hero-inner">
             <div>
-                <div class="list-title">{{ risk.short_title if risk.short_title else risk.message }}</div>
-                <div class="list-meta">{{ risk.severity|upper }} · {{ risk.category|replace('_', ' ')|title }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</div>
+                <div class="eyebrow">Run detail</div>
+                <h1 class="hero-title">{{ run_detail.name if run_detail.name else run_detail.run_dir }}</h1>
+                <p class="hero-copy">The donor run-detail UI has been adapted to Silicore’s saved analysis artifacts, print view, and engineering traceability model.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-secondary" href="{{ url_for('history_page') }}">All Runs</a>
+                    <a class="btn btn-primary" href="{{ url_for('history_printable_page', run_dir=run_detail.run_dir) }}" target="_blank">Print View</a>
+                </div>
             </div>
-            <span class="mini-chip {% if risk.severity in ['critical','high'] %}mini-chip-critical{% elif risk.severity == 'medium' %}mini-chip-medium{% else %}mini-chip-low{% endif %}">{{ risk.severity }}</span>
+            <aside class="hero-card">
+                <div class="hero-card-label">Run telemetry</div>
+                <div class="metric-grid" style="margin-top: 18px;">
+                    <div class="metric-card"><div class="metric-label">Run type</div><div class="metric-value-text">{{ run_detail.run_type if run_detail.run_type else "Unknown" }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Score</div><div class="metric-value">{% if run_score is not none %}{{ run_score|round|int if run_score > 10 else (run_score * 10)|round|int }}{% else %}N/A{% endif %}</div></div>
+                    <div class="metric-card"><div class="metric-label">Artifacts</div><div class="metric-value">{{ run_detail.files|length if run_detail.files else 0 }}</div></div>
+                    <div class="metric-card"><div class="metric-label">Findings</div><div class="metric-value">{{ run_detail.result.risks|length if run_detail.result and run_detail.result.risks else 0 }}</div></div>
+                </div>
+            </aside>
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state" style="margin-top:18px;">No findings were stored for this run.</div>
-    {% endif %}
-</section>
+    </section>
+
+    <section class="viz-grid">
+        <article class="feature-flow">
+            <div class="section-kicker">Run artifacts</div>
+            <h2 class="section-title">Saved outputs</h2>
+            {% if run_detail.files %}
+            <div class="timeline">
+                {% for file in run_detail.files %}
+                <div class="timeline-row">
+                    <div>
+                        <div class="list-title">{{ file.label if file.label else file.filename }}</div>
+                        <div class="list-meta">{{ file.kind|default("artifact")|upper }}</div>
+                    </div>
+                    <a class="btn btn-secondary" href="{{ download_href(file) }}">Download</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No saved artifacts were found for this run.</div>
+            {% endif %}
+        </article>
+
+        <article class="viz-panel">
+            <div class="section-kicker">Stored context</div>
+            <h2 class="section-title">Analysis metadata</h2>
+            <div class="stats-grid">
+                <div class="metric-card"><div class="metric-label">Board</div><div class="metric-value-text">{{ context.board_name if context and context.board_name else "Unknown" }}</div></div>
+                <div class="metric-card"><div class="metric-label">Profile</div><div class="metric-value-text">{{ context.profile.replace('_', ' ')|title if context and context.profile else "Balanced" }}</div></div>
+                <div class="metric-card"><div class="metric-label">Created</div><div class="metric-value-text">{{ run_detail.created_at if run_detail.created_at else "Unknown" }}</div></div>
+                <div class="metric-card"><div class="metric-label">Review readiness</div><div class="metric-value">{{ run_detail.export_summary.review_ready_score if run_detail.export_summary else 0 }}</div></div>
+            </div>
+        </article>
+    </section>
+
+    <section class="feature-flow">
+        <div class="section-kicker">Detailed findings</div>
+        <h2 class="section-title">Engineering findings captured in this run</h2>
+        {% if run_detail.result and run_detail.result.risks %}
+        <div class="timeline">
+            {% for risk in run_detail.result.risks[:24] %}
+            <div class="timeline-row">
+                <div>
+                    <div class="list-title">{{ risk.short_title if risk.short_title else risk.message }}</div>
+                    <div class="list-meta">{{ risk.severity|upper }} · {{ risk.category|replace('_', ' ')|title }}{% if risk.nets %} · {{ risk.nets|join(', ') }}{% endif %}</div>
+                </div>
+                <span class="mini-chip {% if risk.severity in ['critical','high'] %}mini-chip-critical{% elif risk.severity == 'medium' %}mini-chip-medium{% else %}mini-chip-low{% endif %}">{{ risk.severity }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No findings were stored for this run.</div>
+        {% endif %}
+    </section>
+</div>
 {% endblock %}
