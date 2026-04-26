@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ type ProjectsPayload = {
 };
 
 function Projects() {
+  const navigate = useNavigate();
   const { data, loading, error, reload } = useApiData<ProjectsPayload>("/api/frontend/projects");
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState("");
@@ -57,6 +58,10 @@ function Projects() {
     }
   };
 
+  const onOpen = async (projectId: string) => {
+    await navigate({ to: "/projects/$projectId", params: { projectId } });
+  };
+
   return (
     <AppShell title="Projects">
       <div className="space-y-6">
@@ -80,10 +85,14 @@ function Projects() {
                 </div>
                 <ScorePill score={Math.round(project.latest_score || project.average_score || 0)} />
               </div>
-              <Link to="/projects/$projectId" params={{ projectId: project.project_id }} className="block">
+              <button
+                type="button"
+                onClick={() => void onOpen(project.project_id)}
+                className="block w-full text-left"
+              >
                 <h3 className="mt-4 text-lg font-medium">{project.name}</h3>
                 <p className="text-sm text-muted-foreground">{project.description || "No description yet."}</p>
-              </Link>
+              </button>
               <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-4 text-center">
                 <Stat label="runs" value={String(project.runs.length)} />
                 <Stat label="avg score" value={String(Math.round(project.average_score || 0))} />
@@ -92,22 +101,28 @@ function Projects() {
               <div className="mt-4 flex items-center justify-between gap-3 text-xs">
                 <span className="font-mono text-muted-foreground">{loading ? "Loading…" : project.project_id}</span>
                 <div className="flex items-center gap-2">
-                  <Link
-                    to="/projects/$projectId"
-                    params={{ projectId: project.project_id }}
-                    className="flex items-center gap-1 text-primary opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    open <ArrowRight className="h-3 w-3" />
-                  </Link>
                   <Button
                     size="sm"
                     variant="ghost"
                     className="h-8 rounded-full border border-danger/25 bg-danger/10 px-3 text-danger hover:bg-danger/15 hover:text-danger"
                     disabled={deletingId === project.project_id}
-                    onClick={() => void onDelete(project.project_id, project.name)}
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      void onDelete(project.project_id, project.name);
+                    }}
                   >
                     <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                     {deletingId === project.project_id ? "Deleting…" : "Delete"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 rounded-full border border-primary/20 bg-primary/10 px-3 text-primary hover:bg-primary/15 hover:text-primary"
+                    type="button"
+                    onClick={() => void onOpen(project.project_id)}
+                  >
+                    Open <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
