@@ -98,10 +98,10 @@ function Dashboard() {
             </div>
           </section>
 
-          <section data-reveal className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_320px]">
-            <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,17,27,0.96),rgba(7,14,22,0.98))] p-5">
+          <section data-reveal className="grid gap-8 xl:grid-cols-[200px_minmax(0,1fr)_300px]">
+            <div className="relative pt-3">
               <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Telemetry rail</div>
-              <div className="mt-5 space-y-6">
+              <div className="mt-5 space-y-7">
                 <RailMetric label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} />
                 <RailMetric label="Average score" value={String(stats?.avg_score_30d ?? 0)} />
                 <RailMetric label="Critical open" value={String(stats?.open_critical_issues ?? 0)} tone="danger" />
@@ -109,8 +109,10 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[34px] border border-white/8 bg-[linear-gradient(180deg,rgba(8,17,28,0.95),rgba(6,13,21,0.98))] px-6 py-6 shadow-[0_32px_80px_-46px_rgba(0,0,0,0.95)]">
-              <div className="pointer-events-none absolute inset-0 opacity-45 [background-image:linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:64px_64px]" />
+            <div className="relative min-h-[560px] overflow-hidden rounded-[42px] bg-[linear-gradient(180deg,rgba(8,17,28,0.72),rgba(6,13,21,0.88))] px-7 py-7 shadow-[0_36px_90px_-54px_rgba(0,0,0,0.98)] ring-1 ring-white/6">
+              <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:64px_64px]" />
+              <div className="pointer-events-none absolute inset-x-12 top-0 h-28 rounded-full bg-primary/10 blur-3xl" />
+              <div className="pointer-events-none absolute bottom-[-40px] right-[10%] h-40 w-40 rounded-full bg-success/8 blur-3xl" />
               <div className="relative">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="max-w-xl">
@@ -126,7 +128,7 @@ function Dashboard() {
                   </div>
                 </div>
 
-                <div className="mt-6 h-[280px]">
+                <div className="mt-7 h-[290px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={trend}>
                       <defs>
@@ -151,7 +153,7 @@ function Dashboard() {
                   </ResponsiveContainer>
                 </div>
 
-                <div className="mt-5 grid gap-4 md:grid-cols-3">
+                <div className="mt-6 grid gap-6 md:grid-cols-3">
                   <InlineSignal label="Critical" value={String(stats?.critical_total ?? 0)} tone="danger" />
                   <InlineSignal label="Medium" value={String(stats?.medium_total ?? 0)} tone="warning" />
                   <InlineSignal label="Low" value={String(stats?.low_total ?? 0)} />
@@ -159,7 +161,7 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,17,27,0.96),rgba(7,14,22,0.98))] p-5">
+            <div className="relative pt-3">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Activity strip</div>
@@ -169,7 +171,7 @@ function Dashboard() {
               </div>
               <div className="space-y-3">
                 {recent.slice(0, 5).map((item) => (
-                  <div key={item.run_dir} className="border-l border-white/10 pl-4">
+                  <div key={item.run_dir} className="relative pl-4 before:absolute before:bottom-0 before:left-0 before:top-0 before:w-px before:bg-white/10">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium text-foreground">{item.name}</div>
@@ -189,8 +191,8 @@ function Dashboard() {
             </div>
           </section>
 
-          <section data-reveal className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-            <div className="relative overflow-hidden rounded-[32px] border border-white/8 bg-[linear-gradient(170deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_30px_76px_-44px_rgba(0,0,0,0.95)]">
+          <section data-reveal className="grid gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+            <div className="relative">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Spatial context</div>
@@ -205,8 +207,8 @@ function Dashboard() {
               />
             </div>
 
-            <div className="grid gap-6">
-              <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6">
+            <div className="grid gap-8">
+              <div className="relative pl-5 before:absolute before:bottom-0 before:left-0 before:top-0 before:w-px before:bg-white/10">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Severity stack</div>
                 <h3 className="mt-1 text-lg font-medium tracking-tight">Severity over time</h3>
                 <div className="mt-4 h-[220px]">
@@ -243,7 +245,7 @@ function Dashboard() {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6">
+              <div className="relative pl-5 before:absolute before:bottom-0 before:left-0 before:top-0 before:w-px before:bg-white/10">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Reading guide</div>
                 <h3 className="mt-1 text-lg font-medium tracking-tight">How to interpret the field</h3>
                 <div className="mt-4 space-y-4 text-sm leading-7 text-muted-foreground">
@@ -254,7 +256,7 @@ function Dashboard() {
             </div>
           </section>
 
-          <section data-reveal className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6">
+          <section data-reveal className="relative pt-2">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Run ledger</div>
@@ -313,7 +315,7 @@ function HeroMetric({ label, value, tone }: { label: string; value: string; tone
 
 function RailMetric({ label, value, tone }: { label: string; value: string; tone?: "danger" }) {
   return (
-    <div className="border-l border-white/10 pl-4">
+    <div className="relative pl-4 before:absolute before:bottom-0 before:left-0 before:top-0 before:w-px before:bg-white/10">
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className={`mt-1 text-3xl font-semibold ${tone === "danger" ? "text-danger" : "text-foreground"}`}>{value}</div>
     </div>
@@ -323,7 +325,7 @@ function RailMetric({ label, value, tone }: { label: string; value: string; tone
 function InlineSignal({ label, value, tone }: { label: string; value: string; tone?: "danger" | "warning" }) {
   const toneClass = tone === "danger" ? "text-danger" : tone === "warning" ? "text-warning" : "text-foreground";
   return (
-    <div className="border-t border-white/8 pt-3">
+    <div className="pt-3">
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className={`mt-1 text-2xl font-semibold ${toneClass}`}>{value}</div>
     </div>
