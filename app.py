@@ -639,7 +639,7 @@ def _atlas_board_context_payload(board_name="", run_id=""):
     }
 
 
-def _atlas_compare_context_payload(project_id=""):
+def _atlas_compare_context_payload(project_id="", run_a_id="", run_b_id=""):
     project = get_project(project_id) if project_id else None
     if project is None:
         project = _atlas_default_project()
@@ -661,7 +661,19 @@ def _atlas_compare_context_payload(project_id=""):
             "quick_actions": ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"],
         }
 
-    compare_payload = _compare_payload(project.get("project_id"))
+    runs = project.get("runs", []) or []
+    compare_run_options = [
+        {
+            "run_id": run.get("run_id"),
+            "label": run.get("name") or run.get("run_id") or "Workspace run",
+            "score": _score_to_100(run.get("score")),
+            "risk_count": _safe_int(run.get("risk_count"), 0),
+        }
+        for run in runs
+        if run.get("run_id")
+    ]
+
+    compare_payload = _compare_payload(project.get("project_id"), run_a_id or None, run_b_id or None)
     if not compare_payload or compare_payload.get("error"):
         return {
             "context": {
@@ -670,6 +682,9 @@ def _atlas_compare_context_payload(project_id=""):
                 "posture": compare_payload.get("error") if isinstance(compare_payload, dict) else "Comparison is not available yet.",
             },
             "selected_project_id": project.get("project_id"),
+            "selected_run_a_id": run_a_id,
+            "selected_run_b_id": run_b_id,
+            "compare_run_options": compare_run_options,
             "summary": {
                 "title": project.get("name") or "Workspace",
                 "copy": compare_payload.get("error") if isinstance(compare_payload, dict) else "Atlas cannot compare this workspace yet.",
@@ -724,6 +739,9 @@ def _atlas_compare_context_payload(project_id=""):
     return {
         "context": context,
         "selected_project_id": compare_payload.get("project", {}).get("project_id"),
+        "selected_run_a_id": (compare_payload.get("run_a") or {}).get("run_id"),
+        "selected_run_b_id": (compare_payload.get("run_b") or {}).get("run_id"),
+        "compare_run_options": compare_run_options,
         "summary": {
             "title": compare_copilot.get("posture") or compare_payload.get("project", {}).get("name") or "Comparison context",
             "copy": compare_copilot.get("signoff_note") or compare_copilot.get("root_cause"),
@@ -978,11 +996,13 @@ def frontend_atlas_context_route():
     project_id = str(request.args.get("project_id") or "").strip()
     board_name = str(request.args.get("board_name") or "").strip()
     run_id = str(request.args.get("run_id") or "").strip()
+    run_a = str(request.args.get("run_a") or "").strip()
+    run_b = str(request.args.get("run_b") or "").strip()
 
     if page_type == "board":
         return jsonify(_atlas_board_context_payload(board_name, run_id))
     if page_type == "compare":
-        return jsonify(_atlas_compare_context_payload(project_id))
+        return jsonify(_atlas_compare_context_payload(project_id, run_a, run_b))
     return jsonify(_atlas_project_context_payload(project_id))
 
 

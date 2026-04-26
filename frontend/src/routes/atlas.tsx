@@ -57,7 +57,10 @@ type AtlasContextPayload = {
   context: Record<string, unknown>;
   selected_project_id?: string;
   selected_run_id?: string;
+  selected_run_a_id?: string;
+  selected_run_b_id?: string;
   board_options?: Array<{ run_id?: string; label?: string; score?: number; risk_count?: number; run_type?: string }>;
+  compare_run_options?: Array<{ run_id?: string; label?: string; score?: number; risk_count?: number }>;
   summary?: { title?: string; copy?: string };
   prompt_starters?: string[];
   quick_actions?: string[];
@@ -73,6 +76,9 @@ function Atlas() {
   const [projectId, setProjectId] = useState("");
   const [boardName, setBoardName] = useState("");
   const [selectedRunId, setSelectedRunId] = useState("");
+  const [compareRunA, setCompareRunA] = useState("");
+  const [compareRunB, setCompareRunB] = useState("");
+  const [atlasFocus, setAtlasFocus] = useState("");
   const [prompt, setPrompt] = useState("");
   const [threadKey, setThreadKey] = useState("");
   const [messages, setMessages] = useState<Array<{ who: "user" | "atlas"; text: string }>>([]);
@@ -100,11 +106,19 @@ function Atlas() {
     }
     if (pageType === "board" && selectedRunId) {
       params.set("run_id", selectedRunId);
+    }
+    if (pageType === "compare") {
+      if (compareRunA) {
+        params.set("run_a", compareRunA);
+      }
+      if (compareRunB) {
+        params.set("run_b", compareRunB);
+      }
     } else if (boardName) {
       params.set("board_name", boardName);
     }
     return `/api/frontend/atlas/context?${params.toString()}`;
-  }, [boardName, pageType, projectId, selectedRunId]);
+  }, [boardName, compareRunA, compareRunB, pageType, projectId, selectedRunId]);
 
   const atlasContext = useApiData<AtlasContextPayload>(contextUrl);
   const runs = useApiData<AgentRunsPayload>(threadKey ? `/atlas/agent-runs?thread_key=${encodeURIComponent(threadKey)}` : "/atlas/agent-runs");
@@ -129,6 +143,19 @@ function Atlas() {
     }
   }, [atlasContext.data?.board_options, atlasContext.data?.selected_run_id, pageType, selectedRunId]);
 
+  useEffect(() => {
+    if (pageType !== "compare") {
+      return;
+    }
+    const compareOptions = atlasContext.data?.compare_run_options || [];
+    if ((!compareRunA || !compareOptions.some((option) => option.run_id === compareRunA)) && atlasContext.data?.selected_run_a_id) {
+      setCompareRunA(atlasContext.data.selected_run_a_id);
+    }
+    if ((!compareRunB || !compareOptions.some((option) => option.run_id === compareRunB)) && atlasContext.data?.selected_run_b_id) {
+      setCompareRunB(atlasContext.data.selected_run_b_id);
+    }
+  }, [atlasContext.data?.selected_run_a_id, atlasContext.data?.selected_run_b_id, compareRunA, compareRunB, pageType]);
+
   const availableBoardOptions = atlasContext.data?.board_options || [];
   const activeRunId = selectedRunId || atlasContext.data?.selected_run_id || availableBoardOptions[0]?.run_id || "";
   const selectedBoardOption = useMemo(
@@ -142,11 +169,19 @@ function Atlas() {
     }
   }, [pageType, selectedBoardOption?.label]);
 
-  const resolvedContext = atlasContext.data?.context || {
-    project_id: projectId || session.data?.project_options?.[0]?.project_id || "",
-    board_name: boardName || selectedBoardOption?.label || "",
-    run_id: selectedRunId,
+  const resolvedContext: Record<string, unknown> = {
+    ...(atlasContext.data?.context || {}),
   };
+  if (!Object.keys(resolvedContext).length) {
+    Object.assign(resolvedContext, {
+      project_id: projectId || session.data?.project_options?.[0]?.project_id || "",
+      board_name: boardName || selectedBoardOption?.label || "",
+      run_id: selectedRunId,
+    });
+  }
+  if (atlasFocus) {
+    resolvedContext.atlas_focus = atlasFocus;
+  }
 
   const parseThread = (thread: ThreadMessage[] = []) =>
     thread.flatMap((message) => {
@@ -161,10 +196,13 @@ function Atlas() {
 
   const contextScope = useMemo(() => {
     if (pageType === "board") {
-      return `${pageType}:${selectedRunId || atlasContext.data?.selected_run_id || boardName}`;
+      return `${pageType}:${selectedRunId || atlasContext.data?.selected_run_id || boardName}:${atlasFocus}`;
     }
-    return `${pageType}:${projectId || atlasContext.data?.selected_project_id || ""}`;
-  }, [atlasContext.data?.selected_project_id, atlasContext.data?.selected_run_id, boardName, pageType, projectId, selectedRunId]);
+    if (pageType === "compare") {
+      return `${pageType}:${projectId || atlasContext.data?.selected_project_id || ""}:${compareRunA || atlasContext.data?.selected_run_a_id || ""}:${compareRunB || atlasContext.data?.selected_run_b_id || ""}`;
+    }
+    return `${pageType}:${projectId || atlasContext.data?.selected_project_id || ""}:${atlasFocus}`;
+  }, [atlasContext.data?.selected_project_id, atlasContext.data?.selected_run_a_id, atlasContext.data?.selected_run_b_id, atlasContext.data?.selected_run_id, atlasFocus, boardName, compareRunA, compareRunB, pageType, projectId, selectedRunId]);
 
   useEffect(() => {
     if (!contextScope) {
@@ -264,6 +302,39 @@ function Atlas() {
 
   const visibleQuickActions = toolSuggestions.length ? toolSuggestions : atlasContext.data?.quick_actions || ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"];
   const starterPrompts = atlasContext.data?.prompt_starters || [];
+  const focusOptions = useMemo(() => {
+    if (pageType === "board") {
+      return [
+        { value: "overview", label: "Board overview" },
+        { value: "parser_confidence", label: "Parser trust" },
+        { value: "signoff_gate", label: "Signoff gate" },
+        { value: "dominant_domain", label: "Main risk domain" },
+      ];
+    }
+    if (pageType === "compare") {
+      return [
+        { value: "direction", label: "Revision direction" },
+        { value: "next_move", label: "Next move" },
+        { value: "domain_impacts", label: "Domain movement" },
+        { value: "focus_sources", label: "Changed issue sources" },
+      ];
+    }
+    return [
+      { value: "posture", label: "Workspace posture" },
+      { value: "momentum", label: "Momentum" },
+      { value: "release_readiness", label: "Release readiness" },
+      { value: "recurring_family_summary", label: "Recurring issue family" },
+    ];
+  }, [pageType]);
+
+  useEffect(() => {
+    if (!focusOptions.length) {
+      return;
+    }
+    if (!atlasFocus || !focusOptions.some((option) => option.value === atlasFocus)) {
+      setAtlasFocus(focusOptions[0].value);
+    }
+  }, [atlasFocus, focusOptions]);
   const selectedProjectLabel =
     session.data?.project_options?.find((option) => option.project_id === projectId)?.name ||
     session.data?.project_options?.[0]?.name ||
@@ -301,7 +372,7 @@ function Atlas() {
         <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
           <div className="space-y-4">
             <AtlasStage title="Context" rail="working context">
-              <div className="grid gap-3 md:grid-cols-3">
+              <div className={`grid gap-3 ${pageType === "compare" ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
                 <Field label="Page type">
                   <div className="grid grid-cols-3 gap-2">
                     {(["board", "project", "compare"] as const).map((option) => (
@@ -311,6 +382,10 @@ function Atlas() {
                           setPageType(option);
                           if (option !== "board") {
                             setSelectedRunId("");
+                          }
+                          if (option !== "compare") {
+                            setCompareRunA("");
+                            setCompareRunB("");
                           }
                         }}
                         className={`interactive-lift rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}
@@ -331,15 +406,41 @@ function Atlas() {
                         ))}
                       </select>
                     </Field>
-                    <Field label="Board label">
-                      <div className="premium-input flex min-h-10 w-full flex-col items-start justify-center rounded-2xl px-3 py-2 text-sm text-foreground">
-                        <div className="truncate font-medium text-foreground">
-                          {selectedBoardOption?.label || boardName || "Select a board run"}
-                        </div>
-                        <div className="mt-0.5 text-xs text-muted-foreground">
-                          {activeRunId ? `Run ${activeRunId}` : "Choose a board snapshot to anchor Atlas to a real analysis run"}
-                        </div>
-                      </div>
+                    <Field label="Atlas focus">
+                      <select value={atlasFocus} onChange={(event) => setAtlasFocus(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
+                        {focusOptions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                    </Field>
+                  </>
+                ) : pageType === "compare" ? (
+                  <>
+                    <Field label="Project">
+                      <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
+                        <option value="">{selectedProjectLabel}</option>
+                        {(session.data?.project_options || []).map((option) => (
+                          <option key={option.project_id} value={option.project_id}>{option.name}</option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Baseline run">
+                      <select value={compareRunA} onChange={(event) => setCompareRunA(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
+                        {(atlasContext.data?.compare_run_options || []).map((option) => (
+                          <option key={option.run_id} value={option.run_id}>
+                            {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Candidate run">
+                      <select value={compareRunB} onChange={(event) => setCompareRunB(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
+                        {(atlasContext.data?.compare_run_options || []).map((option) => (
+                          <option key={option.run_id} value={option.run_id}>
+                            {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
+                          </option>
+                        ))}
+                      </select>
                     </Field>
                   </>
                 ) : (
@@ -352,14 +453,24 @@ function Atlas() {
                         ))}
                       </select>
                     </Field>
-                    <Field label="Context source">
-                      <div className="premium-input flex min-h-10 items-center rounded-2xl px-3 text-sm text-foreground">
-                        {pageType === "project" ? selectedProjectLabel : "Revision comparison for the selected workspace"}
-                      </div>
+                    <Field label="Atlas focus">
+                      <select value={atlasFocus} onChange={(event) => setAtlasFocus(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
+                        {focusOptions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
                     </Field>
                   </>
                 )}
               </div>
+              {pageType === "board" ? (
+                <div className="mt-3 rounded-2xl border border-white/8 bg-background/24 px-4 py-3">
+                  <div className="text-sm font-medium text-foreground">{selectedBoardOption?.label || boardName || "Select a board run"}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {activeRunId ? `Run ${activeRunId}` : "Choose a board snapshot to anchor Atlas to a real analysis run"}
+                  </div>
+                </div>
+              ) : null}
               <div className="mt-4 rounded-2xl border border-primary/14 bg-primary/8 p-4">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Atlas brief</div>
                 <div className="mt-2 text-lg font-semibold text-foreground">{atlasContext.data?.summary?.title || "Loading context…"}</div>
