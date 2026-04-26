@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import {
   ArrowLeft,
   CheckCircle2,
+  CirclePlus,
   KeyRound,
   LogIn,
   MailCheck,
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/login")({
   component: Login,
 });
 
-type AuthMode = "login" | "reset" | "verify";
+type AuthMode = "login" | "signup" | "reset" | "verify";
 
 function Login() {
   const [mode, setMode] = useState<AuthMode>("login");
@@ -72,7 +73,7 @@ function Login() {
                     Sign into the Silicore command surface without losing your engineering context.
                   </h1>
                   <p className="mt-4 max-w-xl text-base leading-8 text-muted-foreground">
-                    Use the same backend identity flow for board analysis, compare, Atlas, and workspace review. This screen is now the single sign-in destination across the UI.
+                    Use the same backend identity flow for board analysis, compare, Atlas, and workspace review. This screen is now the single sign-in and sign-up destination across the UI.
                   </p>
                 </div>
 
@@ -123,6 +124,7 @@ function Login() {
                 <div className="flex flex-wrap gap-2 rounded-full border border-white/8 bg-white/4 p-1">
                   {[
                     { id: "login", label: "Sign in" },
+                    { id: "signup", label: "Sign up" },
                     { id: "reset", label: "Reset password" },
                     { id: "verify", label: "Verify / MFA" },
                   ].map((item) => {
@@ -162,6 +164,39 @@ function Login() {
                         <Button type="submit" className="h-12 w-full rounded-full text-sm">
                           <LogIn className="mr-2 h-4 w-4" />
                           Sign in
+                        </Button>
+                      </form>
+                    </AuthPanel>
+                  ) : null}
+
+                  {mode === "signup" ? (
+                    <AuthPanel
+                      eyebrow="Account creation"
+                      title="Create a Silicore workspace account"
+                      copy="Register a new user directly against the existing Flask identity backend so your session, organization, and verification flow all stay connected."
+                    >
+                      <form className="space-y-4" method="post" action="/login">
+                        <input type="hidden" name="action" value="register" />
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Field label="Full name" htmlFor="signup_name">
+                            <Input id="signup_name" name="name" placeholder="Elena Rivera" required />
+                          </Field>
+                          <Field label="Organization" htmlFor="organization_name">
+                            <Input id="organization_name" name="organization_name" placeholder="Astrabit Labs" />
+                          </Field>
+                        </div>
+                        <Field label="Email" htmlFor="signup_email">
+                          <Input id="signup_email" name="email" type="email" placeholder="elena@astrabit.io" required />
+                        </Field>
+                        <Field label="Password" htmlFor="signup_password">
+                          <Input id="signup_password" name="password" type="password" placeholder="Create a strong password" required />
+                        </Field>
+                        <div className="rounded-[22px] border border-white/8 bg-white/4 px-4 py-3 text-sm leading-6 text-muted-foreground">
+                          New accounts are created in the backend identity system, then follow the same verification and session setup as every other Silicore workspace user.
+                        </div>
+                        <Button type="submit" className="h-12 w-full rounded-full text-sm">
+                          <CirclePlus className="mr-2 h-4 w-4" />
+                          Create account
                         </Button>
                       </form>
                     </AuthPanel>
@@ -240,14 +275,18 @@ function Login() {
                 </div>
 
                 <div className="mt-6 rounded-[24px] border border-primary/14 bg-primary/8 px-4 py-3 text-sm leading-6 text-muted-foreground">
-                  Password reset, verification, and MFA still run through the original Flask auth backend. This page simply gives those flows a proper modern surface.
+                  Sign in, sign up, password reset, verification, and MFA still run through the original Flask auth backend. This page simply gives those flows a proper modern surface.
                 </div>
 
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
-                  <span>Need a new workspace account?</span>
-                  <Link to="/" className="text-primary hover:underline">
-                    Request access from the landing page
-                  </Link>
+                  <span>{mode === "signup" ? "Already have an account?" : "Need a new workspace account?"}</span>
+                  <button
+                    type="button"
+                    onClick={() => setMode(mode === "signup" ? "login" : "signup")}
+                    className="text-primary hover:underline"
+                  >
+                    {mode === "signup" ? "Go back to sign in" : "Create an account here"}
+                  </button>
                 </div>
               </div>
             </section>
