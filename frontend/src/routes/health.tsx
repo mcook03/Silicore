@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { CheckCircle2, AlertCircle, Server, Database, Cpu } from "lucide-react";
 import { useApiData } from "@/lib/api";
 
@@ -66,7 +66,7 @@ function Health() {
 
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
 
-        <Panel title="Services">
+        <HealthStage title="Services" rail="service mesh">
           <div className="space-y-2">
             {services.map((service) => (
               <div key={service.name} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
@@ -83,25 +83,25 @@ function Health() {
               </div>
             ))}
           </div>
-        </Panel>
+        </HealthStage>
 
-        <Panel title="Readiness checks">
+        <HealthStage title="Readiness checks" rail="probe detail">
           <div className="grid gap-3 md:grid-cols-2">
             {Object.entries(data?.ready.checks || {}).map(([key, value]) => (
               <Meta key={key} label={key.replaceAll("_", " ")} value={typeof value === "object" ? JSON.stringify(value) : String(value)} />
             ))}
             {!Object.keys(data?.ready.checks || {}).length ? <p className="text-sm text-muted-foreground">No detailed readiness checks were reported.</p> : null}
           </div>
-        </Panel>
+        </HealthStage>
 
-        <Panel title="Runtime">
+        <HealthStage title="Runtime" rail="runtime metadata">
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {Object.entries(data?.runtime || {}).map(([key, value]) => (
               <Meta key={key} label={key.replaceAll("_", " ")} value={typeof value === "object" ? JSON.stringify(value) : String(value)} />
             ))}
             {!Object.keys(data?.runtime || {}).length ? <p className="text-sm text-muted-foreground">Runtime metadata is not available.</p> : null}
           </div>
-        </Panel>
+        </HealthStage>
       </div>
     </AppShell>
   );
@@ -122,5 +122,25 @@ function Meta({ label, value }: { label: string; value: string }) {
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1 break-words font-mono text-sm">{value}</div>
     </div>
+  );
+}
+
+function HealthStage({
+  title,
+  rail,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(155deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 border-b border-white/8 pb-4">
+        {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+        <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+      </div>
+      {children}
+    </section>
   );
 }

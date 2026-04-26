@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Button } from "@/components/ui/button";
@@ -58,7 +58,7 @@ function RunDetail() {
             </div>
           </div>
 
-          <Panel title="Run artifacts" action={<FileText className="h-4 w-4 text-muted-foreground" />}>
+          <RunStage title="Run artifacts" rail="artifact rail" action={<FileText className="h-4 w-4 text-muted-foreground" />}>
             <div className="space-y-2">
               {(data?.files ?? []).map((file) => (
                 <div key={file.filename} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-3.5">
@@ -72,7 +72,7 @@ function RunDetail() {
                 </div>
               ))}
             </div>
-          </Panel>
+          </RunStage>
         </div>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
@@ -81,7 +81,7 @@ function RunDetail() {
             boardView={data?.board_view}
             emptyCopy="This saved run does not include enough board geometry to render a spatial hotspot map."
           />
-          <Panel title="Spatial readout">
+          <RunStage title="Spatial readout" rail="geometry readout">
             <div className="space-y-4">
               <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
                 This view adds a spatial lens to the saved run so you can quickly scan where thermal pressure, density, or findings intensity would likely surface before downloading artifacts or opening the original deliverables.
@@ -92,7 +92,7 @@ function RunDetail() {
                 <RunStat label="Run id" value={runDir.slice(0, 8)} />
               </div>
             </div>
-          </Panel>
+          </RunStage>
         </div>
       </div>
     </AppShell>
@@ -105,5 +105,30 @@ function RunStat({ label, value }: { label: string; value: string }) {
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 text-xl font-semibold">{value}</div>
     </div>
+  );
+}
+
+function RunStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(155deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+        <div>
+          {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+          <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }

@@ -1,9 +1,10 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
-import { Panel, ScorePill } from "@/components/silicore/Panel";
+import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -118,7 +119,7 @@ function ProjectDetail() {
             matrixRows={data?.risk_heatmap}
             emptyCopy="This project needs linked run findings before a real heat map can be shown."
           />
-          <Panel title="Project signal">
+          <ProjectStage title="Project signal" rail="workspace posture">
             <div className="space-y-4">
               <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
                 This view adds a spatial overview for the current project so you can scan likely risk concentration before diving into release gates, notes, or individual runs.
@@ -129,19 +130,19 @@ function ProjectDetail() {
                 <QuickStat label="Gates" value={String((project?.release_gates || []).length)} />
               </div>
             </div>
-          </Panel>
+          </ProjectStage>
         </div>
 
-        <Panel title="Run score trend">
+        <ProjectStage title="Run score trend" rail="score motion">
           {runTrend.length ? (
             <ScoreTrend data={runTrend} />
           ) : (
             <p className="text-sm text-muted-foreground">Run trend data appears here as soon as this project has recorded analyses.</p>
           )}
-        </Panel>
+        </ProjectStage>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-          <Panel title="Runs">
+          <ProjectStage title="Runs" rail="run ladder">
             <div className="space-y-2">
               {(project?.runs || []).map((run) => (
                 <div key={run.run_id} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
@@ -153,9 +154,9 @@ function ProjectDetail() {
                 </div>
               ))}
             </div>
-          </Panel>
+          </ProjectStage>
 
-          <Panel title="Members" action={<Users className="h-4 w-4 text-muted-foreground" />}>
+          <ProjectStage title="Members" rail="team surface" action={<Users className="h-4 w-4 text-muted-foreground" />}>
             <div className="space-y-3">
               {(project?.team_members || []).map((member, index) => (
                 <div key={`${member.name}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
@@ -164,10 +165,10 @@ function ProjectDetail() {
                 </div>
               ))}
             </div>
-          </Panel>
+          </ProjectStage>
         </div>
 
-        <Panel title="Release gates" action={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}>
+        <ProjectStage title="Release gates" rail="signoff lattice" action={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}>
           <div className="grid gap-3 md:grid-cols-2">
             {(project?.release_gates || []).map((gate) => (
               <div key={gate.gate_id} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
@@ -189,10 +190,10 @@ function ProjectDetail() {
               </div>
             ))}
           </div>
-        </Panel>
+        </ProjectStage>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <Panel title="Notes & activity" action={<MessageSquare className="h-4 w-4 text-muted-foreground" />}>
+          <ProjectStage title="Notes & activity" rail="review feed" action={<MessageSquare className="h-4 w-4 text-muted-foreground" />}>
             <div className="space-y-3">
               {reviewFeed.map((item, index) => (
                 <div key={`${item.review_id || "review"}-${index}`} className="rounded-xl border border-border bg-background/40 p-4">
@@ -210,9 +211,9 @@ function ProjectDetail() {
                 </div>
               </div>
             </div>
-          </Panel>
+          </ProjectStage>
 
-          <Panel title="Submit a review" action={<FileCheck2 className="h-4 w-4 text-muted-foreground" />}>
+          <ProjectStage title="Submit a review" rail="decision input" action={<FileCheck2 className="h-4 w-4 text-muted-foreground" />}>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <label className="text-xs uppercase tracking-wider text-muted-foreground">Verdict</label>
@@ -228,7 +229,7 @@ function ProjectDetail() {
               </div>
               <Button className="w-full rounded-full" onClick={() => void submitReview()}>Submit review</Button>
             </div>
-          </Panel>
+          </ProjectStage>
         </div>
       </div>
     </AppShell>
@@ -262,5 +263,30 @@ function QuickStat({ label, value }: { label: string; value: string }) {
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 text-xl font-semibold">{value}</div>
     </div>
+  );
+}
+
+function ProjectStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(155deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+        <div>
+          {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+          <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }

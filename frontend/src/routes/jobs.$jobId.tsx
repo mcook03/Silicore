@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { ArrowLeft, Terminal } from "lucide-react";
 import { useApiData } from "@/lib/api";
 
@@ -56,17 +56,17 @@ function JobDetail() {
           {details.map((detail) => <Stat key={detail.label} label={detail.label} value={detail.value} />)}
         </div>
 
-        <Panel title="Payload">
+        <JobStage title="Payload" rail="input payload">
           <pre className="overflow-x-auto rounded-lg border border-border bg-background/60 p-4 font-mono text-[12px] leading-relaxed text-muted-foreground">
 {JSON.stringify(data?.payload || {}, null, 2)}
           </pre>
-        </Panel>
+        </JobStage>
 
-        <Panel title="Logs / result" action={<Terminal className="h-4 w-4 text-muted-foreground" />}>
+        <JobStage title="Logs / result" rail="execution output" action={<Terminal className="h-4 w-4 text-muted-foreground" />}>
           <pre className="overflow-x-auto rounded-lg border border-border bg-background/60 p-4 font-mono text-[12px] leading-relaxed text-muted-foreground">
 {logLines.length ? logLines.join("\n") : data?.error || "No logs were recorded for this job."}
           </pre>
-        </Panel>
+        </JobStage>
       </div>
     </AppShell>
   );
@@ -78,5 +78,30 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1 break-words font-mono text-sm">{value}</div>
     </div>
+  );
+}
+
+function JobStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(155deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+        <div>
+          {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+          <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }
