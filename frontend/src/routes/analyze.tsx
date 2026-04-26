@@ -8,6 +8,7 @@ import { CategoryBreakdown, SeverityDonut } from "@/components/silicore/Analysis
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Sparkles, AlertTriangle, AlertCircle, Info, CheckCircle2, ChevronRight, Download } from "lucide-react";
 import { apiPostForm, useApiData } from "@/lib/api";
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export const Route = createFileRoute("/analyze")({
   head: () => ({ meta: [{ title: "Board analysis — Silicore" }] }),
@@ -27,6 +28,13 @@ type Risk = {
   message?: string;
   category?: string;
   recommendation?: string;
+  components?: string[];
+  nets?: string[];
+  transparency_view?: {
+    confidence_score?: number;
+    confidence_band?: string;
+    traceability_score?: number;
+  };
 };
 
 type GroupedRisk = {
@@ -53,6 +61,11 @@ type AnalysisResultPayload = {
     risks?: Risk[];
     grouped_risks?: GroupedRisk[];
     downloads?: DownloadItem[] | Record<string, string>;
+    analysis_context_view?: {
+      score_breakdown?: {
+        category_rows?: Array<{ label?: string; penalty?: number }>;
+      };
+    };
     board_view?: {
       has_data?: boolean;
       width?: number;
@@ -96,6 +109,63 @@ function Analyze() {
     medium: Number(item.severity_counts?.medium || 0) + Number(item.severity_counts?.high || 0),
     low: Number(item.severity_counts?.low || 0),
   }));
+  const penaltyRows = (result?.analysis_context_view?.score_breakdown?.category_rows || [])
+    .map((item) => ({ label: item.label || "General", penalty: Number(item.penalty || 0) }))
+    .filter((item) => item.penalty > 0)
+    .sort((a, b) => b.penalty - a.penalty)
+    .slice(0, 8);
+  const confidenceBuckets = risks.reduce(
+    (acc, risk) => {
+      const score = Number(risk.transparency_view?.confidence_score || 0);
+      if (score >= 80) acc.high += 1;
+      else if (score >= 60) acc.medium += 1;
+      else acc.low += 1;
+      return acc;
+    },
+    { high: 0, medium: 0, low: 0 },
+  );
+  const confidenceData = [
+    { label: "High", value: confidenceBuckets.high, fill: "oklch(0.76 0.16 160)" },
+    { label: "Medium", value: confidenceBuckets.medium, fill: "oklch(0.82 0.16 75)" },
+    { label: "Low", value: confidenceBuckets.low, fill: "oklch(0.68 0.2 24)" },
+  ];
+  const traceabilityData = risks.reduce(
+    (acc, risk) => {
+      const score = Number(risk.transparency_view?.traceability_score || 0);
+      if (score >= 85) acc.auditReady += 1;
+      else if (score >= 60) acc.moderate += 1;
+      else acc.weak += 1;
+      return acc;
+    },
+    { auditReady: 0, moderate: 0, weak: 0 },
+  );
+  const traceabilityChart = [
+    { label: "Audit-ready", value: traceabilityData.auditReady, fill: "oklch(0.76 0.16 160)" },
+    { label: "Moderate", value: traceabilityData.moderate, fill: "oklch(0.84 0.15 205)" },
+    { label: "Weak", value: traceabilityData.weak, fill: "oklch(0.68 0.2 24)" },
+  ];
+  const componentLeaderboard = Array.from(
+    risks.reduce((map, risk) => {
+      for (const ref of risk.components || []) {
+        map.set(ref, (map.get(ref) || 0) + 1);
+      }
+      return map;
+    }, new Map<string, number>()),
+  )
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+  const netLeaderboard = Array.from(
+    risks.reduce((map, risk) => {
+      for (const net of risk.nets || []) {
+        map.set(net, (map.get(net) || 0) + 1);
+      }
+      return map;
+    }, new Map<string, number>()),
+  )
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedFile) {
@@ -285,6 +355,77 @@ function Analyze() {
               </Panel>
             </div>
 
+            <div className="grid gap-4 xl:grid-cols-2">
+              <Panel title="Penalty contribution">
+                {penaltyRows.length ? (
+                  <ResponsiveContainer width="100%" height={280}>
+                    <BarChart data={penaltyRows} layout="vertical" margin={{ left: 10, right: 18 }}>
+                      <CartesianGrid stroke="oklch(0.28 0.014 250)" horizontal={false} />
+                      <XAxis type="number" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
+                      <YAxis type="category" dataKey="label" width={118} tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
+                      <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                      <Bar dataKey="penalty" fill="oklch(0.84 0.15 205)" radius={[0, 8, 8, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Penalty contribution will appear when score explanation detail is available for the run.</p>
+                )}
+              </Panel>
+
+              <Panel title="Confidence distribution">
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={confidenceData} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
+                    <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
+                    <XAxis dataKey="label" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
+                    <YAxis tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} allowDecimals={false} />
+                    <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                      {confidenceData.map((item) => <Cell key={item.label} fill={item.fill} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Panel>
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+              <Panel title="Component hotspot leaderboard">
+                {componentLeaderboard.length ? (
+                  <Leaderboard items={componentLeaderboard} accent="oklch(0.84 0.15 205)" />
+                ) : (
+                  <p className="text-sm text-muted-foreground">No component-linked findings were preserved for this run.</p>
+                )}
+              </Panel>
+
+              <Panel title="Net hotspot leaderboard">
+                {netLeaderboard.length ? (
+                  <Leaderboard items={netLeaderboard} accent="oklch(0.82 0.16 75)" />
+                ) : (
+                  <p className="text-sm text-muted-foreground">No net-linked findings were preserved for this run.</p>
+                )}
+              </Panel>
+            </div>
+
+            <Panel title="Traceability completeness">
+              <div className="grid gap-4 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={traceabilityChart} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
+                    <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
+                    <XAxis dataKey="label" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
+                    <YAxis tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} allowDecimals={false} />
+                    <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                      {traceabilityChart.map((item) => <Cell key={item.label} fill={item.fill} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                  <SignalStat label="Audit-ready" value={String(traceabilityData.auditReady)} />
+                  <SignalStat label="Moderate evidence" value={String(traceabilityData.moderate)} />
+                  <SignalStat label="Weak evidence" value={String(traceabilityData.weak)} />
+                </div>
+              </div>
+            </Panel>
+
             <Panel title="Artifacts">
               <div className="grid gap-3 md:grid-cols-2">
                 {downloadItems.map((item, index) => (
@@ -360,6 +501,25 @@ function SignalStat({ label, value }: { label: string; value: string }) {
     <div className="rounded-xl border border-border bg-background/40 p-4">
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 text-2xl font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function Leaderboard({ items, accent }: { items: Array<{ label: string; value: number }>; accent: string }) {
+  const maxValue = Math.max(...items.map((item) => item.value), 1);
+  return (
+    <div className="space-y-3">
+      {items.map((item) => (
+        <div key={item.label} className="rounded-xl border border-border bg-background/40 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-sm font-medium">{item.label}</div>
+            <div className="font-mono text-xs text-muted-foreground">{item.value}</div>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-muted/70">
+            <div className="h-2 rounded-full" style={{ width: `${Math.max((item.value / maxValue) * 100, 8)}%`, background: accent }} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -26,7 +26,7 @@ type DashboardPayload = {
     open_critical_issues: number;
     issue_change: number;
   };
-  trend: Array<{ label: string; score: number; issues: number; name: string }>;
+  trend: Array<{ label: string; score: number; issues: number; name: string; critical?: number; high?: number; medium?: number; low?: number }>;
   recent: Array<{ name: string; rev: string; score: number; delta: number | null; issues: number; status: string; run_dir: string }>;
   risk_heatmap?: Array<{
     category: string;
@@ -109,6 +109,39 @@ function Dashboard() {
               </ResponsiveContainer>
             </Panel>
           </div>
+
+          <Panel title="Severity over time">
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={trend}>
+                <defs>
+                  <linearGradient id="sevCritical" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="oklch(0.68 0.2 24)" stopOpacity={0.22} />
+                  </linearGradient>
+                  <linearGradient id="sevHigh" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="oklch(0.77 0.18 52)" stopOpacity={0.85} />
+                    <stop offset="100%" stopColor="oklch(0.77 0.18 52)" stopOpacity={0.2} />
+                  </linearGradient>
+                  <linearGradient id="sevMedium" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="oklch(0.82 0.16 75)" stopOpacity={0.8} />
+                    <stop offset="100%" stopColor="oklch(0.82 0.16 75)" stopOpacity={0.18} />
+                  </linearGradient>
+                  <linearGradient id="sevLow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="oklch(0.84 0.15 205)" stopOpacity={0.75} />
+                    <stop offset="100%" stopColor="oklch(0.84 0.15 205)" stopOpacity={0.15} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
+                <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                <Area type="monotone" dataKey="critical" stackId="1" stroke="oklch(0.68 0.2 24)" fill="url(#sevCritical)" />
+                <Area type="monotone" dataKey="high" stackId="1" stroke="oklch(0.77 0.18 52)" fill="url(#sevHigh)" />
+                <Area type="monotone" dataKey="medium" stackId="1" stroke="oklch(0.82 0.16 75)" fill="url(#sevMedium)" />
+                <Area type="monotone" dataKey="low" stackId="1" stroke="oklch(0.84 0.15 205)" fill="url(#sevLow)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </Panel>
 
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             <BoardHeatmap

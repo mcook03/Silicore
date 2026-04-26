@@ -7,6 +7,7 @@ import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
 import { Button } from "@/components/ui/button";
 import { Upload, Layers, Sparkles } from "lucide-react";
 import { apiPostForm, useApiData } from "@/lib/api";
+import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 
 export const Route = createFileRoute("/project-review")({
   head: () => ({ meta: [{ title: "Project review — Silicore" }] }),
@@ -78,6 +79,11 @@ function ProjectReview() {
   const boardTrend = boards.map((board, index) => ({
     label: `B${index + 1}`,
     score: normalizeScore(board.score),
+  }));
+  const boardVariance = boards.map((board) => ({
+    name: board.filename || "Board",
+    score: normalizeScore(board.score),
+    risks: (board.risks || []).length,
   }));
 
   return (
@@ -187,6 +193,22 @@ function ProjectReview() {
                 <ScoreTrend data={boardTrend} />
               ) : (
                 <p className="text-sm text-muted-foreground">Board-to-board score trend appears after a project review completes.</p>
+              )}
+            </Panel>
+
+            <Panel title="Board-to-board variance">
+              {boardVariance.length ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <ScatterChart margin={{ top: 8, right: 18, bottom: 10, left: 0 }}>
+                    <CartesianGrid stroke="oklch(0.28 0.014 250)" />
+                    <XAxis type="number" dataKey="score" name="Score" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} domain={[0, 100]} />
+                    <YAxis type="number" dataKey="risks" name="Findings" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} allowDecimals={false} />
+                    <Tooltip cursor={{ strokeDasharray: "4 4" }} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} formatter={(value, name) => [value, name === "score" ? "Score" : "Findings"]} labelFormatter={() => ""} />
+                    <Scatter data={boardVariance} fill="oklch(0.84 0.15 205)" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="text-sm text-muted-foreground">Variance plotting appears after Silicore has multiple boards to compare.</p>
               )}
             </Panel>
 

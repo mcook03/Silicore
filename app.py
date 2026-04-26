@@ -259,6 +259,10 @@ def _dashboard_payload():
                 "score": item.get("display_score", 0),
                 "issues": item.get("risk_count", 0),
                 "name": item.get("name"),
+                "critical": item.get("critical_count", 0),
+                "high": item.get("high_count", 0),
+                "medium": item.get("medium_count", 0),
+                "low": item.get("low_count", 0),
             }
         )
 
@@ -334,6 +338,7 @@ def _project_payload(project_id):
         "project": project,
         "review_feed": review_feed,
         "risk_heatmap": _build_run_category_heatmap(project.get("runs", []) or [], limit_rows=5, limit_cols=6),
+        "timeline": _build_project_timeline_data(project),
         "score_history": [
             {
                 "label": run.get("name") or run.get("run_id"),
@@ -565,11 +570,24 @@ def frontend_projects_route():
     current_user = _current_user()
     if current_user:
         projects = [project for project in projects if project_is_visible_to_user(current_user, project)]
+    projects = [project for project in projects if not _is_placeholder_project(project)]
     return jsonify({"projects": projects, "summary": _build_projects_summary(projects)})
 
 
-@app.route("/api/frontend/projects/<project_id>", methods=["GET"])
+@app.route("/api/frontend/projects/<project_id>", methods=["GET", "DELETE"])
 def frontend_project_detail_route(project_id):
+    if request.method == "DELETE":
+        project = get_project(project_id)
+        if project is None:
+            return _json_error("Project not found.", 404)
+        current_user = _current_user()
+        if current_user and not can_manage_project(current_user, project):
+            return _json_error("You do not have permission to delete this workspace.", 403)
+        deleted = delete_project(project_id)
+        if not deleted:
+            return _json_error("Project could not be deleted.", 400)
+        return jsonify({"deleted": True, "project_id": project_id})
+
     payload = _project_payload(project_id)
     if payload is None:
         return _json_error("Project not found.", 404)
@@ -628,6 +646,14 @@ def frontend_history_detail_route(run_dir):
         detail["board_view"] = enriched_detail.get("board_view") or {"has_data": False}
         detail["analysis_context_view"] = enriched_detail.get("analysis_context_view") or {}
     return jsonify(detail)
+
+
+def _is_placeholder_project(project):
+    project = project or {}
+    name = str(project.get("name") or "").strip().lower()
+    runs = project.get("runs") or []
+    description = str(project.get("description") or "").strip()
+    return name == "governance workspace" and not runs and not description
 
 
 @app.route("/api/frontend/compare", methods=["GET"])

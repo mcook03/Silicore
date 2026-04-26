@@ -71,6 +71,22 @@ export async function apiPostForm<T>(url: string, formData: FormData): Promise<T
   return payload as T;
 }
 
+export async function apiDelete<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
+    method: "DELETE",
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  const payload = await parseJson(response);
+  if (!response.ok) {
+    const message = typeof payload === "object" && payload && "error" in payload ? String(payload.error) : `Request failed with ${response.status}`;
+    throw new ApiError(message, response.status);
+  }
+  return payload as T;
+}
+
 export function useApiData<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
