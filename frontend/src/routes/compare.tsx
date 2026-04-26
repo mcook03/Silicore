@@ -31,6 +31,7 @@ import {
 } from "recharts";
 import { useApiData } from "@/lib/api";
 import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
+import { usePersistentState } from "@/lib/uiState";
 
 const transparentCursor = { fill: "transparent", stroke: "transparent" };
 
@@ -82,10 +83,10 @@ function Compare() {
     [session.data?.project_options],
   );
   const defaultProject = projectOptions[0]?.value || "";
-  const [projectId, setProjectId] = useState("");
-  const [runAId, setRunAId] = useState("");
-  const [runBId, setRunBId] = useState("");
-  const [changeFilter, setChangeFilter] = useState<"all" | "fixed" | "regressed" | "new">("all");
+  const [projectId, setProjectId] = usePersistentState("silicore:compare:projectId", "");
+  const [runAId, setRunAId] = usePersistentState("silicore:compare:runAId", "");
+  const [runBId, setRunBId] = usePersistentState("silicore:compare:runBId", "");
+  const [changeFilter, setChangeFilter] = usePersistentState<"all" | "fixed" | "regressed" | "new">("silicore:compare:changeFilter", "all");
   const activeProjectId = projectId || defaultProject;
 
   const projectDetail = useApiData<ProjectDetailPayload>(
@@ -194,6 +195,15 @@ function Compare() {
     () => (compare.data?.changes || []).filter((change) => changeFilter === "all" || change.kind === changeFilter),
     [compare.data?.changes, changeFilter],
   );
+  const recommendedPair = useMemo(() => {
+    if (selectableRuns.length < 2) return null;
+    const sorted = [...selectableRuns].sort((a, b) => {
+      const aWeight = normalizeScore(a.score) + Number(a.risk_count || 0) + (Number(a.critical_count || 0) * 3);
+      const bWeight = normalizeScore(b.score) + Number(b.risk_count || 0) + (Number(b.critical_count || 0) * 3);
+      return bWeight - aWeight;
+    });
+    return { baseline: sorted[1] || sorted[0], candidate: sorted[0] };
+  }, [selectableRuns]);
 
   const swapRuns = () => {
     setRunAId(runBId);
@@ -356,6 +366,21 @@ function Compare() {
                     Compare now prioritizes runs that actually contain analyzable score/risk data so the page doesn’t silently land on empty batch shells.
                   </span>
                 </div>
+                {recommendedPair ? (
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    <span>Suggested pair:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRunAId(recommendedPair.baseline.run_id);
+                        setRunBId(recommendedPair.candidate.run_id);
+                      }}
+                      className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/15"
+                    >
+                      {recommendedPair.baseline.name || recommendedPair.baseline.run_id} → {recommendedPair.candidate.name || recommendedPair.candidate.run_id}
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </div>
           </CompareStage>

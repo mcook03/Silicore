@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
@@ -10,6 +10,7 @@ import { Upload, FileUp, Sparkles, AlertTriangle, AlertCircle, Info, CheckCircle
 import { apiPostForm, useApiData } from "@/lib/api";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
+import { usePersistentState } from "@/lib/uiState";
 
 const transparentCursor = { fill: "transparent", stroke: "transparent" };
 
@@ -84,14 +85,14 @@ type AnalysisResultPayload = {
 function Analyze() {
   const { data: options, loading: optionsLoading } = useApiData<AnalysisOptions>("/api/frontend/analyze/options");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [projectId, setProjectId] = useState("");
+  const [projectId, setProjectId] = usePersistentState("silicore:analyze:projectId", "");
   const [profile, setProfile] = useState("balanced");
   const [boardType, setBoardType] = useState("general");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResultPayload | null>(null);
-  const [severityFilter, setSeverityFilter] = useState<"all" | "critical" | "high" | "medium" | "low">("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [severityFilter, setSeverityFilter] = usePersistentState<"all" | "critical" | "high" | "medium" | "low">("silicore:analyze:severityFilter", "all");
+  const [categoryFilter, setCategoryFilter] = usePersistentState("silicore:analyze:categoryFilter", "all");
   const [selectedFindingKey, setSelectedFindingKey] = useState<string | null>(null);
   const [justCompleted, setJustCompleted] = useState(false);
 
@@ -201,6 +202,11 @@ function Analyze() {
     || filteredRisks[0]
     || risks[0]
     || null;
+  useEffect(() => {
+    if (!flashTimerNeeded(justCompleted)) return;
+    const timer = window.setTimeout(() => setJustCompleted(false), 2600);
+    return () => window.clearTimeout(timer);
+  }, [justCompleted]);
   const topCategory = [...groupedRisks].sort((a, b) => Number(b.count || 0) - Number(a.count || 0))[0];
   const lowestConfidenceBucket = confidenceData.find((item) => item.label === "Low")?.value || 0;
   const highestComponent = componentLeaderboard[0];
@@ -480,7 +486,14 @@ function Analyze() {
                       </button>
                     ))}
                   </div>
-                  <BoardHeatmap title="Board hotspot map" boardView={result.board_view} />
+                  <BoardHeatmap
+                    title="Board hotspot map"
+                    boardView={result.board_view}
+                    focusSummary={selectedFinding ? {
+                      title: "Linked issue focus",
+                      detail: `Selected finding: ${selectedFinding.message || "Unnamed issue"} · ${(selectedFinding.components || []).length || 0} components · ${(selectedFinding.nets || []).length || 0} nets`,
+                    } : null}
+                  />
                 </div>
               </div>
             </div>
@@ -812,6 +825,10 @@ function FindingRow({
 
 function findingKey(risk?: Risk | null) {
   return `${risk?.message || "issue"}|${risk?.category || "General"}|${risk?.recommendation || ""}`;
+}
+
+function flashTimerNeeded(value: boolean) {
+  return typeof window !== "undefined" && value;
 }
 
 function SignalStat({ label, value }: { label: string; value: string }) {

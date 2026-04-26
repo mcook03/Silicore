@@ -156,6 +156,22 @@ function ProjectDetail() {
           ]}
         />
 
+        <ProjectStage title="Signoff readiness" rail="workspace gate posture">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+            <div className="rounded-2xl border border-border bg-background/35 p-5 text-sm leading-7 text-muted-foreground">
+              {(project?.latest_score || 0) >= 85 && pendingGates === 0
+                ? "This workspace is approaching signoff-ready posture: strong latest score, no pending gates, and the current run set looks stable enough for focused final review."
+                : "This workspace still needs another decision cycle before signoff. Use the gate list, run ladder, and compare flow to resolve the remaining pressure before treating the program as ready."}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <QuickStat label="Readiness score" value={String(Math.max(0, Math.round((project?.latest_score || 0) - (pendingGates * 6) - ((riskiestRun?.critical_count || 0) * 4))))} />
+              <QuickStat label="Suggested next step" value={pendingGates > 0 ? "Close gates" : (riskiestRun?.critical_count || 0) > 0 ? "Compare runs" : "Final review"} />
+              <WorkflowAction to="/compare" label="Compare best candidate" copy="Use revision arbitration before closing the final signoff decision." />
+              <WorkflowAction to="/history" label="Review archive path" copy="Confirm this workspace trend is actually stabilizing over time." />
+            </div>
+          </div>
+        </ProjectStage>
+
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <BoardHeatmap
             title="Project hotspot overview"

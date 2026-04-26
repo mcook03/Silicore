@@ -75,11 +75,13 @@ export function BoardHeatmap({
   boardView,
   matrixRows,
   emptyCopy = "No heat-map data is available for this view yet.",
+  focusSummary,
 }: {
   title?: string;
   boardView?: BoardViewData | null;
   matrixRows?: MatrixRow[] | null;
   emptyCopy?: string;
+  focusSummary?: { title: string; detail: string } | null;
 }) {
   const [mode, setMode] = useState<HeatMode>("thermal");
   const hasBoardData = Boolean(
@@ -131,6 +133,13 @@ export function BoardHeatmap({
           {emptyCopy}
         </p>
       )}
+
+      {focusSummary ? (
+        <div className="mt-4 rounded-2xl border border-primary/18 bg-primary/8 px-4 py-3">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{focusSummary.title}</div>
+          <div className="mt-2 text-sm leading-6 text-muted-foreground">{focusSummary.detail}</div>
+        </div>
+      ) : null}
     </div>
   );
 }
