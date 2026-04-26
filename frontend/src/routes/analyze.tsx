@@ -108,6 +108,13 @@ function Analyze() {
     { name: "medium", value: risks.filter((item) => (item.severity || "").toLowerCase() === "medium").length },
     { name: "low", value: risks.filter((item) => !["critical", "high", "medium"].includes((item.severity || "").toLowerCase())).length },
   ].filter((item) => item.value > 0);
+  const severityCounts = {
+    all: risks.length,
+    critical: risks.filter((item) => (item.severity || "").toLowerCase() === "critical").length,
+    high: risks.filter((item) => (item.severity || "").toLowerCase() === "high").length,
+    medium: risks.filter((item) => (item.severity || "").toLowerCase() === "medium").length,
+    low: risks.filter((item) => !["critical", "high", "medium"].includes((item.severity || "").toLowerCase())).length,
+  };
   const categoryChartData = groupedRisks.map((item) => ({
     category: item.title || "General",
     critical: Number(item.severity_counts?.critical || 0),
@@ -466,11 +473,11 @@ function Analyze() {
                       active={severityFilter}
                       onChange={setSeverityFilter}
                       options={[
-                        { value: "all", label: "All", count: risks.length },
-                        { value: "critical", label: "Critical", count: severityData.find((item) => item.name === "critical")?.value ?? 0 },
-                        { value: "high", label: "High", count: severityData.find((item) => item.name === "high")?.value ?? 0 },
-                        { value: "medium", label: "Medium", count: severityData.find((item) => item.name === "medium")?.value ?? 0 },
-                        { value: "low", label: "Low", count: severityData.find((item) => item.name === "low")?.value ?? 0 },
+                        { value: "all", label: "All", count: severityCounts.all },
+                        { value: "critical", label: "Critical", count: severityCounts.critical },
+                        { value: "high", label: "High", count: severityCounts.high },
+                        { value: "medium", label: "Medium", count: severityCounts.medium },
+                        { value: "low", label: "Low", count: severityCounts.low },
                       ]}
                     />
                   </div>
@@ -625,11 +632,11 @@ function Analyze() {
                   active={severityFilter}
                   onChange={setSeverityFilter}
                   options={[
-                    { value: "all", label: "All severities", count: filteredRisks.length },
-                    { value: "critical", label: "Critical", count: filteredRisks.filter((risk) => (risk.severity || "").toLowerCase() === "critical").length },
-                    { value: "high", label: "High", count: filteredRisks.filter((risk) => (risk.severity || "").toLowerCase() === "high").length },
-                    { value: "medium", label: "Medium", count: filteredRisks.filter((risk) => (risk.severity || "").toLowerCase() === "medium").length },
-                    { value: "low", label: "Low", count: filteredRisks.filter((risk) => !["critical", "high", "medium"].includes((risk.severity || "").toLowerCase())).length },
+                    { value: "all", label: "All severities", count: severityCounts.all },
+                    { value: "critical", label: "Critical", count: severityCounts.critical },
+                    { value: "high", label: "High", count: severityCounts.high },
+                    { value: "medium", label: "Medium", count: severityCounts.medium },
+                    { value: "low", label: "Low", count: severityCounts.low },
                   ]}
                 />
               </div>

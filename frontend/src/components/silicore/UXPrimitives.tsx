@@ -122,9 +122,9 @@ export function DecisionStrip({
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {metrics.map((metric) => (
-            <div key={metric.label} className="rounded-2xl border border-white/8 bg-black/10 px-4 py-3">
+            <div key={metric.label} className="min-w-0 rounded-2xl border border-white/8 bg-black/10 px-4 py-3">
               <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{metric.label}</div>
-              <div className={`mt-2 text-2xl font-semibold ${toneClass(metric.tone)}`}>{metric.value}</div>
+              <div className={`mt-2 break-words text-2xl font-semibold leading-tight ${toneClass(metric.tone)}`}>{metric.value}</div>
             </div>
           ))}
         </div>
