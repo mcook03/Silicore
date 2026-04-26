@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
+import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
 import { useApiData } from "@/lib/api";
 import { History as HistoryIcon } from "lucide-react";
 
@@ -12,20 +13,33 @@ export const Route = createFileRoute("/history")({
 
 type HistoryRun = {
   name: string;
+  label?: string;
   created_at?: string;
   result?: { score?: number };
   risk_count?: number;
   critical_count?: number;
   preview?: string;
+  run_type?: string;
 };
 
 type HistoryPayload = {
   runs: HistoryRun[];
-  summary: { total_runs: number; total_files: number };
+  summary: { total_runs: number; total_files: number; total_html?: number; total_json?: number; total_text?: number };
 };
 
 function History() {
   const { data, error } = useApiData<HistoryPayload>("/api/frontend/history");
+  const scoreHistory = (data?.runs ?? [])
+    .filter((run) => Number.isFinite(Number(run.result?.score)))
+    .slice(0, 20)
+    .reverse()
+    .map((run, index) => ({
+      label: `wk${index + 1}`,
+      score: Math.round(Number(run.result?.score || 0)),
+      runLabel: run.label || run.name,
+      createdAt: run.created_at || "—",
+    }));
+
   return (
     <AppShell title="History">
       <div className="space-y-6">
@@ -50,9 +64,46 @@ function History() {
             <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-white/8 pt-4 xl:border-t-0 xl:pt-0">
               <HistoryMetric label="Runs" value={String(data?.summary.total_runs ?? 0)} />
               <HistoryMetric label="Files" value={String(data?.summary.total_files ?? 0)} />
+              <HistoryMetric label="HTML" value={String(data?.summary.total_html ?? 0)} />
+              <HistoryMetric label="JSON" value={String(data?.summary.total_json ?? 0)} />
             </div>
           </div>
         </section>
+
+        <HistoryStage
+          title="Score progression"
+          rail="trend surface"
+          subtitle="Track how saved analysis scores have moved across the most recent history window."
+        >
+          {scoreHistory.length >= 2 ? (
+            <div className="space-y-4">
+              <div className="h-[320px]">
+                <ScoreTrend data={scoreHistory} />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <HistoryMetricCard
+                  label="Latest score"
+                  value={String(scoreHistory[scoreHistory.length - 1]?.score ?? 0)}
+                  copy={scoreHistory[scoreHistory.length - 1]?.runLabel || "Latest run"}
+                />
+                <HistoryMetricCard
+                  label="Window delta"
+                  value={formatDelta((scoreHistory[scoreHistory.length - 1]?.score ?? 0) - (scoreHistory[0]?.score ?? 0))}
+                  copy="Movement across this visible history range"
+                />
+                <HistoryMetricCard
+                  label="Tracked runs"
+                  value={String(scoreHistory.length)}
+                  copy="Recent scored analyses in the timeline"
+                />
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Score progression appears once history includes at least two scored analysis runs.
+            </p>
+          )}
+        </HistoryStage>
 
         <HistoryStage title="Analysis log" rail="run archive" subtitle="Every recorded run, sorted into a cleaner review-friendly table.">
           {error ? (
@@ -73,7 +124,10 @@ function History() {
                 <tbody>
                   {(data?.runs ?? []).map((run) => (
                     <tr key={run.name} className="border-t border-border/60 hover:bg-surface/50">
-                      <td className="px-6 py-3.5 font-medium">{run.name}</td>
+                      <td className="px-6 py-3.5">
+                        <div className="font-medium">{run.label || run.name}</div>
+                        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{run.run_type || "run"}</div>
+                      </td>
                       <td className="px-6 py-3.5 font-mono text-xs text-muted-foreground">{run.created_at || "—"}</td>
                       <td className="px-6 py-3.5"><ScorePill score={Math.round(Number(run.result?.score || 0))} /></td>
                       <td className="px-6 py-3.5 text-muted-foreground">{run.risk_count || 0}</td>
@@ -93,11 +147,28 @@ function History() {
   );
 }
 
+function formatDelta(value: number) {
+  if (!Number.isFinite(value)) {
+    return "0";
+  }
+  return `${value > 0 ? "+" : ""}${Math.round(value)}`;
+}
+
 function HistoryMetric({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function HistoryMetricCard({ label, value, copy }: { label: string; value: string; copy: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-background/35 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className="mt-2 text-2xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
   );
 }
