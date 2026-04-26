@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
-import { PageHero } from "@/components/silicore/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -131,16 +130,31 @@ function Atlas() {
   return (
     <AppShell title="Atlas — AI copilot">
       <div className="space-y-6">
-        <PageHero
-          eyebrow={<><Sparkles className="h-3.5 w-3.5" /> Copilot interface</>}
-          title="Work with Atlas in a UI that feels like an integrated engineering copilot, not a raw prompt box."
-          description="Context, thread state, agent runs, and workflow planning now sit inside the same premium control surface so the AI layer feels native to Silicore."
-          metrics={[
-            { label: "Thread", value: threadKey ? "Live" : "New", copy: threadKey || "Start a new Atlas thread" },
-            { label: "Messages", value: String(messages.length), copy: "Conversation items in memory" },
-            { label: "Agent runs", value: String(runs.data?.runs.length || 0), copy: "Tracked against this thread" },
-          ]}
-        />
+        <section
+          data-reveal
+          className="relative overflow-hidden rounded-[34px] border border-border/80 bg-[radial-gradient(circle_at_78%_20%,rgba(86,211,240,0.16),transparent_18%),linear-gradient(135deg,rgba(8,16,26,0.98),rgba(9,17,28,0.96)_48%,rgba(15,18,30,0.96))] px-6 py-7 sm:px-8 sm:py-8"
+        >
+          <div className="absolute inset-y-0 left-[58%] w-px bg-gradient-to-b from-transparent via-white/8 to-transparent max-xl:hidden" />
+          <div className="relative grid gap-7 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+            <div>
+              <div className="section-eyebrow">
+                <Sparkles className="h-3.5 w-3.5" />
+                Copilot interface
+              </div>
+              <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.15rem] sm:leading-[1.02]">
+                Atlas should feel like a live copilot station, not a chatbot dropped into a dashboard.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
+                Context, thread state, quick actions, and agent runs should support the conversation instead of competing with it. This layout is moving toward that more intentional flow.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              <AtlasSignal label="Thread" value={threadKey ? "Live" : "New"} copy={threadKey || "Start a new Atlas thread"} />
+              <AtlasSignal label="Messages" value={String(messages.length)} copy="Conversation items in memory" />
+              <AtlasSignal label="Agent runs" value={String(runs.data?.runs.length || 0)} copy="Tracked against this thread" />
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
@@ -255,6 +269,16 @@ function Atlas() {
       </div>
       </div>
     </AppShell>
+  );
+}
+
+function AtlasSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
+  return (
+    <div className="border-l border-white/10 pl-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
+    </div>
   );
 }
 

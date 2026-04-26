@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { PageHero } from "@/components/silicore/PageHero";
 import { Panel, ScorePill } from "@/components/silicore/Panel";
 import { useApiData } from "@/lib/api";
 import { History as HistoryIcon } from "lucide-react";
@@ -29,15 +28,30 @@ function History() {
   return (
     <AppShell title="History">
       <div className="space-y-6">
-        <PageHero
-          eyebrow={<><HistoryIcon className="h-3.5 w-3.5" /> Analysis archive</>}
-          title="Review the full run trail with enough clarity to revisit old decisions without losing context."
-          description="History now feels like an audit-grade ledger instead of a simple file list, keeping score, risk, and critical counts visible at a glance."
-          metrics={[
-            { label: "Runs", value: String(data?.summary.total_runs ?? 0), copy: "Recorded analyses in the archive" },
-            { label: "Files", value: String(data?.summary.total_files ?? 0), copy: "Artifacts tracked alongside runs" },
-          ]}
-        />
+        <section
+          data-reveal
+          className="relative overflow-hidden rounded-[30px] border border-border/80 bg-[linear-gradient(180deg,rgba(7,15,24,0.98),rgba(8,17,27,0.94))] px-6 py-7 sm:px-8 sm:py-8"
+        >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/8 to-transparent" />
+          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+            <div className="max-w-3xl">
+              <div className="section-eyebrow">
+                <HistoryIcon className="h-3.5 w-3.5" />
+                Analysis archive
+              </div>
+              <h2 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-[3.2rem] sm:leading-[1.02]">
+                Revisit prior analyses like a clean engineering ledger, not a leftover file table.
+              </h2>
+              <p className="mt-4 text-base leading-8 text-muted-foreground">
+                History should help you scan outcomes, compare moments in time, and jump back into detail without the page feeling like an admin afterthought.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-white/8 pt-4 xl:border-t-0 xl:pt-0">
+              <HistoryMetric label="Runs" value={String(data?.summary.total_runs ?? 0)} />
+              <HistoryMetric label="Files" value={String(data?.summary.total_files ?? 0)} />
+            </div>
+          </div>
+        </section>
 
         <Panel title="Analysis log" subtitle="Every recorded run, sorted into a cleaner review-friendly table.">
           {error ? (
@@ -75,5 +89,14 @@ function History() {
         </Panel>
       </div>
     </AppShell>
+  );
+}
+
+function HistoryMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+    </div>
   );
 }

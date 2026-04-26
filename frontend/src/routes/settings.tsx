@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { PageHero } from "@/components/silicore/PageHero";
 import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -112,16 +111,35 @@ function Settings() {
       <div className="space-y-6">
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
 
-        <PageHero
-          eyebrow={<><SlidersHorizontal className="h-3.5 w-3.5" /> Control board</>}
-          title="Tune how Silicore thinks about spacing, score pressure, power realism, and review strictness."
-          description="This page is now the human-friendly surface for the most common configuration changes. Use the sliders and toggles for daily tuning, and drop into JSON only when you need the full config."
-          metrics={summaryCards.map((card) => ({
-            label: card.label,
-            value: humanize(card.value),
-            copy: card.subtext,
-          }))}
-        />
+        <section
+          data-reveal
+          className="relative overflow-hidden rounded-[34px] border border-border/80 bg-[radial-gradient(circle_at_100%_0%,rgba(86,211,240,0.14),transparent_22%),linear-gradient(135deg,rgba(8,17,27,0.98),rgba(8,15,24,0.96)_58%,rgba(11,20,32,0.98))] px-6 py-7 sm:px-8 sm:py-8"
+        >
+          <div className="absolute inset-y-0 right-[32%] w-px bg-gradient-to-b from-transparent via-white/8 to-transparent max-xl:hidden" />
+          <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div>
+              <div className="section-eyebrow">
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                Control board
+              </div>
+              <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.15rem] sm:leading-[1.02]">
+                Tune how Silicore thinks about spacing, score pressure, power realism, and review strictness.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
+                Settings should feel like a control instrument, not a banner sitting above more cards. This page is moving toward a more intentional configuration workspace with daily controls front and center.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+              {summaryCards.map((card) => (
+                <div key={card.label} className="border-l border-white/10 pl-4">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{card.label}</div>
+                  <div className="mt-1 text-2xl font-semibold text-foreground">{humanize(card.value)}</div>
+                  <div className="mt-1 text-sm text-muted-foreground">{card.subtext}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
           <Panel title="Workspace posture">

@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
-import { PageHero } from "@/components/silicore/PageHero";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel, ScorePill } from "@/components/silicore/Panel";
 import {
@@ -52,16 +51,52 @@ function Dashboard() {
         </Panel>
       ) : (
         <div className="space-y-6">
-          <PageHero
-            eyebrow={<><TrendingUp className="h-3.5 w-3.5" /> Mission control</>}
-            title="Track design health, hotspot movement, and risk momentum without digging through raw runs."
-            description="The dashboard now behaves like an engineering command surface: trend-aware, spatially aware, and tuned for fast review across boards and revisions."
-            metrics={[
-              { label: "Boards analyzed", value: String(stats?.boards_analyzed ?? 0), copy: "Runs represented in the active sample" },
-              { label: "Overall score", value: String(Math.round(stats?.overall_score ?? 0)), copy: "Blended across recent analyses" },
-              { label: "Open critical", value: String(stats?.open_critical_issues ?? 0), copy: "Immediate engineering attention" },
-            ]}
-          />
+          <section
+            data-reveal
+            className="relative overflow-hidden rounded-[36px] border border-border/80 bg-[radial-gradient(circle_at_18%_12%,rgba(96,240,198,0.14),transparent_18%),radial-gradient(circle_at_82%_14%,rgba(125,178,255,0.16),transparent_22%),linear-gradient(180deg,rgba(7,15,24,0.96),rgba(8,16,26,0.98))] px-6 py-7 sm:px-8 sm:py-9"
+          >
+            <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:76px_76px]" />
+            <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.25fr)_320px]">
+              <div className="min-w-0">
+                <div className="section-eyebrow">
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  Mission control
+                </div>
+                <h2 className="mt-6 max-w-4xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl sm:leading-[1.02]">
+                  Track design health, hotspot movement, and risk momentum without digging through raw runs.
+                </h2>
+                <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
+                  The dashboard should feel like a live engineering surface, not a stack of cards. This composition keeps the score center-stage while surfacing fleet pressure and recent activity in one glance.
+                </p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-white/8 pt-5">
+                  <HeroMetric label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} />
+                  <HeroMetric label="Overall score" value={String(Math.round(stats?.overall_score ?? 0))} />
+                  <HeroMetric label="Open critical" value={String(stats?.open_critical_issues ?? 0)} tone="danger" />
+                  <HeroMetric label="Average score" value={String(stats?.avg_score_30d ?? 0)} />
+                </div>
+              </div>
+
+              <div className="relative flex min-h-[340px] items-center justify-center">
+                <div className="absolute inset-x-12 top-4 h-24 rounded-full bg-primary/10 blur-3xl" />
+                <div className="absolute left-0 top-10 h-px w-24 bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+                <div className="absolute right-0 bottom-12 h-px w-28 bg-gradient-to-r from-transparent via-success/60 to-transparent" />
+                <div className="relative">
+                  <div className="absolute inset-[-20px] rounded-full border border-primary/14" />
+                  <div className="absolute inset-[-44px] rounded-full border border-white/5" />
+                  <div className="premium-subtle relative rounded-full p-6 shadow-[0_28px_70px_-36px_rgba(0,0,0,0.85)]">
+                    <ScoreRing score={Math.round(stats?.overall_score || 0)} size={210} />
+                  </div>
+                </div>
+                <div className="absolute bottom-4 left-0 right-0 flex items-center justify-between text-[11px]">
+                  <div className="font-mono uppercase tracking-[0.18em] text-muted-foreground">critical {stats?.critical_total ?? 0}</div>
+                  <div className="font-mono uppercase tracking-[0.18em] text-success">
+                    {stats ? `${stats.score_change >= 0 ? "+" : ""}${stats.score_change} delta` : "0 delta"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
           <div className="grid gap-4 lg:grid-cols-3">
             <div data-reveal className="premium-panel rounded-[28px] p-6 lg:row-span-2">
@@ -248,6 +283,15 @@ function MetricCard({ label, value, copy }: { label: string; value: string; copy
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 text-2xl font-semibold">{value}</div>
       <div className="mt-1 text-xs text-muted-foreground">{copy}</div>
+    </div>
+  );
+}
+
+function HeroMetric({ label, value, tone }: { label: string; value: string; tone?: "danger" }) {
+  return (
+    <div className="min-w-[132px]">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className={`mt-1 text-2xl font-semibold ${tone === "danger" ? "text-danger" : "text-foreground"}`}>{value}</div>
     </div>
   );
 }

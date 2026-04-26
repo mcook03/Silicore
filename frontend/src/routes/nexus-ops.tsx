@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { Panel } from "@/components/silicore/Panel";
-import { PageHero } from "@/components/silicore/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiPostForm, apiPostJson, useApiData } from "@/lib/api";
@@ -87,16 +86,31 @@ function NexusOps() {
   return (
     <AppShell title="Nexus Ops">
       <div className="space-y-6">
-        <PageHero
-          eyebrow={<><Plug className="h-3.5 w-3.5" /> Operations fabric</>}
-          title="Run integrations, validation, and operational telemetry from a surface that feels built for serious internal ops."
-          description="Nexus Ops now has stronger hierarchy and clearer action grouping so the power-user workflows feel deliberate instead of improvised."
-          metrics={[
-            { label: "Queued jobs", value: String(snapshot?.summary.queued_jobs ?? 0), copy: "Waiting in the operational pipeline" },
-            { label: "Completed", value: String(snapshot?.summary.completed_jobs ?? 0), copy: "Finished jobs in the current snapshot" },
-            { label: "Worker", value: snapshot?.summary.worker_label || "Unknown", copy: "Current execution posture" },
-          ]}
-        />
+        <section
+          data-reveal
+          className="relative overflow-hidden rounded-[34px] border border-border/80 bg-[linear-gradient(115deg,rgba(7,15,24,0.98),rgba(8,18,28,0.95)_52%,rgba(11,21,31,0.97))] px-6 py-7 sm:px-8 sm:py-8"
+        >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-primary/8 to-transparent" />
+          <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div>
+              <div className="section-eyebrow">
+                <Plug className="h-3.5 w-3.5" />
+                Operations fabric
+              </div>
+              <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.1rem] sm:leading-[1.02]">
+                Run integrations, validation, and telemetry from an ops surface that feels deliberate.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
+                Nexus Ops should read like a mission rail for high-trust internal workflows, with state and action aligned before you drop into the detailed panels below.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              <OpsSignal label="Queued jobs" value={String(snapshot?.summary.queued_jobs ?? 0)} copy="Waiting in the pipeline" />
+              <OpsSignal label="Completed" value={String(snapshot?.summary.completed_jobs ?? 0)} copy="Finished in this snapshot" />
+              <OpsSignal label="Worker" value={snapshot?.summary.worker_label || "Unknown"} copy="Current execution posture" />
+            </div>
+          </div>
+        </section>
 
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
         {accessBlocked ? (
@@ -201,6 +215,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div className="space-y-1.5">
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       {children}
+    </div>
+  );
+}
+
+function OpsSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
+  return (
+    <div className="border-l border-white/10 pl-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
   );
 }

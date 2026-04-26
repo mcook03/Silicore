@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { PageHero } from "@/components/silicore/PageHero";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Plus, FolderKanban, ArrowRight, Trash2 } from "lucide-react";
@@ -47,21 +46,43 @@ function Projects() {
   return (
     <AppShell title="Projects">
       <div className="space-y-6">
-        <PageHero
-          eyebrow={<><FolderKanban className="h-3.5 w-3.5" /> Workspace system</>}
-          title="Organize boards into durable workspaces that stay ready for review, comparison, and release."
-          description="Projects now act like a polished control layer over Silicore’s backend workflows, giving each workspace clearer identity, state, and action hierarchy."
-          metrics={[
-            { label: "Workspaces", value: String(data?.summary.total_projects ?? 0), copy: "Visible in your current view" },
-            { label: "Linked runs", value: String(data?.summary.total_runs ?? 0), copy: "Attached to project history" },
-            { label: "Create flow", value: creating ? "Busy" : "Ready", copy: "Launch a new workspace instantly" },
-          ]}
-          actions={
-            <Button size="sm" onClick={onCreate} disabled={creating}>
-              <Plus className="mr-1.5 h-3.5 w-3.5" /> New project
-            </Button>
-          }
-        />
+        <section
+          data-reveal
+          className="relative overflow-hidden rounded-[34px] border border-border/80 bg-[linear-gradient(135deg,rgba(7,16,26,0.97),rgba(9,18,28,0.94)_58%,rgba(11,23,33,0.97))] px-6 py-7 sm:px-8 sm:py-8"
+        >
+          <div className="absolute inset-y-0 left-[34%] w-px bg-gradient-to-b from-transparent via-white/8 to-transparent max-xl:hidden" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(86,211,240,0.12),transparent_24%),radial-gradient(circle_at_100%_100%,rgba(125,178,255,0.12),transparent_28%)]" />
+          <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div className="min-w-0">
+              <div className="section-eyebrow">
+                <FolderKanban className="h-3.5 w-3.5" />
+                Workspace system
+              </div>
+              <h2 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.4rem] sm:leading-[0.98]">
+                Organize boards into workspaces that feel active, owned, and ready for engineering review.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
+                Instead of a generic project index, this page is shifting toward a workspace overview with state, ownership, and quick motion into the right board context.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Button size="sm" onClick={onCreate} disabled={creating}>
+                  <Plus className="mr-1.5 h-3.5 w-3.5" /> New project
+                </Button>
+                <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  {data?.summary.total_projects ?? 0} workspaces · {data?.summary.total_runs ?? 0} linked runs
+                </span>
+              </div>
+            </div>
+
+            <div className="grid content-start gap-4">
+              <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                <ProjectSignal label="Workspaces" value={String(data?.summary.total_projects ?? 0)} copy="Visible in your current view" />
+                <ProjectSignal label="Linked runs" value={String(data?.summary.total_runs ?? 0)} copy="Attached to workspace history" />
+                <ProjectSignal label="Create flow" value={creating ? "Busy" : "Ready"} copy="Launch new workspace instantly" />
+              </div>
+            </div>
+          </div>
+        </section>
         {error ? (
           <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>
         ) : null}
@@ -130,6 +151,16 @@ function Stat({ label, value }: { label: string; value: string }) {
     <div>
       <div className="text-base font-semibold">{value}</div>
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function ProjectSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
+  return (
+    <div className="border-l border-white/10 pl-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
   );
 }

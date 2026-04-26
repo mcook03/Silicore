@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { PageHero } from "@/components/silicore/PageHero";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel } from "@/components/silicore/Panel";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
@@ -195,16 +194,31 @@ function Analyze() {
   return (
     <AppShell title="Board analysis">
       <div className="space-y-6">
-        <PageHero
-          eyebrow={<><Sparkles className="h-3.5 w-3.5" /> Analysis studio</>}
-          title="Upload a board and step through a modern analysis flow that feels like a real product surface, not a static form."
-          description="This workspace combines upload, tuning, results, charts, and heat mapping into one interactive analysis environment built on the real Silicore backend."
-          metrics={[
-            { label: "Profiles", value: String(options?.analysis_modes.profiles.length ?? 0), copy: "Analysis presets available" },
-            { label: "Board types", value: String(options?.analysis_modes.board_types.length ?? 0), copy: "Context modes for the run" },
-            { label: "Workspaces", value: String(options?.project_options.length ?? 0), copy: "Projects available for linking" },
-          ]}
-        />
+        <section
+          data-reveal
+          className="relative overflow-hidden rounded-[34px] border border-border/80 bg-[radial-gradient(circle_at_82%_22%,rgba(96,240,198,0.14),transparent_18%),linear-gradient(135deg,rgba(7,16,26,0.98),rgba(8,18,28,0.95)_55%,rgba(10,17,28,0.98))] px-6 py-7 sm:px-8 sm:py-8"
+        >
+          <div className="absolute inset-y-0 left-[62%] w-px bg-gradient-to-b from-transparent via-white/8 to-transparent max-xl:hidden" />
+          <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+            <div>
+              <div className="section-eyebrow">
+                <Sparkles className="h-3.5 w-3.5" />
+                Analysis studio
+              </div>
+              <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.2rem] sm:leading-[1.02]">
+                Upload a board into a workspace that feels like a live analysis instrument, not a file form.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
+                The top of this page should set the tone for the full flow: upload, tune, run, and inspect without looking like another generic hero stacked over content.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              <AnalyzeSignal label="Profiles" value={String(options?.analysis_modes.profiles.length ?? 0)} copy="Analysis presets available" />
+              <AnalyzeSignal label="Board types" value={String(options?.analysis_modes.board_types.length ?? 0)} copy="Context modes for the run" />
+              <AnalyzeSignal label="Workspaces" value={String(options?.project_options.length ?? 0)} copy="Projects available for linking" />
+            </div>
+          </div>
+        </section>
 
         <form onSubmit={onSubmit} className="premium-hero relative overflow-hidden rounded-[30px] p-8">
           <div className="bg-hero-glow pointer-events-none absolute inset-0 opacity-40" />
@@ -470,6 +484,16 @@ function Analyze() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+function AnalyzeSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
+  return (
+    <div className="border-l border-white/10 pl-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+      <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
+    </div>
   );
 }
 
