@@ -196,9 +196,8 @@ function Analyze() {
       <div className="space-y-6">
         <section
           data-reveal
-          className="relative overflow-hidden rounded-[34px] border border-border/80 bg-[radial-gradient(circle_at_82%_22%,rgba(96,240,198,0.14),transparent_18%),linear-gradient(135deg,rgba(7,16,26,0.98),rgba(8,18,28,0.95)_55%,rgba(10,17,28,0.98))] px-6 py-7 sm:px-8 sm:py-8"
+          className="editorial-surface instrument-grid rounded-[38px] px-6 py-7 sm:px-8 sm:py-8"
         >
-          <div className="absolute inset-y-0 left-[62%] w-px bg-gradient-to-b from-transparent via-white/8 to-transparent max-xl:hidden" />
           <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
             <div>
               <div className="section-eyebrow">
@@ -209,57 +208,104 @@ function Analyze() {
                 Upload a board into a workspace that feels like a live analysis instrument, not a file form.
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
-                The top of this page should set the tone for the full flow: upload, tune, run, and inspect without looking like another generic hero stacked over content.
+                This should read like an instrument bay: intake on one side, live tuning on the other, then results unfolding as a dense engineering workspace instead of stacked forms and cards.
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
-              <AnalyzeSignal label="Profiles" value={String(options?.analysis_modes.profiles.length ?? 0)} copy="Analysis presets available" />
-              <AnalyzeSignal label="Board types" value={String(options?.analysis_modes.board_types.length ?? 0)} copy="Context modes for the run" />
-              <AnalyzeSignal label="Workspaces" value={String(options?.project_options.length ?? 0)} copy="Projects available for linking" />
+            <div className="command-strip rounded-[28px] p-5">
+              <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+                <AnalyzeSignal label="Profiles" value={String(options?.analysis_modes.profiles.length ?? 0)} copy="Analysis presets available" />
+                <AnalyzeSignal label="Board types" value={String(options?.analysis_modes.board_types.length ?? 0)} copy="Context modes for the run" />
+                <AnalyzeSignal label="Workspaces" value={String(options?.project_options.length ?? 0)} copy="Projects available for linking" />
+              </div>
             </div>
           </div>
         </section>
 
-        <form onSubmit={onSubmit} className="premium-hero relative overflow-hidden rounded-[30px] p-8">
-          <div className="bg-hero-glow pointer-events-none absolute inset-0 opacity-40" />
-          <div className="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="text-center lg:text-left">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-background lg:mx-0">
-                <Upload className="h-5 w-5 text-primary" />
+        <form onSubmit={onSubmit} className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_380px]">
+          <section className="editorial-surface instrument-grid rounded-[34px] p-8">
+            <div className="relative flex h-full flex-col justify-between gap-8">
+              <div className="max-w-2xl">
+                <div className="section-eyebrow">
+                  <Upload className="h-3.5 w-3.5" />
+                  Intake surface
+                </div>
+                <h3 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-[2.65rem] sm:leading-[1.02]">
+                  Drop a board into the workspace and turn analysis settings without leaving the canvas.
+                </h3>
+                <p className="mt-4 text-base leading-8 text-muted-foreground">
+                  Intake, file signal, and action controls stay together here so the run starts feeling like a workstation action instead of a generic upload form.
+                </p>
               </div>
-              <h3 className="mt-4 text-lg font-medium">Upload a PCB file</h3>
-              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                Drop a Gerber zip, ODB++, `.brd` or `.kicad_pcb` file to run a real Silicore analysis in the new UI.
-              </p>
-              <div className="mt-4 text-sm text-foreground">
-                {selectedFile ? selectedFile.name : "No file selected yet"}
+
+              <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
+                <div className="command-strip flex min-h-[320px] flex-col justify-between rounded-[30px] p-6">
+                  <div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-background/55">
+                      <Upload className="h-5 w-5 text-primary" />
+                    </div>
+                    <h4 className="mt-5 text-xl font-medium tracking-tight">Board intake</h4>
+                    <p className="mt-2 max-w-lg text-sm leading-7 text-muted-foreground">
+                      Drop in a Gerber zip, ODB++, Altium export, or KiCad board file and route it into the right analysis profile immediately.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="rounded-[24px] border border-dashed border-primary/25 bg-primary/6 px-5 py-8 text-center lg:text-left">
+                      <div className="text-sm text-foreground">{selectedFile ? selectedFile.name : "No file selected yet"}</div>
+                      <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                        .zip · .odb · .brd · .kicad_pcb
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap items-center gap-3">
+                      <label className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                        <FileUp className="mr-1.5 h-3.5 w-3.5" />
+                        Choose file
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept=".zip,.odb,.brd,.kicad_pcb,.pcbdocascii,.gbr,.gko,.ger,.gtl,.gbl,.gto,.gbo,.gts,.gbs,.gm1,.pho,.art,.outline,.drl,.xln,.txt"
+                          onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
+                        />
+                      </label>
+                      <Button type="submit" size="sm" className="rounded-full" disabled={submitting || optionsLoading}>
+                        <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                        {submitting ? "Analyzing…" : "Run analysis"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  <div className="signal-rail">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Flight readout</div>
+                    <div className="mt-2 text-sm leading-7 text-muted-foreground">
+                      Tune routing and scoring context before launch. These controls shape how the board gets interpreted and linked back into your workspace history.
+                    </div>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                    <AnalyzeSignal label="Project links" value={projectId ? "Live" : "Open"} copy="Attach results to a workspace" />
+                    <AnalyzeSignal label="Profile" value={profile} copy="Preset analysis posture" />
+                    <AnalyzeSignal label="Board type" value={boardType} copy="Physical context mode" />
+                  </div>
+                </div>
               </div>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                <label className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                  <FileUp className="mr-1.5 h-3.5 w-3.5" />
-                  Choose file
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept=".zip,.odb,.brd,.kicad_pcb,.pcbdocascii,.gbr,.gko,.ger,.gtl,.gbl,.gto,.gbo,.gts,.gbs,.gm1,.pho,.art,.outline,.drl,.xln,.txt"
-                    onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
-                  />
-                </label>
-                <Button type="submit" size="sm" className="rounded-full" disabled={submitting || optionsLoading}>
-                  <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-                  {submitting ? "Analyzing…" : "Run analysis"}
-                </Button>
-              </div>
-              <div className="mt-4 font-mono text-xs text-muted-foreground">.zip · .odb · .brd · .kicad_pcb</div>
+            </div>
+          </section>
+
+          <aside className="command-strip rounded-[34px] p-5">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Tuning rail</div>
+            <div className="mt-2 text-sm leading-7 text-muted-foreground">
+              Route this analysis into the right workspace and scoring posture before launch.
             </div>
 
-            <div className="grid gap-3 rounded-2xl border border-border bg-background/40 p-4">
+            <div className="mt-5 grid gap-3">
               <label className="space-y-1.5">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Project</span>
                 <select
                   value={projectId}
                   onChange={(event) => setProjectId(event.target.value)}
-                  className="premium-select h-10 w-full px-3 text-sm"
+                  className="premium-select h-11 w-full px-3 text-sm"
                 >
                   <option value="">No workspace</option>
                   {(options?.project_options ?? []).map((option) => (
@@ -272,7 +318,7 @@ function Analyze() {
                 <select
                   value={profile}
                   onChange={(event) => setProfile(event.target.value)}
-                  className="premium-select h-10 w-full px-3 text-sm"
+                  className="premium-select h-11 w-full px-3 text-sm"
                 >
                   {(options?.analysis_modes.profiles ?? []).map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -284,7 +330,7 @@ function Analyze() {
                 <select
                   value={boardType}
                   onChange={(event) => setBoardType(event.target.value)}
-                  className="premium-select h-10 w-full px-3 text-sm"
+                  className="premium-select h-11 w-full px-3 text-sm"
                 >
                   {(options?.analysis_modes.board_types ?? []).map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -293,13 +339,13 @@ function Analyze() {
               </label>
               {error && <div className="rounded-lg border border-danger/20 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div>}
             </div>
-          </div>
+          </aside>
         </form>
 
         {result ? (
           <>
-            <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-              <div className="rounded-2xl border border-border bg-surface p-6">
+            <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
+              <div className="command-strip rounded-[30px] p-6">
                 <div className="mb-2 font-mono text-xs uppercase tracking-wider text-muted-foreground">{result.filename}</div>
                 <div className="mb-6 text-sm text-muted-foreground">Latest analysis result</div>
                 <div className="flex flex-col items-center">
@@ -322,21 +368,30 @@ function Analyze() {
                 </div>
               </div>
 
-              <AnalysisSurface title="Category summary" rail="grouped findings">
-                <div className="space-y-4">
-                  {groupedRisks.map((item, index) => (
-                    <div key={`${item.title}-${index}`}>
-                      <div className="mb-1.5 flex items-center justify-between text-sm">
-                        <span>{item.title || "General"}</span>
-                        <span className="font-mono text-xs text-muted-foreground">{item.count || 0} findings</span>
-                      </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                        <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(Number(item.count || 0) * 8, 100)}%` }} />
-                      </div>
-                    </div>
-                  ))}
+              <div className="editorial-surface rounded-[30px] p-6">
+                <div className="mb-5 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Category summary</div>
+                    <h3 className="mt-1 text-xl font-medium tracking-tight text-foreground">Grouped findings and board surface context</h3>
+                  </div>
                 </div>
-              </AnalysisSurface>
+                <div className="grid gap-6 xl:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
+                  <div className="space-y-4">
+                    {groupedRisks.map((item, index) => (
+                      <div key={`${item.title}-${index}`}>
+                        <div className="mb-1.5 flex items-center justify-between text-sm">
+                          <span>{item.title || "General"}</span>
+                          <span className="font-mono text-xs text-muted-foreground">{item.count || 0} findings</span>
+                        </div>
+                        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                          <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(Number(item.count || 0) * 8, 100)}%` }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <BoardHeatmap title="Board hotspot map" boardView={result.board_view} />
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -357,12 +412,7 @@ function Analyze() {
               </AnalysisSurface>
             </div>
 
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-              <BoardHeatmap
-                title="Board hotspot map"
-                boardView={result.board_view}
-                emptyCopy="This run does not include enough board geometry to render a spatial hotspot map yet."
-              />
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <AnalysisSurface title="Board signal" rail="readout">
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-border bg-background/40 p-4">
@@ -379,6 +429,16 @@ function Analyze() {
                   <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm text-muted-foreground">
                     When we expose coordinate-aware backend data, this panel can upgrade from an analysis heat overlay to a true board-geometry map without changing the page structure.
                   </div>
+                </div>
+              </AnalysisSurface>
+              <AnalysisSurface title="Run posture" rail="analysis metadata">
+                <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                  <SignalStat label="Findings" value={String(risks.length)} />
+                  <SignalStat label="Groups" value={String(groupedRisks.length)} />
+                  <SignalStat label="Artifacts" value={String(downloadItems.length)} />
+                </div>
+                <div className="mt-4 rounded-2xl border border-border bg-background/40 p-4 text-sm leading-7 text-muted-foreground">
+                  The result view now keeps score, grouped findings, heat, and evidence on one continuous surface so engineers can move from intake to triage without changing mental context.
                 </div>
               </AnalysisSurface>
             </div>

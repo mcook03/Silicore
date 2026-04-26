@@ -444,6 +444,188 @@
     background-color: oklch(0.23 0.03 235 / 0.7);
   }
 
+  .shell-chassis {
+    border-left: 1px solid rgba(255, 255, 255, 0.04);
+    background:
+      linear-gradient(180deg, rgba(4, 9, 16, 0.96), rgba(6, 11, 18, 0.92)),
+      radial-gradient(circle at top, rgba(107, 227, 255, 0.06), transparent 24%);
+    box-shadow:
+      inset -1px 0 0 rgba(255, 255, 255, 0.015),
+      24px 0 64px -40px rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-pillar {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+      radial-gradient(circle at top left, rgba(107, 227, 255, 0.07), transparent 46%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 18px 46px -34px rgba(0, 0, 0, 0.86);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-chip {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.15rem;
+    border: 1px solid transparent;
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 180ms ease,
+      background 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease;
+  }
+
+  .nav-chip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(107, 227, 255, 0.08), transparent 48%, rgba(125, 178, 255, 0.08));
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
+  }
+
+  .nav-chip:hover {
+    transform: translateX(2px);
+    border-color: rgba(107, 227, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 12px 34px -24px rgba(0, 0, 0, 0.82);
+    color: var(--color-foreground);
+  }
+
+  .nav-chip:hover::before,
+  .nav-chip[data-active="true"]::before {
+    opacity: 1;
+  }
+
+  .nav-chip[data-active="true"] {
+    border-color: rgba(107, 227, 255, 0.18);
+    background:
+      linear-gradient(90deg, rgba(107, 227, 255, 0.12), rgba(125, 178, 255, 0.06)),
+      rgba(255, 255, 255, 0.02);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 18px 40px -26px rgba(86, 211, 240, 0.24);
+  }
+
+  .command-deck {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+      linear-gradient(180deg, rgba(5, 10, 17, 0.8), rgba(5, 10, 17, 0.62)),
+      radial-gradient(circle at top right, rgba(107, 227, 255, 0.08), transparent 22%);
+    backdrop-filter: blur(24px);
+  }
+
+  .command-deck::after {
+    content: "";
+    position: absolute;
+    left: 2rem;
+    right: 2rem;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(107, 227, 255, 0.35), transparent);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .command-strip {
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+      radial-gradient(circle at top left, rgba(107, 227, 255, 0.05), transparent 54%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 16px 36px -28px rgba(0, 0, 0, 0.84);
+    backdrop-filter: blur(14px);
+  }
+
+  .editorial-surface {
+    position: relative;
+    overflow: hidden;
+    border-radius: 2rem;
+    background:
+      radial-gradient(circle at top left, rgba(96, 240, 198, 0.08), transparent 24%),
+      radial-gradient(circle at top right, rgba(125, 178, 255, 0.1), transparent 26%),
+      linear-gradient(180deg, rgba(8, 16, 26, 0.76), rgba(8, 14, 22, 0.48));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 32px 70px -48px rgba(0, 0, 0, 0.95);
+  }
+
+  .editorial-surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .instrument-grid {
+    position: relative;
+  }
+
+  .instrument-grid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.5;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 100%);
+    pointer-events: none;
+  }
+
+  .workspace-ribbon {
+    position: relative;
+    border-radius: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.014)),
+      linear-gradient(135deg, rgba(107, 227, 255, 0.08), transparent 34%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 22px 48px -36px rgba(0, 0, 0, 0.9);
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .workspace-ribbon:hover {
+    transform: translateY(-2px);
+    border-color: rgba(107, 227, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 28px 62px -34px rgba(0, 0, 0, 0.92),
+      0 0 30px -22px rgba(107, 227, 255, 0.28);
+  }
+
+  .signal-rail {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .signal-rail::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    background: linear-gradient(180deg, rgba(107, 227, 255, 0.55), rgba(255, 255, 255, 0.08));
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
