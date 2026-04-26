@@ -535,6 +535,13 @@
         gap: 14px;
     }
 
+    .board-preview-summary {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+        gap: 14px;
+        align-items: start;
+    }
+
     .board-tabs {
         display: flex;
         gap: 8px;
@@ -785,20 +792,6 @@
         text-transform: uppercase;
     }
 
-    .board-stage-hud {
-        position: absolute;
-        left: 16px;
-        right: 16px;
-        top: 16px;
-        display: flex;
-        align-items: start;
-        justify-content: space-between;
-        gap: 14px;
-        flex-wrap: wrap;
-        pointer-events: none;
-        z-index: 2;
-    }
-
     .board-hud-grid,
     .board-diagnostic-stack {
         display: grid;
@@ -807,8 +800,6 @@
 
     .board-hud-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        min-width: min(100%, 520px);
-        flex: 1 1 520px;
     }
 
     .board-hud-card,
@@ -841,10 +832,8 @@
     }
 
     .board-diagnostic-stack {
-        min-width: 150px;
         width: 100%;
-        max-width: 200px;
-        flex: 0 1 200px;
+        max-width: 220px;
     }
 
     .board-diagnostic-pill {
@@ -1413,6 +1402,7 @@
 
         .board-snapshot-grid,
         .board-hud-grid,
+        .board-preview-summary,
         .board-preview-notes {
             grid-template-columns: 1fr;
         }
@@ -1478,7 +1468,6 @@
             height: 96px;
         }
 
-        .board-stage-hud,
         .board-stage-footer {
             padding-top: 14px;
         }
@@ -1647,37 +1636,40 @@
                     </div>
 
                     <div class="board-preview-stage">
-                        <div class="board-svg-shell" data-board-stage data-mode="risk">
-                            {% if board_view and board_view.has_data %}
-                            <div class="board-stage-hud">
-                                <div class="board-hud-grid">
-                                    {% for stat in board_view.summary_stats[:3] %}
-                                    <div class="board-hud-card">
-                                        <div class="board-hud-label">{{ stat.label }}</div>
-                                        <div class="board-hud-value">{{ stat.value }}</div>
+                        {% if board_view and board_view.has_data %}
+                        <div class="board-preview-summary">
+                            <div class="board-hud-grid">
+                                {% for stat in board_view.summary_stats[:3] %}
+                                <div class="board-hud-card">
+                                    <div class="board-hud-label">{{ stat.label }}</div>
+                                    <div class="board-hud-value">{{ stat.value }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="board-diagnostic-stack">
+                                {% if board_view.cam_diagnostics %}
+                                    {% for diagnostic in board_view.cam_diagnostics[:3] %}
+                                    <div class="board-diagnostic-pill {{ diagnostic.tone }}">
+                                        <span class="board-diagnostic-label">{{ diagnostic.label }}</span>
+                                        <span class="board-diagnostic-value">{{ diagnostic.status }}</span>
                                     </div>
                                     {% endfor %}
+                                {% else %}
+                                <div class="board-diagnostic-pill safe">
+                                    <span class="board-diagnostic-label">Preview Mode</span>
+                                    <span class="board-diagnostic-value">{{ board_view.source_format|replace('_', ' ')|title if board_view.source_format else "Parsed board" }}</span>
                                 </div>
-                                <div class="board-diagnostic-stack">
-                                    {% if board_view.cam_diagnostics %}
-                                        {% for diagnostic in board_view.cam_diagnostics[:3] %}
-                                        <div class="board-diagnostic-pill {{ diagnostic.tone }}">
-                                            <span class="board-diagnostic-label">{{ diagnostic.label }}</span>
-                                            <span class="board-diagnostic-value">{{ diagnostic.status }}</span>
-                                        </div>
-                                        {% endfor %}
-                                    {% else %}
-                                    <div class="board-diagnostic-pill safe">
-                                        <span class="board-diagnostic-label">Preview Mode</span>
-                                        <span class="board-diagnostic-value">{{ board_view.source_format|replace('_', ' ')|title if board_view.source_format else "Parsed board" }}</span>
-                                    </div>
-                                    <div class="board-diagnostic-pill medium">
-                                        <span class="board-diagnostic-label">Hotspots</span>
-                                        <span class="board-diagnostic-value">{{ board_view.hotspots|length }}</span>
-                                    </div>
-                                    {% endif %}
+                                <div class="board-diagnostic-pill medium">
+                                    <span class="board-diagnostic-label">Hotspots</span>
+                                    <span class="board-diagnostic-value">{{ board_view.hotspots|length }}</span>
                                 </div>
+                                {% endif %}
                             </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="board-svg-shell" data-board-stage data-mode="risk">
+                            {% if board_view and board_view.has_data %}
                             <svg class="board-svg" viewBox="{{ board_view.base_view_box }}" aria-label="Board geometry preview">
                                 <rect class="board-substrate" x="22" y="22" rx="18" ry="18" width="{{ board_view.width - 44 }}" height="{{ board_view.height - 44 }}"></rect>
                                 <rect class="board-substrate-glow" x="44" y="44" rx="16" ry="16" width="{{ board_view.width - 88 }}" height="{{ board_view.height - 88 }}"></rect>
