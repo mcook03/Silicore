@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel, ScorePill } from "@/components/silicore/Panel";
 import {
@@ -104,6 +105,23 @@ function Dashboard() {
             </Panel>
           </div>
 
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+            <BoardHeatmap title="Fleet hotspot overview" />
+            <Panel title="Hotspot reading guide">
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
+                  This overview gives the dashboard a spatial read on where board pressure typically concentrates across recent analyses. Switch between thermal, density, and findings modes to change the lens.
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <MetricCard label="Recent runs" value={String(recent.length)} copy="Included in the latest dashboard sample" />
+                  <MetricCard label="Trend points" value={String(trend.length)} copy="Used to shape the score and issue curves" />
+                  <MetricCard label="Critical findings" value={String(stats?.critical_total ?? 0)} copy="Open critical issues across recent analyses" />
+                  <MetricCard label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} copy="Total runs represented in this dashboard view" />
+                </div>
+              </div>
+            </Panel>
+          </div>
+
           <Panel title="Recent analyses" action={<Link to="/history" className="font-mono text-xs text-primary hover:underline">view all →</Link>}>
             <div className="-mx-6 overflow-x-auto">
               <table className="w-full text-sm">
@@ -164,6 +182,16 @@ function Mini({ label, value, tone }: { label: string; value: string; tone: "dan
     <div>
       <div className={`text-xl font-semibold ${c}`}>{value}</div>
       <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function MetricCard({ label, value, copy }: { label: string; value: string; copy: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/40 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-2 text-2xl font-semibold">{value}</div>
+      <div className="mt-1 text-xs text-muted-foreground">{copy}</div>
     </div>
   );
 }

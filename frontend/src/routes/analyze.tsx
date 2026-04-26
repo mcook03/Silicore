@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel } from "@/components/silicore/Panel";
+import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
+import { CategoryBreakdown, SeverityDonut } from "@/components/silicore/AnalysisCharts";
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Sparkles, AlertTriangle, AlertCircle, Info, CheckCircle2, ChevronRight, Download } from "lucide-react";
 import { apiPostForm, useApiData } from "@/lib/api";
@@ -79,6 +81,12 @@ function Analyze() {
     { name: "medium", value: risks.filter((item) => (item.severity || "").toLowerCase() === "medium").length },
     { name: "low", value: risks.filter((item) => !["critical", "high", "medium"].includes((item.severity || "").toLowerCase())).length },
   ].filter((item) => item.value > 0);
+  const categoryChartData = groupedRisks.map((item) => ({
+    category: item.title || "General",
+    critical: Number(item.severity_counts?.critical || 0),
+    medium: Number(item.severity_counts?.medium || 0) + Number(item.severity_counts?.high || 0),
+    low: Number(item.severity_counts?.low || 0),
+  }));
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedFile) {
@@ -224,34 +232,42 @@ function Analyze() {
               </Panel>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <Panel title="Severity mix">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {severityData.map((item) => (
-                    <div key={item.name} className="rounded-xl border border-border bg-background/40 p-4">
-                      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{item.name}</div>
-                      <div className="mt-2 text-2xl font-semibold">{item.value}</div>
-                    </div>
-                  ))}
-                </div>
+                {severityData.length ? (
+                  <SeverityDonut data={severityData} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">No severity breakdown is available for this run yet.</p>
+                )}
               </Panel>
 
               <Panel title="Category distribution">
-                <div className="space-y-3">
-                  {groupedRisks.map((item, index) => (
-                    <div key={`${item.title}-${index}`} className="rounded-xl border border-border bg-background/40 p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="text-sm font-medium">{item.title || "General"}</div>
-                        <div className="font-mono text-xs text-muted-foreground">{item.count || 0} findings</div>
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
-                        <span>critical {item.severity_counts?.critical || 0}</span>
-                        <span>high {item.severity_counts?.high || 0}</span>
-                        <span>medium {item.severity_counts?.medium || 0}</span>
-                        <span>low {item.severity_counts?.low || 0}</span>
-                      </div>
-                    </div>
-                  ))}
+                {categoryChartData.length ? (
+                  <CategoryBreakdown data={categoryChartData} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">Category-level distribution appears after Silicore groups findings for the uploaded board.</p>
+                )}
+              </Panel>
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+              <BoardHeatmap title="Board hotspot map" />
+              <Panel title="Board signal">
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-border bg-background/40 p-4">
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Interpretation</div>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      Use the hotspot map to scan where thermal concentration, routing density, or findings pressure would likely cluster across the board surface while you review the grouped findings below.
+                    </p>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <SignalStat label="Findings" value={String(risks.length)} />
+                    <SignalStat label="Groups" value={String(groupedRisks.length)} />
+                    <SignalStat label="Artifacts" value={String(downloadItems.length)} />
+                  </div>
+                  <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm text-muted-foreground">
+                    When we expose coordinate-aware backend data, this panel can upgrade from an analysis heat overlay to a true board-geometry map without changing the page structure.
+                  </div>
                 </div>
               </Panel>
             </div>
@@ -322,6 +338,15 @@ function FindingRow({ risk }: { risk: Risk }) {
         </div>
       </div>
       <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+    </div>
+  );
+}
+
+function SignalStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/40 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-2 text-2xl font-semibold">{value}</div>
     </div>
   );
 }
