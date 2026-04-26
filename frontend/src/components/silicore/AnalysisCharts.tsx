@@ -11,6 +11,8 @@ const tooltipStyle = {
   fontSize: 12,
 };
 
+const transparentCursor = { fill: "transparent", stroke: "transparent" };
+
 const SEV_COLORS: Record<string, string> = {
   critical: "oklch(0.68 0.22 25)",
   medium: "oklch(0.78 0.18 75)",
@@ -40,7 +42,7 @@ export function SeverityDonut({
                 <Cell key={d.name} fill={SEV_COLORS[d.name.toLowerCase()] ?? "oklch(0.6 0.05 250)"} />
               ))}
             </Pie>
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip cursor={transparentCursor} contentStyle={tooltipStyle} />
           </PieChart>
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
@@ -75,7 +77,7 @@ export function ScoreTrend({
         <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
         <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
         <YAxis domain={[0, 100]} stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-        <Tooltip contentStyle={tooltipStyle} />
+        <Tooltip cursor={transparentCursor} contentStyle={tooltipStyle} />
         <Line
           type="monotone"
           dataKey="score"
@@ -108,11 +110,11 @@ export function CategoryBreakdown({
           axisLine={false}
           width={110}
         />
-        <Tooltip contentStyle={tooltipStyle} />
+        <Tooltip cursor={transparentCursor} contentStyle={tooltipStyle} />
         <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
-        <Bar dataKey="critical" stackId="a" fill={SEV_COLORS.critical} radius={[0, 0, 0, 0]} />
-        <Bar dataKey="medium" stackId="a" fill={SEV_COLORS.medium} />
-        <Bar dataKey="low" stackId="a" fill={SEV_COLORS.low} radius={[0, 4, 4, 0]} />
+        <Bar dataKey="critical" stackId="a" fill={SEV_COLORS.critical} radius={[0, 0, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.75)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(248,113,113,0.35))" }} />
+        <Bar dataKey="medium" stackId="a" fill={SEV_COLORS.medium} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.3, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(250,204,21,0.32))" }} />
+        <Bar dataKey="low" stackId="a" fill={SEV_COLORS.low} radius={[0, 4, 4, 0]} activeBar={{ stroke: "rgba(255,255,255,0.7)", strokeWidth: 1.3, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }} />
       </BarChart>
     </ResponsiveContainer>
   );

@@ -31,6 +31,8 @@ import {
 } from "recharts";
 import { useApiData } from "@/lib/api";
 
+const transparentCursor = { fill: "transparent", stroke: "transparent" };
+
 export const Route = createFileRoute("/compare")({
   head: () => ({ meta: [{ title: "Compare revisions — Silicore" }] }),
   component: Compare,
@@ -372,7 +374,7 @@ function Compare() {
                       <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
                       <YAxis yAxisId="score" domain={[0, 100]} tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
                       <YAxis yAxisId="issues" orientation="right" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.45)" />
-                      <Tooltip content={<TrendTooltip />} />
+                      <Tooltip cursor={transparentCursor} content={<TrendTooltip />} />
                       <Line yAxisId="score" type="monotone" dataKey="score" stroke="oklch(0.84 0.15 205)" strokeWidth={3} dot={{ r: 3, fill: "oklch(0.84 0.15 205)" }} activeDot={{ r: 5 }} />
                       <Line yAxisId="issues" type="monotone" dataKey="issues" stroke="oklch(0.76 0.15 76)" strokeWidth={2} dot={{ r: 0 }} />
                     </LineChart>
@@ -399,8 +401,8 @@ function Compare() {
                       <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
                       <YAxis tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" allowDecimals={false} />
-                      <Tooltip content={<MixTooltip />} />
-                      <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                      <Tooltip cursor={transparentCursor} content={<MixTooltip />} />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }}>
                         {changeMix.map((entry) => (
                           <Cell key={entry.name} fill={entry.fill} />
                         ))}

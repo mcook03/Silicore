@@ -9,6 +9,8 @@ import { Upload, Layers, Sparkles } from "lucide-react";
 import { apiPostForm, useApiData } from "@/lib/api";
 import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 
+const transparentCursor = { fill: "transparent", stroke: "transparent" };
+
 export const Route = createFileRoute("/project-review")({
   head: () => ({ meta: [{ title: "Project review — Silicore" }] }),
   component: ProjectReview,
@@ -203,7 +205,7 @@ function ProjectReview() {
                     <CartesianGrid stroke="oklch(0.28 0.014 250)" />
                     <XAxis type="number" dataKey="score" name="Score" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} domain={[0, 100]} />
                     <YAxis type="number" dataKey="risks" name="Findings" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} allowDecimals={false} />
-                    <Tooltip cursor={{ strokeDasharray: "4 4" }} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} formatter={(value, name) => [value, name === "score" ? "Score" : "Findings"]} labelFormatter={() => ""} />
+                    <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} formatter={(value, name) => [value, name === "score" ? "Score" : "Findings"]} labelFormatter={() => ""} />
                     <Scatter data={boardVariance} fill="oklch(0.84 0.15 205)" />
                   </ScatterChart>
                 </ResponsiveContainer>

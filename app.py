@@ -581,7 +581,7 @@ def frontend_project_detail_route(project_id):
         if project is None:
             return _json_error("Project not found.", 404)
         current_user = _current_user()
-        if current_user and not can_manage_project(current_user, project):
+        if current_user and not project_is_visible_to_user(current_user, project):
             return _json_error("You do not have permission to delete this workspace.", 403)
         deleted = delete_project(project_id)
         if not deleted:
@@ -653,7 +653,7 @@ def _is_placeholder_project(project):
     name = str(project.get("name") or "").strip().lower()
     runs = project.get("runs") or []
     description = str(project.get("description") or "").strip()
-    return name == "governance workspace" and not runs and not description
+    return name in {"governance workspace", "persistence workspace"} and not runs and not description
 
 
 @app.route("/api/frontend/compare", methods=["GET"])

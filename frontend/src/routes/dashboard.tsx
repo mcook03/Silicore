@@ -9,6 +9,8 @@ import { ArrowUpRight, CircuitBoard, TrendingUp, AlertTriangle } from "lucide-re
 import { AppShell } from "@/components/silicore/AppShell";
 import { useApiData } from "@/lib/api";
 
+const transparentCursor = { fill: "transparent", stroke: "transparent" };
+
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Silicore" }] }),
   component: Dashboard,
@@ -92,7 +94,7 @@ function Dashboard() {
                   <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
                   <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                  <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
                   <Area type="monotone" dataKey="score" stroke="oklch(0.85 0.16 195)" strokeWidth={2} fill="url(#g1)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -103,7 +105,7 @@ function Dashboard() {
                   <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
                   <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                  <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
                   <Line type="monotone" dataKey="issues" stroke="oklch(0.82 0.16 75)" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
@@ -134,7 +136,7 @@ function Dashboard() {
                 <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
                 <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
                 <YAxis stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
                 <Area type="monotone" dataKey="critical" stackId="1" stroke="oklch(0.68 0.2 24)" fill="url(#sevCritical)" />
                 <Area type="monotone" dataKey="high" stackId="1" stroke="oklch(0.77 0.18 52)" fill="url(#sevHigh)" />
                 <Area type="monotone" dataKey="medium" stackId="1" stroke="oklch(0.82 0.16 75)" fill="url(#sevMedium)" />

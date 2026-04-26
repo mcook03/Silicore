@@ -10,6 +10,8 @@ import { Upload, FileUp, Sparkles, AlertTriangle, AlertCircle, Info, CheckCircle
 import { apiPostForm, useApiData } from "@/lib/api";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+const transparentCursor = { fill: "transparent", stroke: "transparent" };
+
 export const Route = createFileRoute("/analyze")({
   head: () => ({ meta: [{ title: "Board analysis — Silicore" }] }),
   component: Analyze,
@@ -363,8 +365,8 @@ function Analyze() {
                       <CartesianGrid stroke="oklch(0.28 0.014 250)" horizontal={false} />
                       <XAxis type="number" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
                       <YAxis type="category" dataKey="label" width={118} tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
-                      <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
-                      <Bar dataKey="penalty" fill="oklch(0.84 0.15 205)" radius={[0, 8, 8, 0]} />
+                      <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                      <Bar dataKey="penalty" fill="oklch(0.84 0.15 205)" radius={[0, 8, 8, 0]} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.32))" }} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -378,8 +380,8 @@ function Analyze() {
                     <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
                     <XAxis dataKey="label" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
                     <YAxis tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} allowDecimals={false} />
-                    <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
-                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                    <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }}>
                       {confidenceData.map((item) => <Cell key={item.label} fill={item.fill} />)}
                     </Bar>
                   </BarChart>
@@ -412,8 +414,8 @@ function Analyze() {
                     <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
                     <XAxis dataKey="label" tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} />
                     <YAxis tickLine={false} axisLine={false} stroke="oklch(0.55 0.018 250)" fontSize={11} allowDecimals={false} />
-                    <Tooltip contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
-                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                    <Tooltip cursor={transparentCursor} contentStyle={{ background: "oklch(0.19 0.014 250)", border: "1px solid oklch(0.28 0.014 250)", borderRadius: 8, fontSize: 12 }} />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }}>
                       {traceabilityChart.map((item) => <Cell key={item.label} fill={item.fill} />)}
                     </Bar>
                   </BarChart>
