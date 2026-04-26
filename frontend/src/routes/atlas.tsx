@@ -143,20 +143,20 @@ function Atlas() {
     }
   }, [atlasContext.data?.board_options, atlasContext.data?.selected_run_id, pageType, selectedRunId]);
 
+  const availableBoardOptions = atlasContext.data?.board_options || [];
+  const compareRunOptions = atlasContext.data?.compare_run_options || [];
   useEffect(() => {
     if (pageType !== "compare") {
       return;
     }
-    const compareOptions = atlasContext.data?.compare_run_options || [];
-    if ((!compareRunA || !compareOptions.some((option) => option.run_id === compareRunA)) && atlasContext.data?.selected_run_a_id) {
+    if ((!compareRunA || !compareRunOptions.some((option) => option.run_id === compareRunA)) && atlasContext.data?.selected_run_a_id) {
       setCompareRunA(atlasContext.data.selected_run_a_id);
     }
-    if ((!compareRunB || !compareOptions.some((option) => option.run_id === compareRunB)) && atlasContext.data?.selected_run_b_id) {
+    if ((!compareRunB || !compareRunOptions.some((option) => option.run_id === compareRunB)) && atlasContext.data?.selected_run_b_id) {
       setCompareRunB(atlasContext.data.selected_run_b_id);
     }
-  }, [atlasContext.data?.selected_run_a_id, atlasContext.data?.selected_run_b_id, compareRunA, compareRunB, pageType]);
+  }, [atlasContext.data?.selected_run_a_id, atlasContext.data?.selected_run_b_id, compareRunA, compareRunB, compareRunOptions, pageType]);
 
-  const availableBoardOptions = atlasContext.data?.board_options || [];
   const activeRunId = selectedRunId || atlasContext.data?.selected_run_id || availableBoardOptions[0]?.run_id || "";
   const selectedBoardOption = useMemo(
     () => availableBoardOptions.find((option) => option.run_id === activeRunId) || availableBoardOptions[0],
@@ -398,8 +398,9 @@ function Atlas() {
                 {pageType === "board" ? (
                   <>
                     <Field label="Board snapshot">
-                      <select value={activeRunId} onChange={(event) => setSelectedRunId(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
-                        {(atlasContext.data?.board_options || []).map((option) => (
+                      <select value={activeRunId} onChange={(event) => setSelectedRunId(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground" disabled={atlasContext.loading || !availableBoardOptions.length}>
+                        {!availableBoardOptions.length ? <option value="">{atlasContext.loading ? "Loading board runs..." : "No board runs available"}</option> : null}
+                        {availableBoardOptions.map((option) => (
                           <option key={option.run_id} value={option.run_id}>
                             {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
                           </option>
@@ -425,8 +426,9 @@ function Atlas() {
                       </select>
                     </Field>
                     <Field label="Baseline run">
-                      <select value={compareRunA} onChange={(event) => setCompareRunA(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
-                        {(atlasContext.data?.compare_run_options || []).map((option) => (
+                      <select value={compareRunA} onChange={(event) => setCompareRunA(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground" disabled={atlasContext.loading || !compareRunOptions.length}>
+                        {!compareRunOptions.length ? <option value="">{atlasContext.loading ? "Loading compare runs..." : "No compare runs available"}</option> : null}
+                        {compareRunOptions.map((option) => (
                           <option key={option.run_id} value={option.run_id}>
                             {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
                           </option>
@@ -434,8 +436,9 @@ function Atlas() {
                       </select>
                     </Field>
                     <Field label="Candidate run">
-                      <select value={compareRunB} onChange={(event) => setCompareRunB(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground">
-                        {(atlasContext.data?.compare_run_options || []).map((option) => (
+                      <select value={compareRunB} onChange={(event) => setCompareRunB(event.target.value)} className="premium-select h-10 w-full rounded-2xl px-3 text-sm text-foreground" disabled={atlasContext.loading || !compareRunOptions.length}>
+                        {!compareRunOptions.length ? <option value="">{atlasContext.loading ? "Loading compare runs..." : "No compare runs available"}</option> : null}
+                        {compareRunOptions.map((option) => (
                           <option key={option.run_id} value={option.run_id}>
                             {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
                           </option>

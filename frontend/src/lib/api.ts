@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export class ApiError extends Error {
   status: number;
@@ -91,17 +91,26 @@ export function useApiData<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const load = async () => {
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
     setLoading(true);
     setError(null);
     try {
       const payload = await apiGet<T>(url);
-      setData(payload);
+      if (requestIdRef.current === requestId) {
+        setData(payload);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Request failed.");
+      if (requestIdRef.current === requestId) {
+        setError(err instanceof Error ? err.message : "Request failed.");
+      }
     } finally {
-      setLoading(false);
+      if (requestIdRef.current === requestId) {
+        setLoading(false);
+      }
     }
   };
 
