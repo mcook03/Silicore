@@ -1,7 +1,7 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiPostForm, apiPostJson, useApiData } from "@/lib/api";
@@ -114,9 +114,9 @@ function NexusOps() {
 
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
         {accessBlocked ? (
-          <Panel title="Lead access required">
+          <OpsStage title="Lead access required" rail="permission boundary">
             <p className="text-sm text-muted-foreground">Nexus Ops is reserved for lead and admin roles because it exposes integrations, external validation uploads, and operational telemetry.</p>
-          </Panel>
+          </OpsStage>
         ) : null}
         {message ? <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm">{message}</div> : null}
 
@@ -127,7 +127,7 @@ function NexusOps() {
           <StatCard label="Worker" value={snapshot?.summary.worker_label || "unknown"} />
         </div>
 
-        <Panel title="Integrations" action={<Plug className="h-4 w-4 text-primary" />}>
+        <OpsStage title="Integrations" rail="integration mesh" action={<Plug className="h-4 w-4 text-primary" />}>
           <div className="grid gap-3 md:grid-cols-2">
             {(snapshot?.integrations || []).map((integration) => (
               <div key={integration.integration_id || integration.label} className="rounded-xl border border-border bg-background/40 p-4">
@@ -143,10 +143,10 @@ function NexusOps() {
             ))}
             {!snapshot?.integrations.length ? <p className="text-sm text-muted-foreground">No integrations configured yet.</p> : null}
           </div>
-        </Panel>
+        </OpsStage>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-          <Panel title="Recent operations">
+          <OpsStage title="Recent operations" rail="recent activity">
             <div className="space-y-2">
               {(snapshot?.jobs || []).slice(0, 8).map((job) => (
                 <div key={job.job_id} className="rounded-xl border border-border bg-background/40 p-4">
@@ -159,9 +159,9 @@ function NexusOps() {
               ))}
               {!snapshot?.jobs.length ? <p className="text-sm text-muted-foreground">No recent jobs were reported.</p> : null}
             </div>
-          </Panel>
+          </OpsStage>
 
-          <Panel title="Add integration">
+          <OpsStage title="Add integration" rail="new connection">
             <div className="space-y-3">
               <Field label="Type"><Input className="premium-input" value={integrationType} onChange={(event) => setIntegrationType(event.target.value)} placeholder="github" /></Field>
               <Field label="Label"><Input className="premium-input" value={integrationLabel} onChange={(event) => setIntegrationLabel(event.target.value)} placeholder="GitHub" /></Field>
@@ -169,11 +169,11 @@ function NexusOps() {
               <Field label="Endpoint"><Input className="premium-input" value={integrationEndpoint} onChange={(event) => setIntegrationEndpoint(event.target.value)} placeholder="https://api.example.com" /></Field>
               <Button className="w-full rounded-full" onClick={() => void addIntegration()}>Save integration</Button>
             </div>
-          </Panel>
+          </OpsStage>
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-          <Panel title="Evaluation history" action={<ShieldCheck className="h-4 w-4 text-primary" />}>
+          <OpsStage title="Evaluation history" rail="evaluation ledger" action={<ShieldCheck className="h-4 w-4 text-primary" />}>
             <div className="space-y-2">
               {(snapshot?.evaluations || []).map((evaluation) => (
                 <div key={evaluation.evaluation_id} className="rounded-xl border border-border bg-background/40 p-4">
@@ -186,15 +186,15 @@ function NexusOps() {
               ))}
               {!snapshot?.evaluations.length ? <p className="text-sm text-muted-foreground">No evaluation history is available.</p> : null}
             </div>
-          </Panel>
+          </OpsStage>
 
-          <Panel title="External validation upload" action={<Upload className="h-4 w-4 text-muted-foreground" />}>
+          <OpsStage title="External validation upload" rail="validation intake" action={<Upload className="h-4 w-4 text-muted-foreground" />}>
             <div className="space-y-3">
               <Field label="Run label"><Input className="premium-input" value={validationLabel} onChange={(event) => setValidationLabel(event.target.value)} placeholder="Vendor CAM package" /></Field>
               <Field label="Files"><Input className="premium-input" type="file" multiple onChange={(event) => setValidationFiles(event.target.files)} /></Field>
               <Button className="w-full rounded-full" onClick={() => void submitValidation()}>Submit validation package</Button>
             </div>
-          </Panel>
+          </OpsStage>
         </div>
       </div>
     </AppShell>
@@ -226,5 +226,30 @@ function OpsSignal({ label, value, copy }: { label: string; value: string; copy:
       <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
       <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
+  );
+}
+
+function OpsStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(155deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+        <div>
+          {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+          <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }

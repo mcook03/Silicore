@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Play, RefreshCcw, Cpu, ChevronRight } from "lucide-react";
 import { apiPostJson, useApiData } from "@/lib/api";
@@ -78,12 +78,12 @@ function Jobs() {
 
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
         {accessBlocked ? (
-          <Panel title="Lead access required">
+          <JobsStage title="Lead access required" rail="permission boundary">
             <p className="text-sm text-muted-foreground">Job controls are reserved for lead and admin roles because they can process queued work and manage the background worker.</p>
-          </Panel>
+          </JobsStage>
         ) : null}
 
-        <Panel title="Queue">
+        <JobsStage title="Queue" rail="active workload">
           <div className="overflow-hidden rounded-xl border border-border">
             <table className="premium-table w-full text-sm">
               <thead className="bg-background/40 text-left font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -112,9 +112,9 @@ function Jobs() {
               </tbody>
             </table>
           </div>
-        </Panel>
+        </JobsStage>
 
-        <Panel title="Worker" action={<Cpu className="h-4 w-4 text-primary" />}>
+        <JobsStage title="Worker" rail="runtime state" action={<Cpu className="h-4 w-4 text-primary" />}>
           <div className="grid gap-3 md:grid-cols-2">
             <Stat label="Status" value={data?.worker.running ? "running" : "stopped"} tone={data?.worker.running ? "success" : undefined} />
             <Stat label="Thread" value={data?.worker.thread_name || "—"} />
@@ -124,7 +124,7 @@ function Jobs() {
               {data?.worker.running ? "Stop worker" : "Start worker"}
             </Button>
           </div>
-        </Panel>
+        </JobsStage>
       </div>
     </AppShell>
   );
@@ -155,5 +155,30 @@ function JobsSignal({ label, value, copy }: { label: string; value: string; copy
       <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
       <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
+  );
+}
+
+function JobsStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(150deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+        <div>
+          {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+          <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }

@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
-import { Panel, ScorePill } from "@/components/silicore/Panel";
+import { ScorePill } from "@/components/silicore/Panel";
 import {
   LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, AreaChart, Area,
 } from "recharts";
@@ -46,9 +47,9 @@ function Dashboard() {
   return (
     <AppShell title="Dashboard">
       {error ? (
-        <Panel title="Dashboard unavailable">
+        <DashboardSection title="Dashboard unavailable">
           <p className="text-sm text-danger">{error}</p>
-        </Panel>
+        </DashboardSection>
       ) : (
         <div className="space-y-6">
           <section
@@ -129,7 +130,7 @@ function Dashboard() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <Panel title="Score trend">
+            <DashboardSection title="Score trend" kicker="score telemetry">
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={trend}>
                   <defs>
@@ -145,8 +146,8 @@ function Dashboard() {
                   <Area type="monotone" dataKey="score" stroke="oklch(0.85 0.16 195)" strokeWidth={2} fill="url(#g1)" />
                 </AreaChart>
               </ResponsiveContainer>
-            </Panel>
-            <Panel title="Issues over time">
+            </DashboardSection>
+            <DashboardSection title="Issues over time" kicker="risk flow">
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={trend}>
                   <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
@@ -156,10 +157,10 @@ function Dashboard() {
                   <Line type="monotone" dataKey="issues" stroke="oklch(0.82 0.16 75)" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
-            </Panel>
+            </DashboardSection>
           </div>
 
-          <Panel title="Severity over time">
+          <DashboardSection title="Severity over time" kicker="severity stack">
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={trend}>
                 <defs>
@@ -190,7 +191,7 @@ function Dashboard() {
                 <Area type="monotone" dataKey="low" stackId="1" stroke="oklch(0.84 0.15 205)" fill="url(#sevLow)" />
               </AreaChart>
             </ResponsiveContainer>
-          </Panel>
+          </DashboardSection>
 
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             <BoardHeatmap
@@ -198,7 +199,7 @@ function Dashboard() {
               matrixRows={data?.risk_heatmap}
               emptyCopy="Recent runs do not expose enough categorized findings yet to render a workspace heat map."
             />
-            <Panel title="Hotspot reading guide">
+            <DashboardSection title="Hotspot reading guide" kicker="spatial context">
               <div className="space-y-4">
                 <div className="rounded-2xl border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
                   This overview gives the dashboard a spatial read on where board pressure typically concentrates across recent analyses. Switch between thermal, density, and findings modes to change the lens.
@@ -210,10 +211,10 @@ function Dashboard() {
                   <MetricCard label="Boards analyzed" value={String(stats?.boards_analyzed ?? 0)} copy="Total runs represented in this dashboard view" />
                 </div>
               </div>
-            </Panel>
+            </DashboardSection>
           </div>
 
-          <Panel title="Recent analyses" action={<Link to="/history" className="font-mono text-xs text-primary hover:underline">view all →</Link>}>
+          <DashboardSection title="Recent analyses" kicker="activity ledger" action={<Link to="/history" className="font-mono text-xs text-primary hover:underline">view all →</Link>}>
             <div className="-mx-6 overflow-x-auto">
               <table className="premium-table w-full text-sm">
                 <thead>
@@ -247,7 +248,7 @@ function Dashboard() {
                 </tbody>
               </table>
             </div>
-          </Panel>
+          </DashboardSection>
         </div>
       )}
     </AppShell>
@@ -293,5 +294,33 @@ function HeroMetric({ label, value, tone }: { label: string; value: string; tone
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className={`mt-1 text-2xl font-semibold ${tone === "danger" ? "text-danger" : "text-foreground"}`}>{value}</div>
     </div>
+  );
+}
+
+function DashboardSection({
+  title,
+  kicker,
+  action,
+  children,
+}: {
+  title: string;
+  kicker?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(9,18,28,0.95),rgba(7,14,22,0.98))] p-6 shadow-[0_30px_80px_-42px_rgba(0,0,0,0.9)]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(86,211,240,0.06),transparent_28%)]" />
+      <div className="relative">
+        <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+          <div>
+            {kicker ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{kicker}</div> : null}
+            <h3 className="mt-1 text-lg font-medium tracking-tight text-foreground">{title}</h3>
+          </div>
+          {action}
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }

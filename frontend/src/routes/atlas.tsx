@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -158,7 +158,7 @@ function Atlas() {
 
         <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
-          <Panel title="Context">
+          <AtlasStage title="Context" rail="working context">
             <div className="grid gap-3 md:grid-cols-3">
               <Field label="Page type">
                 <div className="grid grid-cols-3 gap-2">
@@ -181,9 +181,9 @@ function Atlas() {
                 <Input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="sentinel-power.kicad_pcb" className="premium-input" />
               </Field>
             </div>
-          </Panel>
+          </AtlasStage>
 
-          <Panel title="Thread" action={<Button size="sm" variant="ghost" className="h-7 rounded-full text-xs" onClick={() => { setThreadKey(""); setMessages([]); setToolSuggestions([]); setWorkflowPlan([]); setWorkflowResults([]); }}><HistoryIcon className="mr-1.5 h-3 w-3" /> New</Button>}>
+          <AtlasStage title="Thread" rail="conversation stream" action={<Button size="sm" variant="ghost" className="h-7 rounded-full text-xs" onClick={() => { setThreadKey(""); setMessages([]); setToolSuggestions([]); setWorkflowPlan([]); setWorkflowResults([]); }}><HistoryIcon className="mr-1.5 h-3 w-3" /> New</Button>}>
             <div className="space-y-3">
               {messages.map((message, index) => (
                 <div key={`${message.who}-${index}`} className={`flex items-start gap-3 rounded-xl border border-border p-4 ${message.who === "user" ? "bg-background/40" : "bg-primary/5"}`}>
@@ -198,9 +198,9 @@ function Atlas() {
               ))}
               {!messages.length ? <p className="text-sm text-muted-foreground">Ask Atlas about a board, project, or comparison and Silicore will answer against the live backend context.</p> : null}
             </div>
-          </Panel>
+          </AtlasStage>
 
-          <Panel title="Ask Atlas">
+          <AtlasStage title="Ask Atlas" rail="input rail">
             <div className="space-y-3">
               <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask about a board, request a fix, or trigger an action…" className="premium-textarea min-h-[100px]" />
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -215,11 +215,11 @@ function Atlas() {
               </div>
               {error ? <div className="text-sm text-danger">{error}</div> : null}
             </div>
-          </Panel>
+          </AtlasStage>
         </div>
 
         <div className="space-y-4">
-          <Panel title="Agent runs" action={<Sparkles className="h-4 w-4 text-primary" />}>
+          <AtlasStage title="Agent runs" rail="execution history" action={<Sparkles className="h-4 w-4 text-primary" />}>
             <div className="space-y-2">
               {(runs.data?.runs || []).map((run, index) => (
                 <div key={`${run.run_id || run.action_name}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
@@ -232,9 +232,9 @@ function Atlas() {
               ))}
               {!runs.data?.runs.length ? <p className="text-sm text-muted-foreground">No Atlas runs recorded for this thread yet.</p> : null}
             </div>
-          </Panel>
+          </AtlasStage>
 
-          <Panel title="Workflow plan">
+          <AtlasStage title="Workflow plan" rail="planner">
             <div className="space-y-2">
               {workflowPlan.map((step, index) => (
                 <div key={`${step.step || step.title}-${index}`} className="rounded-xl border border-border bg-background/40 p-3">
@@ -243,9 +243,9 @@ function Atlas() {
               ))}
               {!workflowPlan.length ? <p className="text-sm text-muted-foreground">Atlas will surface its workflow plan here after a request.</p> : null}
             </div>
-          </Panel>
+          </AtlasStage>
 
-          <Panel title="Quick actions" action={<Zap className="h-4 w-4 text-primary" />}>
+          <AtlasStage title="Quick actions" rail="action shortcuts" action={<Zap className="h-4 w-4 text-primary" />}>
             <div className="space-y-2">
               {(toolSuggestions.length ? toolSuggestions : ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"]).map((actionName) => (
                 <button key={actionName} onClick={() => void runQuickAction(actionName)} className="flex w-full items-center justify-between rounded-lg border border-border bg-background/40 p-3 text-left text-sm hover:border-primary/30">
@@ -264,7 +264,7 @@ function Atlas() {
                 ))}
               </div>
             ) : null}
-          </Panel>
+          </AtlasStage>
         </div>
       </div>
       </div>
@@ -288,5 +288,30 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       {children}
     </div>
+  );
+}
+
+function AtlasStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(155deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 flex items-start justify-between gap-4 border-b border-white/8 pb-4">
+        <div>
+          {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+          <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }

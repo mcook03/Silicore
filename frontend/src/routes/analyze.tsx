@@ -1,8 +1,8 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScoreRing } from "@/components/silicore/ScoreRing";
-import { Panel } from "@/components/silicore/Panel";
 import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { CategoryBreakdown, SeverityDonut } from "@/components/silicore/AnalysisCharts";
 import { Button } from "@/components/ui/button";
@@ -322,7 +322,7 @@ function Analyze() {
                 </div>
               </div>
 
-              <Panel title="Category summary">
+              <AnalysisSurface title="Category summary" rail="grouped findings">
                 <div className="space-y-4">
                   {groupedRisks.map((item, index) => (
                     <div key={`${item.title}-${index}`}>
@@ -336,25 +336,25 @@ function Analyze() {
                     </div>
                   ))}
                 </div>
-              </Panel>
+              </AnalysisSurface>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-              <Panel title="Severity mix">
+              <AnalysisSurface title="Severity mix" rail="signal profile">
                 {severityData.length ? (
                   <SeverityDonut data={severityData} />
                 ) : (
                   <p className="text-sm text-muted-foreground">No severity breakdown is available for this run yet.</p>
                 )}
-              </Panel>
+              </AnalysisSurface>
 
-              <Panel title="Category distribution">
+              <AnalysisSurface title="Category distribution" rail="domain stack">
                 {categoryChartData.length ? (
                   <CategoryBreakdown data={categoryChartData} />
                 ) : (
                   <p className="text-sm text-muted-foreground">Category-level distribution appears after Silicore groups findings for the uploaded board.</p>
                 )}
-              </Panel>
+              </AnalysisSurface>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
@@ -363,7 +363,7 @@ function Analyze() {
                 boardView={result.board_view}
                 emptyCopy="This run does not include enough board geometry to render a spatial hotspot map yet."
               />
-              <Panel title="Board signal">
+              <AnalysisSurface title="Board signal" rail="readout">
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-border bg-background/40 p-4">
                     <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Interpretation</div>
@@ -380,11 +380,11 @@ function Analyze() {
                     When we expose coordinate-aware backend data, this panel can upgrade from an analysis heat overlay to a true board-geometry map without changing the page structure.
                   </div>
                 </div>
-              </Panel>
+              </AnalysisSurface>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-2">
-              <Panel title="Penalty contribution">
+              <AnalysisSurface title="Penalty contribution" rail="score drag">
                 {penaltyRows.length ? (
                   <ResponsiveContainer width="100%" height={280}>
                     <BarChart data={penaltyRows} layout="vertical" margin={{ left: 10, right: 18 }}>
@@ -398,9 +398,9 @@ function Analyze() {
                 ) : (
                   <p className="text-sm text-muted-foreground">Penalty contribution will appear when score explanation detail is available for the run.</p>
                 )}
-              </Panel>
+              </AnalysisSurface>
 
-              <Panel title="Confidence distribution">
+              <AnalysisSurface title="Confidence distribution" rail="evidence confidence">
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={confidenceData} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
                     <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
@@ -412,28 +412,28 @@ function Analyze() {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
-              </Panel>
+              </AnalysisSurface>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-              <Panel title="Component hotspot leaderboard">
+              <AnalysisSurface title="Component hotspot leaderboard" rail="component pressure">
                 {componentLeaderboard.length ? (
                   <Leaderboard items={componentLeaderboard} accent="oklch(0.84 0.15 205)" />
                 ) : (
                   <p className="text-sm text-muted-foreground">No component-linked findings were preserved for this run.</p>
                 )}
-              </Panel>
+              </AnalysisSurface>
 
-              <Panel title="Net hotspot leaderboard">
+              <AnalysisSurface title="Net hotspot leaderboard" rail="net pressure">
                 {netLeaderboard.length ? (
                   <Leaderboard items={netLeaderboard} accent="oklch(0.82 0.16 75)" />
                 ) : (
                   <p className="text-sm text-muted-foreground">No net-linked findings were preserved for this run.</p>
                 )}
-              </Panel>
+              </AnalysisSurface>
             </div>
 
-            <Panel title="Traceability completeness">
+            <AnalysisSurface title="Traceability completeness" rail="audit readiness">
               <div className="grid gap-4 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={traceabilityChart} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
@@ -452,9 +452,9 @@ function Analyze() {
                   <SignalStat label="Weak evidence" value={String(traceabilityData.weak)} />
                 </div>
               </div>
-            </Panel>
+            </AnalysisSurface>
 
-            <Panel title="Artifacts">
+            <AnalysisSurface title="Artifacts" rail="exports">
               <div className="grid gap-3 md:grid-cols-2">
                 {downloadItems.map((item, index) => (
                   <a
@@ -467,20 +467,20 @@ function Analyze() {
                   </a>
                 ))}
               </div>
-            </Panel>
+            </AnalysisSurface>
 
-            <Panel title="Findings & recommendations" action={<span className="font-mono text-xs text-muted-foreground">{risks.length} total</span>}>
+            <AnalysisSurface title="Findings & recommendations" rail="action list" action={<span className="font-mono text-xs text-muted-foreground">{risks.length} total</span>}>
               <div className="space-y-2">
                 {risks.map((finding, index) => <FindingRow key={`${finding.message}-${index}`} risk={finding} />)}
               </div>
-            </Panel>
+            </AnalysisSurface>
           </>
         ) : (
-          <Panel title="Ready to analyze">
+          <AnalysisSurface title="Ready to analyze" rail="empty state">
             <p className="text-sm text-muted-foreground">
               Run a board through the uploader above and Silicore will populate live findings, score breakdowns, and downloads here.
             </p>
-          </Panel>
+          </AnalysisSurface>
         )}
       </div>
     </AppShell>
@@ -494,6 +494,34 @@ function AnalyzeSignal({ label, value, copy }: { label: string; value: string; c
       <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
       <div className="mt-1 text-sm text-muted-foreground">{copy}</div>
     </div>
+  );
+}
+
+function AnalysisSurface({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(135deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_72px_-44px_rgba(0,0,0,0.9)]">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
+      <div className="relative">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+            <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+          </div>
+          {action}
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }
 

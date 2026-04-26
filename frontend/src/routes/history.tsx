@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel, ScorePill } from "@/components/silicore/Panel";
+import { ScorePill } from "@/components/silicore/Panel";
 import { useApiData } from "@/lib/api";
 import { History as HistoryIcon } from "lucide-react";
 
@@ -53,7 +54,7 @@ function History() {
           </div>
         </section>
 
-        <Panel title="Analysis log" subtitle="Every recorded run, sorted into a cleaner review-friendly table.">
+        <HistoryStage title="Analysis log" rail="run archive" subtitle="Every recorded run, sorted into a cleaner review-friendly table.">
           {error ? (
             <p className="text-sm text-danger">{error}</p>
           ) : (
@@ -86,7 +87,7 @@ function History() {
               </table>
             </div>
           )}
-        </Panel>
+        </HistoryStage>
       </div>
     </AppShell>
   );
@@ -98,5 +99,28 @@ function HistoryMetric({ label, value }: { label: string; value: string }) {
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className="mt-1 text-3xl font-semibold text-foreground">{value}</div>
     </div>
+  );
+}
+
+function HistoryStage({
+  title,
+  rail,
+  subtitle,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  subtitle?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(150deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="mb-5 border-b border-white/8 pb-4">
+        {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+        <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+        {subtitle ? <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p> : null}
+      </div>
+      {children}
+    </section>
   );
 }

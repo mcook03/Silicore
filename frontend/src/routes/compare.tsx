@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel, ScorePill } from "@/components/silicore/Panel";
+import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeftRight,
@@ -233,8 +233,9 @@ function Compare() {
         </section>
 
         <section className="grid gap-6 2xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <Panel
+          <CompareStage
             title="Comparison setup"
+            rail="selection rail"
             action={
               <Button size="sm" variant="ghost" className="rounded-full" onClick={() => void compare.reload()}>
                 <RefreshCcw className="mr-1.5 h-3.5 w-3.5" />
@@ -318,9 +319,9 @@ function Compare() {
                 </div>
               </div>
             </div>
-          </Panel>
+          </CompareStage>
 
-          <Panel title="Run library" action={<Sparkles className="h-4 w-4 text-primary" />}>
+          <CompareStage title="Run library" rail="workspace runs" action={<Sparkles className="h-4 w-4 text-primary" />}>
             <div className="grid gap-3 sm:grid-cols-2">
               {runs.map((run) => {
                 const state = run.run_id === runAId ? "baseline" : run.run_id === runBId ? "candidate" : "idle";
@@ -360,11 +361,11 @@ function Compare() {
                 );
               })}
             </div>
-          </Panel>
+          </CompareStage>
         </section>
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-          <Panel title="Revision trendline" action={<span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Last 6 runs</span>}>
+          <CompareStage title="Revision trendline" rail="time motion" action={<span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Last 6 runs</span>}>
             {trendData.length ? (
               <div className="space-y-4">
                 <div className="h-[280px]">
@@ -389,9 +390,9 @@ function Compare() {
             ) : (
               <EmptyPanel copy="There are not enough runs in this workspace yet to render a score and findings trendline." />
             )}
-          </Panel>
+          </CompareStage>
 
-          <Panel title="Change mix and issue pressure">
+          <CompareStage title="Change mix and issue pressure" rail="pressure model">
             <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <div className="rounded-[22px] border border-border bg-background/25 p-4">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Outcome mix</div>
@@ -437,7 +438,7 @@ function Compare() {
                 </div>
               </div>
             </div>
-          </Panel>
+          </CompareStage>
         </section>
 
         {compare.error ? (
@@ -445,7 +446,7 @@ function Compare() {
         ) : null}
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-          <Panel title={`Category movement · ${compare.data?.project.name || selectedProjectLabel}`}>
+          <CompareStage title={`Category movement · ${compare.data?.project.name || selectedProjectLabel}`} rail="delta surface">
             {(compare.data?.categories || []).length ? (
               <div className="space-y-5">
                 <CategoryHeatmap rows={categoryHeatmap} scale={categoryScale} />
@@ -458,9 +459,9 @@ function Compare() {
             ) : (
               <EmptyPanel copy="These runs do not currently expose category deltas. Compare two richer analysis runs to see domain-level movement here." />
             )}
-          </Panel>
+          </CompareStage>
 
-          <Panel title="Difference digest">
+          <CompareStage title="Difference digest" rail="decision digest">
             <div className="grid gap-3 sm:grid-cols-3">
               <DigestCard
                 icon={<CheckCircle2 className="h-4 w-4" />}
@@ -489,7 +490,7 @@ function Compare() {
                 <EmptyPanel copy="Silicore didn’t generate a distinct change list for these runs yet. Try choosing runs with richer risk snapshots or more different analysis outcomes." />
               )}
             </div>
-          </Panel>
+          </CompareStage>
         </section>
       </div>
     </AppShell>
@@ -533,6 +534,34 @@ function RevisionCard({
         <MiniStat label="Critical" value={String(run?.critical_count ?? 0)} />
       </div>
     </div>
+  );
+}
+
+function CompareStage({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(160deg,rgba(8,16,26,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_72px_-46px_rgba(0,0,0,0.9)]">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+      <div className="relative">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+            <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+          </div>
+          {action}
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }
 

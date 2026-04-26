@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
-import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -142,7 +142,7 @@ function Settings() {
         </section>
 
         <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
-          <Panel title="Workspace posture">
+          <SettingsZone title="Workspace posture" rail="config snapshot">
             <div className="space-y-3">
               {data?.settings_architecture.profile_cards.map((card) => (
                 <div key={card.title} className="rounded-xl border border-border bg-background/40 p-4">
@@ -156,10 +156,10 @@ function Settings() {
                 <div className="mt-1 font-mono text-xs text-muted-foreground">{data?.settings_view.total_controls ?? 0} editable controls across {Object.keys(data?.settings_view.section_counts || {}).length} sections.</div>
               </div>
             </div>
-          </Panel>
+          </SettingsZone>
 
           <div className="space-y-6">
-            <Panel title="Analysis defaults" action={<Zap className="h-4 w-4 text-primary" />}>
+            <SettingsZone title="Analysis defaults" rail="default routing" action={<Zap className="h-4 w-4 text-primary" />}>
               <div className="grid gap-5 lg:grid-cols-2">
                 <Field label="Default profile">
                   <select
@@ -192,10 +192,10 @@ function Settings() {
                   />
                 ))}
               </div>
-            </Panel>
+            </SettingsZone>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <Panel title="Score penalties" action={<ShieldCheck className="h-4 w-4 text-primary" />}>
+              <SettingsZone title="Score penalties" rail="scoring pressure" action={<ShieldCheck className="h-4 w-4 text-primary" />}>
                 <div className="space-y-6">
                   <SliderField
                     label="Critical penalty"
@@ -234,9 +234,9 @@ function Settings() {
                     onValueChange={(value) => updateConfig((current) => setNested(current, ["score", "penalty_low"], value))}
                   />
                 </div>
-              </Panel>
+              </SettingsZone>
 
-              <Panel title="Layout and routing" action={<Waves className="h-4 w-4 text-primary" />}>
+              <SettingsZone title="Layout and routing" rail="physical layout" action={<Waves className="h-4 w-4 text-primary" />}>
                 <div className="space-y-6">
                   <SliderField
                     label="Minimum component spacing"
@@ -275,11 +275,11 @@ function Settings() {
                     onValueChange={(value) => updateConfig((current) => setNested(current, ["signal", "min_general_trace_width"], value))}
                   />
                 </div>
-              </Panel>
+              </SettingsZone>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <Panel title="Power and manufacturability" action={<Zap className="h-4 w-4 text-primary" />}>
+              <SettingsZone title="Power and manufacturability" rail="power model" action={<Zap className="h-4 w-4 text-primary" />}>
                 <div className="space-y-6">
                   <SliderField
                     label="Power trace width floor"
@@ -318,9 +318,9 @@ function Settings() {
                     onValueChange={(value) => updateConfig((current) => setNested(current, ["rules", "assembly_testability_min_fiducials"], value))}
                   />
                 </div>
-              </Panel>
+              </SettingsZone>
 
-              <Panel title="Safety and thermal" action={<Thermometer className="h-4 w-4 text-primary" />}>
+              <SettingsZone title="Safety and thermal" rail="risk policy" action={<Thermometer className="h-4 w-4 text-primary" />}>
                 <div className="space-y-6">
                   <SliderField
                     label="High-voltage clearance"
@@ -356,7 +356,7 @@ function Settings() {
                     onCheckedChange={(checked) => updateConfig((current) => setNested(current, ["emi", "require_ground_reference"], checked))}
                   />
                 </div>
-              </Panel>
+              </SettingsZone>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4">
@@ -371,7 +371,7 @@ function Settings() {
           </div>
         </div>
 
-        <Panel title="Architecture notes">
+        <SettingsZone title="Architecture notes" rail="system notes">
           <div className="grid gap-3 md:grid-cols-3">
             {data?.settings_architecture.domain_pillars.map((pillar) => (
               <div key={pillar.title} className="rounded-xl border border-border bg-background/40 p-4">
@@ -380,10 +380,11 @@ function Settings() {
               </div>
             )) ?? null}
           </div>
-        </Panel>
+        </SettingsZone>
 
-        <Panel
+        <SettingsZone
           title="Advanced JSON"
+          rail="power user editor"
           action={
             <Button type="button" size="sm" variant="ghost" className="rounded-full" onClick={() => setAdvancedOpen((value) => !value)}>
               <ChevronDown className={`mr-1.5 h-3.5 w-3.5 transition-transform ${advancedOpen ? "rotate-180" : ""}`} />
@@ -437,9 +438,37 @@ function Settings() {
             <p className="text-sm text-muted-foreground">The raw JSON editor is tucked away by default now, but it’s still here for power users and edge-case tuning.</p>
           )}
           {saveState ? <div className={`mt-3 text-sm ${/saved|formatted|synced/i.test(saveState) ? "text-success" : "text-danger"}`}>{saveState}</div> : null}
-        </Panel>
+        </SettingsZone>
       </div>
     </AppShell>
+  );
+}
+
+function SettingsZone({
+  title,
+  rail,
+  action,
+  children,
+}: {
+  title: string;
+  rail?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section data-reveal className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[linear-gradient(145deg,rgba(8,17,27,0.96),rgba(7,14,22,0.98))] p-6 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92)]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
+      <div className="relative">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            {rail ? <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{rail}</div> : null}
+            <h3 className="mt-1 text-lg font-medium tracking-tight">{title}</h3>
+          </div>
+          {action}
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }
 
