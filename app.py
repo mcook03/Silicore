@@ -493,6 +493,37 @@ def _atlas_default_project():
     return projects[0] if projects else None
 
 
+def _atlas_board_options(limit=16):
+    options = []
+    for run in _build_history_runs():
+        detail = _build_run_detail(run.get("name") or "") or {}
+        analysis_context = detail.get("analysis_context_view") or {}
+        board_label = (
+            analysis_context.get("board_name")
+            or detail.get("filename")
+            or run.get("label")
+            or run.get("name")
+            or "Board run"
+        )
+        options.append(
+            {
+                "run_id": run.get("name") or "",
+                "label": board_label,
+                "score": _safe_float(run.get("score"), 0.0),
+                "risk_count": _safe_int(run.get("risk_count"), 0),
+                "run_type": run.get("run_type"),
+            }
+        )
+    meaningful = [
+        item
+        for item in options
+        if item.get("score", 0) > 0
+        or item.get("risk_count", 0) > 0
+        or item.get("run_type") == "single"
+    ]
+    return (meaningful or options)[:limit]
+
+
 def _atlas_project_context_payload(project_id=""):
     project = get_project(project_id) if project_id else None
     if project is None:
@@ -538,22 +569,25 @@ def _atlas_project_context_payload(project_id=""):
     }
 
 
-def _atlas_board_context_payload(board_name=""):
-    history_runs = _build_history_runs()
-    selected_run = None
-    if board_name:
+def _atlas_board_context_payload(board_name="", run_id=""):
+    board_options = _atlas_board_options()
+    selected_option = None
+    if run_id:
+        selected_option = next((item for item in board_options if str(item.get("run_id")) == str(run_id)), None)
+    if selected_option is None and board_name:
         lowered = board_name.strip().lower()
-        selected_run = next(
+        selected_option = next(
             (
-                run
-                for run in history_runs
-                if lowered in str(run.get("name") or "").lower()
-                or lowered in str(run.get("label") or "").lower()
+                item
+                for item in board_options
+                if lowered in str(item.get("label") or "").lower()
+                or lowered in str(item.get("run_id") or "").lower()
             ),
             None,
         )
-    if selected_run is None and history_runs:
-        selected_run = history_runs[0]
+    if selected_option is None and board_options:
+        selected_option = board_options[0]
+    selected_run = {"name": selected_option.get("run_id")} if selected_option else None
     if selected_run is None:
         return {
             "context": {
@@ -561,6 +595,7 @@ def _atlas_board_context_payload(board_name=""):
                 "summary": "Run a board analysis to unlock Atlas engineering guidance.",
             },
             "selected_run_id": "",
+            "board_options": [],
             "summary": {
                 "title": "Atlas needs a board analysis",
                 "copy": "Run a single-board analysis first so Atlas can reason about score, hotspots, signoff, and confidence.",
@@ -590,6 +625,7 @@ def _atlas_board_context_payload(board_name=""):
     return {
         "context": context,
         "selected_run_id": context.get("run_id") or selected_run.get("name"),
+        "board_options": board_options,
         "summary": {
             "title": board_copilot.get("mission") or context.get("board_name") or "Board context",
             "copy": board_copilot.get("release_note") or context.get("summary"),
@@ -941,9 +977,10 @@ def frontend_atlas_context_route():
     page_type = str(request.args.get("page_type") or "project").strip().lower()
     project_id = str(request.args.get("project_id") or "").strip()
     board_name = str(request.args.get("board_name") or "").strip()
+    run_id = str(request.args.get("run_id") or "").strip()
 
     if page_type == "board":
-        return jsonify(_atlas_board_context_payload(board_name))
+        return jsonify(_atlas_board_context_payload(board_name, run_id))
     if page_type == "compare":
         return jsonify(_atlas_compare_context_payload(project_id))
     return jsonify(_atlas_project_context_payload(project_id))
@@ -5970,7 +6007,15 @@ def atlas_query_route():
             actor_user_id=actor_user_id,
         ) if workflow_plan else []
     if not thread_key:
-        thread_key = f"{page_type}::{_normalize_compare_text(context.get('project_id') or context.get('board_name') or context.get('project_name') or context.get('direction') or 'atlas')}"
+        scope_value = (
+            context.get("run_id")
+            or context.get("project_id")
+            or context.get("board_name")
+            or context.get("project_name")
+            or context.get("direction")
+            or "atlas"
+        )
+        thread_key = f"{page_type}::{_normalize_compare_text(scope_value)}"
 
     thread_messages = persist_atlas_exchange(
         thread_key=thread_key,
@@ -6014,7 +6059,15 @@ def atlas_query_stream_route():
     actor_user_id = (g.current_user or {}).get("user_id") if getattr(g, "current_user", None) else None
     preview_plan = build_workflow_plan(page_type, prompt, context=context)
     if not thread_key:
-        thread_key = f"{page_type}::{_normalize_compare_text(context.get('project_id') or context.get('board_name') or context.get('project_name') or context.get('direction') or 'atlas')}"
+        scope_value = (
+            context.get("run_id")
+            or context.get("project_id")
+            or context.get("board_name")
+            or context.get("project_name")
+            or context.get("direction")
+            or "atlas"
+        )
+        thread_key = f"{page_type}::{_normalize_compare_text(scope_value)}"
 
     def generate():
         yield json.dumps({"type": "status", "stage": "planning", "workflow_plan": preview_plan}) + "\n"

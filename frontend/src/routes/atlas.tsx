@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
@@ -57,6 +57,7 @@ type AtlasContextPayload = {
   context: Record<string, unknown>;
   selected_project_id?: string;
   selected_run_id?: string;
+  board_options?: Array<{ run_id?: string; label?: string; score?: number; risk_count?: number; run_type?: string }>;
   summary?: { title?: string; copy?: string };
   prompt_starters?: string[];
   quick_actions?: string[];
@@ -71,6 +72,7 @@ function Atlas() {
   const [pageType, setPageType] = useState<"board" | "project" | "compare">("project");
   const [projectId, setProjectId] = useState("");
   const [boardName, setBoardName] = useState("");
+  const [selectedRunId, setSelectedRunId] = useState("");
   const [prompt, setPrompt] = useState("");
   const [threadKey, setThreadKey] = useState("");
   const [messages, setMessages] = useState<Array<{ who: "user" | "atlas"; text: string }>>([]);
@@ -79,17 +81,30 @@ function Atlas() {
   const [workflowResults, setWorkflowResults] = useState<Array<{ status?: string; action_name?: string; summary?: string; reason?: string; result?: { summary?: string; status?: string; count?: number } }>>([]);
   const [latestAnswer, setLatestAnswer] = useState<AtlasResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const scopeRef = useRef("");
+
+  const resetAtlasThread = () => {
+    setThreadKey("");
+    setMessages([]);
+    setToolSuggestions([]);
+    setWorkflowPlan([]);
+    setWorkflowResults([]);
+    setLatestAnswer(null);
+    setError(null);
+  };
 
   const contextUrl = useMemo(() => {
     const params = new URLSearchParams({ page_type: pageType });
     if (projectId) {
       params.set("project_id", projectId);
     }
-    if (boardName) {
+    if (pageType === "board" && selectedRunId) {
+      params.set("run_id", selectedRunId);
+    } else if (boardName) {
       params.set("board_name", boardName);
     }
     return `/api/frontend/atlas/context?${params.toString()}`;
-  }, [boardName, pageType, projectId]);
+  }, [boardName, pageType, projectId, selectedRunId]);
 
   const atlasContext = useApiData<AtlasContextPayload>(contextUrl);
   const runs = useApiData<AgentRunsPayload>(threadKey ? `/atlas/agent-runs?thread_key=${encodeURIComponent(threadKey)}` : "/atlas/agent-runs");
@@ -100,9 +115,35 @@ function Atlas() {
     }
   }, [atlasContext.data?.selected_project_id, projectId]);
 
+  useEffect(() => {
+    if (pageType !== "board") {
+      return;
+    }
+    const availableRuns = atlasContext.data?.board_options || [];
+    if (!selectedRunId && atlasContext.data?.selected_run_id) {
+      setSelectedRunId(atlasContext.data.selected_run_id);
+      return;
+    }
+    if (selectedRunId && !availableRuns.some((option) => option.run_id === selectedRunId) && atlasContext.data?.selected_run_id) {
+      setSelectedRunId(atlasContext.data.selected_run_id);
+    }
+  }, [atlasContext.data?.board_options, atlasContext.data?.selected_run_id, pageType, selectedRunId]);
+
+  const selectedBoardOption = useMemo(
+    () => (atlasContext.data?.board_options || []).find((option) => option.run_id === selectedRunId) || (atlasContext.data?.board_options || [])[0],
+    [atlasContext.data?.board_options, selectedRunId],
+  );
+
+  useEffect(() => {
+    if (pageType === "board" && selectedBoardOption?.label) {
+      setBoardName(selectedBoardOption.label);
+    }
+  }, [pageType, selectedBoardOption?.label]);
+
   const resolvedContext = atlasContext.data?.context || {
     project_id: projectId || session.data?.project_options?.[0]?.project_id || "",
-    board_name: boardName,
+    board_name: boardName || selectedBoardOption?.label || "",
+    run_id: selectedRunId,
   };
 
   const parseThread = (thread: ThreadMessage[] = []) =>
@@ -116,13 +157,52 @@ function Atlas() {
       return rows;
     });
 
+  const contextScope = useMemo(() => {
+    if (pageType === "board") {
+      return `${pageType}:${selectedRunId || atlasContext.data?.selected_run_id || boardName}`;
+    }
+    return `${pageType}:${projectId || atlasContext.data?.selected_project_id || ""}`;
+  }, [atlasContext.data?.selected_project_id, atlasContext.data?.selected_run_id, boardName, pageType, projectId, selectedRunId]);
+
   useEffect(() => {
-    if (!threadKey) {
+    if (!contextScope) {
       return;
     }
-    setMessages([]);
-    setLatestAnswer(null);
-  }, [threadKey]);
+    if (!scopeRef.current) {
+      scopeRef.current = contextScope;
+      return;
+    }
+    if (scopeRef.current !== contextScope) {
+      scopeRef.current = contextScope;
+      resetAtlasThread();
+    }
+  }, [contextScope]);
+
+  const contextMetrics = useMemo(() => {
+    const context = atlasContext.data?.context || {};
+    if (pageType === "board") {
+      return [
+        { label: "Run score", value: formatMetricValue(context.score, "score"), copy: "Board posture from this selected analysis snapshot" },
+        { label: "Driver", value: String(context.dominant_domain || "General"), copy: "Primary engineering domain Atlas sees" },
+        { label: "Parser trust", value: String(context.parser_confidence || "Mixed"), copy: "How trustworthy the extracted board evidence looks" },
+        { label: "Signoff gate", value: String(context.signoff_gate || "Needs review"), copy: "Release-readiness signal for this board" },
+      ];
+    }
+    if (pageType === "compare") {
+      return [
+        { label: "Score delta", value: formatMetricValue(context.score_diff, "delta"), copy: "Headline revision movement" },
+        { label: "Risk delta", value: formatMetricValue(context.risk_diff, "count"), copy: "Change in total risk load" },
+        { label: "Direction", value: String(context.direction || "Mixed"), copy: "Overall compare posture" },
+        { label: "Next move", value: String(context.next_move || "Inspect changed domains"), copy: "What Atlas recommends next" },
+      ];
+    }
+    return [
+      { label: "Health score", value: formatMetricValue(context.health_score, "score"), copy: "Current workspace health blend" },
+      { label: "Momentum", value: String(context.momentum || "Stable"), copy: "How recent runs are trending" },
+      { label: "Avg confidence", value: formatMetricValue(context.average_confidence, "percent"), copy: "Trust in the workspace evidence base" },
+      { label: "Readiness", value: String(context.release_readiness || "Needs review"), copy: "Workspace release posture right now" },
+    ];
+  }, [atlasContext.data?.context, pageType]);
 
   const sendPrompt = async (overridePrompt?: string) => {
     const nextPrompt = (overridePrompt ?? prompt).trim();
@@ -223,23 +303,55 @@ function Atlas() {
                 <Field label="Page type">
                   <div className="grid grid-cols-3 gap-2">
                     {(["board", "project", "compare"] as const).map((option) => (
-                      <button key={option} onClick={() => setPageType(option)} className={`interactive-lift rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}>
+                      <button
+                        key={option}
+                        onClick={() => {
+                          setPageType(option);
+                          if (option !== "board") {
+                            setSelectedRunId("");
+                          }
+                        }}
+                        className={`interactive-lift rounded-2xl border px-3 py-2 text-sm capitalize ${pageType === option ? "border-primary/40 bg-primary/8 text-foreground" : "border-border bg-background/40 text-muted-foreground"}`}
+                      >
                         {option}
                       </button>
                     ))}
                   </div>
                 </Field>
-                <Field label="Project">
-                  <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
-                    <option value="">{selectedProjectLabel}</option>
-                    {(session.data?.project_options || []).map((option) => (
-                      <option key={option.project_id} value={option.project_id}>{option.name}</option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="Board name">
-                  <Input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="sentinel-power.kicad_pcb" className="premium-input" />
-                </Field>
+                {pageType === "board" ? (
+                  <>
+                    <Field label="Board snapshot">
+                      <select value={selectedRunId} onChange={(event) => setSelectedRunId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
+                        {(atlasContext.data?.board_options || []).map((option) => (
+                          <option key={option.run_id} value={option.run_id}>
+                            {option.label} · score {Math.round(Number(option.score || 0))} · risks {Number(option.risk_count || 0)}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Board label">
+                      <div className="premium-input flex min-h-10 items-center rounded-2xl px-3 text-sm text-foreground">
+                        {selectedBoardOption?.label || boardName || "Select a board run"}
+                      </div>
+                    </Field>
+                  </>
+                ) : (
+                  <>
+                    <Field label="Project">
+                      <select value={projectId} onChange={(event) => setProjectId(event.target.value)} className="premium-select h-10 rounded-2xl px-3 text-sm">
+                        <option value="">{selectedProjectLabel}</option>
+                        {(session.data?.project_options || []).map((option) => (
+                          <option key={option.project_id} value={option.project_id}>{option.name}</option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Context source">
+                      <div className="premium-input flex min-h-10 items-center rounded-2xl px-3 text-sm text-foreground">
+                        {pageType === "project" ? selectedProjectLabel : "Revision comparison for the selected workspace"}
+                      </div>
+                    </Field>
+                  </>
+                )}
               </div>
               <div className="mt-4 rounded-2xl border border-primary/14 bg-primary/8 p-4">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Atlas brief</div>
@@ -247,6 +359,15 @@ function Atlas() {
                 <div className="mt-2 text-sm leading-6 text-muted-foreground">
                   {atlasContext.data?.summary?.copy || "Atlas is preparing context from the active page type and selected workspace."}
                 </div>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                {contextMetrics.map((metric) => (
+                  <div key={metric.label} className="overflow-hidden rounded-2xl border border-white/8 bg-background/30 p-4">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{metric.label}</div>
+                    <div className="mt-2 break-words text-2xl font-semibold leading-tight text-foreground">{metric.value}</div>
+                    <div className="mt-2 text-xs leading-5 text-muted-foreground">{metric.copy}</div>
+                  </div>
+                ))}
               </div>
             </AtlasStage>
 
@@ -259,12 +380,7 @@ function Atlas() {
                   variant="ghost"
                   className="h-7 rounded-full text-xs"
                   onClick={() => {
-                    setThreadKey("");
-                    setMessages([]);
-                    setToolSuggestions([]);
-                    setWorkflowPlan([]);
-                    setWorkflowResults([]);
-                    setLatestAnswer(null);
+                    resetAtlasThread();
                     setPrompt("");
                   }}
                 >
@@ -434,6 +550,22 @@ function Atlas() {
 
 function stripHtml(value: string) {
   return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function formatMetricValue(value: unknown, mode: "score" | "percent" | "delta" | "count") {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return "—";
+  }
+  if (mode === "percent") {
+    const normalized = number <= 1 ? number * 100 : number;
+    return `${Math.round(normalized)}%`;
+  }
+  if (mode === "delta") {
+    const rounded = Math.round(number);
+    return `${rounded > 0 ? "+" : ""}${rounded}`;
+  }
+  return `${Math.round(number)}`;
 }
 
 function AtlasSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
