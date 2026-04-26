@@ -26,6 +26,7 @@ type JobsPayload = {
 
 function Jobs() {
   const { data, error, reload } = useApiData<JobsPayload>("/api/frontend/jobs");
+  const accessBlocked = Boolean(error && /access is required/i.test(error));
 
   const processQueue = async () => {
     await apiPostJson("/api/frontend/jobs/process", {});
@@ -55,6 +56,11 @@ function Jobs() {
         </div>
 
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
+        {accessBlocked ? (
+          <Panel title="Lead access required">
+            <p className="text-sm text-muted-foreground">Job controls are reserved for lead and admin roles because they can process queued work and manage the background worker.</p>
+          </Panel>
+        ) : null}
 
         <Panel title="Queue">
           <div className="overflow-hidden rounded-xl border border-border">

@@ -85,8 +85,27 @@ function Settings() {
 
           <Panel title="Configuration editor" action={<Button size="sm" className="rounded-full" onClick={() => void saveConfig()} disabled={saving}>{saving ? "Saving…" : "Save config"}</Button>}>
             <p className="mb-4 text-sm text-muted-foreground">This editor writes the full Silicore config that powers upload analysis, scoring, and rule behavior in the new UI.</p>
+            <div className="mb-3 flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="rounded-full"
+                onClick={() => {
+                  try {
+                    const parsed = JSON.parse(editorValue) as Record<string, unknown>;
+                    setEditorValue(JSON.stringify(parsed, null, 2));
+                    setSaveState("JSON formatted.");
+                  } catch (err) {
+                    setSaveState(err instanceof Error ? err.message : "JSON formatting failed.");
+                  }
+                }}
+              >
+                Format JSON
+              </Button>
+            </div>
             <Textarea value={editorValue} onChange={(event) => setEditorValue(event.target.value)} className="min-h-[520px] font-mono text-xs" />
-            {saveState ? <div className={`mt-3 text-sm ${saveState === "Settings saved." ? "text-success" : "text-danger"}`}>{saveState}</div> : null}
+            {saveState ? <div className={`mt-3 text-sm ${saveState === "Settings saved." || saveState === "JSON formatted." ? "text-success" : "text-danger"}`}>{saveState}</div> : null}
           </Panel>
         </div>
 

@@ -37,6 +37,7 @@ type OpsPayload = { operations_snapshot: OperationsSnapshot };
 
 function NexusOps() {
   const { data, error, reload } = useApiData<OpsPayload>("/api/frontend/ops");
+  const accessBlocked = Boolean(error && /access is required/i.test(error));
   const [integrationType, setIntegrationType] = useState("");
   const [integrationLabel, setIntegrationLabel] = useState("");
   const [integrationStatus, setIntegrationStatus] = useState("configured");
@@ -86,6 +87,11 @@ function NexusOps() {
     <AppShell title="Nexus Ops">
       <div className="space-y-6">
         {error ? <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div> : null}
+        {accessBlocked ? (
+          <Panel title="Lead access required">
+            <p className="text-sm text-muted-foreground">Nexus Ops is reserved for lead and admin roles because it exposes integrations, external validation uploads, and operational telemetry.</p>
+          </Panel>
+        ) : null}
         {message ? <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm">{message}</div> : null}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
