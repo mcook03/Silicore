@@ -39,7 +39,7 @@ export const Route = createFileRoute("/compare")({
 });
 
 type SessionPayload = {
-  project_options: Array<{ value: string; label: string }>;
+  project_options: Array<{ project_id: string; name: string }>;
 };
 
 type ProjectRun = {
@@ -72,7 +72,15 @@ type ComparePayload = {
 
 function Compare() {
   const session = useApiData<SessionPayload>("/api/frontend/session");
-  const defaultProject = session.data?.project_options?.[0]?.value || "";
+  const projectOptions = useMemo(
+    () =>
+      (session.data?.project_options || []).map((option) => ({
+        value: option.project_id,
+        label: option.name,
+      })),
+    [session.data?.project_options],
+  );
+  const defaultProject = projectOptions[0]?.value || "";
   const [projectId, setProjectId] = useState("");
   const [runAId, setRunAId] = useState("");
   const [runBId, setRunBId] = useState("");
@@ -134,7 +142,7 @@ function Compare() {
   const compare = useApiData<ComparePayload>(compareUrl);
 
   const selectedProjectLabel =
-    session.data?.project_options?.find((option) => option.value === activeProjectId)?.label || "Select project";
+    projectOptions.find((option) => option.value === activeProjectId)?.label || "Select project";
   const selectedRunA = selectableRuns.find((run) => run.run_id === runAId);
   const selectedRunB = selectableRuns.find((run) => run.run_id === runBId);
   const scoreDelta = (compare.data?.run_b.score || 0) - (compare.data?.run_a.score || 0);
@@ -280,7 +288,7 @@ function Compare() {
                     }}
                     className="h-11 w-full rounded-2xl border border-input bg-background/50 px-3 text-sm"
                   >
-                    {(session.data?.project_options || []).map((option) => (
+                    {projectOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
@@ -425,21 +433,27 @@ function Compare() {
             <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <div className="rounded-[22px] border border-border bg-background/25 p-4">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Outcome mix</div>
-                <div className="mt-4 h-[240px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={changeMix} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
-                      <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
-                      <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
-                      <YAxis tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" allowDecimals={false} />
-                      <Tooltip cursor={transparentCursor} content={<MixTooltip />} />
-                      <Bar dataKey="value" radius={[8, 8, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }}>
-                        {changeMix.map((entry) => (
-                          <Cell key={entry.name} fill={entry.fill} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+                {changeMix.some((entry) => entry.value > 0) ? (
+                  <div className="mt-4 h-[240px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={changeMix} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
+                        <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" />
+                        <YAxis tickLine={false} axisLine={false} fontSize={11} stroke="rgba(148, 163, 184, 0.8)" allowDecimals={false} />
+                        <Tooltip cursor={transparentCursor} content={<MixTooltip />} />
+                        <Bar dataKey="value" radius={[8, 8, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }}>
+                          {changeMix.map((entry) => (
+                            <Cell key={entry.name} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <EmptyPanel copy="These selected runs do not expose a change mix yet, so the outcome chart is intentionally hidden instead of rendering a misleading empty graph." />
+                  </div>
+                )}
               </div>
 
               <div className="rounded-[22px] border border-border bg-background/25 p-4">

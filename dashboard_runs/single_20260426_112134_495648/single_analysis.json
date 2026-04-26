@@ -1,0 +1,1904 @@
+{
+    "filename": "board.gtl",
+    "file_path": "dashboard_uploads/board.gtl",
+    "score": 82.0,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "cam_bundle",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+            "recommendation": "Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "outline_count": 0
+            },
+            "confidence": 0.94,
+            "short_title": "Missing CAM outline",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "A missing board outline makes CAM import incomplete and weakens manufacturability and keepout reasoning.",
+            "suggested_actions": [],
+            "trigger_condition": "CAM review expected a board outline layer but did not find one.",
+            "threshold_label": "Outline layer required",
+            "observed_label": "Observed outline segments 0",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.94
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        },
+        {
+            "rule_id": "cam_bundle_drill",
+            "category": "manufacturing",
+            "severity": "medium",
+            "message": "Gerber/CAM bundle has copper layers but no drill hits were recognized.",
+            "recommendation": "Include Excellon drill output in the CAM package so through-hole and via features can be reviewed accurately.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "drill_hits": 0
+            },
+            "confidence": 0.82,
+            "short_title": "No drill file recognized",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Without drill data, via, tooling, and hole-related manufacturability checks are incomplete.",
+            "suggested_actions": [],
+            "trigger_condition": "CAM bundle contained copper content without recognized drill geometry.",
+            "threshold_label": "Drill geometry expected for copper bundle",
+            "observed_label": "Observed drill hits 0",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.82
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "medium"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 100.0,
+        "start_score_raw_10": 10.0,
+        "total_penalty": 18.0,
+        "total_penalty_raw_10": 1.8,
+        "severity_totals": {
+            "medium": 1.2,
+            "high": 0.6
+        },
+        "category_totals": {
+            "assembly_testability": 0.8,
+            "manufacturing": 1.0
+        },
+        "final_score": 82.0,
+        "final_score_raw_10": 8.2,
+        "floor_mode": "linear",
+        "soft_floor_score": 5.0,
+        "overflow_penalty_raw_10": 0.0,
+        "overflow_penalty": 0.0,
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.94,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "penalty": 0.4,
+                "message": "Gerber/CAM bundle has copper layers but no drill hits were recognized.",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.82,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "medium"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "board.gtl",
+        "component_count": 0,
+        "net_count": 1,
+        "sample_components": [],
+        "risk_count": 4,
+        "severity_counts": {
+            "medium": 3,
+            "high": 1
+        },
+        "category_counts": {
+            "assembly_testability": 2,
+            "manufacturing": 2
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "board.gtl",
+        "declared_layers": [
+            "Top Copper",
+            "Copper L1 Top"
+        ],
+        "layers": [
+            "Copper L1 Top",
+            "Top Copper"
+        ],
+        "board_bounds": {
+            "min_x": 0.0,
+            "max_x": 3.0,
+            "min_y": 0.0,
+            "max_y": 3.0,
+            "width": 3.0,
+            "height": 3.0
+        },
+        "board_width": 3.0,
+        "board_height": 3.0,
+        "source_format": "gerber",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": true,
+                "shapely": true,
+                "pyclipper": true
+            },
+            "parser": {
+                "backend": "text_fallback"
+            },
+            "cam": {
+                "aperture_count": 1,
+                "flash_count": 1,
+                "region_count": 0
+            }
+        },
+        "components": [],
+        "nets": {
+            "COPPER L1 TOP": {
+                "name": "COPPER L1 TOP",
+                "connections": [],
+                "trace_segments": [
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 0.0,
+                        "y1": 0.0,
+                        "x2": 3.0,
+                        "y2": 0.0,
+                        "width": 0.25,
+                        "layer": "Copper L1 Top",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 3.0,
+                        "y1": 0.0,
+                        "x2": 3.0,
+                        "y2": 3.0,
+                        "width": 0.25,
+                        "layer": "Copper L1 Top",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 3.0,
+                        "y1": 3.0,
+                        "x2": 0.0,
+                        "y2": 3.0,
+                        "width": 0.25,
+                        "layer": "Copper L1 Top",
+                        "length": 3.0
+                    },
+                    {
+                        "net_name": "COPPER L1 TOP",
+                        "x1": 0.0,
+                        "y1": 3.0,
+                        "x2": 0.0,
+                        "y2": 0.0,
+                        "width": 0.25,
+                        "layer": "Copper L1 Top",
+                        "length": 3.0
+                    }
+                ],
+                "vias": [],
+                "total_trace_length": 12.0,
+                "min_trace_width": 0.25,
+                "max_trace_width": 0.25,
+                "via_count": 0,
+                "layer_count": 1
+            }
+        },
+        "traces": [
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 0.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 0.0,
+                "width": 0.25,
+                "layer": "Copper L1 Top",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 3.0,
+                "y1": 0.0,
+                "x2": 3.0,
+                "y2": 3.0,
+                "width": 0.25,
+                "layer": "Copper L1 Top",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 3.0,
+                "y1": 3.0,
+                "x2": 0.0,
+                "y2": 3.0,
+                "width": 0.25,
+                "layer": "Copper L1 Top",
+                "length": 3.0
+            },
+            {
+                "net_name": "COPPER L1 TOP",
+                "x1": 0.0,
+                "y1": 3.0,
+                "x2": 0.0,
+                "y2": 0.0,
+                "width": 0.25,
+                "layer": "Copper L1 Top",
+                "length": 3.0
+            }
+        ],
+        "vias": [],
+        "zones": [
+            {
+                "net_name": "COPPER L1 TOP",
+                "layer": "Copper L1 Top",
+                "points": [
+                    {
+                        "x": 1.625,
+                        "y": 1.5
+                    },
+                    {
+                        "x": 1.6247323654048254,
+                        "y": 1.4918246088462321
+                    },
+                    {
+                        "x": 1.6239306076717264,
+                        "y": 1.4836842259724936
+                    },
+                    {
+                        "x": 1.6225981600504038,
+                        "y": 1.475613709747984
+                    },
+                    {
+                        "x": 1.6207407282861335,
+                        "y": 1.467647619362185
+                    },
+                    {
+                        "x": 1.6183662661868883,
+                        "y": 1.4598200668371049
+                    },
+                    {
+                        "x": 1.6154849415639108,
+                        "y": 1.4521645709543638
+                    },
+                    {
+                        "x": 1.612109092691586,
+                        "y": 1.4447139137226248
+                    },
+                    {
+                        "x": 1.608253175473055,
+                        "y": 1.4375
+                    },
+                    {
+                        "x": 1.6039337015378181,
+                        "y": 1.4305537208725498
+                    },
+                    {
+                        "x": 1.5991691675364044,
+                        "y": 1.4239048213739098
+                    },
+                    {
+                        "x": 1.5939799759348723,
+                        "y": 1.4175817731124913
+                    },
+                    {
+                        "x": 1.5883883476483185,
+                        "y": 1.4116116523516815
+                    },
+                    {
+                        "x": 1.5824182268875087,
+                        "y": 1.406020024065128
+                    },
+                    {
+                        "x": 1.5760951786260902,
+                        "y": 1.4008308324635956
+                    },
+                    {
+                        "x": 1.5694462791274504,
+                        "y": 1.3960662984621819
+                    },
+                    {
+                        "x": 1.5625,
+                        "y": 1.391746824526945
+                    },
+                    {
+                        "x": 1.5552860862773752,
+                        "y": 1.387890907308414
+                    },
+                    {
+                        "x": 1.5478354290456362,
+                        "y": 1.3845150584360892
+                    },
+                    {
+                        "x": 1.5401799331628951,
+                        "y": 1.3816337338131117
+                    },
+                    {
+                        "x": 1.5323523806378152,
+                        "y": 1.3792592717138665
+                    },
+                    {
+                        "x": 1.524386290252016,
+                        "y": 1.3774018399495962
+                    },
+                    {
+                        "x": 1.5163157740275064,
+                        "y": 1.3760693923282736
+                    },
+                    {
+                        "x": 1.5081753911537679,
+                        "y": 1.3752676345951746
+                    },
+                    {
+                        "x": 1.5,
+                        "y": 1.375
+                    },
+                    {
+                        "x": 1.4918246088462321,
+                        "y": 1.3752676345951746
+                    },
+                    {
+                        "x": 1.4836842259724936,
+                        "y": 1.3760693923282736
+                    },
+                    {
+                        "x": 1.475613709747984,
+                        "y": 1.3774018399495962
+                    },
+                    {
+                        "x": 1.467647619362185,
+                        "y": 1.3792592717138665
+                    },
+                    {
+                        "x": 1.4598200668371049,
+                        "y": 1.3816337338131117
+                    },
+                    {
+                        "x": 1.4521645709543638,
+                        "y": 1.3845150584360892
+                    },
+                    {
+                        "x": 1.4447139137226248,
+                        "y": 1.387890907308414
+                    },
+                    {
+                        "x": 1.4375,
+                        "y": 1.391746824526945
+                    },
+                    {
+                        "x": 1.4305537208725498,
+                        "y": 1.3960662984621819
+                    },
+                    {
+                        "x": 1.42390482137391,
+                        "y": 1.4008308324635956
+                    },
+                    {
+                        "x": 1.4175817731124913,
+                        "y": 1.4060200240651277
+                    },
+                    {
+                        "x": 1.4116116523516815,
+                        "y": 1.4116116523516815
+                    },
+                    {
+                        "x": 1.406020024065128,
+                        "y": 1.4175817731124913
+                    },
+                    {
+                        "x": 1.4008308324635956,
+                        "y": 1.4239048213739098
+                    },
+                    {
+                        "x": 1.3960662984621819,
+                        "y": 1.4305537208725496
+                    },
+                    {
+                        "x": 1.391746824526945,
+                        "y": 1.4375
+                    },
+                    {
+                        "x": 1.387890907308414,
+                        "y": 1.4447139137226248
+                    },
+                    {
+                        "x": 1.3845150584360892,
+                        "y": 1.4521645709543638
+                    },
+                    {
+                        "x": 1.3816337338131117,
+                        "y": 1.4598200668371049
+                    },
+                    {
+                        "x": 1.3792592717138665,
+                        "y": 1.4676476193621848
+                    },
+                    {
+                        "x": 1.3774018399495962,
+                        "y": 1.475613709747984
+                    },
+                    {
+                        "x": 1.3760693923282736,
+                        "y": 1.4836842259724936
+                    },
+                    {
+                        "x": 1.3752676345951746,
+                        "y": 1.4918246088462321
+                    },
+                    {
+                        "x": 1.375,
+                        "y": 1.5
+                    },
+                    {
+                        "x": 1.3752676345951746,
+                        "y": 1.5081753911537679
+                    },
+                    {
+                        "x": 1.3760693923282736,
+                        "y": 1.5163157740275064
+                    },
+                    {
+                        "x": 1.3774018399495962,
+                        "y": 1.524386290252016
+                    },
+                    {
+                        "x": 1.3792592717138665,
+                        "y": 1.532352380637815
+                    },
+                    {
+                        "x": 1.3816337338131117,
+                        "y": 1.5401799331628951
+                    },
+                    {
+                        "x": 1.3845150584360892,
+                        "y": 1.5478354290456362
+                    },
+                    {
+                        "x": 1.387890907308414,
+                        "y": 1.5552860862773752
+                    },
+                    {
+                        "x": 1.391746824526945,
+                        "y": 1.5625
+                    },
+                    {
+                        "x": 1.3960662984621819,
+                        "y": 1.5694462791274502
+                    },
+                    {
+                        "x": 1.4008308324635956,
+                        "y": 1.57609517862609
+                    },
+                    {
+                        "x": 1.4060200240651277,
+                        "y": 1.5824182268875087
+                    },
+                    {
+                        "x": 1.4116116523516815,
+                        "y": 1.5883883476483185
+                    },
+                    {
+                        "x": 1.4175817731124913,
+                        "y": 1.593979975934872
+                    },
+                    {
+                        "x": 1.4239048213739098,
+                        "y": 1.5991691675364044
+                    },
+                    {
+                        "x": 1.4305537208725496,
+                        "y": 1.6039337015378181
+                    },
+                    {
+                        "x": 1.4375,
+                        "y": 1.6082531754730547
+                    },
+                    {
+                        "x": 1.4447139137226248,
+                        "y": 1.612109092691586
+                    },
+                    {
+                        "x": 1.4521645709543638,
+                        "y": 1.6154849415639108
+                    },
+                    {
+                        "x": 1.4598200668371049,
+                        "y": 1.6183662661868883
+                    },
+                    {
+                        "x": 1.4676476193621848,
+                        "y": 1.6207407282861335
+                    },
+                    {
+                        "x": 1.475613709747984,
+                        "y": 1.6225981600504038
+                    },
+                    {
+                        "x": 1.4836842259724934,
+                        "y": 1.6239306076717264
+                    },
+                    {
+                        "x": 1.4918246088462321,
+                        "y": 1.6247323654048254
+                    },
+                    {
+                        "x": 1.5,
+                        "y": 1.625
+                    },
+                    {
+                        "x": 1.5081753911537679,
+                        "y": 1.6247323654048254
+                    },
+                    {
+                        "x": 1.5163157740275064,
+                        "y": 1.6239306076717264
+                    },
+                    {
+                        "x": 1.524386290252016,
+                        "y": 1.6225981600504038
+                    },
+                    {
+                        "x": 1.532352380637815,
+                        "y": 1.6207407282861335
+                    },
+                    {
+                        "x": 1.5401799331628951,
+                        "y": 1.6183662661868883
+                    },
+                    {
+                        "x": 1.5478354290456362,
+                        "y": 1.6154849415639108
+                    },
+                    {
+                        "x": 1.5552860862773752,
+                        "y": 1.612109092691586
+                    },
+                    {
+                        "x": 1.5625,
+                        "y": 1.608253175473055
+                    },
+                    {
+                        "x": 1.5694462791274502,
+                        "y": 1.6039337015378181
+                    },
+                    {
+                        "x": 1.57609517862609,
+                        "y": 1.5991691675364044
+                    },
+                    {
+                        "x": 1.5824182268875084,
+                        "y": 1.5939799759348723
+                    },
+                    {
+                        "x": 1.5883883476483185,
+                        "y": 1.5883883476483185
+                    },
+                    {
+                        "x": 1.593979975934872,
+                        "y": 1.5824182268875087
+                    },
+                    {
+                        "x": 1.5991691675364044,
+                        "y": 1.5760951786260902
+                    },
+                    {
+                        "x": 1.6039337015378181,
+                        "y": 1.5694462791274504
+                    },
+                    {
+                        "x": 1.6082531754730547,
+                        "y": 1.5625
+                    },
+                    {
+                        "x": 1.612109092691586,
+                        "y": 1.5552860862773752
+                    },
+                    {
+                        "x": 1.6154849415639108,
+                        "y": 1.5478354290456362
+                    },
+                    {
+                        "x": 1.6183662661868883,
+                        "y": 1.5401799331628951
+                    },
+                    {
+                        "x": 1.6207407282861335,
+                        "y": 1.5323523806378152
+                    },
+                    {
+                        "x": 1.6225981600504038,
+                        "y": 1.524386290252016
+                    },
+                    {
+                        "x": 1.6239306076717264,
+                        "y": 1.5163157740275066
+                    },
+                    {
+                        "x": 1.6247323654048254,
+                        "y": 1.5081753911537679
+                    }
+                ],
+                "area_estimate": 0.0491
+            }
+        ],
+        "outline_segments": []
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "soft_floor_score": 0.5,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "decoupling_strategy": {
+                "local_distance_threshold": 4.0,
+                "bulk_distance_threshold": 12.0,
+                "min_local_caps": 1,
+                "target_keywords": [
+                    "mcu",
+                    "cpu",
+                    "fpga",
+                    "soc",
+                    "adc",
+                    "dac",
+                    "sensor",
+                    "driver",
+                    "ic",
+                    "controller",
+                    "regulator",
+                    "pmic"
+                ],
+                "capacitor_keywords": [
+                    "cap",
+                    "capacitor"
+                ],
+                "bulk_keywords": [
+                    "10u",
+                    "22u",
+                    "47u",
+                    "100u",
+                    "bulk",
+                    "electrolytic",
+                    "tantalum"
+                ]
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "cam_geometry": {
+                "min_clearance": 0.18,
+                "native_min_clearance": 0.08,
+                "min_creepage": 2.5,
+                "cluster_granularity": 1.0,
+                "max_clearance_findings": 12,
+                "max_creepage_findings": 6,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "cam_bundle": {
+                "require_outline": true,
+                "require_drill": true,
+                "min_copper_area_ratio": 0.005,
+                "min_layer_files": 2
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "clock_sensitive_placement": {
+                "max_clock_source_distance": 12.0,
+                "sensitive_aggressor_keepout": 8.0,
+                "clock_source_keywords": [
+                    "XTAL",
+                    "OSC",
+                    "CRYSTAL",
+                    "CLOCK",
+                    "Y"
+                ],
+                "controller_keywords": [
+                    "MCU",
+                    "CPU",
+                    "SOC",
+                    "FPGA",
+                    "DSP",
+                    "STM",
+                    "ESP",
+                    "PIC",
+                    "AVR",
+                    "NRF",
+                    "IMX",
+                    "ATSAM"
+                ],
+                "sensitive_component_keywords": [
+                    "ADC",
+                    "DAC",
+                    "REF",
+                    "SENSOR",
+                    "OPAMP",
+                    "AMP",
+                    "LNA",
+                    "AFE",
+                    "ANALOG"
+                ],
+                "aggressor_component_keywords": [
+                    "REG",
+                    "BUCK",
+                    "BOOST",
+                    "PMIC",
+                    "INDUCTOR",
+                    "L",
+                    "MOSFET",
+                    "DRIVER",
+                    "SW",
+                    "CLOCK"
+                ]
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "current_density": {
+                "min_high_current_width": 0.7,
+                "max_bottleneck_length": 24.0,
+                "neckdown_ratio_threshold": 2.5,
+                "max_bottleneck_vias": 3,
+                "high_current_net_keywords": [
+                    "VIN",
+                    "VBUS",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "12V",
+                    "PACK",
+                    "BATT",
+                    "SW",
+                    "PHASE"
+                ]
+            },
+            "analog_isolation": {
+                "sensitive_component_keepout": 8.0,
+                "max_analog_route_length": 20.0,
+                "sensitive_component_keywords": [
+                    "ADC",
+                    "DAC",
+                    "REF",
+                    "SENSOR",
+                    "OPAMP",
+                    "AFE",
+                    "AMP",
+                    "LNA",
+                    "ANALOG"
+                ],
+                "aggressor_component_keywords": [
+                    "REG",
+                    "BUCK",
+                    "BOOST",
+                    "PMIC",
+                    "INDUCTOR",
+                    "MOSFET",
+                    "SW",
+                    "USB",
+                    "ETH",
+                    "DDR",
+                    "MCU",
+                    "CPU"
+                ],
+                "analog_net_keywords": [
+                    "ADC",
+                    "REF",
+                    "SENSE",
+                    "ANALOG",
+                    "VREF",
+                    "THERM",
+                    "CURRENT",
+                    "SHUNT"
+                ]
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "board.gtl",
+        "timestamp": "2026-04-26T16:21:34.508952+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "soft_floor_score": 0.5,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "decoupling_strategy": {
+                    "local_distance_threshold": 4.0,
+                    "bulk_distance_threshold": 12.0,
+                    "min_local_caps": 1,
+                    "target_keywords": [
+                        "mcu",
+                        "cpu",
+                        "fpga",
+                        "soc",
+                        "adc",
+                        "dac",
+                        "sensor",
+                        "driver",
+                        "ic",
+                        "controller",
+                        "regulator",
+                        "pmic"
+                    ],
+                    "capacitor_keywords": [
+                        "cap",
+                        "capacitor"
+                    ],
+                    "bulk_keywords": [
+                        "10u",
+                        "22u",
+                        "47u",
+                        "100u",
+                        "bulk",
+                        "electrolytic",
+                        "tantalum"
+                    ]
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "cam_geometry": {
+                    "min_clearance": 0.18,
+                    "native_min_clearance": 0.08,
+                    "min_creepage": 2.5,
+                    "cluster_granularity": 1.0,
+                    "max_clearance_findings": 12,
+                    "max_creepage_findings": 6,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "cam_bundle": {
+                    "require_outline": true,
+                    "require_drill": true,
+                    "min_copper_area_ratio": 0.005,
+                    "min_layer_files": 2
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "clock_sensitive_placement": {
+                    "max_clock_source_distance": 12.0,
+                    "sensitive_aggressor_keepout": 8.0,
+                    "clock_source_keywords": [
+                        "XTAL",
+                        "OSC",
+                        "CRYSTAL",
+                        "CLOCK",
+                        "Y"
+                    ],
+                    "controller_keywords": [
+                        "MCU",
+                        "CPU",
+                        "SOC",
+                        "FPGA",
+                        "DSP",
+                        "STM",
+                        "ESP",
+                        "PIC",
+                        "AVR",
+                        "NRF",
+                        "IMX",
+                        "ATSAM"
+                    ],
+                    "sensitive_component_keywords": [
+                        "ADC",
+                        "DAC",
+                        "REF",
+                        "SENSOR",
+                        "OPAMP",
+                        "AMP",
+                        "LNA",
+                        "AFE",
+                        "ANALOG"
+                    ],
+                    "aggressor_component_keywords": [
+                        "REG",
+                        "BUCK",
+                        "BOOST",
+                        "PMIC",
+                        "INDUCTOR",
+                        "L",
+                        "MOSFET",
+                        "DRIVER",
+                        "SW",
+                        "CLOCK"
+                    ]
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "current_density": {
+                    "min_high_current_width": 0.7,
+                    "max_bottleneck_length": 24.0,
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_bottleneck_vias": 3,
+                    "high_current_net_keywords": [
+                        "VIN",
+                        "VBUS",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "12V",
+                        "PACK",
+                        "BATT",
+                        "SW",
+                        "PHASE"
+                    ]
+                },
+                "analog_isolation": {
+                    "sensitive_component_keepout": 8.0,
+                    "max_analog_route_length": 20.0,
+                    "sensitive_component_keywords": [
+                        "ADC",
+                        "DAC",
+                        "REF",
+                        "SENSOR",
+                        "OPAMP",
+                        "AFE",
+                        "AMP",
+                        "LNA",
+                        "ANALOG"
+                    ],
+                    "aggressor_component_keywords": [
+                        "REG",
+                        "BUCK",
+                        "BOOST",
+                        "PMIC",
+                        "INDUCTOR",
+                        "MOSFET",
+                        "SW",
+                        "USB",
+                        "ETH",
+                        "DDR",
+                        "MCU",
+                        "CPU"
+                    ],
+                    "analog_net_keywords": [
+                        "ADC",
+                        "REF",
+                        "SENSE",
+                        "ANALOG",
+                        "VREF",
+                        "THERM",
+                        "CURRENT",
+                        "SHUNT"
+                    ]
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "parser_confidence": {
+        "score": 79.4,
+        "status": "supported",
+        "component_count": 0,
+        "net_count": 1,
+        "trace_count": 4,
+        "via_count": 0,
+        "outline_count": 0,
+        "zone_count": 1,
+        "layer_count": 2,
+        "summary": "Parser confidence is 79.4 / 100 for this Gerber Top Copper (single layer) input."
+    },
+    "cam_summary": {
+        "active": true,
+        "source_format": "gerber",
+        "source_family": "generic_gerber",
+        "bundle_type": "single_layer",
+        "layer_file_count": 0,
+        "layer_files": [],
+        "declared_layers": [
+            "Top Copper",
+            "Copper L1 Top"
+        ],
+        "copper_layers": [
+            "Top Copper",
+            "Copper L1 Top"
+        ],
+        "outline_count": 0,
+        "drill_count": 0,
+        "trace_count": 4,
+        "zone_count": 1,
+        "parser_confidence": 79.4,
+        "readiness_score": 51,
+        "complete": false,
+        "summary": "CAM import recognized 1 file(s), 2 copper layer(s), 0 outline segment(s), and 0 drill hit(s). The bundle still looks incomplete for full fabrication review.",
+        "status_label": "CAM package incomplete",
+        "strengths": [
+            "2 copper layer(s) recognized"
+        ],
+        "missing_signals": [
+            "No recognizable board outline was found",
+            "Copper layers were found without drill data",
+            "Very few CAM files were recognized"
+        ],
+        "remediation_steps": [
+            "Export a profile or mechanical outline layer in the Gerber package.",
+            "Include Excellon or NC drill output with the fabrication package.",
+            "Export the full fabrication bundle instead of a partial single-layer subset."
+        ],
+        "readiness_level": "needs_work",
+        "package_state": "incomplete",
+        "trust_call": "package_incomplete",
+        "fabrication_blockers": [
+            "Missing board outline",
+            "Missing drill data"
+        ],
+        "geometry_warnings": [],
+        "parser_warnings": [
+            "Very few recognized CAM files"
+        ],
+        "review_modes": {
+            "geometry_review": false,
+            "fabrication_review": false
+        },
+        "diagnostic_flags": [
+            {
+                "label": "Outline",
+                "status": "missing"
+            },
+            {
+                "label": "Drill",
+                "status": "missing"
+            },
+            {
+                "label": "Copper",
+                "status": "ok"
+            },
+            {
+                "label": "Geometry",
+                "status": "ok"
+            }
+        ]
+    },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [],
+        "power_models": [],
+        "summary": {
+            "signal_nets_modeled": 0,
+            "power_nets_modeled": 0,
+            "worst_impedance_mismatch_pct": 0.0,
+            "worst_voltage_drop_mv": 0.0
+        },
+        "risks": []
+    },
+    "stackup_summary": {
+        "layer_count": 2,
+        "copper_layers": [],
+        "signal_layers": [],
+        "reference_layers": [],
+        "style": "two_layer",
+        "reference_coverage_pct": 0.0,
+        "dominant_signal_layer": "Copper L1 Top",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets.",
+            "No dedicated reference layer was inferred from the current board data."
+        ]
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            },
+            {
+                "rule_id": "cam_bundle",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+                "recommendation": "Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "outline_count": 0
+                },
+                "confidence": 0.94,
+                "short_title": "Missing CAM outline",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "A missing board outline makes CAM import incomplete and weakens manufacturability and keepout reasoning.",
+                "suggested_actions": [],
+                "trigger_condition": "CAM review expected a board outline layer but did not find one.",
+                "threshold_label": "Outline layer required",
+                "observed_label": "Observed outline segments 0"
+            },
+            {
+                "rule_id": "cam_bundle_drill",
+                "category": "manufacturing",
+                "severity": "medium",
+                "message": "Gerber/CAM bundle has copper layers but no drill hits were recognized.",
+                "recommendation": "Include Excellon drill output in the CAM package so through-hole and via features can be reviewed accurately.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "drill_hits": 0
+                },
+                "confidence": 0.82,
+                "short_title": "No drill file recognized",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Without drill data, via, tooling, and hole-related manufacturability checks are incomplete.",
+                "suggested_actions": [],
+                "trigger_condition": "CAM bundle contained copper content without recognized drill geometry.",
+                "threshold_label": "Drill geometry expected for copper bundle",
+                "observed_label": "Observed drill hits 0"
+            }
+        ],
+        "score": 8.2,
+        "total_penalty": 1.8
+    },
+    "generated_at": "2026-04-26T16:21:34.508962+00:00",
+    "subsystem_summary": {
+        "subsystems": [
+            {
+                "name": "general",
+                "label": "General",
+                "component_count": 0,
+                "net_count": 1,
+                "components": [],
+                "nets": [
+                    "COPPER L1 TOP"
+                ],
+                "weight": 1.0
+            }
+        ],
+        "dominant_subsystem": "General",
+        "interaction_risks": [],
+        "summary": "Dominant subsystem pressure is General."
+    },
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows moderate design risk. The main risk concentration is in assembly testability. The highest-priority issue is Gerber/CAM bundle does not include a recognizable board outline.. The current design snapshot includes 0 components and 1 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+                "recommendation": "Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous."
+            },
+            {
+                "severity": "medium",
+                "category": "manufacturing",
+                "message": "Gerber/CAM bundle has copper layers but no drill hits were recognized.",
+                "recommendation": "Include Excellon drill output in the CAM package so through-hole and via features can be reviewed accurately."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up."
+            }
+        ]
+    }
+}

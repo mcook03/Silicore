@@ -1,0 +1,229 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .issue-card, .risk-card {
+                background: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            h1, h2, h3 {
+                margin-top: 0;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .muted {
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Engineering Report</h1>
+                <p><strong>File:</strong> board.gtl</p>
+                <p><strong>Score:</strong> 82.0 / 100</p>
+                <p><strong>Total Risks:</strong> 4</p>
+                <p><strong>Total Penalty:</strong> 18.0</p>
+            </div>
+
+            <div class="card">
+                <h2>Executive Summary</h2>
+                <p><strong>Board needs focused engineering review</strong></p>
+                <p class="muted">This board shows moderate design risk. The main risk concentration is in assembly testability. The highest-priority issue is Gerber/CAM bundle does not include a recognizable board outline.. The current design snapshot includes 0 components and 1 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+
+            <div class="card">
+                <h2>Parser Capability</h2>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .txt</p>
+                <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            <div class="card">
+                <h2>Review Readiness</h2>
+                <p><strong>Output format:</strong> engineering review packet</p>
+                <p><strong>Includes:</strong> score rationale, finding traceability, recommendations, and saved analysis context</p>
+                <p><strong>Best use:</strong> design reviews, management updates, supplier communication, and internal signoff</p>
+            </div>
+
+            <div class="card">
+                <h2>Top Issues</h2>
+                
+            <div class="issue-card">
+                <p><strong>HIGH</strong> — manufacturing</p>
+                <p>Gerber/CAM bundle does not include a recognizable board outline.</p>
+                <p><strong>Recommendation:</strong> Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>MEDIUM</strong> — manufacturing</p>
+                <p>Gerber/CAM bundle has copper layers but no drill hits were recognized.</p>
+                <p><strong>Recommendation:</strong> Include Excellon drill output in the CAM package so through-hole and via features can be reviewed accurately.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>MEDIUM</strong> — assembly_testability</p>
+                <p>Ground test-point coverage appears limited for bring-up and probing</p>
+                <p><strong>Recommendation:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+            </div>
+            
+            </div>
+
+            <div class="card">
+                <h2>Board Summary</h2>
+                <p><strong>Component Count:</strong> 0</p>
+                <p><strong>Net Count:</strong> 1</p>
+                <p><strong>Risk Count:</strong> 4</p>
+                <p><strong>Sample Components:</strong> </p>
+            </div>
+
+            <div class="card">
+                <h2>Severity Penalties</h2>
+                <ul><li>medium: 1.2</li><li>high: 0.6</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Category Penalties</h2>
+                <ul><li>assembly_testability: 0.8</li><li>manufacturing: 1.0</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Detailed Findings</h2>
+                
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Board has limited visible fiducial strategy for assembly alignment</p>
+                <p><strong>Recommendation:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 5</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 76.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 76.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;fiducials&quot;: 0, &quot;threshold&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Ground test-point coverage appears limited for bring-up and probing</p>
+                <p><strong>Recommendation:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=1</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 5</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 81.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 81.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;ground_test_points&quot;: 0, &quot;threshold&quot;: 1}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Gerber/CAM bundle does not include a recognizable board outline.</p>
+                <p><strong>Recommendation:</strong> Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 4</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 94.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 94.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review the board against fabrication limits and increase trace widths or spacing where necessary.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;outline_count&quot;: 0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Gerber/CAM bundle has copper layers but no drill hits were recognized.</p>
+                <p><strong>Recommendation:</strong> Include Excellon drill output in the CAM package so through-hole and via features can be reviewed accurately.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 4</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review the board against fabrication limits and increase trace widths or spacing where necessary.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;drill_hits&quot;: 0}</p>
+            </div>
+            
+            </div>
+        </div>
+    </body>
+    </html>
+    
