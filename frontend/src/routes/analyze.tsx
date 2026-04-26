@@ -5,8 +5,6 @@ import { ScoreRing } from "@/components/silicore/ScoreRing";
 import { Panel } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Sparkles, AlertTriangle, AlertCircle, Info, CheckCircle2, ChevronRight, Download } from "lucide-react";
-import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
-import { SeverityDonut, CategoryBreakdown } from "@/components/silicore/AnalysisCharts";
 import { apiPostForm, useApiData } from "@/lib/api";
 
 export const Route = createFileRoute("/analyze")({
@@ -78,13 +76,6 @@ function Analyze() {
     { name: "medium", value: risks.filter((item) => (item.severity || "").toLowerCase() === "medium").length },
     { name: "low", value: risks.filter((item) => !["critical", "high", "medium"].includes((item.severity || "").toLowerCase())).length },
   ].filter((item) => item.value > 0);
-  const categoryData = groupedRisks.map((item) => ({
-    category: item.title || "General",
-    critical: Number(item.severity_counts?.critical || 0),
-    medium: Number(item.severity_counts?.medium || 0) + Number(item.severity_counts?.high || 0),
-    low: Number(item.severity_counts?.low || 0),
-  }));
-
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedFile) {
@@ -230,15 +221,51 @@ function Analyze() {
               </Panel>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-              <BoardHeatmap title={`Board heatmap · ${result.filename || "board"}`} />
+            <div className="grid gap-4 lg:grid-cols-2">
               <Panel title="Severity mix">
-                <SeverityDonut data={severityData} />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {severityData.map((item) => (
+                    <div key={item.name} className="rounded-xl border border-border bg-background/40 p-4">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{item.name}</div>
+                      <div className="mt-2 text-2xl font-semibold">{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <Panel title="Category distribution">
+                <div className="space-y-3">
+                  {groupedRisks.map((item, index) => (
+                    <div key={`${item.title}-${index}`} className="rounded-xl border border-border bg-background/40 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-sm font-medium">{item.title || "General"}</div>
+                        <div className="font-mono text-xs text-muted-foreground">{item.count || 0} findings</div>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                        <span>critical {item.severity_counts?.critical || 0}</span>
+                        <span>high {item.severity_counts?.high || 0}</span>
+                        <span>medium {item.severity_counts?.medium || 0}</span>
+                        <span>low {item.severity_counts?.low || 0}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </Panel>
             </div>
 
-            <Panel title="Findings by category">
-              <CategoryBreakdown data={categoryData} />
+            <Panel title="Artifacts">
+              <div className="grid gap-3 md:grid-cols-2">
+                {downloadItems.map((item, index) => (
+                  <a
+                    key={`artifact-${index}`}
+                    href={item.url || "#"}
+                    className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4 text-sm hover:border-primary/30"
+                  >
+                    <span>{item.label || "Download artifact"}</span>
+                    <Download className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                ))}
+              </div>
             </Panel>
 
             <Panel title="Findings & recommendations" action={<span className="font-mono text-xs text-muted-foreground">{risks.length} total</span>}>
