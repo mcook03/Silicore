@@ -61,6 +61,20 @@ type AtlasContextPayload = {
   selected_run_b_id?: string;
   board_options?: Array<{ run_id?: string; label?: string; score?: number; risk_count?: number; run_type?: string }>;
   compare_run_options?: Array<{ run_id?: string; label?: string; score?: number; risk_count?: number }>;
+  atlas_engine?: {
+    identity?: { title?: string; summary?: string; advantage?: string; persona?: string };
+    intelligence_layers?: Array<{ key?: string; title?: string; summary?: string; current_signal?: string }>;
+    operating_loop?: Array<{ label?: string; summary?: string; signal?: string }>;
+    advisory_panels?: Array<{ label?: string; headline?: string }>;
+    assistant_console?: {
+      title?: string;
+      eyebrow?: string;
+      summary?: string;
+      questions?: Array<{ label?: string; answer?: string; route_key?: string }>;
+      review_lenses?: Array<{ label?: string; headline?: string; copy?: string }>;
+      routes?: Array<{ key?: string; label?: string; title?: string; answer?: string; detail?: string; follow_ups?: string[] }>;
+    };
+  };
   summary?: { title?: string; copy?: string };
   prompt_starters?: string[];
   quick_actions?: string[];
@@ -301,7 +315,13 @@ function Atlas() {
   };
 
   const visibleQuickActions = toolSuggestions.length ? toolSuggestions : atlasContext.data?.quick_actions || ["compare_latest_runs", "generate_signoff_packet", "open_high_confidence_findings"];
-  const starterPrompts = atlasContext.data?.prompt_starters || [];
+  const atlasEngine = atlasContext.data?.atlas_engine;
+  const assistantConsole = atlasEngine?.assistant_console;
+  const starterPrompts = useMemo(() => {
+    const routePrompts = (assistantConsole?.routes || []).slice(0, 4).map((route) => route.label || route.title).filter(Boolean) as string[];
+    const contextPrompts = atlasContext.data?.prompt_starters || [];
+    return [...routePrompts, ...contextPrompts].filter((item, index, array) => array.indexOf(item) === index).slice(0, 6);
+  }, [assistantConsole?.routes, atlasContext.data?.prompt_starters]);
   const focusOptions = useMemo(() => {
     if (pageType === "board") {
       return [
@@ -339,6 +359,10 @@ function Atlas() {
     session.data?.project_options?.find((option) => option.project_id === projectId)?.name ||
     session.data?.project_options?.[0]?.name ||
     "Latest project";
+  const engineIdentity = atlasEngine?.identity;
+  const intelligenceLayers = atlasEngine?.intelligence_layers || [];
+  const operatingLoop = atlasEngine?.operating_loop || [];
+  const advisoryPanels = atlasEngine?.advisory_panels || [];
 
   return (
     <AppShell title="Atlas — AI copilot">
@@ -352,25 +376,42 @@ function Atlas() {
             <div>
               <div className="section-eyebrow">
                 <Sparkles className="h-3.5 w-3.5" />
-                Copilot interface
+                Core AI engine
               </div>
               <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-[3.15rem] sm:leading-[1.02]">
-                Atlas is now grounded in live Silicore context instead of acting like a detached chatbot.
+                {engineIdentity?.title || "Atlas Intelligence"} is the engineering intelligence layer that turns Silicore from a tool into an advantage.
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
-                Workspace intelligence, board analysis context, compare posture, workflow actions, and follow-up prompts are now driven by the same backend intelligence layer as the rest of the product.
+                {engineIdentity?.summary || "Atlas interprets hardware designs like a senior engineer would: reading raw design evidence, understanding interacting engineering domains, predicting failure paths, and recommending what should be fixed first."}
+              </p>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
+                {engineIdentity?.advantage || "Atlas combines deterministic engineering constraints, contextual system reasoning, and adaptive learning from reruns and outcomes so the platform can advise, not just flag."}
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
               <AtlasSignal label="Mode" value={pageType} copy={atlasContext.data?.summary?.title || "Atlas context"} />
-              <AtlasSignal label="Thread" value={threadKey ? "Live" : "New"} copy={threadKey || "Start a new Atlas thread"} />
-              <AtlasSignal label="Agent runs" value={String(runs.data?.runs.length || 0)} copy="Tracked against this thread" />
+              <AtlasSignal label="Intelligence" value="3 Layers" copy="Rules, contextual reasoning, and adaptive learning" />
+              <AtlasSignal label="Agent runs" value={String(runs.data?.runs.length || 0)} copy="Tracked Atlas reasoning cycles" />
             </div>
           </div>
         </section>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
           <div className="space-y-4">
+            <AtlasStage title="Atlas Stack" rail="intelligence layers">
+              <div className="grid gap-3 lg:grid-cols-3">
+                {intelligenceLayers.map((layer) => (
+                  <div key={layer.key || layer.title} className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{layer.title}</div>
+                    <p className="mt-3 text-sm leading-7 text-muted-foreground">{layer.summary}</p>
+                    <div className="mt-4 rounded-2xl border border-primary/14 bg-primary/8 px-3 py-2 text-sm text-foreground">
+                      {layer.current_signal}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </AtlasStage>
+
             <AtlasStage title="Context" rail="working context">
               <div className={`grid gap-3 ${pageType === "compare" ? "md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]" : "md:grid-cols-3"}`}>
                 <Field label="Page type">
@@ -492,9 +533,44 @@ function Atlas() {
               </div>
             </AtlasStage>
 
+            <AtlasStage title="How Atlas Thinks" rail="operating loop">
+              <div className="grid gap-3 lg:grid-cols-2">
+                {operatingLoop.map((step, index) => (
+                  <div key={`${step.label}-${index}`} className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{step.label}</div>
+                    <div className="mt-2 text-base font-medium text-foreground">{step.signal}</div>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </AtlasStage>
+
+            <AtlasStage title={assistantConsole?.title || "Atlas Advisory Console"} rail={assistantConsole?.eyebrow?.toLowerCase() || "engineering copilot"}>
+              <p className="text-sm leading-7 text-muted-foreground">
+                {assistantConsole?.summary || engineIdentity?.persona || "Atlas should behave like a senior hardware engineer beside the user: highlighting what matters, why it matters, and what to do next."}
+              </p>
+              <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                {advisoryPanels.map((panel) => (
+                  <div key={panel.label} className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{panel.label}</div>
+                    <div className="mt-2 text-base leading-7 text-foreground">{panel.headline}</div>
+                  </div>
+                ))}
+              </div>
+              {assistantConsole?.questions?.length ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {assistantConsole.questions.map((question) => (
+                    <button key={question.label} onClick={() => void sendPrompt(question.label || "")} className="rounded-full border border-primary/18 bg-primary/8 px-3 py-1.5 text-xs text-primary hover:bg-primary/12">
+                      {question.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </AtlasStage>
+
             <AtlasStage
-              title="Ask Atlas"
-              rail="copilot input"
+              title="Ask Atlas Intelligence"
+              rail="engineering conversation"
               action={
                 <Button
                   size="sm"
@@ -521,7 +597,7 @@ function Atlas() {
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="text-xs text-muted-foreground">
-                    Atlas is answering from live workspace/board/compare context instead of a generic prompt shell.
+                    Atlas is answering from live Silicore engineering context, not a generic chat prompt.
                   </div>
                   <Button size="sm" className="rounded-full" onClick={() => void sendPrompt()}><Send className="mr-1.5 h-3.5 w-3.5" /> Send</Button>
                 </div>
@@ -529,7 +605,7 @@ function Atlas() {
               </div>
             </AtlasStage>
 
-            <AtlasStage title="Atlas answer" rail="reasoned output" action={<BrainCircuit className="h-4 w-4 text-primary" />}>
+            <AtlasStage title="Atlas reasoning output" rail="reasoned engineering output" action={<BrainCircuit className="h-4 w-4 text-primary" />}>
               {latestAnswer ? (
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-white/8 bg-background/35 p-4">

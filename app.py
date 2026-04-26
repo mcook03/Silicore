@@ -493,6 +493,141 @@ def _atlas_default_project():
     return projects[0] if projects else None
 
 
+def _atlas_identity_manifest():
+    return {
+        "title": "Atlas Intelligence",
+        "summary": (
+            "Atlas Intelligence is the core AI engine inside Silicore: the system that interprets PCB designs, "
+            "identifies engineering risk, predicts downstream failure, and recommends the next fix with hardware-aware context."
+        ),
+        "advantage": (
+            "Atlas turns raw schematics, layouts, netlists, and component data into structured engineering judgment, "
+            "so Silicore behaves more like a senior hardware reviewer than a passive checker."
+        ),
+        "persona": (
+            "Atlas should feel like a senior hardware engineer sitting beside the user: fast, consistent, explainable, "
+            "and grounded in real board behavior rather than generic lint output."
+        ),
+    }
+
+
+def _atlas_signal_text(value, fallback="Not active yet."):
+    if isinstance(value, dict):
+        return str(value.get("label") or value.get("summary") or value.get("status") or fallback)
+    if isinstance(value, list):
+        return str(value[0]) if value else fallback
+    text = str(value or "").strip()
+    return text or fallback
+
+
+def _atlas_operating_loop(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        input_signal = f"{context.get('board_name') or 'Board input'} · score {round(_safe_float(context.get('score'), 0.0))}"
+        interpretation = context.get("dominant_domain") or "General"
+        prediction = copilot.get("likely_failure_path") or context.get("summary") or "Atlas is waiting for a board review signal."
+        prioritize = copilot.get("mission") or "Atlas will rank the strongest engineering driver first."
+        recommend = ((copilot.get("validation_plan") or []) or ["Run the next validation loop."])[0]
+        learn = context.get("release_note") or "Atlas improves as reruns, validation outcomes, and signoff decisions accumulate."
+    elif page_type == "compare":
+        input_signal = f"{context.get('run_a_id') or 'Baseline'} vs {context.get('run_b_id') or 'Candidate'}"
+        interpretation = context.get("direction") or "Mixed revision signal"
+        prediction = copilot.get("root_cause") or context.get("posture") or "Atlas is looking for the changed subsystem story."
+        prioritize = copilot.get("next_move") or "Atlas will reduce revision noise to one explainable change cluster."
+        recommend = ((context.get("takeaways") or [{}])[0] or {}).get("why") or "Inspect the dominant changed subsystem."
+        learn = context.get("signoff_note") or "Atlas gets sharper when compare outcomes are tied back to acceptance decisions."
+    else:
+        input_signal = f"{context.get('project_name') or 'Workspace'} · health {round(_safe_float(context.get('health_score'), 0.0))}"
+        interpretation = context.get("recurring_family_summary") or copilot.get("systemic_pattern") or "Atlas is looking for repeated engineering pressure."
+        prediction = context.get("trend_summary") or copilot.get("posture") or "Atlas is reading the workspace as a release gate."
+        prioritize = ((copilot.get("execution_plan") or [{}])[0] or {}).get("action") or "Atlas will focus the team on the strongest repeated issue family."
+        recommend = ((copilot.get("team_guidance") or []) or ["Assign the next repeated issue family to one owner."])[0]
+        learn = context.get("release_readiness") or "Atlas uses review outcomes and rerun direction to refine future workspace guidance."
+
+    return [
+        {"label": "Ingest", "summary": "Atlas absorbs raw design evidence instead of waiting for pre-labeled issues.", "signal": input_signal},
+        {"label": "Interpret", "summary": "Atlas maps the design into interacting engineering domains and subsystems.", "signal": interpretation},
+        {"label": "Predict", "summary": "Atlas estimates what is most likely to fail first and why it matters in the real world.", "signal": prediction},
+        {"label": "Prioritize", "summary": "Atlas ranks what should be fixed first based on severity, confidence, and downstream impact.", "signal": prioritize},
+        {"label": "Recommend", "summary": "Atlas turns design judgment into a concrete engineering move, not just a warning.", "signal": recommend},
+        {"label": "Learn", "summary": "Atlas gets better as it sees reruns, decisions, validations, and outcomes across the design stream.", "signal": learn},
+    ]
+
+
+def _atlas_intelligence_layers(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        rule_signal = _atlas_signal_text(context.get("signoff_gate"), "Known engineering constraints are available once a board run exists.")
+        contextual_signal = f"{context.get('dominant_domain') or 'General'} is the current interaction pressure driver."
+        adaptive_signal = copilot.get("release_note") or "Atlas will learn more once this board has multiple reruns and decisions."
+    elif page_type == "compare":
+        rule_signal = _atlas_signal_text(context.get("signoff_note"), "Compare gates are waiting on two linked runs.")
+        contextual_signal = context.get("root_cause") or "Atlas is looking for the changed subsystem story between revisions."
+        adaptive_signal = "Atlas uses compare outcomes to learn which revision changes actually improved engineering posture."
+    else:
+        rule_signal = context.get("release_readiness") or "Workspace gate logic becomes active once linked runs exist."
+        contextual_signal = context.get("recurring_family_summary") or "Atlas is tracking how power, signal, thermal, and manufacturing patterns interact across the workspace."
+        adaptive_signal = context.get("trend_summary") or "Atlas strengthens its guidance as workspace reruns and review outcomes accumulate."
+
+    return [
+        {
+            "key": "rules",
+            "title": "Rule-Based Constraint Layer",
+            "summary": "Known constraints, standards, and failure thresholds give Atlas a deterministic engineering floor.",
+            "current_signal": rule_signal,
+        },
+        {
+            "key": "context",
+            "title": "Contextual Reasoning Layer",
+            "summary": "Atlas understands how power, signal, thermal, mechanical, and manufacturing decisions interact instead of treating findings in isolation.",
+            "current_signal": contextual_signal,
+        },
+        {
+            "key": "learning",
+            "title": "Adaptive Learning Layer",
+            "summary": "Atlas improves from reruns, review decisions, and design outcomes so future advice is sharper and more proactive.",
+            "current_signal": adaptive_signal,
+        },
+    ]
+
+
+def _atlas_advisory_panels(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        return [
+            {"label": "Most Likely To Fail", "headline": copilot.get("likely_failure_path") or context.get("summary") or "No board failure hypothesis is active yet."},
+            {"label": "Why It Matters", "headline": context.get("posture") or copilot.get("posture") or "Atlas is waiting for a stronger board posture signal."},
+            {"label": "Fix First", "headline": copilot.get("mission") or "Run a board analysis to activate ranked board guidance."},
+            {"label": "Validate Next", "headline": ((copilot.get("validation_plan") or []) or ["Re-run the board and confirm the top driver really collapsed."])[0]},
+        ]
+    if page_type == "compare":
+        return [
+            {"label": "Most Likely To Fail", "headline": copilot.get("root_cause") or context.get("posture") or "Atlas is waiting for two strong revision snapshots."},
+            {"label": "Why It Matters", "headline": context.get("signoff_note") or copilot.get("signoff_note") or "Revision impact matters when a change alters real approval posture."},
+            {"label": "Fix First", "headline": copilot.get("next_move") or "Atlas will isolate the changed subsystem that best explains the revision movement."},
+            {"label": "Validate Next", "headline": ((copilot.get("takeaways") or [{}])[0] or {}).get("why") or "Confirm whether the changed findings cluster into one explainable subsystem."},
+        ]
+    return [
+        {"label": "Most Likely To Fail", "headline": context.get("recurring_family_summary") or copilot.get("systemic_pattern") or "Atlas is waiting for more linked workspace history."},
+        {"label": "Why It Matters", "headline": context.get("release_readiness") or copilot.get("release_readiness") or "Workspace risk matters when issue families persist across reruns."},
+        {"label": "Fix First", "headline": ((copilot.get("execution_plan") or [{}])[0] or {}).get("action") or "Atlas will focus the team on the strongest repeated issue family."},
+        {"label": "Validate Next", "headline": ((copilot.get("team_guidance") or []) or ["Verify the next rerun improves both trust and risk posture."])[0]},
+    ]
+
+
+def _atlas_engine_payload(page_type, context, copilot, assistant_console):
+    return {
+        "identity": _atlas_identity_manifest(),
+        "intelligence_layers": _atlas_intelligence_layers(page_type, context, copilot),
+        "operating_loop": _atlas_operating_loop(page_type, context, copilot),
+        "advisory_panels": _atlas_advisory_panels(page_type, context, copilot),
+        "assistant_console": assistant_console or {},
+    }
+
+
 def _atlas_board_options(limit=16):
     options = []
     for run in _build_history_runs():
@@ -551,11 +686,13 @@ def _atlas_project_context_payload(project_id=""):
     workspace_intelligence = _build_project_workspace_intelligence(enriched_project)
     timeline_data = _build_project_timeline_data(enriched_project)
     project_copilot = build_project_copilot_brief(enriched_project, workspace_intelligence, timeline_data)
+    project_assistant_console = build_project_assistant_console(project_copilot)
     context = _build_project_atlas_context(enriched_project, workspace_intelligence, timeline_data, project_copilot)
 
     return {
         "context": context,
         "selected_project_id": enriched_project.get("project_id"),
+        "atlas_engine": _atlas_engine_payload("project", context, project_copilot, project_assistant_console),
         "summary": {
             "title": project_copilot.get("posture") or enriched_project.get("name") or "Workspace",
             "copy": project_copilot.get("release_readiness") or workspace_intelligence.get("health_summary"),
@@ -612,6 +749,7 @@ def _atlas_board_context_payload(board_name="", run_id=""):
     enriched_result = _enrich_single_result(detail)
     single_decision = _build_single_decision_data(enriched_result)
     board_copilot = build_board_copilot_brief(enriched_result, single_decision)
+    board_assistant_console = build_board_assistant_console(board_copilot, single_decision)
     board_review_layers = _build_board_review_layers(enriched_result)
     board_value_metrics = _build_board_value_metrics(enriched_result)
     context = _build_board_atlas_context(
@@ -626,6 +764,7 @@ def _atlas_board_context_payload(board_name="", run_id=""):
         "context": context,
         "selected_run_id": context.get("run_id") or selected_run.get("name"),
         "board_options": board_options,
+        "atlas_engine": _atlas_engine_payload("board", context, board_copilot, board_assistant_console),
         "summary": {
             "title": board_copilot.get("mission") or context.get("board_name") or "Board context",
             "copy": board_copilot.get("release_note") or context.get("summary"),
@@ -733,6 +872,7 @@ def _atlas_compare_context_payload(project_id="", run_a_id="", run_b_id=""):
         },
     }
     compare_copilot = build_compare_copilot_brief(comparison)
+    compare_assistant_console = build_compare_assistant_console(compare_copilot)
     context = _build_compare_atlas_context(comparison, compare_copilot)
     context["project_name"] = compare_payload.get("project", {}).get("name")
 
@@ -742,6 +882,7 @@ def _atlas_compare_context_payload(project_id="", run_a_id="", run_b_id=""):
         "selected_run_a_id": (compare_payload.get("run_a") or {}).get("run_id"),
         "selected_run_b_id": (compare_payload.get("run_b") or {}).get("run_id"),
         "compare_run_options": compare_run_options,
+        "atlas_engine": _atlas_engine_payload("compare", context, compare_copilot, compare_assistant_console),
         "summary": {
             "title": compare_copilot.get("posture") or compare_payload.get("project", {}).get("name") or "Comparison context",
             "copy": compare_copilot.get("signoff_note") or compare_copilot.get("root_cause"),
