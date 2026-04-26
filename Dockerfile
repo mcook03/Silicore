@@ -12,4 +12,4 @@ COPY . /app
 
 EXPOSE 5001
 
-CMD ["python3", "app.py"]
+CMD gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app
