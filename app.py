@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import subprocess
 from flask_cors import CORS
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
@@ -152,6 +153,9 @@ RUNS_FOLDER = "dashboard_runs"
 PROJECTS_FOLDER = "dashboard_projects"
 VALIDATION_FOLDER = "dashboard_validation_samples"
 CONFIG_PATH = "custom_config.json"
+LOVEABLE_FRONTEND_ROOT = os.path.join(os.path.dirname(__file__), "frontend_loveable", "dist", "client")
+LOVEABLE_FRONTEND_ASSETS = os.path.join(LOVEABLE_FRONTEND_ROOT, "assets")
+LOVEABLE_FRONTEND_SERVER_ENTRY = os.path.join(os.path.dirname(__file__), "frontend_loveable", "dist", "server", "index.js")
 
 initialize_database()
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -177,6 +181,129 @@ def _current_user():
     if user_id:
         return get_user_by_id(user_id)
     return None
+
+
+_loveable_bundle_cache = None
+_loveable_ssr_script = """
+const requestUrl = process.argv[1];
+const { default: serverEntry } = await import('./dist/server/index.js');
+const response = await serverEntry.fetch(new Request(requestUrl));
+const body = await response.text();
+const payload = {
+  status: response.status,
+  headers: Object.fromEntries(response.headers.entries()),
+  body,
+};
+process.stdout.write(JSON.stringify(payload));
+"""
+
+
+def _get_loveable_bundle():
+    global _loveable_bundle_cache
+    if _loveable_bundle_cache:
+        return _loveable_bundle_cache
+
+    if not os.path.isdir(LOVEABLE_FRONTEND_ASSETS):
+        return None
+
+    css_name = None
+    entry_name = None
+    for item in sorted(os.listdir(LOVEABLE_FRONTEND_ASSETS)):
+        if item.startswith("styles-") and item.endswith(".css"):
+            css_name = item
+    for item in sorted(os.listdir(LOVEABLE_FRONTEND_ASSETS)):
+        if item.startswith("index-") and item.endswith(".js"):
+            file_path = os.path.join(LOVEABLE_FRONTEND_ASSETS, item)
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as handle:
+                    content = handle.read()
+                if "hydrateRoot" in content or "createRouter" in content:
+                    entry_name = item
+                    break
+            except OSError:
+                continue
+
+    if not css_name or not entry_name:
+        return None
+
+    _loveable_bundle_cache = {
+        "styles_href": url_for("loveable_client_route", filename=f"assets/{css_name}"),
+        "entry_href": url_for("loveable_client_route", filename=f"assets/{entry_name}"),
+    }
+    return _loveable_bundle_cache
+
+
+def _render_loveable_shell(frontend_path=None):
+    rendered = _render_loveable_ssr(frontend_path=frontend_path)
+    if rendered is not None:
+        return rendered
+    bundle = _get_loveable_bundle()
+    if not bundle:
+        return render_template(
+            "loveable_shell.html",
+            styles_href=None,
+            entry_href=None,
+            frontend_path=frontend_path or request.path,
+        )
+    return render_template(
+        "loveable_shell.html",
+        styles_href=bundle["styles_href"],
+        entry_href=bundle["entry_href"],
+        frontend_path=frontend_path or request.path,
+    )
+
+
+def _inject_loveable_path(html, frontend_path):
+    target_path = frontend_path or request.path
+    if not target_path or target_path == request.path:
+        return html
+    script = (
+        "<script>(function(){var p="
+        + json.dumps(target_path)
+        + ";var u=p+window.location.search+window.location.hash;"
+        + "if(window.location.pathname!==p){window.history.replaceState({},'',u);}})();</script>"
+    )
+    if "<head>" in html:
+        return html.replace("<head>", f"<head>{script}", 1)
+    return script + html
+
+
+def _render_loveable_ssr(frontend_path=None):
+    if not os.path.isfile(LOVEABLE_FRONTEND_SERVER_ENTRY):
+        return None
+    target_path = frontend_path or request.path
+    request_url = f"http://localhost{target_path}"
+    if request.query_string:
+        request_url = f"{request_url}?{request.query_string.decode('utf-8', errors='ignore')}"
+    try:
+        completed = subprocess.run(
+            ["node", "--input-type=module", "-e", _loveable_ssr_script, request_url],
+            cwd=os.path.join(os.path.dirname(__file__), "frontend_loveable"),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return None
+    if completed.returncode != 0 or not completed.stdout:
+        return None
+    try:
+        payload = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        return None
+    body = _inject_loveable_path(payload.get("body") or "", frontend_path)
+    headers = payload.get("headers") or {}
+    content_type = headers.get("content-type", "text/html; charset=utf-8")
+    return Response(body, status=payload.get("status", 200), content_type=content_type)
+
+
+def _should_render_loveable_html():
+    if (request.args.get("format") or "").strip().lower() == "json":
+        return False
+    best = request.accept_mimetypes.best_match(["text/html", "application/json"])
+    if best == "application/json":
+        return False
+    return request.accept_mimetypes[best] >= request.accept_mimetypes["application/json"]
 
 
 def _require_role(minimum_role):
@@ -4353,28 +4480,13 @@ def _build_project_intelligence(project, run_a, run_b):
 
 @app.route("/", methods=["GET"])
 def index():
-    stats = _build_home_stats()
-    recent_runs = _get_recent_runs(limit=5)
-    projects = [_enrich_project_for_display(project) for project in list_projects()]
-    return _render_page(
-        active_page="home",
-        page_title="Silicore — PCB design intelligence",
-        page_eyebrow="Powered by Atlas Intelligence",
-        page_copy="AI-powered hardware design intelligence for PCB analysis, design review, and revision-aware engineering workflows.",
-        template_name="home.html",
-        show_page_hero=False,
-        body_context={
-            "stats": stats,
-            "recent_runs": recent_runs,
-            "home_chart": _build_home_chart_data(recent_runs, stats),
-            "dashboard_story": _build_dashboard_story(recent_runs, projects),
-            "projects": projects,
-        },
-    )
+    return _render_loveable_shell("/")
 
 
 @app.route("/single-board", methods=["GET", "POST"])
 def single_board_page():
+    if request.method == "GET":
+        return _render_loveable_shell("/analyze")
     result = None
     single_chart = None
     single_decision = None
@@ -4449,6 +4561,8 @@ def single_board_page():
 
 @app.route("/project-review", methods=["GET", "POST"])
 def project_page():
+    if request.method == "GET":
+        return _render_loveable_shell("/project-review")
     project_result = None
     comparison = None
     project_chart = None
@@ -4515,48 +4629,12 @@ def project_page():
 
 @app.route("/projects", methods=["GET"])
 def projects_page():
-    projects = [_enrich_project_for_display(project) for project in list_projects()]
-    current_user = _current_user()
-    if current_user:
-        visible_projects = []
-        for project in projects:
-            if project_is_visible_to_user(current_user, project):
-                visible_projects.append(project)
-        projects = visible_projects
-    return _render_page(
-        active_page="projects_workspace",
-        page_title="Silicore",
-        page_eyebrow="Workspace System Layer",
-        page_copy="Organize boards and saved runs into Silicore workspaces for cleaner project-level visibility, review flow, and team coordination.",
-        template_name="projects.html",
-        body_context={
-            "projects": projects,
-            "projects_summary": _build_projects_summary(projects),
-            "projects_chart": _build_projects_chart_data(projects),
-        },
-    )
+    return _render_loveable_shell("/projects")
 
 
 @app.route("/nexus-ops", methods=["GET"])
 def nexus_ops_page():
-    current_user = _current_user()
-    if not current_user or not has_role(current_user, "lead"):
-        flash("Lead or admin access is required to open Nexus Ops.")
-        return redirect(url_for("login_page"))
-
-    operations_snapshot = _build_operations_snapshot(current_user)
-    evaluation_summary = evaluate_fixture_suite() if has_role(current_user, "admin") else None
-    return _render_page(
-        active_page="ops",
-        page_title="Nexus Ops",
-        page_eyebrow="Runtime, Reviews, and Audit",
-        page_copy="Monitor Atlas workflows, worker activity, review decisions, queued jobs, and evaluation health from one Silicore control surface.",
-        template_name="nexus_ops.html",
-        body_context={
-            "operations_snapshot": operations_snapshot,
-            "evaluation_summary": evaluation_summary,
-        },
-    )
+    return _render_loveable_shell("/nexus-ops")
 
 
 @app.route("/projects/create", methods=["POST"])
@@ -4594,57 +4672,7 @@ def delete_project_route(project_id):
 
 @app.route("/projects/<project_id>", methods=["GET"])
 def project_detail_page(project_id):
-    project = get_project(project_id)
-
-    if not project:
-        flash("Project not found.")
-        return redirect(url_for("projects_page"))
-
-    project = _enrich_project_for_display(project)
-    current_user = _current_user()
-    if current_user and not project_is_visible_to_user(current_user, project):
-        flash("You do not have access to that project.")
-        return redirect(url_for("projects_page"))
-
-    workspace_chart = _build_project_workspace_chart_data(project)
-    workspace_intelligence = _build_project_workspace_intelligence(project)
-    timeline_data = _build_project_timeline_data(project)
-    workspace_review_layers = _build_workspace_review_layers(project)
-    project_value_metrics = _build_project_value_metrics(project)
-    project_copilot = build_project_copilot_brief(
-        project,
-        workspace_intelligence,
-        timeline_data,
-        project_value_metrics,
-    )
-    project_assistant_console = build_project_assistant_console(project_copilot)
-
-    return _render_page(
-        active_page="projects_workspace",
-        page_title=project.get("name", "Project"),
-        page_eyebrow="Silicore Workspace",
-        page_copy="Review linked analysis runs, compare revisions, and monitor design progress inside this Silicore workspace.",
-        template_name="project_detail.html",
-        body_context={
-            "project": project,
-            "workspace_chart": workspace_chart,
-            "workspace_intelligence": workspace_intelligence,
-            "timeline_data": timeline_data,
-            "workspace_review_layers": workspace_review_layers,
-            "project_value_metrics": project_value_metrics,
-            "project_copilot": project_copilot,
-            "project_assistant_console": project_assistant_console,
-            "project_atlas_context": _build_project_atlas_context(
-                project,
-                workspace_intelligence,
-                timeline_data,
-                project_copilot,
-            ),
-            "project_review_feed": _build_project_review_feed(project),
-            "operations_snapshot": _build_operations_snapshot(current_user),
-            "available_users": [user for user in list_users() if user.get("user_id") != ((project.get("owner") or {}).get("user_id"))],
-        },
-    )
+    return _render_loveable_shell(f"/projects/{project_id}")
 
 
 @app.route("/projects/<project_id>/notes", methods=["POST"])
@@ -4874,6 +4902,8 @@ def nexus_ops_external_validation_route():
 
 @app.route("/projects/<project_id>/compare", methods=["GET"])
 def compare_runs(project_id):
+    return _render_loveable_shell("/compare")
+    project = get_project(project_id)
     run_a_id = (request.args.get("run_a") or "").strip()
     run_b_id = (request.args.get("run_b") or "").strip()
 
@@ -5211,6 +5241,41 @@ def atlas_action_route():
     return jsonify(result)
 
 
+@app.route("/loveable-client/<path:filename>", methods=["GET"])
+def loveable_client_route(filename):
+    return send_from_directory(LOVEABLE_FRONTEND_ROOT, filename)
+
+
+@app.route("/assets/<path:filename>", methods=["GET"])
+def loveable_asset_route(filename):
+    return send_from_directory(LOVEABLE_FRONTEND_ASSETS, filename)
+
+
+@app.route("/dashboard", methods=["GET"])
+def dashboard_page():
+    return _render_loveable_shell("/dashboard")
+
+
+@app.route("/analyze", methods=["GET"])
+def analyze_page():
+    return _render_loveable_shell("/analyze")
+
+
+@app.route("/compare", methods=["GET"])
+def compare_page():
+    return _render_loveable_shell("/compare")
+
+
+@app.route("/atlas", methods=["GET"])
+def atlas_page():
+    return _render_loveable_shell("/atlas")
+
+
+@app.route("/health", methods=["GET"])
+def health_page():
+    return _render_loveable_shell("/health")
+
+
 @app.route("/health/live", methods=["GET"])
 def health_live_route():
     return jsonify(
@@ -5257,6 +5322,8 @@ def runtime_meta_route():
 
 @app.route("/jobs", methods=["GET"])
 def jobs_route():
+    if _should_render_loveable_html():
+        return _render_loveable_shell("/jobs")
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
     return jsonify({"jobs": list_jobs(limit=_safe_int(request.args.get("limit"), 20))})
@@ -5264,6 +5331,8 @@ def jobs_route():
 
 @app.route("/jobs/<job_id>", methods=["GET"])
 def job_detail_route(job_id):
+    if _should_render_loveable_html():
+        return _render_loveable_shell(f"/jobs/{job_id}")
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
     job = get_job(job_id)
@@ -5274,6 +5343,8 @@ def job_detail_route(job_id):
 
 @app.route("/admin/evaluation", methods=["GET"])
 def evaluation_route():
+    if _should_render_loveable_html():
+        return _render_loveable_shell("/admin/evaluation")
     if not _require_role("lead"):
         return jsonify({"error": "Lead or admin access is required."}), 403
     scope = (request.args.get("scope") or "fixtures").strip().lower()
@@ -5318,6 +5389,8 @@ def worker_status_route():
 
 @app.route("/admin/audit", methods=["GET"])
 def audit_route():
+    if _should_render_loveable_html():
+        return _render_loveable_shell("/admin/audit")
     if not _require_role("admin"):
         return jsonify({"error": "Admin access is required."}), 403
     return jsonify(
@@ -5342,37 +5415,12 @@ def project_reviews_route(project_id):
 
 @app.route("/history", methods=["GET"])
 def history_page():
-    history_runs = _build_history_runs()
-    return _render_page(
-        active_page="history",
-        page_title="Nexus History",
-        page_eyebrow="Silicore Archive",
-        page_copy="Browse previous analyses, inspect saved outputs, and revisit engineering findings across earlier work inside Silicore.",
-        template_name="history.html",
-        body_context={
-            "history_runs": history_runs,
-            "history_summary": _build_history_summary(history_runs),
-            "history_chart": _build_history_chart_data(history_runs),
-        },
-    )
+    return _render_loveable_shell("/history")
 
 
 @app.route("/history/<run_dir>", methods=["GET"])
 def history_detail_page(run_dir):
-    run_detail = _build_run_detail(run_dir)
-
-    if not run_detail:
-        flash("Requested run folder was not found.")
-        return redirect(url_for("history_page"))
-
-    return _render_page(
-        active_page="history",
-        page_title="Nexus Run Detail",
-        page_eyebrow="Silicore Archive",
-        page_copy="Review a saved analysis run in more detail and access every artifact generated for it.",
-        template_name="history_detail.html",
-        body_context={"run_detail": run_detail},
-    )
+    return _render_loveable_shell(f"/history/{run_dir}")
 
 
 @app.route("/history/<run_dir>/print", methods=["GET"])
@@ -5531,15 +5579,7 @@ def login_page():
         flash("Signed in successfully.")
         return redirect(url_for("single_board_page"))
 
-    return _render_page(
-        active_page="login",
-        page_title="Silicore Access",
-        page_eyebrow="Silicore Identity",
-        page_copy="Sign in to access Silicore workspaces, review workflow features, and saved team context.",
-        template_name="login.html",
-        show_page_hero=False,
-        body_context={"organizations": list_organizations()},
-    )
+    return _render_loveable_shell("/login")
 
 
 @app.route("/logout", methods=["POST"])
@@ -5554,6 +5594,8 @@ def logout_route():
 
 @app.route("/settings", methods=["GET", "POST"])
 def settings_page():
+    if request.method == "GET":
+        return _render_loveable_shell("/settings")
     if request.method == "POST":
         try:
             updated_fields = parse_config_form(request.form)

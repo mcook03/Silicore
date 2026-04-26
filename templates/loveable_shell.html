@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Silicore</title>
+    {% if frontend_path %}
+    <script>
+        (function() {
+            var targetPath = {{ frontend_path|tojson }};
+            var targetUrl = targetPath + window.location.search + window.location.hash;
+            if (targetPath && window.location.pathname !== targetPath) {
+                window.history.replaceState({}, "", targetUrl);
+            }
+        })();
+    </script>
+    {% endif %}
+    {% if styles_href %}
+    <link rel="stylesheet" href="{{ styles_href }}">
+    {% endif %}
+</head>
+<body>
+    {% if entry_href %}
+    <script type="module" src="{{ entry_href }}"></script>
+    {% else %}
+    <main style="font-family: sans-serif; padding: 2rem;">
+        <h1>Loveable bundle not found</h1>
+        <p>Build the frontend in <code>/Users/malikcook/Silicore/frontend_loveable</code> to load the UI preview.</p>
+    </main>
+    {% endif %}
+</body>
+</html>
