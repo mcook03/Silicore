@@ -29,14 +29,30 @@ type Risk = {
   recommendation?: string;
 };
 
+type GroupedRisk = {
+  title?: string;
+  count?: number;
+  severity_counts?: {
+    critical?: number;
+    high?: number;
+    medium?: number;
+    low?: number;
+  };
+};
+
+type DownloadItem = {
+  label?: string;
+  url?: string;
+};
+
 type AnalysisResultPayload = {
   result: {
     filename?: string;
     score?: number;
     health_summary?: string;
     risks?: Risk[];
-    grouped_risks?: Array<{ title?: string; count?: number }>;
-    downloads?: Record<string, string>;
+    grouped_risks?: GroupedRisk[];
+    downloads?: DownloadItem[] | Record<string, string>;
   };
 };
 
@@ -51,17 +67,22 @@ function Analyze() {
   const [analysis, setAnalysis] = useState<AnalysisResultPayload | null>(null);
 
   const result = analysis?.result;
-  const risks = result?.risks ?? [];
+  const risks = Array.isArray(result?.risks) ? result.risks : [];
+  const groupedRisks = Array.isArray(result?.grouped_risks) ? result.grouped_risks : [];
+  const downloadItems: DownloadItem[] = Array.isArray(result?.downloads)
+    ? result.downloads
+    : Object.entries(result?.downloads || {}).map(([label, url]) => ({ label, url }));
   const severityData = [
     { name: "critical", value: risks.filter((item) => (item.severity || "").toLowerCase() === "critical").length },
+    { name: "high", value: risks.filter((item) => (item.severity || "").toLowerCase() === "high").length },
     { name: "medium", value: risks.filter((item) => (item.severity || "").toLowerCase() === "medium").length },
-    { name: "low", value: risks.filter((item) => !["critical", "medium"].includes((item.severity || "").toLowerCase())).length },
+    { name: "low", value: risks.filter((item) => !["critical", "high", "medium"].includes((item.severity || "").toLowerCase())).length },
   ].filter((item) => item.value > 0);
-  const categoryData = (result?.grouped_risks ?? []).map((item) => ({
+  const categoryData = groupedRisks.map((item) => ({
     category: item.title || "General",
-    critical: 0,
-    medium: 0,
-    low: Number(item.count || 0),
+    critical: Number(item.severity_counts?.critical || 0),
+    medium: Number(item.severity_counts?.medium || 0) + Number(item.severity_counts?.high || 0),
+    low: Number(item.severity_counts?.low || 0),
   }));
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -184,9 +205,9 @@ function Analyze() {
                   <Tally tone="muted" label="low" n={severityData.find((item) => item.name === "low")?.value ?? 0} />
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {Object.entries(result.downloads || {}).map(([label, href]) => (
-                    <a key={label} href={href} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground">
-                      <Download className="h-3 w-3" /> {label}
+                  {downloadItems.map((item, index) => (
+                    <a key={`${item.label}-${index}`} href={item.url || "#"} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground">
+                      <Download className="h-3 w-3" /> {item.label || "Download artifact"}
                     </a>
                   ))}
                 </div>
@@ -194,8 +215,8 @@ function Analyze() {
 
               <Panel title="Category summary">
                 <div className="space-y-4">
-                  {(result.grouped_risks ?? []).map((item) => (
-                    <div key={item.title}>
+                  {groupedRisks.map((item, index) => (
+                    <div key={`${item.title}-${index}`}>
                       <div className="mb-1.5 flex items-center justify-between text-sm">
                         <span>{item.title || "General"}</span>
                         <span className="font-mono text-xs text-muted-foreground">{item.count || 0} findings</span>
