@@ -91,7 +91,7 @@ function ProjectDetail() {
                     <div className="text-sm">{run.name || run.run_id}</div>
                     <div className="font-mono text-[11px] text-muted-foreground">{run.critical_count || 0} critical findings</div>
                   </div>
-                  <ScorePill score={Math.round(Number(run.score || 0) * 10)} />
+                  <ScorePill score={normalizeRunScore(run.score)} />
                 </div>
               ))}
             </div>
@@ -188,4 +188,12 @@ function Stat({ label, value, tone, icon: Icon }: { label: string; value: string
       <div className={`mt-2 text-2xl font-semibold ${c}`}>{value}</div>
     </div>
   );
+}
+
+function normalizeRunScore(value?: number) {
+  const numeric = Number(value || 0);
+  if (!Number.isFinite(numeric)) {
+    return 0;
+  }
+  return Math.round(numeric <= 10 ? numeric * 10 : numeric);
 }

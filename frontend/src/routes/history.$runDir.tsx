@@ -14,13 +14,16 @@ export const Route = createFileRoute("/history/$runDir")({
 type RunDetailPayload = {
   run_dir?: string;
   name?: string;
-  result?: { score?: number; health_summary?: string };
+  result?: { score?: number; health_summary?: string | { title?: string; summary?: string } };
   files?: Array<{ filename: string; kind: string; run_dir: string }>;
 };
 
 function RunDetail() {
   const { runDir } = Route.useParams();
   const { data, error } = useApiData<RunDetailPayload>(`/api/frontend/history/${runDir}`);
+  const healthSummaryText = typeof data?.result?.health_summary === "string"
+    ? data.result.health_summary
+    : data?.result?.health_summary?.summary || data?.result?.health_summary?.title || "Run loaded.";
   return (
     <AppShell title="Run detail">
       <div className="space-y-6">
@@ -41,7 +44,7 @@ function RunDetail() {
           <div className="rounded-2xl border border-border bg-surface p-6">
             <div className="flex flex-col items-center">
               <ScoreRing score={Math.round(Number(data?.result?.score || 0))} size={160} />
-              <div className="mt-4 text-sm">{data?.result?.health_summary || "Run loaded."}</div>
+              <div className="mt-4 text-sm">{healthSummaryText}</div>
             </div>
           </div>
 

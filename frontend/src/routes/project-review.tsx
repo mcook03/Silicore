@@ -144,9 +144,9 @@ function ProjectReview() {
           <>
             <div className="grid gap-4 md:grid-cols-4">
               <SummaryStat label="Boards" value={String(summary.total_boards || 0)} />
-              <SummaryStat label="Average score" value={String(Math.round(Number(summary.average_score || 0) * 10))} />
-              <SummaryStat label="Best score" value={String(Math.round(Number(summary.best_score || 0) * 10))} />
-              <SummaryStat label="Worst score" value={String(Math.round(Number(summary.worst_score || 0) * 10))} />
+              <SummaryStat label="Average score" value={String(normalizeScore(summary.average_score))} />
+              <SummaryStat label="Best score" value={String(normalizeScore(summary.best_score))} />
+              <SummaryStat label="Worst score" value={String(normalizeScore(summary.worst_score))} />
             </div>
 
             <Panel title="Board comparison" action={<span className="font-mono text-xs text-muted-foreground">spread {result.comparison.score_spread || 0}</span>}>
@@ -159,7 +159,7 @@ function ProjectReview() {
                         <div className="text-sm">{board.filename}</div>
                         <div className="font-mono text-[11px] text-muted-foreground">{criticals} critical findings</div>
                       </div>
-                      <div className="text-lg font-semibold">{Math.round(Number(board.score || 0) * 10)}</div>
+                      <div className="text-lg font-semibold">{normalizeScore(board.score)}</div>
                     </div>
                   );
                 })}
@@ -188,4 +188,12 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
       <div className="mt-2 text-2xl font-semibold">{value}</div>
     </div>
   );
+}
+
+function normalizeScore(value?: number) {
+  const numeric = Number(value || 0);
+  if (!Number.isFinite(numeric)) {
+    return 0;
+  }
+  return Math.round(numeric <= 10 ? numeric * 10 : numeric);
 }

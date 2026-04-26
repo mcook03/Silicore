@@ -1,0 +1,1229 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Silicore Engineering Report</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background: #0f172a;
+                color: #e2e8f0;
+            }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 32px 20px 60px;
+            }
+            .hero {
+                background: linear-gradient(135deg, #111827, #1e293b);
+                border: 1px solid #334155;
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 20px;
+            }
+            .card {
+                background: #111827;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .issue-card, .risk-card {
+                background: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            h1, h2, h3 {
+                margin-top: 0;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .muted {
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero">
+                <h1>Silicore Engineering Report</h1>
+                <p><strong>File:</strong> high_speed_pair_bad.kicad_pcb</p>
+                <p><strong>Score:</strong> 6.1 / 100</p>
+                <p><strong>Total Risks:</strong> 44</p>
+                <p><strong>Total Penalty:</strong> 224.0</p>
+            </div>
+
+            <div class="card">
+                <h2>Executive Summary</h2>
+                <p><strong>Board needs focused engineering review</strong></p>
+                <p class="muted">This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700). The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.</p>
+            </div>
+
+            <div class="card">
+                <h2>Parser Capability</h2>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .txt</p>
+                <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
+            </div>
+
+            <div class="card">
+                <h2>Review Readiness</h2>
+                <p><strong>Output format:</strong> engineering review packet</p>
+                <p><strong>Includes:</strong> score rationale, finding traceability, recommendations, and saved analysis context</p>
+                <p><strong>Best use:</strong> design reviews, management updates, supplier communication, and internal signoff</p>
+            </div>
+
+            <div class="card">
+                <h2>Top Issues</h2>
+                
+            <div class="issue-card">
+                <p><strong>CRITICAL</strong> — safety_high_voltage</p>
+                <p>Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>CRITICAL</strong> — safety_high_voltage</p>
+                <p>Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+            </div>
+            
+            <div class="issue-card">
+                <p><strong>CRITICAL</strong> — safety_high_voltage</p>
+                <p>High-voltage pad on J1:VBUS is close to J1:USB_DP</p>
+                <p><strong>Recommendation:</strong> Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.</p>
+            </div>
+            
+            </div>
+
+            <div class="card">
+                <h2>Board Summary</h2>
+                <p><strong>Component Count:</strong> 3</p>
+                <p><strong>Net Count:</strong> 5</p>
+                <p><strong>Risk Count:</strong> 44</p>
+                <p><strong>Sample Components:</strong> J1, U1, Y1</p>
+            </div>
+
+            <div class="card">
+                <h2>Severity Penalties</h2>
+                <ul><li>medium: 10.8</li><li>critical: 3.6</li><li>high: 7.8</li><li>low: 0.2</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Category Penalties</h2>
+                <ul><li>assembly_testability: 2.0</li><li>safety_high_voltage: 3.6</li><li>signal_integrity: 5.2</li><li>component_design: 0.8</li><li>power_integrity: 4.4</li><li>high_speed: 0.6</li><li>emi_emc: 1.6</li><li>manufacturing: 0.8</li><li>reliability: 0.8</li><li>stackup_return_path: 2.0</li><li>system_interaction: 0.6</li></ul>
+            </div>
+
+            <div class="card">
+                <h2>Detailed Findings</h2>
+                
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Board has limited visible fiducial strategy for assembly alignment</p>
+                <p><strong>Recommendation:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 5</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 76.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 76.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add global fiducials to improve assembly registration and inspection consistency.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;fiducials&quot;: 0, &quot;threshold&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Ground test-point coverage appears limited for bring-up and probing</p>
+                <p><strong>Recommendation:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=1</p>
+                <p><strong>Traceability:</strong> 86 / 100</p>
+                <p><strong>Evidence Count:</strong> 5</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 81.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 81.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                <p><strong>Metrics:</strong> {&quot;ground_test_points&quot;: 0, &quot;threshold&quot;: 1}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Critical or debug-oriented net USB_DP has no visible test point</p>
+                <p><strong>Recommendation:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;has_testpoint&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Critical or debug-oriented net USB_DN has no visible test point</p>
+                <p><strong>Recommendation:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;has_testpoint&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> assembly_testability</p>
+                <p><strong>Message:</strong> Critical or debug-oriented net CLK has no visible test point</p>
+                <p><strong>Recommendation:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Expose this net through a test point, header, or accessible debug pad to improve bring-up and manufacturing test coverage.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1, Y1</p>
+                <p><strong>Nets:</strong> CLK</p>
+                <p><strong>Metrics:</strong> {&quot;has_testpoint&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> J1, J1</p>
+                <p><strong>Nets:</strong> VBUS, USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 0.7, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)</p>
+                <p><strong>Recommendation:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2.5</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> J1, J1</p>
+                <p><strong>Nets:</strong> VBUS, USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;creepage&quot;: 2.5, &quot;threshold&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Clock source Y1 is far from controller U1 (19.80 units)</p>
+                <p><strong>Recommendation:</strong> Move the crystal or oscillator closer to the controller clock pins and keep the timing loop compact and isolated.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=19.8, threshold=12.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 10</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> Y1, U1</p>
+                <p><strong>Nets:</strong> CLK, GND</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 19.8, &quot;threshold&quot;: 12.0, &quot;shares_clock_net&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> component_design</p>
+                <p><strong>Message:</strong> High-speed net USB_DN has a long route with no visible series or termination resistor</p>
+                <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=18.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 118.2, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> component_design</p>
+                <p><strong>Message:</strong> High-speed net USB_DP has a long route with no visible series or termination resistor</p>
+                <p><strong>Recommendation:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=18.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review whether this interface requires termination or series damping based on edge rate and topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.67, &quot;threshold&quot;: 18.0, &quot;has_resistor&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> High-current net VBUS bottlenecks through a narrow copper section</p>
+                <p><strong>Recommendation:</strong> Widen the narrow neck-down, shorten the high-current route, or add parallel copper/plane support to reduce current-density and voltage-drop pressure.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 86.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 86.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;min_width&quot;: 0.25, &quot;recommended_width&quot;: 0.7, &quot;trace_length&quot;: 84.02}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U1 (mcu) has no nearby decoupling capacitor</p>
+                <p><strong>Recommendation:</strong> Place a decoupling capacitor close to the device power pin and on the relevant supply net.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place a 0.1uF decoupling capacitor close to the IC power pin, ideally within the configured threshold of 4.0.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1, J1</p>
+                
+                <p><strong>Metrics:</strong> {&quot;nearest_cap_distance&quot;: 84.02, &quot;threshold&quot;: 4.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U1 appears to lack enough local decoupling support</p>
+                <p><strong>Recommendation:</strong> Add or reposition local bypass capacitors close to the device supply pins with short return paths.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 11</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 87.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 87.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> USB_DN, USB_DP, GND, CLK</p>
+                <p><strong>Metrics:</strong> {&quot;local_caps_found&quot;: 0, &quot;min_local_caps&quot;: 1, &quot;nearest_local_cap_distance&quot;: null}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> high_speed</p>
+                <p><strong>Message:</strong> Differential pair USB has a length mismatch of 33.53 units</p>
+                <p><strong>Recommendation:</strong> Length-match the positive and negative pair routes more closely to reduce skew.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=5.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Length-match the positive and negative pair routes more closely to reduce skew.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DP, USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;positive_length&quot;: 84.67, &quot;negative_length&quot;: 118.2, &quot;length_mismatch&quot;: 33.53, &quot;threshold&quot;: 5.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> emi_emc</p>
+                <p><strong>Message:</strong> Switching or power net VBUS forms a long exposed loop path</p>
+                <p><strong>Recommendation:</strong> Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 74.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 74.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Tighten the converter current loop, shorten the route, and keep the return path adjacent to reduce loop area and EMI.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.02, &quot;max_loop_length&quot;: 45.0, &quot;via_count&quot;: 0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> emi_emc</p>
+                <p><strong>Message:</strong> Fast or noisy net USB_DP changes layers without nearby return-path stitching support</p>
+                <p><strong>Recommendation:</strong> Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;unsupported_vias&quot;: 2, &quot;return_via_radius&quot;: 3.0, &quot;trace_length&quot;: 84.67}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> emi_emc</p>
+                <p><strong>Message:</strong> Fast or noisy net USB_DN changes layers without nearby return-path stitching support</p>
+                <p><strong>Recommendation:</strong> Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;unsupported_vias&quot;: 2, &quot;return_via_radius&quot;: 3.0, &quot;trace_length&quot;: 118.2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Net CLK uses a trace width below the fab-oriented limit (0.12)</p>
+                <p><strong>Recommendation:</strong> Increase the trace width or confirm that the chosen board house can reliably build this geometry.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=0.15</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 90.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 90.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review the board against fabrication limits and increase trace widths or spacing where necessary.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> CLK</p>
+                <p><strong>Metrics:</strong> {&quot;trace_width&quot;: 0.12, &quot;threshold&quot;: 0.15}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net USB_DP has a long path between J1 and U1 (84.02 units)</p>
+                <p><strong>Recommendation:</strong> Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=84.02, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Shorten the net path from 84.02 toward 25.0 or below by improving placement or route topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 84.02, &quot;threshold&quot;: 25.0, &quot;is_critical_net&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net USB_DN has a long path between J1 and U1 (84.02 units)</p>
+                <p><strong>Recommendation:</strong> Reduce routing distance, improve placement, or treat the net as timing-sensitive if appropriate.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=84.02, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Shorten the net path from 84.02 toward 25.0 or below by improving placement or route topology.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 84.02, &quot;threshold&quot;: 25.0, &quot;is_critical_net&quot;: false}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> J1 has ground but no visible power rail</p>
+                <p><strong>Recommendation:</strong> Verify that the component is connected to the intended supply net as well as ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 10</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> USB_DN, USB_DP, GND, VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;USB_DN&quot;, &quot;USB_DP&quot;, &quot;GND&quot;, &quot;VBUS&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> U1 has ground but no visible power rail</p>
+                <p><strong>Recommendation:</strong> Verify that the component is connected to the intended supply net as well as ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 10</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> U1</p>
+                <p><strong>Nets:</strong> USB_DN, USB_DP, GND, CLK</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;USB_DN&quot;, &quot;USB_DP&quot;, &quot;GND&quot;, &quot;CLK&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Y1 has ground but no visible power rail</p>
+                <p><strong>Recommendation:</strong> Verify that the component is connected to the intended supply net as well as ground.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 66 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> Y1</p>
+                <p><strong>Nets:</strong> GND, CLK</p>
+                <p><strong>Metrics:</strong> {&quot;required_power_nets&quot;: [&quot;VIN&quot;, &quot;VCC&quot;, &quot;VBAT&quot;, &quot;5V&quot;, &quot;3V3&quot;, &quot;VDD&quot;], &quot;required_ground_nets&quot;: [&quot;GND&quot;, &quot;GROUND&quot;, &quot;PGND&quot;], &quot;observed_component_nets&quot;: [&quot;GND&quot;, &quot;CLK&quot;], &quot;has_power&quot;: false, &quot;has_ground&quot;: true}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> High-current net VBUS uses a long routed path</p>
+                <p><strong>Recommendation:</strong> Shorten the power path and tighten the source-to-load loop to reduce parasitic resistance and inductance.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=40.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 76.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 76.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1</p>
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.02, &quot;threshold&quot;: 40.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> reliability</p>
+                <p><strong>Message:</strong> Ground strategy looks light on stitching support for net GND (0 vias)</p>
+                <p><strong>Recommendation:</strong> Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=2</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 7</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Add more stitching or reference vias to strengthen grounding continuity and return-current robustness.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> GND</p>
+                <p><strong>Metrics:</strong> {&quot;ground_via_count&quot;: 0, &quot;threshold&quot;: 2, &quot;board_layers&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> reliability</p>
+                <p><strong>Message:</strong> Ground net GND has limited visible connectivity (3 connections)</p>
+                <p><strong>Recommendation:</strong> Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=4</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 74.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 74.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review grounding strategy and ensure intended loads and returns are visibly tied into the board ground structure.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> GND</p>
+                <p><strong>Metrics:</strong> {&quot;ground_connections&quot;: 3, &quot;threshold&quot;: 4}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> critical</p>
+                <p><strong>Category:</strong> safety_high_voltage</p>
+                <p><strong>Message:</strong> High-voltage pad on J1:VBUS is close to J1:USB_DP</p>
+                <p><strong>Recommendation:</strong> Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 83.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 83.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.</p>
+                <p><strong>Fix Priority:</strong> critical</p>
+                
+                <p><strong>Components:</strong> J1, J1</p>
+                <p><strong>Nets:</strong> VBUS, USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;clearance&quot;: 1.8, &quot;min_clearance&quot;: 2.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net USB_DP has a long signal path between J1 and U1 (84.02 units)</p>
+                <p><strong>Recommendation:</strong> Reduce path length or improve routing to lower noise and signal quality risks.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=84.02, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce the signal path length from 84.02 to at or below 25.0 by improving placement or rerouting.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 84.02, &quot;threshold&quot;: 25.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net USB_DN has a long signal path between J1 and U1 (84.02 units)</p>
+                <p><strong>Recommendation:</strong> Reduce path length or improve routing to lower noise and signal quality risks.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> distance=84.02, threshold=25.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce the signal path length from 84.02 to at or below 25.0 by improving placement or rerouting.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;distance&quot;: 84.02, &quot;threshold&quot;: 25.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> stackup_return_path</p>
+                <p><strong>Message:</strong> Critical net USB_DP is long for a two-layer style stackup</p>
+                <p><strong>Recommendation:</strong> Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=28.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.67, &quot;threshold&quot;: 28.0, &quot;copper_layers&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> stackup_return_path</p>
+                <p><strong>Message:</strong> Critical net USB_DP changes layers without nearby ground-return stitching</p>
+                <p><strong>Recommendation:</strong> Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;unsupported_vias&quot;: 2, &quot;signal_via_ground_radius&quot;: 3.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> stackup_return_path</p>
+                <p><strong>Message:</strong> Critical net USB_DN is long for a two-layer style stackup</p>
+                <p><strong>Recommendation:</strong> Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=28.0</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 70.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 70.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Review whether this board class needs a stronger reference-plane strategy or a stackup with better return-path support.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 118.2, &quot;threshold&quot;: 28.0, &quot;copper_layers&quot;: 2}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> stackup_return_path</p>
+                <p><strong>Message:</strong> Critical net USB_DN changes layers without nearby ground-return stitching</p>
+                <p><strong>Recommendation:</strong> Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 100 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Place ground stitching vias near sensitive transitions so return current does not need to detour around the layer change.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                <p><strong>Components:</strong> J1, U1</p>
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;unsupported_vias&quot;: 2, &quot;signal_via_ground_radius&quot;: 3.5}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net VBUS has a long total routed trace length (84.02 units)</p>
+                <p><strong>Recommendation:</strong> Review routing topology and shorten critical signal traces where practical.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=60.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce total routed trace length from 84.02380615040002 toward or below 60.0 by tightening placement and simplifying the route.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.02380615040002, &quot;threshold&quot;: 60.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net USB_DP has a long total routed trace length (84.67 units)</p>
+                <p><strong>Recommendation:</strong> Review routing topology and shorten critical signal traces where practical.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=60.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce total routed trace length from 84.67372197262105 toward or below 60.0 by tightening placement and simplifying the route.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 84.67372197262105, &quot;threshold&quot;: 60.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Net USB_DN has a long total routed trace length (118.20 units)</p>
+                <p><strong>Recommendation:</strong> Review routing topology and shorten critical signal traces where practical.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=60.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 78.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 78.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce total routed trace length from 118.2 toward or below 60.0 by tightening placement and simplifying the route.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;trace_length&quot;: 118.2, &quot;threshold&quot;: 60.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> manufacturing</p>
+                <p><strong>Message:</strong> Net CLK contains a very narrow trace (0.12)</p>
+                <p><strong>Recommendation:</strong> Review manufacturability limits and increase trace width if the design rules require it.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=0.15</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 6</p>
+                <p><strong>Engineering Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Trust Confidence:</strong> 83.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Design rule below fabrication limits</p>
+                <p><strong>Impact:</strong> Reduced yield or board failure risk</p>
+                <p><strong>Confidence:</strong> 83.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Increase the narrow trace width from 0.12 to at least 0.15, subject to board-space and fabrication constraints.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                <p><strong>Nets:</strong> CLK</p>
+                <p><strong>Metrics:</strong> {&quot;min_trace_width&quot;: 0.12, &quot;threshold&quot;: 0.15}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VBUS may incur high IR drop (248.3 mV)</p>
+                <p><strong>Recommendation:</strong> Reduce path length, widen copper, or split the load path so voltage drop and transient impedance come down.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 82.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 82.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;voltage_drop_mv&quot;: 248.33, &quot;estimated_current_a&quot;: 1.5, &quot;resistance_ohms&quot;: 0.1656, &quot;threshold_mv&quot;: 75.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> power_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests VBUS is running high current density (171.4 A/mm²)</p>
+                <p><strong>Recommendation:</strong> Increase copper cross-section or redistribute load current so the conductor stays in a safer density band.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> threshold=12.0</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 8</p>
+                <p><strong>Engineering Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Trust Confidence:</strong> 80.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Power delivery path impedance or placement issue</p>
+                <p><strong>Impact:</strong> Voltage drop, instability, or noise</p>
+                <p><strong>Confidence:</strong> 80.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> VBUS</p>
+                <p><strong>Metrics:</strong> {&quot;current_density_a_per_mm2&quot;: 171.43, &quot;estimated_current_a&quot;: 1.5, &quot;cross_section_mm2&quot;: 0.00875, &quot;threshold&quot;: 12.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests USB_DP is off target impedance (63.1 ohms vs 90.0 ohms)</p>
+                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DP</p>
+                <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 63.11, &quot;target_impedance_ohms&quot;: 90.0, &quot;mismatch_pct&quot;: 29.9, &quot;delay_ps&quot;: 497.6, &quot;via_inductance_nh&quot;: 68.97}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests USB_DN is off target impedance (63.1 ohms vs 90.0 ohms)</p>
+                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> USB_DN</p>
+                <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 63.11, &quot;target_impedance_ohms&quot;: 90.0, &quot;mismatch_pct&quot;: 29.9, &quot;delay_ps&quot;: 694.6, &quot;via_inductance_nh&quot;: 68.97}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> high</p>
+                <p><strong>Category:</strong> signal_integrity</p>
+                <p><strong>Message:</strong> Physics estimate suggests CLK is off target impedance (73.9 ohms vs 50.0 ohms)</p>
+                <p><strong>Recommendation:</strong> Adjust trace geometry, reference height, or stackup assumptions to bring the line closer to its impedance target.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 94 / 100</p>
+                <p><strong>Evidence Count:</strong> 9</p>
+                <p><strong>Engineering Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Trust Confidence:</strong> 84.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> Signal path geometry or routing issue</p>
+                <p><strong>Impact:</strong> Timing errors or signal degradation</p>
+                <p><strong>Confidence:</strong> 84.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Reduce path length, simplify routing, and keep critical signals on cleaner and more direct routes.</p>
+                <p><strong>Fix Priority:</strong> high</p>
+                
+                
+                <p><strong>Nets:</strong> CLK</p>
+                <p><strong>Metrics:</strong> {&quot;estimated_impedance_ohms&quot;: 73.94, &quot;target_impedance_ohms&quot;: 50.0, &quot;mismatch_pct&quot;: 47.9, &quot;delay_ps&quot;: 92.0, &quot;via_inductance_nh&quot;: 0.0}</p>
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> medium</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Clocking and fast connectivity subsystems share board context and need timing-containment review.</p>
+                <p><strong>Recommendation:</strong> Check clock-source placement, reference continuity, and keepout from high-speed connectors.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 72.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 72.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Check clock-source placement, reference continuity, and keepout from high-speed connectors.</p>
+                <p><strong>Fix Priority:</strong> medium</p>
+                
+                
+                
+                
+            </div>
+            
+            <div class="risk-card">
+                <p><strong>Severity:</strong> low</p>
+                <p><strong>Category:</strong> system_interaction</p>
+                <p><strong>Message:</strong> Digital control logic is present without a clearly classified debug or test subsystem.</p>
+                <p><strong>Recommendation:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Trigger Condition:</strong> A rule-based design condition triggered this finding.</p>
+                <p><strong>Observed vs Threshold:</strong> No measured value preserved.</p>
+                <p><strong>Traceability:</strong> 40 / 100</p>
+                <p><strong>Evidence Count:</strong> 0</p>
+                <p><strong>Engineering Impact:</strong> Unknown system impact</p>
+                <p><strong>Trust Confidence:</strong> 66.0 / 100</p>
+                
+                <p><strong>Root Cause:</strong> General design issue</p>
+                <p><strong>Impact:</strong> Unknown system impact</p>
+                <p><strong>Confidence:</strong> 66.0 / 100</p>
+                
+                
+                <p><strong>Suggested Fix:</strong> Confirm bring-up access through debug headers, test pads, or programming entry points.</p>
+                <p><strong>Fix Priority:</strong> low</p>
+                
+                
+                
+                
+            </div>
+            
+            </div>
+        </div>
+    </body>
+    </html>
+    

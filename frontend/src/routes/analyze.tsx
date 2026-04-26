@@ -47,7 +47,7 @@ type AnalysisResultPayload = {
   result: {
     filename?: string;
     score?: number;
-    health_summary?: string;
+    health_summary?: string | { title?: string; summary?: string };
     risks?: Risk[];
     grouped_risks?: GroupedRisk[];
     downloads?: DownloadItem[] | Record<string, string>;
@@ -70,6 +70,9 @@ function Analyze() {
   const downloadItems: DownloadItem[] = Array.isArray(result?.downloads)
     ? result.downloads
     : Object.entries(result?.downloads || {}).map(([label, url]) => ({ label, url }));
+  const healthSummaryText = typeof result?.health_summary === "string"
+    ? result.health_summary
+    : result?.health_summary?.summary || result?.health_summary?.title || "Analysis complete.";
   const severityData = [
     { name: "critical", value: risks.filter((item) => (item.severity || "").toLowerCase() === "critical").length },
     { name: "high", value: risks.filter((item) => (item.severity || "").toLowerCase() === "high").length },
@@ -187,7 +190,7 @@ function Analyze() {
                 <div className="flex flex-col items-center">
                   <ScoreRing score={Math.round(Number(result.score || 0))} size={160} />
                   <div className="mt-4 text-center">
-                    <div className="text-sm">{result.health_summary || "Analysis complete."}</div>
+                    <div className="text-sm">{healthSummaryText}</div>
                   </div>
                 </div>
                 <div className="mt-6 grid grid-cols-3 gap-2 border-t border-border pt-4 text-center">
