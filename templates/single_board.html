@@ -877,28 +877,25 @@
     }
 
     .board-stage-footer {
-        position: absolute;
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
         display: flex;
-        align-items: center;
+        align-items: start;
         justify-content: space-between;
         gap: 14px;
-        pointer-events: none;
-        z-index: 2;
+        flex-wrap: wrap;
     }
 
     .board-mode-legend {
-        display: flex;
+        display: grid;
         gap: 8px;
-        flex-wrap: wrap;
+        flex: 1 1 520px;
     }
 
     .board-mode-chip {
         color: var(--text-soft);
         font-size: 11px;
         font-weight: 700;
+        width: fit-content;
+        max-width: 100%;
     }
 
     .board-mode-chip strong {
@@ -906,11 +903,19 @@
     }
 
     .board-stage-caption {
-        max-width: 280px;
+        max-width: 240px;
         color: var(--muted);
-        font-size: 12px;
-        line-height: 1.55;
-        text-align: right;
+        font-size: 13px;
+        line-height: 1.65;
+        text-align: left;
+        padding-top: 6px;
+    }
+
+    .board-preview-notes {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 240px;
+        gap: 16px;
+        align-items: start;
     }
 
     .board-empty {
@@ -1407,7 +1412,8 @@
         }
 
         .board-snapshot-grid,
-        .board-hud-grid {
+        .board-hud-grid,
+        .board-preview-notes {
             grid-template-columns: 1fr;
         }
 
@@ -1474,9 +1480,7 @@
 
         .board-stage-hud,
         .board-stage-footer {
-            position: static;
-            padding: 14px 14px 0;
-            pointer-events: auto;
+            padding-top: 14px;
         }
 
         .board-empty {
@@ -1699,6 +1703,13 @@
                                 {% endif %}
                                 {% endfor %}
                             </svg>
+                            {% else %}
+                            <div class="board-empty">Board geometry preview appears after a board is parsed. Silicore will render traces, components, zones, vias, and risk-linked hotspots from the actual board snapshot.</div>
+                            {% endif %}
+                        </div>
+
+                        {% if board_view and board_view.has_data %}
+                        <div class="board-preview-notes">
                             <div class="board-stage-footer">
                                 <div class="board-mode-legend">
                                     <div class="board-mode-chip"><strong>Risk</strong> severity-linked traces, pads, and issue pressure</div>
@@ -1707,10 +1718,8 @@
                                 </div>
                                 <div class="board-stage-caption">Hover an issue row below to isolate matching nets, references, and hotspot regions directly on the board surface.</div>
                             </div>
-                            {% else %}
-                            <div class="board-empty">Board geometry preview appears after a board is parsed. Silicore will render traces, components, zones, vias, and risk-linked hotspots from the actual board snapshot.</div>
-                            {% endif %}
                         </div>
+                        {% endif %}
 
                         <div class="board-preview-thumbs">
                             {% if board_view and board_view.has_data %}
