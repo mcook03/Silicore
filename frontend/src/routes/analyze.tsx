@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Sparkles, AlertTriangle, AlertCircle, Info, CheckCircle2, ChevronRight, Download } from "lucide-react";
 import { apiPostForm, useApiData } from "@/lib/api";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 const transparentCursor = { fill: "transparent", stroke: "transparent" };
 
@@ -89,6 +90,8 @@ function Analyze() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResultPayload | null>(null);
+  const [severityFilter, setSeverityFilter] = useState<"all" | "critical" | "high" | "medium" | "low">("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const result = analysis?.result;
   const risks = Array.isArray(result?.risks) ? result.risks : [];
@@ -168,6 +171,25 @@ function Analyze() {
     .map(([label, value]) => ({ label, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 6);
+  const categoryOptions = useMemo(
+    () => ["all", ...new Set(groupedRisks.map((item) => item.title || "General"))],
+    [groupedRisks],
+  );
+  const filteredRisks = useMemo(
+    () =>
+      risks.filter((risk) => {
+        const severity = (risk.severity || "low").toLowerCase();
+        const category = risk.category || "General";
+        const severityMatch = severityFilter === "all" ? true : severity === severityFilter;
+        const categoryMatch = categoryFilter === "all" ? true : category === categoryFilter;
+        return severityMatch && categoryMatch;
+      }),
+    [risks, severityFilter, categoryFilter],
+  );
+  const topCategory = [...groupedRisks].sort((a, b) => Number(b.count || 0) - Number(a.count || 0))[0];
+  const lowestConfidenceBucket = confidenceData.find((item) => item.label === "Low")?.value || 0;
+  const highestComponent = componentLeaderboard[0];
+  const highestNet = netLeaderboard[0];
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedFile) {
@@ -184,6 +206,8 @@ function Analyze() {
       formData.append("analysis_board_type", boardType);
       const payload = await apiPostForm<AnalysisResultPayload>("/api/frontend/analyze/single", formData);
       setAnalysis(payload);
+      setSeverityFilter("all");
+      setCategoryFilter("all");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Analysis failed.");
     } finally {
@@ -342,8 +366,34 @@ function Analyze() {
           </aside>
         </form>
 
+        {submitting ? (
+          <LoadingSurface
+            title="Running board analysis"
+            copy="Silicore is parsing the board, scoring the risk field, and assembling exports for this workspace."
+            lines={4}
+          />
+        ) : null}
+
         {result ? (
           <>
+            <DecisionStrip
+              eyebrow="Run decision"
+              title={
+                Number(result.score || 0) >= 85
+                  ? "This board looks healthy enough for focused final review."
+                  : Number(result.score || 0) >= 65
+                    ? "The board is analyzable, but there are still concentrated risk pockets to work through."
+                    : "This board needs another engineering pass before it should move toward signoff."
+              }
+              copy={`Silicore sees ${risks.length} findings across ${groupedRisks.length} grouped domains. ${topCategory ? `${topCategory.title || "General"} is the heaviest drag area right now.` : "Use the grouped findings and score drag charts below to decide where to start."}`}
+              metrics={[
+                { label: "Run score", value: String(Math.round(Number(result.score || 0))), tone: Number(result.score || 0) >= 80 ? "success" : Number(result.score || 0) >= 60 ? "warning" : "danger" },
+                { label: "Top drag", value: topCategory?.title || "—", tone: "warning" },
+                { label: "Low confidence", value: String(lowestConfidenceBucket), tone: lowestConfidenceBucket > 0 ? "danger" : "success" },
+                { label: "Artifacts", value: String(downloadItems.length), tone: "default" },
+              ]}
+            />
+
             <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
               <div className="command-strip rounded-[30px] p-6">
                 <div className="mb-2 font-mono text-xs uppercase tracking-wider text-muted-foreground">{result.filename}</div>
@@ -366,6 +416,10 @@ function Analyze() {
                     </a>
                   ))}
                 </div>
+                <div className="mt-6 grid gap-3">
+                  <WorkflowAction to="/history" label="Open history ledger" copy="Check how this run compares to the recent analysis archive." />
+                  <WorkflowAction to="/compare" label="Move into compare" copy="Pair this run against another revision to arbitrate the delta." />
+                </div>
               </div>
 
               <div className="editorial-surface rounded-[30px] p-6">
@@ -378,7 +432,12 @@ function Analyze() {
                 <div className="grid gap-6 xl:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
                   <div className="space-y-4">
                     {groupedRisks.map((item, index) => (
-                      <div key={`${item.title}-${index}`}>
+                      <button
+                        type="button"
+                        key={`${item.title}-${index}`}
+                        onClick={() => setCategoryFilter((item.title || "General") === categoryFilter ? "all" : (item.title || "General"))}
+                        className={`block w-full rounded-2xl px-2 py-2 text-left transition-colors ${categoryFilter === (item.title || "General") ? "bg-primary/8" : "hover:bg-white/4"}`}
+                      >
                         <div className="mb-1.5 flex items-center justify-between text-sm">
                           <span>{item.title || "General"}</span>
                           <span className="font-mono text-xs text-muted-foreground">{item.count || 0} findings</span>
@@ -386,7 +445,7 @@ function Analyze() {
                         <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                           <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(Number(item.count || 0) * 8, 100)}%` }} />
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                   <BoardHeatmap title="Board hotspot map" boardView={result.board_view} />
@@ -397,7 +456,24 @@ function Analyze() {
             <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <AnalysisSurface title="Severity mix" rail="signal profile">
                 {severityData.length ? (
-                  <SeverityDonut data={severityData} />
+                  <div className="space-y-4">
+                    <SeverityDonut
+                      data={severityData}
+                      activeKey={severityFilter === "all" ? undefined : severityFilter}
+                      onSelect={(value) => setSeverityFilter(value === severityFilter ? "all" : value as typeof severityFilter)}
+                    />
+                    <FilterPills
+                      active={severityFilter}
+                      onChange={setSeverityFilter}
+                      options={[
+                        { value: "all", label: "All", count: risks.length },
+                        { value: "critical", label: "Critical", count: severityData.find((item) => item.name === "critical")?.value ?? 0 },
+                        { value: "high", label: "High", count: severityData.find((item) => item.name === "high")?.value ?? 0 },
+                        { value: "medium", label: "Medium", count: severityData.find((item) => item.name === "medium")?.value ?? 0 },
+                        { value: "low", label: "Low", count: severityData.find((item) => item.name === "low")?.value ?? 0 },
+                      ]}
+                    />
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">No severity breakdown is available for this run yet.</p>
                 )}
@@ -405,7 +481,18 @@ function Analyze() {
 
               <AnalysisSurface title="Category distribution" rail="domain stack">
                 {categoryChartData.length ? (
-                  <CategoryBreakdown data={categoryChartData} />
+                  <div className="space-y-4">
+                    <CategoryBreakdown data={categoryChartData} activeCategory={categoryFilter === "all" ? undefined : categoryFilter} onSelect={(value) => setCategoryFilter(value === categoryFilter ? "all" : value)} />
+                    <FilterPills
+                      active={categoryFilter}
+                      onChange={setCategoryFilter}
+                      options={categoryOptions.map((value) => ({
+                        value,
+                        label: value === "all" ? "All categories" : value,
+                        count: value === "all" ? groupedRisks.length : groupedRisks.find((item) => (item.title || "General") === value)?.count ?? 0,
+                      }))}
+                    />
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">Category-level distribution appears after Silicore groups findings for the uploaded board.</p>
                 )}
@@ -433,12 +520,12 @@ function Analyze() {
               </AnalysisSurface>
               <AnalysisSurface title="Run posture" rail="analysis metadata">
                 <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-                  <SignalStat label="Findings" value={String(risks.length)} />
-                  <SignalStat label="Groups" value={String(groupedRisks.length)} />
-                  <SignalStat label="Artifacts" value={String(downloadItems.length)} />
+                  <SignalStat label="Filtered findings" value={String(filteredRisks.length)} />
+                  <SignalStat label="Top component" value={highestComponent?.label || "—"} />
+                  <SignalStat label="Top net" value={highestNet?.label || "—"} />
                 </div>
                 <div className="mt-4 rounded-2xl border border-border bg-background/40 p-4 text-sm leading-7 text-muted-foreground">
-                  The result view now keeps score, grouped findings, heat, and evidence on one continuous surface so engineers can move from intake to triage without changing mental context.
+                  The result view now lets you narrow the risk field by severity and category before you commit to a fix path, so charts act like controls instead of static decoration.
                 </div>
               </AnalysisSurface>
             </div>
@@ -529,18 +616,42 @@ function Analyze() {
               </div>
             </AnalysisSurface>
 
-            <AnalysisSurface title="Findings & recommendations" rail="action list" action={<span className="font-mono text-xs text-muted-foreground">{risks.length} total</span>}>
+            <AnalysisSurface title="Findings & recommendations" rail="action list" action={<span className="font-mono text-xs text-muted-foreground">{filteredRisks.length} visible</span>}>
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  Use the severity donut, category stack, or grouped findings rail to focus this list on the exact issue cluster you want to work.
+                </p>
+                <FilterPills
+                  active={severityFilter}
+                  onChange={setSeverityFilter}
+                  options={[
+                    { value: "all", label: "All severities", count: filteredRisks.length },
+                    { value: "critical", label: "Critical", count: filteredRisks.filter((risk) => (risk.severity || "").toLowerCase() === "critical").length },
+                    { value: "high", label: "High", count: filteredRisks.filter((risk) => (risk.severity || "").toLowerCase() === "high").length },
+                    { value: "medium", label: "Medium", count: filteredRisks.filter((risk) => (risk.severity || "").toLowerCase() === "medium").length },
+                    { value: "low", label: "Low", count: filteredRisks.filter((risk) => !["critical", "high", "medium"].includes((risk.severity || "").toLowerCase())).length },
+                  ]}
+                />
+              </div>
               <div className="space-y-2">
-                {risks.map((finding, index) => <FindingRow key={`${finding.message}-${index}`} risk={finding} />)}
+                {filteredRisks.length ? (
+                  filteredRisks.map((finding, index) => <FindingRow key={`${finding.message}-${index}`} risk={finding} />)
+                ) : (
+                  <EmptySurface
+                    eyebrow="Filtered view"
+                    title="No findings match the current filters."
+                    copy="Clear the severity or category filter and Silicore will bring the broader finding set back into view."
+                  />
+                )}
               </div>
             </AnalysisSurface>
           </>
         ) : (
-          <AnalysisSurface title="Ready to analyze" rail="empty state">
-            <p className="text-sm text-muted-foreground">
-              Run a board through the uploader above and Silicore will populate live findings, score breakdowns, and downloads here.
-            </p>
-          </AnalysisSurface>
+          <EmptySurface
+            eyebrow="Analysis ready"
+            title="The analysis workstation is ready for a board."
+            copy="Drop a board into the intake surface above and Silicore will populate score, grouped findings, traceability, and exports here in one continuous engineering workspace."
+          />
         )}
       </div>
     </AppShell>

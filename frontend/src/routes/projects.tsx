@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import { Plus, FolderKanban, ArrowRight, Trash2 } from "lucide-react";
 import { apiPostJson, useApiData } from "@/lib/api";
+import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({ meta: [{ title: "Projects — Silicore" }] }),
@@ -29,8 +30,9 @@ type ProjectsPayload = {
 
 function Projects() {
   const location = useLocation();
-  const { data, error, reload } = useApiData<ProjectsPayload>("/api/frontend/projects");
+  const { data, error, reload, loading } = useApiData<ProjectsPayload>("/api/frontend/projects");
   const [creating, setCreating] = useState(false);
+  const [sortMode, setSortMode] = useState<"score" | "runs" | "pressure">("pressure");
 
   if (location.pathname !== "/projects") {
     return <Outlet />;
@@ -47,6 +49,21 @@ function Projects() {
       setCreating(false);
     }
   };
+  const projects = useMemo(() => {
+    const list = [...(data?.projects ?? [])];
+    if (sortMode === "score") {
+      return list.sort((a, b) => (b.latest_score || b.average_score || 0) - (a.latest_score || a.average_score || 0));
+    }
+    if (sortMode === "runs") {
+      return list.sort((a, b) => b.runs.length - a.runs.length);
+    }
+    return list.sort(
+      (a, b) =>
+        (b.open_assignment_count + b.open_release_gate_count) -
+        (a.open_assignment_count + a.open_release_gate_count),
+    );
+  }, [data?.projects, sortMode]);
+  const leadWorkspace = projects[0];
 
   return (
     <AppShell title="Projects">
@@ -89,11 +106,60 @@ function Projects() {
             </div>
           </div>
         </section>
+        <DecisionStrip
+          eyebrow="Workspace direction"
+          title={
+            leadWorkspace
+              ? `${leadWorkspace.name} is the current workspace Silicore thinks deserves attention first.`
+              : "Create a workspace so boards, revisions, and compare flows have a shared home."
+          }
+          copy={
+            leadWorkspace
+              ? `${leadWorkspace.runs.length} linked runs, average score ${Math.round(leadWorkspace.average_score || 0)}, and ${(leadWorkspace.open_assignment_count || 0) + (leadWorkspace.open_release_gate_count || 0)} active items. Use sorting to change what “attention first” means.`
+              : "Once a workspace exists, this strip will guide you toward the program with the most pressure, the most history, or the strongest score."
+          }
+          metrics={[
+            { label: "Visible", value: String(data?.summary.total_projects ?? 0) },
+            { label: "Linked runs", value: String(data?.summary.total_runs ?? 0) },
+            { label: "Lead score", value: String(Math.round(leadWorkspace?.latest_score || leadWorkspace?.average_score || 0)), tone: (leadWorkspace?.latest_score || leadWorkspace?.average_score || 0) >= 80 ? "success" : "warning" },
+            { label: "Pressure", value: String((leadWorkspace?.open_assignment_count || 0) + (leadWorkspace?.open_release_gate_count || 0)), tone: ((leadWorkspace?.open_assignment_count || 0) + (leadWorkspace?.open_release_gate_count || 0)) > 0 ? "danger" : "default" },
+          ]}
+        />
         {error ? (
           <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>
         ) : null}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <FilterPills
+            active={sortMode}
+            onChange={setSortMode}
+            options={[
+              { value: "pressure", label: "Most pressure" },
+              { value: "score", label: "Best score" },
+              { value: "runs", label: "Most runs" },
+            ]}
+          />
+          {leadWorkspace ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <WorkflowAction to={`/projects/${leadWorkspace.project_id}`} label="Open lead workspace" copy="Jump straight into the workspace Silicore is currently prioritizing." />
+              <WorkflowAction to="/compare" label="Compare within workspaces" copy="Move from workspace management into revision arbitration." />
+            </div>
+          ) : null}
+        </div>
+        {loading ? <LoadingSurface title="Loading workspaces" copy="Silicore is assembling workspace telemetry and linked run history." /> : null}
+        {!loading && !projects.length ? (
+          <EmptySurface
+            eyebrow="Workspace system"
+            title="No workspaces exist yet."
+            copy="Create the first workspace so analysis runs, compare flows, and project review can stay connected instead of floating as isolated results."
+            action={
+              <Button size="sm" className="rounded-full" onClick={onCreate} disabled={creating}>
+                <Plus className="mr-1.5 h-3.5 w-3.5" /> Create first workspace
+              </Button>
+            }
+          />
+        ) : null}
         <div className="space-y-4">
-          {(data?.projects ?? []).map((project) => (
+          {projects.map((project) => (
             <article key={project.project_id} data-reveal className="workspace-ribbon overflow-hidden p-5 sm:p-6">
               <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
                 <div className="min-w-0">

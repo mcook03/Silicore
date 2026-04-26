@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
 import { ScoreTrend } from "@/components/silicore/AnalysisCharts";
 import { useApiData } from "@/lib/api";
 import { History as HistoryIcon } from "lucide-react";
+import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 export const Route = createFileRoute("/history")({
   head: () => ({ meta: [{ title: "History — Silicore" }] }),
@@ -29,7 +30,9 @@ type HistoryPayload = {
 };
 
 function History() {
-  const { data, error } = useApiData<HistoryPayload>("/api/frontend/history");
+  const { data, error, loading } = useApiData<HistoryPayload>("/api/frontend/history");
+  const [runFilter, setRunFilter] = useState<"all" | "single" | "project">("all");
+  const [focusIndex, setFocusIndex] = useState(0);
   const getRunScore = (run: HistoryRun) => {
     const nestedScore = Number(run.result?.score);
     if (Number.isFinite(nestedScore)) {
@@ -38,7 +41,15 @@ function History() {
     const topLevelScore = Number(run.score);
     return Number.isFinite(topLevelScore) ? topLevelScore : NaN;
   };
-  const scoreHistory = (data?.runs ?? [])
+  const filteredRuns = useMemo(
+    () =>
+      (data?.runs ?? []).filter((run) => {
+        if (runFilter === "all") return true;
+        return (run.run_type || "").toLowerCase() === runFilter;
+      }),
+    [data?.runs, runFilter],
+  );
+  const scoreHistory = filteredRuns
     .filter((run) => Number.isFinite(getRunScore(run)))
     .slice(0, 20)
     .reverse()
@@ -47,7 +58,14 @@ function History() {
       score: Math.round(getRunScore(run) || 0),
       runLabel: run.label || run.name,
       createdAt: run.created_at || "—",
+      runName: run.name,
+      risks: run.risk_count || 0,
+      critical: run.critical_count || 0,
     }));
+  const focusedHistoryPoint = scoreHistory[focusIndex] || scoreHistory[scoreHistory.length - 1];
+  const latestRun = filteredRuns[0];
+  const riskiestRun = [...filteredRuns].sort((a, b) => (b.risk_count || 0) - (a.risk_count || 0))[0];
+  const lowestScoreRun = [...filteredRuns].sort((a, b) => getRunScore(a) - getRunScore(b))[0];
 
   return (
     <AppShell title="History">
@@ -79,15 +97,47 @@ function History() {
           </div>
         </section>
 
+        <DecisionStrip
+          eyebrow="History guidance"
+          title={focusedHistoryPoint ? `${focusedHistoryPoint.runLabel} is the current timeline focus.` : "Choose a run window and let history show the movement."}
+          copy={
+            focusedHistoryPoint
+              ? `Score ${focusedHistoryPoint.score}, ${focusedHistoryPoint.risks} findings, ${focusedHistoryPoint.critical} critical. Use history to decide whether the board is stabilizing or just moving risk around.`
+              : "When recent runs carry score data, this strip turns the archive into a decision surface instead of a static ledger."
+          }
+          metrics={[
+            { label: "Focused score", value: String(focusedHistoryPoint?.score ?? 0), tone: (focusedHistoryPoint?.score ?? 0) >= 80 ? "success" : (focusedHistoryPoint?.score ?? 0) >= 60 ? "warning" : "danger" },
+            { label: "Focused risks", value: String(focusedHistoryPoint?.risks ?? 0), tone: (focusedHistoryPoint?.risks ?? 0) > 10 ? "danger" : "default" },
+            { label: "Lowest score", value: String(Math.round(getRunScore(lowestScoreRun || {}) || 0)), tone: "danger" },
+            { label: "Riskiest run", value: String(riskiestRun?.risk_count ?? 0), tone: "warning" },
+          ]}
+        />
+
         <HistoryStage
           title="Score progression"
           rail="trend surface"
           subtitle="Track how saved analysis scores have moved across the most recent history window."
         >
-          {scoreHistory.length >= 2 ? (
+          {loading ? (
+            <LoadingSurface title="Loading history trend" copy="Silicore is pulling recent scored analyses into the timeline." />
+          ) : scoreHistory.length >= 2 ? (
             <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <FilterPills
+                  active={runFilter}
+                  onChange={setRunFilter}
+                  options={[
+                    { value: "all", label: "All runs", count: data?.runs.length ?? 0 },
+                    { value: "single", label: "Single", count: (data?.runs ?? []).filter((run) => (run.run_type || "").toLowerCase() === "single").length },
+                    { value: "project", label: "Project", count: (data?.runs ?? []).filter((run) => (run.run_type || "").toLowerCase() === "project").length },
+                  ]}
+                />
+                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  {focusedHistoryPoint ? `${focusedHistoryPoint.runLabel} · ${focusedHistoryPoint.createdAt}` : "Select a point"}
+                </div>
+              </div>
               <div className="h-[320px]">
-                <ScoreTrend data={scoreHistory} />
+                <ScoreTrend data={scoreHistory} activeIndex={focusIndex} onSelect={setFocusIndex} height={320} />
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
                 <HistoryMetricCard
@@ -106,16 +156,38 @@ function History() {
                   copy="Recent scored analyses in the timeline"
                 />
               </div>
+              <div className="grid gap-3 lg:grid-cols-3">
+                <WorkflowAction
+                  to={latestRun ? `/history/${latestRun.name}` : "/history"}
+                  label="Open latest run"
+                  copy={latestRun ? (latestRun.label || latestRun.name) : "Jump into the freshest archive item"}
+                />
+                <WorkflowAction
+                  to={riskiestRun ? `/history/${riskiestRun.name}` : "/history"}
+                  label="Review riskiest run"
+                  copy={riskiestRun ? `${riskiestRun.risk_count || 0} findings need attention` : "Jump into the most crowded risk snapshot"}
+                />
+                <WorkflowAction
+                  to="/compare"
+                  label="Move into compare"
+                  copy="Use history to pick the two runs worth arbitration next."
+                />
+              </div>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Score progression appears once history includes at least two scored analysis runs.
-            </p>
+            <EmptySurface
+              eyebrow="Trend surface"
+              title="History needs at least two scored runs to show progression."
+              copy="Run another analysis or switch the filter to a run type with richer saved data, then this surface will turn into a trend and decision workspace."
+              action={<WorkflowAction to="/analyze" label="Run another board" copy="Generate the next point in this history timeline." />}
+            />
           )}
         </HistoryStage>
 
         <HistoryStage title="Analysis log" rail="run archive" subtitle="Every recorded run, sorted into a cleaner review-friendly table.">
-          {error ? (
+          {loading ? (
+            <LoadingSurface title="Loading run archive" copy="Silicore is assembling the run ledger and score telemetry." />
+          ) : error ? (
             <p className="text-sm text-danger">{error}</p>
           ) : (
             <div className="-mx-6 overflow-x-auto">
@@ -131,7 +203,7 @@ function History() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(data?.runs ?? []).map((run) => (
+                  {filteredRuns.map((run) => (
                     <tr key={run.name} className="border-t border-border/60 hover:bg-surface/50">
                       <td className="px-6 py-3.5">
                         <div className="font-medium">{run.label || run.name}</div>

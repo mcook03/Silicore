@@ -8,6 +8,7 @@ import {
 import { TrendingUp, AlertTriangle } from "lucide-react";
 import { AppShell } from "@/components/silicore/AppShell";
 import { useApiData } from "@/lib/api";
+import { DecisionStrip, EmptySurface, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 const transparentCursor = { fill: "transparent", stroke: "transparent" };
 
@@ -42,10 +43,14 @@ function Dashboard() {
   const trend = data?.trend ?? [];
   const recent = data?.recent ?? [];
   const stats = data?.stats;
+  const highestPressureRun = [...recent].sort((a, b) => b.issues - a.issues)[0];
+  const lowestScoreRun = [...recent].sort((a, b) => a.score - b.score)[0];
 
   return (
     <AppShell title="Dashboard">
-      {error ? (
+      {loading ? (
+        <LoadingSurface title="Loading mission control" copy="Silicore is assembling the score field, recent activity, and fleet hotspot context." lines={4} />
+      ) : error ? (
         <section data-reveal className="rounded-[30px] border border-danger/20 bg-danger/10 p-6">
           <p className="text-sm text-danger">{error}</p>
         </section>
@@ -97,6 +102,26 @@ function Dashboard() {
               </div>
             </div>
           </section>
+
+          <DecisionStrip
+            eyebrow="What needs attention"
+            title={
+              (stats?.open_critical_issues || 0) > 0
+                ? `${stats?.open_critical_issues || 0} critical items are still keeping the fleet out of a calm state.`
+                : "Critical pressure is quiet, so the next decisions are about trend stability and score drag."
+            }
+            copy={
+              highestPressureRun
+                ? `${highestPressureRun.name} currently carries the heaviest issue pressure in the recent window. Use the activity strip, history ledger, or compare cockpit to decide whether the latest movement is a real improvement.`
+                : "As new runs arrive, this strip will call out the board that deserves the next engineering decision."
+            }
+            metrics={[
+              { label: "Critical open", value: String(stats?.open_critical_issues ?? 0), tone: (stats?.open_critical_issues || 0) > 0 ? "danger" : "success" },
+              { label: "30d average", value: String(stats?.avg_score_30d ?? 0), tone: (stats?.avg_score_30d || 0) >= 80 ? "success" : "warning" },
+              { label: "Highest pressure", value: highestPressureRun ? `${highestPressureRun.issues}` : "0", tone: highestPressureRun?.issues ? "warning" : "default" },
+              { label: "Lowest score", value: lowestScoreRun ? `${lowestScoreRun.score}` : "0", tone: lowestScoreRun && lowestScoreRun.score < 70 ? "danger" : "default" },
+            ]}
+          />
 
           <section data-reveal className="grid gap-8 xl:grid-cols-[200px_minmax(0,1fr)_300px]">
             <div className="relative pt-3">
@@ -185,6 +210,14 @@ function Dashboard() {
                         {item.delta == null ? "stable" : `${item.delta > 0 ? "+" : ""}${item.delta}`}
                       </span>
                     </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Link to="/history/$runDir" params={{ runDir: item.run_dir }} className="text-[11px] text-primary hover:underline">
+                        open run
+                      </Link>
+                      <Link to="/compare" className="text-[11px] text-muted-foreground hover:text-primary">
+                        compare next
+                      </Link>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -205,6 +238,11 @@ function Dashboard() {
                 matrixRows={data?.risk_heatmap}
                 emptyCopy="Recent runs do not expose enough categorized findings yet to render a workspace heat map."
               />
+              <div className="mt-4 grid gap-3 lg:grid-cols-3">
+                <WorkflowAction to="/history" label="Open archive" copy="Trace whether the hotspot field is calming down over time." />
+                <WorkflowAction to="/compare" label="Compare revisions" copy="Put two run snapshots beside each other and arbitrate the delta." />
+                <WorkflowAction to="/analyze" label="Run another board" copy="Feed fresh analysis data into the fleet surface." />
+              </div>
             </div>
 
             <div className="grid gap-8">

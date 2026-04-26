@@ -3,6 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   BarChart, Bar, Legend,
 } from "recharts";
+import type { ReactNode } from "react";
 
 const tooltipStyle = {
   background: "oklch(0.19 0.014 250)",
@@ -21,8 +22,12 @@ const SEV_COLORS: Record<string, string> = {
 
 export function SeverityDonut({
   data,
+  activeKey,
+  onSelect,
 }: {
   data: { name: string; value: number }[];
+  activeKey?: string;
+  onSelect?: (value: string) => void;
 }) {
   const total = data.reduce((s, d) => s + d.value, 0);
   return (
@@ -39,7 +44,14 @@ export function SeverityDonut({
               stroke="none"
             >
               {data.map((d) => (
-                <Cell key={d.name} fill={SEV_COLORS[d.name.toLowerCase()] ?? "oklch(0.6 0.05 250)"} />
+                <Cell
+                  key={d.name}
+                  fill={SEV_COLORS[d.name.toLowerCase()] ?? "oklch(0.6 0.05 250)"}
+                  stroke={activeKey === d.name ? "rgba(255,255,255,0.8)" : "transparent"}
+                  strokeWidth={activeKey === d.name ? 2 : 0}
+                  style={{ cursor: onSelect ? "pointer" : "default", filter: activeKey === d.name ? "drop-shadow(0 0 12px rgba(86,211,240,0.35))" : undefined }}
+                  onClick={() => onSelect?.(d.name)}
+                />
               ))}
             </Pie>
             <Tooltip cursor={transparentCursor} contentStyle={tooltipStyle} />
@@ -52,14 +64,21 @@ export function SeverityDonut({
       </div>
       <div className="space-y-2">
         {data.map((d) => (
-          <div key={d.name} className="flex items-center gap-3 text-sm">
+          <button
+            type="button"
+            key={d.name}
+            onClick={() => onSelect?.(d.name)}
+            className={`flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-left text-sm transition-colors ${
+              activeKey === d.name ? "bg-primary/10 text-foreground" : "text-foreground/90 hover:bg-white/4"
+            }`}
+          >
             <span
               className="h-2.5 w-2.5 rounded-full"
               style={{ background: SEV_COLORS[d.name.toLowerCase()] ?? "oklch(0.6 0.05 250)" }}
             />
             <span className="capitalize">{d.name}</span>
             <span className="ml-auto font-mono text-xs text-muted-foreground">{d.value}</span>
-          </div>
+          </button>
         ))}
       </div>
     </div>
@@ -68,23 +87,45 @@ export function SeverityDonut({
 
 export function ScoreTrend({
   data,
+  activeIndex,
+  onSelect,
+  height = 220,
+  tooltipContent,
 }: {
   data: { label: string; score: number }[];
+  activeIndex?: number;
+  onSelect?: (index: number) => void;
+  height?: number;
+  tooltipContent?: ReactNode;
 }) {
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data}>
         <CartesianGrid stroke="oklch(0.28 0.014 250)" vertical={false} />
         <XAxis dataKey="label" stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
         <YAxis domain={[0, 100]} stroke="oklch(0.55 0.018 250)" fontSize={11} tickLine={false} axisLine={false} />
-        <Tooltip cursor={transparentCursor} contentStyle={tooltipStyle} />
+        <Tooltip cursor={transparentCursor} content={tooltipContent} contentStyle={tooltipContent ? undefined : tooltipStyle} />
         <Line
           type="monotone"
           dataKey="score"
           stroke="oklch(0.85 0.16 195)"
           strokeWidth={2}
-          dot={{ r: 3, fill: "oklch(0.85 0.16 195)", strokeWidth: 0 }}
-          activeDot={{ r: 5 }}
+          dot={(props) => (
+            <InteractiveDot
+              {...props}
+              active={activeIndex === props.index}
+              color="oklch(0.85 0.16 195)"
+              onSelect={onSelect}
+            />
+          )}
+          activeDot={(props) => (
+            <InteractiveDot
+              {...props}
+              active
+              color="oklch(0.85 0.16 195)"
+              onSelect={onSelect}
+            />
+          )}
         />
       </LineChart>
     </ResponsiveContainer>
@@ -93,8 +134,12 @@ export function ScoreTrend({
 
 export function CategoryBreakdown({
   data,
+  activeCategory,
+  onSelect,
 }: {
   data: { category: string; critical: number; medium: number; low: number }[];
+  activeCategory?: string;
+  onSelect?: (value: string) => void;
 }) {
   return (
     <ResponsiveContainer width="100%" height={260}>
@@ -112,10 +157,69 @@ export function CategoryBreakdown({
         />
         <Tooltip cursor={transparentCursor} contentStyle={tooltipStyle} />
         <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
-        <Bar dataKey="critical" stackId="a" fill={SEV_COLORS.critical} radius={[0, 0, 0, 0]} activeBar={{ stroke: "rgba(255,255,255,0.75)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(248,113,113,0.35))" }} />
-        <Bar dataKey="medium" stackId="a" fill={SEV_COLORS.medium} activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.3, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(250,204,21,0.32))" }} />
-        <Bar dataKey="low" stackId="a" fill={SEV_COLORS.low} radius={[0, 4, 4, 0]} activeBar={{ stroke: "rgba(255,255,255,0.7)", strokeWidth: 1.3, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }} />
+        <Bar
+          dataKey="critical"
+          stackId="a"
+          fill={SEV_COLORS.critical}
+          radius={[0, 0, 0, 0]}
+          activeBar={{ stroke: "rgba(255,255,255,0.75)", strokeWidth: 1.4, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(248,113,113,0.35))" }}
+          onClick={(payload) => onSelect?.(String(payload?.category || ""))}
+        >
+          {data.map((entry) => (
+            <Cell key={`${entry.category}-critical`} fill={SEV_COLORS.critical} fillOpacity={activeCategory && activeCategory !== entry.category ? 0.3 : 1} style={{ cursor: onSelect ? "pointer" : "default" }} />
+          ))}
+        </Bar>
+        <Bar
+          dataKey="medium"
+          stackId="a"
+          fill={SEV_COLORS.medium}
+          activeBar={{ stroke: "rgba(255,255,255,0.72)", strokeWidth: 1.3, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(250,204,21,0.32))" }}
+          onClick={(payload) => onSelect?.(String(payload?.category || ""))}
+        >
+          {data.map((entry) => (
+            <Cell key={`${entry.category}-medium`} fill={SEV_COLORS.medium} fillOpacity={activeCategory && activeCategory !== entry.category ? 0.3 : 1} style={{ cursor: onSelect ? "pointer" : "default" }} />
+          ))}
+        </Bar>
+        <Bar
+          dataKey="low"
+          stackId="a"
+          fill={SEV_COLORS.low}
+          radius={[0, 4, 4, 0]}
+          activeBar={{ stroke: "rgba(255,255,255,0.7)", strokeWidth: 1.3, fillOpacity: 1, filter: "drop-shadow(0 0 10px rgba(86,211,240,0.3))" }}
+          onClick={(payload) => onSelect?.(String(payload?.category || ""))}
+        >
+          {data.map((entry) => (
+            <Cell key={`${entry.category}-low`} fill={SEV_COLORS.low} fillOpacity={activeCategory && activeCategory !== entry.category ? 0.3 : 1} style={{ cursor: onSelect ? "pointer" : "default" }} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
+  );
+}
+
+function InteractiveDot({
+  cx,
+  cy,
+  index,
+  active,
+  color,
+  onSelect,
+}: {
+  cx?: number;
+  cy?: number;
+  index?: number;
+  active?: boolean;
+  color: string;
+  onSelect?: (index: number) => void;
+}) {
+  if (typeof cx !== "number" || typeof cy !== "number") {
+    return null;
+  }
+  const radius = active ? 6 : 3;
+  return (
+    <g onClick={() => (typeof index === "number" ? onSelect?.(index) : undefined)} style={{ cursor: onSelect ? "pointer" : "default" }}>
+      {active ? <circle cx={cx} cy={cy} r={12} fill={color} opacity={0.16} /> : null}
+      <circle cx={cx} cy={cy} r={radius} fill={color} stroke="rgba(255,255,255,0.85)" strokeWidth={active ? 2 : 0} />
+    </g>
   );
 }

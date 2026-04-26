@@ -626,6 +626,22 @@
     background: linear-gradient(180deg, rgba(107, 227, 255, 0.55), rgba(255, 255, 255, 0.08));
   }
 
+  .decision-strip {
+    border: 1px solid rgba(107, 227, 255, 0.14);
+    background:
+      radial-gradient(circle at top left, rgba(107, 227, 255, 0.1), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(96, 240, 198, 0.08), transparent 24%),
+      linear-gradient(155deg, rgba(8, 17, 27, 0.96), rgba(7, 14, 22, 0.98));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 24px 64px -40px rgba(0, 0, 0, 0.9);
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

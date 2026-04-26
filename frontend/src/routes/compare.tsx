@@ -30,6 +30,7 @@ import {
   YAxis,
 } from "recharts";
 import { useApiData } from "@/lib/api";
+import { DecisionStrip, EmptySurface, FilterPills, LoadingSurface, WorkflowAction } from "@/components/silicore/UXPrimitives";
 
 const transparentCursor = { fill: "transparent", stroke: "transparent" };
 
@@ -84,6 +85,7 @@ function Compare() {
   const [projectId, setProjectId] = useState("");
   const [runAId, setRunAId] = useState("");
   const [runBId, setRunBId] = useState("");
+  const [changeFilter, setChangeFilter] = useState<"all" | "fixed" | "regressed" | "new">("all");
   const activeProjectId = projectId || defaultProject;
 
   const projectDetail = useApiData<ProjectDetailPayload>(
@@ -187,6 +189,10 @@ function Compare() {
       { name: "New", value: neutralChanges, fill: "oklch(0.8 0.14 82)" },
     ],
     [improvements, regressions, neutralChanges],
+  );
+  const filteredChanges = useMemo(
+    () => (compare.data?.changes || []).filter((change) => changeFilter === "all" || change.kind === changeFilter),
+    [compare.data?.changes, changeFilter],
   );
 
   const swapRuns = () => {
@@ -401,6 +407,28 @@ function Compare() {
           </CompareStage>
         </section>
 
+        <DecisionStrip
+          eyebrow="Comparison readout"
+          title={
+            scoreDelta > 0
+              ? `${compare.data?.run_b.name || "Candidate"} is currently ahead of the baseline.`
+              : scoreDelta < 0
+                ? `${compare.data?.run_a.name || "Baseline"} still holds the stronger position.`
+                : "These revisions are effectively tied until another differentiator surfaces."
+          }
+          copy={
+            strongestCategoryShift
+              ? `${strongestCategoryShift.name} shows the strongest movement. Use the category heat map and difference digest to decide whether this delta is a real improvement or a hidden regression.`
+              : "Choose two richer runs and Silicore will tell you which domain moved most and why."
+          }
+          metrics={[
+            { label: "Score delta", value: `${scoreDelta > 0 ? "+" : ""}${scoreDelta.toFixed(1)}`, tone: scoreDelta > 0 ? "success" : scoreDelta < 0 ? "danger" : "default" },
+            { label: "Issue delta", value: `${issueDelta > 0 ? "+" : ""}${issueDelta}`, tone: issueDelta > 0 ? "danger" : issueDelta < 0 ? "success" : "default" },
+            { label: "Resolved", value: String(improvements), tone: "success" },
+            { label: "Regressed", value: String(regressions), tone: regressions > 0 ? "danger" : "default" },
+          ]}
+        />
+
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           <CompareStage title="Revision trendline" rail="time motion" action={<span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Last 6 runs</span>}>
             {trendData.length ? (
@@ -527,10 +555,50 @@ function Compare() {
             </div>
 
             <div className="mt-4 space-y-3">
-              {(compare.data?.changes || []).length ? (
-                (compare.data?.changes || []).map((change) => <ChangeRow key={`${change.kind}-${change.title}`} {...change} />)
+              {compare.loading ? (
+                <LoadingSurface title="Loading comparison digest" copy="Silicore is lining up the revision delta and change list." />
+              ) : (compare.data?.changes || []).length ? (
+                <>
+                  <FilterPills
+                    active={changeFilter}
+                    onChange={setChangeFilter}
+                    options={[
+                      { value: "all", label: "All changes", count: compare.data?.changes.length ?? 0 },
+                      { value: "fixed", label: "Resolved", count: improvements },
+                      { value: "regressed", label: "Regressed", count: regressions },
+                      { value: "new", label: "New", count: neutralChanges },
+                    ]}
+                  />
+                  <div className="space-y-3">
+                    {filteredChanges.length ? (
+                      filteredChanges.map((change) => <ChangeRow key={`${change.kind}-${change.title}`} {...change} />)
+                    ) : (
+                      <EmptySurface
+                        eyebrow="Filtered digest"
+                        title="No change rows match the current filter."
+                        copy="Choose another change state above and Silicore will narrow this difference digest to that specific revision outcome."
+                      />
+                    )}
+                  </div>
+                  <div className="grid gap-3 lg:grid-cols-2">
+                    <WorkflowAction
+                      to="/history"
+                      label="Inspect both runs in history"
+                      copy="Use the archive to validate whether this compare snapshot matches the broader run sequence."
+                    />
+                    <WorkflowAction
+                      to="/projects"
+                      label="Return to workspaces"
+                      copy="Pick another project if this revision pair is no longer the right arbitration target."
+                    />
+                  </div>
+                </>
               ) : (
-                <EmptyPanel copy="Silicore didn’t generate a distinct change list for these runs yet. Try choosing runs with richer risk snapshots or more different analysis outcomes." />
+                <EmptySurface
+                  eyebrow="Difference digest"
+                  title="Silicore does not have a distinct change list for this run pair yet."
+                  copy="Try choosing runs with richer risk snapshots or a bigger outcome change so the compare digest has enough data to classify what truly shifted."
+                />
               )}
             </div>
           </CompareStage>
