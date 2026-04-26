@@ -224,8 +224,8 @@ function Atlas() {
       return [
         { label: "Run score", value: formatMetricValue(context.score, "score"), copy: "Board posture from this selected analysis snapshot" },
         { label: "Driver", value: String(context.dominant_domain || "General"), copy: "Primary engineering domain Atlas sees" },
-        { label: "Parser trust", value: String(context.parser_confidence || "Mixed"), copy: "How trustworthy the extracted board evidence looks" },
-        { label: "Signoff gate", value: String(context.signoff_gate || "Needs review"), copy: "Release-readiness signal for this board" },
+        { label: "Parser trust", value: formatContextText(context.parser_confidence, "Mixed"), copy: "How trustworthy the extracted board evidence looks" },
+        { label: "Signoff gate", value: formatContextText(context.signoff_gate, "Needs review"), copy: "Release-readiness signal for this board" },
       ];
     }
     if (pageType === "compare") {
@@ -687,6 +687,20 @@ function formatMetricValue(value: unknown, mode: "score" | "percent" | "delta" |
     return `${rounded > 0 ? "+" : ""}${rounded}`;
   }
   return `${Math.round(number)}`;
+}
+
+function formatContextText(value: unknown, fallback: string) {
+  if (!value) {
+    return fallback;
+  }
+  if (typeof value === "string") {
+    return value;
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return String(record.label || record.status || record.summary || fallback);
+  }
+  return String(value);
 }
 
 function AtlasSignal({ label, value, copy }: { label: string; value: string; copy: string }) {
