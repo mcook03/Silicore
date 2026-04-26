@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { AppShell } from "@/components/silicore/AppShell";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
@@ -28,8 +28,13 @@ type ProjectsPayload = {
 };
 
 function Projects() {
+  const location = useLocation();
   const { data, error, reload } = useApiData<ProjectsPayload>("/api/frontend/projects");
   const [creating, setCreating] = useState(false);
+
+  if (location.pathname !== "/projects") {
+    return <Outlet />;
+  }
 
   const onCreate = async () => {
     const name = window.prompt("Project name");
