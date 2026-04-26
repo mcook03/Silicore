@@ -78,6 +78,7 @@ export function BoardHeatmap({
   emptyCopy = "No heat-map data is available for this view yet.",
   focusSummary,
   linkedFinding,
+  onSelectHotspot,
 }: {
   title?: string;
   boardView?: BoardViewData | null;
@@ -85,6 +86,7 @@ export function BoardHeatmap({
   emptyCopy?: string;
   focusSummary?: { title: string; detail: string } | null;
   linkedFinding?: { message?: string; components?: string[]; nets?: string[] } | null;
+  onSelectHotspot?: (hotspot: { message?: string; components?: string[]; nets?: string[] }) => void;
 }) {
   const [mode, setMode] = useState<HeatMode>("thermal");
   const hasBoardData = Boolean(
@@ -141,7 +143,7 @@ export function BoardHeatmap({
       </div>
 
       {hasBoardData ? (
-        <BoardViewHeatmap boardView={boardView!} mode={mode} />
+        <BoardViewHeatmap boardView={boardView!} mode={mode} linkedFinding={linkedFinding} onSelectHotspot={onSelectHotspot} />
       ) : hasMatrixData ? (
         <MatrixHeatmap rows={matrixRows!} />
       ) : (
@@ -173,7 +175,17 @@ export function BoardHeatmap({
   );
 }
 
-function BoardViewHeatmap({ boardView, mode }: { boardView: BoardViewData; mode: HeatMode }) {
+function BoardViewHeatmap({
+  boardView,
+  mode,
+  linkedFinding,
+  onSelectHotspot,
+}: {
+  boardView: BoardViewData;
+  mode: HeatMode;
+  linkedFinding?: { message?: string; components?: string[]; nets?: string[] } | null;
+  onSelectHotspot?: (hotspot: { message?: string; components?: string[]; nets?: string[] }) => void;
+}) {
   const width = boardView.width || 820;
   const height = boardView.height || 440;
   const cols = 24;
@@ -181,6 +193,22 @@ function BoardViewHeatmap({ boardView, mode }: { boardView: BoardViewData; mode:
   const cellWidth = width / cols;
   const cellHeight = height / rows;
   const stats = boardView.summary_stats || [];
+  const highlightedHotspots = useMemo(() => {
+    if (!linkedFinding) return new Set<number>();
+    const componentSet = new Set(linkedFinding.components || []);
+    const netSet = new Set(linkedFinding.nets || []);
+    const message = (linkedFinding.message || "").toLowerCase();
+    const matches = new Set<number>();
+    (boardView.hotspots || []).forEach((hotspot, index) => {
+      const componentMatch = (hotspot.components || []).some((value) => componentSet.has(value));
+      const netMatch = (hotspot.nets || []).some((value) => netSet.has(value));
+      const messageMatch = message && (hotspot.message || "").toLowerCase().includes(message.slice(0, 20));
+      if (componentMatch || netMatch || messageMatch) {
+        matches.add(index);
+      }
+    });
+    return matches;
+  }, [boardView.hotspots, linkedFinding]);
 
   const cells = useMemo(() => {
     const hotspotValues = (boardView.hotspots || []).map((item) => ({
@@ -252,7 +280,7 @@ function BoardViewHeatmap({ boardView, mode }: { boardView: BoardViewData; mode:
   return (
     <div className="space-y-4">
       <div className="rounded-[28px] border border-border bg-[linear-gradient(180deg,rgba(9,19,29,0.98),rgba(10,18,28,0.96))] p-5">
-        <div className="rounded-[26px] border border-white/6 bg-background/25 p-4">
+        <div className="relative rounded-[26px] border border-white/6 bg-background/25 p-4">
           <div
             className="grid gap-[6px]"
             style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
@@ -269,6 +297,31 @@ function BoardViewHeatmap({ boardView, mode }: { boardView: BoardViewData; mode:
                 }}
               />
             ))}
+          </div>
+          <div className="pointer-events-none absolute inset-4">
+            {(boardView.hotspots || []).map((hotspot, index) => {
+              const highlighted = highlightedHotspots.has(index);
+              return (
+                <button
+                  key={`${hotspot.x}-${hotspot.y}-${index}`}
+                  type="button"
+                  onClick={() => onSelectHotspot?.({ message: hotspot.message, components: hotspot.components || [], nets: hotspot.nets || [] })}
+                  className={`pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border transition-all ${
+                    highlighted
+                      ? "border-primary/70 shadow-[0_0_26px_rgba(86,211,240,0.45)]"
+                      : "border-white/30 hover:border-primary/55 hover:shadow-[0_0_22px_rgba(86,211,240,0.28)]"
+                  }`}
+                  style={{
+                    left: `${(hotspot.x / width) * 100}%`,
+                    top: `${(hotspot.y / height) * 100}%`,
+                    width: `${Math.max(12, hotspot.radius * 0.7)}px`,
+                    height: `${Math.max(12, hotspot.radius * 0.7)}px`,
+                    background: hotspotGlowFill(hotspot.tone, highlighted),
+                  }}
+                  title={hotspot.message || `Hotspot ${index + 1}`}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
@@ -406,6 +459,17 @@ function glowColor(tone: BoardHotspot["tone"] | "safe") {
     critical: "rgba(248,113,113,0.32)",
   };
   return map[tone] || map.low;
+}
+
+function hotspotGlowFill(tone: BoardHotspot["tone"] | "safe", highlighted: boolean) {
+  const base = {
+    safe: "rgba(86,211,240,0.18)",
+    low: "rgba(86,211,240,0.22)",
+    medium: "rgba(250,204,21,0.24)",
+    high: "rgba(251,146,60,0.28)",
+    critical: "rgba(248,113,113,0.3)",
+  }[tone] || "rgba(86,211,240,0.22)";
+  return highlighted ? base.replace(/0\.\d+\)/, "0.52)") : base;
 }
 
 function matrixTone(tone: MatrixCell["tone"]) {

@@ -429,6 +429,28 @@ def _compare_payload(project_id, run_a_id=None, run_b_id=None):
     changes.extend(_change_item("new", item) for item in new[:4])
     changes.extend(_change_item("regressed", item) for item in unchanged[:2] if str(item.get("severity") or "").lower() in {"critical", "high"})
 
+    run_a_payload = _load_run_payload(run_a)
+    run_b_payload = _load_run_payload(run_b)
+    run_a_board_view = _build_board_view_data(run_a_payload.get("pcb_snapshot") or {}, run_a_payload.get("risks") or [])
+    run_b_board_view = _build_board_view_data(run_b_payload.get("pcb_snapshot") or {}, run_b_payload.get("risks") or [])
+
+    focus_items = []
+    for risk in (new[:3] + unchanged[:2]):
+        components = risk.get("components") or []
+        nets = risk.get("nets") or []
+        focus_items.append(
+            {
+                "label": risk.get("message") or "Compare focus item",
+                "severity": risk.get("severity"),
+                "components": components,
+                "nets": nets,
+                "recommendation": risk.get("recommendation") or "Review this delta in the revision board views.",
+            }
+        )
+
+    score_delta = round(score_b - score_a, 2)
+    risk_delta = risk_b - risk_a
+
     return {
         "project": {"project_id": project.get("project_id"), "name": project.get("name")},
         "run_a": {
@@ -445,6 +467,24 @@ def _compare_payload(project_id, run_a_id=None, run_b_id=None):
         },
         "categories": category_rows,
         "changes": changes[:8],
+        "run_a_board_view": run_a_board_view,
+        "run_b_board_view": run_b_board_view,
+        "focus_items": focus_items,
+        "summary": {
+            "score_delta": score_delta,
+            "risk_delta": risk_delta,
+            "critical_delta": _safe_int(run_b.get("critical_count"), 0) - _safe_int(run_a.get("critical_count"), 0),
+            "score_direction": "improved" if score_delta > 0 else "worsened" if score_delta < 0 else "unchanged",
+            "risk_direction": "improved" if risk_delta < 0 else "worsened" if risk_delta > 0 else "unchanged",
+            "winner": "candidate" if score_delta > 0 and risk_delta <= 0 else "baseline" if score_delta < 0 and risk_delta >= 0 else "tie",
+            "takeaway": (
+                "Candidate looks stronger overall."
+                if score_delta > 0 and risk_delta <= 0
+                else "Baseline still looks safer."
+                if score_delta < 0 and risk_delta >= 0
+                else "The revision signal is mixed, so inspect the board views and change digest before deciding."
+            ),
+        },
     }
 
 

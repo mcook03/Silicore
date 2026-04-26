@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 import { ArrowRight, LoaderCircle, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -135,24 +135,48 @@ export function DecisionStrip({
 
 export function WorkflowAction({
   to,
+  href,
   label,
   copy,
+  onClick,
 }: {
-  to: string;
+  to?: string;
+  href?: string;
   label: string;
   copy: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
 }) {
-  return (
-    <Link
-      to={to}
-      className="group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/3 px-4 py-3 transition-colors hover:border-primary/20 hover:bg-primary/6"
-    >
+  const className = "group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/3 px-4 py-3 text-left transition-colors hover:border-primary/20 hover:bg-primary/6";
+  const content = (
+    <>
       <div>
         <div className="text-sm font-medium text-foreground">{label}</div>
         <div className="mt-1 text-xs text-muted-foreground">{copy}</div>
       </div>
       <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-    </Link>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a href={href} onClick={onClick} className={className}>
+        {content}
+      </a>
+    );
+  }
+
+  if (to) {
+    return (
+      <Link to={to} onClick={onClick} className={className}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" onClick={onClick} className={className}>
+      {content}
+    </button>
   );
 }
 

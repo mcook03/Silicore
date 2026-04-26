@@ -76,7 +76,7 @@ type AnalysisResultPayload = {
       height?: number;
       base_view_box?: string;
       outline_segments?: Array<{ x1: number; y1: number; x2: number; y2: number }>;
-      hotspots?: Array<{ x: number; y: number; radius: number; tone: "safe" | "low" | "medium" | "high" | "critical" }>;
+      hotspots?: Array<{ x: number; y: number; radius: number; tone: "safe" | "low" | "medium" | "high" | "critical"; message?: string; components?: string[]; nets?: string[] }>;
       summary_stats?: Array<{ label: string; value: number }>;
     };
   };
@@ -211,6 +211,20 @@ function Analyze() {
   const lowestConfidenceBucket = confidenceData.find((item) => item.label === "Low")?.value || 0;
   const highestComponent = componentLeaderboard[0];
   const highestNet = netLeaderboard[0];
+  const selectFindingFromHotspot = (hotspot: { message?: string; components?: string[]; nets?: string[] }) => {
+    const hotspotComponentSet = new Set(hotspot.components || []);
+    const hotspotNetSet = new Set(hotspot.nets || []);
+    const hotspotMessage = (hotspot.message || "").toLowerCase();
+    const match = risks.find((risk) => {
+      const componentMatch = (risk.components || []).some((value) => hotspotComponentSet.has(value));
+      const netMatch = (risk.nets || []).some((value) => hotspotNetSet.has(value));
+      const messageMatch = hotspotMessage && (risk.message || "").toLowerCase().includes(hotspotMessage.slice(0, 20));
+      return componentMatch || netMatch || messageMatch;
+    });
+    if (match) {
+      setSelectedFindingKey(findingKey(match));
+    }
+  };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedFile) {
@@ -498,6 +512,7 @@ function Analyze() {
                       components: selectedFinding.components || [],
                       nets: selectedFinding.nets || [],
                     } : null}
+                    onSelectHotspot={selectFindingFromHotspot}
                   />
                 </div>
               </div>

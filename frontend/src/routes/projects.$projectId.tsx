@@ -82,6 +82,24 @@ function ProjectDetail() {
   const latestRun = project?.runs?.[0];
   const riskiestRun = [...(project?.runs || [])].sort((a, b) => Number(b.critical_count || 0) - Number(a.critical_count || 0))[0];
   const pendingGates = (project?.release_gates || []).filter((gate) => !["approved", "rejected"].includes((gate.status || "").toLowerCase())).length;
+  const compareReadyRuns = useMemo(
+    () =>
+      (project?.runs || []).filter((run) => {
+        const score = Number(run.score || 0);
+        return score > 0 || Number(run.critical_count || 0) > 0;
+      }),
+    [project?.runs],
+  );
+  const comparePool = compareReadyRuns.length >= 2 ? compareReadyRuns : (project?.runs || []);
+  const compareBaselineRun = comparePool[1] || comparePool[0];
+  const compareCandidateRun = comparePool[0];
+  const compareHref = compareBaselineRun && compareCandidateRun
+    ? `/compare?project_id=${encodeURIComponent(projectId)}&run_a=${encodeURIComponent(compareBaselineRun.run_id)}&run_b=${encodeURIComponent(compareCandidateRun.run_id)}`
+    : `/compare?project_id=${encodeURIComponent(projectId)}`;
+  const rowCompareTarget = (runId: string) => {
+    const alternate = comparePool.find((item) => item.run_id !== runId) || latestRun;
+    return alternate?.run_id || runId;
+  };
 
   return (
     <AppShell title={project?.name || "Project detail"}>
@@ -166,7 +184,7 @@ function ProjectDetail() {
             <div className="grid gap-3 sm:grid-cols-2">
               <QuickStat label="Readiness score" value={String(Math.max(0, Math.round((project?.latest_score || 0) - (pendingGates * 6) - ((riskiestRun?.critical_count || 0) * 4))))} />
               <QuickStat label="Suggested next step" value={pendingGates > 0 ? "Close gates" : (riskiestRun?.critical_count || 0) > 0 ? "Compare runs" : "Final review"} />
-              <WorkflowAction to="/compare" label="Compare best candidate" copy="Use revision arbitration before closing the final signoff decision." />
+              <WorkflowAction href={compareHref} label="Compare best candidate" copy="Use revision arbitration before closing the final signoff decision." />
               <WorkflowAction to="/history" label="Review archive path" copy="Confirm this workspace trend is actually stabilizing over time." />
             </div>
           </div>
@@ -189,7 +207,7 @@ function ProjectDetail() {
                 <QuickStat label="Gates" value={String((project?.release_gates || []).length)} />
               </div>
               <div className="grid gap-3 lg:grid-cols-3">
-                <WorkflowAction to="/compare" label="Open compare" copy="Take the strongest two workspace runs into revision arbitration." />
+                <WorkflowAction href={compareHref} label="Open compare" copy="Take the strongest two workspace runs into revision arbitration." />
                 <WorkflowAction to="/history" label="Open history" copy="Use the archive to validate how this workspace has moved over time." />
                 <WorkflowAction to="/analyze" label="Run another board" copy="Feed a new analysis into this workspace when it needs fresh evidence." />
               </div>
@@ -223,12 +241,20 @@ function ProjectDetail() {
             </div>
             <div className="space-y-2">
               {sortedRuns.length ? sortedRuns.map((run) => (
-                <div key={run.run_id} className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
+                <div key={run.run_id} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/40 p-4">
                   <div>
                     <div className="text-sm">{run.name || run.run_id}</div>
                     <div className="font-mono text-[11px] text-muted-foreground">{run.critical_count || 0} critical findings</div>
                   </div>
-                  <ScorePill score={normalizeRunScore(run.score)} />
+                  <div className="flex items-center gap-2">
+                    <ScorePill score={normalizeRunScore(run.score)} />
+                    <a
+                      href={`/compare?project_id=${encodeURIComponent(projectId)}&run_a=${encodeURIComponent(run.run_id)}&run_b=${encodeURIComponent(rowCompareTarget(run.run_id))}`}
+                      className="rounded-full border border-primary/20 bg-primary/8 px-3 py-1.5 text-xs text-primary transition-colors hover:bg-primary/14"
+                    >
+                      compare
+                    </a>
+                  </div>
                 </div>
               )) : (
                 <EmptySurface

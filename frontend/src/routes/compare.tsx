@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/silicore/AppShell";
+import { BoardHeatmap } from "@/components/silicore/BoardHeatmap";
 import { ScorePill } from "@/components/silicore/Panel";
 import { Button } from "@/components/ui/button";
 import {
@@ -70,6 +71,32 @@ type ComparePayload = {
   run_b: { run_id?: string; name: string; score: number; issues: number };
   categories: Array<{ name: string; before: number; after: number; delta: number }>;
   changes: Array<{ kind: "fixed" | "new" | "regressed"; title: string; impact: string; why: string }>;
+  run_a_board_view?: {
+    has_data?: boolean;
+    width?: number;
+    height?: number;
+    hotspots?: Array<{ x: number; y: number; radius: number; tone: "safe" | "low" | "medium" | "high" | "critical"; message?: string; components?: string[]; nets?: string[] }>;
+    summary_stats?: Array<{ label: string; value: number }>;
+    focus_items?: Array<{ label: string; severity?: string; components?: string; nets?: string; component_list?: string[]; net_list?: string[] }>;
+  };
+  run_b_board_view?: {
+    has_data?: boolean;
+    width?: number;
+    height?: number;
+    hotspots?: Array<{ x: number; y: number; radius: number; tone: "safe" | "low" | "medium" | "high" | "critical"; message?: string; components?: string[]; nets?: string[] }>;
+    summary_stats?: Array<{ label: string; value: number }>;
+    focus_items?: Array<{ label: string; severity?: string; components?: string; nets?: string; component_list?: string[]; net_list?: string[] }>;
+  };
+  focus_items?: Array<{ label: string; severity?: string; components?: string[]; nets?: string[]; recommendation?: string }>;
+  summary?: {
+    score_delta?: number;
+    risk_delta?: number;
+    critical_delta?: number;
+    score_direction?: string;
+    risk_direction?: string;
+    winner?: "candidate" | "baseline" | "tie";
+    takeaway?: string;
+  };
 };
 
 function Compare() {
@@ -87,6 +114,8 @@ function Compare() {
   const [runAId, setRunAId] = usePersistentState("silicore:compare:runAId", "");
   const [runBId, setRunBId] = usePersistentState("silicore:compare:runBId", "");
   const [changeFilter, setChangeFilter] = usePersistentState<"all" | "fixed" | "regressed" | "new">("silicore:compare:changeFilter", "all");
+  const [viewMode, setViewMode] = usePersistentState<"overview" | "boards" | "digest">("silicore:compare:viewMode", "overview");
+  const [selectedFocusIndex, setSelectedFocusIndex] = useState(0);
   const activeProjectId = projectId || defaultProject;
 
   const projectDetail = useApiData<ProjectDetailPayload>(
@@ -131,6 +160,25 @@ function Compare() {
       return selectableRuns[1]?.run_id || selectableRuns[0]?.run_id || "";
     });
   }, [selectableRuns]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const nextProjectId = params.get("project_id");
+    const nextRunA = params.get("run_a");
+    const nextRunB = params.get("run_b");
+    if (nextProjectId) {
+      setProjectId(nextProjectId);
+    }
+    if (nextRunA) {
+      setRunAId(nextRunA);
+    }
+    if (nextRunB) {
+      setRunBId(nextRunB);
+    }
+  }, []);
 
   const compareUrl = useMemo(() => {
     if (!activeProjectId) {
@@ -195,6 +243,15 @@ function Compare() {
     () => (compare.data?.changes || []).filter((change) => changeFilter === "all" || change.kind === changeFilter),
     [compare.data?.changes, changeFilter],
   );
+  const focusItems = compare.data?.focus_items || [];
+  const selectedFocusItem = focusItems[selectedFocusIndex] || focusItems[0] || null;
+  const linkedFinding = selectedFocusItem
+    ? {
+        message: selectedFocusItem.label,
+        components: selectedFocusItem.components || [],
+        nets: selectedFocusItem.nets || [],
+      }
+    : null;
   const recommendedPair = useMemo(() => {
     if (selectableRuns.length < 2) return null;
     const sorted = [...selectableRuns].sort((a, b) => {
@@ -208,6 +265,25 @@ function Compare() {
   const swapRuns = () => {
     setRunAId(runBId);
     setRunBId(runAId);
+  };
+
+  useEffect(() => {
+    setSelectedFocusIndex(0);
+  }, [runAId, runBId, activeProjectId]);
+
+  const syncFocusFromHotspot = (hotspot: { message?: string; components?: string[]; nets?: string[] }) => {
+    const hotspotComponents = new Set(hotspot.components || []);
+    const hotspotNets = new Set(hotspot.nets || []);
+    const hotspotMessage = (hotspot.message || "").toLowerCase();
+    const matchIndex = focusItems.findIndex((item) => {
+      const componentMatch = (item.components || []).some((value) => hotspotComponents.has(value));
+      const netMatch = (item.nets || []).some((value) => hotspotNets.has(value));
+      const messageMatch = hotspotMessage && item.label?.toLowerCase().includes(hotspotMessage.slice(0, 20));
+      return Boolean(componentMatch || netMatch || messageMatch);
+    });
+    if (matchIndex >= 0) {
+      setSelectedFocusIndex(matchIndex);
+    }
   };
 
   const pickRun = (runId: string) => {
@@ -435,11 +511,13 @@ function Compare() {
         <DecisionStrip
           eyebrow="Comparison readout"
           title={
-            scoreDelta > 0
-              ? `${compare.data?.run_b.name || "Candidate"} is currently ahead of the baseline.`
-              : scoreDelta < 0
-                ? `${compare.data?.run_a.name || "Baseline"} still holds the stronger position.`
-                : "These revisions are effectively tied until another differentiator surfaces."
+            compare.data?.summary?.takeaway || (
+              scoreDelta > 0
+                ? `${compare.data?.run_b.name || "Candidate"} is currently ahead of the baseline.`
+                : scoreDelta < 0
+                  ? `${compare.data?.run_a.name || "Baseline"} still holds the stronger position.`
+                  : "These revisions are effectively tied until another differentiator surfaces."
+            )
           }
           copy={
             strongestCategoryShift
@@ -453,6 +531,113 @@ function Compare() {
             { label: "Regressed", value: String(regressions), tone: regressions > 0 ? "danger" : "default" },
           ]}
         />
+
+        <section className="grid gap-6 xl:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)]">
+          <CompareStage
+            title="Board-to-board hotspot arbitration"
+            rail="geometry-linked delta"
+            action={
+              <FilterPills
+                active={viewMode}
+                onChange={setViewMode}
+                options={[
+                  { value: "overview", label: "Overview" },
+                  { value: "boards", label: "Board views" },
+                  { value: "digest", label: "Digest only" },
+                ]}
+              />
+            }
+          >
+            {viewMode === "digest" ? (
+              <EmptySurface
+                eyebrow="Digest view"
+                title="Board canvases are tucked away for this saved compare view."
+                copy="Switch back to overview or board views whenever you want to inspect the spatial hotspot shift between baseline and candidate."
+              />
+            ) : (
+              <div className="space-y-4">
+                <div className="grid gap-4 xl:grid-cols-2">
+                  <BoardHeatmap
+                    title={`Baseline · ${compare.data?.run_a.name || selectedRunA?.name || "Run A"}`}
+                    boardView={compare.data?.run_a_board_view}
+                    emptyCopy="This baseline run does not include enough geometry-linked data for a board heat surface."
+                    focusSummary={selectedFocusItem ? { title: "Focused delta", detail: selectedFocusItem.recommendation || selectedFocusItem.label } : null}
+                    linkedFinding={linkedFinding}
+                    onSelectHotspot={syncFocusFromHotspot}
+                  />
+                  <BoardHeatmap
+                    title={`Candidate · ${compare.data?.run_b.name || selectedRunB?.name || "Run B"}`}
+                    boardView={compare.data?.run_b_board_view}
+                    emptyCopy="This candidate run does not include enough geometry-linked data for a board heat surface."
+                    focusSummary={selectedFocusItem ? { title: "Focused delta", detail: selectedFocusItem.recommendation || selectedFocusItem.label } : null}
+                    linkedFinding={linkedFinding}
+                    onSelectHotspot={syncFocusFromHotspot}
+                  />
+                </div>
+                <div className="rounded-[22px] border border-border bg-background/25 p-4 text-sm leading-6 text-muted-foreground">
+                  Click a hotspot on either board to pivot the compare focus. The linked board surfaces and the difference digest stay centered on the same issue family instead of making you re-hunt context.
+                </div>
+              </div>
+            )}
+          </CompareStage>
+
+          <CompareStage title="Revision focus cues" rail="decision rail">
+            <div className="space-y-3">
+              <div className="rounded-[22px] border border-primary/16 bg-primary/8 p-4">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Recommended posture</div>
+                <div className="mt-2 text-lg font-semibold text-foreground">
+                  {compare.data?.summary?.winner === "candidate"
+                    ? "Candidate is the suggested next baseline."
+                    : compare.data?.summary?.winner === "baseline"
+                      ? "Baseline still looks safer to preserve."
+                      : "The compare signal is mixed, so inspect the focus cues before deciding."}
+                </div>
+                <div className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {compare.data?.summary?.takeaway || "Use the score shift, issue pressure, and board surfaces together before locking this revision decision."}
+                </div>
+              </div>
+
+              {focusItems.length ? (
+                <div className="space-y-2">
+                  {focusItems.map((item, index) => {
+                    const selected = index === selectedFocusIndex;
+                    return (
+                      <button
+                        key={`${item.label}-${index}`}
+                        type="button"
+                        onClick={() => setSelectedFocusIndex(index)}
+                        className={`w-full rounded-[22px] border p-4 text-left transition-all ${
+                          selected
+                            ? "border-primary/35 bg-primary/10 shadow-[0_0_0_1px_rgba(86,211,240,0.08)]"
+                            : "border-border bg-background/28 hover:border-primary/18 hover:bg-background/45"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                            {item.severity || "focus cue"}
+                          </span>
+                          <span className="rounded-full border border-white/8 px-2 py-1 text-[10px] text-muted-foreground">
+                            cue {index + 1}
+                          </span>
+                        </div>
+                        <div className="mt-2 text-sm font-medium leading-6 text-foreground">{item.label}</div>
+                        <div className="mt-2 text-xs leading-5 text-muted-foreground">
+                          {item.recommendation || "Review the linked hotspot regions and change digest for this issue family."}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <EmptySurface
+                  eyebrow="Focus cues"
+                  title="These runs do not expose richer compare cues yet."
+                  copy="Once the selected revisions include more structured risk snapshots, Silicore will summarize the specific issue families worth reviewing here."
+                />
+              )}
+            </div>
+          </CompareStage>
+        </section>
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           <CompareStage title="Revision trendline" rail="time motion" action={<span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Last 6 runs</span>}>
