@@ -206,6 +206,70 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertIn(".kicad_sch", manifest["parser_capabilities"])
         self.assertEqual(manifest["parser_capabilities"][".kicad_sch"]["status"], "supported")
 
+    def test_single_analysis_accepts_kicad_module_inputs(self):
+        module_content = """
+(module TestPad (layer F.Cu)
+  (fp_text reference REF** (at 0 -3) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))
+  (fp_text value TestPad (at 0 3) (layer F.Fab) (effects (font (size 1 1) (thickness 0.15))))
+  (fp_line (start -1 -1) (end 1 -1) (layer F.CrtYd) (width 0.05))
+  (pad 1 smd rect (at -1 0) (size 1.5 1.2) (layers F.Cu F.Paste F.Mask))
+  (pad 2 smd rect (at 1 0) (size 1.5 1.2) (layers F.Cu F.Paste F.Mask))
+)
+""".strip()
+        input_path = self._make_tempfile(".kicad_mod", module_content)
+        output_dir = self._make_tempdir("silicore_module_test_")
+
+        result = run_single_analysis_from_path(
+            input_path,
+            config=self.config,
+            output_dir=output_dir,
+        )
+
+        self.assertEqual(result["filename"], os.path.basename(input_path))
+        self.assertEqual(result["board_summary"]["component_count"], 1)
+
+        manifest_path = os.path.join(output_dir, "export_manifest.json")
+        with open(manifest_path, "r", encoding="utf-8") as file:
+            manifest = json.load(file)
+
+        self.assertIn(".kicad_mod", manifest["parser_capabilities"])
+        self.assertEqual(manifest["parser_capabilities"][".kicad_mod"]["status"], "supported")
+
+    def test_single_analysis_accepts_kicad_project_inputs(self):
+        tempdir = self._make_tempdir("silicore_project_input_")
+        pro_path = os.path.join(tempdir, "demo.pro")
+        pcb_path = os.path.join(tempdir, "demo.kicad_pcb")
+        with open(pro_path, "w", encoding="utf-8") as file:
+            file.write("last_client=kicad\n[general]\nversion=1\n[pcbnew]\nCopperLayerCount=2\nBoardThickness=1.6\n")
+        with open(pcb_path, "w", encoding="utf-8") as file:
+            file.write("""
+(kicad_pcb
+  (layers (0 "F.Cu" signal) (31 "B.Cu" signal))
+  (net 0 "")
+  (net 1 "GND")
+  (footprint "custom:R" (layer "F.Cu") (at 10 10) (property "Reference" "R1") (property "Value" "10k")
+    (pad 1 smd rect (at 0 0) (size 1 1) (layers "F.Cu") (net 1 "GND"))
+  )
+)
+""".strip())
+
+        output_dir = self._make_tempdir("silicore_project_test_")
+        result = run_single_analysis_from_path(
+            pro_path,
+            config=self.config,
+            output_dir=output_dir,
+        )
+
+        self.assertEqual(result["filename"], "demo.pro")
+        self.assertEqual(result["board_summary"]["component_count"], 1)
+
+        manifest_path = os.path.join(output_dir, "export_manifest.json")
+        with open(manifest_path, "r", encoding="utf-8") as file:
+            manifest = json.load(file)
+
+        self.assertIn(".pro", manifest["parser_capabilities"])
+        self.assertEqual(manifest["parser_capabilities"][".pro"]["status"], "supported")
+
 
 if __name__ == "__main__":
     unittest.main()

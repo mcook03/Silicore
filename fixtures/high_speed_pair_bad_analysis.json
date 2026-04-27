@@ -382,10 +382,10 @@
                 "U1"
             ],
             "nets": [
-                "USB_DN",
                 "CLK",
-                "USB_DP",
-                "GND"
+                "USB_DN",
+                "GND",
+                "USB_DP"
             ],
             "region": null,
             "metrics": {
@@ -690,10 +690,10 @@
                 "J1"
             ],
             "nets": [
-                "VBUS",
                 "USB_DN",
+                "GND",
                 "USB_DP",
-                "GND"
+                "VBUS"
             ],
             "region": null,
             "metrics": {
@@ -711,10 +711,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "VBUS",
                     "USB_DN",
+                    "GND",
                     "USB_DP",
-                    "GND"
+                    "VBUS"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -749,10 +749,10 @@
                 "U1"
             ],
             "nets": [
-                "USB_DN",
                 "CLK",
-                "USB_DP",
-                "GND"
+                "USB_DN",
+                "GND",
+                "USB_DP"
             ],
             "region": null,
             "metrics": {
@@ -770,10 +770,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "USB_DN",
                     "CLK",
-                    "USB_DP",
-                    "GND"
+                    "USB_DN",
+                    "GND",
+                    "USB_DP"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -3244,7 +3244,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-27T02:42:33.649650+00:00",
+        "timestamp": "2026-04-27T02:58:45.800975+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4231,10 +4231,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "USB_DN",
                     "CLK",
-                    "USB_DP",
-                    "GND"
+                    "USB_DN",
+                    "GND",
+                    "USB_DP"
                 ],
                 "region": null,
                 "metrics": {
@@ -4467,10 +4467,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "VBUS",
                     "USB_DN",
+                    "GND",
                     "USB_DP",
-                    "GND"
+                    "VBUS"
                 ],
                 "region": null,
                 "metrics": {
@@ -4488,10 +4488,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "VBUS",
                         "USB_DN",
+                        "GND",
                         "USB_DP",
-                        "GND"
+                        "VBUS"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4517,10 +4517,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "USB_DN",
                     "CLK",
-                    "USB_DP",
-                    "GND"
+                    "USB_DN",
+                    "GND",
+                    "USB_DP"
                 ],
                 "region": null,
                 "metrics": {
@@ -4538,10 +4538,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "USB_DN",
                         "CLK",
-                        "USB_DP",
-                        "GND"
+                        "USB_DN",
+                        "GND",
+                        "USB_DP"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -5014,7 +5014,7 @@
         "score": 0.0,
         "total_penalty": 16.4
     },
-    "generated_at": "2026-04-27T02:42:33.649656+00:00",
+    "generated_at": "2026-04-27T02:58:45.800981+00:00",
     "subsystem_summary": {
         "subsystems": [
             {

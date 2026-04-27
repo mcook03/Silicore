@@ -13,7 +13,7 @@ This board shows moderate design risk. The main risk concentration is in manufac
 
 ## Parser Capability
 
-- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.txt`
+- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.pro`, `.kicad_mod`, `.txt`
 - Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows
 
 ## Review Readiness

@@ -20,6 +20,8 @@ SUPPORTED_EXTENSIONS = {
     ".brd",
     ".kicad_pcb",
     ".kicad_sch",
+    ".pro",
+    ".kicad_mod",
     ".gbr",
     ".gko",
     ".ger",
@@ -41,6 +43,8 @@ SUPPORTED_EXTENSIONS = {
 FORMAT_READINESS = {
     ".kicad_pcb": {"label": "KiCad PCB", "status": "supported"},
     ".kicad_sch": {"label": "KiCad Schematic", "status": "supported"},
+    ".pro": {"label": "KiCad Project", "status": "supported"},
+    ".kicad_mod": {"label": "KiCad Footprint", "status": "supported"},
     ".txt": {"label": "Structured Demo Text", "status": "supported"},
     ".brd": {"label": "Legacy Structured Board", "status": "supported"},
     ".gbr": {"label": "Gerber CAM Layer", "status": "supported"},
@@ -792,10 +796,26 @@ def _build_project_summary(boards):
 def _load_board(file_path):
     extension = os.path.splitext(file_path)[1].lower()
 
-    if extension in {".kicad_pcb", ".kicad_sch"}:
+    if extension in {".kicad_pcb", ".kicad_sch", ".pro", ".kicad_mod"}:
         parser_func = _optional_function(
-            "engine.kicad_parser" if extension == ".kicad_pcb" else "engine.kicad_schematic_parser",
-            ["parse_kicad_pcb", "parse_kicad_file", "parse_board"] if extension == ".kicad_pcb" else ["parse_kicad_schematic_file", "parse_schematic_file", "parse_board"],
+            (
+                "engine.kicad_parser"
+                if extension == ".kicad_pcb"
+                else "engine.kicad_schematic_parser"
+                if extension == ".kicad_sch"
+                else "engine.kicad_project_parser"
+                if extension == ".pro"
+                else "engine.kicad_module_parser"
+            ),
+            (
+                ["parse_kicad_pcb", "parse_kicad_file", "parse_board"]
+                if extension == ".kicad_pcb"
+                else ["parse_kicad_schematic_file", "parse_schematic_file", "parse_board"]
+                if extension == ".kicad_sch"
+                else ["parse_kicad_project_file", "parse_project_file", "parse_board"]
+                if extension == ".pro"
+                else ["parse_kicad_module_file", "parse_module_file", "parse_board"]
+            ),
         )
         if parser_func:
             return _call_with_supported_args(
@@ -849,10 +869,19 @@ def _run_rule_engine(pcb, config):
     if not rule_func:
         raise RuntimeError("No compatible rule runner was found.")
 
+    runtime_source_format = str(getattr(pcb, "source_format", "") or "")
+    project_meta = getattr(pcb, "metadata", {}).get("project", {}) if hasattr(pcb, "metadata") else {}
+    if runtime_source_format == "kicad_project":
+        companion_kind = str(project_meta.get("companion_kind", "") or "").lower()
+        if companion_kind == "schematic":
+            runtime_source_format = "kicad_schematic"
+        elif companion_kind == "pcb":
+            runtime_source_format = "kicad_pcb"
+
     runtime_config = dict(config or {})
     runtime_config["_runtime"] = {
         **dict((config or {}).get("_runtime") or {}),
-        "source_format": str(getattr(pcb, "source_format", "") or ""),
+        "source_format": runtime_source_format,
     }
 
     result = _call_with_supported_args(
@@ -983,7 +1012,7 @@ def _write_single_markdown(path, result):
         "",
         "## Parser Capability",
         "",
-        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.txt`",
+        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.pro`, `.kicad_mod`, `.txt`",
         "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
         "",
         "## Review Readiness",
@@ -1229,7 +1258,7 @@ def _write_single_html(path, result):
 
             <div class="card">
                 <h2>Parser Capability</h2>
-                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .kicad_sch, .txt</p>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .kicad_sch, .pro, .kicad_mod, .txt</p>
                 <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
             </div>
 
@@ -1304,7 +1333,7 @@ def _write_project_markdown(path, project_data):
     lines.extend([
         "## Parser Capability",
         "",
-        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.txt`",
+        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.pro`, `.kicad_mod`, `.txt`",
         "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
         "",
         "## Review Readiness",
@@ -1424,7 +1453,7 @@ def _write_project_html(path, project_data):
 
             <div class="hero">
                 <p><strong>Parser Capability</strong></p>
-                <p>Current production-ready inputs: .kicad_pcb, .kicad_sch, .txt</p>
+                <p>Current production-ready inputs: .kicad_pcb, .kicad_sch, .pro, .kicad_mod, .txt</p>
                 <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
             </div>
 
@@ -1759,7 +1788,7 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path,
     extension = os.path.splitext(filename)[1].lower()
 
     if extension not in SUPPORTED_EXTENSIONS:
-        raise ValueError("Unsupported file type. Use .txt, .brd, .kicad_pcb, or .kicad_sch.")
+        raise ValueError("Unsupported file type. Use .txt, .brd, .kicad_pcb, .kicad_sch, .pro, or .kicad_mod.")
 
     ensure_clean_upload_dir(upload_folder)
     ensure_runs_folder(runs_folder)
