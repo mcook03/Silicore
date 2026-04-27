@@ -73,6 +73,42 @@ class KiCadParserFidelityTests(unittest.TestCase):
         self.assertEqual(component.pads[0].size_x, 1.2)
         self.assertEqual(component.pads[0].size_y, 0.8)
 
+    def test_parser_supports_legacy_fp_text_reference_and_value(self):
+        content = """
+(kicad_pcb
+  (layers
+    (0 "F.Cu" signal)
+  )
+  (net 0 "")
+  (net 1 "GND")
+  (net 2 "SIG")
+  (footprint "custom:R_0603"
+    (layer "F.Cu")
+    (at 10 10 180)
+    (fp_text reference "R7" (at 0 -1) (layer "F.SilkS"))
+    (fp_text value "4k7" (at 0 1) (layer "F.Fab"))
+    (pad "1" smd rect (at -0.8 0 180) (size 0.7 0.9) (layers "F.Cu" "F.Paste" "F.Mask") (net 1 "GND"))
+    (pad "2" smd rect (at 0.8 0 180) (size 0.7 0.9) (layers "F.Cu" "F.Paste" "F.Mask") (net 2 "SIG"))
+  )
+)
+""".strip()
+
+        fd, path = tempfile.mkstemp(suffix=".kicad_pcb")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as file:
+                file.write(content)
+
+            pcb = parse_kicad_file(path)
+        finally:
+            if os.path.exists(path):
+                os.remove(path)
+
+        component = pcb.get_component("R7")
+        self.assertIsNotNone(component)
+        self.assertEqual(component.value, "4k7")
+        self.assertEqual(component.rotation, 180.0)
+        self.assertEqual(len(component.pads), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

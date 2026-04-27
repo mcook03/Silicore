@@ -129,6 +129,9 @@ def _record_best_violation(best, key, entry):
 def run_rule(pcb, config):
     risks = []
     rule_config = config.get("rules", {}).get("cam_geometry", {})
+    source_format = str(getattr(pcb, "source_format", "") or "").lower()
+    if not source_format.startswith("gerber"):
+        return risks
     if not getattr(pcb, "traces", None) and not getattr(pcb, "zones", None):
         return risks
 
@@ -140,7 +143,6 @@ def run_rule(pcb, config):
     max_creepage_findings = int(rule_config.get("max_creepage_findings", 10))
     hv_keywords = [str(item).upper() for item in rule_config.get("high_voltage_net_keywords", ["HV", "VBUS", "PACK", "BATT", "VAC", "VDC"])]
     regions = _build_regions(pcb)
-    source_format = str(getattr(pcb, "source_format", "") or "").lower()
     is_cam_source = source_format.startswith("gerber")
     clearance_threshold = min_clearance if is_cam_source else native_min_clearance
     clearance_candidates = {}

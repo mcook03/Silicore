@@ -43,7 +43,9 @@ def parse_footprints(content, pcb):
     footprint_blocks = extract_blocks(content, "(footprint ")
 
     ref_pattern = re.compile(r'\(property\s+"Reference"\s+"([^"]+)"')
+    legacy_ref_pattern = re.compile(r'\(fp_text\s+reference\s+"([^"]+)"')
     value_pattern = re.compile(r'\(property\s+"Value"\s+"([^"]+)"')
+    legacy_value_pattern = re.compile(r'\(fp_text\s+value\s+"([^"]+)"')
     at_pattern = re.compile(r'\(at\s+([-\d\.]+)\s+([-\d\.]+)')
     rotation_pattern = re.compile(r'\(at\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+))?')
     layer_pattern = re.compile(r'\(layer\s+"([^"]+)"')
@@ -58,8 +60,8 @@ def parse_footprints(content, pcb):
     )
 
     for block in footprint_blocks:
-        ref_match = ref_pattern.search(block)
-        value_match = value_pattern.search(block)
+        ref_match = ref_pattern.search(block) or legacy_ref_pattern.search(block)
+        value_match = value_pattern.search(block) or legacy_value_pattern.search(block)
         at_match = at_pattern.search(block)
         rotation_match = rotation_pattern.search(block)
         layer_match = layer_pattern.search(block)
