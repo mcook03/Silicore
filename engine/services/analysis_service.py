@@ -20,6 +20,7 @@ SUPPORTED_EXTENSIONS = {
     ".brd",
     ".kicad_pcb",
     ".kicad_sch",
+    ".sch",
     ".pro",
     ".kicad_mod",
     ".gbr",
@@ -43,6 +44,7 @@ SUPPORTED_EXTENSIONS = {
 FORMAT_READINESS = {
     ".kicad_pcb": {"label": "KiCad PCB", "status": "supported"},
     ".kicad_sch": {"label": "KiCad Schematic", "status": "supported"},
+    ".sch": {"label": "Eagle Schematic", "status": "supported"},
     ".pro": {"label": "KiCad Project", "status": "supported"},
     ".kicad_mod": {"label": "KiCad Footprint", "status": "supported"},
     ".txt": {"label": "Structured Demo Text", "status": "supported"},
@@ -796,13 +798,15 @@ def _build_project_summary(boards):
 def _load_board(file_path):
     extension = os.path.splitext(file_path)[1].lower()
 
-    if extension in {".kicad_pcb", ".kicad_sch", ".pro", ".kicad_mod"}:
+    if extension in {".kicad_pcb", ".kicad_sch", ".sch", ".pro", ".kicad_mod"}:
         parser_func = _optional_function(
             (
                 "engine.kicad_parser"
                 if extension == ".kicad_pcb"
                 else "engine.kicad_schematic_parser"
                 if extension == ".kicad_sch"
+                else "engine.eagle_schematic_parser"
+                if extension == ".sch"
                 else "engine.kicad_project_parser"
                 if extension == ".pro"
                 else "engine.kicad_module_parser"
@@ -812,6 +816,8 @@ def _load_board(file_path):
                 if extension == ".kicad_pcb"
                 else ["parse_kicad_schematic_file", "parse_schematic_file", "parse_board"]
                 if extension == ".kicad_sch"
+                else ["parse_eagle_schematic_file", "parse_schematic_file", "parse_board"]
+                if extension == ".sch"
                 else ["parse_kicad_project_file", "parse_project_file", "parse_board"]
                 if extension == ".pro"
                 else ["parse_kicad_module_file", "parse_module_file", "parse_board"]
@@ -1012,7 +1018,7 @@ def _write_single_markdown(path, result):
         "",
         "## Parser Capability",
         "",
-        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.pro`, `.kicad_mod`, `.txt`",
+        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.sch`, `.pro`, `.kicad_mod`, `.txt`",
         "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
         "",
         "## Review Readiness",
@@ -1258,7 +1264,7 @@ def _write_single_html(path, result):
 
             <div class="card">
                 <h2>Parser Capability</h2>
-                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .kicad_sch, .pro, .kicad_mod, .txt</p>
+                <p><strong>Current production-ready inputs:</strong> .kicad_pcb, .kicad_sch, .sch, .pro, .kicad_mod, .txt</p>
                 <p><strong>Planned next-stage inputs:</strong> Altium-style board imports, Gerber-derived review flows</p>
             </div>
 
@@ -1333,7 +1339,7 @@ def _write_project_markdown(path, project_data):
     lines.extend([
         "## Parser Capability",
         "",
-        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.pro`, `.kicad_mod`, `.txt`",
+        "- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.sch`, `.pro`, `.kicad_mod`, `.txt`",
         "- Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows",
         "",
         "## Review Readiness",
@@ -1453,7 +1459,7 @@ def _write_project_html(path, project_data):
 
             <div class="hero">
                 <p><strong>Parser Capability</strong></p>
-                <p>Current production-ready inputs: .kicad_pcb, .kicad_sch, .pro, .kicad_mod, .txt</p>
+                <p>Current production-ready inputs: .kicad_pcb, .kicad_sch, .sch, .pro, .kicad_mod, .txt</p>
                 <p>Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows</p>
             </div>
 
@@ -1788,7 +1794,7 @@ def analyze_single_board(uploaded_file, upload_folder, runs_folder, config_path,
     extension = os.path.splitext(filename)[1].lower()
 
     if extension not in SUPPORTED_EXTENSIONS:
-        raise ValueError("Unsupported file type. Use .txt, .brd, .kicad_pcb, .kicad_sch, .pro, or .kicad_mod.")
+        raise ValueError("Unsupported file type. Use .txt, .brd, .kicad_pcb, .kicad_sch, .sch, .pro, or .kicad_mod.")
 
     ensure_clean_upload_dir(upload_folder)
     ensure_runs_folder(runs_folder)

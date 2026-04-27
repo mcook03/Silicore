@@ -1,6 +1,7 @@
 import os
 
 from engine.altium_ascii_parser import parse_altium_ascii_file
+from engine.eagle_schematic_parser import parse_eagle_schematic_file
 from engine.gerber_parser import parse_gerber_directory, parse_gerber_file
 from engine.kicad_module_parser import parse_kicad_module_file
 from engine.kicad_parser import parse_kicad_file
@@ -176,6 +177,8 @@ def parse_pcb_file(filepath):
         return parse_kicad_file(filepath)
     if lower.endswith(".kicad_sch"):
         return parse_kicad_schematic_file(filepath)
+    if lower.endswith(".sch"):
+        return parse_eagle_schematic_file(filepath)
     if lower.endswith(".pro"):
         return parse_kicad_project_file(filepath)
     if lower.endswith(".kicad_mod"):

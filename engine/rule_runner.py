@@ -46,7 +46,7 @@ def _rule_is_enabled(filename, config):
     stem = filename[:-3]
     source_format = str(((config or {}).get("_runtime") or {}).get("source_format") or "").lower()
 
-    if source_format == "kicad_schematic" and stem not in SCHEMATIC_ALLOWED_RULES:
+    if source_format in {"kicad_schematic", "eagle_schematic"} and stem not in SCHEMATIC_ALLOWED_RULES:
         return False
     if source_format == "kicad_footprint" and stem not in FOOTPRINT_ALLOWED_RULES:
         return False

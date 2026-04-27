@@ -315,7 +315,7 @@ function Analyze() {
                     <div className="rounded-[24px] border border-dashed border-primary/25 bg-primary/6 px-5 py-8 text-center lg:text-left">
                       <div className="text-sm text-foreground">{selectedFile ? selectedFile.name : "No file selected yet"}</div>
                       <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                        .zip · .odb · .brd · .kicad_pcb · .kicad_sch · .pro · .kicad_mod
+                        .zip · .odb · .brd · .kicad_pcb · .kicad_sch · .sch · .pro · .kicad_mod
                       </div>
                     </div>
 
@@ -326,7 +326,7 @@ function Analyze() {
                         <input
                           type="file"
                           className="hidden"
-                          accept=".zip,.odb,.brd,.kicad_pcb,.kicad_sch,.pro,.kicad_mod,.pcbdocascii,.gbr,.gko,.ger,.gtl,.gbl,.gto,.gbo,.gts,.gbs,.gm1,.pho,.art,.outline,.drl,.xln,.txt"
+                          accept=".zip,.odb,.brd,.kicad_pcb,.kicad_sch,.sch,.pro,.kicad_mod,.pcbdocascii,.gbr,.gko,.ger,.gtl,.gbl,.gto,.gbo,.gts,.gbs,.gm1,.pho,.art,.outline,.drl,.xln,.txt"
                           onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
                         />
                       </label>

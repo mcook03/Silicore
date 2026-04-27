@@ -206,6 +206,58 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertIn(".kicad_sch", manifest["parser_capabilities"])
         self.assertEqual(manifest["parser_capabilities"][".kicad_sch"]["status"], "supported")
 
+    def test_single_analysis_accepts_eagle_schematic_inputs(self):
+        schematic_content = """<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eagle SYSTEM "eagle.dtd">
+<eagle version="7.7.0">
+  <drawing>
+    <schematic>
+      <parts>
+        <part name="U1" library="supply1" deviceset="+3V3" device="" value="+3V3"/>
+        <part name="R1" library="rcl" deviceset="R-US_" device="" value="10k"/>
+      </parts>
+      <sheets>
+        <sheet>
+          <instances>
+            <instance part="U1" gate="G$1" x="5.08" y="10.16"/>
+            <instance part="R1" gate="G$1" x="20.32" y="10.16"/>
+          </instances>
+          <nets>
+            <net name="VIN" class="0">
+              <segment>
+                <pinref part="U1" gate="G$1" pin="PWR"/>
+                <pinref part="R1" gate="G$1" pin="1"/>
+                <wire x1="5.08" y1="10.16" x2="20.32" y2="10.16" width="0.1524" layer="91"/>
+                <label x="5.08" y="10.16" size="1.6764" layer="95"/>
+              </segment>
+            </net>
+          </nets>
+        </sheet>
+      </sheets>
+    </schematic>
+  </drawing>
+</eagle>
+""".strip()
+        input_path = self._make_tempfile(".sch", schematic_content)
+        output_dir = self._make_tempdir("silicore_eagle_schematic_test_")
+
+        result = run_single_analysis_from_path(
+            input_path,
+            config=self.config,
+            output_dir=output_dir,
+        )
+
+        self.assertEqual(result["filename"], os.path.basename(input_path))
+        self.assertGreaterEqual(result["board_summary"]["component_count"], 2)
+        self.assertGreaterEqual(result["board_summary"]["net_count"], 1)
+
+        manifest_path = os.path.join(output_dir, "export_manifest.json")
+        with open(manifest_path, "r", encoding="utf-8") as file:
+            manifest = json.load(file)
+
+        self.assertIn(".sch", manifest["parser_capabilities"])
+        self.assertEqual(manifest["parser_capabilities"][".sch"]["status"], "supported")
+
     def test_single_analysis_accepts_kicad_module_inputs(self):
         module_content = """
 (module TestPad (layer F.Cu)
