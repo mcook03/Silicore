@@ -140,12 +140,12 @@ function ProjectReview() {
               <label className="block cursor-pointer rounded-xl border border-dashed border-border bg-background/40 p-6 text-center">
                 <Upload className="mx-auto h-5 w-5 text-primary" />
                 <div className="mt-2 text-sm">Drop board files here or click to select</div>
-                <div className="font-mono text-[11px] text-muted-foreground">.zip · .brd · .kicad_pcb · .odb</div>
+                <div className="font-mono text-[11px] text-muted-foreground">.zip · .brd · .kicad_pcb · .kicad_sch · .odb</div>
                 <input
                   type="file"
                   multiple
                   className="hidden"
-                  accept=".zip,.odb,.brd,.kicad_pcb,.pcbdocascii,.gbr,.gko,.ger,.gtl,.gbl,.gto,.gbo,.gts,.gbs,.gm1,.pho,.art,.outline,.drl,.xln,.txt"
+                  accept=".zip,.odb,.brd,.kicad_pcb,.kicad_sch,.pcbdocascii,.gbr,.gko,.ger,.gtl,.gbl,.gto,.gbo,.gts,.gbs,.gm1,.pho,.art,.outline,.drl,.xln,.txt"
                   onChange={(event) => setFiles(Array.from(event.target.files ?? []))}
                 />
               </label>

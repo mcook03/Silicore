@@ -1,7 +1,7 @@
 {
     "filename": "high_speed_pair_bad.kicad_pcb",
     "file_path": "fixtures/high_speed_pair_bad.kicad_pcb",
-    "score": 6.1,
+    "score": 6.4,
     "risks": [
         {
             "rule_id": "assembly_testability",
@@ -181,90 +181,6 @@
             }
         },
         {
-            "rule_id": "cam_geometry_creepage",
-            "category": "safety_high_voltage",
-            "severity": "critical",
-            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
-            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-            "components": [
-                "J1",
-                "J1"
-            ],
-            "nets": [
-                "VBUS",
-                "USB_DP"
-            ],
-            "region": {
-                "x": 8.0,
-                "y": 20.0
-            },
-            "metrics": {
-                "creepage": 0.7,
-                "threshold": 2.5
-            },
-            "confidence": 0.84,
-            "short_title": "Geometry creepage below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "safety",
-            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
-            "suggested_actions": [],
-            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
-            "threshold_label": "Minimum geometry creepage 2.500",
-            "observed_label": "Observed geometry creepage 0.700",
-            "explanation": {
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.84
-            },
-            "fix_suggestion": {
-                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                "priority": "critical"
-            }
-        },
-        {
-            "rule_id": "cam_geometry_creepage",
-            "category": "safety_high_voltage",
-            "severity": "critical",
-            "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
-            "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-            "components": [
-                "J1",
-                "J1"
-            ],
-            "nets": [
-                "VBUS",
-                "USB_DN"
-            ],
-            "region": {
-                "x": 8.0,
-                "y": 20.0
-            },
-            "metrics": {
-                "creepage": 2.5,
-                "threshold": 2.5
-            },
-            "confidence": 0.84,
-            "short_title": "Geometry creepage below target",
-            "fix_priority": "high",
-            "estimated_impact": "high",
-            "design_domain": "safety",
-            "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
-            "suggested_actions": [],
-            "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
-            "threshold_label": "Minimum geometry creepage 2.500",
-            "observed_label": "Observed geometry creepage 2.500",
-            "explanation": {
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.84
-            },
-            "fix_suggestion": {
-                "fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                "priority": "critical"
-            }
-        },
-        {
             "rule_id": "clock_sensitive_placement",
             "category": "signal_integrity",
             "severity": "high",
@@ -308,45 +224,6 @@
             "rule_id": "component_analysis",
             "category": "component_design",
             "severity": "medium",
-            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
-            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-            "components": [
-                "J1",
-                "U1"
-            ],
-            "nets": [
-                "USB_DP"
-            ],
-            "region": null,
-            "metrics": {
-                "trace_length": 84.67,
-                "threshold": 18.0,
-                "has_resistor": false
-            },
-            "confidence": 0.7,
-            "short_title": "Possible missing signal termination",
-            "fix_priority": "medium",
-            "estimated_impact": "moderate",
-            "design_domain": "component",
-            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-            "suggested_actions": [],
-            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-            "threshold_label": "Termination review length 18.00 units",
-            "observed_label": "Observed route length 84.67 units",
-            "explanation": {
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.7
-            },
-            "fix_suggestion": {
-                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "priority": "medium"
-            }
-        },
-        {
-            "rule_id": "component_analysis",
-            "category": "component_design",
-            "severity": "medium",
             "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
             "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
             "components": [
@@ -372,6 +249,45 @@
             "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
             "threshold_label": "Termination review length 18.00 units",
             "observed_label": "Observed route length 118.20 units",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.7
+            },
+            "fix_suggestion": {
+                "fix": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "component_analysis",
+            "category": "component_design",
+            "severity": "medium",
+            "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+            "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+            "components": [
+                "J1",
+                "U1"
+            ],
+            "nets": [
+                "USB_DP"
+            ],
+            "region": null,
+            "metrics": {
+                "trace_length": 84.67,
+                "threshold": 18.0,
+                "has_resistor": false
+            },
+            "confidence": 0.7,
+            "short_title": "Possible missing signal termination",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "component",
+            "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+            "suggested_actions": [],
+            "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+            "threshold_label": "Termination review length 18.00 units",
+            "observed_label": "Observed route length 84.67 units",
             "explanation": {
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
@@ -466,10 +382,10 @@
                 "U1"
             ],
             "nets": [
-                "GND",
-                "USB_DP",
+                "USB_DN",
                 "CLK",
-                "USB_DN"
+                "USB_DP",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -774,10 +690,10 @@
                 "J1"
             ],
             "nets": [
-                "GND",
                 "VBUS",
+                "USB_DN",
                 "USB_DP",
-                "USB_DN"
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -795,10 +711,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
                     "VBUS",
+                    "USB_DN",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -833,10 +749,10 @@
                 "U1"
             ],
             "nets": [
-                "GND",
-                "USB_DP",
+                "USB_DN",
                 "CLK",
-                "USB_DN"
+                "USB_DP",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -854,10 +770,10 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "USB_DP",
+                    "USB_DN",
                     "CLK",
-                    "USB_DN"
+                    "USB_DP",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -892,8 +808,8 @@
                 "Y1"
             ],
             "nets": [
-                "GND",
-                "CLK"
+                "CLK",
+                "GND"
             ],
             "region": null,
             "metrics": {
@@ -911,8 +827,8 @@
                     "PGND"
                 ],
                 "observed_component_nets": [
-                    "GND",
-                    "CLK"
+                    "CLK",
+                    "GND"
                 ],
                 "has_power": false,
                 "has_ground": true
@@ -1722,17 +1638,16 @@
     "score_explanation": {
         "start_score": 100.0,
         "start_score_raw_10": 10.0,
-        "total_penalty": 224.0,
-        "total_penalty_raw_10": 22.4,
+        "total_penalty": 200.0,
+        "total_penalty_raw_10": 20.0,
         "severity_totals": {
             "medium": 10.8,
-            "critical": 3.6,
             "high": 7.8,
+            "critical": 1.2,
             "low": 0.2
         },
         "category_totals": {
             "assembly_testability": 2.0,
-            "safety_high_voltage": 3.6,
             "signal_integrity": 5.2,
             "component_design": 0.8,
             "power_integrity": 4.4,
@@ -1740,15 +1655,16 @@
             "emi_emc": 1.6,
             "manufacturing": 0.8,
             "reliability": 0.8,
+            "safety_high_voltage": 1.2,
             "stackup_return_path": 2.0,
             "system_interaction": 0.6
         },
-        "final_score": 6.1,
-        "final_score_raw_10": 0.61,
+        "final_score": 6.4,
+        "final_score_raw_10": 0.64,
         "floor_mode": "soft_floor",
         "soft_floor_score": 5.0,
-        "overflow_penalty_raw_10": 12.4,
-        "overflow_penalty": 124.0,
+        "overflow_penalty_raw_10": 10.0,
+        "overflow_penalty": 100.0,
         "details": [
             {
                 "severity": "medium",
@@ -1806,28 +1722,6 @@
                 "fix_priority": "medium"
             },
             {
-                "severity": "critical",
-                "category": "safety_high_voltage",
-                "penalty": 1.2,
-                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.84,
-                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                "fix_priority": "critical"
-            },
-            {
-                "severity": "critical",
-                "category": "safety_high_voltage",
-                "penalty": 1.2,
-                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
-                "root_cause": "General design issue",
-                "impact": "Unknown system impact",
-                "confidence": 0.84,
-                "suggested_fix": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                "fix_priority": "critical"
-            },
-            {
                 "severity": "high",
                 "category": "signal_integrity",
                 "penalty": 0.6,
@@ -1842,7 +1736,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -1853,7 +1747,7 @@
                 "severity": "medium",
                 "category": "component_design",
                 "penalty": 0.4,
-                "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
                 "root_cause": "General design issue",
                 "impact": "Unknown system impact",
                 "confidence": 0.7,
@@ -2245,16 +2139,15 @@
             "U1",
             "Y1"
         ],
-        "risk_count": 44,
+        "risk_count": 42,
         "severity_counts": {
             "medium": 27,
-            "critical": 3,
             "high": 13,
+            "critical": 1,
             "low": 1
         },
         "category_counts": {
             "assembly_testability": 5,
-            "safety_high_voltage": 3,
             "signal_integrity": 11,
             "component_design": 2,
             "power_integrity": 9,
@@ -2262,6 +2155,7 @@
             "emi_emc": 3,
             "manufacturing": 2,
             "reliability": 2,
+            "safety_high_voltage": 1,
             "stackup_return_path": 4,
             "system_interaction": 2
         }
@@ -3350,7 +3244,7 @@
     },
     "analysis_context": {
         "board_name": "high_speed_pair_bad.kicad_pcb",
-        "timestamp": "2026-04-21T15:09:12.989433+00:00",
+        "timestamp": "2026-04-27T02:42:33.649650+00:00",
         "config_snapshot": {
             "analysis": {
                 "profile": "balanced",
@@ -4181,72 +4075,6 @@
                 "observed_label": "Observed visible access point: none"
             },
             {
-                "rule_id": "cam_geometry_creepage",
-                "category": "safety_high_voltage",
-                "severity": "critical",
-                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
-                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                "components": [
-                    "J1",
-                    "J1"
-                ],
-                "nets": [
-                    "VBUS",
-                    "USB_DP"
-                ],
-                "region": {
-                    "x": 8.0,
-                    "y": 20.0
-                },
-                "metrics": {
-                    "creepage": 0.7,
-                    "threshold": 2.5
-                },
-                "confidence": 0.84,
-                "short_title": "Geometry creepage below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "safety",
-                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
-                "suggested_actions": [],
-                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
-                "threshold_label": "Minimum geometry creepage 2.500",
-                "observed_label": "Observed geometry creepage 0.700"
-            },
-            {
-                "rule_id": "cam_geometry_creepage",
-                "category": "safety_high_voltage",
-                "severity": "critical",
-                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
-                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.",
-                "components": [
-                    "J1",
-                    "J1"
-                ],
-                "nets": [
-                    "VBUS",
-                    "USB_DN"
-                ],
-                "region": {
-                    "x": 8.0,
-                    "y": 20.0
-                },
-                "metrics": {
-                    "creepage": 2.5,
-                    "threshold": 2.5
-                },
-                "confidence": 0.84,
-                "short_title": "Geometry creepage below target",
-                "fix_priority": "high",
-                "estimated_impact": "high",
-                "design_domain": "safety",
-                "why_it_matters": "Geometry-derived region spacing is a stronger basis for high-voltage creepage review than simple pad-center distance.",
-                "suggested_actions": [],
-                "trigger_condition": "High-voltage copper-region spacing fell below the configured geometry creepage threshold.",
-                "threshold_label": "Minimum geometry creepage 2.500",
-                "observed_label": "Observed geometry creepage 2.500"
-            },
-            {
                 "rule_id": "clock_sensitive_placement",
                 "category": "signal_integrity",
                 "severity": "high",
@@ -4281,36 +4109,6 @@
                 "rule_id": "component_analysis",
                 "category": "component_design",
                 "severity": "medium",
-                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
-                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
-                "components": [
-                    "J1",
-                    "U1"
-                ],
-                "nets": [
-                    "USB_DP"
-                ],
-                "region": null,
-                "metrics": {
-                    "trace_length": 84.67,
-                    "threshold": 18.0,
-                    "has_resistor": false
-                },
-                "confidence": 0.7,
-                "short_title": "Possible missing signal termination",
-                "fix_priority": "medium",
-                "estimated_impact": "moderate",
-                "design_domain": "component",
-                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
-                "suggested_actions": [],
-                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
-                "threshold_label": "Termination review length 18.00 units",
-                "observed_label": "Observed route length 84.67 units"
-            },
-            {
-                "rule_id": "component_analysis",
-                "category": "component_design",
-                "severity": "medium",
                 "message": "High-speed net USB_DN has a long route with no visible series or termination resistor",
                 "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
                 "components": [
@@ -4336,6 +4134,36 @@
                 "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
                 "threshold_label": "Termination review length 18.00 units",
                 "observed_label": "Observed route length 118.20 units"
+            },
+            {
+                "rule_id": "component_analysis",
+                "category": "component_design",
+                "severity": "medium",
+                "message": "High-speed net USB_DP has a long route with no visible series or termination resistor",
+                "recommendation": "Review whether this interface requires termination or series damping based on edge rate and topology.",
+                "components": [
+                    "J1",
+                    "U1"
+                ],
+                "nets": [
+                    "USB_DP"
+                ],
+                "region": null,
+                "metrics": {
+                    "trace_length": 84.67,
+                    "threshold": 18.0,
+                    "has_resistor": false
+                },
+                "confidence": 0.7,
+                "short_title": "Possible missing signal termination",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "component",
+                "why_it_matters": "Longer high-speed routes can require series damping or termination to control ringing and reflections.",
+                "suggested_actions": [],
+                "trigger_condition": "A high-speed net exceeded the termination review length threshold without a visible resistor component.",
+                "threshold_label": "Termination review length 18.00 units",
+                "observed_label": "Observed route length 84.67 units"
             },
             {
                 "rule_id": "current_density",
@@ -4403,10 +4231,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
-                    "USB_DP",
+                    "USB_DN",
                     "CLK",
-                    "USB_DN"
+                    "USB_DP",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4639,10 +4467,10 @@
                     "J1"
                 ],
                 "nets": [
-                    "GND",
                     "VBUS",
+                    "USB_DN",
                     "USB_DP",
-                    "USB_DN"
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4660,10 +4488,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
                         "VBUS",
+                        "USB_DN",
                         "USB_DP",
-                        "USB_DN"
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4689,10 +4517,10 @@
                     "U1"
                 ],
                 "nets": [
-                    "GND",
-                    "USB_DP",
+                    "USB_DN",
                     "CLK",
-                    "USB_DN"
+                    "USB_DP",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4710,10 +4538,10 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "USB_DP",
+                        "USB_DN",
                         "CLK",
-                        "USB_DN"
+                        "USB_DP",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -4739,8 +4567,8 @@
                     "Y1"
                 ],
                 "nets": [
-                    "GND",
-                    "CLK"
+                    "CLK",
+                    "GND"
                 ],
                 "region": null,
                 "metrics": {
@@ -4758,8 +4586,8 @@
                         "PGND"
                     ],
                     "observed_component_nets": [
-                        "GND",
-                        "CLK"
+                        "CLK",
+                        "GND"
                     ],
                     "has_power": false,
                     "has_ground": true
@@ -5184,9 +5012,9 @@
             }
         ],
         "score": 0.0,
-        "total_penalty": 18.8
+        "total_penalty": 16.4
     },
-    "generated_at": "2026-04-21T15:09:12.989439+00:00",
+    "generated_at": "2026-04-27T02:42:33.649656+00:00",
     "subsystem_summary": {
         "subsystems": [
             {
@@ -5271,25 +5099,25 @@
     },
     "executive_summary": {
         "headline": "Board needs focused engineering review",
-        "summary": "This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700). The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "summary": "This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
         "top_issues": [
-            {
-                "severity": "critical",
-                "category": "safety_high_voltage",
-                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)",
-                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
-            },
-            {
-                "severity": "critical",
-                "category": "safety_high_voltage",
-                "message": "Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)",
-                "recommendation": "Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent."
-            },
             {
                 "severity": "critical",
                 "category": "safety_high_voltage",
                 "message": "High-voltage pad on J1:VBUS is close to J1:USB_DP",
                 "recommendation": "Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target."
+            },
+            {
+                "severity": "high",
+                "category": "emi_emc",
+                "message": "Fast or noisy net USB_DP changes layers without nearby return-path stitching support",
+                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption."
+            },
+            {
+                "severity": "high",
+                "category": "emi_emc",
+                "message": "Fast or noisy net USB_DN changes layers without nearby return-path stitching support",
+                "recommendation": "Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption."
             }
         ]
     }

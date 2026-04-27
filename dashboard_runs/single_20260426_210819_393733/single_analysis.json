@@ -1,0 +1,4536 @@
+{
+    "filename": "ossc_board-B_Silkscreen.gbr",
+    "file_path": "dashboard_uploads/ossc_board-B_Silkscreen.gbr",
+    "score": 86.0,
+    "risks": [
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Board has limited visible fiducial strategy for assembly alignment",
+            "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "fiducials": 0,
+                "threshold": 2
+            },
+            "confidence": 0.76,
+            "short_title": "Weak fiducial coverage",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "manufacturing",
+            "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+            "threshold_label": "Minimum fiducials 2",
+            "observed_label": "Observed fiducials 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76
+            },
+            "fix_suggestion": {
+                "fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "assembly_testability",
+            "category": "assembly_testability",
+            "severity": "medium",
+            "message": "Ground test-point coverage appears limited for bring-up and probing",
+            "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "ground_test_points": 0,
+                "threshold": 1
+            },
+            "confidence": 0.81,
+            "short_title": "Limited ground test access",
+            "fix_priority": "medium",
+            "estimated_impact": "moderate",
+            "design_domain": "testability",
+            "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+            "suggested_actions": [],
+            "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+            "threshold_label": "Minimum ground test points 1",
+            "observed_label": "Observed ground test points 0",
+            "explanation": {
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81
+            },
+            "fix_suggestion": {
+                "fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "priority": "medium"
+            }
+        },
+        {
+            "rule_id": "cam_bundle",
+            "category": "manufacturing",
+            "severity": "high",
+            "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+            "recommendation": "Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous.",
+            "components": [],
+            "nets": [],
+            "region": null,
+            "metrics": {
+                "outline_count": 0
+            },
+            "confidence": 0.94,
+            "short_title": "Missing CAM outline",
+            "fix_priority": "high",
+            "estimated_impact": "high",
+            "design_domain": "manufacturing",
+            "why_it_matters": "A missing board outline makes CAM import incomplete and weakens manufacturability and keepout reasoning.",
+            "suggested_actions": [],
+            "trigger_condition": "CAM review expected a board outline layer but did not find one.",
+            "threshold_label": "Outline layer required",
+            "observed_label": "Observed outline segments 0",
+            "explanation": {
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.94
+            },
+            "fix_suggestion": {
+                "fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "priority": "high"
+            }
+        }
+    ],
+    "score_explanation": {
+        "start_score": 100.0,
+        "start_score_raw_10": 10.0,
+        "total_penalty": 14.0,
+        "total_penalty_raw_10": 1.4,
+        "severity_totals": {
+            "medium": 0.8,
+            "high": 0.6
+        },
+        "category_totals": {
+            "assembly_testability": 0.8,
+            "manufacturing": 0.6
+        },
+        "final_score": 86.0,
+        "final_score_raw_10": 8.6,
+        "floor_mode": "linear",
+        "soft_floor_score": 5.0,
+        "overflow_penalty_raw_10": 0.0,
+        "overflow_penalty": 0.0,
+        "details": [
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.76,
+                "suggested_fix": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "penalty": 0.4,
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "root_cause": "General design issue",
+                "impact": "Unknown system impact",
+                "confidence": 0.81,
+                "suggested_fix": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "fix_priority": "medium"
+            },
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "penalty": 0.6,
+                "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+                "root_cause": "Design rule below fabrication limits",
+                "impact": "Reduced yield or board failure risk",
+                "confidence": 0.94,
+                "suggested_fix": "Review the board against fabrication limits and increase trace widths or spacing where necessary.",
+                "fix_priority": "high"
+            }
+        ]
+    },
+    "board_summary": {
+        "filename": "ossc_board-B_Silkscreen.gbr",
+        "component_count": 0,
+        "net_count": 0,
+        "sample_components": [],
+        "risk_count": 3,
+        "severity_counts": {
+            "medium": 2,
+            "high": 1
+        },
+        "category_counts": {
+            "assembly_testability": 2,
+            "manufacturing": 1
+        }
+    },
+    "pcb_snapshot": {
+        "filename": "ossc_board-B_Silkscreen.gbr",
+        "declared_layers": [
+            "Gerber"
+        ],
+        "layers": [
+            "Gerber"
+        ],
+        "board_bounds": {
+            "min_x": 63.811616,
+            "max_x": 84.259749,
+            "min_y": -73.991182,
+            "max_y": -63.4322,
+            "width": 20.448133,
+            "height": 10.558981999999993
+        },
+        "board_width": 20.448133,
+        "board_height": 10.558981999999993,
+        "source_format": "gerber",
+        "metadata": {
+            "geometry_capabilities": {
+                "numpy": true,
+                "scipy": true,
+                "shapely": true,
+                "pyclipper": true
+            },
+            "parser": {
+                "backend": "gerbonara"
+            },
+            "cam": {
+                "flash_count": 0,
+                "region_count": 9
+            }
+        },
+        "components": [],
+        "nets": {},
+        "traces": [],
+        "vias": [],
+        "zones": [
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 70.627266,
+                        "y": -72.466134
+                    },
+                    {
+                        "x": 70.627266,
+                        "y": -73.956267
+                    },
+                    {
+                        "x": 64.4974,
+                        "y": -73.956267
+                    },
+                    {
+                        "x": 64.4974,
+                        "y": -72.466134
+                    }
+                ],
+                "area_estimate": 9.1343
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 80.372508,
+                        "y": -72.130011
+                    },
+                    {
+                        "x": 80.259279,
+                        "y": -72.250264
+                    },
+                    {
+                        "x": 80.116625,
+                        "y": -72.317484
+                    },
+                    {
+                        "x": 80.041729,
+                        "y": -72.331604
+                    },
+                    {
+                        "x": 79.865711,
+                        "y": -72.33562
+                    },
+                    {
+                        "x": 79.691681,
+                        "y": -72.305619
+                    },
+                    {
+                        "x": 79.538968,
+                        "y": -72.245983
+                    },
+                    {
+                        "x": 79.426899,
+                        "y": -72.161095
+                    },
+                    {
+                        "x": 79.368384,
+                        "y": -72.065354
+                    },
+                    {
+                        "x": 79.318407,
+                        "y": -71.917045
+                    },
+                    {
+                        "x": 79.285492,
+                        "y": -71.740971
+                    },
+                    {
+                        "x": 79.275468,
+                        "y": -71.604264
+                    },
+                    {
+                        "x": 79.271867,
+                        "y": -71.555146
+                    },
+                    {
+                        "x": 79.279755,
+                        "y": -71.377584
+                    },
+                    {
+                        "x": 79.311385,
+                        "y": -71.2263
+                    },
+                    {
+                        "x": 79.313188,
+                        "y": -71.220968
+                    },
+                    {
+                        "x": 79.400856,
+                        "y": -71.042721
+                    },
+                    {
+                        "x": 79.524811,
+                        "y": -70.916507
+                    },
+                    {
+                        "x": 79.686012,
+                        "y": -70.841643
+                    },
+                    {
+                        "x": 79.885418,
+                        "y": -70.817447
+                    },
+                    {
+                        "x": 80.074563,
+                        "y": -70.838518
+                    },
+                    {
+                        "x": 80.243321,
+                        "y": -70.908073
+                    },
+                    {
+                        "x": 80.371123,
+                        "y": -71.025965
+                    },
+                    {
+                        "x": 80.457782,
+                        "y": -71.191933
+                    },
+                    {
+                        "x": 80.503106,
+                        "y": -71.405719
+                    },
+                    {
+                        "x": 80.505133,
+                        "y": -71.545053
+                    },
+                    {
+                        "x": 80.506907,
+                        "y": -71.667064
+                    },
+                    {
+                        "x": 80.499662,
+                        "y": -71.748788
+                    },
+                    {
+                        "x": 80.453555,
+                        "y": -71.96132
+                    }
+                ],
+                "area_estimate": 1.5554
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 78.926,
+                        "y": -70.37225
+                    },
+                    {
+                        "x": 78.926,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 78.64025,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 78.64025,
+                        "y": -71.38825
+                    },
+                    {
+                        "x": 77.94175,
+                        "y": -71.38825
+                    },
+                    {
+                        "x": 77.94175,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 77.656,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 77.656,
+                        "y": -70.37225
+                    },
+                    {
+                        "x": 77.94175,
+                        "y": -70.37225
+                    },
+                    {
+                        "x": 77.94175,
+                        "y": -71.13425
+                    },
+                    {
+                        "x": 78.64025,
+                        "y": -71.13425
+                    },
+                    {
+                        "x": 78.64025,
+                        "y": -70.37225
+                    }
+                ],
+                "area_estimate": 1.2843
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 81.64451,
+                        "y": -71.492238
+                    },
+                    {
+                        "x": 81.58066,
+                        "y": -71.501051
+                    },
+                    {
+                        "x": 81.475856,
+                        "y": -71.524619
+                    },
+                    {
+                        "x": 81.404913,
+                        "y": -71.552242
+                    },
+                    {
+                        "x": 81.403572,
+                        "y": -71.553112
+                    },
+                    {
+                        "x": 81.362066,
+                        "y": -71.599309
+                    },
+                    {
+                        "x": 81.301516,
+                        "y": -71.689574
+                    },
+                    {
+                        "x": 81.229843,
+                        "y": -71.811247
+                    },
+                    {
+                        "x": 81.154967,
+                        "y": -71.951671
+                    },
+                    {
+                        "x": 80.973875,
+                        "y": -72.308718
+                    },
+                    {
+                        "x": 80.822798,
+                        "y": -72.308859
+                    },
+                    {
+                        "x": 80.67172,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 80.849766,
+                        "y": -71.951812
+                    },
+                    {
+                        "x": 80.924407,
+                        "y": -71.808836
+                    },
+                    {
+                        "x": 81.001948,
+                        "y": -71.67254
+                    },
+                    {
+                        "x": 81.070841,
+                        "y": -71.563074
+                    },
+                    {
+                        "x": 81.121934,
+                        "y": -71.49577
+                    },
+                    {
+                        "x": 81.216058,
+                        "y": -71.396916
+                    },
+                    {
+                        "x": 81.101348,
+                        "y": -71.329235
+                    },
+                    {
+                        "x": 81.001461,
+                        "y": -71.244794
+                    },
+                    {
+                        "x": 80.927831,
+                        "y": -71.11722
+                    },
+                    {
+                        "x": 80.899003,
+                        "y": -70.979029
+                    },
+                    {
+                        "x": 80.89704,
+                        "y": -70.969618
+                    },
+                    {
+                        "x": 80.907927,
+                        "y": -70.815226
+                    },
+                    {
+                        "x": 80.95933,
+                        "y": -70.667282
+                    },
+                    {
+                        "x": 81.050089,
+                        "y": -70.539023
+                    },
+                    {
+                        "x": 81.17904,
+                        "y": -70.443687
+                    },
+                    {
+                        "x": 81.186241,
+                        "y": -70.440085
+                    },
+                    {
+                        "x": 81.254542,
+                        "y": -70.410272
+                    },
+                    {
+                        "x": 81.326102,
+                        "y": -70.390605
+                    },
+                    {
+                        "x": 81.415972,
+                        "y": -70.379059
+                    },
+                    {
+                        "x": 81.539205,
+                        "y": -70.373615
+                    },
+                    {
+                        "x": 81.710853,
+                        "y": -70.37225
+                    },
+                    {
+                        "x": 82.101,
+                        "y": -70.37225
+                    },
+                    {
+                        "x": 82.101,
+                        "y": -70.5945
+                    },
+                    {
+                        "x": 82.101,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 81.81525,
+                        "y": -72.309
+                    },
+                    {
+                        "x": 81.81525,
+                        "y": -71.474616
+                    }
+                ],
+                "area_estimate": 1.6998
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 77.11661,
+                        "y": -70.456794
+                    },
+                    {
+                        "x": 77.239874,
+                        "y": -70.600061
+                    },
+                    {
+                        "x": 77.310491,
+                        "y": -70.764415
+                    },
+                    {
+                        "x": 77.325201,
+                        "y": -70.938956
+                    },
+                    {
+                        "x": 77.280743,
+                        "y": -71.112787
+                    },
+                    {
+                        "x": 77.278481,
+                        "y": -71.117848
+                    },
+                    {
+                        "x": 77.228753,
+                        "y": -71.204908
+                    },
+                    {
+                        "x": 77.160637,
+                        "y": -71.274818
+                    },
+                    {
+                        "x": 77.063061,
+                        "y": -71.334426
+                    },
+                    {
+                        "x": 76.924955,
+                        "y": -71.390576
+                    },
+                    {
+                        "x": 76.73525,
+                        "y": -71.450114
+                    },
+                    {
+                        "x": 76.682801,
+                        "y": -71.466053
+                    },
+                    {
+                        "x": 76.527615,
+                        "y": -71.527826
+                    },
+                    {
+                        "x": 76.426215,
+                        "y": -71.599828
+                    },
+                    {
+                        "x": 76.37097,
+                        "y": -71.689122
+                    },
+                    {
+                        "x": 76.35425,
+                        "y": -71.80277
+                    },
+                    {
+                        "x": 76.365102,
+                        "y": -71.890857
+                    },
+                    {
+                        "x": 76.422719,
+                        "y": -72.000969
+                    },
+                    {
+                        "x": 76.523927,
+                        "y": -72.074736
+                    },
+                    {
+                        "x": 76.661918,
+                        "y": -72.109606
+                    },
+                    {
+                        "x": 76.829879,
+                        "y": -72.103031
+                    },
+                    {
+                        "x": 77.021,
+                        "y": -72.052458
+                    },
+                    {
+                        "x": 77.125982,
+                        "y": -72.013794
+                    },
+                    {
+                        "x": 77.220979,
+                        "y": -71.98103
+                    },
+                    {
+                        "x": 77.275334,
+                        "y": -71.971089
+                    },
+                    {
+                        "x": 77.300268,
+                        "y": -71.985637
+                    },
+                    {
+                        "x": 77.307,
+                        "y": -72.026337
+                    },
+                    {
+                        "x": 77.30675,
+                        "y": -72.094855
+                    },
+                    {
+                        "x": 77.30675,
+                        "y": -72.237367
+                    },
+                    {
+                        "x": 77.140063,
+                        "y": -72.288014
+                    },
+                    {
+                        "x": 76.996079,
+                        "y": -72.317983
+                    },
+                    {
+                        "x": 76.818001,
+                        "y": -72.331581
+                    },
+                    {
+                        "x": 76.635907,
+                        "y": -72.326856
+                    },
+                    {
+                        "x": 76.471583,
+                        "y": -72.30444
+                    },
+                    {
+                        "x": 76.346813,
+                        "y": -72.264967
+                    },
+                    {
+                        "x": 76.339977,
+                        "y": -72.261544
+                    },
+                    {
+                        "x": 76.215498,
+                        "y": -72.164803
+                    },
+                    {
+                        "x": 76.128271,
+                        "y": -72.030105
+                    },
+                    {
+                        "x": 76.080755,
+                        "y": -71.871996
+                    },
+                    {
+                        "x": 76.075407,
+                        "y": -71.705021
+                    },
+                    {
+                        "x": 76.114687,
+                        "y": -71.543724
+                    },
+                    {
+                        "x": 76.201054,
+                        "y": -71.402651
+                    },
+                    {
+                        "x": 76.212109,
+                        "y": -71.390393
+                    },
+                    {
+                        "x": 76.272127,
+                        "y": -71.336327
+                    },
+                    {
+                        "x": 76.3494,
+                        "y": -71.290576
+                    },
+                    {
+                        "x": 76.458808,
+                        "y": -71.245645
+                    },
+                    {
+                        "x": 76.615234,
+                        "y": -71.194039
+                    },
+                    {
+                        "x": 76.625323,
+                        "y": -71.190894
+                    },
+                    {
+                        "x": 76.801533,
+                        "y": -71.130922
+                    },
+                    {
+                        "x": 76.924005,
+                        "y": -71.07571
+                    },
+                    {
+                        "x": 77.001114,
+                        "y": -71.019211
+                    },
+                    {
+                        "x": 77.041237,
+                        "y": -70.955377
+                    },
+                    {
+                        "x": 77.05275,
+                        "y": -70.878162
+                    },
+                    {
+                        "x": 77.039698,
+                        "y": -70.782025
+                    },
+                    {
+                        "x": 76.979091,
+                        "y": -70.673064
+                    },
+                    {
+                        "x": 76.875623,
+                        "y": -70.600215
+                    },
+                    {
+                        "x": 76.736518,
+                        "y": -70.566195
+                    },
+                    {
+                        "x": 76.569001,
+                        "y": -70.573717
+                    },
+                    {
+                        "x": 76.380296,
+                        "y": -70.625496
+                    },
+                    {
+                        "x": 76.31102,
+                        "y": -70.650087
+                    },
+                    {
+                        "x": 76.235931,
+                        "y": -70.671576
+                    },
+                    {
+                        "x": 76.201109,
+                        "y": -70.674192
+                    },
+                    {
+                        "x": 76.198895,
+                        "y": -70.670606
+                    },
+                    {
+                        "x": 76.189192,
+                        "y": -70.622531
+                    },
+                    {
+                        "x": 76.183342,
+                        "y": -70.542048
+                    },
+                    {
+                        "x": 76.182863,
+                        "y": -70.494393
+                    },
+                    {
+                        "x": 76.194582,
+                        "y": -70.442067
+                    },
+                    {
+                        "x": 76.235824,
+                        "y": -70.410281
+                    },
+                    {
+                        "x": 76.3225,
+                        "y": -70.380568
+                    },
+                    {
+                        "x": 76.379409,
+                        "y": -70.366226
+                    },
+                    {
+                        "x": 76.528591,
+                        "y": -70.346588
+                    },
+                    {
+                        "x": 76.691733,
+                        "y": -70.343496
+                    },
+                    {
+                        "x": 76.849769,
+                        "y": -70.355881
+                    },
+                    {
+                        "x": 76.983633,
+                        "y": -70.38267
+                    },
+                    {
+                        "x": 77.074258,
+                        "y": -70.422794
+                    }
+                ],
+                "area_estimate": 1.0639
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 66.460023,
+                        "y": -69.508432
+                    },
+                    {
+                        "x": 66.487016,
+                        "y": -69.556164
+                    },
+                    {
+                        "x": 66.501275,
+                        "y": -69.61228
+                    },
+                    {
+                        "x": 66.501755,
+                        "y": -69.650048
+                    },
+                    {
+                        "x": 66.489552,
+                        "y": -69.702101
+                    },
+                    {
+                        "x": 66.464162,
+                        "y": -69.749274
+                    },
+                    {
+                        "x": 66.427789,
+                        "y": -69.788709
+                    },
+                    {
+                        "x": 66.382637,
+                        "y": -69.817553
+                    },
+                    {
+                        "x": 66.33091,
+                        "y": -69.832949
+                    },
+                    {
+                        "x": 66.306566,
+                        "y": -69.835149
+                    },
+                    {
+                        "x": 66.248698,
+                        "y": -69.829476
+                    },
+                    {
+                        "x": 66.196406,
+                        "y": -69.80834
+                    },
+                    {
+                        "x": 66.151464,
+                        "y": -69.772339
+                    },
+                    {
+                        "x": 66.148009,
+                        "y": -69.768585
+                    },
+                    {
+                        "x": 66.115214,
+                        "y": -69.720941
+                    },
+                    {
+                        "x": 66.097183,
+                        "y": -69.669403
+                    },
+                    {
+                        "x": 66.093424,
+                        "y": -69.616641
+                    },
+                    {
+                        "x": 66.103447,
+                        "y": -69.565326
+                    },
+                    {
+                        "x": 66.126761,
+                        "y": -69.518127
+                    },
+                    {
+                        "x": 66.162875,
+                        "y": -69.477714
+                    },
+                    {
+                        "x": 66.2113,
+                        "y": -69.446757
+                    },
+                    {
+                        "x": 66.218328,
+                        "y": -69.443634
+                    },
+                    {
+                        "x": 66.272869,
+                        "y": -69.428829
+                    },
+                    {
+                        "x": 66.326717,
+                        "y": -69.42928
+                    },
+                    {
+                        "x": 66.377465,
+                        "y": -69.443615
+                    },
+                    {
+                        "x": 66.422703,
+                        "y": -69.470457
+                    }
+                ],
+                "area_estimate": 0.1294
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 84.231918,
+                        "y": -69.620939
+                    },
+                    {
+                        "x": 84.211207,
+                        "y": -69.753938
+                    },
+                    {
+                        "x": 84.182538,
+                        "y": -69.900732
+                    },
+                    {
+                        "x": 84.065792,
+                        "y": -70.366484
+                    },
+                    {
+                        "x": 83.88584,
+                        "y": -70.874451
+                    },
+                    {
+                        "x": 83.654519,
+                        "y": -71.354161
+                    },
+                    {
+                        "x": 83.367825,
+                        "y": -71.813758
+                    },
+                    {
+                        "x": 83.02175,
+                        "y": -72.261388
+                    },
+                    {
+                        "x": 82.845478,
+                        "y": -72.45651
+                    },
+                    {
+                        "x": 82.464574,
+                        "y": -72.810611
+                    },
+                    {
+                        "x": 82.040258,
+                        "y": -73.127232
+                    },
+                    {
+                        "x": 81.580621,
+                        "y": -73.401807
+                    },
+                    {
+                        "x": 81.093751,
+                        "y": -73.629766
+                    },
+                    {
+                        "x": 80.587739,
+                        "y": -73.806543
+                    },
+                    {
+                        "x": 80.070675,
+                        "y": -73.92757
+                    },
+                    {
+                        "x": 79.850374,
+                        "y": -73.958136
+                    },
+                    {
+                        "x": 79.542427,
+                        "y": -73.98202
+                    },
+                    {
+                        "x": 79.210956,
+                        "y": -73.991182
+                    },
+                    {
+                        "x": 78.876979,
+                        "y": -73.985591
+                    },
+                    {
+                        "x": 78.561512,
+                        "y": -73.965218
+                    },
+                    {
+                        "x": 78.285574,
+                        "y": -73.930036
+                    },
+                    {
+                        "x": 77.914791,
+                        "y": -73.852561
+                    },
+                    {
+                        "x": 77.37829,
+                        "y": -73.68738
+                    },
+                    {
+                        "x": 76.867079,
+                        "y": -73.464511
+                    },
+                    {
+                        "x": 76.383632,
+                        "y": -73.185261
+                    },
+                    {
+                        "x": 75.930424,
+                        "y": -72.850938
+                    },
+                    {
+                        "x": 75.50993,
+                        "y": -72.462852
+                    },
+                    {
+                        "x": 75.319984,
+                        "y": -72.258385
+                    },
+                    {
+                        "x": 74.978267,
+                        "y": -71.830423
+                    },
+                    {
+                        "x": 74.692949,
+                        "y": -71.380555
+                    },
+                    {
+                        "x": 74.460019,
+                        "y": -70.902036
+                    },
+                    {
+                        "x": 74.275464,
+                        "y": -70.388125
+                    },
+                    {
+                        "x": 74.241394,
+                        "y": -70.272109
+                    },
+                    {
+                        "x": 74.168114,
+                        "y": -69.983481
+                    },
+                    {
+                        "x": 74.117122,
+                        "y": -69.705631
+                    },
+                    {
+                        "x": 74.08619,
+                        "y": -69.420345
+                    },
+                    {
+                        "x": 74.07309,
+                        "y": -69.109411
+                    },
+                    {
+                        "x": 74.075364,
+                        "y": -68.787122
+                    },
+                    {
+                        "x": 74.075593,
+                        "y": -68.754614
+                    },
+                    {
+                        "x": 74.084418,
+                        "y": -68.526303
+                    },
+                    {
+                        "x": 74.120639,
+                        "y": -68.112019
+                    },
+                    {
+                        "x": 74.185264,
+                        "y": -67.73156
+                    },
+                    {
+                        "x": 74.28241,
+                        "y": -67.367888
+                    },
+                    {
+                        "x": 74.416192,
+                        "y": -67.00397
+                    },
+                    {
+                        "x": 74.590728,
+                        "y": -66.622771
+                    },
+                    {
+                        "x": 74.611183,
+                        "y": -66.581992
+                    },
+                    {
+                        "x": 74.896065,
+                        "y": -66.088358
+                    },
+                    {
+                        "x": 75.228185,
+                        "y": -65.635895
+                    },
+                    {
+                        "x": 75.604729,
+                        "y": -65.226805
+                    },
+                    {
+                        "x": 76.022882,
+                        "y": -64.863293
+                    },
+                    {
+                        "x": 76.479831,
+                        "y": -64.547563
+                    },
+                    {
+                        "x": 76.972762,
+                        "y": -64.281818
+                    },
+                    {
+                        "x": 77.49886,
+                        "y": -64.068264
+                    },
+                    {
+                        "x": 78.055313,
+                        "y": -63.909103
+                    },
+                    {
+                        "x": 78.309202,
+                        "y": -63.862061
+                    },
+                    {
+                        "x": 78.633302,
+                        "y": -63.824613
+                    },
+                    {
+                        "x": 78.980637,
+                        "y": -63.803725
+                    },
+                    {
+                        "x": 79.33095,
+                        "y": -63.800058
+                    },
+                    {
+                        "x": 79.663987,
+                        "y": -63.814272
+                    },
+                    {
+                        "x": 79.95949,
+                        "y": -63.847028
+                    },
+                    {
+                        "x": 80.460194,
+                        "y": -63.950588
+                    },
+                    {
+                        "x": 80.995407,
+                        "y": -64.120683
+                    },
+                    {
+                        "x": 81.503395,
+                        "y": -64.346044
+                    },
+                    {
+                        "x": 81.98088,
+                        "y": -64.624219
+                    },
+                    {
+                        "x": 82.424588,
+                        "y": -64.952751
+                    },
+                    {
+                        "x": 82.831242,
+                        "y": -65.329188
+                    },
+                    {
+                        "x": 83.197566,
+                        "y": -65.751074
+                    },
+                    {
+                        "x": 83.520285,
+                        "y": -66.215956
+                    },
+                    {
+                        "x": 83.796122,
+                        "y": -66.721379
+                    },
+                    {
+                        "x": 83.905889,
+                        "y": -66.964334
+                    },
+                    {
+                        "x": 84.041566,
+                        "y": -67.324981
+                    },
+                    {
+                        "x": 84.141742,
+                        "y": -67.686775
+                    },
+                    {
+                        "x": 84.209466,
+                        "y": -68.064198
+                    },
+                    {
+                        "x": 84.247785,
+                        "y": -68.471728
+                    },
+                    {
+                        "x": 84.259749,
+                        "y": -68.923846
+                    },
+                    {
+                        "x": 84.259258,
+                        "y": -69.01881
+                    },
+                    {
+                        "x": 84.258586,
+                        "y": -69.149235
+                    },
+                    {
+                        "x": 84.254378,
+                        "y": -69.334135
+                    },
+                    {
+                        "x": 84.245898,
+                        "y": -69.486188
+                    }
+                ],
+                "area_estimate": 81.9501
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 77.663541,
+                        "y": -65.363736
+                    },
+                    {
+                        "x": 77.777944,
+                        "y": -65.471027
+                    },
+                    {
+                        "x": 77.879943,
+                        "y": -65.573201
+                    },
+                    {
+                        "x": 77.958797,
+                        "y": -65.660817
+                    },
+                    {
+                        "x": 78.045622,
+                        "y": -65.768333
+                    },
+                    {
+                        "x": 78.171094,
+                        "y": -65.933486
+                    },
+                    {
+                        "x": 78.293616,
+                        "y": -66.108381
+                    },
+                    {
+                        "x": 78.41728,
+                        "y": -66.299922
+                    },
+                    {
+                        "x": 78.546175,
+                        "y": -66.515015
+                    },
+                    {
+                        "x": 78.684391,
+                        "y": -66.760562
+                    },
+                    {
+                        "x": 78.83602,
+                        "y": -67.04347
+                    },
+                    {
+                        "x": 79.005151,
+                        "y": -67.370643
+                    },
+                    {
+                        "x": 79.195875,
+                        "y": -67.748985
+                    },
+                    {
+                        "x": 79.306521,
+                        "y": -67.96899
+                    },
+                    {
+                        "x": 79.417696,
+                        "y": -68.186798
+                    },
+                    {
+                        "x": 79.518021,
+                        "y": -68.380025
+                    },
+                    {
+                        "x": 79.604056,
+                        "y": -68.542195
+                    },
+                    {
+                        "x": 79.672362,
+                        "y": -68.666829
+                    },
+                    {
+                        "x": 79.7195,
+                        "y": -68.747448
+                    },
+                    {
+                        "x": 79.742029,
+                        "y": -68.777576
+                    },
+                    {
+                        "x": 79.762896,
+                        "y": -68.77094
+                    },
+                    {
+                        "x": 79.8029,
+                        "y": -68.723397
+                    },
+                    {
+                        "x": 79.858195,
+                        "y": -68.628727
+                    },
+                    {
+                        "x": 79.930412,
+                        "y": -68.483802
+                    },
+                    {
+                        "x": 80.021185,
+                        "y": -68.285498
+                    },
+                    {
+                        "x": 80.132146,
+                        "y": -68.030687
+                    },
+                    {
+                        "x": 80.203243,
+                        "y": -67.867614
+                    },
+                    {
+                        "x": 80.265761,
+                        "y": -67.743779
+                    },
+                    {
+                        "x": 80.322768,
+                        "y": -67.671636
+                    },
+                    {
+                        "x": 80.384184,
+                        "y": -67.647618
+                    },
+                    {
+                        "x": 80.459932,
+                        "y": -67.668157
+                    },
+                    {
+                        "x": 80.559933,
+                        "y": -67.729686
+                    },
+                    {
+                        "x": 80.694109,
+                        "y": -67.828638
+                    },
+                    {
+                        "x": 80.708475,
+                        "y": -67.839497
+                    },
+                    {
+                        "x": 80.846592,
+                        "y": -67.946809
+                    },
+                    {
+                        "x": 80.989552,
+                        "y": -68.062345
+                    },
+                    {
+                        "x": 81.128211,
+                        "y": -68.178214
+                    },
+                    {
+                        "x": 81.253427,
+                        "y": -68.286523
+                    },
+                    {
+                        "x": 81.356058,
+                        "y": -68.37938
+                    },
+                    {
+                        "x": 81.426961,
+                        "y": -68.448893
+                    },
+                    {
+                        "x": 81.456993,
+                        "y": -68.487171
+                    },
+                    {
+                        "x": 81.454687,
+                        "y": -68.496448
+                    },
+                    {
+                        "x": 81.418844,
+                        "y": -68.544557
+                    },
+                    {
+                        "x": 81.346763,
+                        "y": -68.622615
+                    },
+                    {
+                        "x": 81.246483,
+                        "y": -68.722181
+                    },
+                    {
+                        "x": 81.126037,
+                        "y": -68.834813
+                    },
+                    {
+                        "x": 80.979103,
+                        "y": -68.969663
+                    },
+                    {
+                        "x": 80.697551,
+                        "y": -69.236302
+                    },
+                    {
+                        "x": 80.461159,
+                        "y": -69.473299
+                    },
+                    {
+                        "x": 80.265377,
+                        "y": -69.685485
+                    },
+                    {
+                        "x": 80.105657,
+                        "y": -69.877692
+                    },
+                    {
+                        "x": 79.977451,
+                        "y": -70.05475
+                    },
+                    {
+                        "x": 79.905089,
+                        "y": -70.162828
+                    },
+                    {
+                        "x": 79.830588,
+                        "y": -70.272819
+                    },
+                    {
+                        "x": 79.774148,
+                        "y": -70.354706
+                    },
+                    {
+                        "x": 79.744257,
+                        "y": -70.396062
+                    },
+                    {
+                        "x": 79.709931,
+                        "y": -70.42644
+                    },
+                    {
+                        "x": 79.666941,
+                        "y": -70.426972
+                    },
+                    {
+                        "x": 79.617413,
+                        "y": -70.383096
+                    },
+                    {
+                        "x": 79.55609,
+                        "y": -70.289797
+                    },
+                    {
+                        "x": 79.477708,
+                        "y": -70.142062
+                    },
+                    {
+                        "x": 79.279356,
+                        "y": -69.763042
+                    },
+                    {
+                        "x": 78.986273,
+                        "y": -69.253897
+                    },
+                    {
+                        "x": 78.678321,
+                        "y": -68.773207
+                    },
+                    {
+                        "x": 78.360465,
+                        "y": -68.327822
+                    },
+                    {
+                        "x": 78.037674,
+                        "y": -67.924595
+                    },
+                    {
+                        "x": 77.714913,
+                        "y": -67.570377
+                    },
+                    {
+                        "x": 77.39715,
+                        "y": -67.272021
+                    },
+                    {
+                        "x": 77.375671,
+                        "y": -67.253524
+                    },
+                    {
+                        "x": 77.305128,
+                        "y": -67.187252
+                    },
+                    {
+                        "x": 77.258282,
+                        "y": -67.124656
+                    },
+                    {
+                        "x": 77.23183,
+                        "y": -67.052382
+                    },
+                    {
+                        "x": 77.222468,
+                        "y": -66.957077
+                    },
+                    {
+                        "x": 77.226893,
+                        "y": -66.825388
+                    },
+                    {
+                        "x": 77.241803,
+                        "y": -66.643959
+                    },
+                    {
+                        "x": 77.253108,
+                        "y": -66.495134
+                    },
+                    {
+                        "x": 77.260957,
+                        "y": -66.267516
+                    },
+                    {
+                        "x": 77.257079,
+                        "y": -66.023066
+                    },
+                    {
+                        "x": 77.241466,
+                        "y": -65.738997
+                    },
+                    {
+                        "x": 77.239174,
+                        "y": -65.705387
+                    },
+                    {
+                        "x": 77.225958,
+                        "y": -65.483227
+                    },
+                    {
+                        "x": 77.220595,
+                        "y": -65.316536
+                    },
+                    {
+                        "x": 77.223541,
+                        "y": -65.198591
+                    },
+                    {
+                        "x": 77.235251,
+                        "y": -65.122669
+                    },
+                    {
+                        "x": 77.25618,
+                        "y": -65.082046
+                    },
+                    {
+                        "x": 77.286784,
+                        "y": -65.069999
+                    },
+                    {
+                        "x": 77.296658,
+                        "y": -65.072232
+                    },
+                    {
+                        "x": 77.353292,
+                        "y": -65.105577
+                    },
+                    {
+                        "x": 77.440476,
+                        "y": -65.17157
+                    },
+                    {
+                        "x": 77.547472,
+                        "y": -65.26077
+                    }
+                ],
+                "area_estimate": 7.2788
+            },
+            {
+                "net_name": "GERBER",
+                "layer": "Gerber",
+                "points": [
+                    {
+                        "x": 68.998089,
+                        "y": -64.450111
+                    },
+                    {
+                        "x": 69.046794,
+                        "y": -64.485425
+                    },
+                    {
+                        "x": 69.121019,
+                        "y": -64.554478
+                    },
+                    {
+                        "x": 69.183295,
+                        "y": -64.62961
+                    },
+                    {
+                        "x": 69.231163,
+                        "y": -64.70855
+                    },
+                    {
+                        "x": 69.256865,
+                        "y": -64.760206
+                    },
+                    {
+                        "x": 69.265917,
+                        "y": -64.7784
+                    },
+                    {
+                        "x": 69.484266,
+                        "y": -64.7784
+                    },
+                    {
+                        "x": 69.484266,
+                        "y": -64.990067
+                    },
+                    {
+                        "x": 69.231304,
+                        "y": -64.990067
+                    },
+                    {
+                        "x": 69.230192,
+                        "y": -64.998533
+                    },
+                    {
+                        "x": 69.226579,
+                        "y": -65.02605
+                    },
+                    {
+                        "x": 69.224442,
+                        "y": -65.044384
+                    },
+                    {
+                        "x": 69.220974,
+                        "y": -65.078672
+                    },
+                    {
+                        "x": 69.216817,
+                        "y": -65.123224
+                    },
+                    {
+                        "x": 69.212168,
+                        "y": -65.175575
+                    },
+                    {
+                        "x": 69.207226,
+                        "y": -65.233258
+                    },
+                    {
+                        "x": 69.202192,
+                        "y": -65.293806
+                    },
+                    {
+                        "x": 69.197263,
+                        "y": -65.354753
+                    },
+                    {
+                        "x": 69.192638,
+                        "y": -65.413632
+                    },
+                    {
+                        "x": 69.188517,
+                        "y": -65.467977
+                    },
+                    {
+                        "x": 69.185098,
+                        "y": -65.515321
+                    },
+                    {
+                        "x": 69.18258,
+                        "y": -65.553198
+                    },
+                    {
+                        "x": 69.181163,
+                        "y": -65.579141
+                    },
+                    {
+                        "x": 69.181044,
+                        "y": -65.590683
+                    },
+                    {
+                        "x": 69.184214,
+                        "y": -65.589484
+                    },
+                    {
+                        "x": 69.195601,
+                        "y": -65.579853
+                    },
+                    {
+                        "x": 69.215487,
+                        "y": -65.561066
+                    },
+                    {
+                        "x": 69.244108,
+                        "y": -65.532876
+                    },
+                    {
+                        "x": 69.281702,
+                        "y": -65.495039
+                    },
+                    {
+                        "x": 69.328507,
+                        "y": -65.447308
+                    },
+                    {
+                        "x": 69.384759,
+                        "y": -65.389438
+                    },
+                    {
+                        "x": 69.450697,
+                        "y": -65.321183
+                    },
+                    {
+                        "x": 69.526557,
+                        "y": -65.242296
+                    },
+                    {
+                        "x": 69.612576,
+                        "y": -65.152533
+                    },
+                    {
+                        "x": 69.708993,
+                        "y": -65.051648
+                    },
+                    {
+                        "x": 69.816044,
+                        "y": -64.939394
+                    },
+                    {
+                        "x": 69.933967,
+                        "y": -64.815526
+                    },
+                    {
+                        "x": 70.062999,
+                        "y": -64.679799
+                    },
+                    {
+                        "x": 70.203377,
+                        "y": -64.531965
+                    },
+                    {
+                        "x": 70.243273,
+                        "y": -64.489933
+                    },
+                    {
+                        "x": 70.350302,
+                        "y": -64.37719
+                    },
+                    {
+                        "x": 70.453962,
+                        "y": -64.268028
+                    },
+                    {
+                        "x": 70.553662,
+                        "y": -64.163067
+                    },
+                    {
+                        "x": 70.648809,
+                        "y": -64.062929
+                    },
+                    {
+                        "x": 70.738812,
+                        "y": -63.968236
+                    },
+                    {
+                        "x": 70.823079,
+                        "y": -63.87961
+                    },
+                    {
+                        "x": 70.901019,
+                        "y": -63.797673
+                    },
+                    {
+                        "x": 70.972038,
+                        "y": -63.723047
+                    },
+                    {
+                        "x": 71.035547,
+                        "y": -63.656354
+                    },
+                    {
+                        "x": 71.090953,
+                        "y": -63.598215
+                    },
+                    {
+                        "x": 71.137664,
+                        "y": -63.549252
+                    },
+                    {
+                        "x": 71.175089,
+                        "y": -63.510087
+                    },
+                    {
+                        "x": 71.202636,
+                        "y": -63.481342
+                    },
+                    {
+                        "x": 71.219712,
+                        "y": -63.463639
+                    },
+                    {
+                        "x": 71.225727,
+                        "y": -63.4576
+                    },
+                    {
+                        "x": 71.226064,
+                        "y": -63.458536
+                    },
+                    {
+                        "x": 71.226982,
+                        "y": -63.471504
+                    },
+                    {
+                        "x": 71.227724,
+                        "y": -63.497346
+                    },
+                    {
+                        "x": 71.228219,
+                        "y": -63.533027
+                    },
+                    {
+                        "x": 71.228399,
+                        "y": -63.575507
+                    },
+                    {
+                        "x": 71.228399,
+                        "y": -63.693415
+                    },
+                    {
+                        "x": 70.191596,
+                        "y": -64.787278
+                    },
+                    {
+                        "x": 70.107625,
+                        "y": -64.875875
+                    },
+                    {
+                        "x": 69.985595,
+                        "y": -65.004658
+                    },
+                    {
+                        "x": 69.8744,
+                        "y": -65.122057
+                    },
+                    {
+                        "x": 69.773535,
+                        "y": -65.228618
+                    },
+                    {
+                        "x": 69.682496,
+                        "y": -65.324889
+                    },
+                    {
+                        "x": 69.60078,
+                        "y": -65.411414
+                    },
+                    {
+                        "x": 69.527884,
+                        "y": -65.48874
+                    },
+                    {
+                        "x": 69.463302,
+                        "y": -65.557413
+                    },
+                    {
+                        "x": 69.406531,
+                        "y": -65.61798
+                    },
+                    {
+                        "x": 69.357068,
+                        "y": -65.670985
+                    },
+                    {
+                        "x": 69.314408,
+                        "y": -65.716976
+                    },
+                    {
+                        "x": 69.278048,
+                        "y": -65.756498
+                    },
+                    {
+                        "x": 69.247483,
+                        "y": -65.790098
+                    },
+                    {
+                        "x": 69.22221,
+                        "y": -65.818321
+                    },
+                    {
+                        "x": 69.201726,
+                        "y": -65.841714
+                    },
+                    {
+                        "x": 69.185525,
+                        "y": -65.860823
+                    },
+                    {
+                        "x": 69.173104,
+                        "y": -65.876193
+                    },
+                    {
+                        "x": 69.16396,
+                        "y": -65.888372
+                    },
+                    {
+                        "x": 69.157589,
+                        "y": -65.897904
+                    },
+                    {
+                        "x": 69.153486,
+                        "y": -65.905337
+                    },
+                    {
+                        "x": 69.151148,
+                        "y": -65.911216
+                    },
+                    {
+                        "x": 69.15007,
+                        "y": -65.916087
+                    },
+                    {
+                        "x": 69.149542,
+                        "y": -65.92098
+                    },
+                    {
+                        "x": 69.147523,
+                        "y": -65.942332
+                    },
+                    {
+                        "x": 69.144189,
+                        "y": -65.9791
+                    },
+                    {
+                        "x": 69.139623,
+                        "y": -66.030355
+                    },
+                    {
+                        "x": 69.133905,
+                        "y": -66.095168
+                    },
+                    {
+                        "x": 69.130198,
+                        "y": -66.137442
+                    },
+                    {
+                        "x": 69.127115,
+                        "y": -66.172607
+                    },
+                    {
+                        "x": 69.119334,
+                        "y": -66.261743
+                    },
+                    {
+                        "x": 69.110644,
+                        "y": -66.361646
+                    },
+                    {
+                        "x": 69.101125,
+                        "y": -66.471385
+                    },
+                    {
+                        "x": 69.090858,
+                        "y": -66.590032
+                    },
+                    {
+                        "x": 69.079923,
+                        "y": -66.716655
+                    },
+                    {
+                        "x": 69.068403,
+                        "y": -66.850325
+                    },
+                    {
+                        "x": 69.056376,
+                        "y": -66.990111
+                    },
+                    {
+                        "x": 69.043925,
+                        "y": -67.135084
+                    },
+                    {
+                        "x": 69.031131,
+                        "y": -67.284313
+                    },
+                    {
+                        "x": 68.916913,
+                        "y": -68.617593
+                    },
+                    {
+                        "x": 68.970356,
+                        "y": -68.672285
+                    },
+                    {
+                        "x": 68.983314,
+                        "y": -68.685547
+                    },
+                    {
+                        "x": 68.990402,
+                        "y": -68.69279
+                    },
+                    {
+                        "x": 69.010858,
+                        "y": -68.71367
+                    },
+                    {
+                        "x": 69.042056,
+                        "y": -68.745498
+                    },
+                    {
+                        "x": 69.083311,
+                        "y": -68.787574
+                    },
+                    {
+                        "x": 69.133936,
+                        "y": -68.8392
+                    },
+                    {
+                        "x": 69.193249,
+                        "y": -68.899679
+                    },
+                    {
+                        "x": 69.260564,
+                        "y": -68.968313
+                    },
+                    {
+                        "x": 69.335197,
+                        "y": -69.044403
+                    },
+                    {
+                        "x": 69.416462,
+                        "y": -69.127251
+                    },
+                    {
+                        "x": 69.503675,
+                        "y": -69.216159
+                    },
+                    {
+                        "x": 69.596152,
+                        "y": -69.310429
+                    },
+                    {
+                        "x": 69.693206,
+                        "y": -69.409363
+                    },
+                    {
+                        "x": 69.794155,
+                        "y": -69.512263
+                    },
+                    {
+                        "x": 69.898312,
+                        "y": -69.61843
+                    },
+                    {
+                        "x": 70.004994,
+                        "y": -69.727167
+                    },
+                    {
+                        "x": 70.072469,
+                        "y": -69.795942
+                    },
+                    {
+                        "x": 70.177688,
+                        "y": -69.90319
+                    },
+                    {
+                        "x": 70.279972,
+                        "y": -70.007449
+                    },
+                    {
+                        "x": 70.378632,
+                        "y": -70.108019
+                    },
+                    {
+                        "x": 70.472985,
+                        "y": -70.2042
+                    },
+                    {
+                        "x": 70.562342,
+                        "y": -70.295292
+                    },
+                    {
+                        "x": 70.646017,
+                        "y": -70.380596
+                    },
+                    {
+                        "x": 70.723324,
+                        "y": -70.459412
+                    },
+                    {
+                        "x": 70.793577,
+                        "y": -70.531039
+                    },
+                    {
+                        "x": 70.856089,
+                        "y": -70.594779
+                    },
+                    {
+                        "x": 70.910174,
+                        "y": -70.649931
+                    },
+                    {
+                        "x": 70.955145,
+                        "y": -70.695795
+                    },
+                    {
+                        "x": 70.990317,
+                        "y": -70.731671
+                    },
+                    {
+                        "x": 71.015001,
+                        "y": -70.756861
+                    },
+                    {
+                        "x": 71.028513,
+                        "y": -70.770663
+                    },
+                    {
+                        "x": 71.096752,
+                        "y": -70.840493
+                    },
+                    {
+                        "x": 71.037863,
+                        "y": -70.899837
+                    },
+                    {
+                        "x": 71.021238,
+                        "y": -70.916258
+                    },
+                    {
+                        "x": 70.998092,
+                        "y": -70.937891
+                    },
+                    {
+                        "x": 70.981008,
+                        "y": -70.952305
+                    },
+                    {
+                        "x": 70.972823,
+                        "y": -70.957007
+                    },
+                    {
+                        "x": 70.97206,
+                        "y": -70.956365
+                    },
+                    {
+                        "x": 70.962043,
+                        "y": -70.94659
+                    },
+                    {
+                        "x": 70.940965,
+                        "y": -70.925528
+                    },
+                    {
+                        "x": 70.909432,
+                        "y": -70.893797
+                    },
+                    {
+                        "x": 70.868052,
+                        "y": -70.852012
+                    },
+                    {
+                        "x": 70.81743,
+                        "y": -70.80079
+                    },
+                    {
+                        "x": 70.758173,
+                        "y": -70.740744
+                    },
+                    {
+                        "x": 70.690889,
+                        "y": -70.672493
+                    },
+                    {
+                        "x": 70.616184,
+                        "y": -70.596652
+                    },
+                    {
+                        "x": 70.534664,
+                        "y": -70.513836
+                    },
+                    {
+                        "x": 70.446937,
+                        "y": -70.424661
+                    },
+                    {
+                        "x": 70.35361,
+                        "y": -70.329744
+                    },
+                    {
+                        "x": 70.255288,
+                        "y": -70.2297
+                    },
+                    {
+                        "x": 70.152579,
+                        "y": -70.125145
+                    },
+                    {
+                        "x": 70.046089,
+                        "y": -70.016696
+                    },
+                    {
+                        "x": 69.936426,
+                        "y": -69.904967
+                    },
+                    {
+                        "x": 69.902063,
+                        "y": -69.869952
+                    },
+                    {
+                        "x": 69.793351,
+                        "y": -69.759216
+                    },
+                    {
+                        "x": 69.688014,
+                        "y": -69.651972
+                    },
+                    {
+                        "x": 69.586656,
+                        "y": -69.548834
+                    },
+                    {
+                        "x": 69.489885,
+                        "y": -69.450418
+                    },
+                    {
+                        "x": 69.398304,
+                        "y": -69.357336
+                    },
+                    {
+                        "x": 69.312521,
+                        "y": -69.270204
+                    },
+                    {
+                        "x": 69.23314,
+                        "y": -69.189636
+                    },
+                    {
+                        "x": 69.160768,
+                        "y": -69.116246
+                    },
+                    {
+                        "x": 69.096009,
+                        "y": -69.050648
+                    },
+                    {
+                        "x": 69.039471,
+                        "y": -68.993457
+                    },
+                    {
+                        "x": 68.991757,
+                        "y": -68.945287
+                    },
+                    {
+                        "x": 68.953475,
+                        "y": -68.906751
+                    },
+                    {
+                        "x": 68.92523,
+                        "y": -68.878466
+                    },
+                    {
+                        "x": 68.907627,
+                        "y": -68.861044
+                    },
+                    {
+                        "x": 68.901272,
+                        "y": -68.8551
+                    },
+                    {
+                        "x": 68.900405,
+                        "y": -68.858403
+                    },
+                    {
+                        "x": 68.897978,
+                        "y": -68.876464
+                    },
+                    {
+                        "x": 68.894385,
+                        "y": -68.908919
+                    },
+                    {
+                        "x": 68.889773,
+                        "y": -68.954246
+                    },
+                    {
+                        "x": 68.884287,
+                        "y": -69.010927
+                    },
+                    {
+                        "x": 68.878074,
+                        "y": -69.07744
+                    },
+                    {
+                        "x": 68.87128,
+                        "y": -69.152265
+                    },
+                    {
+                        "x": 68.864051,
+                        "y": -69.233881
+                    },
+                    {
+                        "x": 68.856532,
+                        "y": -69.320767
+                    },
+                    {
+                        "x": 68.852229,
+                        "y": -69.370981
+                    },
+                    {
+                        "x": 68.844828,
+                        "y": -69.456897
+                    },
+                    {
+                        "x": 68.837829,
+                        "y": -69.537597
+                    },
+                    {
+                        "x": 68.831378,
+                        "y": -69.611417
+                    },
+                    {
+                        "x": 68.825624,
+                        "y": -69.67669
+                    },
+                    {
+                        "x": 68.820713,
+                        "y": -69.731752
+                    },
+                    {
+                        "x": 68.816792,
+                        "y": -69.774937
+                    },
+                    {
+                        "x": 68.814009,
+                        "y": -69.80458
+                    },
+                    {
+                        "x": 68.812511,
+                        "y": -69.819016
+                    },
+                    {
+                        "x": 68.804933,
+                        "y": -69.845728
+                    },
+                    {
+                        "x": 68.781551,
+                        "y": -69.879599
+                    },
+                    {
+                        "x": 68.745549,
+                        "y": -69.905989
+                    },
+                    {
+                        "x": 68.722266,
+                        "y": -69.918102
+                    },
+                    {
+                        "x": 68.722266,
+                        "y": -70.230933
+                    },
+                    {
+                        "x": 68.324333,
+                        "y": -70.230933
+                    },
+                    {
+                        "x": 68.324333,
+                        "y": -69.917667
+                    },
+                    {
+                        "x": 66.837791,
+                        "y": -69.917667
+                    },
+                    {
+                        "x": 66.802061,
+                        "y": -69.972012
+                    },
+                    {
+                        "x": 66.772419,
+                        "y": -70.011761
+                    },
+                    {
+                        "x": 66.721841,
+                        "y": -70.065974
+                    },
+                    {
+                        "x": 66.664112,
+                        "y": -70.116059
+                    },
+                    {
+                        "x": 66.604518,
+                        "y": -70.157067
+                    },
+                    {
+                        "x": 66.604298,
+                        "y": -70.157197
+                    },
+                    {
+                        "x": 66.516832,
+                        "y": -70.199496
+                    },
+                    {
+                        "x": 66.424976,
+                        "y": -70.226469
+                    },
+                    {
+                        "x": 66.330712,
+                        "y": -70.238475
+                    },
+                    {
+                        "x": 66.236023,
+                        "y": -70.235872
+                    },
+                    {
+                        "x": 66.14289,
+                        "y": -70.219018
+                    },
+                    {
+                        "x": 66.053296,
+                        "y": -70.188271
+                    },
+                    {
+                        "x": 65.969223,
+                        "y": -70.14399
+                    },
+                    {
+                        "x": 65.892653,
+                        "y": -70.086533
+                    },
+                    {
+                        "x": 65.825568,
+                        "y": -70.016258
+                    },
+                    {
+                        "x": 65.78848,
+                        "y": -69.96635
+                    },
+                    {
+                        "x": 65.747831,
+                        "y": -69.896387
+                    },
+                    {
+                        "x": 65.719186,
+                        "y": -69.822971
+                    },
+                    {
+                        "x": 65.701135,
+                        "y": -69.74224
+                    },
+                    {
+                        "x": 65.692274,
+                        "y": -69.650333
+                    },
+                    {
+                        "x": 65.691635,
+                        "y": -69.637016
+                    },
+                    {
+                        "x": 65.686966,
+                        "y": -69.539632
+                    },
+                    {
+                        "x": 65.022493,
+                        "y": -70.240844
+                    },
+                    {
+                        "x": 64.358019,
+                        "y": -70.942056
+                    },
+                    {
+                        "x": 64.29701,
+                        "y": -70.881453
+                    },
+                    {
+                        "x": 64.236,
+                        "y": -70.820851
+                    },
+                    {
+                        "x": 64.279916,
+                        "y": -70.772593
+                    },
+                    {
+                        "x": 64.28288,
+                        "y": -70.76938
+                    },
+                    {
+                        "x": 64.298139,
+                        "y": -70.753087
+                    },
+                    {
+                        "x": 64.324125,
+                        "y": -70.725506
+                    },
+                    {
+                        "x": 64.36017,
+                        "y": -70.687341
+                    },
+                    {
+                        "x": 64.405606,
+                        "y": -70.639296
+                    },
+                    {
+                        "x": 64.459767,
+                        "y": -70.582077
+                    },
+                    {
+                        "x": 64.521985,
+                        "y": -70.516386
+                    },
+                    {
+                        "x": 64.591591,
+                        "y": -70.44293
+                    },
+                    {
+                        "x": 64.667919,
+                        "y": -70.362412
+                    },
+                    {
+                        "x": 64.750301,
+                        "y": -70.275536
+                    },
+                    {
+                        "x": 64.838069,
+                        "y": -70.183007
+                    },
+                    {
+                        "x": 64.930556,
+                        "y": -70.08553
+                    },
+                    {
+                        "x": 65.027094,
+                        "y": -69.983808
+                    },
+                    {
+                        "x": 65.127015,
+                        "y": -69.878547
+                    },
+                    {
+                        "x": 65.229653,
+                        "y": -69.77045
+                    },
+                    {
+                        "x": 65.287806,
+                        "y": -69.709205
+                    },
+                    {
+                        "x": 65.404302,
+                        "y": -69.586463
+                    },
+                    {
+                        "x": 65.509866,
+                        "y": -69.475154
+                    },
+                    {
+                        "x": 65.605013,
+                        "y": -69.374719
+                    },
+                    {
+                        "x": 65.690261,
+                        "y": -69.2846
+                    },
+                    {
+                        "x": 65.766126,
+                        "y": -69.204239
+                    },
+                    {
+                        "x": 65.833125,
+                        "y": -69.133078
+                    },
+                    {
+                        "x": 65.891773,
+                        "y": -69.070558
+                    },
+                    {
+                        "x": 65.942589,
+                        "y": -69.016121
+                    },
+                    {
+                        "x": 65.986087,
+                        "y": -68.969209
+                    },
+                    {
+                        "x": 66.022785,
+                        "y": -68.929263
+                    },
+                    {
+                        "x": 66.053198,
+                        "y": -68.895725
+                    },
+                    {
+                        "x": 66.077845,
+                        "y": -68.868038
+                    },
+                    {
+                        "x": 66.09724,
+                        "y": -68.845642
+                    },
+                    {
+                        "x": 66.10596,
+                        "y": -68.835137
+                    },
+                    {
+                        "x": 66.111901,
+                        "y": -68.82798
+                    },
+                    {
+                        "x": 66.122345,
+                        "y": -68.814493
+                    },
+                    {
+                        "x": 66.129087,
+                        "y": -68.804622
+                    },
+                    {
+                        "x": 66.132644,
+                        "y": -68.797811
+                    },
+                    {
+                        "x": 66.133533,
+                        "y": -68.793499
+                    },
+                    {
+                        "x": 66.131815,
+                        "y": -68.773729
+                    },
+                    {
+                        "x": 66.128507,
+                        "y": -68.736741
+                    },
+                    {
+                        "x": 66.123899,
+                        "y": -68.685897
+                    },
+                    {
+                        "x": 66.118093,
+                        "y": -68.622296
+                    },
+                    {
+                        "x": 66.111191,
+                        "y": -68.547035
+                    },
+                    {
+                        "x": 66.103296,
+                        "y": -68.46121
+                    },
+                    {
+                        "x": 66.09451,
+                        "y": -68.365918
+                    },
+                    {
+                        "x": 66.084935,
+                        "y": -68.262256
+                    },
+                    {
+                        "x": 66.074672,
+                        "y": -68.151322
+                    },
+                    {
+                        "x": 66.063825,
+                        "y": -68.034213
+                    },
+                    {
+                        "x": 66.052495,
+                        "y": -67.912024
+                    },
+                    {
+                        "x": 66.040784,
+                        "y": -67.785854
+                    },
+                    {
+                        "x": 66.028795,
+                        "y": -67.6568
+                    },
+                    {
+                        "x": 66.016629,
+                        "y": -67.525958
+                    },
+                    {
+                        "x": 66.00439,
+                        "y": -67.394425
+                    },
+                    {
+                        "x": 65.992178,
+                        "y": -67.263298
+                    },
+                    {
+                        "x": 65.980096,
+                        "y": -67.133675
+                    },
+                    {
+                        "x": 65.968246,
+                        "y": -67.006652
+                    },
+                    {
+                        "x": 65.95673,
+                        "y": -66.883327
+                    },
+                    {
+                        "x": 65.945651,
+                        "y": -66.764796
+                    },
+                    {
+                        "x": 65.93511,
+                        "y": -66.652156
+                    },
+                    {
+                        "x": 65.92521,
+                        "y": -66.546505
+                    },
+                    {
+                        "x": 65.916053,
+                        "y": -66.448939
+                    },
+                    {
+                        "x": 65.90774,
+                        "y": -66.360555
+                    },
+                    {
+                        "x": 65.900375,
+                        "y": -66.282451
+                    },
+                    {
+                        "x": 65.894059,
+                        "y": -66.215723
+                    },
+                    {
+                        "x": 65.888894,
+                        "y": -66.161468
+                    },
+                    {
+                        "x": 65.884983,
+                        "y": -66.120784
+                    },
+                    {
+                        "x": 65.882427,
+                        "y": -66.094767
+                    },
+                    {
+                        "x": 65.881329,
+                        "y": -66.084515
+                    },
+                    {
+                        "x": 65.880488,
+                        "y": -66.079485
+                    },
+                    {
+                        "x": 65.876748,
+                        "y": -66.057129
+                    },
+                    {
+                        "x": 65.637924,
+                        "y": -66.054881
+                    },
+                    {
+                        "x": 65.399099,
+                        "y": -66.052634
+                    },
+                    {
+                        "x": 65.397935,
+                        "y": -65.862134
+                    },
+                    {
+                        "x": 65.396874,
+                        "y": -65.688567
+                    },
+                    {
+                        "x": 65.39687,
+                        "y": -65.68798
+                    },
+                    {
+                        "x": 65.396382,
+                        "y": -65.599199
+                    },
+                    {
+                        "x": 65.396131,
+                        "y": -65.525843
+                    },
+                    {
+                        "x": 65.396162,
+                        "y": -65.466416
+                    },
+                    {
+                        "x": 65.396521,
+                        "y": -65.419421
+                    },
+                    {
+                        "x": 65.397251,
+                        "y": -65.383361
+                    },
+                    {
+                        "x": 65.398397,
+                        "y": -65.356738
+                    },
+                    {
+                        "x": 65.400004,
+                        "y": -65.338054
+                    },
+                    {
+                        "x": 65.402118,
+                        "y": -65.325814
+                    },
+                    {
+                        "x": 65.404781,
+                        "y": -65.31852
+                    },
+                    {
+                        "x": 65.40804,
+                        "y": -65.314674
+                    },
+                    {
+                        "x": 65.408701,
+                        "y": -65.312431
+                    },
+                    {
+                        "x": 65.406447,
+                        "y": -65.307043
+                    },
+                    {
+                        "x": 65.40042,
+                        "y": -65.298129
+                    },
+                    {
+                        "x": 65.390079,
+                        "y": -65.28512
+                    },
+                    {
+                        "x": 65.374883,
+                        "y": -65.267449
+                    },
+                    {
+                        "x": 65.354289,
+                        "y": -65.244546
+                    },
+                    {
+                        "x": 65.327755,
+                        "y": -65.215845
+                    },
+                    {
+                        "x": 65.29474,
+                        "y": -65.180777
+                    },
+                    {
+                        "x": 65.254701,
+                        "y": -65.138775
+                    },
+                    {
+                        "x": 65.207097,
+                        "y": -65.08927
+                    },
+                    {
+                        "x": 65.151387,
+                        "y": -65.031693
+                    },
+                    {
+                        "x": 65.087027,
+                        "y": -64.965478
+                    },
+                    {
+                        "x": 65.013477,
+                        "y": -64.890057
+                    },
+                    {
+                        "x": 64.930194,
+                        "y": -64.80486
+                    },
+                    {
+                        "x": 64.836637,
+                        "y": -64.70932
+                    },
+                    {
+                        "x": 64.732264,
+                        "y": -64.60287
+                    },
+                    {
+                        "x": 64.616532,
+                        "y": -64.484941
+                    },
+                    {
+                        "x": 63.811632,
+                        "y": -63.665033
+                    },
+                    {
+                        "x": 63.811616,
+                        "y": -63.548617
+                    },
+                    {
+                        "x": 63.811639,
+                        "y": -63.535058
+                    },
+                    {
+                        "x": 63.812036,
+                        "y": -63.494643
+                    },
+                    {
+                        "x": 63.812847,
+                        "y": -63.46199
+                    },
+                    {
+                        "x": 63.813976,
+                        "y": -63.440157
+                    },
+                    {
+                        "x": 63.815325,
+                        "y": -63.4322
+                    },
+                    {
+                        "x": 63.816968,
+                        "y": -63.43366
+                    },
+                    {
+                        "x": 63.828844,
+                        "y": -63.445317
+                    },
+                    {
+                        "x": 63.85163,
+                        "y": -63.468085
+                    },
+                    {
+                        "x": 63.884688,
+                        "y": -63.501315
+                    },
+                    {
+                        "x": 63.927377,
+                        "y": -63.54436
+                    },
+                    {
+                        "x": 63.979057,
+                        "y": -63.596572
+                    },
+                    {
+                        "x": 64.039089,
+                        "y": -63.657301
+                    },
+                    {
+                        "x": 64.106833,
+                        "y": -63.7259
+                    },
+                    {
+                        "x": 64.181648,
+                        "y": -63.801721
+                    },
+                    {
+                        "x": 64.262894,
+                        "y": -63.884115
+                    },
+                    {
+                        "x": 64.349932,
+                        "y": -63.972434
+                    },
+                    {
+                        "x": 64.442121,
+                        "y": -64.066031
+                    },
+                    {
+                        "x": 64.538822,
+                        "y": -64.164256
+                    },
+                    {
+                        "x": 64.639395,
+                        "y": -64.266462
+                    },
+                    {
+                        "x": 64.743199,
+                        "y": -64.372
+                    },
+                    {
+                        "x": 65.667348,
+                        "y": -65.3118
+                    },
+                    {
+                        "x": 65.811914,
+                        "y": -65.3118
+                    },
+                    {
+                        "x": 65.806918,
+                        "y": -65.271583
+                    },
+                    {
+                        "x": 65.806428,
+                        "y": -65.267487
+                    },
+                    {
+                        "x": 65.803578,
+                        "y": -65.240829
+                    },
+                    {
+                        "x": 65.799844,
+                        "y": -65.202797
+                    },
+                    {
+                        "x": 65.795656,
+                        "y": -65.157853
+                    },
+                    {
+                        "x": 65.79144,
+                        "y": -65.110459
+                    },
+                    {
+                        "x": 65.788871,
+                        "y": -65.081613
+                    },
+                    {
+                        "x": 65.784897,
+                        "y": -65.042293
+                    },
+                    {
+                        "x": 65.781276,
+                        "y": -65.016285
+                    },
+                    {
+                        "x": 65.777538,
+                        "y": -65.001291
+                    },
+                    {
+                        "x": 65.775637,
+                        "y": -64.998534
+                    },
+                    {
+                        "x": 65.773212,
+                        "y": -64.995017
+                    },
+                    {
+                        "x": 65.767829,
+                        "y": -64.995166
+                    },
+                    {
+                        "x": 65.765986,
+                        "y": -64.995804
+                    },
+                    {
+                        "x": 65.748656,
+                        "y": -64.999007
+                    },
+                    {
+                        "x": 65.720614,
+                        "y": -65.002177
+                    },
+                    {
+                        "x": 65.686966,
+                        "y": -65.004712
+                    },
+                    {
+                        "x": 65.665946,
+                        "y": -65.005687
+                    },
+                    {
+                        "x": 65.630952,
+                        "y": -65.005156
+                    },
+                    {
+                        "x": 65.60187,
+                        "y": -65.000425
+                    },
+                    {
+                        "x": 65.571421,
+                        "y": -64.990605
+                    },
+                    {
+                        "x": 65.562926,
+                        "y": -64.987239
+                    },
+                    {
+                        "x": 65.504849,
+                        "y": -64.954129
+                    },
+                    {
+                        "x": 65.456366,
+                        "y": -64.907446
+                    },
+                    {
+                        "x": 65.418572,
+                        "y": -64.848209
+                    },
+                    {
+                        "x": 65.406708,
+                        "y": -64.822815
+                    },
+                    {
+                        "x": 65.396639,
+                        "y": -64.794203
+                    },
+                    {
+                        "x": 65.39301,
+                        "y": -64.771591
+                    },
+                    {
+                        "x": 65.391986,
+                        "y": -64.76521
+                    },
+                    {
+                        "x": 65.390856,
+                        "y": -64.7276
+                    },
+                    {
+                        "x": 65.391413,
+                        "y": -64.69894
+                    },
+                    {
+                        "x": 65.39493,
+                        "y": -64.668434
+                    },
+                    {
+                        "x": 65.403352,
+                        "y": -64.640531
+                    },
+                    {
+                        "x": 65.418572,
+                        "y": -64.606992
+                    },
+                    {
+                        "x": 65.420179,
+                        "y": -64.603774
+                    },
+                    {
+                        "x": 65.457373,
+                        "y": -64.547367
+                    },
+                    {
+                        "x": 65.504232,
+                        "y": -64.503012
+                    },
+                    {
+                        "x": 65.55839,
+                        "y": -64.471195
+                    },
+                    {
+                        "x": 65.617477,
+                        "y": -64.452403
+                    },
+                    {
+                        "x": 65.679124,
+                        "y": -64.447121
+                    },
+                    {
+                        "x": 65.740962,
+                        "y": -64.455837
+                    },
+                    {
+                        "x": 65.800624,
+                        "y": -64.479038
+                    },
+                    {
+                        "x": 65.855739,
+                        "y": -64.517209
+                    },
+                    {
+                        "x": 65.89502,
+                        "y": -64.551786
+                    },
+                    {
+                        "x": 65.943393,
+                        "y": -64.505835
+                    },
+                    {
+                        "x": 65.989514,
+                        "y": -64.465486
+                    },
+                    {
+                        "x": 66.065049,
+                        "y": -64.41143
+                    },
+                    {
+                        "x": 66.119813,
+                        "y": -64.380467
+                    },
+                    {
+                        "x": 66.151376,
+                        "y": -64.362622
+                    },
+                    {
+                        "x": 66.249474,
+                        "y": -64.318684
+                    },
+                    {
+                        "x": 66.360323,
+                        "y": -64.279241
+                    },
+                    {
+                        "x": 66.484901,
+                        "y": -64.243915
+                    },
+                    {
+                        "x": 66.624189,
+                        "y": -64.212328
+                    },
+                    {
+                        "x": 66.779166,
+                        "y": -64.184105
+                    },
+                    {
+                        "x": 66.846899,
+                        "y": -64.173034
+                    },
+                    {
+                        "x": 66.851941,
+                        "y": -64.0672
+                    },
+                    {
+                        "x": 67.884066,
+                        "y": -64.0672
+                    },
+                    {
+                        "x": 67.884066,
+                        "y": -64.109534
+                    },
+                    {
+                        "x": 67.884219,
+                        "y": -64.119041
+                    },
+                    {
+                        "x": 67.887393,
+                        "y": -64.143691
+                    },
+                    {
+                        "x": 67.89465,
+                        "y": -64.152041
+                    },
+                    {
+                        "x": 67.926349,
+                        "y": -64.153628
+                    },
+                    {
+                        "x": 67.973214,
+                        "y": -64.157657
+                    },
+                    {
+                        "x": 68.030141,
+                        "y": -64.163661
+                    },
+                    {
+                        "x": 68.093705,
+                        "y": -64.171197
+                    },
+                    {
+                        "x": 68.160479,
+                        "y": -64.17982
+                    },
+                    {
+                        "x": 68.227038,
+                        "y": -64.189088
+                    },
+                    {
+                        "x": 68.289956,
+                        "y": -64.198557
+                    },
+                    {
+                        "x": 68.345806,
+                        "y": -64.207784
+                    },
+                    {
+                        "x": 68.391163,
+                        "y": -64.216324
+                    },
+                    {
+                        "x": 68.427756,
+                        "y": -64.222857
+                    },
+                    {
+                        "x": 68.449696,
+                        "y": -64.224176
+                    },
+                    {
+                        "x": 68.458145,
+                        "y": -64.22033
+                    },
+                    {
+                        "x": 68.46343,
+                        "y": -64.217622
+                    },
+                    {
+                        "x": 68.484069,
+                        "y": -64.214757
+                    },
+                    {
+                        "x": 68.520565,
+                        "y": -64.212732
+                    },
+                    {
+                        "x": 68.57327,
+                        "y": -64.21153
+                    },
+                    {
+                        "x": 68.642538,
+                        "y": -64.211134
+                    },
+                    {
+                        "x": 68.823866,
+                        "y": -64.211134
+                    },
+                    {
+                        "x": 68.823866,
+                        "y": -64.278867
+                    },
+                    {
+                        "x": 68.823866,
+                        "y": -64.352172
+                    },
+                    {
+                        "x": 68.868082,
+                        "y": -64.37267
+                    },
+                    {
+                        "x": 68.872323,
+                        "y": -64.374651
+                    },
+                    {
+                        "x": 68.963076,
+                        "y": -64.424725
+                    }
+                ],
+                "area_estimate": 20.618
+            }
+        ],
+        "outline_segments": []
+    },
+    "config_snapshot": {
+        "analysis": {
+            "profile": "balanced",
+            "board_type": "general",
+            "custom_profile_name": "Custom Profile",
+            "category_toggles": {
+                "layout_manufacturing": true,
+                "power": true,
+                "signal": true,
+                "thermal": true,
+                "emi_reliability": true,
+                "safety": true
+            },
+            "rule_toggles": {}
+        },
+        "score": {
+            "start_score": 10.0,
+            "min_score": 0.0,
+            "max_score": 10.0,
+            "soft_floor_score": 0.5,
+            "severity_penalties": {
+                "low": 0.2,
+                "medium": 0.4,
+                "high": 0.6,
+                "critical": 1.2
+            }
+        },
+        "layout": {
+            "min_component_spacing": 3.0,
+            "density_threshold": 6,
+            "density_region_size": 25.0
+        },
+        "power": {
+            "required_power_nets": [
+                "VIN",
+                "VCC",
+                "VBAT",
+                "5V",
+                "3V3",
+                "VDD"
+            ],
+            "required_ground_nets": [
+                "GND",
+                "GROUND",
+                "PGND"
+            ],
+            "distribution_distance_threshold": 20.0,
+            "decoupling_distance_threshold": 4.0,
+            "max_trace_length": 50.0,
+            "min_trace_width": 0.5,
+            "max_via_count": 5,
+            "min_connections": 2
+        },
+        "signal": {
+            "max_trace_length": 25.0,
+            "critical_nets": [
+                "CLK",
+                "SCL",
+                "SDA",
+                "MOSI",
+                "MISO",
+                "CS",
+                "CTRL"
+            ],
+            "min_general_trace_width": 0.15,
+            "excluded_net_keywords": [
+                "GND",
+                "GROUND",
+                "VCC",
+                "VIN",
+                "VBAT",
+                "3V3",
+                "5V",
+                "12V",
+                "VDD"
+            ]
+        },
+        "thermal": {
+            "hotspot_distance_threshold": 4.0
+        },
+        "emi": {
+            "require_ground_reference": true
+        },
+        "physics": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "impedance_tolerance_pct": 12.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0,
+            "current_estimate_map": {
+                "VBUS": 1.5,
+                "VIN": 1.5,
+                "BATT": 2.0,
+                "PACK": 2.0,
+                "VCC": 0.8,
+                "VDD": 0.8,
+                "3V3": 0.6,
+                "5V": 1.0
+            }
+        },
+        "rules": {
+            "spacing": {
+                "threshold": 3.0
+            },
+            "density": {
+                "component_threshold": 6,
+                "region_size": 25.0
+            },
+            "thermal": {
+                "threshold": 4.0
+            },
+            "decoupling": {
+                "threshold": 4.0
+            },
+            "decoupling_strategy": {
+                "local_distance_threshold": 4.0,
+                "bulk_distance_threshold": 12.0,
+                "min_local_caps": 1,
+                "target_keywords": [
+                    "mcu",
+                    "cpu",
+                    "fpga",
+                    "soc",
+                    "adc",
+                    "dac",
+                    "sensor",
+                    "driver",
+                    "ic",
+                    "controller",
+                    "regulator",
+                    "pmic"
+                ],
+                "capacitor_keywords": [
+                    "cap",
+                    "capacitor"
+                ],
+                "bulk_keywords": [
+                    "10u",
+                    "22u",
+                    "47u",
+                    "100u",
+                    "bulk",
+                    "electrolytic",
+                    "tantalum"
+                ]
+            },
+            "power_distribution": {
+                "threshold": 20.0
+            },
+            "return_path": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "require_ground_reference": true
+            },
+            "signal_path": {
+                "threshold": 25.0,
+                "excluded_nets": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "power_rail": {
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "trace_quality": {
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "signal_integrity_advanced": {
+                "max_signal_vias": 2,
+                "width_ratio_threshold": 2.2,
+                "detour_ratio_threshold": 1.8,
+                "stub_length_threshold": 12.0,
+                "crosstalk_spacing_threshold": 2.5
+            },
+            "differential_pair": {
+                "length_mismatch_threshold": 5.0,
+                "via_mismatch_threshold": 1
+            },
+            "manufacturability": {
+                "min_trace_width": 0.15,
+                "min_drill": 0.2,
+                "min_annular_ring": 0.1,
+                "via_in_pad_distance": 0.35
+            },
+            "cam_geometry": {
+                "min_clearance": 0.18,
+                "native_min_clearance": 0.08,
+                "min_creepage": 2.5,
+                "cluster_granularity": 1.0,
+                "max_clearance_findings": 12,
+                "max_creepage_findings": 6,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "cam_bundle": {
+                "require_outline": true,
+                "require_drill": true,
+                "min_copper_area_ratio": 0.005,
+                "min_layer_files": 2
+            },
+            "thermal_management": {
+                "thermal_via_radius": 4.0,
+                "min_thermal_vias": 1,
+                "min_heat_spread_width": 0.5
+            },
+            "reliability": {
+                "min_ground_vias": 2,
+                "min_ground_connections": 4
+            },
+            "component_analysis": {
+                "termination_length_threshold": 18.0
+            },
+            "clock_sensitive_placement": {
+                "max_clock_source_distance": 12.0,
+                "sensitive_aggressor_keepout": 8.0,
+                "clock_source_keywords": [
+                    "XTAL",
+                    "OSC",
+                    "CRYSTAL",
+                    "CLOCK",
+                    "Y"
+                ],
+                "controller_keywords": [
+                    "MCU",
+                    "CPU",
+                    "SOC",
+                    "FPGA",
+                    "DSP",
+                    "STM",
+                    "ESP",
+                    "PIC",
+                    "AVR",
+                    "NRF",
+                    "IMX",
+                    "ATSAM"
+                ],
+                "sensitive_component_keywords": [
+                    "ADC",
+                    "DAC",
+                    "REF",
+                    "SENSOR",
+                    "OPAMP",
+                    "AMP",
+                    "LNA",
+                    "AFE",
+                    "ANALOG"
+                ],
+                "aggressor_component_keywords": [
+                    "REG",
+                    "BUCK",
+                    "BOOST",
+                    "PMIC",
+                    "INDUCTOR",
+                    "L",
+                    "MOSFET",
+                    "DRIVER",
+                    "SW",
+                    "CLOCK"
+                ]
+            },
+            "emi_emc": {
+                "max_switch_trace_length": 18.0,
+                "sensitive_keepout": 6.0,
+                "return_via_radius": 3.0,
+                "max_loop_length": 45.0
+            },
+            "stackup_return_path": {
+                "max_signal_layers": 2,
+                "signal_via_ground_radius": 3.5,
+                "max_two_layer_critical_length": 28.0
+            },
+            "assembly_testability": {
+                "min_fiducials": 2,
+                "probe_access_radius": 6.0,
+                "min_ground_test_points": 1
+            },
+            "safety_high_voltage": {
+                "min_clearance": 2.5,
+                "min_creepage": 5.0,
+                "high_voltage_net_keywords": [
+                    "HV",
+                    "VAC",
+                    "VDC",
+                    "VBUS",
+                    "48V",
+                    "24V",
+                    "PACK",
+                    "BATT"
+                ]
+            },
+            "power_path_realism": {
+                "neckdown_ratio_threshold": 2.5,
+                "max_high_current_length": 40.0,
+                "converter_cap_radius": 7.0,
+                "max_high_current_vias": 4
+            },
+            "current_density": {
+                "min_high_current_width": 0.7,
+                "max_bottleneck_length": 24.0,
+                "neckdown_ratio_threshold": 2.5,
+                "max_bottleneck_vias": 3,
+                "high_current_net_keywords": [
+                    "VIN",
+                    "VBUS",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "12V",
+                    "PACK",
+                    "BATT",
+                    "SW",
+                    "PHASE"
+                ]
+            },
+            "analog_isolation": {
+                "sensitive_component_keepout": 8.0,
+                "max_analog_route_length": 20.0,
+                "sensitive_component_keywords": [
+                    "ADC",
+                    "DAC",
+                    "REF",
+                    "SENSOR",
+                    "OPAMP",
+                    "AFE",
+                    "AMP",
+                    "LNA",
+                    "ANALOG"
+                ],
+                "aggressor_component_keywords": [
+                    "REG",
+                    "BUCK",
+                    "BOOST",
+                    "PMIC",
+                    "INDUCTOR",
+                    "MOSFET",
+                    "SW",
+                    "USB",
+                    "ETH",
+                    "DDR",
+                    "MCU",
+                    "CPU"
+                ],
+                "analog_net_keywords": [
+                    "ADC",
+                    "REF",
+                    "SENSE",
+                    "ANALOG",
+                    "VREF",
+                    "THERM",
+                    "CURRENT",
+                    "SHUNT"
+                ]
+            },
+            "net_length": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            },
+            "power_connectivity": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ]
+            },
+            "ground_reference": {
+                "ground_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "critical_net_keywords": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ]
+            }
+        }
+    },
+    "analysis_context": {
+        "board_name": "ossc_board-B_Silkscreen.gbr",
+        "timestamp": "2026-04-27T02:08:19.502822+00:00",
+        "config_snapshot": {
+            "analysis": {
+                "profile": "balanced",
+                "board_type": "general",
+                "custom_profile_name": "Custom Profile",
+                "category_toggles": {
+                    "layout_manufacturing": true,
+                    "power": true,
+                    "signal": true,
+                    "thermal": true,
+                    "emi_reliability": true,
+                    "safety": true
+                },
+                "rule_toggles": {}
+            },
+            "score": {
+                "start_score": 10.0,
+                "min_score": 0.0,
+                "max_score": 10.0,
+                "soft_floor_score": 0.5,
+                "severity_penalties": {
+                    "low": 0.2,
+                    "medium": 0.4,
+                    "high": 0.6,
+                    "critical": 1.2
+                }
+            },
+            "layout": {
+                "min_component_spacing": 3.0,
+                "density_threshold": 6,
+                "density_region_size": 25.0
+            },
+            "power": {
+                "required_power_nets": [
+                    "VIN",
+                    "VCC",
+                    "VBAT",
+                    "5V",
+                    "3V3",
+                    "VDD"
+                ],
+                "required_ground_nets": [
+                    "GND",
+                    "GROUND",
+                    "PGND"
+                ],
+                "distribution_distance_threshold": 20.0,
+                "decoupling_distance_threshold": 4.0,
+                "max_trace_length": 50.0,
+                "min_trace_width": 0.5,
+                "max_via_count": 5,
+                "min_connections": 2
+            },
+            "signal": {
+                "max_trace_length": 25.0,
+                "critical_nets": [
+                    "CLK",
+                    "SCL",
+                    "SDA",
+                    "MOSI",
+                    "MISO",
+                    "CS",
+                    "CTRL"
+                ],
+                "min_general_trace_width": 0.15,
+                "excluded_net_keywords": [
+                    "GND",
+                    "GROUND",
+                    "VCC",
+                    "VIN",
+                    "VBAT",
+                    "3V3",
+                    "5V",
+                    "12V",
+                    "VDD"
+                ]
+            },
+            "thermal": {
+                "hotspot_distance_threshold": 4.0
+            },
+            "emi": {
+                "require_ground_reference": true
+            },
+            "physics": {
+                "dielectric_er": 4.2,
+                "dielectric_height_mm": 0.18,
+                "copper_thickness_mm": 0.035,
+                "board_thickness_mm": 1.6,
+                "target_impedance_ohms": 50.0,
+                "target_diff_impedance_ohms": 90.0,
+                "impedance_tolerance_pct": 12.0,
+                "reference_rise_time_ps": 500.0,
+                "max_voltage_drop_mv": 75.0,
+                "max_current_density_a_per_mm2": 12.0,
+                "current_estimate_map": {
+                    "VBUS": 1.5,
+                    "VIN": 1.5,
+                    "BATT": 2.0,
+                    "PACK": 2.0,
+                    "VCC": 0.8,
+                    "VDD": 0.8,
+                    "3V3": 0.6,
+                    "5V": 1.0
+                }
+            },
+            "rules": {
+                "spacing": {
+                    "threshold": 3.0
+                },
+                "density": {
+                    "component_threshold": 6,
+                    "region_size": 25.0
+                },
+                "thermal": {
+                    "threshold": 4.0
+                },
+                "decoupling": {
+                    "threshold": 4.0
+                },
+                "decoupling_strategy": {
+                    "local_distance_threshold": 4.0,
+                    "bulk_distance_threshold": 12.0,
+                    "min_local_caps": 1,
+                    "target_keywords": [
+                        "mcu",
+                        "cpu",
+                        "fpga",
+                        "soc",
+                        "adc",
+                        "dac",
+                        "sensor",
+                        "driver",
+                        "ic",
+                        "controller",
+                        "regulator",
+                        "pmic"
+                    ],
+                    "capacitor_keywords": [
+                        "cap",
+                        "capacitor"
+                    ],
+                    "bulk_keywords": [
+                        "10u",
+                        "22u",
+                        "47u",
+                        "100u",
+                        "bulk",
+                        "electrolytic",
+                        "tantalum"
+                    ]
+                },
+                "power_distribution": {
+                    "threshold": 20.0
+                },
+                "return_path": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ],
+                    "require_ground_reference": true
+                },
+                "signal_path": {
+                    "threshold": 25.0,
+                    "excluded_nets": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "power_rail": {
+                    "max_trace_length": 50.0,
+                    "min_trace_width": 0.5,
+                    "max_via_count": 5,
+                    "min_connections": 2
+                },
+                "trace_quality": {
+                    "min_general_trace_width": 0.15,
+                    "excluded_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "VCC",
+                        "VIN",
+                        "VBAT",
+                        "3V3",
+                        "5V",
+                        "12V",
+                        "VDD"
+                    ]
+                },
+                "signal_integrity_advanced": {
+                    "max_signal_vias": 2,
+                    "width_ratio_threshold": 2.2,
+                    "detour_ratio_threshold": 1.8,
+                    "stub_length_threshold": 12.0,
+                    "crosstalk_spacing_threshold": 2.5
+                },
+                "differential_pair": {
+                    "length_mismatch_threshold": 5.0,
+                    "via_mismatch_threshold": 1
+                },
+                "manufacturability": {
+                    "min_trace_width": 0.15,
+                    "min_drill": 0.2,
+                    "min_annular_ring": 0.1,
+                    "via_in_pad_distance": 0.35
+                },
+                "cam_geometry": {
+                    "min_clearance": 0.18,
+                    "native_min_clearance": 0.08,
+                    "min_creepage": 2.5,
+                    "cluster_granularity": 1.0,
+                    "max_clearance_findings": 12,
+                    "max_creepage_findings": 6,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "cam_bundle": {
+                    "require_outline": true,
+                    "require_drill": true,
+                    "min_copper_area_ratio": 0.005,
+                    "min_layer_files": 2
+                },
+                "thermal_management": {
+                    "thermal_via_radius": 4.0,
+                    "min_thermal_vias": 1,
+                    "min_heat_spread_width": 0.5
+                },
+                "reliability": {
+                    "min_ground_vias": 2,
+                    "min_ground_connections": 4
+                },
+                "component_analysis": {
+                    "termination_length_threshold": 18.0
+                },
+                "clock_sensitive_placement": {
+                    "max_clock_source_distance": 12.0,
+                    "sensitive_aggressor_keepout": 8.0,
+                    "clock_source_keywords": [
+                        "XTAL",
+                        "OSC",
+                        "CRYSTAL",
+                        "CLOCK",
+                        "Y"
+                    ],
+                    "controller_keywords": [
+                        "MCU",
+                        "CPU",
+                        "SOC",
+                        "FPGA",
+                        "DSP",
+                        "STM",
+                        "ESP",
+                        "PIC",
+                        "AVR",
+                        "NRF",
+                        "IMX",
+                        "ATSAM"
+                    ],
+                    "sensitive_component_keywords": [
+                        "ADC",
+                        "DAC",
+                        "REF",
+                        "SENSOR",
+                        "OPAMP",
+                        "AMP",
+                        "LNA",
+                        "AFE",
+                        "ANALOG"
+                    ],
+                    "aggressor_component_keywords": [
+                        "REG",
+                        "BUCK",
+                        "BOOST",
+                        "PMIC",
+                        "INDUCTOR",
+                        "L",
+                        "MOSFET",
+                        "DRIVER",
+                        "SW",
+                        "CLOCK"
+                    ]
+                },
+                "emi_emc": {
+                    "max_switch_trace_length": 18.0,
+                    "sensitive_keepout": 6.0,
+                    "return_via_radius": 3.0,
+                    "max_loop_length": 45.0
+                },
+                "stackup_return_path": {
+                    "max_signal_layers": 2,
+                    "signal_via_ground_radius": 3.5,
+                    "max_two_layer_critical_length": 28.0
+                },
+                "assembly_testability": {
+                    "min_fiducials": 2,
+                    "probe_access_radius": 6.0,
+                    "min_ground_test_points": 1
+                },
+                "safety_high_voltage": {
+                    "min_clearance": 2.5,
+                    "min_creepage": 5.0,
+                    "high_voltage_net_keywords": [
+                        "HV",
+                        "VAC",
+                        "VDC",
+                        "VBUS",
+                        "48V",
+                        "24V",
+                        "PACK",
+                        "BATT"
+                    ]
+                },
+                "power_path_realism": {
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_high_current_length": 40.0,
+                    "converter_cap_radius": 7.0,
+                    "max_high_current_vias": 4
+                },
+                "current_density": {
+                    "min_high_current_width": 0.7,
+                    "max_bottleneck_length": 24.0,
+                    "neckdown_ratio_threshold": 2.5,
+                    "max_bottleneck_vias": 3,
+                    "high_current_net_keywords": [
+                        "VIN",
+                        "VBUS",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "12V",
+                        "PACK",
+                        "BATT",
+                        "SW",
+                        "PHASE"
+                    ]
+                },
+                "analog_isolation": {
+                    "sensitive_component_keepout": 8.0,
+                    "max_analog_route_length": 20.0,
+                    "sensitive_component_keywords": [
+                        "ADC",
+                        "DAC",
+                        "REF",
+                        "SENSOR",
+                        "OPAMP",
+                        "AFE",
+                        "AMP",
+                        "LNA",
+                        "ANALOG"
+                    ],
+                    "aggressor_component_keywords": [
+                        "REG",
+                        "BUCK",
+                        "BOOST",
+                        "PMIC",
+                        "INDUCTOR",
+                        "MOSFET",
+                        "SW",
+                        "USB",
+                        "ETH",
+                        "DDR",
+                        "MCU",
+                        "CPU"
+                    ],
+                    "analog_net_keywords": [
+                        "ADC",
+                        "REF",
+                        "SENSE",
+                        "ANALOG",
+                        "VREF",
+                        "THERM",
+                        "CURRENT",
+                        "SHUNT"
+                    ]
+                },
+                "net_length": {
+                    "max_trace_length": 25.0,
+                    "critical_nets": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                },
+                "power_connectivity": {
+                    "required_power_nets": [
+                        "VIN",
+                        "VCC",
+                        "VBAT",
+                        "5V",
+                        "3V3",
+                        "VDD"
+                    ],
+                    "required_ground_nets": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ]
+                },
+                "ground_reference": {
+                    "ground_net_keywords": [
+                        "GND",
+                        "GROUND",
+                        "PGND"
+                    ],
+                    "critical_net_keywords": [
+                        "CLK",
+                        "SCL",
+                        "SDA",
+                        "MOSI",
+                        "MISO",
+                        "CS",
+                        "CTRL"
+                    ]
+                }
+            }
+        },
+        "profile": "balanced",
+        "board_type": "general"
+    },
+    "parser_confidence": {
+        "score": 65.7,
+        "status": "supported",
+        "component_count": 0,
+        "net_count": 0,
+        "trace_count": 0,
+        "via_count": 0,
+        "outline_count": 0,
+        "zone_count": 9,
+        "layer_count": 1,
+        "summary": "Parser confidence is 65.7 / 100 for this Gerber CAM Layer (single layer) input."
+    },
+    "cam_summary": {
+        "active": true,
+        "source_format": "gerber",
+        "source_family": "generic_gerber",
+        "bundle_type": "single_layer",
+        "layer_file_count": 0,
+        "layer_files": [],
+        "declared_layers": [
+            "Gerber"
+        ],
+        "copper_layers": [],
+        "outline_count": 0,
+        "drill_count": 0,
+        "trace_count": 0,
+        "zone_count": 9,
+        "parser_confidence": 65.7,
+        "readiness_score": 43,
+        "complete": false,
+        "summary": "CAM import recognized 1 file(s), 0 copper layer(s), 0 outline segment(s), and 0 drill hit(s). The bundle still looks incomplete for full fabrication review.",
+        "status_label": "CAM package incomplete",
+        "strengths": [],
+        "missing_signals": [
+            "No recognizable board outline was found",
+            "No copper layers were recognized",
+            "Very few CAM files were recognized"
+        ],
+        "remediation_steps": [
+            "Export a profile or mechanical outline layer in the Gerber package.",
+            "Export at least one copper Gerber layer and verify CAM file naming.",
+            "Export the full fabrication bundle instead of a partial single-layer subset."
+        ],
+        "readiness_level": "needs_work",
+        "package_state": "incomplete",
+        "trust_call": "package_incomplete",
+        "fabrication_blockers": [
+            "Missing board outline",
+            "Missing copper layers"
+        ],
+        "geometry_warnings": [],
+        "parser_warnings": [
+            "Very few recognized CAM files",
+            "Parser confidence is still below strong-review range"
+        ],
+        "review_modes": {
+            "geometry_review": false,
+            "fabrication_review": false
+        },
+        "diagnostic_flags": [
+            {
+                "label": "Outline",
+                "status": "missing"
+            },
+            {
+                "label": "Drill",
+                "status": "not_required"
+            },
+            {
+                "label": "Copper",
+                "status": "missing"
+            },
+            {
+                "label": "Geometry",
+                "status": "ok"
+            }
+        ]
+    },
+    "physics_summary": {
+        "enabled": true,
+        "assumptions": {
+            "dielectric_er": 4.2,
+            "dielectric_height_mm": 0.18,
+            "copper_thickness_mm": 0.035,
+            "board_thickness_mm": 1.6,
+            "target_impedance_ohms": 50.0,
+            "target_diff_impedance_ohms": 90.0,
+            "reference_rise_time_ps": 500.0,
+            "max_voltage_drop_mv": 75.0,
+            "max_current_density_a_per_mm2": 12.0
+        },
+        "signal_models": [],
+        "power_models": [],
+        "summary": {
+            "signal_nets_modeled": 0,
+            "power_nets_modeled": 0,
+            "worst_impedance_mismatch_pct": 0.0,
+            "worst_voltage_drop_mv": 0.0
+        },
+        "risks": []
+    },
+    "stackup_summary": {
+        "layer_count": 1,
+        "copper_layers": [],
+        "signal_layers": [],
+        "reference_layers": [],
+        "style": "two_layer",
+        "reference_coverage_pct": 0.0,
+        "dominant_signal_layer": "F.Cu",
+        "concerns": [
+            "Two-layer stackup limits return-path containment on fast or sensitive nets.",
+            "No dedicated reference layer was inferred from the current board data."
+        ]
+    },
+    "raw_rule_result": {
+        "risks": [
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "fiducials": 0,
+                    "threshold": 2
+                },
+                "confidence": 0.76,
+                "short_title": "Weak fiducial coverage",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "manufacturing",
+                "why_it_matters": "Consistent fiducial strategy helps automated assembly and optical alignment stay reliable.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible fiducial count fell below the configured assembly threshold.",
+                "threshold_label": "Minimum fiducials 2",
+                "observed_label": "Observed fiducials 0"
+            },
+            {
+                "rule_id": "assembly_testability",
+                "category": "assembly_testability",
+                "severity": "medium",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "ground_test_points": 0,
+                    "threshold": 1
+                },
+                "confidence": 0.81,
+                "short_title": "Limited ground test access",
+                "fix_priority": "medium",
+                "estimated_impact": "moderate",
+                "design_domain": "testability",
+                "why_it_matters": "Ground test points are foundational for repeatable probing, debug, and validation.",
+                "suggested_actions": [],
+                "trigger_condition": "Visible ground test-point count fell below the configured minimum.",
+                "threshold_label": "Minimum ground test points 1",
+                "observed_label": "Observed ground test points 0"
+            },
+            {
+                "rule_id": "cam_bundle",
+                "category": "manufacturing",
+                "severity": "high",
+                "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+                "recommendation": "Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous.",
+                "components": [],
+                "nets": [],
+                "region": null,
+                "metrics": {
+                    "outline_count": 0
+                },
+                "confidence": 0.94,
+                "short_title": "Missing CAM outline",
+                "fix_priority": "high",
+                "estimated_impact": "high",
+                "design_domain": "manufacturing",
+                "why_it_matters": "A missing board outline makes CAM import incomplete and weakens manufacturability and keepout reasoning.",
+                "suggested_actions": [],
+                "trigger_condition": "CAM review expected a board outline layer but did not find one.",
+                "threshold_label": "Outline layer required",
+                "observed_label": "Observed outline segments 0"
+            }
+        ],
+        "score": 8.6,
+        "total_penalty": 1.4
+    },
+    "generated_at": "2026-04-27T02:08:19.502830+00:00",
+    "subsystem_summary": {
+        "subsystems": [],
+        "dominant_subsystem": "General",
+        "interaction_risks": [],
+        "summary": "Subsystem classification is not available for this board."
+    },
+    "executive_summary": {
+        "headline": "Board needs focused engineering review",
+        "summary": "This board shows moderate design risk. The main risk concentration is in assembly testability. The highest-priority issue is Gerber/CAM bundle does not include a recognizable board outline.. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.",
+        "top_issues": [
+            {
+                "severity": "high",
+                "category": "manufacturing",
+                "message": "Gerber/CAM bundle does not include a recognizable board outline.",
+                "recommendation": "Include a profile or edge-cuts layer in the CAM export so fabrication shape and board bounds are unambiguous."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Ground test-point coverage appears limited for bring-up and probing",
+                "recommendation": "Add at least one accessible ground test point so probing and scope reference setup are easier during bring-up."
+            },
+            {
+                "severity": "medium",
+                "category": "assembly_testability",
+                "message": "Board has limited visible fiducial strategy for assembly alignment",
+                "recommendation": "Add global fiducials to improve assembly registration and inspection consistency."
+            }
+        ]
+    }
+}

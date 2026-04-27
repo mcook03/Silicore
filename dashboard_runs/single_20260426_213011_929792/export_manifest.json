@@ -1,0 +1,104 @@
+{
+    "run_type": "single",
+    "title": "Chestnut V2.0.brd",
+    "generated_at": "2026-04-27T02:30:11.952844+00:00",
+    "artifacts": [
+        {
+            "name": "single_analysis.json",
+            "kind": "json"
+        },
+        {
+            "name": "single_report.md",
+            "kind": "markdown"
+        },
+        {
+            "name": "single_report.html",
+            "kind": "html"
+        }
+    ],
+    "parser_capabilities": {
+        ".kicad_pcb": {
+            "label": "KiCad PCB",
+            "status": "supported"
+        },
+        ".txt": {
+            "label": "Structured Demo Text",
+            "status": "supported"
+        },
+        ".brd": {
+            "label": "Legacy Structured Board",
+            "status": "supported"
+        },
+        ".gbr": {
+            "label": "Gerber CAM Layer",
+            "status": "supported"
+        },
+        ".gko": {
+            "label": "Gerber Outline",
+            "status": "supported"
+        },
+        ".ger": {
+            "label": "Gerber CAM Layer",
+            "status": "supported"
+        },
+        ".gtl": {
+            "label": "Gerber Top Copper",
+            "status": "supported"
+        },
+        ".gbl": {
+            "label": "Gerber Bottom Copper",
+            "status": "supported"
+        },
+        ".gto": {
+            "label": "Gerber Top Silkscreen",
+            "status": "supported"
+        },
+        ".gbo": {
+            "label": "Gerber Bottom Silkscreen",
+            "status": "supported"
+        },
+        ".gts": {
+            "label": "Gerber Top Soldermask",
+            "status": "supported"
+        },
+        ".gbs": {
+            "label": "Gerber Bottom Soldermask",
+            "status": "supported"
+        },
+        ".gm1": {
+            "label": "Gerber Mechanical",
+            "status": "supported"
+        },
+        ".pho": {
+            "label": "Gerber Photoplot",
+            "status": "supported"
+        },
+        ".art": {
+            "label": "Gerber Artwork",
+            "status": "supported"
+        },
+        ".outline": {
+            "label": "Gerber Outline",
+            "status": "supported"
+        },
+        ".drl": {
+            "label": "Excellon Drill",
+            "status": "supported"
+        },
+        ".xln": {
+            "label": "Excellon Drill",
+            "status": "supported"
+        },
+        ".zip": {
+            "label": "Gerber CAM Archive",
+            "status": "supported"
+        },
+        ".pcbdocascii": {
+            "label": "Altium ASCII Export",
+            "status": "experimental"
+        }
+    },
+    "notes": [
+        "Artifacts include structured analysis, engineering summary, and print-friendly HTML."
+    ]
+}

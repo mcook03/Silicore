@@ -15,10 +15,20 @@ class AnalysisServiceExportTests(unittest.TestCase):
 
     def tearDown(self):
         for path in self.tempdirs:
-            shutil.rmtree(path, ignore_errors=True)
+            if os.path.isdir(path):
+                shutil.rmtree(path, ignore_errors=True)
+            elif os.path.exists(path):
+                os.remove(path)
 
     def _make_tempdir(self, prefix):
         path = tempfile.mkdtemp(prefix=prefix, dir="/tmp")
+        self.tempdirs.append(path)
+        return path
+
+    def _make_tempfile(self, suffix, content):
+        fd, path = tempfile.mkstemp(suffix=suffix, dir="/tmp")
+        with os.fdopen(fd, "w", encoding="utf-8") as file:
+            file.write(content)
         self.tempdirs.append(path)
         return path
 
@@ -143,6 +153,58 @@ class AnalysisServiceExportTests(unittest.TestCase):
         self.assertEqual(cam_summary.get("source_format"), "gerber_cam")
         self.assertTrue(cam_summary.get("missing_signals"))
         self.assertTrue(cam_summary.get("remediation_steps"))
+
+    def test_single_analysis_accepts_kicad_schematic_inputs(self):
+        schematic_content = """
+(kicad_sch (version 20230121) (generator eeschema)
+  (lib_symbols
+    (symbol "Device:R"
+      (property "Reference" "R" (at 0 2.54 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "R" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (pin passive line (at -2.54 0 0) (length 2.54)
+          (name "~" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 2.54 0 180) (length 2.54)
+          (name "~" (effects (font (size 1.27 1.27))))
+          (number "2" (effects (font (size 1.27 1.27))))
+        )
+      )
+    )
+  )
+  (symbol (lib_id "Device:R") (at 10 10 0) (unit 1)
+    (property "Reference" "R1" (at 10 12 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10k" (at 10 8 0) (effects (font (size 1.27 1.27))))
+    (pin "1" (uuid a1))
+    (pin "2" (uuid a2))
+  )
+  (wire (pts (xy 5 10) (xy 7.46 10)) (stroke (width 0) (type default)) (uuid w1))
+  (wire (pts (xy 12.54 10) (xy 15 10)) (stroke (width 0) (type default)) (uuid w2))
+  (label "VIN" (at 5 10 0) (effects (font (size 1.27 1.27))))
+  (hierarchical_label "VOUT" (shape output) (at 15 10 0) (effects (font (size 1.27 1.27))))
+)
+""".strip()
+        input_path = self._make_tempfile(".kicad_sch", schematic_content)
+        output_dir = self._make_tempdir("silicore_schematic_test_")
+
+        result = run_single_analysis_from_path(
+            input_path,
+            config=self.config,
+            output_dir=output_dir,
+        )
+
+        self.assertEqual(result["filename"], os.path.basename(input_path))
+        self.assertIn("board_summary", result)
+        self.assertEqual(result["board_summary"]["component_count"], 1)
+        self.assertGreaterEqual(result["board_summary"]["net_count"], 2)
+
+        manifest_path = os.path.join(output_dir, "export_manifest.json")
+        with open(manifest_path, "r", encoding="utf-8") as file:
+            manifest = json.load(file)
+
+        self.assertIn(".kicad_sch", manifest["parser_capabilities"])
+        self.assertEqual(manifest["parser_capabilities"][".kicad_sch"]["status"], "supported")
 
 
 if __name__ == "__main__":

@@ -1,19 +1,19 @@
 # SILICORE ENGINEERING REPORT
 
 - File: high_speed_pair_bad.kicad_pcb
-- Score: 6.1 / 100
-- Total Risks: 44
-- Total Penalty: 224.0
+- Score: 6.4 / 100
+- Total Risks: 42
+- Total Penalty: 200.0
 
 ## Executive Summary
 
 **Board needs focused engineering review**
 
-This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700). The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
+This board shows elevated design risk. The main risk concentration is in signal integrity. The highest-priority issue is High-voltage pad on J1:VBUS is close to J1:USB_DP. The current design snapshot includes 3 components and 5 nets. The board is likely functional at a prototype level, but the highlighted issues should be addressed before stronger production confidence.
 
 ## Parser Capability
 
-- Current production-ready inputs: `.kicad_pcb`, `.txt`
+- Current production-ready inputs: `.kicad_pcb`, `.kicad_sch`, `.txt`
 - Planned next-stage inputs: Altium-style board imports, Gerber-derived review flows
 
 ## Review Readiness
@@ -24,31 +24,30 @@ This board shows elevated design risk. The main risk concentration is in signal 
 
 ## Top Issues
 
-1. **CRITICAL** — safety_high_voltage — Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)
-   - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-2. **CRITICAL** — safety_high_voltage — Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)
-   - Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-3. **CRITICAL** — safety_high_voltage — High-voltage pad on J1:VBUS is close to J1:USB_DP
+1. **CRITICAL** — safety_high_voltage — High-voltage pad on J1:VBUS is close to J1:USB_DP
    - Recommendation: Increase conductor spacing or introduce isolation features that meet the intended voltage-class clearance target.
+2. **HIGH** — emi_emc — Fast or noisy net USB_DP changes layers without nearby return-path stitching support
+   - Recommendation: Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.
+3. **HIGH** — emi_emc — Fast or noisy net USB_DN changes layers without nearby return-path stitching support
+   - Recommendation: Add nearby ground stitching vias or keep the route on a better contained reference path to reduce return-current disruption.
 
 ## Board Summary
 
 - Component Count: 3
 - Net Count: 5
-- Risk Count: 44
+- Risk Count: 42
 - Sample Components: J1, U1, Y1
 
 ## Severity Penalties
 
 - medium: 10.8
-- critical: 3.6
 - high: 7.8
+- critical: 1.2
 - low: 0.2
 
 ## Category Penalties
 
 - assembly_testability: 2.0
-- safety_high_voltage: 3.6
 - signal_integrity: 5.2
 - component_design: 0.8
 - power_integrity: 4.4
@@ -56,6 +55,7 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - emi_emc: 1.6
 - manufacturing: 0.8
 - reliability: 0.8
+- safety_high_voltage: 1.2
 - stackup_return_path: 2.0
 - system_interaction: 0.6
 
@@ -147,42 +147,6 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Nets: CLK
 - Metrics: {"has_testpoint": false}
 
-### CRITICAL — safety_high_voltage
-- Message: Geometry-derived high-voltage spacing between pad and pad is below creepage target (0.700)
-- Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.84
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=2.5
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 84.0 / 100
-- Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Fix Priority: critical
-- Components: J1, J1
-- Nets: VBUS, USB_DP
-- Metrics: {"creepage": 0.7, "threshold": 2.5}
-
-### CRITICAL — safety_high_voltage
-- Message: Geometry-derived high-voltage spacing between pad and pad is below creepage target (2.500)
-- Recommendation: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.84
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=2.5
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 84.0 / 100
-- Suggested Fix: Increase the routed spacing, add slots/barriers, or rework the high-voltage region to meet creepage intent.
-- Fix Priority: critical
-- Components: J1, J1
-- Nets: VBUS, USB_DN
-- Metrics: {"creepage": 2.5, "threshold": 2.5}
-
 ### HIGH — signal_integrity
 - Message: Clock source Y1 is far from controller U1 (19.80 units)
 - Recommendation: Move the crystal or oscillator closer to the controller clock pins and keep the timing loop compact and isolated.
@@ -202,24 +166,6 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Metrics: {"distance": 19.8, "threshold": 12.0, "shares_clock_net": true}
 
 ### MEDIUM — component_design
-- Message: High-speed net USB_DP has a long route with no visible series or termination resistor
-- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Root Cause: General design issue
-- Impact: Unknown system impact
-- Confidence: 0.7
-- Trigger Condition: A rule-based design condition triggered this finding.
-- Observed vs Threshold: threshold=18.0
-- Traceability: 100 / 100
-- Evidence Count: 9
-- Engineering Impact: Unknown system impact
-- Trust Confidence: 70.0 / 100
-- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
-- Fix Priority: medium
-- Components: J1, U1
-- Nets: USB_DP
-- Metrics: {"trace_length": 84.67, "threshold": 18.0, "has_resistor": false}
-
-### MEDIUM — component_design
 - Message: High-speed net USB_DN has a long route with no visible series or termination resistor
 - Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
 - Root Cause: General design issue
@@ -236,6 +182,24 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Components: J1, U1
 - Nets: USB_DN
 - Metrics: {"trace_length": 118.2, "threshold": 18.0, "has_resistor": false}
+
+### MEDIUM — component_design
+- Message: High-speed net USB_DP has a long route with no visible series or termination resistor
+- Recommendation: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Root Cause: General design issue
+- Impact: Unknown system impact
+- Confidence: 0.7
+- Trigger Condition: A rule-based design condition triggered this finding.
+- Observed vs Threshold: threshold=18.0
+- Traceability: 100 / 100
+- Evidence Count: 9
+- Engineering Impact: Unknown system impact
+- Trust Confidence: 70.0 / 100
+- Suggested Fix: Review whether this interface requires termination or series damping based on edge rate and topology.
+- Fix Priority: medium
+- Components: J1, U1
+- Nets: USB_DP
+- Metrics: {"trace_length": 84.67, "threshold": 18.0, "has_resistor": false}
 
 ### HIGH — power_integrity
 - Message: High-current net VBUS bottlenecks through a narrow copper section
@@ -287,7 +251,7 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Improve regulator-to-load placement, shorten power paths, widen traces, and reduce unnecessary vias.
 - Fix Priority: high
 - Components: U1
-- Nets: GND, USB_DP, CLK, USB_DN
+- Nets: USB_DN, CLK, USB_DP, GND
 - Metrics: {"local_caps_found": 0, "min_local_caps": 1, "nearest_local_cap_distance": null}
 
 ### HIGH — high_speed
@@ -429,8 +393,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: J1
-- Nets: GND, VBUS, USB_DP, USB_DN
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "VBUS", "USB_DP", "USB_DN"], "has_power": false, "has_ground": true}
+- Nets: VBUS, USB_DN, USB_DP, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["VBUS", "USB_DN", "USB_DP", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: U1 has ground but no visible power rail
@@ -447,8 +411,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: U1
-- Nets: GND, USB_DP, CLK, USB_DN
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "USB_DP", "CLK", "USB_DN"], "has_power": false, "has_ground": true}
+- Nets: USB_DN, CLK, USB_DP, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["USB_DN", "CLK", "USB_DP", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: Y1 has ground but no visible power rail
@@ -465,8 +429,8 @@ This board shows elevated design risk. The main risk concentration is in signal 
 - Suggested Fix: Connect the affected component to the intended power rail and verify that the configured power-net definitions match the board design.
 - Fix Priority: medium
 - Components: Y1
-- Nets: GND, CLK
-- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["GND", "CLK"], "has_power": false, "has_ground": true}
+- Nets: CLK, GND
+- Metrics: {"required_power_nets": ["VIN", "VCC", "VBAT", "5V", "3V3", "VDD"], "required_ground_nets": ["GND", "GROUND", "PGND"], "observed_component_nets": ["CLK", "GND"], "has_power": false, "has_ground": true}
 
 ### MEDIUM — power_integrity
 - Message: High-current net VBUS uses a long routed path

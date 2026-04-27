@@ -33,9 +33,20 @@ RULE_CATEGORY_MAP = {
     "safety_high_voltage_rule": "safety",
 }
 
+SCHEMATIC_ALLOWED_RULES = {
+    "component_analysis_rule",
+    "decoupling_rule",
+    "decoupling_strategy_rule",
+}
+
 
 def _rule_is_enabled(filename, config):
     stem = filename[:-3]
+    source_format = str(((config or {}).get("_runtime") or {}).get("source_format") or "").lower()
+
+    if source_format == "kicad_schematic" and stem not in SCHEMATIC_ALLOWED_RULES:
+        return False
+
     analysis = (config or {}).get("analysis", {}) or {}
     category_toggles = analysis.get("category_toggles", {}) or {}
     rule_toggles = analysis.get("rule_toggles", {}) or {}
