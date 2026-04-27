@@ -148,8 +148,8 @@ def _extract_value_note(context, label_keyword):
     return ""
 
 
-def _make_response(intent, title, answer, detail="", follow_ups=None, citations=None, actions=None, confidence=0.78):
-    return {
+def _make_response(intent, title, answer, detail="", follow_ups=None, citations=None, actions=None, confidence=0.78, **extra):
+    payload = {
         "intent": intent,
         "title": title,
         "answer": answer,
@@ -158,6 +158,177 @@ def _make_response(intent, title, answer, detail="", follow_ups=None, citations=
         "citations": citations or [],
         "actions": actions or {},
         "confidence": round(_safe_float(confidence, 0.78), 2),
+    }
+    payload.update(extra)
+    return payload
+
+
+def _focus_payload(item, fallback_label="Focus cue"):
+    if not isinstance(item, dict):
+        return {}
+    return {
+        "label": item.get("label") or item.get("title") or item.get("category") or item.get("message") or fallback_label,
+        "why": _compact(item.get("reasoning") or item.get("message") or item.get("why") or "Atlas linked this item to the active engineering question.", 150),
+        "severity": item.get("severity") or item.get("fix_priority") or "medium",
+        "components": _listify(item.get("components"))[:4],
+        "nets": _listify(item.get("nets"))[:4],
+    }
+
+
+def _priority_payload(item, rank):
+    if not isinstance(item, dict):
+        return {}
+    return {
+        "rank": rank,
+        "label": item.get("title") or item.get("label") or item.get("category") or f"Priority {rank}",
+        "why": _compact(item.get("why") or item.get("message") or item.get("reasoning") or "Atlas ranked this item because it is likely to move real engineering posture.", 160),
+        "action": _compact(item.get("action") or item.get("recommendation") or "Inspect and close this issue before widening scope.", 160),
+        "components": _listify(item.get("components"))[:4],
+        "nets": _listify(item.get("nets"))[:4],
+        "severity": item.get("severity") or item.get("fix_priority") or "medium",
+    }
+
+
+def _history_text(history, role=None):
+    messages = []
+    for item in _listify(history):
+        if not isinstance(item, dict):
+            continue
+        if role and _lower(item.get("role")) != role:
+            continue
+        text = item.get("content") or item.get("prompt") or item.get("answer") or item.get("copy")
+        text = " ".join(str(text or "").split())
+        if text:
+            messages.append(text)
+    return messages
+
+
+def _memory_summary(context, history, fallback):
+    user_messages = _history_text(history, role="user")
+    if not user_messages:
+        return {
+            "summary": fallback,
+            "recent_prompts": [],
+            "active_focus": _lower(context.get("atlas_focus")) or "",
+        }
+    recent = user_messages[-3:]
+    return {
+        "summary": f"Atlas is tracking the current review thread around: {recent[-1]}",
+        "recent_prompts": recent,
+        "active_focus": _lower(context.get("atlas_focus")) or "",
+    }
+
+
+def _board_reasoning_payload(context, history, top_actions, risk_sources, validation_plan):
+    focus_map = [_focus_payload(item, "Board hotspot") for item in (_listify(context.get("board_focus_items"))[:4] or top_actions[:4])]
+    priority_queue = [_priority_payload(item, index) for index, item in enumerate(top_actions[:4], start=1)]
+    if not priority_queue:
+        priority_queue = [_priority_payload(item, index) for index, item in enumerate(_pick_top_risks(risk_sources, limit=3), start=1)]
+    remediation_options = []
+    for index, item in enumerate(top_actions[:3], start=1):
+        remediation_options.append(
+            {
+                "label": item.get("label") or item.get("category") or f"Fix option {index}",
+                "recommendation": item.get("recommendation") or item.get("action") or "Review this issue in layout.",
+                "tradeoff": item.get("engineering_impact") or item.get("reasoning") or "Atlas expects this fix to move the board posture materially.",
+                "validate_next": validation_plan[index - 1] if len(validation_plan) >= index else "",
+            }
+        )
+    proactive_guidance = {
+        "headline": context.get("mission") or "Atlas is ready to lead the next board loop.",
+        "moves": [
+            remediation_options[0].get("recommendation") if remediation_options else "Fix the top ranked issue before changing multiple subsystems at once.",
+            validation_plan[0] if validation_plan else "Re-run the board and confirm the dominant risk driver actually collapsed.",
+            "Only treat the rerun as progress if confidence and traceability stay strong alongside score improvement.",
+        ],
+    }
+    return {
+        "focus_map": focus_map,
+        "priority_queue": priority_queue,
+        "remediation_options": remediation_options,
+        "proactive_guidance": proactive_guidance,
+        "memory": _memory_summary(context, history, "Atlas will learn more once this board has a longer rerun and decision trail."),
+    }
+
+
+def _project_reasoning_payload(context, history, trusted_focus, next_actions):
+    focus_map = [_focus_payload(item, "Recurring family") for item in trusted_focus[:4]]
+    priority_queue = [_priority_payload(item, index) for index, item in enumerate(next_actions[:4], start=1)]
+    proactive_guidance = {
+        "headline": (next_actions[0] or {}).get("recommendation") or "Atlas is ready to guide the next workspace move.",
+        "moves": [
+            (next_actions[0] or {}).get("recommendation") or "Assign one owner to the strongest repeated issue family.",
+            "Compare the latest meaningful runs before opening another broad review cycle.",
+            "Only treat the workspace as improving if repeated issue pressure and confidence both move in the right direction.",
+        ],
+    }
+    return {
+        "focus_map": focus_map,
+        "priority_queue": priority_queue,
+        "remediation_options": [
+            {
+                "label": item.get("category") or item.get("label") or f"Workspace action {index}",
+                "recommendation": item.get("recommendation") or item.get("action") or "Review this repeated issue family.",
+                "tradeoff": item.get("message") or "Atlas expects this move to reduce repeated engineering pressure.",
+                "validate_next": "Verify the next linked rerun improves both risk posture and confidence."
+            }
+            for index, item in enumerate(next_actions[:3], start=1)
+        ],
+        "proactive_guidance": proactive_guidance,
+        "memory": _memory_summary(context, history, "Atlas will learn more as workspace decisions and reruns accumulate."),
+    }
+
+
+def _compare_reasoning_payload(context, history, focus_sources, takeaways):
+    focus_map = [_focus_payload(item, "Changed finding") for item in focus_sources[:4]]
+    priority_queue = []
+    for index, item in enumerate(takeaways[:4], start=1):
+        priority_queue.append(
+            {
+                "rank": index,
+                "label": item.get("title") or item.get("label") or f"Compare move {index}",
+                "why": _compact(item.get("why") or "Atlas sees this change cluster as the best explanation for revision movement.", 160),
+                "action": _compact(item.get("recommendation") or context.get("next_move") or "Inspect this subsystem before approving the candidate revision.", 160),
+                "components": _listify((focus_sources[index - 1] if len(focus_sources) >= index else {}).get("components"))[:4],
+                "nets": _listify((focus_sources[index - 1] if len(focus_sources) >= index else {}).get("nets"))[:4],
+                "severity": (focus_sources[index - 1] if len(focus_sources) >= index else {}).get("severity") or "change",
+            }
+        )
+    if not priority_queue:
+        for index, item in enumerate(focus_sources[:4], start=1):
+            priority_queue.append(
+                {
+                    "rank": index,
+                    "label": item.get("label") or f"Compare move {index}",
+                    "why": _compact(item.get("change_type") or "Atlas is using this changed finding cluster to explain revision movement.", 160),
+                    "action": _compact(context.get("next_move") or "Inspect this changed subsystem before approving the candidate revision.", 160),
+                    "components": _listify(item.get("components"))[:4],
+                    "nets": _listify(item.get("nets"))[:4],
+                    "severity": item.get("severity") or "change",
+                }
+            )
+    proactive_guidance = {
+        "headline": context.get("next_move") or "Atlas is ready to arbitrate this revision decision.",
+        "moves": [
+            (takeaways[0] or {}).get("why") or "Inspect the dominant changed subsystem first.",
+            "Use the board views to confirm the changed cluster is physically real, not just numerically different.",
+            "Approve only if the candidate improves score without creating new critical pressure.",
+        ],
+    }
+    return {
+        "focus_map": focus_map,
+        "priority_queue": priority_queue,
+        "remediation_options": [
+            {
+                "label": item.get("label") or item.get("title") or f"Compare action {index}",
+                "recommendation": item.get("why") or context.get("next_move") or "Inspect this changed subsystem.",
+                "tradeoff": "Atlas is balancing score movement against newly introduced engineering risk.",
+                "validate_next": "Confirm whether the candidate revision is actually safer at the subsystem level."
+            }
+            for index, item in enumerate(takeaways[:3], start=1)
+        ],
+        "proactive_guidance": proactive_guidance,
+        "memory": _memory_summary(context, history, "Atlas will learn more as compare decisions are tied back to accepted or rejected revisions."),
     }
 
 
@@ -200,6 +371,7 @@ def answer_board_question(prompt, context, history=None):
     domain_rows = _extract_domain_rows(context)
     dominant_domain = context.get("dominant_domain") or (domain_rows[0]["label"] if domain_rows else "General")
     intent = _resolve_board_intent(prompt, context, history)
+    board_reasoning = _board_reasoning_payload(context, history, top_actions, risk_sources, validation_plan)
 
     def _action_payload(item, heat_mode="hybrid"):
         return {
@@ -231,6 +403,7 @@ def answer_board_question(prompt, context, history=None):
             citations=citations,
             actions=_action_payload(top_action, "heatmap") if top_action else {},
             confidence=0.86,
+            **board_reasoning,
         )
 
     if intent == "score":
@@ -255,6 +428,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=citations,
             confidence=0.82,
+            **board_reasoning,
         )
 
     if intent == "signoff":
@@ -288,6 +462,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in criticals] or [_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             confidence=0.84,
+            **board_reasoning,
         )
 
     if intent == "validation":
@@ -306,6 +481,7 @@ def answer_board_question(prompt, context, history=None):
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             actions=_action_payload(top_action) if top_action else {},
             confidence=0.8,
+            **board_reasoning,
         )
 
     if intent == "traceability":
@@ -324,6 +500,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
             confidence=0.76,
+            **board_reasoning,
         )
 
     if intent == "parser":
@@ -355,6 +532,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             confidence=0.79,
+            **board_reasoning,
         )
 
     if intent == "cam":
@@ -370,6 +548,7 @@ def answer_board_question(prompt, context, history=None):
                     "Am I signoff ready?",
                 ],
                 confidence=0.77,
+                **board_reasoning,
             )
         missing_signals = _listify(cam_summary.get("missing_signals"))
         remediation_steps = _listify(cam_summary.get("remediation_steps"))
@@ -416,6 +595,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             confidence=0.83,
+            **board_reasoning,
         )
 
     if intent in {"physics", "confidence"}:
@@ -455,6 +635,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
             confidence=0.82,
+            **board_reasoning,
         )
 
     if intent == "stackup":
@@ -475,6 +656,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
             confidence=0.77,
+            **board_reasoning,
         )
 
     if intent == "subsystem":
@@ -497,6 +679,7 @@ def answer_board_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)],
             confidence=0.79,
+            **board_reasoning,
         )
 
     domain_intents = {
@@ -533,6 +716,7 @@ def answer_board_question(prompt, context, history=None):
             citations=[_source_to_citation(item) for item in matches] or [_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=2)],
             actions=_action_payload(action_item, "heatmap") if action_item else {},
             confidence=0.8,
+            **board_reasoning,
         )
 
     overview_citations = [_source_to_citation(item) for item in _pick_top_risks(risk_sources, limit=3)]
@@ -560,6 +744,7 @@ def answer_board_question(prompt, context, history=None):
         citations=overview_citations,
         actions=_action_payload(top_actions[0]) if top_actions else {},
         confidence=0.78,
+        **board_reasoning,
     )
 
 
@@ -592,6 +777,7 @@ def answer_project_question(prompt, context, history=None):
     top_focus = trusted_focus[0] if trusted_focus else {}
     top_action = next_actions[0] if next_actions else {}
     cam_boards = _listify(context.get("cam_boards"))
+    project_reasoning = _project_reasoning_payload(context, history, trusted_focus, next_actions)
 
     if intent == "cam_portfolio":
         if not cam_boards:
@@ -600,12 +786,13 @@ def answer_project_question(prompt, context, history=None):
                 "CAM Portfolio",
                 "This workspace does not currently include Gerber/CAM-backed review runs.",
                 detail="Atlas only surfaces CAM portfolio guidance when at least one linked run includes a fabrication package import.",
-                follow_ups=[
-                    "Are we improving enough?",
-                    "What should the team do next?",
-                ],
-                confidence=0.76,
-            )
+            follow_ups=[
+                "Are we improving enough?",
+                "What should the team do next?",
+            ],
+            confidence=0.76,
+            **project_reasoning,
+        )
         ranked_cam = sorted(cam_boards, key=lambda item: _safe_float(item.get("readiness_score"), 0), reverse=True)
         weakest_cam = ranked_cam[-1]
         strongest_cam = ranked_cam[0]
@@ -649,6 +836,7 @@ def answer_project_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(top_focus)] if top_focus else [],
             confidence=0.83,
+            **project_reasoning,
         )
 
     if intent == "workspace_momentum":
@@ -663,6 +851,7 @@ def answer_project_question(prompt, context, history=None):
                 "What is still holding the workspace back?",
             ],
             confidence=0.8,
+            **project_reasoning,
         )
 
     if intent == "team_action":
@@ -678,6 +867,7 @@ def answer_project_question(prompt, context, history=None):
             ],
             citations=[_source_to_citation(top_action)] if top_action else [],
             confidence=0.82,
+            **project_reasoning,
         )
 
     if intent == "release_gate":
@@ -692,6 +882,7 @@ def answer_project_question(prompt, context, history=None):
                 "Are we improving enough?",
             ],
             confidence=0.82,
+            **project_reasoning,
         )
 
     if intent == "confidence":
@@ -706,6 +897,7 @@ def answer_project_question(prompt, context, history=None):
                 "Are we review-gate ready?",
             ],
             confidence=0.76,
+            **project_reasoning,
         )
 
     if intent == "boards":
@@ -727,6 +919,7 @@ def answer_project_question(prompt, context, history=None):
                 "What should the team do next?",
             ],
             confidence=0.74,
+            **project_reasoning,
         )
 
     return _make_response(
@@ -740,6 +933,7 @@ def answer_project_question(prompt, context, history=None):
             "What should the team do next?",
         ],
         confidence=0.77,
+        **project_reasoning,
     )
 
 
@@ -770,6 +964,7 @@ def answer_compare_question(prompt, context, history=None):
     first_takeaway = takeaways[0] if takeaways else {}
     first_focus = focus_sources[0] if focus_sources else {}
     citations = [_source_to_citation(first_focus)] if first_focus else []
+    compare_reasoning = _compare_reasoning_payload(context, history, focus_sources, takeaways)
 
     if intent == "approval":
         return _make_response(
@@ -785,6 +980,7 @@ def answer_compare_question(prompt, context, history=None):
             citations=citations,
             actions={"components": _listify(first_focus.get("components")), "nets": _listify(first_focus.get("nets"))} if first_focus else {},
             confidence=0.83,
+            **compare_reasoning,
         )
 
     if intent == "regression":
@@ -801,6 +997,7 @@ def answer_compare_question(prompt, context, history=None):
             citations=citations,
             actions={"components": _listify(first_focus.get("components")), "nets": _listify(first_focus.get("nets"))} if first_focus else {},
             confidence=0.84,
+            **compare_reasoning,
         )
 
     if intent == "improvement":
@@ -817,6 +1014,7 @@ def answer_compare_question(prompt, context, history=None):
             ],
             citations=citations,
             confidence=0.77,
+            **compare_reasoning,
         )
 
     if intent == "domains":
@@ -838,6 +1036,7 @@ def answer_compare_question(prompt, context, history=None):
             ],
             citations=citations,
             confidence=0.74,
+            **compare_reasoning,
         )
 
     if intent == "inspect_next":
@@ -854,6 +1053,7 @@ def answer_compare_question(prompt, context, history=None):
             citations=citations,
             actions={"components": _listify(first_focus.get("components")), "nets": _listify(first_focus.get("nets"))} if first_focus else {},
             confidence=0.8,
+            **compare_reasoning,
         )
 
     if intent == "top_change":
@@ -870,6 +1070,7 @@ def answer_compare_question(prompt, context, history=None):
             citations=citations,
             actions={"components": _listify(first_focus.get("components")), "nets": _listify(first_focus.get("nets"))} if first_focus else {},
             confidence=0.82,
+            **compare_reasoning,
         )
 
     return _make_response(
@@ -884,6 +1085,7 @@ def answer_compare_question(prompt, context, history=None):
         ],
         citations=citations,
         confidence=0.76,
+        **compare_reasoning,
     )
 
 

@@ -520,6 +520,192 @@ def _atlas_signal_text(value, fallback="Not active yet."):
     return text or fallback
 
 
+def _atlas_trim(text, limit=140):
+    value = " ".join(str(text or "").split())
+    if len(value) <= limit:
+        return value
+    return value[: limit - 3].rstrip() + "..."
+
+
+def _atlas_focus_components(item):
+    return [value for value in (item.get("components") or []) if value][:4]
+
+
+def _atlas_focus_nets(item):
+    return [value for value in (item.get("nets") or []) if value][:4]
+
+
+def _atlas_priority_queue(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        queue = []
+        for index, item in enumerate((copilot.get("fix_plan") or [])[:4], start=1):
+            queue.append(
+                {
+                    "rank": index,
+                    "label": item.get("title") or item.get("category") or "Board action",
+                    "why": _atlas_trim(item.get("why") or item.get("reasoning") or "Atlas flagged this as a high-leverage board action."),
+                    "action": _atlas_trim(item.get("action") or "Inspect this issue on the board and close it with a rerun."),
+                    "impact": item.get("engineering_impact") or item.get("category") or context.get("dominant_domain") or "Board posture",
+                    "components": _atlas_focus_components(item),
+                    "nets": _atlas_focus_nets(item),
+                    "priority": item.get("fix_priority") or "Fix first",
+                }
+            )
+        return queue
+
+    if page_type == "compare":
+        queue = []
+        source_actions = (context.get("takeaways") or context.get("focus_sources") or [])[:4]
+        for index, item in enumerate(source_actions, start=1):
+            queue.append(
+                {
+                    "rank": index,
+                    "label": item.get("title") or item.get("label") or f"Compare move {index}",
+                    "why": _atlas_trim(item.get("why") or item.get("change_type") or "Atlas sees this changed cluster as part of the revision decision." ),
+                    "action": _atlas_trim(item.get("recommendation") or context.get("next_move") or "Inspect this changed subsystem before approving the candidate revision."),
+                    "impact": item.get("severity") or context.get("direction") or "Revision posture",
+                    "components": _atlas_focus_components(item),
+                    "nets": _atlas_focus_nets(item),
+                    "priority": "Inspect first" if index == 1 else "Next",
+                }
+            )
+        return queue
+
+    source_actions = (context.get("next_actions") or context.get("trusted_focus_items") or [])[:4]
+    queue = []
+    for index, item in enumerate(source_actions, start=1):
+        queue.append(
+            {
+                "rank": index,
+                "label": item.get("category") or item.get("label") or "Atlas action",
+                "why": _atlas_trim(item.get("message") or item.get("headline") or "Atlas sees this as the next strongest engineering move."),
+                "action": _atlas_trim(item.get("recommendation") or item.get("action") or "Review this pressure area before approving the next step."),
+                "impact": item.get("severity") or context.get("momentum") or context.get("direction") or "Program posture",
+                "components": _atlas_focus_components(item),
+                "nets": _atlas_focus_nets(item),
+                "priority": "Fix first" if index == 1 else "Next",
+            }
+        )
+    return queue
+
+
+def _atlas_focus_map(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        focus_items = (context.get("board_focus_items") or [])[:6]
+        if focus_items:
+            return [
+                {
+                    "label": item.get("label") or item.get("title") or "Board focus",
+                    "why": _atlas_trim(item.get("message") or item.get("why") or "Atlas linked this focus area to a board-region risk signal."),
+                    "severity": item.get("severity") or "medium",
+                    "components": _atlas_focus_components(item),
+                    "nets": _atlas_focus_nets(item),
+                }
+                for item in focus_items
+            ]
+
+        return [
+            {
+                "label": item.get("title") or item.get("category") or "Board focus",
+                "why": _atlas_trim(item.get("why") or item.get("reasoning") or "Atlas linked this top action to the current board posture."),
+                "severity": item.get("fix_priority") or "fix first",
+                "components": _atlas_focus_components(item),
+                "nets": _atlas_focus_nets(item),
+            }
+            for item in (copilot.get("fix_plan") or [])[:4]
+        ]
+
+    if page_type == "compare":
+        return [
+            {
+                "label": item.get("label") or "Changed issue source",
+                "why": _atlas_trim(item.get("change_type") or "Atlas is using this changed finding cluster to explain revision movement."),
+                "severity": item.get("severity") or "change",
+                "components": _atlas_focus_components(item),
+                "nets": _atlas_focus_nets(item),
+            }
+            for item in (context.get("focus_sources") or [])[:6]
+        ]
+
+    return [
+        {
+            "label": item.get("category") or item.get("label") or "Recurring family",
+            "why": _atlas_trim(item.get("message") or item.get("headline") or "Atlas is tracking this repeated issue family across the workspace."),
+            "severity": item.get("severity") or "workspace",
+            "components": _atlas_focus_components(item),
+            "nets": _atlas_focus_nets(item),
+        }
+        for item in (context.get("trusted_focus_items") or [])[:6]
+    ]
+
+
+def _atlas_learning_memory(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        return {
+            "summary": context.get("release_note") or "Atlas will strengthen this board model as reruns and validation outcomes accumulate.",
+            "signals": [
+                f"Current driver: {context.get('dominant_domain') or 'General'}",
+                f"Validation loop: {((context.get('validation_plan') or ['Next rerun pending.'])[0])}",
+                f"Signoff posture: {_atlas_signal_text(context.get('signoff_gate'), 'Needs review')}",
+            ],
+        }
+    if page_type == "compare":
+        return {
+            "summary": context.get("signoff_note") or "Atlas learns when compare outcomes are tied back to accepted or rejected revisions.",
+            "signals": [
+                f"Direction: {context.get('direction') or 'Mixed'}",
+                f"Next move: {context.get('next_move') or 'Inspect changed subsystem'}",
+                f"Score delta: {round(_safe_float(context.get('score_diff'), 0.0), 1)}",
+            ],
+        }
+    return {
+        "summary": context.get("release_readiness") or "Atlas gets sharper as repeated workspace issues are linked to reruns and team decisions.",
+        "signals": [
+            f"Momentum: {context.get('momentum') or 'Stable'}",
+            f"Recurring family: {context.get('recurring_family_summary') or 'Still forming'}",
+            f"Health score: {round(_safe_float(context.get('health_score'), 0.0))}",
+        ],
+    }
+
+
+def _atlas_proactive_guidance(page_type, context, copilot):
+    context = context or {}
+    copilot = copilot or {}
+    if page_type == "board":
+        fix_plan = copilot.get("fix_plan") or []
+        return {
+            "headline": copilot.get("mission") or "Atlas is ready to steer the next board loop.",
+            "moves": [
+                _atlas_trim((fix_plan[0] or {}).get("action") or "Fix the top ranked board issue before widening scope."),
+                _atlas_trim(((context.get("validation_plan") or ["Re-run the board to verify the main risk driver collapses."])[0])),
+                "Verify that confidence and traceability remain stable, not just that the total count drops.",
+            ],
+        }
+    if page_type == "compare":
+        return {
+            "headline": copilot.get("next_move") or "Atlas is ready to arbitrate the revision decision.",
+            "moves": [
+                _atlas_trim(((context.get("takeaways") or [{}])[0] or {}).get("why") or "Inspect the dominant changed subsystem first."),
+                "Use the baseline and candidate board views to confirm the changed hotspot cluster is physically real.",
+                "Approve only if the candidate improves score without adding new critical pressure.",
+            ],
+        }
+    return {
+        "headline": ((copilot.get("execution_plan") or [{}])[0] or {}).get("action") or "Atlas is ready to focus the workspace on one repeated issue family.",
+        "moves": [
+            _atlas_trim(((copilot.get("team_guidance") or ["Assign one owner to the strongest repeated issue family."])[0])),
+            "Use compare on the latest two meaningful runs before opening a new review loop.",
+            "Treat workspace improvement as real only if repeated pressure and confidence both move in the right direction.",
+        ],
+    }
+
+
 def _atlas_operating_loop(page_type, context, copilot):
     context = context or {}
     copilot = copilot or {}
@@ -624,6 +810,10 @@ def _atlas_engine_payload(page_type, context, copilot, assistant_console):
         "intelligence_layers": _atlas_intelligence_layers(page_type, context, copilot),
         "operating_loop": _atlas_operating_loop(page_type, context, copilot),
         "advisory_panels": _atlas_advisory_panels(page_type, context, copilot),
+        "priority_queue": _atlas_priority_queue(page_type, context, copilot),
+        "focus_map": _atlas_focus_map(page_type, context, copilot),
+        "learning_memory": _atlas_learning_memory(page_type, context, copilot),
+        "proactive_guidance": _atlas_proactive_guidance(page_type, context, copilot),
         "assistant_console": assistant_console or {},
     }
 
@@ -3533,6 +3723,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
     risks = result.get("risks", []) or []
     board_summary = result.get("board_summary", {}) or {}
     analysis_context = result.get("analysis_context_view", {}) or {}
+    board_view = result.get("board_view", {}) or {}
 
     domain_breakdown = []
     for item in board_review_layers.get("domain_cards", []) or []:
@@ -3572,6 +3763,7 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "release_note": board_copilot.get("release_note"),
         "dominant_domain": board_copilot.get("dominant_domain"),
         "validation_plan": board_copilot.get("validation_plan") or [],
+        "fix_plan": board_copilot.get("fix_plan") or [],
         "top_actions": decision_data.get("next_actions") or [],
         "domain_breakdown": domain_breakdown,
         "traceability_stats": board_review_layers.get("traceability_stats") or [],
@@ -3583,6 +3775,8 @@ def _build_board_atlas_context(result, decision_data, board_copilot, board_revie
         "value_metrics": board_value_metrics or [],
         "subsystem_summary": result.get("subsystem_summary") or {},
         "risk_sources": risk_sources,
+        "board_focus_items": board_view.get("focus_items") or [],
+        "board_hotspots": board_view.get("hotspots") or [],
         "analysis_profile": analysis_context.get("profile"),
         "board_type": analysis_context.get("board_type"),
     }
@@ -3653,6 +3847,7 @@ def _build_compare_atlas_context(comparison, compare_copilot):
                 "components": item.get("components") or [],
                 "nets": item.get("nets") or [],
                 "severity": item.get("severity"),
+                "change_type": item.get("change_type") or "change",
             }
         )
 

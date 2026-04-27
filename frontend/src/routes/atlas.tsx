@@ -51,6 +51,11 @@ type AtlasResponse = {
   workflow_plan?: Array<{ step?: string; title?: string; action_name?: string; reason?: string }>;
   workflow_results?: Array<{ status?: string; action_name?: string; summary?: string; reason?: string; result?: { summary?: string; status?: string; count?: number } }>;
   agent_trace?: Array<{ step?: number; label?: string; status?: string; summary?: string }>;
+  focus_map?: Array<{ label?: string; why?: string; severity?: string; components?: string[]; nets?: string[] }>;
+  priority_queue?: Array<{ rank?: number; label?: string; why?: string; action?: string; severity?: string; components?: string[]; nets?: string[] }>;
+  remediation_options?: Array<{ label?: string; recommendation?: string; tradeoff?: string; validate_next?: string }>;
+  proactive_guidance?: { headline?: string; moves?: string[] };
+  memory?: { summary?: string; recent_prompts?: string[]; active_focus?: string; signals?: string[] };
 };
 
 type AtlasContextPayload = {
@@ -66,6 +71,10 @@ type AtlasContextPayload = {
     intelligence_layers?: Array<{ key?: string; title?: string; summary?: string; current_signal?: string }>;
     operating_loop?: Array<{ label?: string; summary?: string; signal?: string }>;
     advisory_panels?: Array<{ label?: string; headline?: string }>;
+    priority_queue?: Array<{ rank?: number; label?: string; why?: string; action?: string; impact?: string; priority?: string; components?: string[]; nets?: string[] }>;
+    focus_map?: Array<{ label?: string; why?: string; severity?: string; components?: string[]; nets?: string[] }>;
+    learning_memory?: { summary?: string; signals?: string[] };
+    proactive_guidance?: { headline?: string; moves?: string[] };
     assistant_console?: {
       title?: string;
       eyebrow?: string;
@@ -363,6 +372,15 @@ function Atlas() {
   const intelligenceLayers = atlasEngine?.intelligence_layers || [];
   const operatingLoop = atlasEngine?.operating_loop || [];
   const advisoryPanels = atlasEngine?.advisory_panels || [];
+  const enginePriorityQueue = atlasEngine?.priority_queue || [];
+  const engineFocusMap = atlasEngine?.focus_map || [];
+  const engineLearningMemory = atlasEngine?.learning_memory;
+  const engineProactiveGuidance = atlasEngine?.proactive_guidance;
+  const visiblePriorityQueue = latestAnswer?.priority_queue?.length ? latestAnswer.priority_queue : enginePriorityQueue;
+  const visibleFocusMap = latestAnswer?.focus_map?.length ? latestAnswer.focus_map : engineFocusMap;
+  const visibleRemediationOptions = latestAnswer?.remediation_options || [];
+  const visibleProactiveGuidance = latestAnswer?.proactive_guidance || engineProactiveGuidance;
+  const visibleMemory = latestAnswer?.memory || engineLearningMemory;
 
   return (
     <AppShell title="Atlas — AI copilot">
@@ -568,6 +586,127 @@ function Atlas() {
               ) : null}
             </AtlasStage>
 
+            <AtlasStage title="Fix-First Queue" rail="decision order">
+              {visiblePriorityQueue.length ? (
+                <div className="grid gap-3 lg:grid-cols-2">
+                  {visiblePriorityQueue.map((item, index) => (
+                    <div key={`${item.label}-${index}`} className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Rank {item.rank || index + 1}</div>
+                          <div className="mt-2 text-base font-medium text-foreground">{item.label}</div>
+                        </div>
+                        <div className="rounded-full border border-primary/18 bg-primary/8 px-3 py-1 text-[11px] text-primary">
+                          {item.severity || item.priority || "focus"}
+                        </div>
+                      </div>
+                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.why}</p>
+                      {item.action ? <div className="mt-3 rounded-2xl border border-white/8 bg-background/35 px-3 py-2 text-sm text-foreground">{item.action}</div> : null}
+                      {item.components?.length || item.nets?.length ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {(item.components || []).map((component) => (
+                            <span key={`${item.label}-${component}`} className="rounded-full border border-white/8 bg-background/35 px-2.5 py-1 text-[11px] text-muted-foreground">
+                              {component}
+                            </span>
+                          ))}
+                          {(item.nets || []).map((net) => (
+                            <span key={`${item.label}-${net}`} className="rounded-full border border-primary/18 bg-primary/8 px-2.5 py-1 text-[11px] text-primary">
+                              {net}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Atlas will rank the next engineering moves here once there is enough live board, project, or compare evidence to prioritize confidently.</p>
+              )}
+            </AtlasStage>
+
+            <AtlasStage title="Board-Linked Reasoning" rail="focus map">
+              {visibleFocusMap.length ? (
+                <div className="grid gap-3 lg:grid-cols-2">
+                  {visibleFocusMap.map((item, index) => (
+                    <button
+                      key={`${item.label}-${index}`}
+                      onClick={() => void sendPrompt(`Explain why ${item.label || "this focus area"} matters and what I should validate next.`)}
+                      className="interactive-lift rounded-2xl border border-white/8 bg-background/30 p-4 text-left"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="text-base font-medium text-foreground">{item.label}</div>
+                        <div className="rounded-full border border-white/8 bg-background/35 px-3 py-1 text-[11px] capitalize text-muted-foreground">
+                          {item.severity || "focus"}
+                        </div>
+                      </div>
+                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.why}</p>
+                      {item.components?.length || item.nets?.length ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {(item.components || []).map((component) => (
+                            <span key={`${item.label}-${component}`} className="rounded-full border border-white/8 bg-background/35 px-2.5 py-1 text-[11px] text-muted-foreground">
+                              {component}
+                            </span>
+                          ))}
+                          {(item.nets || []).map((net) => (
+                            <span key={`${item.label}-${net}`} className="rounded-full border border-primary/18 bg-primary/8 px-2.5 py-1 text-[11px] text-primary">
+                              {net}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Atlas will map board-linked focus cues here when it can anchor reasoning to components, nets, hotspots, or changed compare sources.</p>
+              )}
+            </AtlasStage>
+
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+              <AtlasStage title="Remediation Paths" rail="optimized fixes">
+                {visibleRemediationOptions.length ? (
+                  <div className="space-y-3">
+                    {visibleRemediationOptions.map((item, index) => (
+                      <div key={`${item.label}-${index}`} className="rounded-2xl border border-white/8 bg-background/30 p-4">
+                        <div className="text-base font-medium text-foreground">{item.label}</div>
+                        <div className="mt-2 text-sm leading-6 text-muted-foreground">{item.recommendation}</div>
+                        {item.tradeoff ? <div className="mt-3 text-xs leading-5 text-muted-foreground">Tradeoff: {item.tradeoff}</div> : null}
+                        {item.validate_next ? <div className="mt-2 rounded-2xl border border-primary/14 bg-primary/8 px-3 py-2 text-xs leading-5 text-primary">Validate next: {item.validate_next}</div> : null}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Atlas will surface concrete remediation options here once it has enough evidence to recommend fixes with tradeoff awareness.</p>
+                )}
+              </AtlasStage>
+
+              <AtlasStage title="Learning Loop" rail="adaptive memory">
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-primary/14 bg-primary/8 p-4">
+                    <div className="text-sm leading-6 text-foreground">{visibleMemory?.summary || "Atlas will start building a persistent learning thread as soon as you ask questions, inspect specific focus areas, and iterate on reruns."}</div>
+                  </div>
+                  {visibleMemory?.signals?.length ? (
+                    <div className="space-y-2">
+                      {visibleMemory.signals.map((signal, index) => (
+                        <div key={`${signal}-${index}`} className="rounded-2xl border border-white/8 bg-background/30 px-3 py-2 text-sm text-muted-foreground">
+                          {signal}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                  {visibleMemory?.recent_prompts?.length ? (
+                    <div className="space-y-2">
+                      {visibleMemory.recent_prompts.map((item, index) => (
+                        <button key={`${item}-${index}`} onClick={() => setPrompt(item)} className="w-full rounded-2xl border border-white/8 bg-background/30 px-3 py-2 text-left text-sm text-muted-foreground hover:text-foreground">
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </AtlasStage>
+            </div>
+
             <AtlasStage
               title="Ask Atlas Intelligence"
               rail="engineering conversation"
@@ -602,6 +741,24 @@ function Atlas() {
                   <Button size="sm" className="rounded-full" onClick={() => void sendPrompt()}><Send className="mr-1.5 h-3.5 w-3.5" /> Send</Button>
                 </div>
                 {error ? <div className="text-sm text-danger">{error}</div> : null}
+              </div>
+            </AtlasStage>
+
+            <AtlasStage title="Proactive Copilot" rail="next moves">
+              <div className="rounded-2xl border border-primary/14 bg-primary/8 p-4">
+                <div className="text-lg font-semibold text-foreground">{visibleProactiveGuidance?.headline || "Atlas is ready to guide the next engineering move once a live context is selected."}</div>
+                {visibleProactiveGuidance?.moves?.length ? (
+                  <div className="mt-4 grid gap-3 md:grid-cols-3">
+                    {visibleProactiveGuidance.moves.map((move, index) => (
+                      <button key={`${move}-${index}`} onClick={() => void sendPrompt(move)} className="rounded-2xl border border-white/8 bg-background/35 p-4 text-left text-sm leading-6 text-muted-foreground hover:text-foreground">
+                        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Move {index + 1}</div>
+                        <div className="mt-2">{move}</div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-3 text-sm text-muted-foreground">Atlas will begin surfacing proactive next steps here once the current context has enough evidence to support them confidently.</div>
+                )}
               </div>
             </AtlasStage>
 
